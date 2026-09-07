@@ -9,12 +9,30 @@ temperature, surface gravity, and composition. It solves the atmospheric
 structure and radiative transfer from scratch, rather than interpolating a
 precomputed spectral grid.
 
-The code supports plane-parallel, LTE models of:
+## White dwarf modeling capabilities
 
-- **DA:** hydrogen atmospheres.
-- **DB:** helium atmospheres.
-- **DAB/DBA:** homogeneous hydrogen–helium mixtures.
-- **DZ/DBZ:** helium-dominated atmospheres polluted by metals.
+The atmosphere models are plane-parallel and LTE. The table distinguishes
+implemented physics from the availability of a ready-made interface.
+
+| Type | Physics implemented | Ready-made interface |
+|:---|:---:|:---:|
+| DA — hydrogen | ✓ | ✓ |
+| DB — helium | ✓ | ✓ |
+| DAB / DBA — mixed H/He | ✓ | ✓ |
+| DZ / DBZ — polluted helium | ✓ | ✓ |
+| DAZ — polluted hydrogen | ✓ | ✗ |
+| DC — featureless H/He | ✓ | ✓ |
+| Magnetic WDs | ◐ | ✗ |
+| DQ — carbon-bearing | ◐ | ✗ |
+| DO / DAO — hot He / H–He | ◐ | ✗ |
+| PG 1159 / D6 | ✗ | ✗ |
+
+**✓ Implemented · ◐ Some ingredients implemented · ✗ Not implemented**
+
+DC spectra use the existing H/He interfaces. DAZ requires lower-level functions.
+Magnetic, DQ, and hot-WD models require additional physics, not just a new interface.
+
+*Implementation does not imply validation across all stellar parameters.*
 
 ## Get started
 
