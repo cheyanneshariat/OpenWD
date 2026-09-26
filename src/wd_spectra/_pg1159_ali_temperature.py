@@ -273,15 +273,20 @@ def refine_upper_atmosphere(
     wave,
     *,
     maximum_iterations=30,
-    maximum_step=0.1,
+    maximum_step=0.2,
     probe_step=0.02,
     local_deadband=2e-5,
     local_maximum_rosseland_depth=1e-2,
     material_tolerance=1e-3,
-    residual_stop=4e-4,
+    coarse_material_tolerance=3e-3,
+    coarse_step=0.03,
+    residual_stop=6e-4,
+    residual_stop_step=0.03,
     stationary_step=0.01,
     flux_tolerance=1e-2,
     local_energy_tolerance=3e-3,
+    include_radiative_acceleration=False,
+    hydrostatic_tolerance=1e-3,
     iteration_callback=None,
 ):
     """Converge the upper atmosphere to local radiative equilibrium.
@@ -292,8 +297,15 @@ def refine_upper_atmosphere(
     take a local-RE step from the measured per-cell secant
     (:func:`temperature_correction`), deeper cells an Unsöld-Lucy flux step.
     It stops when the flux and local-energy gates pass and either every step
-    is below ``stationary_step`` or every band cell's relative heating is
-    below ``residual_stop``.
+    is below ``stationary_step``, or every band cell's relative heating is
+    below ``residual_stop`` with every step below ``residual_stop_step``.
+    While the last step exceeded ``coarse_step`` the populations are closed
+    only to ``coarse_material_tolerance``: large temperature steps are not
+    worth closing tightly, and a stop is accepted only at the fine tolerance.
+    With ``include_radiative_acceleration`` the gas pressure is iterated
+    alongside: each step sets ln P to its hydrostatic target for
+    ``g - g_rad`` at the current state, and a stop also requires
+    ``|ln P/P_target| < hydrostatic_tolerance``.
 
     Returns ``(atmosphere, populations, info)``.
     """
@@ -311,21 +323,32 @@ def refine_upper_atmosphere(
         metal_population_relative_tolerance=material_tolerance,
     )
     equations = PG1159Equations(
-        atmosphere, stage, wave, radiative_acceleration=False,
+        atmosphere, stage, wave, radiative_acceleration=include_radiative_acceleration,
         certification_stage=False, material_tolerance_ceiling=material_tolerance,
         resolved_material_closure=True,
     )
     equations.population_ali = False
     equations.anchor = populations
-    x = np.log(np.asarray(atmosphere.temperature, dtype=float))
+    nd = atmosphere.n_depth
+    x = equations.initial_state()   # ln T, then ln P with radiative acceleration
     previous = None
     band_first = band_last = None
     history = []
     converged = False
     step = None
     current = None
+    fine_stage = stage
+    coarse_stage = replace(stage, metal_population_relative_tolerance=coarse_material_tolerance)
+    fine = True
     base = x
     for iteration in range(maximum_iterations):
+        # Close coarsely at the start and while the temperature is still
+        # moving by more than coarse_step; the anchor populations carry over
+        # between tolerances.
+        fine = previous is not None and float(np.max(abs(previous["raw_step"]))) <= coarse_step
+        tolerance = material_tolerance if fine else coarse_material_tolerance
+        equations.model = fine_stage if fine else coarse_stage
+        equations.material_tolerance_ceiling = tolerance
         # x = base + step; an inadmissible trial state halves the step.
         for halving in range(4):
             try:
@@ -343,18 +366,29 @@ def refine_upper_atmosphere(
         flux = float(d["maximum_all_depth_total_flux_residual"])
         surface = abs(float(d["surface_flux_ratio"]) - 1.0)
         local = float(d["maximum_relative_cell_energy_balance_residual"])
-        gates = flux < flux_tolerance and surface < flux_tolerance and local < local_energy_tolerance
+        hydrostatic = (
+            float(np.max(abs(evaluation.residual[-nd:])))
+            if include_radiative_acceleration else 0.0
+        )
+        gates = (flux < flux_tolerance and surface < flux_tolerance
+                 and local < local_energy_tolerance and hydrostatic < hydrostatic_tolerance)
         stationary = False
         if previous is not None:
             band = slice(previous["band_first"], previous["band_last"])
-            stationary = (
-                float(np.max(abs(previous["raw_step"]))) < stationary_step
-                or float(np.max(abs(previous["relative_heating"][band]))) < residual_stop
+            largest_step = float(np.max(abs(previous["raw_step"])))
+            stationary = fine and (
+                largest_step < stationary_step
+                or (
+                    float(np.max(abs(previous["relative_heating"][band]))) < residual_stop
+                    and largest_step < residual_stop_step
+                )
             )
         history.append(dict(iteration=iteration, all_depth_flux=flux, surface_flux=surface,
-                            local_energy=local, gates=bool(gates), stationary=bool(stationary)))
-        LOGGER.info("PG1159 refinement %d: flux %.4g, surface %.4g, local energy %.4g, gates %s, stationary %s",
-                    iteration, flux, surface, local, gates, stationary)
+                            local_energy=local, hydrostatic=hydrostatic,
+                            gates=bool(gates), stationary=bool(stationary)))
+        LOGGER.info("PG1159 refinement %d: flux %.4g, surface %.4g, local energy %.4g, hydrostatic %.3g, "
+                    "gates %s, stationary %s, closure %.0e",
+                    iteration, flux, surface, local, hydrostatic, gates, stationary, tolerance)
         if iteration_callback is not None:
             iteration_callback(iteration, a, p, d)
         if gates and stationary:
@@ -367,12 +401,17 @@ def refine_upper_atmosphere(
         )
         band_first, band_last = diagnostics["band_first"], diagnostics["band_last"]
         previous = diagnostics
+        if include_radiative_acceleration:
+            # Hydrostatic fixed point: move ln P to its target at this state.
+            step = np.r_[step, -evaluation.residual[-nd:]]
         base = x
         x = base + step
     a, p, d = current
     info = dict(converged=converged, iterations=len(history), history=tuple(history),
                 maximum_step=maximum_step, probe_step=probe_step, local_deadband=local_deadband,
                 local_maximum_rosseland_depth=local_maximum_rosseland_depth,
-                material_tolerance=material_tolerance, residual_stop=residual_stop,
+                material_tolerance=material_tolerance,
+                coarse_material_tolerance=coarse_material_tolerance, coarse_step=coarse_step,
+                residual_stop=residual_stop, residual_stop_step=residual_stop_step,
                 stationary_step=stationary_step)
     return a, p, info

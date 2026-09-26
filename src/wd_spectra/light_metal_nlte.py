@@ -17,7 +17,7 @@ import math
 from pathlib import Path
 import re
 from types import MappingProxyType
-from typing import Iterable, Mapping
+from typing import Sequence, Iterable, Mapping
 
 import numpy as np
 from ._compat import trapezoid
@@ -35,6 +35,15 @@ from .constants import (
     PLANCK,
 )
 from .gaunt import hydrogen_free_free_gaunt_factor
+from ._hydrogenic_stark import (
+    COMPOSITE_LOG_BETA_MAX,
+    COMPOSITE_LOG_BETA_MIN,
+    COMPOSITE_POINTS,
+    composite_static_profile,
+    composite_static_profile_value,
+    formula4_extreme_shift,
+    hydrogenic_stark_pattern,
+)
 from .metals import (
     LINE_WINDOW_MAX_FRACTION,
     ATOMIC_MASS_U,
@@ -69,6 +78,7 @@ _TMAD_WAVELENGTH_PATTERN = re.compile(r"WAVELENGTH:\s*([0-9.Ee+-]+)")
 # large enough to affect a spectrum are many orders of magnitude below this
 # conservative ceiling.
 _MAX_FINITE_DEPARTURE = 1.0e100
+_TABULATED_STARK_MEMBER_TOLERANCE_ANGSTROM = 0.1
 # Dimitrijevic & Sahal-Brechot (1992, A&AS 93, 359) give electron-impact
 # FWHM=0.365 and 0.437 A for the O VI 5s-6p and 5p-6s multiplets at
 # T=100,000 K and ne=1e17 cm^-3.  The Cowley formula and the corresponding
@@ -262,6 +272,78 @@ def _ion_dynamic_holtsmark_distribution(
     return (1.0 - log_fraction) * lower_profile + log_fraction * upper_profile
 
 
+def _hydrogenic_stark_pattern_key(
+    transition: AtomicTransition,
+    enabled: bool,
+) -> tuple[int, int] | None:
+    """Return ``(lower_n, upper_n)`` when a formula-4 line uses component patterns."""
+
+    if not enabled or transition.profile_formula != 4:
+        return None
+    parameters = transition.profile_parameters
+    if len(parameters) < 6:
+        return None
+    lower_n, upper_n = float(parameters[4]), float(parameters[5])
+    if (
+        abs(lower_n - round(lower_n)) > 1.0e-6
+        or abs(upper_n - round(upper_n)) > 1.0e-6
+        or round(lower_n) < 1
+        or round(upper_n) < round(lower_n)
+    ):
+        return None
+    return int(round(lower_n)), int(round(upper_n))
+
+
+def _static_stark_profile(
+    beta: FloatArray,
+    lorentz_hwhm_beta: float,
+    pattern: tuple[int, int] | None,
+) -> FloatArray:
+    """Two-sided static profile: formula-4 Holtsmark or hydrogenic components.
+
+    ``beta`` is in units of the formula-4 (outermost-component) frequency
+    scale.  With a pattern, each shifted component contributes its own
+    Holtsmark distribution at its own scale (see ``_hydrogenic_stark``).
+    """
+
+    if pattern is None:
+        return _ion_dynamic_holtsmark_distribution(beta, lorentz_hwhm_beta)
+    lower_n, upper_n = pattern
+    if float(lorentz_hwhm_beta) == 0.0:
+        return 0.5 * composite_static_profile_value(
+            composite_static_profile(lower_n, upper_n), beta
+        )
+    shifts, strengths = hydrogenic_stark_pattern(lower_n, upper_n)
+    extreme = formula4_extreme_shift(lower_n, upper_n)
+    value = np.zeros_like(np.asarray(beta, dtype=np.float64))
+    for shift, strength in zip(shifts, strengths):
+        if shift <= 0.0:
+            continue
+        ratio = shift / extreme
+        value += strength / ratio * _ion_dynamic_holtsmark_distribution(
+            np.asarray(beta) / ratio, float(lorentz_hwhm_beta) / ratio
+        )
+    return value
+
+
+def _static_pattern_arrays(
+    static_pattern: Sequence[tuple[int, int] | None] | None,
+) -> tuple[FloatArray, FloatArray] | None:
+    """Per-line table row index (-1 = Holtsmark) and the composite table."""
+
+    if static_pattern is None or all(key is None for key in static_pattern):
+        return None
+    rows: dict[tuple[int, int], int] = {}
+    index = np.full(len(static_pattern), -1.0, dtype=np.float64)
+    for line, key in enumerate(static_pattern):
+        if key is not None:
+            index[line] = float(rows.setdefault(key, len(rows)))
+    table = np.stack([
+        composite_static_profile(*key) for key in sorted(rows, key=rows.get)
+    ])
+    return np.ascontiguousarray(index), np.ascontiguousarray(table)
+
+
 def _accumulate_metal_line_profiles_python(
     wavelength: FloatArray,
     planck: FloatArray,
@@ -280,6 +362,7 @@ def _accumulate_metal_line_profiles_python(
     absorption: FloatArray,
     emissivity: FloatArray,
     retain_inverted_emissivity: bool,
+    static_pattern: Sequence[tuple[int, int] | None] | None = None,
 ) -> None:
     """Reference implementation of the element-independent profile kernel."""
 
@@ -333,9 +416,11 @@ def _accumulate_metal_line_profiles_python(
                     # already assumes this two-sided normalization.
                     static_cross_section[inside_static_support] = (
                         static_amplitude[line_index, depth]
-                        * _ion_dynamic_holtsmark_distribution(
+                        * _static_stark_profile(
                             beta[inside_static_support],
                             static_ion_motion_hwhm_beta[line_index, depth],
+                            None if static_pattern is None
+                            else static_pattern[line_index],
                         )
                     )
                     cross_section = np.maximum(
@@ -384,6 +469,7 @@ def _accumulate_metal_line_profiles(
     *,
     depth_major: bool = False,
     planck_depth_major: FloatArray | None = None,
+    static_pattern: Sequence[tuple[int, int] | None] | None = None,
 ) -> None:
     """Dispatch profile accumulation to C while retaining a NumPy fallback.
 
@@ -410,6 +496,7 @@ def _accumulate_metal_line_profiles(
             static_amplitude, static_ion_motion_hwhm_beta, population_scale,
             lower_departure, upper_departure, exponential,
             wave_absorption, wave_emissivity, retain_inverted_emissivity,
+            static_pattern=static_pattern,
         )
         absorption[...] = wave_absorption.T
         emissivity[...] = wave_emissivity.T
@@ -435,8 +522,20 @@ def _accumulate_metal_line_profiles(
             absorption,
             emissivity,
             retain_inverted_emissivity,
+            static_pattern=static_pattern,
         )
         return
+    pattern_arrays = _static_pattern_arrays(static_pattern)
+    pattern_arguments = () if pattern_arrays is None else (
+        bool(depth_major),
+        pattern_arrays[0],
+        pattern_arrays[1],
+        float(COMPOSITE_LOG_BETA_MIN),
+        float(
+            (COMPOSITE_LOG_BETA_MAX - COMPOSITE_LOG_BETA_MIN)
+            / (COMPOSITE_POINTS - 1)
+        ),
+    )
     compiled(
         *(
             np.ascontiguousarray(value, dtype=np.float64)
@@ -462,7 +561,10 @@ def _accumulate_metal_line_profiles(
         emissivity,
         bool(retain_inverted_emissivity),
         # Only depth-major-capable extensions accept the trailing flag.
-        *((True,) if depth_major else ()),
+        *(
+            pattern_arguments if pattern_arguments
+            else ((True,) if depth_major else ())
+        ),
     )
 
 
@@ -583,6 +685,7 @@ def _profile_weighted_line_means(
     static_frequency_scale: FloatArray | None = None,
     static_amplitude: FloatArray | None = None,
     static_ion_motion_hwhm_beta: FloatArray | None = None,
+    static_pattern: Sequence[tuple[int, int] | None] | None = None,
 ) -> tuple[FloatArray, FloatArray]:
     """Compute radiative-rate means with the formal-solution profile.
 
@@ -704,8 +807,10 @@ def _profile_weighted_line_means(
             # profile accumulator above.
             static_cross_section[inside] = (
                 local_amplitude
-                * _ion_dynamic_holtsmark_distribution(
-                    beta[inside], ion_motion_hwhm[line_index, depth]
+                * _static_stark_profile(
+                    beta[inside], ion_motion_hwhm[line_index, depth],
+                    None if static_pattern is None
+                    else static_pattern[line_index],
                 )
             )
             profile_weight = np.maximum(
@@ -785,6 +890,7 @@ def _tabulated_electron_stark_fwhm_angstrom(
     symbol = element.strip().capitalize()
     center = float(wavelength_angstrom)
     if symbol == "C" and charge == 3 and 1_540.0 < center < 1_560.0:
+        members = (1_548.203, 1_550.777, 1_549.05)
         # C IV 2s--2p resonance doublet.  Elabidi, Sahal-Brechot &
         # Ben Nessib (2011), table 7; their quantum widths agree with the
         # Dimitrijevic, Sahal-Brechot & Bommier (1991) semiclassical values
@@ -798,15 +904,19 @@ def _tabulated_electron_stark_fwhm_angstrom(
              0.00561, 0.00478, 0.00430)
         )
     elif symbol == "C" and charge == 3 and 5_750.0 < center < 5_850.0:
+        members = (5_802.955, 5_813.582, 5_806.47)
         table_temperature = np.asarray(
             (10_000.0, 20_000.0, 50_000.0, 80_000.0, 100_000.0, 150_000.0, 200_000.0)
         )
         fwhm_per_1e17 = np.asarray((1.23, 0.893, 0.603, 0.502, 0.463, 0.402, 0.366))
     elif symbol == "O" and charge == 4 and 5_500.0 < center < 5_680.0:
+        members = (5_573.351, 5_581.657, 5_584.774, 5_599.441, 5_605.813,
+                   5_608.957, 5_591.44)
         # O V 3p--3d multiplet; CDS J/A+AS/109/551, table 1.
         table_temperature = np.asarray((40_000.0, 100_000.0, 200_000.0, 500_000.0))
         fwhm_per_1e17 = np.asarray((0.282, 0.189, 0.143, 0.105))
     elif symbol == "O" and charge == 5 and 1_025.0 < center < 1_045.0:
+        members = (1_031.912, 1_037.613, 1_033.81)
         # O VI 2s--2p resonance multiplet; Dimitrijevic & Sahal-Brechot
         # (1992), A&AS 93, 359, table 1.  Values below are FWHM at
         # n_e=1e17 cm-3; their higher-density entries are exactly linear
@@ -816,6 +926,7 @@ def _tabulated_electron_stark_fwhm_angstrom(
         )
         fwhm_per_1e17 = np.asarray((0.00146, 0.00105, 0.000694, 0.000525))
     elif symbol == "O" and charge == 5 and 3_775.0 < center < 3_875.0:
+        members = (3_812.429, 3_835.326, 3_820.03)
         table_temperature = np.asarray(
             (61_900.0, 65_500.0, 79_700.0, 96_300.0, 133_400.0, 181_000.0, 203_100.0)
         )
@@ -826,6 +937,11 @@ def _tabulated_electron_stark_fwhm_angstrom(
              1.0 / 10.0, 1.4 / 13.0, 1.8 / 21.0, 2.1 / 24.0)
         )
     else:
+        return None
+    # The windows also contain unrelated high-n lines (e.g. O VI 5-8 at
+    # 1036-1043 A, O V 2p4s-2s6d at 5616 A); only the tabulated multiplet's
+    # own components (and the term centroid used by the rate atoms) qualify.
+    if min(abs(center - member) for member in members) > _TABULATED_STARK_MEMBER_TOLERANCE_ANGSTROM:
         return None
     log_width = np.interp(
         np.log(np.clip(float(temperature), table_temperature[0], table_temperature[-1])),
@@ -966,6 +1082,37 @@ def _is_ovi_high_series_formula4(
         and parameters[4] >= 5.0
         and abs(parameters[5] - parameters[4] - 1.0) < 0.25
     )
+
+
+
+def _static_linear_stark_scale(
+    scales: Mapping[tuple, float] | None,
+    element: str,
+    charge: int,
+    lower_n: float,
+    upper_n: float,
+) -> float:
+    """Frequency scale of TMAP's formula-4 quasi-static wing for one line.
+
+    ``scales`` is keyed by ``(element, charge, lower_n, upper_n)`` or, for a
+    whole ion, ``(element, charge)``; the transition key takes precedence.
+    A scale of 0 removes the quasi-static wing, leaving the impact profile
+    (TMAP's behaviour when an ion's lines use tabulated Stark widths, e.g.
+    the LINE1 ``STARK OVI`` option).
+    """
+
+    if scales is None:
+        return 1.0
+    scale = scales.get(
+        (element, int(charge), int(round(lower_n)), int(round(upper_n))),
+        scales.get((element, int(charge)), 1.0),
+    )
+    scale = float(scale)
+    if not np.isfinite(scale) or scale < 0.0:
+        raise ValueError(
+            "static linear-Stark frequency scales must be finite and nonnegative"
+        )
+    return scale
 
 
 def _ion_microfield_motion_rate(
@@ -5086,6 +5233,7 @@ def hot_metal_line_nlte_coefficients(
     transition_keys: Iterable[tuple[str, int, int, int]] | None = None,
     retain_inverted_emissivity: bool = False,
     include_ion_dynamic_stark_core: bool = False,
+    hydrogenic_linear_stark_components: bool = False,
     extend_strong_uv_resonance_wings: bool = True,
     strong_uv_resonance_core_optical_depth: float = 1.0e3,
 ) -> tuple[FloatArray, FloatArray]:
@@ -5099,7 +5247,8 @@ def hot_metal_line_nlte_coefficients(
     pointwise maximum of the impact Voigt cross-section and the Holtsmark
     microfield cross-section.  ``static_linear_stark_frequency_scales`` can
     supply ion-dynamic corrections keyed by ``(element, charge, lower_n,
-    upper_n)``.  A scale contracts the quasi-static frequency coordinate and
+    upper_n)`` or ``(element, charge)``; a scale of 0 removes the wing.  A
+    scale contracts the quasi-static frequency coordinate and
     raises its amplitude by the reciprocal factor, preserving the area of
     the pure static component.  Neutral-perturber unified profiles belong to
     the cool DZ path and are intentionally absent.
@@ -5226,6 +5375,7 @@ def hot_metal_line_nlte_coefficients(
         "static_frequency_scale": [],
         "static_amplitude": [],
         "static_ion_motion_hwhm_beta": [],
+        "static_pattern": [],
         "population_scale": [],
         "lower_departure": [],
         "upper_departure": [],
@@ -5255,6 +5405,7 @@ def hot_metal_line_nlte_coefficients(
             retain_inverted_emissivity,
             depth_major=True,
             planck_depth_major=planck_depth_major,
+            static_pattern=list(profile_batch["static_pattern"]),
         )
         for values in profile_batch.values():
             values.clear()
@@ -5399,26 +5550,12 @@ def hot_metal_line_nlte_coefficients(
             stark_sum = (
                 upper_n * (upper_n - 1.0) + lower_n * (lower_n - 1.0)
             )
-            dynamic_scale = 1.0
-            if static_linear_stark_frequency_scales is not None:
-                dynamic_scale = float(
-                    static_linear_stark_frequency_scales.get(
-                        (
-                            ion.element,
-                            ion.charge,
-                            int(round(lower_n)),
-                            int(round(upper_n)),
-                        ),
-                        1.0,
-                    )
-                )
-                if not np.isfinite(dynamic_scale) or dynamic_scale <= 0.0:
-                    raise ValueError(
-                        "static linear-Stark frequency scales must be finite "
-                        "and positive"
-                    )
+            dynamic_scale = _static_linear_stark_scale(
+                static_linear_stark_frequency_scales,
+                ion.element, ion.charge, lower_n, upper_n,
+            )
             valid = microfield_scale > 0.0
-            if stark_sum > 0.0 and np.any(valid):
+            if dynamic_scale > 0.0 and stark_sum > 0.0 and np.any(valid):
                 static_frequency_scale[valid] = (
                     dynamic_scale
                     * stark_sum
@@ -5452,6 +5589,11 @@ def hot_metal_line_nlte_coefficients(
         profile_batch["static_amplitude"].append(static_amplitude)
         profile_batch["static_ion_motion_hwhm_beta"].append(
             static_ion_motion_hwhm_beta
+        )
+        profile_batch["static_pattern"].append(
+            _hydrogenic_stark_pattern_key(
+                line, hydrogenic_linear_stark_components
+            ) if np.any(static_amplitude > 0.0) else None
         )
         profile_batch["population_scale"].append(
             lower_population / atmosphere.mass_density
@@ -6185,6 +6327,7 @@ def solve_reduced_light_metal_levels_nlte(
     include_semiclassical_ovi_stark_widths: bool = False,
     include_ovi_high_series_ion_dephasing: bool = False,
     include_ion_dynamic_stark_core: bool = False,
+    hydrogenic_linear_stark_components: bool = False,
     electron_excitation_collision_scale: float = 1.0,
     approximate_lambda_diagonal: ArrayLike | None = None,
     previous_population_state: ReducedLightMetalLevelState | None = None,
@@ -6522,6 +6665,7 @@ def solve_reduced_light_metal_levels_nlte(
     component_static_frequency_scale: list[FloatArray] = []
     component_static_amplitude: list[FloatArray] = []
     component_static_ion_motion_hwhm_beta: list[FloatArray] = []
+    component_static_pattern: list[tuple[int, int] | None] = []
     atomic_mass_unit = 1.660_539_068_92e-24
     integrated_cross_section = (
         PI * ELEMENTARY_CHARGE_ESU**2 / (ELECTRON_MASS * LIGHT_SPEED)
@@ -6587,26 +6731,11 @@ def solve_reduced_light_metal_levels_nlte(
             upper_n * (upper_n - 1.0)
             + lower_n * (lower_n - 1.0)
         )
-        dynamic_scale = 1.0
-        if static_linear_stark_frequency_scales is not None:
-            dynamic_scale = float(
-                static_linear_stark_frequency_scales.get(
-                    (
-                        symbol,
-                        int(charge),
-                        int(round(lower_n)),
-                        int(round(upper_n)),
-                    ),
-                    1.0,
-                )
-            )
-            if not np.isfinite(dynamic_scale) or dynamic_scale <= 0.0:
-                raise ValueError(
-                    "static linear-Stark frequency scales must be finite "
-                    "and positive"
-                )
+        dynamic_scale = _static_linear_stark_scale(
+            static_linear_stark_frequency_scales, symbol, charge, lower_n, upper_n,
+        )
         valid = rate_microfield_scale > 0.0
-        if stark_sum > 0.0 and np.any(valid):
+        if dynamic_scale > 0.0 and stark_sum > 0.0 and np.any(valid):
             frequency_scale[valid] = (
                 dynamic_scale
                 * stark_sum
@@ -6703,6 +6832,11 @@ def solve_reduced_light_metal_levels_nlte(
             component_static_ion_motion_hwhm_beta.append(
                 static_ion_motion_hwhm_beta
             )
+            component_static_pattern.append(
+                _hydrogenic_stark_pattern_key(
+                    rate_line, hydrogenic_linear_stark_components
+                ) if np.any(static_amplitude > 0.0) else None
+            )
             component_weight.append(
                 formal_level_weight.get(
                     (ion.charge, rate_line.lower_index), 1.0
@@ -6777,6 +6911,11 @@ def solve_reduced_light_metal_levels_nlte(
         component_static_ion_motion_hwhm_beta.append(
             static_ion_motion_hwhm_beta
         )
+        component_static_pattern.append(
+            _hydrogenic_stark_pattern_key(
+                transition, hydrogenic_linear_stark_components
+            ) if np.any(static_amplitude > 0.0) else None
+        )
         component_weight.append(
             lower_level.statistical_weight
             * transition.absorption_oscillator_strength
@@ -6824,6 +6963,7 @@ def solve_reduced_light_metal_levels_nlte(
                 static_ion_motion_hwhm_beta=np.stack(
                     component_static_ion_motion_hwhm_beta
                 ),
+                static_pattern=component_static_pattern,
             )
         )
         # Integrate spontaneous+stimulated downward rates with the same
@@ -6851,6 +6991,7 @@ def solve_reduced_light_metal_levels_nlte(
                 static_ion_motion_hwhm_beta=np.stack(
                     component_static_ion_motion_hwhm_beta
                 ),
+                static_pattern=component_static_pattern,
             )
         )
         component_weight_array = np.asarray(component_weight, dtype=np.float64)

@@ -38,9 +38,14 @@ SUPPORTED_NLTE_TRACE_ELEMENTS = (
     "Ca",
     "Fe",
 )
-# Preserve the accepted development prescription; this is an empirically
-# calibrated series correction, not a first-principles broadening result.
-PG1159_STATIC_LINEAR_STARK_FREQUENCY_SCALES = MappingProxyType({("C", 3, 4, 9): 0.25})
+# Formula-4 (C IV, O VI) quasi-static wings use the hydrogenic linear-Stark
+# component pattern of each n_l -> n_u transition (see _hydrogenic_stark)
+# instead of one Holtsmark distribution at the outermost component's scale.
+# This removes the need for any series- or ion-specific wing scale: the
+# pattern alone narrows the C IV 4-9 far wings to ~0.27 and the O VI 7-8
+# (5290 A) wing to ~0.013 of the formula-4 value.
+PG1159_HYDROGENIC_STARK_COMPONENTS = True
+PG1159_STATIC_LINEAR_STARK_FREQUENCY_SCALES = MappingProxyType({})
 
 
 def _build_model_inputs(data):
@@ -264,6 +269,7 @@ def build_model(
         static_linear_stark_frequency_scales=(
             PG1159_STATIC_LINEAR_STARK_FREQUENCY_SCALES
         ),
+        hydrogenic_linear_stark_components=PG1159_HYDROGENIC_STARK_COMPONENTS,
         metal_rate_line_velocity_samples_kms=(
             PG1424_STRUCTURE_LINE_VELOCITY_SAMPLES_KMS if structure_only else None
         ),

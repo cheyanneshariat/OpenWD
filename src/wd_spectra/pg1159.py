@@ -1120,6 +1120,7 @@ class PG1159NLTEModel:
     include_semiclassical_ovi_stark_widths: bool = False
     include_ovi_high_series_ion_dephasing: bool = False
     include_ion_dynamic_stark_core: bool = False
+    hydrogenic_linear_stark_components: bool = False
     static_linear_stark_frequency_scales: Mapping[
         tuple[str, int, int, int], float
     ] = field(default_factory=lambda: _EMPTY_MAPPING)
@@ -1789,6 +1790,9 @@ class PG1159NLTEModel:
                                     include_ion_dynamic_stark_core=(
                                         self.include_ion_dynamic_stark_core
                                     ),
+                                    hydrogenic_linear_stark_components=(
+                                        self.hydrogenic_linear_stark_components
+                                    ),
                                 )
                             )
                             metal_bound_free += local_bound_free
@@ -1856,6 +1860,9 @@ class PG1159NLTEModel:
                                     elements=ion_only_elements,
                                     include_ion_dynamic_stark_core=(
                                         self.include_ion_dynamic_stark_core
+                                    ),
+                                    hydrogenic_linear_stark_components=(
+                                        self.hydrogenic_linear_stark_components
                                     ),
                                 )
                             )
@@ -2146,6 +2153,9 @@ class PG1159NLTEModel:
                         include_ion_dynamic_stark_core=(
                             self.include_ion_dynamic_stark_core
                         ),
+                        hydrogenic_linear_stark_components=(
+                            self.hydrogenic_linear_stark_components
+                        ),
                         approximate_lambda_diagonal=(
                             None
                             if not self.use_population_ali
@@ -2203,6 +2213,9 @@ class PG1159NLTEModel:
                         ),
                         include_ion_dynamic_stark_core=(
                             self.include_ion_dynamic_stark_core
+                        ),
+                        hydrogenic_linear_stark_components=(
+                            self.hydrogenic_linear_stark_components
                         ),
                         approximate_lambda_diagonal=(
                             None
@@ -2890,6 +2903,9 @@ class PG1159NLTEModel:
                     transition_keys=formal_transition_keys,
                     include_ion_dynamic_stark_core=(
                         self.include_ion_dynamic_stark_core
+                    ),
+                    hydrogenic_linear_stark_components=(
+                        self.hydrogenic_linear_stark_components
                     ),
                 )
             )

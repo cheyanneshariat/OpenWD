@@ -1313,6 +1313,10 @@ def _solve_stage_driver(
         ),
         residual_tolerance=residual_tolerance,
         step_tolerance=step_tolerance,
+        # The certification test checks every certificate gate itself, so a
+        # proposal-limited sub-tolerance step (e.g. a radiation-pressure
+        # re-balance after refinement) need not run to the iteration cap.
+        converge_when_proposal_limited=bool(certification_stage),
         convergence_test=qualified,
         # A provisional Planck-blended problem only prepares the next phase;
         # it need not have a stationary root of its own. The explicit handoff
@@ -1926,6 +1930,11 @@ def _refine_and_certify(
     options = dict(refinement_options or {})
     if iteration_callback is not None and "iteration_callback" not in options:
         options["iteration_callback"] = iteration_callback
+    # The temperature refinement holds the pressure structure fixed; radiation
+    # pressure enters the coupled Newton re-certification below.  Updating the
+    # pressure inside the refinement (options["include_radiative_acceleration"])
+    # is experimental and did not converge in the PG 1159-035 tests.
+    options.setdefault("include_radiative_acceleration", False)
     refined_atmosphere, refined_population, info = refine_upper_atmosphere(
         atmosphere,
         population,

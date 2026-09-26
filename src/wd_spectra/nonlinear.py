@@ -296,6 +296,7 @@ def solve_trust_region_newton(
     iteration_correction: Callable[
         [FloatArray, NonlinearEvaluation[Payload]], NonlinearCorrection[Payload] | None
     ] | None = None,
+    converge_when_proposal_limited: bool = False,
 ) -> NonlinearResult[Payload]:
     """Solve a square nonlinear system with automatic globalization.
 
@@ -602,7 +603,10 @@ def solve_trust_region_newton(
         if (
             residual_maximum < residual_tolerance
             and last_step_maximum < step_tolerance
-            and not last_proposal_limited
+            # A bounded proposal cannot by itself certify stationarity; a
+            # caller may still accept it when its convergence test verifies
+            # the physical equations directly.
+            and (not last_proposal_limited or converge_when_proposal_limited)
             and (
                 convergence_test is None
                 or convergence_test(

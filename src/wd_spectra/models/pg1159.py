@@ -213,10 +213,14 @@ def compute_pg1159(
             model,
             metal_rate_line_velocity_samples_kms=REFINEMENT_LINE_VELOCITY_SAMPLES_KMS,
         )
+        # The refinement holds the pressure structure fixed; radiation
+        # pressure, when requested, enters the coupled Newton
+        # re-certification that follows (a separate pressure update inside
+        # the temperature refinement does not converge).
         refinement = (
             refinement_model,
             structure_wavelength(refinement_model, structure_continuum),
-            {},
+            {"include_radiative_acceleration": False},
         )
     result = solve_pg1159_atmosphere(
         seed,

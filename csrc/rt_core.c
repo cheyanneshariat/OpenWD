@@ -609,6 +609,38 @@ transpose_wave_depth(double *wave_depth, double *depth_wave,
     }
 }
 
+/* Composite hydrogenic Stark profile C(beta) tabulated on a uniform
+ * log10(beta) grid: geometric interpolation between positive samples,
+ * linear otherwise, and the small-field beta^2 law below the grid.  This
+ * matches wd_spectra._hydrogenic_stark.composite_static_profile_value. */
+static double
+composite_stark_profile(double beta, const double *table, Py_ssize_t points,
+                        double log_beta_min, double log_beta_step)
+{
+    double position, fraction, lo, hi;
+    Py_ssize_t left;
+    if (!(beta > 0.0)) {
+        return 0.0;
+    }
+    position = (log10(beta) - log_beta_min) / log_beta_step;
+    if (position < 0.0) {
+        const double ratio = beta / pow(10.0, log_beta_min);
+        return table[0] * ratio * ratio;
+    }
+    if (position > (double)(points - 1)) {
+        return 0.0;
+    }
+    left = (Py_ssize_t)position;
+    if (left > points - 2) left = points - 2;
+    fraction = position - (double)left;
+    lo = table[left];
+    hi = table[left + 1];
+    if (lo > 0.0 && hi > 0.0) {
+        return exp((1.0 - fraction) * log(lo) + fraction * log(hi));
+    }
+    return (1.0 - fraction) * lo + fraction * hi;
+}
+
 static PyObject *
 accumulate_metal_line_profiles(PyObject *self, PyObject *args)
 {
@@ -622,17 +654,27 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
     const double pi = 3.1415926535897932384626433832795;
     const double light_speed = 2.99792458e10;
     const double log_two = 0.69314718055994530941723212145818;
+    /* Optional hydrogenic Stark-component profiles: a per-line index into
+     * rows of a table of the composite static profile C(beta) on a uniform
+     * log10(beta) grid.  A negative index keeps the formula-4 Holtsmark U. */
+    PyObject *pattern_index_object = NULL, *pattern_table_object = NULL;
+    Py_buffer pattern_index_view = {0}, pattern_table_view = {0};
+    double pattern_log_beta_min = 0.0, pattern_log_beta_step = 1.0;
+    const double *pattern_index = NULL, *pattern_table = NULL;
+    Py_ssize_t pattern_points = 0, pattern_rows = 0;
 
     (void)self;
     if (!PyArg_ParseTuple(
             args,
-            "OOOOOOOOOOOOOOOOOp|p:accumulate_metal_line_profiles",
+            "OOOOOOOOOOOOOOOOOp|pOOdd:accumulate_metal_line_profiles",
             &objects[0], &objects[1], &objects[2], &objects[3],
             &objects[4], &objects[5], &objects[6], &objects[7],
             &objects[8], &objects[9], &objects[10], &objects[11],
             &objects[12], &objects[13], &objects[14], &objects[15],
             &objects[16],
-            &retain_inverted_emissivity, &depth_major)) {
+            &retain_inverted_emissivity, &depth_major,
+            &pattern_index_object, &pattern_table_object,
+            &pattern_log_beta_min, &pattern_log_beta_step)) {
         return NULL;
     }
     for (index = 0; index < METAL_PROFILE_BUFFER_COUNT; ++index) {
@@ -678,6 +720,40 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_ValueError,
                         "metal-profile array shapes are inconsistent");
         goto cleanup_metal;
+    }
+    if (pattern_index_object != NULL && pattern_index_object != Py_None) {
+        if (pattern_table_object == NULL ||
+            PyObject_GetBuffer(pattern_index_object, &pattern_index_view,
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES) < 0 ||
+            PyObject_GetBuffer(pattern_table_object, &pattern_table_view,
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES) < 0) {
+            if (!PyErr_Occurred()) {
+                PyErr_SetString(PyExc_ValueError,
+                                "a Stark pattern index requires a pattern table");
+            }
+            goto cleanup_metal;
+        }
+        if (!is_double_buffer(&pattern_index_view) ||
+            !is_double_buffer(&pattern_table_view) ||
+            !PyBuffer_IsContiguous(&pattern_index_view, 'C') ||
+            !PyBuffer_IsContiguous(&pattern_table_view, 'C') ||
+            pattern_index_view.ndim != 1 || pattern_table_view.ndim != 2 ||
+            pattern_index_view.shape[0] != n_line ||
+            pattern_table_view.shape[1] < 2 || !(pattern_log_beta_step > 0.0)) {
+            PyErr_SetString(PyExc_ValueError,
+                            "Stark pattern arrays must be C-contiguous float64 (line,) and (pattern, point)");
+            goto cleanup_metal;
+        }
+        pattern_index = (const double *)pattern_index_view.buf;
+        pattern_table = (const double *)pattern_table_view.buf;
+        pattern_rows = pattern_table_view.shape[0];
+        pattern_points = pattern_table_view.shape[1];
+        for (line = 0; line < n_line; ++line) {
+            if (pattern_index[line] >= (double)pattern_rows) {
+                PyErr_SetString(PyExc_ValueError, "Stark pattern index out of range");
+                goto cleanup_metal;
+            }
+        }
     }
     for (index = 4; index <= 12; ++index) {
         if (index == 6) {
@@ -773,6 +849,10 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
             const double frequency_conversion =
                 1.0e8 * center_cm * center_cm / light_speed;
             const double center_frequency = light_speed / center_cm;
+            const double *line_pattern =
+                (pattern_index != NULL && pattern_index[line] >= 0.0)
+                    ? pattern_table + (Py_ssize_t)pattern_index[line] * pattern_points
+                    : NULL;
             for (depth = 0; depth < n_depth; ++depth) {
                 const Py_ssize_t line_depth = line * n_depth + depth;
                 const double sigma = gaussian_sigma[line_depth];
@@ -878,8 +958,13 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
                         if (beta <= 30.0) {
                             const double static_cross_section =
                                 0.5 * static_amplitude[line_depth] *
-                                holtsmark_distribution(
-                                    beta, &holtsmark);
+                                (line_pattern != NULL
+                                    ? composite_stark_profile(
+                                          beta, line_pattern, pattern_points,
+                                          pattern_log_beta_min,
+                                          pattern_log_beta_step)
+                                    : holtsmark_distribution(
+                                          beta, &holtsmark));
                             if (static_cross_section > cross_section) {
                                 cross_section = static_cross_section;
                             }
@@ -907,6 +992,8 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
     for (index = 0; index < METAL_PROFILE_BUFFER_COUNT; ++index) {
         PyBuffer_Release(&views[index]);
     }
+    if (pattern_index_view.obj != NULL) PyBuffer_Release(&pattern_index_view);
+    if (pattern_table_view.obj != NULL) PyBuffer_Release(&pattern_table_view);
     Py_RETURN_NONE;
 
 cleanup_metal:
@@ -915,6 +1002,8 @@ cleanup_metal:
             PyBuffer_Release(&views[index]);
         }
     }
+    if (pattern_index_view.obj != NULL) PyBuffer_Release(&pattern_index_view);
+    if (pattern_table_view.obj != NULL) PyBuffer_Release(&pattern_table_view);
     return NULL;
 }
 
