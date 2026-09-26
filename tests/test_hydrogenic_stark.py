@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import wd_spectra.light_metal_nlte as light
+from wd_spectra._compat import trapezoid
 from wd_spectra._hydrogenic_stark import (
     COMPOSITE_LOG_BETA_MAX,
     COMPOSITE_LOG_BETA_MIN,
@@ -50,7 +51,7 @@ def test_composite_profile_carries_the_shifted_strength():
     beta = np.logspace(COMPOSITE_LOG_BETA_MIN, COMPOSITE_LOG_BETA_MAX, COMPOSITE_POINTS)
     for pair in ((4, 9), (7, 8)):
         shifts, strengths = hydrogenic_stark_pattern(*pair)
-        area = np.trapz(composite_static_profile(*pair), beta)
+        area = trapezoid(composite_static_profile(*pair), beta)
         # The formula-4 support ends at beta = 30; the lost far wing is < 0.5%.
         assert area == pytest.approx(strengths[shifts > 0].sum(), rel=5e-3)
     table = composite_static_profile(7, 8)

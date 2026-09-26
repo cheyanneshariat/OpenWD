@@ -1299,7 +1299,8 @@ def _term_principal_quantum_number(label: str | None) -> int | None:
     text = label.upper()
     # Fixed-width TMAD labels begin with element, spectroscopic stage, then
     # a two-digit outer-shell principal quantum number (for example C406F).
-    tmad = re.match(r"^[A-Z]{1,2}\d(\d{2})[SPDFGHIKLMNOQ]", text)
+    # C III writes n >= 10 with three digits (C3010P).
+    tmad = re.match(r"^[A-Z]{1,2}\d(\d{2,3})[SPDFGHIKLMNOQ]", text)
     if tmad is not None:
         return int(tmad.group(1))
     # Stout labels retain the configuration explicitly, for example
@@ -4293,10 +4294,20 @@ def read_tmad_structure_model_atom(
                 for level in available.values()
                 if _spectroscopic_term_labels_match(term.label, level.label) is True
             )
-            candidate_pools = (
-                (label_candidates, tuple(available.values()))
-                if label_candidates
-                else (tuple(available.values()),)
+            # Fall back on the energy/statistical-weight match only among
+            # formal levels whose labels carry no comparable spectroscopic
+            # field.  A level whose n, multiplicity or L contradicts the term
+            # must never be taken: near-degenerate high-n O V terms otherwise
+            # borrow unrelated levels (2s6p for a missing 2s6s 3S, 2s7h for
+            # 7p) and the formal lines between them inherit arbitrary
+            # departure ratios.
+            uninformative_candidates = tuple(
+                level
+                for level in available.values()
+                if _spectroscopic_term_labels_match(term.label, level.label) is None
+            )
+            candidate_pools = tuple(
+                pool for pool in (label_candidates, uninformative_candidates) if pool
             )
             for pool in candidate_pools:
                 candidates = sorted(

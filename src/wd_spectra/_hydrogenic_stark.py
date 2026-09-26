@@ -27,6 +27,8 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.special import eval_genlaguerre, gammaln
 
+from ._compat import trapezoid
+
 FloatArray = NDArray[np.float64]
 
 # Composite profile tabulation: C(beta) on a logarithmic grid spanning the
@@ -151,7 +153,7 @@ def hydrogenic_stark_pattern(lower_n: int, upper_n: int) -> tuple[FloatArray, Fl
     def radial(l_upper: int, l_lower: int) -> float:
         key = (l_upper, l_lower)
         if key not in radial_integral:
-            radial_integral[key] = float(np.trapz(
+            radial_integral[key] = float(trapezoid(
                 upper_radial[l_upper] * lower_radial[l_lower] * radius**3, radius
             ))
         return radial_integral[key]
