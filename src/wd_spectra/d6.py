@@ -2331,6 +2331,7 @@ def d6_structure_opacity_function(
     rydberg_correlated_microfields: bool = True,
     include_linear_stark_quasistatic: bool = False,
     include_oxygen_i_series_stark: bool = False,
+    profile_edge_optical_depth: float | None = None,
 ) -> Callable[[Atmosphere, MetalLTEState], tuple[FloatArray, FloatArray]]:
     """Return the D6 structural absorption/scattering closure."""
 
@@ -2357,6 +2358,7 @@ def d6_structure_opacity_function(
             topbase_photoionization_database=topbase_photoionization_database,
             include_linear_stark_quasistatic=include_linear_stark_quasistatic,
             include_oxygen_i_series_stark=include_oxygen_i_series_stark,
+            profile_edge_optical_depth=profile_edge_optical_depth,
         )
 
     return opacity
@@ -2389,6 +2391,7 @@ def radiative_equilibrium_d6_atmosphere(
     topbase_photoionization_database: TOPbasePhotoionizationDatabase | None = None,
     include_linear_stark_quasistatic: bool = False,
     include_oxygen_i_series_stark: bool = False,
+    profile_edge_optical_depth: float | None = None,
     n_angle: int = 3,
     mixing_length_alpha: float | None = 1.25,
     initial_temperature: ArrayLike | None = None,
@@ -2528,6 +2531,7 @@ def radiative_equilibrium_d6_atmosphere(
         rydberg_correlated_microfields=rydberg_correlated_microfields,
         include_linear_stark_quasistatic=include_linear_stark_quasistatic,
         include_oxygen_i_series_stark=include_oxygen_i_series_stark,
+        profile_edge_optical_depth=profile_edge_optical_depth,
     )
 
     # One opacity evaluation per distinct temperature.  The nonlinear driver
@@ -2634,6 +2638,7 @@ def radiative_equilibrium_d6_atmosphere(
                 include_linear_stark_quasistatic
             ),
             "oxygen_i_series_stark_in_structure": bool(include_oxygen_i_series_stark),
+            "line_profile_edge_optical_depth": profile_edge_optical_depth,
             "level_resolved_metal_bound_free": (
                 topbase_photoionization_database.source
                 if topbase_photoionization_database is not None

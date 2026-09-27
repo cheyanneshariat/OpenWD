@@ -72,6 +72,10 @@ class D6Config:
     # levels, and literature-anchored widths for the O I 3p-nd series.
     include_linear_stark_quasistatic: bool = True
     include_oxygen_i_series_stark: bool = True
+    # Extend each line's profile until its omitted wing is optically thin
+    # (vertical optical depth below this value).  Without it the strongest
+    # resonance lines (Ca II H&K, UV) lose wings comparable to the continuum.
+    line_profile_edge_optical_depth: float | None = 1.0e-3
 
 
 # Structural line budgets.  Hollands et al. stress that the dense UV forest
@@ -260,6 +264,7 @@ def compute_d6(
             topbase_photoionization_database=topbase,
             include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
             include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
+            profile_edge_optical_depth=config.line_profile_edge_optical_depth,
             n_angle=min(resolution.n_angle, 3),
             mixing_length_alpha=config.mixing_length_alpha,
             initial_temperature=(
@@ -300,6 +305,7 @@ def compute_d6(
         ),
         include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
         include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
+        profile_edge_optical_depth=config.line_profile_edge_optical_depth,
         n_angle=resolution.n_angle,
     )
     return ModelResult(
@@ -308,7 +314,7 @@ def compute_d6(
         spectrum,
         config,
         {
-            "preset": "D6-shared-solver-v2-linear-stark",
+            "preset": "D6-shared-solver-v3",
             "default_parameter_source": (
                 "Hollands et al. (2025), SDSS J1637+3631"
             ),
