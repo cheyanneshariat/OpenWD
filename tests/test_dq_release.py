@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import pytest
 from wd_spectra.models.dq import DQConfig, compute_dq
+from wd_spectra._convergence import equilibrium_certificate
 from wd_spectra._dq.validation import independent_grid, qualify_spectrum
 from wd_spectra.constants import STEFAN_BOLTZMANN
 from wd_spectra.spectrum import Spectrum
@@ -28,16 +29,66 @@ def test_previous_atmospheres_are_not_public_inputs(kwargs):
 
 def certified_fixture():
     config = DQConfig()
-    checks = {key: dict(passed=True, measured=True, value=0., tolerance=tolerance)
-        for key, tolerance in dict(all_depth_flux=.002, local_energy=.002,
-        temperature_stationarity=.0002, source_closure=1e-6, boundary_screening=.002).items()}
+    certificate = equilibrium_certificate(dict(
+        radiative_equilibrium_solver_converged=True,
+        maximum_all_depth_total_flux_residual=0.,
+        maximum_relative_cell_energy_balance_residual=0.,
+        maximum_unrestricted_log_temperature_correction=0.,
+        temperature_correction_measured=True,
+        electron_scattering_source_final_maximum_relative_residual=0.,
+        lower_boundary_absorption_escape_bound=0.),
+        flux_tolerance=.002, temperature_tolerance=.0002)
     atmosphere = SimpleNamespace(effective_temperature=config.effective_temperature,
         logg=config.logg, metadata={'carbon_abundance': config.log_carbon_to_helium,
-        'dq_refractive_transfer': True, 'equilibrium_certificate': {
-        'verified': True, 'failures': [], 'checks': checks}})
+        'dq_refractive_transfer': True, 'equilibrium_certificate': certificate})
     wave = independent_grid()
     flux = np.full_like(wave, STEFAN_BOLTZMANN*config.effective_temperature**4/(wave[-1]-wave[0]))
     return config, atmosphere, Spectrum(wave, flux, {})
+
+
+def test_optional_unmeasured_diagnostics_do_not_prevent_qualification():
+    config, atmosphere, spectrum = certified_fixture()
+    certificate = atmosphere.metadata['equilibrium_certificate']
+    for name in ('surface_flux', 'photospheric_flux'):
+        assert name not in certificate['required_checks']
+        assert not certificate['checks'][name]['measured']
+        assert not certificate['checks'][name]['passed']
+    assert qualify_spectrum(atmosphere, spectrum, config)['spectral_qualification']
+
+
+def test_legacy_five_check_certificate_still_qualifies():
+    config, atmosphere, spectrum = certified_fixture()
+    certificate = atmosphere.metadata['equilibrium_certificate']
+    required = certificate.pop('required_checks')
+    certificate['checks'] = {name: certificate['checks'][name] for name in required}
+    assert qualify_spectrum(atmosphere, spectrum, config)['spectral_qualification']
+
+
+@pytest.mark.parametrize('name', ['all_depth_flux', 'local_energy',
+    'temperature_stationarity', 'source_closure', 'boundary_screening'])
+@pytest.mark.parametrize('change', ['missing', 'failed', 'unmeasured'])
+def test_every_dq_check_remains_mandatory(name, change):
+    config, atmosphere, spectrum = certified_fixture()
+    certificate = atmosphere.metadata['equilibrium_certificate']
+    # Even a certificate declaring a weaker profile cannot waive DQ's checks.
+    certificate['required_checks'] = ['surface_flux']
+    certificate['checks']['surface_flux'].update(
+        value=0., measured=True, passed=True)
+    if change == 'missing':
+        certificate['checks'].pop(name)
+    else:
+        certificate['checks'][name]['passed' if change == 'failed' else 'measured'] = False
+    with pytest.raises(ValueError, match='certificate'):
+        qualify_spectrum(atmosphere, spectrum, config)
+
+
+@pytest.mark.parametrize('name', ['surface_flux', 'photospheric_flux', 'missing_check'])
+def test_additional_declared_required_checks_cannot_be_ignored(name):
+    config, atmosphere, spectrum = certified_fixture()
+    certificate = atmosphere.metadata['equilibrium_certificate']
+    certificate['required_checks'] = (*certificate['required_checks'], name)
+    with pytest.raises(ValueError, match='certificate'):
+        qualify_spectrum(atmosphere, spectrum, config)
 
 
 def test_independent_grid_and_absolute_gate():

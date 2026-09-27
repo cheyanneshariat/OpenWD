@@ -18,8 +18,12 @@ def qualify_spectrum(atmosphere, spectrum, config):
     checks = certificate.get('checks', {})
     required = {'all_depth_flux', 'local_energy', 'temperature_stationarity',
                 'source_closure', 'boundary_screening'}
+    # Shared certificates also contain optional diagnostics. Enforce DQ's
+    # mandatory checks plus any additional requirements the certificate declares.
+    required.update(certificate.get('required_checks', ()))
     if (not certificate.get('verified') or certificate.get('failures') or
-            set(checks) != required or not all(c.get('passed') for c in checks.values())):
+            not required.issubset(checks) or
+            not all(checks[name].get('passed') for name in required)):
         raise ValueError('DQ atmosphere certificate is incomplete or failed')
     limits = dict(all_depth_flux=.002, local_energy=.002,
                   temperature_stationarity=.0002, source_closure=1e-6,
