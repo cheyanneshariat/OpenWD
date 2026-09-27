@@ -35,7 +35,7 @@ ConvergenceStatus = Literal[
     "converged", "spectrum-qualified", "unconverged", "unknown"
 ]
 
-_MODEL_REQUEST_FINGERPRINT_SCHEMA = 1
+_MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
 _MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v4"
 
 
@@ -231,11 +231,11 @@ def model_request_fingerprint(
 ) -> dict[str, object]:
     """Return a stable identity for one solver-relevant public request.
 
-    The data root is deliberately part of the identity.  Moving a checkpoint
-    to another data installation therefore degrades it to a warm start rather
-    than claiming an exact same-physics resume.  The physics revision must be
-    changed whenever solver equations or bundled physical data change.
+    Code and table contents are part of the identity. Older path-only
+    fingerprints degrade to a warm start and cannot certify fixed synthesis.
     """
+
+    from .._provenance import model_data_identity, numerical_code_identity
 
     request = {
         "schema": _MODEL_REQUEST_FINGERPRINT_SCHEMA,
@@ -243,6 +243,8 @@ def model_request_fingerprint(
         "spectral_type": str(spectral_type),
         "config": _jsonable(config),
         "data_root": str(data.root.resolve()),
+        "data_sha256": model_data_identity(data),
+        "code_sha256": numerical_code_identity(),
     }
     if physical_data_identity is not None:
         request["physical_data_identity"] = _jsonable(physical_data_identity)

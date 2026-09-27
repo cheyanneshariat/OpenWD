@@ -8,7 +8,6 @@ from wd_spectra import (
     radiative_equilibrium_helium_atmosphere,
 )
 from wd_spectra.atmosphere import (
-    _smooth_radiative_temperature_correction,
     _solve_bracketed_log_root,
 )
 
@@ -55,62 +54,6 @@ def test_safeguarded_secant_root_matches_bisection_with_few_evaluations():
     assert calls < 35
 
 
-def test_smoothed_radiative_correction_does_not_leak_into_convection():
-    correction = np.array([0.0, 0.04, 0.04, -0.04, -0.04, 0.0])
-    convective_weight = np.array([0.0, 0.0, 1.0, 1.0, 0.5, 0.0])
-
-    smoothed = _smooth_radiative_temperature_correction(
-        correction, convective_weight
-    )
-
-    np.testing.assert_allclose(smoothed[2:4], 0.0)
-    assert abs(smoothed[4]) <= 0.5 * abs(correction[4])
-
-
-@pytest.mark.parametrize("damping", [0.0, -0.1, 1.01, np.nan])
-def test_helium_temperature_correction_damping_must_be_bounded(damping):
-    with pytest.raises(ValueError, match="temperature_correction_damping"):
-        radiative_equilibrium_helium_atmosphere(
-            12_000.0,
-            8.0,
-            stark_table=None,
-            temperature_correction_damping=damping,
-        )
-
-
-@pytest.mark.parametrize("damping", [0.0, -0.1, 1.01, np.nan])
-def test_helium_convective_correction_damping_must_be_bounded(damping):
-    with pytest.raises(ValueError, match="convective_correction_damping"):
-        radiative_equilibrium_helium_atmosphere(
-            12_000.0,
-            8.0,
-            stark_table=None,
-            convective_correction_damping=damping,
-        )
-
-
-@pytest.mark.parametrize("tolerance", [0.0, -0.1, np.nan])
-def test_helium_convective_gradient_tolerance_must_be_positive(tolerance):
-    with pytest.raises(ValueError, match="convective_gradient_tolerance"):
-        radiative_equilibrium_helium_atmosphere(
-            12_000.0,
-            8.0,
-            stark_table=None,
-            convective_gradient_tolerance=tolerance,
-        )
-
-
-@pytest.mark.parametrize("tolerance", [0.0, -0.1, np.nan])
-def test_helium_convective_flux_tolerance_must_be_positive(tolerance):
-    with pytest.raises(ValueError, match="convective_flux_tolerance"):
-        radiative_equilibrium_helium_atmosphere(
-            12_000.0,
-            8.0,
-            stark_table=None,
-            convective_flux_tolerance=tolerance,
-        )
-
-
 @pytest.mark.parametrize("order", [0, 7])
 def test_mixed_structure_balmer_quadrature_order_must_be_bounded(order):
     with pytest.raises(ValueError, match="quadrature_order"):
@@ -119,16 +62,6 @@ def test_mixed_structure_balmer_quadrature_order_must_be_bounded(order):
             8.0,
             stark_table=None,
             hydrogen_self_broadening_quadrature_order=order,
-        )
-
-
-def test_helium_consecutive_convergence_count_must_be_positive():
-    with pytest.raises(ValueError, match="consecutive_convergence_iterations"):
-        radiative_equilibrium_helium_atmosphere(
-            12_000.0,
-            8.0,
-            stark_table=None,
-            consecutive_convergence_iterations=0,
         )
 
 

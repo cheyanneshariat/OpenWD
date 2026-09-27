@@ -7,7 +7,6 @@ excess plus the current stability gap on the stable branch. Differentiate
 the normalization, not just the numerator. Physical equations, fluxes and
 qualification gates are unchanged. This remains research-only.
 """
-from unittest.mock import patch
 import numpy as np
 from wd_spectra.nonlinear import NonlinearEvaluation
 from .scaled_ml2_compatibility import scaled_compatibility
@@ -43,17 +42,15 @@ class CurrentNormSystem(scaling.MaterialScaledSystem):
             {**p,'dq_augmented_scaled_compatibility':residual})
 
 
-def current_norm_material(wavelengths=None):
-    class CurrentNormDQ(conditioned_material(wavelengths)):
+def current_norm_material(wavelengths=None, *, system_class=None):
+    system_class = CurrentNormSystem if system_class is None else system_class
+    class CurrentNormDQ(conditioned_material(wavelengths, system_class=system_class)):
         def __init__(self,*args,**kwargs):
             super().__init__(*args,**kwargs)
             from .provenance import digest
             self.experiment_metadata.update(
                 coupled_compatibility_norm='C1 current ML2 stellar-flux excess / stable-gap; fully differentiated',
                 coupled_norm_source_sha256=digest(__file__))
-        def solve(self,*args,**kwargs):
-            with patch.object(scaling,'MaterialScaledSystem',CurrentNormSystem):
-                return super().solve(*args,**kwargs)
     return CurrentNormDQ
 
 

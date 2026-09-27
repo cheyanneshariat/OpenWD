@@ -19,8 +19,8 @@ def test_data_path_is_explicit_and_independent_of_working_directory(monkeypatch,
 
 def test_source_archive_contains_the_actual_checkout_from_another_cwd(monkeypatch, tmp_path):
     paths = research_paths.source_paths()
-    assert Path("src/wd_spectra/adaptive_structure.py") in paths
-    assert Path("research/cool_models/run_molecular_dab_mass_experiment.py") in paths
+    assert Path("wd_spectra/adaptive_structure.py") in paths
+    assert Path("wd_spectra/_cool/run_molecular_dab_mass_experiment.py") in paths
     monkeypatch.chdir(tmp_path)
     selected = paths[:2]
     manifest = archive_sources(selected, tmp_path / "sources.tar.gz", base_directory=research_paths.REPOSITORY)

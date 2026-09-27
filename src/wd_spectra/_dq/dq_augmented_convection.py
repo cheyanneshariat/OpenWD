@@ -166,7 +166,8 @@ def project_deep_monotone_temperature(old, proposed, n, first_index):
 
 
 @contextmanager
-def augmented_coordinate_solver(material_options,material_factory):
+def augmented_coordinate_solver(material_options,material_factory, *, system_class=None):
+    system_class = CoupledMaterialSystem if system_class is None else system_class
     original=adaptive.solve_trust_region_newton
     def solve(initial,evaluate,**settings):
         first=evaluate(initial,False);p=first.payload
@@ -176,7 +177,7 @@ def augmented_coordinate_solver(material_options,material_factory):
         first=evaluate(initial,True)
         material=material_factory(*(material_options[k] for k in
             ('with_temperature','thermodynamics','rosseland_opacity','mixing_length_alpha')))
-        system=CoupledMaterialSystem(first,evaluate,material);n=system.n
+        system=system_class(first,evaluate,material);n=system.n
         system.same_run_domain_extension = bool(
             material_options.get('metadata', {}).get(
                 'dq_domain_initialization', ''
@@ -244,6 +245,7 @@ def augmented_coordinate_solver(material_options,material_factory):
 
 
 class AugmentedRefractiveDQMaterial(StableREOSSecantMixin,RefractiveDQMaterial):
+    coupled_system_class = CoupledMaterialSystem
     finish_conditioning_in_energy_equations=True
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs);self._completed_domain=None
@@ -260,7 +262,8 @@ class AugmentedRefractiveDQMaterial(StableREOSSecantMixin,RefractiveDQMaterial):
             # The enlarged system resolves the physical gradient constraint;
             # do not precede it with the old approximate-gradient iterations.
             options=dict(options,use_convective_gradient_preconditioner=False)
-            with augmented_coordinate_solver(options,factory):return original(seed,wave,**options)
+            with augmented_coordinate_solver(options,factory, system_class=self.coupled_system_class):
+                return original(seed,wave,**options)
         with patch.object(dq,'solve_adaptive_lte_structure',adapted):result=super().solve(*args,**kwargs)
         self._completed_domain=result
         return result

@@ -162,7 +162,7 @@ See [DQ physics and limitations](models/DQ.md) and the
 
 The automatic interface screens local material conditions before solving and
 selects the dense-helium or molecular workflow when indicated. These workflows
-currently require this source checkout, `quality="production"`, log g = 8,
+are included in the installed package and currently require `quality="production"`, log g = 8,
 and integer-K temperatures. Their Python dependencies are included in the
 normal installation; there is no separate dependency extra to enable.
 

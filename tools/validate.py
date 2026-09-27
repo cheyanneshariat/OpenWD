@@ -40,6 +40,12 @@ SPECTRA = (
 )
 CANARY = "tests/test_protected_model_canaries.py::"
 COLD_TESTS = {
+    "do-50000": "tests/test_hot_cold_canary.py::test_hot_public_model_converges_from_cold[do-50000-standard]",
+    "dao-60000": "tests/test_hot_cold_canary.py::test_hot_public_model_converges_from_cold[dao-60000-standard]",
+    **{
+        case: f"tests/test_released_family_canaries.py::test_released_family_cold_start[{case}]"
+        for case in ("dz-pg1225", "pg1159-pg1424", "d6-j1637")
+    },
     "db-10000": CANARY
     + "test_protected_db_cold_starts_converge_without_fallback[10000.0-60]",
     "db-22000": CANARY

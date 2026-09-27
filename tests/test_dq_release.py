@@ -22,7 +22,7 @@ def test_invalid_requests_fail_before_worker_or_data(kwargs, monkeypatch):
 
 @pytest.mark.parametrize('kwargs', [dict(initial_atmosphere=object()), dict(relax_atmosphere=False)])
 def test_previous_atmospheres_are_not_public_inputs(kwargs):
-    with pytest.raises(ValueError, match='cold start'):
+    with pytest.raises(TypeError, match='unexpected keyword'):
         compute_dq(**kwargs)
 
 

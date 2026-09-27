@@ -1,22 +1,9 @@
-"""Unregularized square Newton direction with explicit physical T bounds.
+"""Compatibility entry point; implementation lives in the installed package."""
+import importlib
+import runpy
+import sys
 
-No singular directions are discarded. Singular equations fail explicitly.
-The full nonlinear driver must still accept the resulting physical trial.
-"""
-import numpy as np
-
-
-def equilibrated_step(state,evaluation,jacobian,radius,method,**settings):
-    mapping=evaluation.payload['log_temperature_from_state']
-    matrix=np.linalg.solve(mapping.T,jacobian.T).T
-    rows=np.max(abs(matrix),axis=1)
-    if np.any(rows==0):raise ValueError('unconstrained energy equation')
-    scaled=matrix/rows[:,None]
-    columns=np.max(abs(scaled),axis=0)
-    if np.any(columns==0):raise ValueError('unconstrained temperature variable')
-    delta=np.linalg.solve(scaled/columns[None,:],-evaluation.residual/rows)/columns
-    unbounded=float(np.max(abs(delta)))
-    delta*=min(1.,radius/max(unbounded,np.finfo(float).tiny))
-    print(f'Equilibrated square Newton: unbounded max dlnT={unbounded:.6g}; '
-        f'bounded={np.max(abs(delta)):.6g}',flush=True)
-    return np.linalg.solve(mapping,delta)
+if __name__ == "__main__":
+    runpy.run_module("wd_spectra._cool.equilibrated_temperature_step", run_name="__main__")
+else:
+    sys.modules[__name__] = importlib.import_module("wd_spectra._cool.equilibrated_temperature_step")

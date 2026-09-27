@@ -172,8 +172,8 @@ def test_cool_worker_environment_cannot_replace_parent_callbacks(monkeypatch, tm
     assert result.convergence_verified
     assert len(calls) == 1
     assert calls[0][1]["check"] is True
-    assert calls[0][0][1].endswith("run_cool_db.py")
-    assert "research/cool_models" in calls[0][1]["env"]["PYTHONPATH"]
+    assert calls[0][0][1:3] == ["-m", "wd_spectra._cool.run_cool_db"]
+    assert "research" not in calls[0][1]["env"]["PYTHONPATH"]
 
 
 def test_missing_worker_spectrum_is_failure_not_qualified_result(monkeypatch, tmp_path):

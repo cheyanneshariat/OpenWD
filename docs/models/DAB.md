@@ -20,8 +20,8 @@ python examples/one_shot_dab.py --teff 20000 --logg 8.0 --log-h-he -2 \
 
 Use `run_model(DABConfig(...), output_directory)` for automatic molecular
 workflow selection. That workflow includes H2, H2+, H-, H3+, H/He ionization,
-H2-He/H2-H2 collision-induced absorption, and neutral Ly-alpha wings. The
-atomic preset above does not automatically select it.
+H2-He/H2-H2 collision-induced absorption, and neutral Ly-alpha wings. The command-line example uses the same automatic selection as `run_model`.
+The lower-level `compute_dab` preset remains an explicit atomic-physics interface.
 
 Fresh molecular calculations have been qualified at 7500, 8000, 9000, and
 10000 K for log g = 8 and log10 N(H)/N(He) = -2. These are cold-start points,

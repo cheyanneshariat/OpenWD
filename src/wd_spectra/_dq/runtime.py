@@ -58,14 +58,13 @@ def numerical_policy(output):
             controller.thermal_relative_norm_limit(.8), \
             patch.object(controller, 'thermal_condition', bounded_condition), \
             error_controlled_thermal_steps(predict_exhaustion=True), \
-            patch.object(dq_explicit_gradient, 'ExplicitGradientSystem', SuperadiabaticSystem), \
             nonlinear_planck_trials():
         yield release_proposals
 
 
 def material_class(output, *, structure_stride=4):
     """Construct after entering numerical_policy so coordinate selection is explicit."""
-    class ColdDQ(dq_explicit_gradient.gradient_material(None)):
+    class ColdDQ(dq_explicit_gradient.gradient_material(None, system_class=SuperadiabaticSystem)):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.experiment_metadata.update(

@@ -1,13 +1,11 @@
 """Slow public cold-start acceptance at fixed observed/control parameters.
 
-Run explicitly with -m canary and OPENWD_DATA pointing at complete external
-CCC/TLUSTY data plus the bundled profiles. Each case creates a new model;
+Run explicitly with -m canary using the bundled data (or OPENWD_DATA). Each case creates a new model;
 no saved atmosphere, population, Jacobian or research proposal is supplied.
 These tests can take hours and are excluded from the ordinary fast suite.
 """
 from dataclasses import asdict
 import json
-import os
 
 import pytest
 
@@ -35,8 +33,6 @@ CASES = [
 
 @pytest.fixture(scope='module')
 def cold_data():
-    if not os.environ.get('OPENWD_DATA'):
-        pytest.skip('Set OPENWD_DATA to explicitly enable external-data cold canaries')
     data = ModelData.default()
     for path in (data.ccc_hydrogen_collisions, data.tlusty_source,
                  data.tlusty_helium_atom, data.helium_ii_stark,

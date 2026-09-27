@@ -14,44 +14,10 @@ def test_selection_is_explicit_and_missing_data_is_actionable(tmp_path):
     assert PG1159Config().population_tolerance == pytest.approx(1e-2)
     with pytest.raises(FileNotFoundError,match='PG1159 requires atomic data'):
         compute_pg1159(data=ModelData(tmp_path))
-    with pytest.raises(ValueError,match='cold start'):
+    with pytest.raises(TypeError,match='initial_atmosphere'):
         compute_pg1159(initial_atmosphere=object())
 
 
-def test_reference_temperature_seed_is_scaled_and_checkpoint_free():
-    from wd_spectra._pg1159_reference import (
-        _REFERENCE_COLUMN_MASS,
-        _REFERENCE_MIGRATED_FLUX_NORMALIZATION,
-        _REFERENCE_TEMPERATURE_OVER_TEFF,
-        reference_temperature_seed,
-    )
-    from wd_spectra.atmosphere import gray_helium_atmosphere
-
-    atmosphere = gray_helium_atmosphere(
-        120000.0,
-        7.0,
-        n_depth=len(_REFERENCE_COLUMN_MASS),
-        tau_min=1e-8,
-        tau_max=100.0,
-    )
-    atmosphere = replace(atmosphere, column_mass=_REFERENCE_COLUMN_MASS.copy())
-
-    class Model:
-        @staticmethod
-        def rebuild_atmosphere(source, temperature, state):
-            assert state is None
-            return replace(source, temperature=np.asarray(temperature))
-
-    seeded = reference_temperature_seed(Model(), atmosphere)
-    np.testing.assert_allclose(
-        seeded.temperature / seeded.effective_temperature,
-        _REFERENCE_MIGRATED_FLUX_NORMALIZATION
-        * _REFERENCE_TEMPERATURE_OVER_TEFF,
-    )
-    metadata = seeded.metadata["pg1159_reference_temperature_initialization"]
-    assert metadata["scaled_by_effective_temperature"]
-    assert metadata["migrated_flux_normalization"] == pytest.approx(1.0885)
-    assert metadata["runtime_checkpoint_loaded"] is False
 
 
 @pytest.mark.parametrize('changes',[

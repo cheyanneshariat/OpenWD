@@ -11,8 +11,8 @@ from . import base as dq
 from .dq_augmented_material_scaling import scaled_material
 
 
-def conditioned_material(wavelengths=None):
-    class ConditionedCoupledDQ(scaled_material(wavelengths)):
+def conditioned_material(wavelengths=None, *, system_class=None):
+    class ConditionedCoupledDQ(scaled_material(wavelengths, system_class=system_class)):
         def __init__(self,*args,**kwargs):
             super().__init__(*args,**kwargs)
             from .provenance import digest

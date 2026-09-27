@@ -495,7 +495,7 @@ def test_complete_helium_checkpoint_skips_hydrostatic_seed():
         initial_gas_pressure=1.0e8 * column_mass,
         initial_rosseland_optical_depth=np.geomspace(1.0e-8, 100.0, n_depth),
     )
-    assert atmosphere.metadata["checkpoint_restart_seed"]
+    assert atmosphere.metadata["checkpoint_skips_hydrostatic_seed"]
 
 
 def test_helium_checkpoint_resamples_all_structure_coordinates():
@@ -553,7 +553,7 @@ def test_helium_checkpoint_resamples_all_structure_coordinates():
     )
 
 
-def test_helium_checkpoint_can_converge_without_fixed_iteration_floor():
+def test_helium_checkpoint_still_requires_measured_equilibrium_certificate():
     n_depth = 6
     column_mass = np.geomspace(1.0e-6, 1.0, n_depth)
     atmosphere = radiative_equilibrium_helium_atmosphere(
@@ -564,7 +564,6 @@ def test_helium_checkpoint_can_converge_without_fixed_iteration_floor():
         max_iterations=10,
         temperature_tolerance=1.0,
         flux_tolerance=100.0,
-        consecutive_convergence_iterations=3,
         n_continuum_wavelength=80,
         include_lines=False,
         mixing_length_alpha=None,
@@ -573,9 +572,10 @@ def test_helium_checkpoint_can_converge_without_fixed_iteration_floor():
         initial_gas_pressure=1.0e8 * column_mass,
         initial_rosseland_optical_depth=np.geomspace(1.0e-8, 100.0, n_depth),
     )
-    assert atmosphere.metadata["radiative_equilibrium_converged"]
-    assert atmosphere.metadata["radiative_equilibrium_iterations"] == 3
-    assert atmosphere.metadata["radiative_equilibrium_final_convergence_streak"] == 3
+    certificate = atmosphere.metadata["equilibrium_certificate"]
+    assert atmosphere.metadata["radiative_equilibrium_converged"] == certificate["verified"]
+    assert not certificate["verified"]
+    assert certificate["failures"]
 
 
 def _write_stout_ion(
