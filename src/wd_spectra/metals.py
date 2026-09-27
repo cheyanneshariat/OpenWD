@@ -4288,6 +4288,108 @@ def _pseudo_voigt_profile_per_angstrom(
     return (1.0 - mixing) * gaussian + mixing * lorentz
 
 
+def _pseudo_voigt_profile_grid(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: FloatArray,
+    lorentz_hwhm: FloatArray,
+) -> FloatArray:
+    """Depth-vectorized :func:`_pseudo_voigt_profile_per_angstrom`."""
+
+    gaussian_fwhm = 2.0 * np.sqrt(2.0 * np.log(2.0)) * np.maximum(gaussian_sigma, 1.0e-12)
+    lorentz_fwhm = 2.0 * np.maximum(lorentz_hwhm, 0.0)
+    width = (
+        gaussian_fwhm**5 + 2.69269 * gaussian_fwhm**4 * lorentz_fwhm
+        + 2.42843 * gaussian_fwhm**3 * lorentz_fwhm**2
+        + 4.47163 * gaussian_fwhm**2 * lorentz_fwhm**3
+        + 0.07842 * gaussian_fwhm * lorentz_fwhm**4 + lorentz_fwhm**5
+    ) ** 0.2
+    ratio = lorentz_fwhm / np.maximum(width, np.finfo(np.float64).tiny)
+    mixing = np.clip(1.36603 * ratio - 0.47719 * ratio**2 + 0.11116 * ratio**3, 0.0, 1.0)
+    offset = (wavelength - center)[:, np.newaxis] / width[np.newaxis, :]
+    gaussian = (
+        2.0 * np.sqrt(np.log(2.0)) / (np.sqrt(np.pi) * width[np.newaxis, :])
+        * np.exp(-4.0 * np.log(2.0) * offset**2)
+    )
+    lorentz = 2.0 / (np.pi * width[np.newaxis, :]) / (1.0 + 4.0 * offset**2)
+    return (1.0 - mixing)[np.newaxis, :] * gaussian + mixing[np.newaxis, :] * lorentz
+
+
+def _quasistatic_line_profile(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+    frequency_scale: float,
+    mixing: float,
+) -> FloatArray:
+    """Impact profile blended with its quasi-static Holtsmark envelope.
+
+    Returns ``(1 - mixing) V + mixing max(V, H)`` (unnormalized) on
+    ``wavelength``.  Points within 25 impact widths of the centre are
+    evaluated exactly; the smooth outer profile is evaluated on log-spaced
+    offset nodes and interpolated, which keeps wide quasi-static windows on
+    dense opacity grids affordable.
+    """
+
+    def exact(points: FloatArray) -> FloatArray:
+        impact = _pseudo_voigt_profile_per_angstrom(
+            points, center, gaussian_sigma, lorentz_hwhm
+        )
+        if frequency_scale <= 0.0 or mixing <= 0.0:
+            return impact
+        points_cm = points * 1.0e-8
+        beta = np.abs(LIGHT_SPEED / points_cm - LIGHT_SPEED / (center * 1.0e-8)) / frequency_scale
+        static = (
+            _tabulated_holtsmark_distribution(beta) / (2.0 * frequency_scale)
+            * LIGHT_SPEED / points_cm**2 * 1.0e-8
+        )
+        return (1.0 - mixing) * impact + mixing * np.maximum(impact, static)
+
+    offset = wavelength - center
+    core = 25.0 * max(gaussian_sigma, lorentz_hwhm, 1.0e-4)
+    outer = np.abs(offset) > core
+    if np.count_nonzero(outer) < 800:
+        return exact(wavelength)
+    result = np.empty_like(wavelength)
+    result[~outer] = exact(wavelength[~outer])
+    extent = float(np.max(np.abs(offset)))
+    nodes = np.geomspace(core, extent * (1.0 + 1.0e-12), 400)
+    for sign in (-1.0, 1.0):
+        side = outer & (np.sign(offset) == sign)
+        if np.any(side):
+            node_values = exact(center + sign * nodes)
+            result[side] = np.exp(np.interp(
+                np.log(np.abs(offset[side])), np.log(nodes),
+                np.log(np.maximum(node_values, np.finfo(np.float64).tiny)),
+            ))
+    return result
+
+
+_HOLTSMARK_TABLE_BETA = np.linspace(0.0, 8.0, 16_001)
+_HOLTSMARK_TABLE_VALUE: FloatArray | None = None
+
+
+def _tabulated_holtsmark_distribution(beta: ArrayLike) -> FloatArray:
+    """Holtsmark distribution from a fine table (quadrature evaluated once).
+
+    Below beta = 8 the Laguerre-quadrature values are tabulated at a spacing of
+    5e-4 and interpolated linearly; the asymptotic series is used above.
+    """
+
+    global _HOLTSMARK_TABLE_VALUE
+    if _HOLTSMARK_TABLE_VALUE is None:
+        _HOLTSMARK_TABLE_VALUE = _metal_holtsmark_microfield_distribution(
+            _HOLTSMARK_TABLE_BETA
+        )
+    value = np.asarray(beta, dtype=np.float64)
+    result = np.interp(value, _HOLTSMARK_TABLE_BETA, _HOLTSMARK_TABLE_VALUE)
+    wing = value > 8.0
+    if np.any(wing):
+        result[wing] = _metal_holtsmark_microfield_distribution(value[wing])
+    return result
+
+
 def optically_thick_line_minimum_half_window_angstrom(
     atmosphere: Atmosphere,
     center_angstrom: float,
@@ -4867,6 +4969,145 @@ def classical_electron_stark_rate_coefficient(
         25.0,
     )
     return float(1.0e-8 * effective_n_squared**2.5)
+
+
+_RYDBERG_FREQUENCY_HZ = 3.289_841_960_250e15
+_ORBITAL_LETTERS = "spdfghik"
+_PARENT_TERM_PATTERN = re.compile(r"\(([^()<]+)(?:<[^>]*>)?\)")
+
+
+def _rydberg_orbital(label: str) -> tuple[int, int, str] | None:
+    parts = label.split(".")
+    if len(parts) < 2:
+        return None
+    orbital = re.fullmatch(r"(\d+)([spdfghik])", parts[-2])
+    if orbital is None:
+        return None
+    return (
+        int(orbital.group(1)),
+        _ORBITAL_LETTERS.index(orbital.group(2)),
+        ".".join(parts[:-2]),
+    )
+
+
+def _level_quantum_defect(ion: AtomicIon, level: AtomicLevel, principal: int) -> float | None:
+    binding = ion.ionization_energy_ev - level.energy_wavenumber / EV_TO_WAVENUMBER
+    if binding <= 0.0:
+        return None
+    return principal - (ion.charge + 1.0) * float(np.sqrt(_RYDBERG_ENERGY_EV / binding))
+
+
+_LINEAR_STARK_LEVEL_CACHE: dict[tuple[int, int, int], object] = {}
+
+
+def linear_stark_rydberg_level(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> tuple[int, int, float, float] | None:
+    """Cached :func:`_linear_stark_rydberg_level` (static atomic data only)."""
+
+    key = (id(atomic_database), id(ion), level.index)
+    if key not in _LINEAR_STARK_LEVEL_CACHE:
+        _LINEAR_STARK_LEVEL_CACHE[key] = _linear_stark_rydberg_level(
+            atomic_database, ion, level
+        )
+    return _LINEAR_STARK_LEVEL_CACHE[key]
+
+
+def _linear_stark_rydberg_level(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> tuple[int, int, float, float] | None:
+    """Return ``(n, l, n_eff, defect gap)`` for a genuine Rydberg level.
+
+    Linear (hydrogenic) Stark behaviour requires a nearly degenerate
+    ``n``-manifold: the outer electron must be in an ``l >= 2`` orbital
+    converging on the ground term of the next ion, with a small positive
+    quantum defect.  The returned defect gap is the smallest defect difference
+    to an ``l +/- 1`` neighbour of the same ``n``.  Core-excited levels and
+    series converging on excited parent terms are excluded; their binding energy relative to the ground
+    ionization limit does not measure their Rydberg character.
+    """
+
+    if ion.ionization_energy_ev is None:
+        return None
+    parsed = _rydberg_orbital(level.label)
+    if parsed is None:
+        return None
+    principal, angular, core = parsed
+    if angular < 2:
+        return None
+    parents = _PARENT_TERM_PATTERN.findall(core)
+    next_ion = atomic_database.ions.get((ion.element, ion.charge + 1))
+    if parents and next_ion is not None and next_ion.levels:
+        ground = min(next_ion.levels, key=lambda item: item.energy_wavenumber)
+        ground_terms = _PARENT_TERM_PATTERN.findall(ground.label)
+        if not ground_terms or ground_terms[-1] != parents[-1]:
+            return None
+    binding = ion.ionization_energy_ev - level.energy_wavenumber / EV_TO_WAVENUMBER
+    if binding <= 0.0:
+        return None
+    core_charge = ion.charge + 1.0
+    effective_n = core_charge * float(np.sqrt(_RYDBERG_ENERGY_EV / binding))
+    defect = principal - effective_n
+    # High-l defects are ~0 and tabulated energies can make them marginally
+    # negative; a clearly negative defect instead signals a wrong parent.
+    if not -0.05 < defect < 0.5:
+        return None
+    # The Stark coupling mixes the level with its l +/- 1 neighbours of the
+    # same n and core.  The relevant gap is the smallest defect difference to
+    # a neighbour that exists: a tabulated level, or an allowed but untabulated
+    # l + 1 <= n - 1 level, whose high-l defect is taken as zero.
+    neighbour_defects = [
+        value
+        for other in ion.levels
+        if (parsed_other := _rydberg_orbital(other.label)) is not None
+        and parsed_other[0] == principal
+        and parsed_other[2] == core
+        and abs(parsed_other[1] - angular) == 1
+        and (value := _level_quantum_defect(ion, other, principal)) is not None
+    ]
+    has_upper = any(
+        (parsed_other := _rydberg_orbital(other.label)) is not None
+        and parsed_other[0] == principal and parsed_other[2] == core
+        and parsed_other[1] == angular + 1
+        for other in ion.levels
+    )
+    if angular + 1 <= principal - 1 and not has_upper:
+        neighbour_defects.append(0.0)
+    if not neighbour_defects:
+        return None
+    gap_defect = min(abs(defect - value) for value in neighbour_defects)
+    return principal, angular, effective_n, gap_defect
+
+
+def linear_stark_mixing_fraction(
+    effective_n: float,
+    quantum_defect: float,
+    core_charge: float,
+    ionic_microfield_scale: ArrayLike,
+) -> FloatArray:
+    """Depth-dependent fraction of a Rydberg level in the linear-Stark regime.
+
+    ``S`` is the hydrogenic linear-Stark extent ``(3/2) n (n-1) e a0 F0 / Z``
+    in the Holtsmark normal field of the ionic perturbers and ``D`` the
+    quantum-defect separation ``2 Ry Z^2 delta / n^3`` from the neighbouring
+    ``l`` manifold.  The two-level mixing fraction ``1 - D / sqrt(D^2 + S^2)``
+    is zero for an isolated level and one for a fully mixed manifold.  It
+    contains no adjustable parameter and is smooth in temperature and density.
+    """
+
+    splitting = (
+        effective_n * (effective_n - 1.0)
+        * np.asarray(ionic_microfield_scale, dtype=np.float64)
+        / 1.385 / core_charge
+    )
+    gap = 2.0 * _RYDBERG_FREQUENCY_HZ * core_charge**2 * quantum_defect / effective_n**3
+    if gap <= 0.0:
+        return np.ones_like(splitting)
+    return 1.0 - gap / np.hypot(gap, splitting)
 
 
 def o_i_3p5p_nd5d_electron_stark_rate_coefficient(
@@ -5874,6 +6115,7 @@ def metal_line_mass_absorption_coefficient(
     oxygen_i_series_stark_minimum_effective_n: float | None = None,
     include_oxygen_i_quasistatic_microfields: bool = False,
     oxygen_i_quasistatic_minimum_effective_n: float = 6.5,
+    include_linear_stark_quasistatic: bool = False,
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
     rydberg_dissolution_elements: Iterable[str] | None = None,
@@ -5928,6 +6170,10 @@ def metal_line_mass_absorption_coefficient(
     complete ion stages.  It is mutually exclusive with the element filter;
     this supports physically distinct neutral/ionized profile families
     without selecting individual observed lines.
+    ``include_linear_stark_quasistatic`` adds the ionic quasi-static
+    (Holtsmark) linear-Stark envelope to every genuine Rydberg line (see
+    :func:`linear_stark_rydberg_level`), weighted depth by depth by
+    :func:`linear_stark_mixing_fraction`; the oscillator strength is conserved.
     ``rydberg_dissolution_elements`` limits ``include_rydberg_dissolution`` to
     the named elements; None (the default) dissolves every element's lines.
     ``uv_resonance_support_angstrom`` supplies already-decided minimum support
@@ -6634,6 +6880,15 @@ def metal_line_mass_absorption_coefficient(
                     ),
                 ),
             )
+        stark_mixing = None
+        if include_linear_stark_quasistatic:
+            rydberg = linear_stark_rydberg_level(atomic_database, ion, upper_level)
+            if rydberg is not None:
+                candidate = linear_stark_mixing_fraction(
+                    rydberg[2], rydberg[3], ion.charge + 1.0, ionic_microfield_scale
+                )
+                if np.max(candidate) > 1.0e-3:
+                    stark_mixing = candidate
         quasistatic_series_rate = (
             o_i_3p5p_nd5d_electron_stark_rate_coefficient(
                 ion,
@@ -6643,7 +6898,8 @@ def metal_line_mass_absorption_coefficient(
             )
             if include_oxygen_i_quasistatic_microfields else None
         )
-        if quasistatic_series_rate is not None:
+        if quasistatic_series_rate is not None or stark_mixing is not None:
+            core_charge = ion.charge + 1.0
             lower_binding_ev = (
                 ion.ionization_energy_ev
                 - lower_level.energy_wavenumber / EV_TO_WAVENUMBER
@@ -6652,10 +6908,10 @@ def metal_line_mass_absorption_coefficient(
                 ion.ionization_energy_ev
                 - upper_level.energy_wavenumber / EV_TO_WAVENUMBER
             )
-            lower_effective_n = np.sqrt(
+            lower_effective_n = core_charge * np.sqrt(
                 _RYDBERG_ENERGY_EV / lower_binding_ev
             )
-            upper_effective_n = np.sqrt(
+            upper_effective_n = core_charge * np.sqrt(
                 _RYDBERG_ENERGY_EV / upper_binding_ev
             )
             stark_sum = (
@@ -6663,59 +6919,47 @@ def metal_line_mass_absorption_coefficient(
                 + lower_effective_n * (lower_effective_n - 1.0)
             )
             frequency_scale = (
-                stark_sum * ionic_microfield_scale / 1.385
+                stark_sum * ionic_microfield_scale / 1.385 / core_charge
+            )
+            static_half_window = (
+                30.0 * frequency_scale * center_cm**2 / LIGHT_SPEED * 1.0e8
             )
             for depth in range(atmosphere.n_depth):
-                local_scale = frequency_scale[depth]
-                static_half_window = (
-                    30.0 * local_scale * center_cm**2
-                    / LIGHT_SPEED * 1.0e8
+                local_scale = float(frequency_scale[depth])
+                sigma = float(gaussian_sigma[depth])
+                hwhm = float(lorentz_hwhm[depth])
+                mixing = (
+                    1.0 if stark_mixing is None or quasistatic_series_rate is not None
+                    else float(stark_mixing[depth])
                 )
                 half_window = max(
                     METAL_LINE_MINIMUM_HALF_WINDOW_ANGSTROM,
-                    10.0 * gaussian_sigma[depth],
-                    100.0 * lorentz_hwhm[depth],
-                    static_half_window,
+                    10.0 * sigma,
+                    100.0 * hwhm,
+                    float(static_half_window[depth]),
                 )
                 start = int(np.searchsorted(wavelength, center - half_window))
                 stop = int(np.searchsorted(
                     wavelength, center + half_window, side="right"
                 ))
-                if stop <= start:
+                if stop - start < 2:
                     continue
                 selected_wavelength = wavelength[start:stop]
-                impact_profile = _pseudo_voigt_profile_per_angstrom(
-                    selected_wavelength,
-                    center,
-                    float(gaussian_sigma[depth]),
-                    float(lorentz_hwhm[depth]),
+
+                combined_profile = _quasistatic_line_profile(
+                    selected_wavelength, center, sigma, hwhm, local_scale, mixing
                 )
-                combined_profile = impact_profile
-                if local_scale > 0.0:
-                    selected_cm = selected_wavelength * 1.0e-8
-                    frequency = LIGHT_SPEED / selected_cm
-                    beta = np.abs(frequency - LIGHT_SPEED / center_cm) / local_scale
-                    static_profile = (
-                        _metal_holtsmark_microfield_distribution(beta)
-                        / (2.0 * local_scale)
-                        * LIGHT_SPEED / selected_cm**2 * 1.0e-8
-                    )
-                    combined_profile = np.maximum(
-                        impact_profile, static_profile
-                    )
                 area = trapezoid(combined_profile, selected_wavelength)
                 if not np.isfinite(area) or area <= 0.0:
                     continue
-                combined_profile = combined_profile / area
                 selected_cm = selected_wavelength * 1.0e-8
-                cross_section = (
+                result[start:stop, depth] += (
                     integrated_cross_section
                     * line.absorption_oscillator_strength
+                    / area
                     * combined_profile
                     * 1.0e8 * selected_cm**2 / LIGHT_SPEED
-                )
-                result[start:stop, depth] += (
-                    cross_section * population_factor[depth]
+                    * population_factor[depth]
                 )
         elif is_mg_resonance and mg_he_red_wing_table is not None:
             # The unified red wing must be enveloped depth by depth, so retain

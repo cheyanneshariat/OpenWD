@@ -1943,6 +1943,7 @@ def _metal_opacity(
     include_oxygen_i_series_stark: bool = False,
     oxygen_i_series_stark_minimum_effective_n: float | None = None,
     include_oxygen_i_quasistatic_microfields: bool = False,
+    include_linear_stark_quasistatic: bool = False,
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
     include_metal_series_pseudocontinuum: bool = False,
@@ -2040,6 +2041,7 @@ def _metal_opacity(
             include_oxygen_i_quasistatic_microfields=(
                 include_oxygen_i_quasistatic_microfields
             ),
+            include_linear_stark_quasistatic=include_linear_stark_quasistatic,
             include_rydberg_dissolution=include_rydberg_dissolution,
             rydberg_dissolution_cutoff_probability=(
                 rydberg_dissolution_cutoff_probability
@@ -2327,6 +2329,8 @@ def d6_structure_opacity_function(
     include_metal_series_pseudocontinuum: bool = True,
     metal_series_pseudocontinuum_elements: Iterable[str] = ("O", "Mg"),
     rydberg_correlated_microfields: bool = True,
+    include_linear_stark_quasistatic: bool = False,
+    include_oxygen_i_series_stark: bool = False,
 ) -> Callable[[Atmosphere, MetalLTEState], tuple[FloatArray, FloatArray]]:
     """Return the D6 structural absorption/scattering closure."""
 
@@ -2351,6 +2355,8 @@ def d6_structure_opacity_function(
             metal_series_pseudocontinuum_elements=elements,
             rydberg_correlated_microfields=rydberg_correlated_microfields,
             topbase_photoionization_database=topbase_photoionization_database,
+            include_linear_stark_quasistatic=include_linear_stark_quasistatic,
+            include_oxygen_i_series_stark=include_oxygen_i_series_stark,
         )
 
     return opacity
@@ -2381,6 +2387,8 @@ def radiative_equilibrium_d6_atmosphere(
     metal_series_pseudocontinuum_elements: Iterable[str] = ("O", "Mg"),
     rydberg_correlated_microfields: bool = True,
     topbase_photoionization_database: TOPbasePhotoionizationDatabase | None = None,
+    include_linear_stark_quasistatic: bool = False,
+    include_oxygen_i_series_stark: bool = False,
     n_angle: int = 3,
     mixing_length_alpha: float | None = 1.25,
     initial_temperature: ArrayLike | None = None,
@@ -2518,6 +2526,8 @@ def radiative_equilibrium_d6_atmosphere(
         include_metal_series_pseudocontinuum=include_metal_series_pseudocontinuum,
         metal_series_pseudocontinuum_elements=metal_series_pseudocontinuum_elements,
         rydberg_correlated_microfields=rydberg_correlated_microfields,
+        include_linear_stark_quasistatic=include_linear_stark_quasistatic,
+        include_oxygen_i_series_stark=include_oxygen_i_series_stark,
     )
 
     # One opacity evaluation per distinct temperature.  The nonlinear driver
@@ -2620,6 +2630,10 @@ def radiative_equilibrium_d6_atmosphere(
             "metal_series_pseudocontinuum": bool(
                 include_metal_series_pseudocontinuum
             ),
+            "linear_stark_quasistatic_in_structure": bool(
+                include_linear_stark_quasistatic
+            ),
+            "oxygen_i_series_stark_in_structure": bool(include_oxygen_i_series_stark),
             "level_resolved_metal_bound_free": (
                 topbase_photoionization_database.source
                 if topbase_photoionization_database is not None
@@ -2751,7 +2765,7 @@ def synthesize_d6_spectrum(
             "minimum_metal_oscillator_strength": float(minimum_metal_oscillator_strength),
             "maximum_metal_lines": maximum_metal_lines,
             "microturbulent_velocity_kms": float(microturbulent_velocity_kms),
-            "line_physics_ablations": {
+            "line_physics_options": {
                 str(key): value for key, value in line_options.items()
             },
         },

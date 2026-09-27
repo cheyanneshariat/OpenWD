@@ -68,6 +68,10 @@ class D6Config:
     formal_maximum_metal_lines: int | None = None
     include_rydberg_dissolution: bool = True
     include_metal_series_pseudocontinuum: bool = True
+    # Quasi-static ionic (linear-Stark) envelopes for Stark-mixed Rydberg
+    # levels, and literature-anchored widths for the O I 3p-nd series.
+    include_linear_stark_quasistatic: bool = True
+    include_oxygen_i_series_stark: bool = True
 
 
 # Structural line budgets.  Hollands et al. stress that the dense UV forest
@@ -254,6 +258,8 @@ def compute_d6(
                 config.include_metal_series_pseudocontinuum
             ),
             topbase_photoionization_database=topbase,
+            include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
+            include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
             n_angle=min(resolution.n_angle, 3),
             mixing_length_alpha=config.mixing_length_alpha,
             initial_temperature=(
@@ -292,6 +298,8 @@ def compute_d6(
         include_metal_series_pseudocontinuum=(
             config.include_metal_series_pseudocontinuum
         ),
+        include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
+        include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
         n_angle=resolution.n_angle,
     )
     return ModelResult(
@@ -300,7 +308,7 @@ def compute_d6(
         spectrum,
         config,
         {
-            "preset": "D6-shared-solver-v1",
+            "preset": "D6-shared-solver-v2-linear-stark",
             "default_parameter_source": (
                 "Hollands et al. (2025), SDSS J1637+3631"
             ),
@@ -320,6 +328,15 @@ def compute_d6(
             "metal_series_pseudocontinuum": (
                 "TOPbase O I and Mg"
                 if config.include_metal_series_pseudocontinuum else "disabled"
+            ),
+            "rydberg_line_profiles": (
+                "impact Voigt plus depth-weighted Holtsmark linear-Stark "
+                "envelope for Stark-mixed Rydberg levels (structure and synthesis)"
+                if config.include_linear_stark_quasistatic else "impact Voigt"
+            ),
+            "oxygen_i_series_stark": (
+                "Dimitrijevic, Iacob & Sahal-Brechot (2025) 4d anchor, n_eff^5 series"
+                if config.include_oxygen_i_series_stark else "generic classical"
             ),
             "convection": (
                 "disabled"
