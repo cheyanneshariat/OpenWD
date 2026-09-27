@@ -158,7 +158,8 @@ parameters, are:
   width;
 - He II 4686 and several optical C IV absorption lines are too deep in
   PG 1424+535 and PG 1159-035;
-- PG 1159-035 shows spurious O V emission (6001, 4500 and 6462–6502 Å), a
+- PG 1159-035 shows spurious O V emission at 6462–6502 Å (and a weak residual
+  bump at 6001 Å), a
   too-strong C IV 5801 emission core, and lacks the observed emission cores of
   He II 4686, C IV 4658 and O VI 5291.
 

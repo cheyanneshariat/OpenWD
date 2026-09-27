@@ -237,7 +237,7 @@ run = run_model(
 to local radiative equilibrium after the main solve and certifies the refined
 structure again; the tested cold starts use it. For the hottest stars add
 `include_radiative_acceleration=True` (used for PG 1159-035 at 140000 K).
-Single-threaded cold starts of the three tested stars take 60–80 minutes.
+Single-threaded cold starts of the three tested stars take 55–90 minutes.
 
 A PG 1159 result is `spectrum-qualified` when it passes the flux, local
 energy, population, source and boundary checks that protect the emergent

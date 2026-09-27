@@ -10,7 +10,7 @@ LTE reference, so a Planck field recovers the LTE populations.
 from __future__ import annotations
 
 from bisect import bisect_right
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from itertools import combinations
 import math
@@ -1275,6 +1275,15 @@ def _term_spin_multiplicity(label: str | None) -> int | None:
     )
     if parenthesized:
         return int(parenthesized[-1])
+    # Fixed-width TMAD keys end in [J or 2J][2S+1][L][parity], with the J
+    # field directly before the multiplicity for fine-structure levels:
+    # ``O507H 51HO`` is 7h J=5 1Ho and ``O609L152L`` is J=15/2 2L.
+    tmad = re.match(
+        r"^[A-Z]{1,2}\d\d{2,3}[SPDFGHIKLMNOQ]\S*\s*\d*?([1-9])[SPDFGHIKLMNOQ]O?$",
+        text.rstrip(),
+    )
+    if tmad is not None:
+        return int(tmad.group(1))
     matches = re.findall(r"(?:^|\s)([1-9])\s*[SPDFGHI]", text)
     if matches:
         return int(matches[-1])
@@ -3320,6 +3329,10 @@ class TmadStructureModelAtom:
     effective_dielectronic_couplings: tuple[
         TmadEffectiveDielectronicCoupling, ...
     ] = ()
+    # TMAD LTE term label behind each ``formal_lte_parent_mapping`` entry.
+    formal_lte_term_labels: Mapping[tuple[str, int, int], str] = field(
+        default_factory=lambda: MappingProxyType({})
+    )
 
 
 def read_chianti_term_collision_strengths(
@@ -4374,6 +4387,7 @@ def read_tmad_structure_model_atom(
         energy_offset_by_charge[charge] = energy_offset
 
     formal_lte_parent_mapping = {}
+    formal_lte_term_labels = {}
     for charge, keys in ordered_lte_keys.items():
         if charge not in available_by_charge or charge not in ordered_keys:
             continue
@@ -4395,10 +4409,16 @@ def read_tmad_structure_model_atom(
                 for level in available.values()
                 if _spectroscopic_term_labels_match(key, level.label) is True
             )
-            candidate_pools = (
-                (label_candidates, tuple(available.values()))
-                if label_candidates
-                else (tuple(available.values()),)
+            # As for the NLTE terms above, never fall back on a formal level
+            # whose n, multiplicity or L contradicts the LTE term (O IV 9p
+            # would otherwise take 3p 4D/4P components).
+            uninformative_candidates = tuple(
+                level
+                for level in available.values()
+                if _spectroscopic_term_labels_match(key, level.label) is None
+            )
+            candidate_pools = tuple(
+                pool for pool in (label_candidates, uninformative_candidates) if pool
             )
             for pool in candidate_pools:
                 candidates = sorted(
@@ -4436,6 +4456,7 @@ def read_tmad_structure_model_atom(
             for level in subset:
                 formal_key = (symbol, charge, level.index)
                 formal_lte_parent_mapping[formal_key] = parent_key
+                formal_lte_term_labels[formal_key] = key
                 available.pop(level.index, None)
 
     return TmadStructureModelAtom(
@@ -4445,6 +4466,7 @@ def read_tmad_structure_model_atom(
         }),
         formal_level_mapping=MappingProxyType(formal_mapping),
         formal_lte_parent_mapping=MappingProxyType(formal_lte_parent_mapping),
+        formal_lte_term_labels=MappingProxyType(formal_lte_term_labels),
         continuum_parent_mapping=MappingProxyType(continuum_parent_mapping),
         lte_level_reservoir=lte_level_reservoir,
         lte_bound_bound_couplings=tuple(lte_bound_bound_couplings),
@@ -4602,14 +4624,21 @@ def atomic_database_with_tmad_formal_ions(
             # That silently assigns the wrong NLTE departure coefficient to
             # a valid formal transition.  Prefer the common n/L fields in
             # the fixed-width TMAD key and the Stout configuration label;
-            # retain the historical energy match only when no such label
-            # candidate exists.
+            # retain the historical energy match only among levels whose
+            # labels carry no comparable field.  A contradicting level is
+            # never taken; the TMAD level is then appended below.
             label_candidates = [
                 level
                 for level in weight_candidates
                 if _spectroscopic_term_labels_match(key, level.label) is True
             ]
-            candidates = label_candidates or weight_candidates
+            candidates = label_candidates or [
+                level
+                for level in weight_candidates
+                if _spectroscopic_term_labels_match(key, level.label) is None
+            ]
+            if not candidates:
+                continue
             matched = min(
                 candidates,
                 key=lambda level: abs(

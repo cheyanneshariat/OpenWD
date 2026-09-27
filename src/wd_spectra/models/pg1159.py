@@ -14,7 +14,12 @@ from .common import (
     AtmosphereConvergenceWarning,
 )
 from ..pg1159_presets import PG1424_PUBLISHED_MASS_FRACTIONS
-from .._pg1159_builder import build_model, structure_wavelength
+from .._pg1159_builder import (
+    PG1159_HYDROGENIC_STARK_COMPONENTS,
+    PG1159_STATIC_LINEAR_STARK_FREQUENCY_SCALES,
+    build_model,
+    structure_wavelength,
+)
 from .._pg1159_structure import solve_pg1159_atmosphere, PG1159Equations
 from .._pg1159_transfer import transfer_field
 from ..atmosphere import helium_continuum_atmosphere
@@ -367,8 +372,10 @@ def compute_pg1159(
             "population_state_layout": "structure, line_formation, line_formation_atmosphere",
             "independent_grid_validation": False,
             "full_physics_validation": False,
-            "civ_n4_n9_static_stark_frequency_scale": 0.25,
-            "civ_profile_scale_provenance": "preserved development calibration on PG1424 and PG1707",
+            "hydrogenic_linear_stark_components": PG1159_HYDROGENIC_STARK_COMPONENTS,
+            "static_linear_stark_frequency_scales": dict(
+                PG1159_STATIC_LINEAR_STARK_FREQUENCY_SCALES
+            ),
         },
         population_state=PG1159PopulationResult(
             result.population_state, state, atmosphere
