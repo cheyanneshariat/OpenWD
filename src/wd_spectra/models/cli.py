@@ -103,6 +103,10 @@ def one_shot_main(spectral_type: str) -> None:
         parser.add_argument("--mass-fraction", action="append", type=_assignment)
         parser.add_argument("--target-name", default="PG 1424+535")
         parser.add_argument("--oxygen-atom", choices=("compact14", "extended54-complete"), default="extended54-complete")
+        parser.add_argument("--refine-upper-atmosphere", action="store_true",
+                            help="converge tau_Ross < 1e-2 to local radiative equilibrium and re-certify")
+        parser.add_argument("--radiative-acceleration", action="store_true",
+                            help="include radiation pressure in hydrostatic equilibrium")
     args = parser.parse_args()
 
     supplied_grid = (args.wavelength_min, args.wavelength_max, args.wavelength_step)
@@ -127,7 +131,9 @@ def one_shot_main(spectral_type: str) -> None:
             defaults.effective_temperature if args.teff is None else args.teff,
             defaults.logg if args.logg is None else args.logg,
             dict(args.mass_fraction) if args.mass_fraction else defaults.mass_fractions,
-            args.target_name, args.quality, args.oxygen_atom)
+            args.target_name, args.quality, args.oxygen_atom,
+            include_radiative_acceleration=args.radiative_acceleration,
+            refine_upper_atmosphere=args.refine_upper_atmosphere)
         def progress(iteration, atmosphere, diagnostics):
             print(
                 "PG1159 "

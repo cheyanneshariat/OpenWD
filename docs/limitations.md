@@ -2,7 +2,7 @@
 
 [Documentation home](README.md) · [Getting started](getting-started.md)
 
-OpenWD is pre-alpha research software. A useful-looking spectrum, numerical
+OpenWD is research software under active development. A useful-looking spectrum, numerical
 convergence, agreement with a reference spectrum, and adequate physical
 approximations are separate questions.
 
@@ -13,11 +13,11 @@ Tested cold-start points reach **3000 K for DA, 5000 K for pure-He DB, and
 individual tested points, not validity ranges. The cool DB/DAB workflows are
 experimental and require the setup described in the [user guide](getting-started.md#cool-helium-and-mixed-atmospheres).
 
-The preliminary refractive DQ release has a separately checked J1235 cold
-worker at 9347 K, log g = 8.041 and log(C/He) = -4.107. The completed
-atmosphere/spectrum were verified after a result-reader repair; this is not
-a uniformly qualified DQ temperature/abundance grid. See the
-[DQ release evidence](tested-temperature-ranges.md#dq-release-qualification).
+DQ has a cold-start-qualified point at J1225 (6294 K, log g = 7.924,
+log(C/He) = -5.33); it is not a qualified DQ temperature/abundance grid. See
+the [DQ release evidence](tested-temperature-ranges.md#dq-release-qualification).
+DO/DAO and PG 1159 are qualified at the individual stars and temperatures in
+the [tested-point table](tested-temperature-ranges.md).
 
 The [tested-point table](tested-temperature-ranges.md) is the detailed record
 of temperatures, compositions, settings, and convergence evidence. In particular:
@@ -40,8 +40,12 @@ audit records. A solver's terminal success flag alone is insufficient.
 For established presets, unqualified completed spectra remain available with
 a warning for exploration; use `require_convergence=True` to require numerical
 qualification. DQ always requires its atmosphere certificate and a finite,
-positive independent 154000-point spectrum with absolute bolometric ratio
+positive independent 218520-point spectrum with absolute bolometric ratio
 error at most 0.002. It raises on failure even without the strict flag.
+PG 1159 distinguishes `spectrum-qualified` (flux, local energy, population,
+source and boundary checks that protect the emergent spectrum) from
+`converged` (which also requires a full-rank temperature certificate);
+`require_convergence=True` accepts only the latter.
 A failed calculation never selects an alternative physics prescription automatically.
 
 ## Spectrum accuracy and reference comparisons
@@ -96,12 +100,12 @@ preservation of historical spectra.
 
 ## Physical approximations
 
-All current modules are plane-parallel LTE models. DAB/DBA assumes a homogeneous
-mixture, not a stratified hydrogen layer; DAZ assumes a hydrogen-dominated host,
-and DZ/DBZ a helium-dominated host, with fixed input abundances. DQ assumes
-hydrogen-free, nonmagnetic helium with trace carbon and C₂. Hot NLTE,
-magnetic, PG 1159, and D6 models are not
-part of the public modules.
+All modules are plane-parallel and static. DA, DAZ, DB, DAB/DBA, DZ/DBZ and
+DQ use LTE populations; DO/DAO and PG 1159 use NLTE (see below). DAB/DBA
+assumes a homogeneous mixture, not a stratified hydrogen layer; DAZ assumes a
+hydrogen-dominated host, and DZ/DBZ a helium-dominated host, with fixed input
+abundances. DQ assumes hydrogen-free, nonmagnetic helium with trace carbon and
+C₂. Magnetic and D6 models are not part of the public modules.
 
 The dense pure-He DB treatment combines tabulated bulk thermodynamics with
 approximate chemical potentials and trace-ion chemistry. Refraction and
@@ -120,7 +124,7 @@ Automatic selection identifies the relevance of implemented physics; it does
 not establish convergence or supply missing physics. Unsupported overrides,
 missing data, or invalid material domains are reported explicitly.
 
-## Restricted DO/DAO NLTE
+## DO/DAO
 
 [DO/DAO models](models/DO-DAO.md) have seven cold-start-qualified configurations,
 not a validated hot-star grid. Their electron density and gas pressure retain
@@ -130,3 +134,32 @@ fails the strict legacy profile comparison, and GD153's H-alpha profile remains
 worse than the TMAP reference. A numerical certificate does not resolve these
 physical and observational limitations. The required CCC/TLUSTY inputs are
 installed with OpenWD.
+
+## PG 1159
+
+[PG 1159 models](models/PG1159.md) are qualified from a cold start for three
+stars: PG 1707+427 (85000 K), PG 1424+535 (110000 K) and PG 1159-035
+(140000 K, with radiative acceleration), all with the upper-atmosphere
+refinement. They are individual points, not a grid. Only He, C and O define
+the atmospheric structure; the trace elements (N, Ne, F, Si, P, S, Ar, Fe) are
+NLTE passengers in the final line formation and do not feed back on it.
+Radiative acceleration and the upper-atmosphere refinement are options, off
+by default. Convection, winds and diffusion are omitted.
+
+Known differences from the observed spectra, at the published stellar
+parameters, are:
+
+- the O VI 1032/1038 damping wings are too deep in PG 1424+535 and
+  PG 1159-035 with the Dimitrijević & Sahal-Bréchot / Elabidi et al. Stark
+  width;
+- He II 4686 and several optical C IV absorption lines are too deep in
+  PG 1424+535 and PG 1159-035;
+- PG 1159-035 shows spurious O V emission (6001, 4500 and 6462–6502 Å), a
+  too-strong C IV 5801 emission core, and lacks the observed emission cores of
+  He II 4686, C IV 4658 and O VI 5291.
+
+PG 1707+427 fits its FUSE spectrum about as well as the published TMAP model,
+and its SDSS line windows to reduced chi-square of 1.2 or better. In the refined upper layers the radiative heating and
+cooling nearly cancel (net ~1e-4 of the gross terms), and in PG 1159-035 local
+radiative equilibrium is thermally unstable between `tau_Ross` 2e-5 and 4e-4,
+so the upper-layer temperatures are the least certain part of the structure.

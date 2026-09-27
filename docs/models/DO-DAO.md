@@ -1,11 +1,12 @@
-# DO and DAO: experimental restricted NLTE
+# DO and DAO: hot helium and hydrogen–helium NLTE atmospheres
 
 [Model guide](README.md) · [Development checks](../development/README.md)
 
 `DOConfig` describes pure helium. `DAOConfig` describes homogeneous hydrogen
 and helium, with `log_hydrogen_to_helium = log10(N(H)/N(He))`; the default 2
-means 100 hydrogen nuclei per helium nucleus. These are new experimental
-adapters, not a validated temperature/composition grid.
+means 100 hydrogen nuclei per helium nucleus. Hydrogen and helium are solved
+in NLTE, with an LTE charge/pressure closure. The models are qualified at the
+individual tested points, not across a temperature/composition grid.
 
 Select these presets explicitly with `DOConfig` or `DAOConfig`. A high
 temperature in `DBConfig`, `DABConfig` or `DAConfig` does not switch that

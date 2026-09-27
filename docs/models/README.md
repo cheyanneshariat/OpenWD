@@ -5,30 +5,28 @@
 Use the configuration for your composition with `run_model`. It selects the
 implemented material treatment before solving a new atmosphere.
 
-| Configuration | Composition | Details |
-| --- | --- | --- |
-| `DAConfig` | Pure hydrogen | [DA physics](DA.md) |
-| `DAZConfig` | Hydrogen with metals; abundances relative to H | [DAZ physics](DAZ.md) |
-| `DBConfig` | Pure helium | [DB physics](DB.md) |
-| `DABConfig` | Homogeneous H/He; `log_hydrogen_to_helium` sets log10 N(H)/N(He) | [DAB/DBA physics](DAB.md) |
-| `DZConfig` | Helium with metals and optional trace hydrogen | [DZ/DBZ physics](DZ.md) |
-| `DQConfig` | Helium with trace carbon and C₂ Swan bands; preliminary | [DQ physics and setup](DQ.md) |
-| `DOConfig` | Pure helium; experimental restricted NLTE | [DO/DAO physics and data](DO-DAO.md) |
-| `PG1159Config` | Bulk He/C/O NLTE with trace-element line formation; experimental | [PG 1159 physics and data](PG1159.md) |
-| `DAOConfig` | Homogeneous H/He; experimental restricted NLTE | [DO/DAO physics and data](DO-DAO.md) |
+| Configuration | Composition | Populations | Details |
+| --- | --- | --- | --- |
+| `DAConfig` | Pure hydrogen | LTE | [DA physics](DA.md) |
+| `DAZConfig` | Hydrogen with metals; abundances relative to H | LTE | [DAZ physics](DAZ.md) |
+| `DBConfig` | Pure helium | LTE | [DB physics](DB.md) |
+| `DABConfig` | Homogeneous H/He; `log_hydrogen_to_helium` sets log10 N(H)/N(He) | LTE | [DAB/DBA physics](DAB.md) |
+| `DZConfig` | Helium with metals and optional trace hydrogen | LTE | [DZ/DBZ physics](DZ.md) |
+| `DQConfig` | Helium with trace carbon and C₂; refractive transfer | LTE | [DQ physics and setup](DQ.md) |
+| `DOConfig` | Pure helium, hot | NLTE He; LTE charge closure | [DO/DAO physics and data](DO-DAO.md) |
+| `DAOConfig` | Homogeneous H/He, hot | NLTE H and He; LTE charge closure | [DO/DAO physics and data](DO-DAO.md) |
+| `PG1159Config` | Helium, carbon and oxygen with trace elements (mass fractions) | NLTE He/C/O; trace-element NLTE line formation | [PG 1159 physics and data](PG1159.md) |
 
-`DOConfig` and `DAOConfig` add experimental hot helium and mixed H/He
-[restricted NLTE models](DO-DAO.md). Their LTE charge closure and incomplete
-observational qualification are documented explicitly.
-
-All configurations describe plane-parallel atmospheres; DO/DAO add restricted
-NLTE populations while retaining an LTE charge/pressure closure. They predict spectra for
-specified parameters; they do not fit observations. Established presets and
-experimental cool workflows have different applicability limits; see
+All configurations describe plane-parallel atmospheres. They predict spectra
+for specified parameters; they do not fit observations. Applicability differs
+between classes and between the warm and cool workflows of DB and DAB; see
 [limitations](../limitations.md) and [tested points](../tested-temperature-ranges.md).
+A high temperature in `DAConfig`, `DBConfig` or `DABConfig` does not switch to
+NLTE; request `DOConfig`, `DAOConfig` or `PG1159Config` explicitly.
 
-The individual guides also describe `compute_*` and command-line presets.
-The established explicit presets do not automatically switch to the cool
-dense/molecular workflows; use the [automatic interface](../getting-started.md)
-for that. `compute_dq` is different: it uses the same isolated refractive cold
-worker and mandatory atmosphere-plus-spectrum qualification as `run_model`.
+The individual guides also describe the `compute_*` functions and
+command-line scripts. The explicit `compute_db` and `compute_dab` presets do
+not switch to the cool dense/molecular workflows; use `run_model` (the
+[automatic interface](../getting-started.md)) for that. `compute_dq`,
+`compute_do`, `compute_dao` and `compute_pg1159` run the same calculation as
+`run_model` with the corresponding configuration.

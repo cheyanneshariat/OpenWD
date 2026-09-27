@@ -9,9 +9,8 @@ inspect its convergence status, then change the parameters for your application.
 1. [Get started](getting-started.md): install, run a model, and read the outputs.
 2. [Interactive notebook](../examples/generate_spectrum.ipynb): edit parameters
    and plot the resulting spectrum.
-3. [Choose a model](models/README.md): DA, DAZ, DB, DAB/DBA, DZ/DBZ, and
-   preliminary [refractive DQ](models/DQ.md) and experimental
-   [DO/DAO restricted NLTE](models/DO-DAO.md) physics.
+3. [Choose a model](models/README.md): DA, DAZ, DB, DAB/DBA, DZ/DBZ, DQ,
+   DO/DAO and PG 1159.
 4. [Caveats and limitations](limitations.md): convergence, accuracy, and
    [tested temperatures and compositions](tested-temperature-ranges.md).
 
