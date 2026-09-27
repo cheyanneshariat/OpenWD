@@ -16,6 +16,7 @@ implemented material treatment before solving a new atmosphere.
 | `DOConfig` | Pure helium, hot | NLTE He; LTE charge closure | [DO/DAO physics and data](DO-DAO.md) |
 | `DAOConfig` | Homogeneous H/He, hot | NLTE H and He; LTE charge closure | [DO/DAO physics and data](DO-DAO.md) |
 | `PG1159Config` | Helium, carbon and oxygen with trace elements (mass fractions) | NLTE He/C/O; trace-element NLTE line formation | [PG 1159 physics and data](PG1159.md) |
+| `D6Config` | Hydrogen/helium-free C/O-dominated mixture; abundances relative to C | LTE | [D6 physics and validation](D6.md) |
 
 All configurations describe plane-parallel atmospheres. They predict spectra
 for specified parameters; they do not fit observations. Applicability differs

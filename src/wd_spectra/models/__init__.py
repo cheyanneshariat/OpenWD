@@ -62,3 +62,6 @@ __all__ = [
 
 from .pg1159 import PG1159Config, compute_pg1159
 __all__ += ["PG1159Config", "compute_pg1159"]
+
+from .d6 import D6Config, compute_d6
+__all__ += ["D6Config", "compute_d6"]

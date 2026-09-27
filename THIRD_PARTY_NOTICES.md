@@ -59,6 +59,34 @@ Scientific publications should cite the original databases and atomic-data
 papers used by the applicable model. Redistribution permission does not alter
 their attribution or ownership.
 
+## D6 level-resolved photoionization inputs
+
+OpenWD has permission to redistribute the release copies of the D6
+Opacity Project/TOPbase inputs installed under
+`src/wd_spectra/data/runtime/cache/`, on the same terms as the hot-star
+inputs above. Their source URLs and SHA-256 checksums are pinned in
+`wd_spectra.d6` (`D6_TOPBASE_FILES`, `D6_TLUSTY_TOPBASE_FILES`,
+`D6_TLUSTY_RAP_FILES`). They remain scientific data from their named projects
+and are not covered by OpenWD's BSD source-code license:
+
+- SIROCCO-distributed TOPbase C II and O II level and photoionization files
+  (`sirocco-atomic/c_2_*.dat`, `o_2_*.dat`), from the SIROCCO repository at
+  commit `e3a8c4db`.
+- Public TLUSTY model atoms (Hubeny and Lanz) with Opacity Project cross
+  sections for C I, O I, Ne I, Mg I–II, Al II, Si I–II and S II, and the
+  Fe II `.rap` companion file (`tlusty-atoms/`).
+
+Credit the Opacity Project (Cunto et al. 1993) and the TLUSTY and SIROCCO
+distributions.
+
+## Hollands et al. (2025) J1637 digitization
+
+`src/wd_spectra/data/validation/hollands2025_j1637_figure1.npz` records the
+vector paths of Figure 1 of Hollands et al. (2025, MNRAS 541, 2231; DOI
+[10.1093/mnras/staf950](https://doi.org/10.1093/mnras/staf950)). It is a
+regression target derived from the published figure, not the authors'
+numerical data; cite the paper when using it.
+
 ## Other scientific tables
 
 The DQ constitutive data in `src/wd_spectra/data/dq` include derived ExoMol

@@ -10,7 +10,7 @@ inspect its convergence status, then change the parameters for your application.
 2. [Interactive notebook](../examples/generate_spectrum.ipynb): edit parameters
    and plot the resulting spectrum.
 3. [Choose a model](models/README.md): DA, DAZ, DB, DAB/DBA, DZ/DBZ, DQ,
-   DO/DAO and PG 1159.
+   DO/DAO, PG 1159 and D6.
 4. [Caveats and limitations](limitations.md): convergence, accuracy, and
    [tested temperatures and compositions](tested-temperature-ranges.md).
 

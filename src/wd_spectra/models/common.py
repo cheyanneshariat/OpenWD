@@ -181,6 +181,18 @@ class ModelData:
         return self.cache / "nist-asd-strong"
 
     @property
+    def sirocco_atomic(self) -> Path:
+        """Checksum-pinned SIROCCO/TOPbase level and photoionization files."""
+
+        return self.cache / "sirocco-atomic"
+
+    @property
+    def tlusty_atoms(self) -> Path:
+        """Checksum-pinned public TLUSTY/Opacity Project model atoms."""
+
+        return self.cache / "tlusty-atoms"
+
+    @property
     def h2_h2_cia(self) -> Path:
         return (
             self.cache

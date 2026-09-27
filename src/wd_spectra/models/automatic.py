@@ -39,6 +39,7 @@ from .daz import DAZConfig, compute_daz
 from .dq import DQConfig, compute_dq
 from .hot import DOConfig, DAOConfig, compute_do, compute_dao
 from .pg1159 import PG1159Config, compute_pg1159
+from .d6 import D6Config, compute_d6
 from ..spectrum import Spectrum
 
 
@@ -190,7 +191,7 @@ def run_model(
     environment = os.environ.copy()
     # compute_dq owns its isolated package-local worker; this separate branch
     # is only for the older checkout-based cool workflows.
-    isolated_worker = selection.experimental and not isinstance(config, (DQConfig, DOConfig, DAOConfig, PG1159Config))
+    isolated_worker = selection.experimental and not isinstance(config, (DQConfig, DOConfig, DAOConfig, PG1159Config, D6Config))
     if isolated_worker:
         if not (research / "run_cool_db.py").is_file():
             raise FileNotFoundError(
@@ -245,6 +246,7 @@ def run_model(
                 DOConfig: compute_do,
                 DAOConfig: compute_dao,
                 PG1159Config: compute_pg1159,
+                D6Config: compute_d6,
                 DAConfig: compute_da,
                 DAZConfig: compute_daz,
                 DQConfig: compute_dq,

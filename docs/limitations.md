@@ -135,6 +135,10 @@ worse than the TMAP reference. A numerical certificate does not resolve these
 physical and observational limitations. The required CCC/TLUSTY inputs are
 installed with OpenWD.
 
+## D6
+
+[D6 models](models/D6.md) are LTE and qualified at one star, SDSS J1637+3631 (15680 K, log g = 6.3). Molecules and negative ions are omitted, so they do not yet apply to the cool D6 stars; hot D6 stars need NLTE. Known line-data differences from the Hollands et al. Koester model are listed in the guide.
+
 ## PG 1159
 
 [PG 1159 models](models/PG1159.md) are qualified from a cold start for three

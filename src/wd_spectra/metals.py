@@ -5876,6 +5876,7 @@ def metal_line_mass_absorption_coefficient(
     oxygen_i_quasistatic_minimum_effective_n: float = 6.5,
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
+    rydberg_dissolution_elements: Iterable[str] | None = None,
     rydberg_correlated_microfields: bool = True,
     rydberg_neutral_perturbers: bool = False,
     excluded_elements: Iterable[str] = (),
@@ -5927,6 +5928,8 @@ def metal_line_mass_absorption_coefficient(
     complete ion stages.  It is mutually exclusive with the element filter;
     this supports physically distinct neutral/ionized profile families
     without selecting individual observed lines.
+    ``rydberg_dissolution_elements`` limits ``include_rydberg_dissolution`` to
+    the named elements; None (the default) dissolves every element's lines.
     ``uv_resonance_support_angstrom`` supplies already-decided minimum support
     for eligible strong UV resonances. A caller evaluating depth subsets must
     derive this mapping from the complete atmosphere, not the subset. Every
@@ -5963,6 +5966,23 @@ def metal_line_mass_absorption_coefficient(
         or profile_edge_optical_depth <= 0.0
     ):
         raise ValueError("profile_edge_optical_depth must be positive")
+    # Line dissolution and its returned pseudo-continuum are two halves of
+    # one occupation-probability treatment.  A caller that returns the
+    # dissolved strength only for some elements must restrict dissolution to
+    # the same elements, or the removed opacity is silently lost.
+    dissolution_elements = (
+        None
+        if rydberg_dissolution_elements is None
+        else frozenset(
+            _canonical_element(element) for element in rydberg_dissolution_elements
+        )
+    )
+
+    def dissolves(ion: AtomicIon) -> bool:
+        return include_rydberg_dissolution and (
+            dissolution_elements is None or ion.element in dissolution_elements
+        )
+
     profile_support_elements = (
         None
         if profile_edge_optical_depth_elements is None
@@ -6190,7 +6210,7 @@ def metal_line_mass_absorption_coefficient(
                     / (BOLTZMANN * atmosphere.temperature)
                 ) / partition
             )
-            if metal_state.metal_level_dissolution and include_rydberg_dissolution:
+            if metal_state.metal_level_dissolution and dissolves(ion):
                 lower_population = lower_population * (
                     metal_rydberg_level_occupation_probability(
                         ion,
@@ -6238,7 +6258,7 @@ def metal_line_mass_absorption_coefficient(
         )
         lower_level = levels_by_ion[(ion.element, ion.charge)][line.lower_index]
         upper_level = levels_by_ion[(ion.element, ion.charge)][line.upper_index]
-        if include_rydberg_dissolution:
+        if dissolves(ion):
             line_survival = metal_rydberg_transition_survival_probability(
                 ion,
                 lower_level,

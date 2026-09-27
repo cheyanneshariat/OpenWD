@@ -104,6 +104,7 @@ def _molecular_probe(config):
 
 
 from .pg1159 import PG1159Config, validate_config as validate_pg1159_config
+from .d6 import D6Config
 
 
 def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
@@ -114,13 +115,21 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
     Actual dense runs retain their stricter local table/trace-ion guards.
     """
     if not isinstance(config, (DAConfig, DAZConfig, DBConfig, DABConfig, DZConfig,
-                               DQConfig, DOConfig, DAOConfig, PG1159Config)):
-        raise TypeError('expected a DAConfig, DAZConfig, DBConfig, DABConfig, DZConfig, DQConfig, DOConfig, DAOConfig or PG1159Config')
+                               DQConfig, DOConfig, DAOConfig, PG1159Config, D6Config)):
+        raise TypeError('expected a DAConfig, DAZConfig, DBConfig, DABConfig, DZConfig, DQConfig, DOConfig, DAOConfig, PG1159Config or D6Config')
     data = ModelData.default() if data is None else data
     t, g = config.effective_temperature, config.logg
     if not np.isfinite(t) or t <= 0 or not np.isfinite(g):
         raise ValueError(
             "effective temperature and logg must be finite, with Teff positive"
+        )
+    if isinstance(config, D6Config):
+        return PhysicsSelection(
+            "d6",
+            "Hydrogen/helium-free bulk-metal LTE mixture with shared trust-region solver",
+            {"bulk_metal_charge_pressure_closure": True, "trace_host": None},
+            False,
+            False,
         )
     if isinstance(config, PG1159Config):
         validate_pg1159_config(config)

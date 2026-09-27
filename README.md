@@ -21,6 +21,7 @@ OpenWD provides plane-parallel models for these classes:
 | DQ | Helium with trace carbon and C₂, refractive transfer | LTE | [DQ](docs/models/DQ.md) |
 | DO/DAO | Hot helium or hydrogen–helium | NLTE hydrogen and helium (LTE charge closure) | [DO/DAO](docs/models/DO-DAO.md) |
 | PG 1159 | Hot helium–carbon–oxygen | NLTE He, C and O; trace elements in the line formation | [PG 1159](docs/models/PG1159.md) |
+| D6 | Hydrogen/helium-free carbon–oxygen with heavier elements | LTE | [D6](docs/models/D6.md) |
 
 Every class is calculated from a cold start and reports whether the result
 passed its numerical convergence checks. The guides describe each class's

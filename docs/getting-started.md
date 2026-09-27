@@ -90,8 +90,8 @@ certificate and the independent final-spectrum flux check, even with
 Replace the configuration above, keeping the same `run_model` call:
 
 ```python
-from wd_spectra import (DABConfig, DAOConfig, DAZConfig, DBConfig, DOConfig,
-                        DQConfig, DZConfig, PG1159Config)
+from wd_spectra import (D6Config, DABConfig, DAOConfig, DAZConfig, DBConfig,
+                        DOConfig, DQConfig, DZConfig, PG1159Config)
 
 helium = DBConfig(effective_temperature=22_000, logg=8.0, quality="standard")
 mixed = DABConfig(effective_temperature=20_000, logg=8.0,
@@ -106,6 +106,7 @@ hot_mixed = DAOConfig(effective_temperature=60_000, logg=8.0,
                       log_hydrogen_to_helium=2.0, quality="standard")
 hot_carbon_oxygen = PG1159Config(effective_temperature=110_000, logg=7.0,
                                  refine_upper_atmosphere=True)
+carbon_oxygen = D6Config(quality="standard")  # SDSS J1637+3631 defaults
 ```
 
 `log_hydrogen_to_helium=-2` means N(H)/N(He) = 0.01, not a hydrogen mass
@@ -115,7 +116,9 @@ fraction. DZ defaults to a bundled GD 40 composition; supplying an
 not guarantees of convergence or paper-spectrum reproduction. For DAZ, metal
 abundances are relative to hydrogen, and the defaults describe G29-38.
 `PG1159Config` takes mass fractions (normalized once); its defaults describe
-PG 1424+535. The sections below cover the classes with their own requirements.
+PG 1424+535. `D6Config` takes log number ratios to carbon, has no hydrogen or
+helium, and defaults to the Hollands et al. (2025) solution for SDSS
+J1637+3631; see the [D6 guide](models/D6.md). The sections below cover the classes with their own requirements.
 
 ### DQ helium/carbon atmospheres
 

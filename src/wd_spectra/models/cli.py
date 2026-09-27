@@ -1,4 +1,4 @@
-"""Command-line interface shared by the four one-shot examples."""
+"""Command-line interface shared by the one-shot examples."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from .common import ModelData, ModelResult, load_atmosphere_checkpoint, save_model_result
+from .d6 import D6Config, compute_d6
 from .pg1159 import PG1159Config, compute_pg1159
 from .stellar import (
     DAConfig,
@@ -62,7 +63,7 @@ def one_shot_main(spectral_type: str) -> None:
     """Run a DA, DB, DAB, or DZ atmosphere and formal spectrum."""
 
     kind = spectral_type.upper()
-    if kind not in {"DA", "DB", "DAB", "DZ", "PG1159"}:
+    if kind not in {"DA", "DB", "DAB", "DZ", "PG1159", "D6"}:
         raise ValueError(f"unsupported spectral type {spectral_type!r}")
     parser = argparse.ArgumentParser(
         description=f"Produce one self-consistent {kind} atmosphere and spectrum."
@@ -98,6 +99,12 @@ def one_shot_main(spectral_type: str) -> None:
         parser.add_argument("--strong-line-atomic-data",
                             choices=("stout", "nist-asd"),
                             default=DZConfig().strong_line_atomic_data)
+    if kind == "D6":
+        parser.add_argument("--abundance", action="append", type=_assignment,
+                            help="Element=log10 N(X)/N(reference); replaces the J1637 defaults")
+        parser.add_argument("--reference-element", default="C")
+        parser.add_argument("--compare-hollands2025", action="store_true",
+                            help="score the spectrum against the bundled J1637 digitization")
     if kind == "PG1159":
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
         parser.add_argument("--mass-fraction", action="append", type=_assignment)
@@ -150,6 +157,43 @@ def one_shot_main(spectral_type: str) -> None:
         )
         directory = save_model_result(result, args.output)
         _quicklook(result, directory / "spectrum.png")
+        print(f"Wrote {directory}")
+        return
+    if kind == "D6":
+        if args.restart_atmosphere is not None:
+            parser.error("D6 one-shot runs are cold starts")
+        defaults = D6Config()
+        config = D6Config(
+            effective_temperature=defaults.effective_temperature if args.teff is None else args.teff,
+            logg=defaults.logg if args.logg is None else args.logg,
+            abundances=dict(args.abundance) if args.abundance else defaults.abundances,
+            reference_element=args.reference_element,
+            quality=args.quality,
+        )
+
+        def d6_progress(iteration, atmosphere, diagnostics):
+            print(
+                f"D6 {diagnostics.get('solver_phase', 'solver')} iteration {iteration}: "
+                f"flux={diagnostics.get('maximum_all_depth_total_flux_residual', float('nan')):.4g}, "
+                f"local={diagnostics.get('maximum_relative_cell_energy_balance_residual', float('nan')):.4g}",
+                flush=True,
+            )
+
+        result = compute_d6(config, wavelength, data=data, iteration_callback=d6_progress)
+        directory = save_model_result(result, args.output)
+        _quicklook(result, directory / "spectrum.png")
+        if args.compare_hollands2025:
+            import json
+
+            from ..validation.hollands_d6 import hollands2025_scores
+
+            scores = hollands2025_scores(
+                result.spectrum.wavelength_angstrom, result.spectrum.surface_flux_lambda
+            )
+            (directory / "hollands2025_scores.json").write_text(
+                json.dumps(scores, indent=2) + "\n", encoding="utf-8"
+            )
+            print(json.dumps(scores, indent=2))
         print(f"Wrote {directory}")
         return
     if kind == "DA":
