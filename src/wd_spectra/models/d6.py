@@ -350,7 +350,7 @@ def compute_d6(
                 if config.include_linear_stark_quasistatic else "impact Voigt"
             ),
             "oxygen_i_series_stark": (
-                "Dimitrijevic, Iacob & Sahal-Brechot (2025) 4d anchor, n_eff^5 series"
+                "Dimitrijevic & Sahal-Brechot (2025) 4d anchor, n_eff^5 series"
                 if config.include_oxygen_i_series_stark else "generic classical"
             ),
             "convection": (

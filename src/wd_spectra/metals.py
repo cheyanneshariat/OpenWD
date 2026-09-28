@@ -343,7 +343,7 @@ _NA_I_D_NEON_DAMPING_RATE_CM3_S = MappingProxyType(
     }
 )
 
-# Dimitrijevic, Iacob & Sahal-Brechot (2025, Galaxies 13, 116), their
+# Dimitrijevic & Sahal-Brechot (2025, Galaxies 13, 116), their
 # Table 2, give a semiclassical electron-impact FWHM of 0.192 A for the
 # O I 3p 5P--4d 5Do multiplet at ne=1e16 cm^-3 and T=10000 K.  This later,
 # line-by-line calculation supersedes the anomalous 16.7-A value printed in
@@ -5120,7 +5120,7 @@ def o_i_3p5p_nd5d_electron_stark_rate_coefficient(
     """Return a literature-anchored Stark rate for the O I 3p--nd series.
 
     The absolute normalization is the 4d multiplet calculation tabulated by
-    Dimitrijevic, Iacob & Sahal-Brechot (2025, Galaxies 13, 116). Higher
+    Dimitrijevic & Sahal-Brechot (2025, Galaxies 13, 116). Higher
     series members use the asymptotic ``n_eff**5`` impact scaling. Unlike the
     generic SYNSPEC fallback, this deliberately does not cap ``n_eff`` at
     five: the function exists specifically to diagnose the merging high-n
