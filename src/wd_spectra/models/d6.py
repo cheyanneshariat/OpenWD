@@ -68,6 +68,9 @@ class D6Config:
     formal_maximum_metal_lines: int | None = None
     include_rydberg_dissolution: bool = True
     include_metal_series_pseudocontinuum: bool = True
+    # Elements whose Rydberg lines are dissolved and returned as a
+    # level-resolved pseudo-continuum below their TOPbase edges.
+    metal_series_pseudocontinuum_elements: tuple[str, ...] = ("O", "Mg", "C")
     # Quasi-static ionic (linear-Stark) envelopes for Stark-mixed Rydberg
     # levels, and literature-anchored widths for the O I 3p-nd series.
     include_linear_stark_quasistatic: bool = True
@@ -261,6 +264,9 @@ def compute_d6(
             include_metal_series_pseudocontinuum=(
                 config.include_metal_series_pseudocontinuum
             ),
+            metal_series_pseudocontinuum_elements=tuple(
+                config.metal_series_pseudocontinuum_elements
+            ),
             topbase_photoionization_database=topbase,
             include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
             include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
@@ -303,6 +309,9 @@ def compute_d6(
         include_metal_series_pseudocontinuum=(
             config.include_metal_series_pseudocontinuum
         ),
+        metal_series_pseudocontinuum_elements=tuple(
+            config.metal_series_pseudocontinuum_elements
+        ),
         include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
         include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
         profile_edge_optical_depth=config.line_profile_edge_optical_depth,
@@ -314,7 +323,7 @@ def compute_d6(
         spectrum,
         config,
         {
-            "preset": "D6-shared-solver-v3",
+            "preset": "D6-shared-solver-v4",
             "default_parameter_source": (
                 "Hollands et al. (2025), SDSS J1637+3631"
             ),
@@ -332,7 +341,7 @@ def compute_d6(
                 if config.include_rydberg_dissolution else "disabled"
             ),
             "metal_series_pseudocontinuum": (
-                "TOPbase O I and Mg"
+                "TOPbase " + ", ".join(config.metal_series_pseudocontinuum_elements)
                 if config.include_metal_series_pseudocontinuum else "disabled"
             ),
             "rydberg_line_profiles": (
