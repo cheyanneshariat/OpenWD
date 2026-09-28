@@ -139,6 +139,17 @@ installed with OpenWD.
 
 [D6 models](models/D6.md) are LTE and qualified at one star, SDSS J1637+3631 (15680 K, log g = 6.3). Molecules and negative ions are omitted, so they do not yet apply to the cool D6 stars; hot D6 stars need NLTE. Known line-data differences from the Hollands et al. Koester model are listed in the guide.
 
+## DAH
+
+[DAH models](models/DAH.md) are LTE pure-hydrogen atmospheres with one
+structure at the disk-mean field. Above 1 MG every H2db component carries
+the zero-field Stark profile of its parent line; at hundreds of MG this
+smears the stationary components and leaves a 9–12% blue excess for the hot
+high-field stars GH Leo and J0732+3646. Magnetic Lyman/Paschen lines,
+decentered atoms, molecules in the magnetic EOS and polarimetric (Q, U, V)
+output are not available, and cyclotron absorption is an explicit option.
+The validation table in the guide gives the fixed-parameter scores.
+
 ## PG 1159
 
 [PG 1159 models](models/PG1159.md) are qualified from a cold start for three

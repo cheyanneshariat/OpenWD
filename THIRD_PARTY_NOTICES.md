@@ -87,6 +87,29 @@ vector paths of Figure 1 of Hollands et al. (2025, MNRAS 541, 2231; DOI
 regression target derived from the published figure, not the authors'
 numerical data; cite the paper when using it.
 
+## H2db magnetic hydrogen data (DAH)
+
+`src/wd_spectra/data/runtime/cache/h2db/h2db_balmer_subset.npz` is a subset of
+the Hydrogen Database of C. Schimeczek and G. Wunner (DaRUS,
+doi:[10.18419/DARUS-2118](https://doi.org/10.18419/DARUS-2118); method in
+Comput. Phys. Commun. 185, 614, 2014), distributed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). It contains the
+Balmer transitions and all stationary-state energies for beta <= 3, copied
+without modification (transition energies and dipole strengths stored as
+single precision). `tools/build_h2db_subset.py` rebuilds it from the public
+archive. Cite Schimeczek & Wunner when using DAH models.
+
+## DAH observed validation spectra
+
+`src/wd_spectra/data/validation/dah/` holds resampled copies of public
+spectra used only for validation: SDSS/BOSS spectra (SDSS Collaboration; see
+the SDSS data policy), the Gianninas GH Leo spectrum from the Montreal White
+Dwarf Database, and model curves of Hardy, Dufour & Jordan (2023, MNRAS 520,
+6111) digitized from their CDS figures (regression targets derived from the
+published figures, not the authors' numerical models). Survey spectra of the
+Hardy targets are de-reddened with MWDD E(B-V). Cite the original surveys and
+papers when using them.
+
 ## Other scientific tables
 
 The DQ constitutive data in `src/wd_spectra/data/dq` include derived ExoMol

@@ -105,6 +105,7 @@ def _molecular_probe(config):
 
 from .pg1159 import PG1159Config, validate_config as validate_pg1159_config
 from .d6 import D6Config
+from .dah import DAHConfig
 
 
 def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
@@ -115,13 +116,31 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
     Actual dense runs retain their stricter local table/trace-ion guards.
     """
     if not isinstance(config, (DAConfig, DAZConfig, DBConfig, DABConfig, DZConfig,
-                               DQConfig, DOConfig, DAOConfig, PG1159Config, D6Config)):
-        raise TypeError('expected a DAConfig, DAZConfig, DBConfig, DABConfig, DZConfig, DQConfig, DOConfig, DAOConfig, PG1159Config or D6Config')
+                               DQConfig, DOConfig, DAOConfig, PG1159Config, D6Config,
+                               DAHConfig)):
+        raise TypeError('expected a DAConfig, DAZConfig, DBConfig, DABConfig, DZConfig, DQConfig, DOConfig, DAOConfig, PG1159Config, D6Config or DAHConfig')
     data = ModelData.default() if data is None else data
     t, g = config.effective_temperature, config.logg
     if not np.isfinite(t) or t <= 0 or not np.isfinite(g):
         raise ValueError(
             "effective temperature and logg must be finite, with Teff positive"
+        )
+    if isinstance(config, DAHConfig):
+        from .dah import dah_surface_cells
+        from ..magnetic import WEAK_FIELD_MAXIMUM_MEGAGAUSS
+
+        maximum = float(np.max(dah_surface_cells(config).field_strength_megagauss))
+        regime = (
+            "normal Zeeman triplets"
+            if maximum <= WEAK_FIELD_MAXIMUM_MEGAGAUSS
+            else "H2db Halpha-H12 components"
+        )
+        return PhysicsSelection(
+            "dah",
+            f"Magnetic pure-H LTE ({regime}; maximum visible field {maximum:.4g} MG) with shared trust-region solver",
+            {"maximum_visible_field_megagauss": maximum},
+            False,
+            False,
         )
     if isinstance(config, D6Config):
         return PhysicsSelection(

@@ -11,6 +11,7 @@ import numpy as np
 from .common import ModelData, load_atmosphere_checkpoint, save_model_result
 from .automatic import run_model
 from .d6 import D6Config
+from .dah import DAHConfig
 from .pg1159 import PG1159Config
 from .stellar import (
     DAConfig,
@@ -64,7 +65,7 @@ def one_shot_main(spectral_type: str) -> None:
     """Run a DA, DB, DAB, or DZ atmosphere and formal spectrum."""
 
     kind = spectral_type.upper()
-    if kind not in {"DA", "DB", "DAB", "DZ", "PG1159", "D6"}:
+    if kind not in {"DA", "DB", "DAB", "DZ", "PG1159", "D6", "DAH"}:
         raise ValueError(f"unsupported spectral type {spectral_type!r}")
     parser = argparse.ArgumentParser(
         description=f"Produce one self-consistent {kind} atmosphere and spectrum."
@@ -111,6 +112,20 @@ def one_shot_main(spectral_type: str) -> None:
         parser.add_argument("--reference-element", default="C")
         parser.add_argument("--compare-hollands2025", action="store_true",
                             help="score the spectrum against the bundled J1637 digitization")
+    if kind == "DAH":
+        parser.add_argument("--field-mg", type=float,
+                            help="uniform field, or dipole polar field (MG)")
+        parser.add_argument("--geometry", choices=("uniform", "dipole"), default="uniform")
+        parser.add_argument("--field-angle", type=float, default=None,
+                            help="uniform field-to-line-of-sight angle; default isotropic")
+        parser.add_argument("--inclination", type=float, default=DAHConfig().dipole_inclination_deg)
+        parser.add_argument("--offset", type=float, nargs=3, default=(0.0, 0.0, 0.0),
+                            metavar=("AX", "AY", "AZ"),
+                            help="dipole offset in stellar radii, magnetic-axis frame")
+        parser.add_argument("--transfer", choices=("full-stokes-iquv", "scalar-stokes-i"),
+                            default="full-stokes-iquv")
+        parser.add_argument("--compare", default=None,
+                            help="score against a bundled validation target, e.g. j2149-0728")
     if kind == "PG1159":
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
         parser.add_argument("--mass-fraction", action="append", type=_assignment)
@@ -164,6 +179,54 @@ def one_shot_main(spectral_type: str) -> None:
         )
         directory = run.output_directory
         _quicklook(run.spectrum, config, kind, directory / "spectrum.png")
+        print(f"Wrote {directory}")
+        return
+    if kind == "DAH":
+        if args.restart_atmosphere is not None:
+            parser.error("DAH one-shot runs are cold starts")
+        defaults = DAHConfig()
+        config = DAHConfig(
+            effective_temperature=defaults.effective_temperature if args.teff is None else args.teff,
+            logg=defaults.logg if args.logg is None else args.logg,
+            magnetic_field_megagauss=(
+                defaults.magnetic_field_megagauss if args.field_mg is None else args.field_mg
+            ),
+            field_geometry=args.geometry,
+            field_angle_deg=args.field_angle,
+            dipole_inclination_deg=args.inclination,
+            dipole_offset_radius=tuple(args.offset),
+            polarized_transfer=args.transfer,
+            quality=args.quality,
+        )
+
+        def dah_progress(iteration, atmosphere, diagnostics):
+            print(
+                f"DAH iteration {iteration}: "
+                f"flux={diagnostics.get('maximum_all_depth_total_flux_residual', float('nan')):.4g}, "
+                f"local={diagnostics.get('maximum_relative_cell_energy_balance_residual', float('nan')):.4g}",
+                flush=True,
+            )
+
+        run = run_model(
+            config, args.output, wavelength=wavelength, data=data,
+            iteration_callback=dah_progress, require_convergence=args.require_convergence,
+        )
+        directory = run.output_directory
+        _quicklook(run.spectrum, config, kind, directory / "spectrum.png")
+        if args.compare:
+            import json
+
+            from ..validation.magnetic_da import score_dah_spectrum
+
+            scores = score_dah_spectrum(
+                args.compare,
+                run.spectrum.wavelength_angstrom,
+                run.spectrum.surface_flux_lambda,
+            )
+            (directory / "validation_scores.json").write_text(
+                json.dumps(scores, indent=2, default=float) + "\n", encoding="utf-8"
+            )
+            print(json.dumps(scores, indent=2, default=float))
         print(f"Wrote {directory}")
         return
     if kind == "D6":

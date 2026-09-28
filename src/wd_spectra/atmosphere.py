@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Callable, Literal, Mapping, TYPE_CHECKING
 
 import numpy as np
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from ._compat import trapezoid
 from .eos import (
@@ -997,6 +997,9 @@ def radiative_equilibrium_hydrogen_atmosphere(
     | None = None,
     continuum_opacity_function: Callable[[Atmosphere, FloatArray], FloatArray]
     | None = None,
+    additional_structure_wavelength_angstrom: ArrayLike | None = None,
+    scattering_opacity_function: Callable[[Atmosphere, FloatArray], FloatArray]
+    | None = None,
     metal_database: AtomicDatabase | None = None,
     metal_abundances: Mapping[str, float] | None = None,
     metal_photoionization_database: VernerPhotoionizationDatabase | None = None,
@@ -1059,7 +1062,14 @@ def radiative_equilibrium_hydrogen_atmosphere(
     corresponding controlled hook for replacing the thermal continuum.  It
     must return the complete true-absorption continuum (not scattering), so a
     magnetic implementation can replace H I bound-free opacity without
-    losing the otherwise validated free-free and molecular terms.
+    losing the otherwise validated free-free and molecular terms.  When it
+    is supplied, the adaptive solver's Rosseland mean (its depth coordinate)
+    is taken from the same continuum rather than the zero-field one.
+    ``additional_structure_wavelength_angstrom`` adds frequency points to the
+    structure mesh, e.g. around displaced magnetic Balmer components.
+    ``scattering_opacity_function(atmosphere, wavelength)`` returns a change
+    to the electron plus Rayleigh coherent scattering (e.g. magnetic Thomson
+    scattering; adaptive-newton solver only).
     """
 
     if max_iterations < 1:
@@ -1173,6 +1183,17 @@ def radiative_equilibrium_hydrogen_atmosphere(
                     )
                 )
             )
+    if additional_structure_wavelength_angstrom is not None:
+        extra_wavelength = np.asarray(
+            additional_structure_wavelength_angstrom, dtype=np.float64
+        ).ravel()
+        if np.any(~np.isfinite(extra_wavelength)) or np.any(
+            extra_wavelength <= 0.0
+        ):
+            raise ValueError(
+                "additional_structure_wavelength_angstrom must be finite and positive"
+            )
+        wavelength = np.unique(np.concatenate((wavelength, extra_wavelength)))
     infrared_line_offsets = np.asarray(
         (
             -300.0,
@@ -1536,12 +1557,23 @@ def radiative_equilibrium_hydrogen_atmosphere(
     from .eos import hummer_mihalas_hydrogen_thermodynamics
 
     def scattering_opacity(current: Atmosphere) -> FloatArray:
-        return (
+        result = (
             electron_scattering_mass_coefficient(current)[np.newaxis, :]
-            + hydrogen_rayleigh_scattering_mass_coefficient(
-                current, wavelength
-            )
+            + hydrogen_rayleigh_scattering_mass_coefficient(current, wavelength)
         )
+        if scattering_opacity_function is not None:
+            extra = np.asarray(
+                scattering_opacity_function(current, wavelength), dtype=np.float64
+            )
+            if extra.shape != (wavelength.size, current.n_depth) or np.any(
+                ~np.isfinite(extra)
+            ) or np.any(result + extra < 0.0):
+                raise ValueError(
+                    "scattering_opacity_function must return a finite "
+                    "(wavelength, depth) change that keeps scattering nonnegative"
+                )
+            result = result + extra
+        return result
 
     explicit_metal_rosseland_opacity = (
         metal_database is not None
@@ -1553,6 +1585,14 @@ def radiative_equilibrium_hydrogen_atmosphere(
     )
 
     def rosseland_opacity(current: Atmosphere) -> FloatArray:
+        if continuum_opacity_function is not None and not explicit_metal_rosseland_opacity:
+            # Use the same continuum physics for the Rosseland depth coordinate.
+            return rosseland_mean_from_opacity_grid(
+                wavelength,
+                continuum_opacity_function(current, wavelength)
+                + scattering_opacity(current),
+                current.temperature,
+            )
         if explicit_metal_rosseland_opacity:
             if (
                 hydrogen_structure_absorption_cache.get("atmosphere")

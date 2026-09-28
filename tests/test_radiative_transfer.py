@@ -30,6 +30,86 @@ def test_isothermal_specific_intensity_is_source_function():
     np.testing.assert_allclose(intensity, np.array([1.0, 7.5]), rtol=2e-12)
 
 
+@pytest.mark.parametrize("explicit_emission", [False, True])
+def test_linear_stokes_preserves_lte_with_variable_propagation(explicit_emission):
+    mass = np.geomspace(1e-5, 100., 40)
+    eta_i = np.ones((1, mass.size))
+    eta_q = 0.7 * eta_i * mass / (1 + mass)
+    eta_v = 0.2 * eta_i / (1 + mass)
+    rho_q = 2. * eta_i / (1 + mass)
+    rho_v = 3. * eta_i * mass / (1 + mass)
+    emission = None
+    if explicit_emission:
+        emission = np.zeros(eta_i.shape + (4,))
+        emission[..., 0] = eta_i
+        emission[..., 1] = eta_q
+        emission[..., 3] = eta_v
+    stokes = emergent_stokes_specific_intensity(
+        mass, eta_i, eta_q, eta_v, rho_q, rho_v, eta_i, 0.63,
+        emission_stokes=emission, formal_solver="delo-linear",
+    )
+    np.testing.assert_allclose(stokes.i, 1., atol=1e-12, rtol=0)
+    for polarization in (stokes.q, stokes.u, stokes.v):
+        np.testing.assert_allclose(polarization, 0., atol=1e-12)
+
+
+def test_linear_stokes_matches_constant_matrix_analytic_solution():
+    from scipy.linalg import expm
+
+    mass = np.linspace(0., 40., 12)
+    eta_i = np.ones((1, mass.size))
+    matrix = np.array([[1, .3, 0, .1], [.3, 1, .7, 0],
+                       [0, -.7, 1, .4], [.1, 0, -.4, 1]])
+    offset = np.array([1., .03, .02, -.01])
+    gradient = np.array([.1, .002, -.003, .004])
+    equilibrium = offset + mass[:, None] * gradient
+    emission = (equilibrium @ matrix.T)[None, :, :]
+    mu = .63
+    stokes = emergent_stokes_specific_intensity(
+        mass, eta_i, .3 * eta_i, .1 * eta_i, .4 * eta_i, .7 * eta_i,
+        emission[..., 0], mu, emission_stokes=emission, formal_solver="delo-linear",
+    )
+    correction = mu * np.linalg.solve(matrix, gradient)
+    expected = offset + correction - expm(-matrix * mass[-1] / mu) @ correction
+    np.testing.assert_allclose(
+        np.array([stokes.i[0], stokes.q[0], stokes.u[0], stokes.v[0]]), expected,
+        rtol=1e-12, atol=1e-12,
+    )
+
+
+def test_linear_stokes_variable_modes_converge_to_independent_quadrature():
+    from scipy.integrate import quad
+
+    mu = .7
+    bottom = 15.
+    modes = []
+    for sign in (-1, 1):
+        def depth(m):
+            return m + sign * .6 * (m - np.log1p(m))
+
+        def integrand(m):
+            opacity = 1 + sign * .6 * m / (1 + m)
+            return (1 + .3 * m) * opacity / mu * np.exp(-depth(m) / mu)
+
+        modes.append((1 + .3 * bottom) * np.exp(-depth(bottom) / mu)
+                     + quad(integrand, 0., bottom, epsabs=1e-12)[0])
+    expected = np.array([(modes[1] + modes[0]) / 2, (modes[1] - modes[0]) / 2])
+    errors = []
+    for count in (40, 80, 160):
+        mass = np.linspace(0., bottom, count)
+        eta_i = np.ones((1, count))
+        eta_q = .6 * eta_i * mass / (1 + mass)
+        zero = np.zeros_like(eta_i)
+        stokes = emergent_stokes_specific_intensity(
+            mass, eta_i, eta_q, zero, zero, zero, 1 + .3 * mass[None, :], mu,
+            formal_solver="delo-linear",
+        )
+        errors.append(np.max(np.abs(np.array([stokes.i[0], stokes.q[0]]) - expected)))
+    assert errors[-1] < 2e-4
+    assert errors[1] < errors[0] / 3
+    assert errors[2] < errors[1] / 3
+
+
 def test_stokes_solver_has_exact_scalar_limit():
     mass = np.geomspace(1.0e-8, 1.0e3, 80)
     opacity = np.vstack(
