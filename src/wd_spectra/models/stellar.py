@@ -76,7 +76,7 @@ class DAConfig:
     use_cool_mean_3d_temperature_differential: bool = False
     balmer_self_broadening_prescription: str | None = None
     balmer_self_broadening_truncation_closure: str = "stark-core"
-    atmosphere_solver: Literal["adaptive-newton", "lambda"] = (
+    atmosphere_solver: Literal["adaptive-newton"] = (
         "adaptive-newton"
     )
     multigrid_initialization: bool = False
@@ -90,7 +90,7 @@ class DBConfig:
     logg: float = 8.0
     quality: Quality = "standard"
     mixing_length_alpha: float = 1.25
-    atmosphere_solver: Literal["adaptive-newton", "lambda"] = "adaptive-newton"
+    atmosphere_solver: Literal["adaptive-newton"] = "adaptive-newton"
     neutral_broadening: Literal["unsold", "montreal", "none"] = "unsold"
 
 
@@ -103,7 +103,7 @@ class DABConfig:
     log_hydrogen_to_helium: float = -2.0
     quality: Quality = "standard"
     mixing_length_alpha: float = 1.25
-    atmosphere_solver: Literal["adaptive-newton", "lambda"] = "adaptive-newton"
+    atmosphere_solver: Literal["adaptive-newton"] = "adaptive-newton"
     lyman_profile_source: Literal["allard", "stark"] = "allard"
     allard_minimum_effective_temperature: float = 9_000.0
     balmer_self_broadening_prescription: str | None = None
@@ -147,7 +147,7 @@ class DZConfig:
     quality: Quality = "standard"
     neutral_broadening: Literal["unsold", "montreal", "none"] = "unsold"
     mixing_length_alpha: float = 1.25
-    atmosphere_solver: Literal["adaptive-newton", "lambda"] = "adaptive-newton"
+    atmosphere_solver: Literal["adaptive-newton"] = "adaptive-newton"
     maximum_metal_charge: int = 3
     structure_maximum_metal_lines: int | None = None
     formal_maximum_metal_lines: int | None = None

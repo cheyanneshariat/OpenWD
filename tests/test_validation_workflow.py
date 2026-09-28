@@ -48,6 +48,8 @@ def test_non_numerical_changes_do_not_trigger_cold_models(path):
         "tests/test_protected_model_canaries.py",
         "tests/test_dq_spectral_regression.py",
         "tests/test_dq_release.py",
+        "tests/test_hot_cold_canary.py",
+        "tests/test_released_family_canaries.py",
         "tools/validate.py",
         ".github/workflows/canaries.yml",
         "unknown-input.bin",
@@ -82,6 +84,12 @@ def test_dq_fixed_spectrum_and_true_cold_are_separate_tiers():
     assert spectral[-1].startswith("tests/test_dq_spectral_regression.py::")
     assert cold[-1] == runner.COLD_TESTS["dq-j1235"]
     assert "true_cold" in cold[-1]
+
+
+def test_every_released_family_has_a_cold_case():
+    assert {case.split("-")[0] for case in runner.COLD} >= {
+        "da", "daz", "db", "dab", "dz", "dq", "do", "dao", "pg1159", "d6"
+    }
 
 
 @pytest.mark.parametrize("variable", ["OPENWD_DATA", "OPENWD_DQ_DATA"])

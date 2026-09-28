@@ -7,7 +7,6 @@ Use the velocity corresponding to the whole locally stable gradient range
 fixed throughout a nonlinear phase; no residual equation or root is changed.
 This is a research experiment, not a public default.
 """
-from unittest.mock import patch
 import numpy as np
 from . import dq_augmented_convection as coupled
 from wd_spectra._ml2_auxiliary import ml2_auxiliary_from_gradient,ml2_scaled_coefficients
@@ -27,19 +26,18 @@ class MaterialScaledSystem(coupled.CoupledMaterialSystem):
         self.initial[self.n:]=velocity/self.velocity_scale
 
 
-def scaled_material(wavelengths=None):
+def scaled_material(wavelengths=None, *, system_class=None):
     if wavelengths is not None:
         raise ValueError('The release DQ protocol requires its full structure grid')
     base=coupled.AugmentedRefractiveDQMaterial
+    selected_system = MaterialScaledSystem if system_class is None else system_class
     class MaterialScaledDQ(base):
+        coupled_system_class = selected_system
         def __init__(self,*args,**kwargs):
             super().__init__(*args,**kwargs)
             from .provenance import digest
             self.experiment_metadata.update(
                 coupled_variable_units='fixed max(stellar-flux, initial, local stable-gradient velocity)',
                 coupled_scaling_source_sha256=digest(__file__))
-        def solve(self,*args,**kwargs):
-            with patch.object(coupled,'CoupledMaterialSystem',MaterialScaledSystem):
-                return super().solve(*args,**kwargs)
     return MaterialScaledDQ
 

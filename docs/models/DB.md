@@ -21,7 +21,8 @@ Use `run_model(DBConfig(...), output_directory)` to select the experimental
 dense-neutral helium treatment when indicated by the local material screen.
 It combines the tabulated bulk EOS with approximate chemical potentials and
 trace-ion chemistry, without inserting that closure into warm ionized helium.
-The `compute_db` preset does not automatically select this workflow.
+The command-line example uses the same automatic selection as `run_model`.
+The lower-level `compute_db` preset remains an explicit atomic-physics interface.
 
 Protected cold starts cover the established prescription at 10000 and 22000 K
 and the dense workflow at 5000 and 8000 K. See [tested points](../tested-temperature-ranges.md),

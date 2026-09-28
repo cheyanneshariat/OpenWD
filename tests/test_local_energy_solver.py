@@ -99,7 +99,7 @@ def test_public_run_rejects_continuation_before_any_physics_work(
         raise AssertionError("must reject before screening")
 
     monkeypatch.setattr(automatic, "select_physics", forbidden)
-    with pytest.raises(ValueError, match="requires a cold start"):
+    with pytest.raises(TypeError, match="initial_checkpoint"):
         automatic.run_model(
             DBConfig(), tmp_path / "run", initial_checkpoint="previous.npz"
         )

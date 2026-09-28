@@ -1222,7 +1222,10 @@ def test_short_radiative_equilibrium_relaxation_preserves_hydrostatic_balance():
         atmosphere.gravity * atmosphere.column_mass,
         rtol=2e-14,
     )
-    assert atmosphere.metadata["radiative_equilibrium_iterations"] == 2
+    segments = atmosphere.metadata["nonlinear_solver_segments"]
+    assert segments
+    assert all(len(segment["iteration_history"]) <= 2 for segment in segments)
+    assert atmosphere.metadata["radiative_equilibrium_converged"] == atmosphere.metadata["equilibrium_certificate"]["verified"]
 
 
 def test_adaptive_newton_converges_cool_convective_flux_control():
@@ -1358,7 +1361,8 @@ def test_hydrogen_relaxation_callback_receives_updated_atmospheres():
         iteration_callback=callback,
     )
 
-    assert [record[0] for record in records] == [1, 2]
+    assert [record[0] for record in records] == list(range(1, len(records) + 1))
+    assert len(records) >= 2
     for _, atmosphere, status in records:
         assert atmosphere.effective_temperature == 12_000.0
         assert atmosphere.logg == 8.0
@@ -1380,7 +1384,7 @@ def test_hydrogen_relaxation_callback_receives_updated_atmospheres():
 def test_hydrogen_relaxation_uses_coupled_total_flux_ml2_solver(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    from wd_spectra import convection
+    from wd_spectra import adaptive_structure as convection
 
     original = (
         convection.ml2_temperature_gradient_for_total_flux_from_thermodynamics
@@ -1411,10 +1415,8 @@ def test_hydrogen_relaxation_uses_coupled_total_flux_ml2_solver(
         n_angle=1,
     )
 
-    assert calls == 1
-    assert atmosphere.metadata["convective_transport_solver"] == (
-        "coupled-radiative-plus-ML2-total-flux"
-    )
+    assert calls > 0
+    assert atmosphere.metadata["structure_solver"] == "adaptive-trust-region-newton"
     assert np.isfinite(atmosphere.metadata["maximum_total_flux_residual"])
 
 

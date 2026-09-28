@@ -67,14 +67,9 @@ def refined_proposals(history=None, system_class=ProbeReuseSystem):
     original_solver = coupled.adaptive.solve_trust_region_newton
     controller = RefinedController(history)
 
-    class RefinedProbeSystem(system_class):
-        def __init__(self, first, evaluate, material):
-            self.refined_material = material
-            super().__init__(first, evaluate, material)
-
     def solve(initial, evaluate, **settings):
         system = getattr(evaluate, '__self__', None)
-        if isinstance(system, RefinedProbeSystem):
+        if isinstance(system, system_class):
             settings['iteration_correction'] = lambda state, ev: controller.proposal(system, state, ev)
             if getattr(system, 'native_trust_geometry', False):
                 measure = getattr(system, 'trust_step_size', None)
@@ -84,13 +79,17 @@ def refined_proposals(history=None, system_class=ProbeReuseSystem):
                 )
         return original_solver(initial, evaluate, **settings)
 
-    with patch.object(current, 'CurrentNormSystem', RefinedProbeSystem), \
-            patch.object(coupled.adaptive, 'solve_trust_region_newton', solve):
+    with patch.object(coupled.adaptive, 'solve_trust_region_newton', solve):
         yield
 
 
 def refined_material(wavelengths, system_class=ProbeReuseSystem):
-    class RefinedDQ(current.current_norm_material(wavelengths)):
+    class RefinedProbeSystem(system_class):
+        def __init__(self, first, evaluate, material):
+            self.refined_material = material
+            super().__init__(first, evaluate, material)
+
+    class RefinedDQ(current.current_norm_material(wavelengths, system_class=RefinedProbeSystem)):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.refined_history = ConvectionHistory()
@@ -103,7 +102,7 @@ def refined_material(wavelengths, system_class=ProbeReuseSystem):
                 refined_proposal_acceptance='independent between-Newton update; actual coupled and physical merit; original gates')
 
         def solve(self, *args, **kwargs):
-            with refined_proposals(self.refined_history, system_class):
+            with refined_proposals(self.refined_history, RefinedProbeSystem):
                 return super().solve(*args, **kwargs)
     return RefinedDQ
 

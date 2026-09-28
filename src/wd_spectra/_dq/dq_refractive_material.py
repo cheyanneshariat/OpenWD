@@ -404,7 +404,3 @@ class RefractiveDQMaterial(BoundedDirectEnergyDQMaterial):
         return Spectrum(wave,flux,dict(refraction=self.refraction_enabled,
             transfer_discretization='conservative-invariant-ray-mass-cells',opacity_scale=1.,
             independent_radiation_scaled_source_error=closure,maximum_cell_conservation_error=conservation))
-
-
-class StraightRayControlDQMaterial(RefractiveDQMaterial):
-    refraction_enabled=False

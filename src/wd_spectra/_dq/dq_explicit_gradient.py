@@ -185,9 +185,9 @@ class ExplicitGradientSystem(ProbeReuseSystem):
                 auxiliary-p['convective_flux_interface']))/self.target)})
 
 
-def gradient_material(wavelengths):
+def gradient_material(wavelengths, *, system_class=ExplicitGradientSystem):
     from .dq_refined_convection_cold import refined_material
-    class GradientDQ(refined_material(wavelengths, ExplicitGradientSystem)):
+    class GradientDQ(refined_material(wavelengths, system_class)):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             from .provenance import digest

@@ -8,9 +8,10 @@ from pathlib import Path
 
 import numpy as np
 
-from .common import ModelData, ModelResult, load_atmosphere_checkpoint, save_model_result
-from .d6 import D6Config, compute_d6
-from .pg1159 import PG1159Config, compute_pg1159
+from .common import ModelData, load_atmosphere_checkpoint, save_model_result
+from .automatic import run_model
+from .d6 import D6Config
+from .pg1159 import PG1159Config
 from .stellar import (
     DAConfig,
     DABConfig,
@@ -31,21 +32,21 @@ def _assignment(value: str) -> tuple[str, float]:
         raise argparse.ArgumentTypeError("expected Element=value") from exc
 
 
-def _quicklook(result: ModelResult, path: Path) -> None:
+def _quicklook(spectrum, config, spectral_type: str, path: Path) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    wavelength = result.spectrum.wavelength_angstrom
-    flux = result.spectrum.surface_flux_lambda
+    wavelength = spectrum.wavelength_angstrom
+    flux = spectrum.surface_flux_lambda
     figure, axes = plt.subplots(2, 1, figsize=(11, 7), constrained_layout=True)
     axes[0].loglog(wavelength, wavelength * flux, color="#d55e00", lw=0.9)
     axes[0].set_ylabel(r"$\lambda F_\lambda$")
     axes[0].set_title(
-        f"{result.spectral_type}: "
-        f"Teff={result.atmosphere.effective_temperature:.0f} K, "
-        f"log g={result.atmosphere.logg:.2f}"
+        f"{spectral_type}: "
+        f"Teff={config.effective_temperature:.0f} K, "
+        f"log g={config.logg:.2f}"
     )
     optical = (wavelength >= 3400.0) & (wavelength <= 7500.0)
     if np.any(optical):
@@ -79,7 +80,12 @@ def one_shot_main(spectral_type: str) -> None:
     parser.add_argument("--wavelength-min", type=float)
     parser.add_argument("--wavelength-max", type=float)
     parser.add_argument("--wavelength-step", type=float)
-    parser.add_argument("--restart-atmosphere", type=Path)
+    parser.add_argument("--synthesize-atmosphere", "--restart-atmosphere", type=Path,
+                        dest="restart_atmosphere",
+                        help="diagnostic spectrum on a fixed atmosphere; does not resume a solve")
+    parser.add_argument("--research-data", type=Path,
+                        help="directory containing the qualified molecular DAB tables")
+    parser.add_argument("--require-convergence", action="store_true")
     if kind in {"DA", "DAB", "DZ"}:
         parser.add_argument("--lyman-profiles", choices=("allard", "stark"),
                             default=(DZConfig().lyman_profile_source
@@ -152,11 +158,12 @@ def one_shot_main(spectral_type: str) -> None:
                 flush=True,
             )
 
-        result = compute_pg1159(
-            config, wavelength, data=data, iteration_callback=progress
+        run = run_model(
+            config, args.output, wavelength=wavelength, data=data,
+            iteration_callback=progress, require_convergence=args.require_convergence,
         )
-        directory = save_model_result(result, args.output)
-        _quicklook(result, directory / "spectrum.png")
+        directory = run.output_directory
+        _quicklook(run.spectrum, config, kind, directory / "spectrum.png")
         print(f"Wrote {directory}")
         return
     if kind == "D6":
@@ -179,16 +186,18 @@ def one_shot_main(spectral_type: str) -> None:
                 flush=True,
             )
 
-        result = compute_d6(config, wavelength, data=data, iteration_callback=d6_progress)
-        directory = save_model_result(result, args.output)
-        _quicklook(result, directory / "spectrum.png")
+        run = run_model(config, args.output, wavelength=wavelength, data=data,
+                        iteration_callback=d6_progress, require_convergence=args.require_convergence)
+        directory = run.output_directory
+        spectrum = run.spectrum
+        _quicklook(spectrum, config, kind, directory / "spectrum.png")
         if args.compare_hollands2025:
             import json
 
             from ..validation.hollands_d6 import hollands2025_scores
 
             scores = hollands2025_scores(
-                result.spectrum.wavelength_angstrom, result.spectrum.surface_flux_lambda
+                spectrum.wavelength_angstrom, spectrum.surface_flux_lambda
             )
             (directory / "hollands2025_scores.json").write_text(
                 json.dumps(scores, indent=2) + "\n", encoding="utf-8"
@@ -242,6 +251,17 @@ def one_shot_main(spectral_type: str) -> None:
         composition = "helium"
         compute = compute_dz
 
+    if args.restart_atmosphere is None:
+        run = run_model(config, args.output, data=data, wavelength=wavelength,
+                        research_data=args.research_data,
+                        require_convergence=args.require_convergence)
+        _quicklook(run.spectrum, config, kind, run.output_directory / "spectrum.png")
+        print(f"Wrote {run.output_directory}")
+        return
+    if args.require_convergence:
+        parser.error("--require-convergence applies to cold runs, not diagnostic fixed synthesis")
+    if args.output.exists():
+        parser.error("choose a new output directory; existing results are never overwritten")
     atmosphere = None
     if args.restart_atmosphere is not None:
         checkpoint_kwargs = {}
@@ -272,5 +292,5 @@ def one_shot_main(spectral_type: str) -> None:
         relax_atmosphere=atmosphere is None,
     )
     directory = save_model_result(result, args.output)
-    _quicklook(result, directory / "spectrum.png")
+    _quicklook(result.spectrum, config, kind, directory / "spectrum.png")
     print(f"Wrote {directory}")

@@ -1,8 +1,8 @@
 # Explicit cool-model workflows
 
-This source-checkout toolkit preserves the successful cool DB/DAB work
-without replacing the established DA/DB/DAB/DZ configurations. It imports
-`wd_spectra` from the same repository, not a duplicate solver tree. The
+The cool DB/DAB implementations are packaged in `wd_spectra._cool`.
+This directory retains component tests and compatibility command entry points.
+`run_model` and the normal model CLI select the packaged recipes automatically. The
 qualified recipes below are experimental physical models with numerical
 validation at discrete points; see [tested temperatures](../../docs/tested-temperature-ranges.md).
 
@@ -40,12 +40,13 @@ DAB additionally requires these exact, unmodified external tables:
 | `H2-He_2011.cia` (~140 MiB) | [HITRAN CIA download page](https://hitran.org/cia/), select this filename | `4f0eb9cd69a1c383f53a1431495bae0c01a30a41cc1b8433c2d726763ff45431` |
 | `1H2__RACPPK.states.bz2` | [ExoMol RACPPK states](https://exomol.com/db/H2/1H2/RACPPK/1H2__RACPPK.states.bz2) | `276f5a36d094e7e1417c44f11c1d173417e92629c5f747b6a862bcce5c374a81` |
 
-Place them in `.cache/molecular-opacity` in this repository, or set
-`OPENWD_RESEARCH_DATA` to the directory containing those two files. No data
+Set `OPENWD_RESEARCH_DATA` to the directory containing those two files,
+or supply `research_data=...` to `run_model`. The default lookup is the
+selected `ModelData.cache / "molecular-opacity"` directory. No data
 are searched for in an adjacent checkout. Verify before running:
 
 ```sh
-python research/cool_models/check_data.py
+python -m wd_spectra._cool.check_data
 ```
 
 The external tables are not redistributed here. Follow HITRAN's citation

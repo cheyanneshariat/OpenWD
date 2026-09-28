@@ -124,7 +124,7 @@ def test_automatic_daz_is_cold_and_retains_unqualified_outputs(
 
 
 def test_automatic_daz_rejects_checkpoint(tmp_path):
-    with pytest.raises(ValueError, match="cold start"):
+    with pytest.raises(TypeError, match="initial_checkpoint"):
         run_model(DAZConfig(), tmp_path / "model", initial_checkpoint="old.npz")
 
 

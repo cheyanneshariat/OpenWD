@@ -1,7 +1,6 @@
 """Cold-start homogeneous PG 1159 models with the shared nonlinear solver."""
 from __future__ import annotations
 from dataclasses import dataclass, field, replace
-from pathlib import Path
 from typing import Mapping
 import hashlib
 import numpy as np
@@ -133,10 +132,8 @@ def compute_pg1159(
     wavelength=None,
     *,
     data=None,
-    initial_atmosphere=None,
     iteration_callback=None,
     output=None,
-    fresh=True
 ):
     """Build a fresh He/C/O atmosphere; return the common ModelResult.
 
@@ -146,8 +143,6 @@ def compute_pg1159(
     """
     validate_config(config)
     wave = validate_wavelength(wavelength)
-    if initial_atmosphere is not None or not fresh:
-        raise ValueError("PG1159 public models require a cold start")
     data = ModelData.default() if data is None else data
     files = required_atomic_files(data, config.oxygen_atom)
     missing = [str(p) for p in files if not p.is_file()]
@@ -386,14 +381,3 @@ def compute_pg1159(
 
         save_model_result(value, output)
     return value
-
-
-@dataclass(frozen=True)
-class PG1159Artifacts:
-    """Legacy artifact record, retained for reading old development output."""
-
-    output_directory: Path
-    spectrum: Path
-    atmosphere: Path
-    population_checkpoint: Path
-    provenance: Mapping[str, object]

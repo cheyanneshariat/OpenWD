@@ -115,8 +115,7 @@ def _load_result(directory, config, data):
 
 
 def compute_dq(config=DQConfig(), wavelength=None, *, data=None,
-               output_directory=None, initial_atmosphere=None,
-               relax_atmosphere=True, iteration_callback=None):
+               output_directory=None):
     """Return a qualified cold atmosphere and unscaled surface-flux spectrum.
 
     This can take hours. The worker prints progress and retains checkpoints
@@ -126,10 +125,6 @@ def compute_dq(config=DQConfig(), wavelength=None, *, data=None,
     Failed qualification raises; exploratory spectra are not returned.
     """
     validate_config(config)
-    if initial_atmosphere is not None or not relax_atmosphere:
-        raise ValueError('Public DQ requires a cold start; saved-state synthesis is not a public mode')
-    if iteration_callback is not None:
-        raise ValueError('DQ worker reports progress to stdout and progress.json; callbacks are not supported')
     wave = None if wavelength is None else validate_wavelength(wavelength)
     data = ModelData.default() if data is None else data
     directory = (Path(tempfile.mkdtemp(prefix='openwd-dq-'))/'run'

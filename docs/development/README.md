@@ -159,9 +159,40 @@ Adaptive solvers must preserve the structured fields documented in
 diagnostics, not by increasing iteration limits or accepting a surface-flux
 ratio in place of all-depth convergence.
 
-The explicit cool-model workflow source and component tests live in
-`research/cool_models`, importing this same `src/wd_spectra` tree. Local
-compatibility symlinks may preserve historical outer-workspace script names;
-do not keep separate editable implementations. Document tested compositions,
+The cool-model runtime lives in `src/wd_spectra/_cool` and is included in wheels.
+Component tests and historical command entry points live in `research/cool_models`.
+The entry points delegate to the installed implementation. Document tested compositions,
 temperatures, initialization and physical limitations before claiming a new
 range. Research comparison flags are not regression-qualified defaults.
+
+## Release simplification and compatibility
+
+The supported LTE structure solver is now `adaptive-newton`, including at
+low-level atmosphere entry points. The former `lambda` implementation was
+removed together with its unused damping and convergence-count controls.
+Existing explicit `structure_solver="adaptive-newton"` and config
+`atmosphere_solver="adaptive-newton"` arguments remain accepted for saved
+configuration compatibility. They no longer select between algorithms.
+
+Normal one-shot CLI calculations delegate to `run_model`, including cool
+DB/DAB physics selection. Use `--synthesize-atmosphere` for a diagnostic
+fixed-state spectrum; the old `--restart-atmosphere` spelling is an alias
+and never resumes an atmosphere solve. Both modes refuse existing output
+directories. `run_model` accepts a final `wavelength` grid and an
+`iteration_callback` for in-process models. Cool workers retain their
+qualified output grids and stdout progress.
+
+Unsupported continuation arguments were removed from `run_model`,
+`compute_dq`, and `compute_pg1159`. Scientific-resolution controls and
+low-level diagnostic physics remain available. `quality="quick"` is a
+two-iteration smoke-test budget, not a convergence or accuracy guarantee.
+DQ still accepts the single `quality="standard"` value for serialized
+configuration and notebook compatibility.
+
+Checkpoint request identities now include Python/native code and table
+contents. Older path-only identities become unverified warm starts;
+fixed-state synthesis cannot carry their equilibrium claim forward.
+
+The full validation plan includes cold DZ, DO, DAO, PG 1159, and D6 cases.
+PG 1159 is checked against its declared spectrum-qualification profile;
+it is not promoted to full equilibrium certification.
