@@ -18,18 +18,19 @@ low-frequency side, as in Landi Degl'Innocenti & Landolfi (2004).
 
 Two atomic regimes share this representation.
 
-* ``B <= 1 MG`` everywhere on the visible disk: the complete zero-field Balmer
-  opacity (Tremblay--Bergeron Stark profiles, neutral broadening, HM/Q-MHD
-  populations) is translated in frequency by the normal-triplet displacement
-  ``e B / (4 pi m_e c)``.  ``B = 0`` is exactly the DA opacity.
-* stronger fields: Halpha--H12 components, their wavelengths, relative
-  strengths and field-dependent total strength come from the public
-  Schimeczek--Wunner H2db calculation, with field-dependent lower-substate
-  Boltzmann factors.  Each component carries the zero-field unified profile of
-  its parent line (no general simultaneous Stark--Zeeman theory is
-  available).  H13 and higher are omitted: already at ~1 MG their l-mixed,
-  field-dominated upper levels no longer form discrete zero-field lines, and
-  H2db has no data for them.  The dissolved-level pseudo-continuum is kept.
+* ``B <= 1 MG`` everywhere on the visible disk: Halpha--H22 are translated
+  in frequency by the normal-triplet displacement ``e B / (4 pi m_e c)``.
+* Stronger fields: Halpha--H12 component wavelengths and Boltzmann-weighted
+  strengths come from the public Schimeczek--Wunner H2db calculation. H13+
+  are omitted because the database has no matching transitions.
+
+The low-level default retains the unified zero-field DA profiles and H2db
+field-dependent total strengths; its zero-field limit is the DA opacity.
+The public DAH default explicitly selects frequency-normalized Kurucz/Griem
+profiles and normalizes the complete component opacity (including stimulated
+emission) to the parent-line strength before ray-angle weighting. Both
+choices translate zero-field profiles rather than solving a simultaneous
+Stark--Zeeman problem.
 
 The emergent flux is a projected-area sum of specific intensities over
 surface cells, each with its own field modulus, field--ray angle and limb
@@ -415,6 +416,7 @@ def h2db_balmer_manifolds(
     broadening: BalmerBroadening = BalmerBroadening(),
     maximum_upper_level: int = MAXIMUM_H2DB_BALMER_UPPER_LEVEL,
     dispersion: bool = False,
+    normalize_line_strength: bool = False,
 ) -> PolarizedOpacity | tuple[PolarizedOpacity, PolarizedOpacity]:
     """Return H2db Halpha--H12 manifolds at one local field.
 
@@ -424,12 +426,14 @@ def h2db_balmer_manifolds(
     field, and ``phi_n`` the zero-field line opacity translated in frequency
     with stimulated emission evaluated at the component frequency.
     The isotropic mean is therefore the zero-field line opacity as
-    ``B -> 0``.
+    ``B -> 0``. With ``normalize_line_strength=True``, the complete component
+    weights (including stimulated emission) sum to the zero-field line
+    strength at each depth before ray-angle factors are applied.
     """
 
     wavelength = _validate_grid(wavelength_angstrom)
     field = _validate_field(field_strength_megagauss)
-    if not 0 < maximum_upper_level <= MAXIMUM_H2DB_BALMER_UPPER_LEVEL:
+    if not 3 <= maximum_upper_level <= MAXIMUM_H2DB_BALMER_UPPER_LEVEL:
         raise ValueError("maximum_upper_level must lie in 3..12")
     if templates is None:
         templates = balmer_line_templates(
@@ -448,13 +452,22 @@ def h2db_balmer_manifolds(
         )
         rest_frequency = LIGHT_SPEED / (line.wavelength_vacuum_angstrom * 1.0e-8)
         template = templates[level]
+        strength_scale = components.line_strength_scale
+        if normalize_line_strength:
+            stimulated = _stimulated_emission_ratio(
+                atmosphere.temperature[np.newaxis, :], rest_frequency,
+                LIGHT_SPEED / (components.wavelength_angstrom[:, np.newaxis] * 1.0e-8),
+            )
+            strength_scale = 1.0 / np.sum(
+                components.normalized_strength * stimulated, axis=0
+            )
         for index, (component_wavelength, delta_m) in enumerate(
             zip(components.wavelength_angstrom, components.delta_m)
         ):
             component_frequency = LIGHT_SPEED / (component_wavelength * 1.0e-8)
             shift = component_frequency - rest_frequency
             weight = 3.0 * (
-                components.normalized_strength[index] * components.line_strength_scale
+                components.normalized_strength[index] * strength_scale
                 * _stimulated_emission_ratio(
                     atmosphere.temperature, rest_frequency, component_frequency
                 )
@@ -840,6 +853,8 @@ class MagneticPhysics:
     transitions: H2dbTransitionDatabase | None
     energies: H2dbEnergyDatabase | None
     broadening: BalmerBroadening = BalmerBroadening()
+    balmer_profile: Literal["unified", "kurucz-griem"] = "unified"
+    normalize_balmer_strength: bool = False
     include_rwa_photoionization: bool = True
     include_cyclotron_absorption: bool = False
     include_magnetic_eos: bool = True
@@ -871,10 +886,18 @@ def _line_manifolds(
 ) -> tuple[PolarizedOpacity, PolarizedOpacity | None]:
     """Line manifolds (and optional dispersion) from cached line templates."""
 
-    key = (regime, dispersion)
+    key = (regime, dispersion, physics.balmer_profile)
     templates = cache.get(key)
     if templates is None:
-        templates = balmer_line_templates(
+        if physics.balmer_profile == "kurucz-griem":
+            from .kurucz_griem import kurucz_griem_templates
+
+            template_factory = kurucz_griem_templates
+        elif physics.balmer_profile == "unified":
+            template_factory = balmer_line_templates
+        else:
+            raise ValueError("balmer_profile must be 'unified' or 'kurucz-griem'")
+        templates = template_factory(
             atmosphere,
             broadening=physics.broadening,
             maximum_upper_level=22 if regime == "linear-zeeman" else MAXIMUM_H2DB_BALMER_UPPER_LEVEL,
@@ -890,6 +913,7 @@ def _line_manifolds(
             raise ValueError("fields above 1 MG require the H2db transition database")
         result = h2db_balmer_manifolds(
             atmosphere, wavelength, field, physics.transitions,
+            normalize_line_strength=physics.normalize_balmer_strength,
             templates=templates, dispersion=dispersion,  # type: ignore[arg-type]
         )
     return result if dispersion else (result, None)  # type: ignore[return-value]
@@ -1171,8 +1195,12 @@ def synthesize_magnetic_hydrogen_spectrum(
                 else "equilibrium of the supplied atmosphere"
             ),
             "combined_stark_zeeman": (
-                "zero-field Tremblay-Bergeron profile translated to each component"
+                "frequency-normalized Kurucz/Griem profile translated to each component"
+                if physics.balmer_profile == "kurucz-griem"
+                else "zero-field Tremblay-Bergeron profile translated to each component"
             ),
+            "balmer_profile": physics.balmer_profile,
+            "normalize_balmer_strength": physics.normalize_balmer_strength,
         },
     )
 

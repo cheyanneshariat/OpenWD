@@ -141,14 +141,22 @@ installed with OpenWD.
 
 ## DAH
 
-[DAH models](models/DAH.md) are LTE pure-hydrogen atmospheres with one
-structure at the disk-mean field. Above 1 MG every H2db component carries
-the zero-field Stark profile of its parent line; at hundreds of MG this
-smears the stationary components and leaves a 9–12% blue excess for the hot
-high-field stars GH Leo and J0732+3646. Magnetic Lyman/Paschen lines,
-decentered atoms, molecules in the magnetic EOS and polarimetric (Q, U, V)
-output are not available, and cyclotron absorption is an explicit option.
-The validation table in the guide gives the fixed-parameter scores.
+[DAH models](models/DAH.md) default to normalized Kurucz/Griem Balmer
+profiles and scalar magnetic transfer on a nonmagnetic DA structure.
+The equilibrium certificate applies to that underlying structure; magnetic
+opacities do not feed back on its temperature profile. The eight fixed-parameter
+paper comparisons span dipole polar fields from 6.13 to 437.1 MG, but neither
+those examples nor the input bounds establish a validated parameter grid.
+
+The historical Stark approximation has no separate Doppler convolution or
+neutral self broadening, and translating a zero-field profile is not a
+simultaneous Stark–Zeeman calculation. Magnetic Lyman/Paschen/Brackett data,
+decentered atoms, strong-field molecular chemistry and disk-integrated Q/U/V
+are absent. The earlier mean-field magnetic structure, magnetic EOS, RWA
+continuum, full IQUV transfer and cyclotron opacity remain explicit options.
+The [DAH guide](models/DAH.md) separates these options from the paper default
+and explains why smooth continuum corrections belong to observational
+comparisons rather than the physical prediction.
 
 ## PG 1159
 

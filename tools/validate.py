@@ -23,7 +23,9 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
-SPECTRA = (
+DAH_PAPER = ("j1007+1237", "j1034+0327", "j1154+0117", "j2149-0728",
+             "j1254+5612", "j1018+0111", "j1351+5419", "j2247+1456")
+SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
     "da-3000",
     "da-4000",
     "da-5000",
@@ -40,6 +42,9 @@ SPECTRA = (
 )
 CANARY = "tests/test_protected_model_canaries.py::"
 COLD_TESTS = {
+    "da-radiative-g76-48": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start",
+    **{f"dah-{key}": f"tests/test_dah_paper.py::test_dah_public_default_cold_start[{key}]"
+       for key in ("j1007+1237", "j1254+5612")},
     "do-50000": "tests/test_hot_cold_canary.py::test_hot_public_model_converges_from_cold[do-50000-standard]",
     "dao-60000": "tests/test_hot_cold_canary.py::test_hot_public_model_converges_from_cold[dao-60000-standard]",
     **{
@@ -87,7 +92,9 @@ def commands(tier, cases=()):
         raise ValueError(f"unknown {tier} cases: {sorted(set(cases) - set(available))}")
     tasks = {}
     for case in cases or available:
-        if tier == "spectra" and case == "dq-j1235":
+        if tier == "spectra" and case.startswith("dah-"):
+            tasks[case] = pytest + [f"tests/test_dah_paper.py::test_public_default_reproduces_frozen_paper_spectrum[{case[4:]}]"]
+        elif tier == "spectra" and case == "dq-j1235":
             tasks[case] = pytest + [
                 "tests/test_dq_spectral_regression.py::test_refractive_spectrum_retains_j1235_absolute_flux"
             ]
@@ -164,6 +171,8 @@ def numerical_identity(root=ROOT):
         "tests/test_daz_regressions.py",
         "tests/test_dq_spectral_regression.py",
         "tests/test_dq_release.py",
+        "tests/test_dah_paper.py",
+        "tests/test_radiative_da_convergence.py",
         "tests/conftest.py",
     ):
         if (root / name).is_file():

@@ -330,6 +330,8 @@ def test_crossing_dipole_uses_same_structure_and_synthesis_regime(monkeypatch, a
 
     config = DAHConfig(
         field_geometry="dipole", magnetic_field_megagauss=1.1,
+        atmosphere_structure="mean-field", balmer_profile="unified",
+        normalize_balmer_strength=False, include_rwa_photoionization=True,
         include_cyclotron_absorption=False, include_centered_motion=False,
     )
     cells = dah.dah_surface_cells(config)
@@ -451,6 +453,8 @@ def test_centered_motion_switch_reaches_absorption_and_dispersion(monkeypatch, a
     compute_dah(
         DAHConfig(magnetic_field_megagauss=100., field_angle_deg=40.,
                   include_centered_motion=False, include_magnetic_eos=False,
+                  include_rwa_photoionization=True, polarized_transfer="full-stokes-iquv",
+                  balmer_profile="unified",
                   include_cyclotron_absorption=False),
         wave, initial_atmosphere=atmosphere, relax_atmosphere=False,
     )
@@ -486,7 +490,8 @@ def test_fixed_checkpoint_restores_mean_field_eos_before_stark_templates(
     config = DAHConfig(
         effective_temperature=atmosphere.effective_temperature, logg=atmosphere.logg,
         magnetic_field_megagauss=111.49, field_geometry="dipole",
-        include_centered_motion=centered_motion,
+        include_centered_motion=centered_motion, include_magnetic_eos=True,
+        atmosphere_structure="mean-field", balmer_profile="unified",
     )
     mean_field = dah.structure_field_megagauss(dah.dah_surface_cells(config))
     expected = atmosphere_with_magnetic_hydrogen_eos(
@@ -535,7 +540,8 @@ def test_strong_field_restart_honors_requested_depth_resolution(monkeypatch, atm
 
     monkeypatch.setattr(dah, "radiative_equilibrium_hydrogen_atmosphere", structure)
     config = DAHConfig(effective_temperature=atmosphere.effective_temperature,
-                       logg=atmosphere.logg, magnetic_field_megagauss=100., quality="production")
+                       logg=atmosphere.logg, magnetic_field_megagauss=100., quality="production",
+                       atmosphere_structure="mean-field")
     with pytest.raises(CapturedRestart):
         compute_dah(config, np.array([4000., 5000.]), initial_atmosphere=atmosphere)
 
@@ -543,7 +549,7 @@ def test_strong_field_restart_honors_requested_depth_resolution(monkeypatch, atm
 def test_refined_restart_still_rejects_mismatched_stellar_parameters(atmosphere):
     with pytest.raises(ValueError, match="must match effective temperature"):
         compute_dah(DAHConfig(effective_temperature=16000., magnetic_field_megagauss=100.,
-                              quality="production"), np.array([4000., 5000.]),
+                              quality="production", atmosphere_structure="mean-field"), np.array([4000., 5000.]),
                     initial_atmosphere=atmosphere)
 
 

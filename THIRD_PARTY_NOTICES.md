@@ -99,6 +99,19 @@ without modification (transition energies and dipole strengths stored as
 single precision). `tools/build_h2db_subset.py` rebuilds it from the public
 archive. Cite Schimeczek & Wunner when using DAH models.
 
+## DAH Kurucz/Griem profile prescription
+
+`src/wd_spectra/kurucz_griem.py` implements the equations and historical
+constants of Kurucz (1970), SAO Special Report 309, section 5.14 and the
+`STARK` listing on printed page 243, based on Griem's Stark theory.
+The original approximation is normalized numerically in frequency and
+combined with OpenWD's full oscillator strengths and occupation factors.
+It is not the later HPROF4 routine or the unpublished Jordan/Moss code.
+Cite [Kurucz (1970)](https://articles.adsabs.harvard.edu/pdf/1970SAOSR.309.....K)
+and [Moss et al. (2024)](https://doi.org/10.1093/mnras/stad3825) when using
+this prescription. The bundled paper controls in `tests/data/dah_paper`
+are OpenWD predictions, with provenance recorded in their manifest.
+
 ## DAH observed validation spectra
 
 `src/wd_spectra/data/validation/dah/` holds resampled copies of public
@@ -108,7 +121,11 @@ Dwarf Database, and model curves of Hardy, Dufour & Jordan (2023, MNRAS 520,
 6111) digitized from their CDS figures (regression targets derived from the
 published figures, not the authors' numerical models). Survey spectra of the
 Hardy targets are de-reddened with MWDD E(B-V). Cite the original surveys and
-papers when using them.
+papers when using them. The weak-field GD 9 and G 76−48 controls come from
+public ESO SPY/UVES spectra. The documentation's eight-panel figures also
+include SDSS/BOSS J1007+1237 (plate 5328, MJD 55982, fiber 66). The unscaled
+and smoothly rescaled figure variants are labelled separately in the guide;
+the smooth correction is a model-derived comparison operation.
 
 ## Other scientific tables
 

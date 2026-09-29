@@ -26,6 +26,8 @@ def requires_full(paths):
                 "test_dq_release.py",
                 "test_hot_cold_canary.py",
                 "test_released_family_canaries.py",
+                "test_dah_paper.py",
+                "test_radiative_da_convergence.py",
             }
         ):
             continue

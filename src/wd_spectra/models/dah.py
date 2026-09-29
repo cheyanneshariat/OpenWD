@@ -65,6 +65,13 @@ class DAHConfig:
     the polar field of the undisplaced dipole (``dipole-polar``, as tabulated
     by Hardy et al. 2023) or the visible projected-area mean modulus.
 
+    Defaults reproduce the paper prescription: a nonmagnetic DA structure,
+    normalized Kurucz/Griem Balmer profiles and scalar magnetic transfer.
+    ``atmosphere_structure="mean-field"`` opts into the earlier coupled
+    magnetic structure experiment above 1 MG; see the DAH guide for its
+    other physics switches. The equilibrium certificate always applies to
+    the chosen structure physics, not to an independently relaxed surface map.
+
     ``mixing_length_alpha=None`` selects the automatic policy: ML2/alpha=0.7
     below 0.05 MG and a radiative atmosphere at stronger fields.
     """
@@ -79,16 +86,19 @@ class DAHConfig:
     dipole_inclination_deg: float = 60.0
     dipole_offset_radius: tuple[float, float, float] = (0.0, 0.0, 0.0)
     disk_field_bins: int | None = 21
+    atmosphere_structure: Literal["nonmagnetic", "mean-field"] = "nonmagnetic"
+    balmer_profile: Literal["kurucz-griem", "unified"] = "kurucz-griem"
+    normalize_balmer_strength: bool = True
     polarized_transfer: Literal["full-stokes-iquv", "scalar-stokes-i"] = (
-        "full-stokes-iquv"
+        "scalar-stokes-i"
     )
-    include_rwa_photoionization: bool = True
+    include_rwa_photoionization: bool = False
     # Off by default: the standard magneto-ionic treatment predicts a broad
     # cyclotron depression at 200-600 MG that J2247+1456 does not show (see
     # the DAH guide); it stays an explicit, validated-against-data option.
     include_cyclotron_absorption: bool = False
-    include_magnetic_eos: bool = True
-    include_centered_motion: bool = True
+    include_magnetic_eos: bool = False
+    include_centered_motion: bool = False
     mixing_length_alpha: float | None = None
     balmer_self_broadening_prescription: str | None = None
 
@@ -130,6 +140,12 @@ def _validate(config: DAHConfig) -> None:
         raise ValueError("DAH effective_temperature must lie in 5000--40000 K")
     if not np.isfinite(config.logg) or not 7.0 <= config.logg <= 9.5:
         raise ValueError("DAH logg must lie in 7.0--9.5")
+    if config.atmosphere_structure not in ("nonmagnetic", "mean-field"):
+        raise ValueError("atmosphere_structure must be 'nonmagnetic' or 'mean-field'")
+    if config.balmer_profile not in ("kurucz-griem", "unified"):
+        raise ValueError("balmer_profile must be 'kurucz-griem' or 'unified'")
+    if config.balmer_profile == "kurucz-griem" and config.balmer_self_broadening_prescription is not None:
+        raise ValueError("Kurucz/Griem profiles do not include neutral self broadening")
     field = float(config.magnetic_field_megagauss)
     if not np.isfinite(field) or field < 0.0:
         raise ValueError("magnetic_field_megagauss must be finite and nonnegative")
@@ -148,16 +164,17 @@ def compute_dah(
     | None = None,
     progress: Callable[[int, int], None] | None = None,
 ) -> ModelResult:
-    """Solve a DAH atmosphere and its disk-integrated optical spectrum.
+    """Compute a DA structure and its disk-integrated magnetic optical spectrum.
 
-    Where every visible field is at most 1 MG the structure is the DA
-    structure (the normal-triplet splitting redistributes, but does not
-    change, the Balmer opacity; convection follows the policy above).
-    Stronger fields relax a radiative structure at the projected-area mean
-    field with the shared adaptive Newton solver: local-field magnetic
-    Saha/HM chemistry, angle-averaged H2db Halpha--H12 opacity on a mesh that
-    resolves the displaced components, the RWA bound-free continuum and the
-    cyclotron resonance.  The spectrum is then synthesized cell by cell.
+    By default the structure is nonmagnetic, with convection suppressed above
+    0.05 MG, and the magnetic line calculation uses normalized Kurucz/Griem
+    kernels. Above 1 MG, H2db component strengths are normalized at each depth
+    including stimulated emission, before angular weighting. No observed
+    spectrum, velocity, continuum correction or fitted scale enters synthesis.
+
+    ``atmosphere_structure="mean-field"`` instead relaxes the strong-field
+    structure using the configured magnetic opacities at the projected-area
+    mean field. Both modes use the shared adaptive Newton solver.
     """
 
     _validate(config)
@@ -194,7 +211,10 @@ def compute_dah(
     self_broadening = _da_self_broadening_prescription(
         config.effective_temperature, config.balmer_self_broadening_prescription
     )
-    broadening = BalmerBroadening(self_broadening_prescription=self_broadening)
+    broadening = BalmerBroadening(
+        include_self_broadening=config.balmer_profile == "unified",
+        self_broadening_prescription=self_broadening,
+    )
     transitions = energies = None
     if strong:
         data.require(data.h2db_balmer_subset)
@@ -213,6 +233,8 @@ def compute_dah(
         transitions,
         energies,
         broadening=broadening,
+        balmer_profile=config.balmer_profile,
+        normalize_balmer_strength=config.normalize_balmer_strength,
         include_molecular_absorption=molecules,
         h2_h2_cia_table=cia,
         include_rwa_photoionization=config.include_rwa_photoionization,
@@ -227,7 +249,7 @@ def compute_dah(
     structure_description: str
     if not relax_atmosphere:
         atmosphere = fixed_synthesis_atmosphere(initial_atmosphere, request_fingerprint)  # type: ignore[arg-type]
-        if strong and config.include_magnetic_eos:
+        if strong and config.include_magnetic_eos and config.atmosphere_structure == "mean-field":
             # Generic checkpoint loading rebuilds the ordinary hydrogen EOS.
             # Restore the requested mean-field chemistry before constructing
             # the shared Stark kernels, not only the cell-local populations.
@@ -239,12 +261,13 @@ def compute_dah(
                 include_centered_motion=config.include_centered_motion,
             )
         structure_description = "caller-supplied structure (not re-relaxed)"
-    elif not strong:
+    elif config.atmosphere_structure == "nonmagnetic" or not strong:
         base = compute_da(
             DAConfig(
                 effective_temperature=config.effective_temperature,
                 logg=config.logg,
                 quality=config.quality,
+                include_molecules=molecules,
                 mixing_length_alpha=mixing_length_alpha,
                 balmer_self_broadening_prescription=self_broadening,
             ),
@@ -257,7 +280,7 @@ def compute_dah(
             base.atmosphere, request_fingerprint
         )
         structure_description = (
-            "DA structure (normal-triplet regime); "
+            "nonmagnetic DA structure; "
             + str(base.metadata["convection"])
         )
     else:
@@ -377,9 +400,19 @@ def compute_dah(
         spectrum,
         config,
         {
-            "preset": "DAH-shared-solver-v2",
+            "preset": "DAH-optical-v4",
             "atmosphere_structure": structure_description,
-            "structure_field_megagauss": structure_field,
+            "structure_field_megagauss": (
+                structure_field if config.atmosphere_structure == "mean-field" and strong else 0.0
+            ),
+            "visible_mean_field_megagauss": structure_field,
+            "equilibrium_certificate_scope": (
+                "shared mean-field magnetic structure"
+                if config.atmosphere_structure == "mean-field" and strong
+                else "nonmagnetic DA structure; magnetic spectrum is post-processed"
+            ),
+            "balmer_profile": config.balmer_profile,
+            "normalize_balmer_strength": config.normalize_balmer_strength,
             "maximum_visible_field_megagauss": maximum_field,
             "visible_field_bounds_exact": cells.field_bounds_exact,
             "visible_field_bounds_megagauss": cells.field_bounds_megagauss,
@@ -395,14 +428,16 @@ def compute_dah(
                 if config.mixing_length_alpha is None
                 else "explicit"
             ),
-            "balmer_self_broadening": self_broadening,
+            "balmer_self_broadening": (
+                self_broadening if config.balmer_profile == "unified" else "omitted"
+            ),
             "line_physics": spectrum.metadata["magnetic_line_regime"],
             "transfer": spectrum.metadata["polarized_transfer"],
             "atmosphere_convergence_status": convergence_status,
             "model_request_fingerprint": request_fingerprint,
             "limitations": (
-                "one structure at the mean field shared by all surface "
-                "cells; zero-field Stark profiles on H2db components; no "
+                "one structure shared by all surface cells; "
+                "zero-field Stark profiles on H2db components; no "
                 "magnetic Lyman/Paschen data; no moving-atom (decentered) "
                 "states; H13+ omitted above 1 MG"
             ),

@@ -10,7 +10,7 @@ from wd_spectra.models import cli
 from wd_spectra.spectrum import Spectrum
 
 
-@pytest.mark.parametrize("kind", ["DA", "DB", "DAB", "DZ", "PG1159", "D6"])
+@pytest.mark.parametrize("kind", ["DA", "DB", "DAB", "DZ", "PG1159", "D6", "DAH"])
 def test_cli_delegates_cold_requests_to_run_model(kind, tmp_path, monkeypatch):
     calls = []
     spectrum = Spectrum(np.array([4000., 5000.]), np.ones(2), {})

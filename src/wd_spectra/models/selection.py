@@ -126,10 +126,11 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
             "effective temperature and logg must be finite, with Teff positive"
         )
     if isinstance(config, DAHConfig):
-        from .dah import dah_surface_cells
+        from .dah import _validate, dah_surface_cells
         from ..magnetic import WEAK_FIELD_MAXIMUM_MEGAGAUSS
 
-        maximum = float(np.max(dah_surface_cells(config).field_strength_megagauss))
+        _validate(config)
+        maximum = dah_surface_cells(config).maximum_field_megagauss
         regime = (
             "normal Zeeman triplets"
             if maximum <= WEAK_FIELD_MAXIMUM_MEGAGAUSS
@@ -137,8 +138,10 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
         )
         return PhysicsSelection(
             "dah",
-            f"Magnetic pure-H LTE ({regime}; maximum visible field {maximum:.4g} MG) with shared trust-region solver",
-            {"maximum_visible_field_megagauss": maximum},
+            f"Magnetic pure-H LTE ({regime}; maximum visible field {maximum:.4g} MG), {config.balmer_profile} profiles on {config.atmosphere_structure} structure",
+            {"maximum_visible_field_megagauss": maximum,
+             "balmer_profile": config.balmer_profile,
+             "atmosphere_structure": config.atmosphere_structure},
             False,
             False,
         )

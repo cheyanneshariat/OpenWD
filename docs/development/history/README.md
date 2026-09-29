@@ -8,6 +8,10 @@ time of writing and may discuss settings that are not public defaults.
 Use [getting started](../../getting-started.md) for current commands and
 [tested points](../../tested-temperature-ranges.md) for current qualification.
 
+## Magnetic hydrogen models
+
+- [DAH paper prescription and release integration](dah-release-2026-09-29.md)
+
 ## Hot H/He models
 
 - [DO/DAO release integration and cold-start evidence](do-dao-release-2026-09-20.md)

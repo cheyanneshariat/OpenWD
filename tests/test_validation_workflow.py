@@ -88,7 +88,7 @@ def test_dq_fixed_spectrum_and_true_cold_are_separate_tiers():
 
 def test_every_released_family_has_a_cold_case():
     assert {case.split("-")[0] for case in runner.COLD} >= {
-        "da", "daz", "db", "dab", "dz", "dq", "do", "dao", "pg1159", "d6"
+        "da", "daz", "db", "dab", "dz", "dq", "do", "dao", "pg1159", "d6", "dah"
     }
 
 

@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        case: [do-50000, dao-60000, dz-pg1225, pg1159-pg1424, d6-j1637, da-3000, da-4000, da-5000, da-20000, db-10000, db-22000, db-22000-standard, dab-20000, dense-db-5000, dense-db-8000, molecular-dab-7500, molecular-dab-9000, molecular-dab-10000, daz-g29-38, daz-g149-28, daz-galex1931, dq-j1235]
+        case: [da-radiative-g76-48, dah-j1007+1237, dah-j1254+5612, do-50000, dao-60000, dz-pg1225, pg1159-pg1424, d6-j1637, da-3000, da-4000, da-5000, da-20000, db-10000, db-22000, db-22000-standard, dab-20000, dense-db-5000, dense-db-8000, molecular-dab-7500, molecular-dab-9000, molecular-dab-10000, daz-g29-38, daz-g149-28, daz-galex1931, dq-j1235]
     env:
       OPENWD_RESEARCH_DATA: ${{ github.workspace }}/.cache/molecular-opacity
     steps:

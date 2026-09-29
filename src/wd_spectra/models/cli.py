@@ -123,7 +123,7 @@ def one_shot_main(spectral_type: str) -> None:
                             metavar=("AX", "AY", "AZ"),
                             help="dipole offset in stellar radii, magnetic-axis frame")
         parser.add_argument("--transfer", choices=("full-stokes-iquv", "scalar-stokes-i"),
-                            default="full-stokes-iquv")
+                            default=DAHConfig().polarized_transfer)
         parser.add_argument("--compare", default=None,
                             help="score against a bundled validation target, e.g. j2149-0728")
     if kind == "PG1159":

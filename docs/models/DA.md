@@ -48,7 +48,8 @@ certificate; exhausting both attempts still returns an unconverged warning.
 The refinement and initial failure diagnostics are recorded in atmosphere
 metadata under `radiative_depth_refinement`.
 
-This path also serves weak-field DAH models whose field suppresses convection.
+This path also serves the default DAH prescription on a nonmagnetic atmosphere
+when the field suppresses convection.
 The G 76−48 regression uses 6680 K and log g = 7.96, with molecular chemistry,
 zero magnetic field in the structure calculation and convection disabled.
 
