@@ -368,6 +368,73 @@ def test_crossing_dipole_uses_same_structure_and_synthesis_regime(monkeypatch, a
     assert result.metadata["line_physics"] == "h2db"
 
 
+@pytest.mark.parametrize("polar,offset", [(0.02, 0.79), (0.05, 0.70)])
+def test_polar_caps_keep_physical_field_bounds_and_strong_area(polar, offset):
+    options = dict(inclination_deg=0., offset_vector_radius=(0., 0., offset))
+    # One bin must not erase either the continuous bound or a strong cap.
+    cells = dipole_surface_cells(polar, n_field_bins=1, **options)
+    raw = dipole_surface_cells(polar, n_field_bins=None, **options)
+    assert cells.field_bounds_exact
+    assert cells.maximum_field_megagauss == pytest.approx(polar / (1-offset)**3, rel=2e-14)
+    assert cells.maximum_field_megagauss > 1.
+    assert np.any(cells.field_strength_megagauss > 1.)
+    assert np.any(cells.field_strength_megagauss < 1.)
+    for c in [cells, raw]:
+        assert c.projected_weight.sum() == pytest.approx(1.)
+    np.testing.assert_allclose(
+        cells.projected_weight[cells.field_strength_megagauss > 1.].sum(),
+        raw.projected_weight[raw.field_strength_megagauss > 1.].sum(), rtol=1e-14,
+    )
+    np.testing.assert_allclose(cells.projected_weight @ cells.field_strength_megagauss,
+                               raw.projected_weight @ raw.field_strength_megagauss, rtol=1e-14)
+
+
+@pytest.mark.parametrize("inclination", [0., 40., 90., 130., 180.])
+@pytest.mark.parametrize("offset", [(0., 0., .7), (0., 0., -.7), (.12, -.2, .4)])
+def test_continuous_field_bounds_enclose_independent_dense_surface(inclination, offset):
+    options = dict(inclination_deg=inclination, offset_vector_radius=offset)
+    cells = dipole_surface_cells(30., n_field_bins=3, **options)
+    fine = dipole_surface_cells(30., n_mu=100, n_azimuth=200, n_field_bins=None, **options)
+    lo, hi = cells.field_bounds_megagauss
+    assert lo <= fine.field_strength_megagauss.min() * (1+1e-13)
+    assert hi >= fine.field_strength_megagauss.max() * (1-1e-13)
+    assert cells.field_bounds_exact == (offset[:2] == (0., 0.))
+
+
+@pytest.mark.parametrize("field", [.001, .01, .03])
+def test_h2db_weak_continuation_has_analytic_triplets(transitions, field):
+    from wd_spectra.opacity import BALMER_LINES
+
+    for line in BALMER_LINES[:10]:
+        result = transitions.balmer_components(line.upper_level, line.wavelength_vacuum_angstrom,
+                                                field, np.array([8000., 25000.]))
+        assert result.delta_m.tolist() == [-1, 0, 1]
+        np.testing.assert_array_equal(result.line_strength_scale, [1., 1.])
+        np.testing.assert_allclose(result.normalized_strength, 1/3, rtol=1e-14)
+        triplet = linear_zeeman_triplet(line.wavelength_vacuum_angstrom, field)
+        # H2db uses the reduced-mass line-center convention; the displacement
+        # agrees with the analytic physical-constant triplet within 0.001 A.
+        np.testing.assert_allclose(result.wavelength_angstrom,
+            [triplet.sigma_red_angstrom, triplet.pi_angstrom, triplet.sigma_blue_angstrom],
+            atol=.001, rtol=0.)
+
+
+@pytest.mark.parametrize("polar,offset", [(0.02, .79), (.05, .70)])
+def test_public_mixed_field_synthesis_stays_inside_atomic_domain(monkeypatch, atmosphere, polar, offset):
+    import wd_spectra.models.dah as dah
+
+    monkeypatch.setattr(dah, "warn_if_atmosphere_not_converged", lambda *args: "unverified")
+    config = DAHConfig(effective_temperature=atmosphere.effective_temperature, logg=atmosphere.logg,
+        magnetic_field_megagauss=polar, field_geometry="dipole", dipole_inclination_deg=0.,
+        dipole_offset_radius=(0.,0.,offset))
+    result = compute_dah(config, np.array([4000.,5000.,6000.]), initial_atmosphere=atmosphere,
+                         relax_atmosphere=False)
+    assert result.metadata["line_physics"] == "h2db"
+    assert result.metadata["maximum_visible_field_megagauss"] == pytest.approx(polar/(1-offset)**3)
+    assert np.all(np.isfinite(result.spectrum.surface_flux_lambda))
+    assert np.all(result.spectrum.surface_flux_lambda > 0.)
+
+
 def test_centered_motion_switch_reaches_absorption_and_dispersion(monkeypatch, atmosphere):
     import wd_spectra.magnetic as magnetic
     import wd_spectra.models.dah as dah

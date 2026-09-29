@@ -84,11 +84,17 @@ angle to the line of sight with `field_angle_deg`.
   displaced components and the cyclotron resonance. Convection is
   suppressed at 0.05 MG and above (Tremblay et al. 2015); weaker fields keep
   ML2/α = 0.7. One structure is shared by all surface cells. The maximum
-  visible cell field selects the atomic regime for both structure and
-  synthesis, even when the mean field is below 1 MG.
+  continuous visible-surface field bound selects the atomic regime for both
+  structure and synthesis, even when the mean field is below 1 MG. Bounds
+  are exact for axial offsets and conservative for transverse offsets;
+  `visible_field_bounds_exact` records the distinction. Compressed cell
+  means are not used as a physical maximum. In a mixed-field disk, cells
+  below the complete H2db table's floor (0.0470103 MG) use an analytic
+  normal-triplet continuation while retaining the disk's EOS/continuum policy.
 - **Transfer and geometry.** The disk is divided into surface cells, each
   with its own field modulus, field–ray angle and limb cosine: 21
-  equal-weight field bins for a dipole, and 4 limb × 3 field-direction nodes
+  equal-weight field bins for a dipole (with an additional split if a bin
+  crosses 1 MG), and 4 limb × 3 field-direction nodes
   for a uniform field. Each cell uses the local-field chemistry on the shared
   temperature–pressure structure. The coherent-scattering source is solved
   exactly for the cell's angle-averaged opacity. One ray per cell is solved
@@ -98,6 +104,12 @@ angle to the line of sight with `field_angle_deg`.
   partners of the same opacities). The flux is the projected-area sum of
   Stokes I. `polarized_transfer="scalar-stokes-i"` solves Stokes I only,
   with the ray-specific π/σ opacity.
+  The underlying dipole quadrature starts at 8 limb × 16 azimuth nodes and
+  refines with displacement to resolve small polar caps. Stark kernels are
+  still shared across the disk: their widths use the reference electron
+  density, while their amplitude follows the local n=2 population per gram.
+  This is an approximation; cool-star density differences across the disk
+  can reach several percent even below 100 MG.
 
 ## Validation
 
@@ -132,22 +144,78 @@ digitized Hardy et al. (2023) model.
 | J1351+5419 | 368.5 | 13937 | 0.037 | 0.040 | 0.051 / 0.038 | 0.050 / 0.043 | 12 |
 | J2247+1456 | 437.1 | 19000 | 0.062 | 0.049 | 0.059 / 0.048 | — | 10 |
 
-Line features (feature RMS) now match the older calculations and Hardy's
-within noise almost everywhere; the continuum (broad RMS) is best at
+Locally normalized feature RMS is close to the older calculations and Hardy's
+for many targets; this statistic removes broad wings and is not a noise-weighted
+goodness-of-fit test. The continuum (broad RMS) is best at
 40–60 MG and at J1351. The GH Leo, J0732 and J1154 continua are 8–14% too
 blue; at least for GH Leo this comes from the synthesis, not the structure
 or the published Teff (a zero-field DA spectrum on the same structure has the
-observed level), and is attributed to the zero-field Stark profiles of the
-components (Limitations). For J1154 (inclination 87°) scalar Stokes-I
+observed level). This isolates the synthesis but does not uniquely identify
+the Stark profiles as its cause (Limitations). For J1154 (inclination 87°) scalar Stokes-I
 transfer on the same structure gives 0.048/0.062: with components this
 broad, polarized transfer limits their Stokes-I depth. The old GH Leo value
 used thermally decentered atoms, which were removed as unphysical.
 
+### Literature-prescription comparison below 100 MG
+
+`research/compare_dah_literature.py` and
+[its method notes](../../research/DAH_LITERATURE.md) provide a fixed-parameter
+comparison of the documented Moss/Kurucz/Griem prescription family. Fresh
+100-depth radiative DA structures converged for J1034, J2149, and J1154;
+their continuous visible maxima are 14.82, 78.86, and 77.57 MG. On the same
+structure for each object, broad RMS changes as follows:
+
+| Object | Release synthesis | Ordinary scalar, normalized, unified profiles | Same with Kurucz/Griem profiles |
+| --- | ---: | ---: | ---: |
+| J1034+0327 | 0.0848 | 0.0577 | 0.0560 |
+| J2149−0728 | 0.0320 | 0.0542 | 0.0503 |
+| J1154+0117 | 0.0647 | 0.0344 | 0.0344 |
+
+Under a single flux scale this is not a uniformly better replacement:
+J2149's raw continuum score deteriorates, and J1034's
+locally normalized feature RMS worsens from 0.0381 to 0.0442 despite its
+improved continuum. Much of J1154's improvement occurs before replacing the
+unified profile. A separate control tests omission of lines above Hδ.
+These are fixed-structure synthesis
+diagnostics, not re-converged magnetic models or an exact reproduction of
+Moss's code. All stellar parameters are unchanged. The comparison remains
+research-only; no universal validity claim follows from a 100-MG cutoff.
+
+The raw continuum ranking is sensitive to calibration. A subsequent check
+with `research/audit_dah_flux_calibration.py`, giving every model the same
+robust quadratic multiplicative correction, reduces J2149's Kurucz broad RMS
+from 0.0503 to 0.0245, compared with 0.0277 for release synthesis. The repeat
+SDSS epoch also favors Kurucz (0.0235 versus 0.0280); held-out wavelength
+blocks retain this ranking. These are model-derived nuisance corrections,
+not an independently measured recalibration. Thus J2149's raw continuum
+score alone is not evidence against the Kurucz prescription. J1034 retains
+deeper-than-observed Kurucz cores and a worse corrected residual (0.0482
+versus 0.0267). Kurucz/Griem remains a leading comparison candidate, with
+continuum calibration and line morphology evaluated separately.
+
 For the weak-field SPY/UVES targets (mean locally normalized Hα–Hδ RMS),
 GD 9 (0.325 MG, 16700 K) gives 0.0382 with full IQUV, 0.0405 with scalar
 Stokes I on the same structure and quadrature, and 0.0477 for the old model.
-G 76-48 (0.09 MG, 6680 K) is not yet supported: the strictly radiative DA
-structure the field requires does not converge at this temperature.
+G 76-48 (0.09 MG, 6680 K, log g = 7.96) requires a finer radiative DA
+structure: the 100-layer solve stalls at its steep ionization transition,
+while a 200-layer solve passes the equilibrium certificate. Production DA
+and normal-triplet DAH now use [automatic radiative depth refinement](DA.md#radiative-atmospheres-with-convection-disabled)
+when the initial grid fails. The fixed-parameter UVES comparison still has
+Hβ and Hγ cores that are too deep; structure convergence does not establish
+accurate line broadening.
+
+The fixed-parameter research driver `research/converge_g76_magnetic.py`
+also re-solves this 200-layer atmosphere with the **0.09-MG Zeeman Balmer
+opacity inside radiative equilibrium**, rather than using the public
+weak-field DA-structure approximation. Both the Kurucz/Griem normalized
+and unified-profile versions pass fresh equilibrium certificates with
+convection off. The structure uses angle-averaged normal triplets, ordinary
+molecular hydrogen chemistry (including H⁻ and H₃⁺), and unchanged continuum
+and non-Balmer lines; the comparison spectra use scalar Stokes I. Both give
+nearly the same UVES profiles as magnetic synthesis on their matched DA
+reference, so magnetic feedback on the structure does not resolve the
+remaining line-core discrepancy. This research path does not change the
+public weak-field default.
 
 The runner writes per-target `scores.json` files and a combined
 `summary.json`. Check each model's convergence status alongside its spectral
@@ -194,15 +262,19 @@ parameters; it supplies no parameter uncertainties.
   broad, shallow wings and remove blanketing near them. This is the likely
   cause of the 9–12% blue excess of GH Leo and J0732: the same synthesis on
   a zero-field structure keeps the excess, while a zero-field DA spectrum at
-  the published parameters has the observed continuum level. Published fits use a
-  global empirical factor C = 0.1 on an Unsöld width (Jordan 1992; Vera-Rueda
-  & Rohrmann 2024), which OpenWD does not adopt. A per-component
+  the published parameters has the observed continuum level. This attribution
+  remains a hypothesis: continuum physics and the transfer prescription also
+  change the blue residuals. The empirical Unsöld-width factor C = 0.1 in
+  Vera-Rueda & Rohrmann (2024) is not a description of all published models.
+  Moss et al. (2024, section 4.2) instead specify approximate Kurucz/Griem
+  profiles, scalar transfer, nonmagnetic structures, and normalization of
+  the summed component opacity to its zero-field value. A per-component
   second-order treatment needs intra-manifold dipole elements that H2db
   does not provide.
 - Cyclotron absorption (above) is off by default pending that validation.
-- Weak-field DAHs below about 7000 K need a strictly radiative DA structure
-  (convection is suppressed), which the shared DA solver does not yet
-  converge (G 76-48).
+- Cool weak-field DAHs may require radiative depth refinement. G 76-48 at
+  6680 K is a checked point with convection disabled; this does not yet
+  qualify a whole low-temperature radiative grid.
 - There is no magnetic Lyman, Paschen or Brackett line data. These series,
   and H13+ above 1 MG, keep zero-field or no line opacity.
 - The magnetic EOS has no molecules or H⁻ in the chemistry; below ~8000 K

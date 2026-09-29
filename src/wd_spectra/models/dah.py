@@ -183,7 +183,7 @@ def compute_dah(
             f"with at least two points in {lower:g}--{upper:g} A"
         )
     cells = dah_surface_cells(config)
-    maximum_field = float(np.max(cells.field_strength_megagauss))
+    maximum_field = cells.maximum_field_megagauss
     strong = maximum_field > WEAK_FIELD_MAXIMUM_MEGAGAUSS
     structure_field = structure_field_megagauss(cells)
     mixing_length_alpha = (
@@ -381,6 +381,9 @@ def compute_dah(
             "atmosphere_structure": structure_description,
             "structure_field_megagauss": structure_field,
             "maximum_visible_field_megagauss": maximum_field,
+            "visible_field_bounds_exact": cells.field_bounds_exact,
+            "visible_field_bounds_megagauss": cells.field_bounds_megagauss,
+            "maximum_synthesis_cell_field_megagauss": float(np.max(cells.field_strength_megagauss)),
             "convection": (
                 "suppressed; radiative equilibrium"
                 if mixing_length_alpha is None

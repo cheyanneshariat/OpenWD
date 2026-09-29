@@ -37,7 +37,7 @@ ConvergenceStatus = Literal[
 
 _MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
 _MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v4"
-_MODEL_FAMILY_PHYSICS_REVISIONS = {"DAH": "dah-shared-solver-v2"}
+_MODEL_FAMILY_PHYSICS_REVISIONS = {"DAH": "dah-surface-domain-v3"}
 
 
 class AtmosphereConvergenceWarning(RuntimeWarning):

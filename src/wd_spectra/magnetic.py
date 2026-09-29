@@ -625,6 +625,53 @@ class SurfaceCells:
     field_ray_cosine: FloatArray
     ray_mu: FloatArray
     projected_weight: FloatArray
+    # Bounds on the continuous visible surface, before quadrature/compression.
+    # For a caller-supplied set of rays only their sampled range is known.
+    field_bounds_megagauss: tuple[float, float] | None = None
+    field_bounds_exact: bool = False
+
+    @property
+    def maximum_field_megagauss(self) -> float:
+        return (
+            float(np.max(self.field_strength_megagauss))
+            if self.field_bounds_megagauss is None
+            else self.field_bounds_megagauss[1]
+        )
+
+
+def _dipole_field_bounds(
+    offset: FloatArray, center: FloatArray, inclination: float,
+) -> tuple[tuple[float, float], bool]:
+    """Unit-polar-field bounds over the closed visible hemisphere.
+
+    Axial offsets have an exact one-dimensional solution: with x=cos(theta)
+    along the magnetic axis, 4 B^2=(3 x^2-8 a x+1+4 a^2)/(1+a^2-2 a x)^4.
+    Its stationary points satisfy 2 a x^2+(1-7 a^2)x+4 a^3=0.
+    Transverse offsets use rigorous distance/angular-factor bounds instead
+    of presenting a sampled maximum as a physical limit.
+    """
+
+    if offset[0] == 0.0 and offset[1] == 0.0:
+        a = float(offset[2])
+        sine, cosine = np.sin(inclination), np.cos(inclination)
+        lower = -sine if cosine >= 0.0 else -1.0
+        upper = 1.0 if cosine >= 0.0 else sine
+        roots = np.roots([2.0 * a, 1.0 - 7.0 * a * a, 4.0 * a**3]) if a else [0.0]
+        candidates = [lower, upper] + [
+            float(np.real(x)) for x in roots
+            if abs(np.imag(x)) < 1e-12 and lower <= np.real(x) <= upper
+        ]
+        x = np.asarray(candidates)
+        distance_squared = 1.0 + a * a - 2.0 * a * x
+        field = 0.5 * np.sqrt(distance_squared + 3.0 * (x - a)**2) / distance_squared**2
+        return (float(field.min()), float(field.max())), True
+    radius = float(np.linalg.norm(center))
+    transverse = float(np.linalg.norm(center[:2]))
+    maximum_dot = radius if center[2] >= 0.0 else transverse
+    minimum_dot = -radius if center[2] <= 0.0 else -transverse
+    minimum_distance = np.sqrt(1.0 + radius**2 - 2.0 * maximum_dot)
+    maximum_distance = np.sqrt(1.0 + radius**2 - 2.0 * minimum_dot)
+    return (0.5 / maximum_distance**3, 1.0 / minimum_distance**3), False
 
 
 def uniform_field_surface_cells(
@@ -664,6 +711,7 @@ def uniform_field_surface_cells(
         cosine_grid.ravel(),
         mu_grid.ravel(),
         weight.ravel() / np.sum(weight),
+        (field, field), True,
     )
 
 
@@ -673,8 +721,8 @@ def dipole_surface_cells(
     field_strength_definition: Literal["visible-mean", "dipole-polar"] = "dipole-polar",
     inclination_deg: float = 60.0,
     offset_vector_radius: tuple[float, float, float] = (0.0, 0.0, 0.0),
-    n_mu: int = 8,
-    n_azimuth: int = 16,
+    n_mu: int | None = None,
+    n_azimuth: int | None = None,
     n_field_bins: int | None = 21,
 ) -> SurfaceCells:
     """Discretize an offset dipole over the visible disk.
@@ -687,11 +735,15 @@ def dipole_surface_cells(
     instead fixes the projected-area mean modulus.
 
     The surface integral uses Gauss--Legendre ``mu`` nodes and uniform
-    azimuths.  With ``n_field_bins`` the cells are compressed into bins of
+    azimuths. Defaults start at 8 by 16 and refine as the dipole approaches
+    the surface. Explicit node counts are honored. With ``n_field_bins``
+    the cells are compressed into bins of
     equal projected weight in field modulus, each keeping its weighted mean
     field, rms field--ray cosine and mean limb cosine (a J0732 test differed
     from 128 uncompressed cells by 0.7 percent RMS).  ``None`` keeps every
-    cell.
+    cell. Compression never merges cells across the 1-MG atomic boundary.
+    Continuous field bounds are retained independently: exact for axial
+    offsets, conservative for transverse offsets.
     """
 
     field = _validate_field(field_strength_megagauss)
@@ -703,6 +755,9 @@ def dipole_surface_cells(
         raise ValueError("offset_vector_radius must be three finite values with modulus < 0.8")
     if field_strength_definition not in ("visible-mean", "dipole-polar"):
         raise ValueError("field_strength_definition must be 'visible-mean' or 'dipole-polar'")
+    distance_scale = 1.0 - float(np.linalg.norm(offset))
+    n_mu = int(np.ceil(8 / distance_scale)) if n_mu is None else n_mu
+    n_azimuth = int(np.ceil(16 / distance_scale)) if n_azimuth is None else n_azimuth
     if n_mu < 2 or n_azimuth < 4 or (n_field_bins is not None and n_field_bins < 1):
         raise ValueError("disk quadrature requires n_mu>=2, n_azimuth>=4, n_field_bins>=1")
 
@@ -719,6 +774,7 @@ def dipole_surface_cells(
     x_axis = np.asarray((np.cos(tilt), 0.0, -np.sin(tilt)))
     y_axis = np.asarray((0.0, 1.0, 0.0))
     center = offset[0] * x_axis + offset[1] * y_axis + offset[2] * axis
+    bounds, bounds_exact = _dipole_field_bounds(offset, center, tilt)
     displacement = position - center
     distance = np.linalg.norm(displacement, axis=-1)
     direction = displacement / distance[..., np.newaxis]
@@ -734,22 +790,27 @@ def dipole_surface_cells(
     weight = mu_grid * (0.5 * node_weights)[:, np.newaxis]
     weight = weight / np.sum(weight)
     if field_strength_definition == "visible-mean":
-        modulus = modulus * field / float(np.sum(weight * modulus))
+        scale = field / float(np.sum(weight * modulus))
     else:
-        modulus = modulus * field
+        scale = field
+    modulus = modulus * scale
+    bounds = (bounds[0] * scale, bounds[1] * scale)
 
     flat_field = modulus.ravel()
     flat_cosine = np.abs(cosine.ravel())
     flat_mu = mu_grid.ravel()
     flat_weight = weight.ravel()
     if n_field_bins is None:
-        return SurfaceCells(flat_field, flat_cosine, flat_mu, flat_weight)
+        return SurfaceCells(flat_field, flat_cosine, flat_mu, flat_weight, bounds, bounds_exact)
     order = np.argsort(flat_field, kind="stable")
     cumulative = np.cumsum(flat_weight[order])
     bins = np.minimum((cumulative * n_field_bins).astype(int), n_field_bins - 1)
     fields, cosines, mus, weights = [], [], [], []
-    for index in range(n_field_bins):
-        selected = order[bins == index]
+    # Preserve weak and strong regions even if a small polar cap would fit
+    # inside one equal-weight bin. The extra split adds at most one cell.
+    group = 2 * bins + (flat_field[order] > WEAK_FIELD_MAXIMUM_MEGAGAUSS)
+    for index in np.unique(group):
+        selected = order[group == index]
         if selected.size == 0:
             continue
         w = flat_weight[selected]
@@ -764,6 +825,7 @@ def dipole_surface_cells(
         np.asarray(cosines),
         np.asarray(mus),
         weights_array / np.sum(weights_array),
+        bounds, bounds_exact,
     )
 
 
@@ -879,9 +941,9 @@ def synthesize_magnetic_hydrogen_spectrum(
     RWA continuum and cyclotron resonance, an exact coherent-scattering
     source for its angle-averaged opacity, and one ray at its limb cosine and
     field--ray angle.  Zero-field Stark kernels are computed once on the
-    shared structure and rescaled by the local n=2 population per gram (the
-    local charged-particle densities that set the widths change by <0.5%
-    across a 100-MG disk).
+    shared structure and rescaled by the local n=2 population per gram.
+    Their widths retain the reference charged-particle density; local
+    density differences can reach several percent for cool magnetic stars.
     """
 
     from ._spectrum_source import solve_spectrum_source
@@ -903,7 +965,7 @@ def synthesize_magnetic_hydrogen_spectrum(
     if polarized_transfer not in ("full-stokes-iquv", "scalar-stokes-i"):
         raise ValueError("polarized_transfer must be 'full-stokes-iquv' or 'scalar-stokes-i'")
     polarized = polarized_transfer == "full-stokes-iquv"
-    regime = physics.regime(float(np.max(cells.field_strength_megagauss)))
+    regime = physics.regime(cells.maximum_field_megagauss)
     cache: dict[str, object] = {}
     flux = np.zeros(wavelength.size)
     # Cells sharing a field (uniform geometry) share every local opacity.

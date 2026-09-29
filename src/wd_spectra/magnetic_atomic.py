@@ -860,8 +860,13 @@ class H2dbTransitionDatabase:
         H2db tabulates dipole strengths rather than the exact aggregate
         field-free oscillator-strength convention used by the atmosphere
         opacity.  We therefore redistribute the validated zero-field line
-        opacity among H2db components and normalize their total at every
-        depth.  Relative lower-substate populations use their H2db energies.
+        opacity among H2db components. Relative strengths sum to unity, but
+        ``line_strength_scale`` retains the field-dependent total oscillator
+        strength per n=2 atom. Relative substate populations use H2db energies.
+        Below the complete table's lower field bound, the analytic normal
+        triplet supplies the weak-field continuation without extrapolating
+        quantized energy tracks. The disk can still use strong-field EOS and
+        continuum physics consistently in these weak surface cells.
         """
 
         transitions = self.transitions_by_upper_level.get(int(upper_level), ())
@@ -872,6 +877,28 @@ class H2dbTransitionDatabase:
         temperature = np.asarray(temperature, dtype=np.float64)
         if temperature.ndim != 1 or np.any(temperature <= 0.0):
             raise ValueError("temperature must be a positive one-dimensional array")
+        # The lower-state partition also reads tracks from other Balmer
+        # members, so use the complete database's floor, not this line's.
+        minimum_field = max(
+            t.beta[0] for group in self.transitions_by_upper_level.values() for t in group
+        ) * H2DB_REFERENCE_FIELD_MEGAGAUSS
+        if field_strength_megagauss < minimum_field:
+            # Delta E/Ry = 2 beta delta_m, with exact field-free Balmer
+            # energy; use the caller's reduced-mass wavelength convention.
+            delta_m = np.array([-1, 0, 1], dtype=np.int64)
+            beta = field_strength_megagauss / H2DB_REFERENCE_FIELD_MEGAGAUSS
+            rest_energy = 0.25 - 1.0 / int(upper_level)**2
+            wavelength = rest_wavelength_angstrom * rest_energy / (rest_energy + 2.0 * beta * delta_m)
+            strengths = np.full((3, temperature.size), 1.0 / 3.0)
+            if field_angle_deg is not None:
+                angle = float(field_angle_deg)
+                if not np.isfinite(angle) or not 0.0 <= angle <= 180.0:
+                    raise ValueError("field_angle_deg must lie between 0 and 180 degrees")
+                cosine_squared = np.cos(np.deg2rad(angle))**2
+                strengths *= np.where(delta_m[:, None] == 0,
+                                      1.5 * (1.0 - cosine_squared),
+                                      0.75 * (1.0 + cosine_squared))
+            return H2dbBalmerComponents(wavelength, strengths, np.ones_like(temperature), delta_m)
         values = [
             transition.values_at_field(field_strength_megagauss)
             for transition in transitions

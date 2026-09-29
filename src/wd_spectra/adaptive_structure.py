@@ -256,9 +256,11 @@ def solve_adaptive_lte_structure(
     ``compute_local_energy_response`` adds a direct thermal-energy tangent
     to the evaluation payload for explicitly requested research formulations.
     It is off by default and does not change the residual equations.
-    ``enforce_local_energy_balance`` adds a completion phase when the original
-    formal-flux solution fails cell-local energy or has no measured final
-    correction. Bounded thermal conditioning stabilizes the temperature field,
+    ``enforce_local_energy_balance`` imposes flux and local energy from the
+    first step when convection is disabled. Convective starts add a completion
+    phase when the original formal-flux solution fails cell-local energy or
+    has no measured final correction. Bounded thermal conditioning stabilizes
+    the temperature field,
     then an unpenalized Newton solve imposes both flux and direct cell energy.
     Positive equation weights are frozen within each linearization, never the
     physical material/transfer response. Final certification uses fresh actual
@@ -413,6 +415,14 @@ def solve_adaptive_lte_structure(
             "preconditioner stationary-completion iterations must be "
             "positive or None"
         )
+    # Without ML2 transport there is no gradient to condition. Leaving this
+    # switch on also postpones local-energy equations and stable transfer:
+    # nearly identical flux rows then leave optically thin temperatures
+    # poorly constrained, even as the bolometric flux improves.
+    use_convective_gradient_preconditioner = bool(
+        use_convective_gradient_preconditioner
+        and mixing_length_alpha is not None
+    )
     preconditioner_iteration_limit = min(
         max_iterations,
         (
@@ -465,9 +475,8 @@ def solve_adaptive_lte_structure(
     )
 
     use_physical_flux_residual = not use_convective_gradient_preconditioner
-    # Keep the established cold conditioning and flux solve intact. Local
-    # energy completion follows it only when the independently evaluated
-    # heating residual or stationary proposal still needs repair.
+    # Convective starts retain their gradient conditioner. Radiative starts
+    # impose local energy immediately, including in optically thin layers.
     energy_completion_active = bool(
         enforce_local_energy_balance
         and not use_convective_gradient_preconditioner
@@ -1933,8 +1942,29 @@ def solve_adaptive_lte_structure(
             np.max(np.abs(temperature_map() @ (new_state - old_state)))
         ),
     )
+    nonlinear_evaluator = evaluate_state
     if energy_completion_active:
-        nonlinear_options["allow_initial_convergence"] = False
+        from ._thermal_conditioning import (
+            frozen_energy_evaluator,
+            equilibrated_direction,
+        )
+
+        # Use the same unpenalized, freshly linearized energy solve as the
+        # completion phase below. A regularized flux-oriented step can stall
+        # while thin layers still have significant heating/cooling defects.
+        solver_phase = "local-energy-completion"
+        nonlinear_options.update(
+            allow_initial_convergence=False,
+            linear_regularization=0.0,
+            jacobian_refresh_interval=1,
+            # Frozen row weights are renewed with each tangent. Secants
+            # between differently weighted residuals cannot update that J.
+            broyden_updates=False,
+            step_builder=lambda state, ev, jac, radius: equilibrated_direction(
+                jac, ev.residual
+            ),
+        )
+        nonlinear_evaluator = frozen_energy_evaluator(evaluate_state)
     if use_convective_trial_correction and mixing_length_alpha is not None:
         nonlinear_options["trial_projector"] = correct_convective_trial
     initial_options = dict(nonlinear_options)
@@ -1950,7 +1980,7 @@ def solve_adaptive_lte_structure(
     nonlinear_solver_segments: list[dict[str, object]] = []
     result = solve_trust_region_newton(
         state_from_log_temperature(initial_log_temperature),
-        evaluate_state,
+        nonlinear_evaluator,
         **initial_options,
     )
     nonlinear_solver_segments.append(
@@ -2055,7 +2085,14 @@ def solve_adaptive_lte_structure(
     # that direct-resume path accidentally bypassed continuation as well.
     # Keep the number bounded so a genuinely inconsistent physical closure
     # still returns as unconverged rather than looping indefinitely.
-    if use_physical_flux_residual and not use_deep_gradient_conditioner:
+    # Energy solves rebuild an exact tangent on every step. Repeating that
+    # solve cannot repair stale Broyden history; return an unresolved grid to
+    # its composition driver instead of restarting the same stalled system.
+    if (
+        use_physical_flux_residual
+        and not use_deep_gradient_conditioner
+        and not energy_completion_active
+    ):
         for _ in range(maximum_formal_flux_continuations):
             if (
                 result.diagnostics.terminal_reason
@@ -2077,7 +2114,7 @@ def solve_adaptive_lte_structure(
                 and result.history[-1].maximum_step < temperature_tolerance
             )
             result = solve_trust_region_newton(
-                result.state, evaluate_state, **continuation_options
+                result.state, nonlinear_evaluator, **continuation_options
             )
             nonlinear_solver_segments.append(
                 {
@@ -2158,6 +2195,7 @@ def solve_adaptive_lte_structure(
         solver_phase = "local-energy-completion"
         energy_options.update(
             jacobian_refresh_interval=1,
+            broyden_updates=False,
             step_builder=lambda state, ev, jac, radius: equilibrated_direction(
                 jac, ev.residual
             ),
