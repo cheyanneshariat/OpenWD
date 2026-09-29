@@ -198,6 +198,79 @@ def hydrogen_saha_constant(temperature: ArrayLike) -> FloatArray:
     )
 
 
+def hydrogenic_critical_microfield_beta(
+    perturber_density: ArrayLike,
+    effective_principal_quantum_number: ArrayLike,
+    ionic_charge: float = 1.0,
+) -> FloatArray:
+    """Hummer--Mihalas critical microfield of level ``n`` in normal-field units.
+
+    Fields above ``beta_critical`` times ``F0 = (4 pi N / 3)^(2/3) e`` (the
+    Holtsmark normal field) dissolve the level; the Q-MHD occupation
+    probability is the fraction of microfields below it.  ``perturber_density``
+    must be positive.
+    """
+
+    density = np.asarray(perturber_density, dtype=np.float64)
+    level = np.asarray(effective_principal_quantum_number, dtype=np.float64)
+    correction = np.where(
+        level <= 3.0,
+        1.0,
+        16.0 * level / (3.0 * (level + 1.0) ** 2),
+    )
+    binding_energy = HYDROGEN_IONIZATION_ENERGY / level**2
+    return (
+        (3.0 / (4.0 * PI)) ** (2.0 / 3.0)
+        * correction
+        * binding_energy**2
+        / (4.0 * ELEMENTARY_CHARGE_ESU**4)
+        * ionic_charge**3
+        * density ** (-2.0 / 3.0)
+    )
+
+
+def hooper_microfield_cumulative_probability(
+    beta: ArrayLike,
+    correlation: ArrayLike,
+    ionic_charge: float = 1.0,
+) -> FloatArray:
+    """Fraction of microfields below ``beta`` normal-field units (Hooper fit).
+
+    This is the Nayfonov et al. (1999) rational fit to Hooper's correlated
+    microfield distribution used by the Q-MHD occupation probability,
+    ``x / (1 + x)`` with ``x = C1 beta^3 / (1 + C2 beta^1.5)``.  At zero
+    correlation it reproduces the Holtsmark limits (``4 beta^3 / 9 pi`` at
+    weak fields, ``1 - O(beta^-1.5)`` at strong fields).  Its derivative is
+    the field distribution consistent with the occupation probabilities.
+    """
+
+    beta = np.asarray(beta, dtype=np.float64)
+    correlation = np.asarray(correlation, dtype=np.float64)
+    correlation_factor = (1.0 + correlation) ** 3.15
+    coefficient_1 = 0.1402 * (
+        correlation_factor
+        + 4.0 * (ionic_charge - 1.0) * correlation**3
+    )
+    coefficient_2 = 0.1285 * correlation_factor
+    # Evaluate the Hooper rational fit in log space. Charge-neutrality
+    # bisections deliberately probe extremely small trial densities, where
+    # beta is enormous and the direct beta**3 expression overflows
+    # even though the physical probability simply tends to one.
+    log_beta = np.log(np.maximum(beta, np.finfo(np.float64).tiny))
+    log_ratio = (
+        np.log(coefficient_1)
+        + 3.0 * log_beta
+        - np.logaddexp(0.0, np.log(coefficient_2) + 1.5 * log_beta)
+    )
+    probability = np.where(
+        log_ratio >= 0.0,
+        1.0 / (1.0 + np.exp(-np.minimum(log_ratio, 745.0))),
+        np.exp(np.maximum(log_ratio, -745.0))
+        / (1.0 + np.exp(np.maximum(log_ratio, -745.0))),
+    )
+    return probability
+
+
 def charged_particle_hydrogen_occupation_probability(
     electron_density: ArrayLike,
     effective_principal_quantum_number: ArrayLike,
@@ -251,43 +324,12 @@ def charged_particle_hydrogen_occupation_probability(
             "number and ionic charge must be finite and positive"
         )
 
-    correction = np.where(
-        level <= 3.0,
-        1.0,
-        16.0 * level / (3.0 * (level + 1.0) ** 2),
-    )
-    binding_energy = HYDROGEN_IONIZATION_ENERGY / level**2
     positive_density = electron_density > 0.0
-    safe_density = np.where(positive_density, electron_density, 1.0)
-    beta_critical = (
-        (3.0 / (4.0 * PI)) ** (2.0 / 3.0)
-        * correction
-        * binding_energy**2
-        / (4.0 * ELEMENTARY_CHARGE_ESU**4)
-        * ionic_charge**3
-        * safe_density ** (-2.0 / 3.0)
+    beta_critical = hydrogenic_critical_microfield_beta(
+        np.where(positive_density, electron_density, 1.0), level, ionic_charge
     )
-    correlation_factor = (1.0 + correlation) ** 3.15
-    coefficient_1 = 0.1402 * (
-        correlation_factor
-        + 4.0 * (ionic_charge - 1.0) * correlation**3
-    )
-    coefficient_2 = 0.1285 * correlation_factor
-    # Evaluate the Hooper rational fit in log space. Charge-neutrality
-    # bisections deliberately probe extremely small trial densities, where
-    # beta_critical is enormous and the direct beta**3 expression overflows
-    # even though the physical probability simply tends to one.
-    log_beta = np.log(np.maximum(beta_critical, np.finfo(np.float64).tiny))
-    log_ratio = (
-        np.log(coefficient_1)
-        + 3.0 * log_beta
-        - np.logaddexp(0.0, np.log(coefficient_2) + 1.5 * log_beta)
-    )
-    probability = np.where(
-        log_ratio >= 0.0,
-        1.0 / (1.0 + np.exp(-np.minimum(log_ratio, 745.0))),
-        np.exp(np.maximum(log_ratio, -745.0))
-        / (1.0 + np.exp(np.maximum(log_ratio, -745.0))),
+    probability = hooper_microfield_cumulative_probability(
+        beta_critical, correlation, ionic_charge
     )
     return np.where(positive_density, probability, 1.0)
 

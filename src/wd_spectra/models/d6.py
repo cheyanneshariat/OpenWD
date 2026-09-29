@@ -74,7 +74,13 @@ class D6Config:
     # Quasi-static ionic (linear-Stark) envelopes for Stark-mixed Rydberg
     # levels, and literature-anchored widths for the O I 3p-nd series.
     include_linear_stark_quasistatic: bool = True
+    # "manifold" diagonalizes each Rydberg n-manifold in the ion field with
+    # the tabulated quantum defects; "two-level" is the earlier blend of the
+    # impact profile with the outermost-component Holtsmark envelope.
+    linear_stark_profile: str = "manifold"
     include_oxygen_i_series_stark: bool = True
+    # Depth-independent microturbulence, in the structure and the spectrum.
+    microturbulent_velocity_kms: float = 0.0
     # Extend each line's profile until its omitted wing is optically thin
     # (vertical optical depth below this value).  Without it the strongest
     # resonance lines (Ca II H&K, UV) lose wings comparable to the continuum.
@@ -220,6 +226,13 @@ def compute_d6(
     if not np.isfinite(config.logg):
         raise ValueError("logg must be finite")
     abundances = _validated_abundances(config)
+    if config.linear_stark_profile not in ("manifold", "two-level"):
+        raise ValueError("linear_stark_profile must be 'manifold' or 'two-level'")
+    if (
+        not np.isfinite(config.microturbulent_velocity_kms)
+        or config.microturbulent_velocity_kms < 0.0
+    ):
+        raise ValueError("microturbulent_velocity_kms must be finite and non-negative")
     data = ModelData.default() if data is None else data
     resolution = numerical_resolution(config.quality)
     request_fingerprint = model_request_fingerprint("D6", config, data)
@@ -269,6 +282,8 @@ def compute_d6(
             ),
             topbase_photoionization_database=topbase,
             include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
+            linear_stark_profile=config.linear_stark_profile,
+            microturbulent_velocity_kms=config.microturbulent_velocity_kms,
             include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
             profile_edge_optical_depth=config.line_profile_edge_optical_depth,
             n_angle=min(resolution.n_angle, 3),
@@ -313,6 +328,8 @@ def compute_d6(
             config.metal_series_pseudocontinuum_elements
         ),
         include_linear_stark_quasistatic=config.include_linear_stark_quasistatic,
+        linear_stark_profile=config.linear_stark_profile,
+        microturbulent_velocity_kms=config.microturbulent_velocity_kms,
         include_oxygen_i_series_stark=config.include_oxygen_i_series_stark,
         profile_edge_optical_depth=config.line_profile_edge_optical_depth,
         n_angle=resolution.n_angle,
@@ -323,7 +340,7 @@ def compute_d6(
         spectrum,
         config,
         {
-            "preset": "D6-shared-solver-v4",
+            "preset": "D6-shared-solver-v5",
             "default_parameter_source": (
                 "Hollands et al. (2025), SDSS J1637+3631"
             ),
@@ -345,10 +362,18 @@ def compute_d6(
                 if config.include_metal_series_pseudocontinuum else "disabled"
             ),
             "rydberg_line_profiles": (
-                "impact Voigt plus depth-weighted Holtsmark linear-Stark "
-                "envelope for Stark-mixed Rydberg levels (structure and synthesis)"
+                (
+                    "impact Voigt convolved with the ionic quasi-static Stark "
+                    "pattern of each Rydberg n-manifold (tabulated quantum "
+                    "defects, Holtsmark fields below the Q-MHD critical field)"
+                    if config.linear_stark_profile == "manifold"
+                    else "impact Voigt plus depth-weighted Holtsmark linear-Stark "
+                    "envelope for Stark-mixed Rydberg levels"
+                )
+                + " (structure and synthesis)"
                 if config.include_linear_stark_quasistatic else "impact Voigt"
             ),
+            "microturbulent_velocity_kms": float(config.microturbulent_velocity_kms),
             "oxygen_i_series_stark": (
                 "Dimitrijevic & Sahal-Brechot (2025) 4d anchor, n_eff^5 series"
                 if config.include_oxygen_i_series_stark else "generic classical"

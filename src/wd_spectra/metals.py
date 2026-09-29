@@ -51,6 +51,8 @@ from .eos import (
     HeliumLTEState,
     HydrogenLTEState,
     charged_particle_hydrogen_occupation_probability,
+    hooper_microfield_cumulative_probability,
+    hydrogenic_critical_microfield_beta,
     hydrogen_level_distribution,
     hydrogen_saha_constant,
     molecular_hydrogen_dissociation_constant,
@@ -4322,6 +4324,7 @@ def _quasistatic_line_profile(
     lorentz_hwhm: float,
     frequency_scale: float,
     mixing: float,
+    support_half_width: float | None = None,
 ) -> FloatArray:
     """Impact profile blended with its quasi-static Holtsmark envelope.
 
@@ -4349,11 +4352,14 @@ def _quasistatic_line_profile(
     offset = wavelength - center
     core = 25.0 * max(gaussian_sigma, lorentz_hwhm, 1.0e-4)
     outer = np.abs(offset) > core
-    if np.count_nonzero(outer) < 800:
+    if support_half_width is None and np.count_nonzero(outer) < 800:
         return exact(wavelength)
     result = np.empty_like(wavelength)
     result[~outer] = exact(wavelength[~outer])
-    extent = float(np.max(np.abs(offset)))
+    extent = max(
+        float(np.max(np.abs(offset))),
+        float(support_half_width) if support_half_width is not None else 0.0,
+    )
     nodes = np.geomspace(core, extent * (1.0 + 1.0e-12), 400)
     for sign in (-1.0, 1.0):
         side = outer & (np.sign(offset) == sign)
@@ -4364,6 +4370,38 @@ def _quasistatic_line_profile(
                 np.log(np.maximum(node_values, np.finfo(np.float64).tiny)),
             ))
     return result
+
+
+def _quasistatic_line_profile_area(
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+    frequency_scale: float,
+    mixing: float,
+    half_window: float,
+) -> float:
+    """Area of :func:`_quasistatic_line_profile` over its full support.
+
+    Evaluated on an internal grid (linear core, logarithmic wings) spanning
+    ``center +- half_window``, so the normalization does not depend on which
+    wavelengths a caller requests.
+    """
+
+    width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
+    core = min(half_window, 25.0 * width)
+    linear = np.linspace(-core, core, 1_001)
+    if half_window > core:
+        wing = np.geomspace(core, half_window, 1_500)[1:]
+        offsets = np.concatenate((-wing[::-1], linear, wing))
+    else:
+        offsets = linear
+    grid = center + offsets
+    return float(trapezoid(
+        _quasistatic_line_profile(
+            grid, center, gaussian_sigma, lorentz_hwhm, frequency_scale, mixing
+        ),
+        grid,
+    ))
 
 
 _HOLTSMARK_TABLE_BETA = np.linspace(0.0, 8.0, 16_001)
@@ -4803,6 +4841,56 @@ def mg_ii_4481_electron_stark_rate_coefficient(
     )
 
 
+_MG_II_KURUCZ_WIDTHS: dict[tuple[str, str], float] | None = None
+
+
+def _mg_ii_kurucz_widths() -> dict[tuple[str, str], float]:
+    global _MG_II_KURUCZ_WIDTHS
+    if _MG_II_KURUCZ_WIDTHS is None:
+        table: dict[tuple[str, str], float] = {}
+        resource = files("wd_spectra").joinpath(
+            "data/stark/kurucz_mg_ii_electron_widths.csv"
+        )
+        with resource.open("r", encoding="ascii") as stream:
+            for raw in stream:
+                if raw.startswith("#") or raw.startswith("lower,"):
+                    continue
+                lower, upper, value, _ = raw.strip().split(",")
+                table[(lower, upper)] = float(value)
+        _MG_II_KURUCZ_WIDTHS = table
+    return _MG_II_KURUCZ_WIDTHS
+
+
+def mg_ii_kurucz_electron_stark_rate_coefficient(
+    lower_level: AtomicLevel,
+    upper_level: AtomicLevel,
+    temperature_kelvin: ArrayLike,
+) -> FloatArray | None:
+    """Kurucz's electron damping per electron for a Mg II 2p6-core transition.
+
+    ``gf1201.all`` gives ``log10(Gamma_e/ne)`` (angular-frequency FWHM,
+    10,000 K) for every Mg II multiplet; the bundled table groups it by the
+    outer orbitals of both levels (components agree to 0.04 dex).  Using it for
+    the whole series replaces a capped generic estimate that was up to ~10^3
+    times smaller than Kurucz for the Rydberg members, while one member
+    (4f-8g, 4852 A) already used Kurucz, making the series inconsistent.
+    The standard ``T**(-1/6)`` dependence is applied.  ``None`` for levels
+    outside the table or not built on the ground 2p6 core.
+    """
+
+    orbitals = []
+    for level in (lower_level, upper_level):
+        parts = level.label.split(".")
+        if len(parts) != 3 or parts[0] != "2p6":
+            return None
+        orbitals.append(parts[1])
+    value = _mg_ii_kurucz_widths().get((orbitals[0], orbitals[1]))
+    if value is None:
+        return None
+    temperature = np.asarray(temperature_kelvin, dtype=np.float64)
+    return 10.0**value * (temperature / 10_000.0) ** (-1.0 / 6.0)
+
+
 def mg_ii_4852_electron_stark_rate_coefficient(
     wavelength_vacuum_angstrom: float,
     temperature_kelvin: ArrayLike,
@@ -5108,6 +5196,394 @@ def linear_stark_mixing_fraction(
     if gap <= 0.0:
         return np.ones_like(splitting)
     return 1.0 - gap / np.hypot(gap, splitting)
+
+
+# Stark coupling e a0 F / h (Hz) on which manifold eigen-systems are tabulated.
+_STARK_MANIFOLD_FIELD_HZ = np.geomspace(1.0e4, 1.0e16, 12 * 48 + 1)
+_STARK_MANIFOLD_CACHE: dict[tuple[int, int, int], object] = {}
+_TERM_MULTIPLICITY_PATTERN = re.compile(r"\((\d+)[A-Z]")
+# e a0 F0 / h per unit ``ionic_microfield_scale`` (Holtsmark normal field
+# F0 = 2.603 e N^(2/3)); consistent with the 1.385 used by the mixing fraction.
+_STARK_COUPLING_PER_MICROFIELD_SCALE = 1.0 / (1.385 * 1.5)
+# Fields per profile evaluation (every tabulated field; coarser sampling
+# changes saturated J1109 lines by ~1 per cent).
+_STARK_PROFILE_FIELD_STRIDE = 1
+# Uniform-grid sizes of the fine (dense pattern) and coarse (sparse tail)
+# convolutions in :func:`manifold_quasistatic_line_profile`.
+_STARK_FINE_BINS = 16_384
+# Fine bins of a quarter impact width reproduce 1/16-width bins to 3e-4 rms
+# in the J1109 spectrum.
+_STARK_FINE_STEP_PER_WIDTH = 0.25
+_STARK_COARSE_BINS = 4_096
+
+
+@dataclass(frozen=True)
+class RydbergStarkManifold:
+    """Stark eigen-system of one ``n``-manifold, projected on one ``l`` state.
+
+    ``shifts_hz[j, i]`` and ``weights[j, i]`` are the energies (relative to
+    the zero-field absorbing level) and the squared projections of the
+    absorbing ``(n, l)`` state, averaged over ``m``, of eigenstate ``i`` at
+    coupling ``_STARK_MANIFOLD_FIELD_HZ[j]``.  Each row of weights sums to one.
+    """
+
+    principal: int
+    angular: int
+    l_values: tuple[int, ...]
+    shifts_hz: FloatArray
+    weights: FloatArray
+    # Strength-weighted mean square shift at each tabulated field (Hz^2).
+    mean_square_shift_hz2: FloatArray
+    # Largest |shift| of any component with weight > 1e-4 at each field (Hz).
+    maximum_shift_hz: FloatArray
+
+
+def rydberg_stark_manifold(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> RydbergStarkManifold | None:
+    """Cached :func:`_rydberg_stark_manifold` (static atomic data only)."""
+
+    key = (id(atomic_database), id(ion), level.index)
+    if key not in _STARK_MANIFOLD_CACHE:
+        _STARK_MANIFOLD_CACHE[key] = _rydberg_stark_manifold(
+            atomic_database, ion, level
+        )
+    return _STARK_MANIFOLD_CACHE[key]
+
+
+def _rydberg_stark_manifold(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> RydbergStarkManifold | None:
+    """Diagonalize the ionic-field Stark problem in the level's ``n``-manifold.
+
+    The zero-field energies are the tabulated term energies (averaged over
+    ``J``) of every ``l`` of the same ``n``, parent core and spin
+    multiplicity; allowed ``l`` above the highest tabulated one are given the
+    hydrogenic energy.  Untabulated ``l`` below it are omitted: they carry
+    large quantum defects and couple weakly.  The field couples ``l`` and
+    ``l + 1`` with the hydrogenic intra-shell matrix element
+    ``(3/2) n sqrt((n^2 - l'^2)(l'^2 - m^2) / (4 l'^2 - 1)) e a0 F / Z``.
+    A fully degenerate manifold gives the parabolic ``(3/2) n k`` pattern; a
+    manifold split by quantum defects gives the partial, field-dependent
+    mixing directly, with no two-level approximation and no free parameter.
+    Levels that are not near-hydrogenic Rydberg levels return ``None``.
+    """
+
+    if linear_stark_rydberg_level(atomic_database, ion, level) is None:
+        return None
+    parsed = _rydberg_orbital(level.label)
+    assert parsed is not None
+    principal, angular, core = parsed
+    multiplicity = _TERM_MULTIPLICITY_PATTERN.findall(level.label.split(".")[-1])
+    energy_sum: dict[int, float] = {}
+    weight_sum: dict[int, float] = {}
+    for other in ion.levels:
+        parsed_other = _rydberg_orbital(other.label)
+        if parsed_other is None or parsed_other[0] != principal or parsed_other[2] != core:
+            continue
+        if _TERM_MULTIPLICITY_PATTERN.findall(other.label.split(".")[-1]) != multiplicity:
+            continue
+        l_other = parsed_other[1]
+        energy_sum[l_other] = (
+            energy_sum.get(l_other, 0.0) + other.statistical_weight * other.energy_wavenumber
+        )
+        weight_sum[l_other] = weight_sum.get(l_other, 0.0) + other.statistical_weight
+    if angular not in energy_sum:
+        return None
+    core_charge = ion.charge + 1.0
+    hydrogenic = (
+        ion.ionization_energy_ev * EV_TO_WAVENUMBER
+        - _RYDBERG_FREQUENCY_HZ / LIGHT_SPEED * core_charge**2 / principal**2
+    )
+    energies = {l_value: energy_sum[l_value] / weight_sum[l_value] for l_value in energy_sum}
+    for l_value in range(max(energies) + 1, principal):
+        energies[l_value] = hydrogenic
+    l_values = tuple(sorted(energies))
+    reference = energies[angular]
+    field = _STARK_MANIFOLD_FIELD_HZ
+    shifts: list[FloatArray] = []
+    weights: list[FloatArray] = []
+    for m in range(angular + 1):
+        block = [l_value for l_value in l_values if l_value >= m]
+        size = len(block)
+        diagonal = np.array(
+            [(energies[l_value] - reference) * LIGHT_SPEED for l_value in block]
+        )
+        coupling = np.zeros((size, size))
+        for index in range(size - 1):
+            lower_l, upper_l = block[index], block[index + 1]
+            if upper_l != lower_l + 1:
+                continue
+            coupling[index, index + 1] = coupling[index + 1, index] = (
+                1.5 * principal
+                * np.sqrt(
+                    (principal**2 - upper_l**2) * (upper_l**2 - m**2)
+                    / (4.0 * upper_l**2 - 1.0)
+                )
+                / core_charge
+            )
+        hamiltonian = (
+            np.diag(diagonal)[np.newaxis, :, :]
+            + field[:, np.newaxis, np.newaxis] * coupling[np.newaxis, :, :]
+        )
+        values, vectors = np.linalg.eigh(hamiltonian)
+        projection = vectors[:, block.index(angular), :] ** 2
+        multiplicity_m = 1.0 if m == 0 else 2.0
+        shifts.append(values)
+        weights.append(projection * multiplicity_m / (2.0 * angular + 1.0))
+    shift_array = np.concatenate(shifts, axis=1)
+    weight_array = np.concatenate(weights, axis=1)
+    keep = np.max(weight_array, axis=0) > 1.0e-8
+    shift_array = np.ascontiguousarray(shift_array[:, keep])
+    weight_array = np.ascontiguousarray(weight_array[:, keep])
+    return RydbergStarkManifold(
+        principal,
+        angular,
+        l_values,
+        shift_array,
+        weight_array,
+        np.sum(weight_array * shift_array**2, axis=1),
+        np.max(
+            np.where(weight_array > 1.0e-4, np.abs(shift_array), 0.0), axis=1
+        ),
+    )
+
+
+def _deposit_segments(
+    start: FloatArray, stop: FloatArray, weight: FloatArray, size: int
+) -> FloatArray:
+    """Bin masses of uniform boxes ``[start, stop]`` (fractional bin units).
+
+    Each box's cumulative distribution is a ramp; its second derivative is a
+    pair of deltas, deposited with linear weights and integrated twice.  The
+    result is exact at the bin edges, so eigenvalue tracks sampled at
+    discrete fields give a smooth density rather than a comb.
+    """
+
+    low = np.minimum(start, stop)
+    high = np.maximum(start, stop)
+    high = np.maximum(high, low + 1.0e-3)
+    slope = weight / (high - low)
+    # Mass outside the window is dropped; a box crossing an edge keeps the
+    # part inside (same slope, clipped extent).
+    low = np.maximum(low, 0.0)
+    high = np.minimum(high, float(size))
+    inside = high > low
+    low, high, slope = low[inside], high[inside], slope[inside]
+    second = np.zeros(size + 3)
+    for position, sign in ((low, 1.0), (high, -1.0)):
+        clipped = position
+        floor = np.floor(clipped)
+        fraction = clipped - floor
+        index = floor.astype(np.int64)
+        second += np.bincount(index, sign * slope * (1.0 - fraction), minlength=size + 3)[: size + 3]
+        second += np.bincount(index + 1, sign * slope * fraction, minlength=size + 3)[: size + 3]
+    cumulative = np.concatenate(([0.0], np.cumsum(np.cumsum(second))))
+    return np.diff(cumulative[: size + 1])
+
+
+def manifold_quasistatic_line_profile(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+    coupling_hz: float,
+    upper: RydbergStarkManifold,
+    lower: RydbergStarkManifold | None,
+    maximum_beta: float = np.inf,
+    correlation: float = 0.0,
+    radiator_core_charge: float = 1.0,
+    support_half_width: float | None = None,
+) -> FloatArray:
+    """Impact profile convolved with the ionic quasi-static manifold pattern.
+
+    ``coupling_hz`` is ``e a0 F0 / h`` for the Holtsmark normal field.  The
+    Stark components of the upper (and, if itself mixed, the lower) manifold
+    are integrated over the Holtsmark field distribution, each eigenvalue
+    track being spread linearly between tabulated fields, and the resulting
+    quasi-static distribution is convolved with the electron-impact Voigt
+    profile.  Only microfields below ``maximum_beta`` (the Hummer--Mihalas
+    critical field of the upper level, in normal-field units) are integrated:
+    stronger fields dissolve the level, and that strength is represented by
+    the Q-MHD occupation probability and pseudo-continuum instead.  Returns
+    the bound-state (conditional) profile per angstrom, normalized to unit
+    area over all wavelengths independently of the sampled ``wavelength``.
+    """
+
+    from scipy.signal import fftconvolve
+
+    stride = _STARK_PROFILE_FIELD_STRIDE
+    field = _STARK_MANIFOLD_FIELD_HZ[::stride]
+    beta = field / max(coupling_hz, np.finfo(np.float64).tiny)
+    # Field probabilities from the same (Hooper-correlated) distribution as
+    # the Q-MHD occupation probabilities, integrated exactly between the
+    # tabulated fields; fields above the critical one dissolve the level.
+    bounded_beta = np.minimum(beta, maximum_beta)
+    cumulative = hooper_microfield_cumulative_probability(
+        bounded_beta, correlation, radiator_core_charge
+    )
+    segment_probability = np.diff(cumulative)
+    # Fraction of each field interval below the critical field; the shift
+    # range of the interval that crosses it ends at the critical field.
+    interval_fraction = np.clip(
+        (maximum_beta - beta[:-1]) / (beta[1:] - beta[:-1]), 0.0, 1.0
+    )
+    to_angstrom = -center**2 / (LIGHT_SPEED * 1.0e8)
+    width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
+
+    def shifted_fraction(manifold: RydbergStarkManifold) -> float:
+        # Holtsmark-weighted strength shifted by more than a quarter width.
+        weights = manifold.weights[::stride]
+        shifted = np.abs(manifold.shifts_hz[::stride] * to_angstrom) > 0.25 * width
+        per_field = np.sum(np.where(shifted, weights, 0.0), axis=1)
+        total = float(np.sum(segment_probability))
+        if total <= 0.0:
+            return 0.0
+        return float(
+            np.sum(segment_probability * 0.5 * (per_field[1:] + per_field[:-1]))
+        ) / total
+
+    # A pattern that leaves < 1e-3 of the strength outside a quarter of the
+    # impact width does not change the profile at that level.
+    if lower is not None and shifted_fraction(lower) < 1.0e-3:
+        lower = None
+    used = segment_probability > 1.0e-12
+    if not np.any(used) or (
+        lower is None and shifted_fraction(upper) < 1.0e-3
+    ):
+        return _pseudo_voigt_profile_per_angstrom(
+            wavelength, center, gaussian_sigma, lorentz_hwhm
+        )
+    # Only the weak-field probability below the tabulated fields is missing;
+    # it is unshifted.
+    missing = float(cumulative[0])
+    bound_probability = missing + float(np.sum(segment_probability[used]))
+    upper_shift = upper.shifts_hz[::stride]
+    upper_weight = upper.weights[::stride]
+    if lower is None:
+        shift = upper_shift[:, :, np.newaxis]
+        weight = upper_weight[:, :, np.newaxis]
+    else:
+        shift = upper_shift[:, :, np.newaxis] - lower.shifts_hz[::stride, np.newaxis, :]
+        weight = upper_weight[:, :, np.newaxis] * lower.weights[::stride, np.newaxis, :]
+    index = np.flatnonzero(used)
+    start_shift = shift[index].reshape(index.size, -1)
+    stop_shift = start_shift + interval_fraction[index, np.newaxis] * (
+        shift[index + 1].reshape(index.size, -1) - start_shift
+    )
+    segment_weight = (
+        0.5 * (weight[index] + weight[index + 1]).reshape(index.size, -1)
+        * segment_probability[index, np.newaxis]
+    )
+    start_offset = (start_shift * to_angstrom).ravel()
+    stop_offset = (stop_shift * to_angstrom).ravel()
+    segment_weight = segment_weight.ravel()
+    significant = segment_weight > 1.0e-7 * float(np.max(segment_weight))
+    start_offset = start_offset[significant]
+    stop_offset = stop_offset[significant]
+    segment_weight = segment_weight[significant]
+
+    # Two uniform grids: a fine one (a fraction of the impact width) over the
+    # dense part of the pattern, where it is convolved with the impact Voigt
+    # profile, and a coarse one over the sparse tail, whose bins are many
+    # impact widths wide and receive the pattern without convolution.
+    # Internal grids depend on the line's support, never on which
+    # wavelengths are requested, so any request samples the same profile.
+    half_extent = (
+        float(support_half_width)
+        if support_half_width is not None
+        else float(np.max(np.abs(wavelength - center)))
+    ) + 1.0e-6
+    # The fine grid spans the pattern out to the largest shift at the field
+    # below which 99 per cent of Holtsmark fields lie (beta ~ 21) or at the
+    # critical field if smaller; only the sparse tail uses the coarse grid.
+    dense_field = min(21.0, maximum_beta) * coupling_hz
+    dense_shift = float(np.interp(
+        np.log(max(dense_field, field[0])), np.log(_STARK_MANIFOLD_FIELD_HZ),
+        upper.maximum_shift_hz,
+    ))
+    if lower is not None:
+        dense_shift += float(np.interp(
+            np.log(max(dense_field, field[0])), np.log(_STARK_MANIFOLD_FIELD_HZ),
+            lower.maximum_shift_hz,
+        ))
+    fine_half = min(
+        half_extent, abs(to_angstrom) * dense_shift + 64.0 * width
+    )
+    fine_step = max(
+        _STARK_FINE_STEP_PER_WIDTH * width, 2.0 * fine_half / _STARK_FINE_BINS
+    )
+    coarse_step = max(fine_step, 2.0 * half_extent / _STARK_COARSE_BINS)
+    # Components within half a fine bin of the centre keep the exact core.
+    core = 0.5 * fine_step
+    unshifted = (np.abs(start_offset) <= core) & (np.abs(stop_offset) <= core)
+    core_weight = missing + float(np.sum(segment_weight[unshifted]))
+    low = np.minimum(start_offset[~unshifted], stop_offset[~unshifted])
+    high = np.maximum(start_offset[~unshifted], stop_offset[~unshifted])
+    high = np.maximum(high, low + 1.0e-6 * fine_step)
+    mass = segment_weight[~unshifted]
+    # Split each box at the fine-range boundaries (mass proportional to length).
+    inner_low = np.clip(low, -fine_half, fine_half)
+    inner_high = np.clip(high, -fine_half, fine_half)
+    inner_mass = mass * (inner_high - inner_low) / (high - low)
+
+    def convolved(grid_step, grid_half, box_low, box_high, box_mass):
+        # An odd grid centred on the line keeps the kernel exactly centred.
+        half_bins = int(np.ceil(grid_half / grid_step))
+        grid = grid_step * (np.arange(2 * half_bins + 1) - half_bins)
+        origin = grid[0] - 0.5 * grid_step
+        masses = _deposit_segments(
+            (box_low - origin) / grid_step, (box_high - origin) / grid_step,
+            box_mass, grid.size,
+        )
+        kernel = _pseudo_voigt_profile_per_angstrom(
+            center + grid, center, gaussian_sigma, lorentz_hwhm
+        )
+        kernel_sum = float(np.sum(kernel))
+        if kernel_sum > 0.0 and np.isfinite(kernel_sum):
+            masses = fftconvolve(masses, kernel / kernel_sum, mode="same")
+        return grid, np.maximum(masses, 0.0) / grid_step
+
+    offset = wavelength - center
+    fine_grid, fine_profile = convolved(
+        fine_step, fine_half, inner_low, inner_high, inner_mass
+    )
+    result = core_weight * _pseudo_voigt_profile_per_angstrom(
+        wavelength, center, gaussian_sigma, lorentz_hwhm
+    )
+    inside = np.abs(offset) <= fine_half
+    result[inside] += np.interp(offset[inside], fine_grid, fine_profile)
+    if half_extent > fine_half:
+        # Outer boxes: the parts below and above the fine range.  On the
+        # coarse grid (bins many impact widths wide) the impact profile only
+        # adds Lorentz wings, so the outer pattern is binned without
+        # convolution and the inner components add their wing, V(x), beyond
+        # the fine range.
+        below_mass = mass * np.clip(np.minimum(high, -fine_half) - low, 0.0, None) / (high - low)
+        above_mass = mass * np.clip(high - np.maximum(low, fine_half), 0.0, None) / (high - low)
+        keep_below = below_mass > 0.0
+        keep_above = above_mass > 0.0
+        half_bins = int(np.ceil(half_extent / coarse_step))
+        coarse_grid = coarse_step * (np.arange(2 * half_bins + 1) - half_bins)
+        origin = coarse_grid[0] - 0.5 * coarse_step
+        masses = _deposit_segments(
+            (np.concatenate((low[keep_below], np.maximum(low, fine_half)[keep_above])) - origin) / coarse_step,
+            (np.concatenate((np.minimum(high, -fine_half)[keep_below], high[keep_above])) - origin) / coarse_step,
+            np.concatenate((below_mass[keep_below], above_mass[keep_above])),
+            coarse_grid.size,
+        )
+        outside = ~inside
+        result[outside] += (
+            np.interp(offset[outside], coarse_grid, masses / coarse_step)
+            + float(np.sum(inner_mass)) * _pseudo_voigt_profile_per_angstrom(
+                wavelength[outside], center, gaussian_sigma, lorentz_hwhm
+            )
+        )
+    return result / max(bound_probability, np.finfo(np.float64).tiny)
 
 
 def o_i_3p5p_nd5d_electron_stark_rate_coefficient(
@@ -6116,6 +6592,7 @@ def metal_line_mass_absorption_coefficient(
     include_oxygen_i_quasistatic_microfields: bool = False,
     oxygen_i_quasistatic_minimum_effective_n: float = 6.5,
     include_linear_stark_quasistatic: bool = False,
+    linear_stark_profile: str = "two-level",
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
     rydberg_dissolution_elements: Iterable[str] | None = None,
@@ -6183,6 +6660,8 @@ def metal_line_mass_absorption_coefficient(
     original optical-depth gate when this argument is None.
     """
 
+    if linear_stark_profile not in ("two-level", "manifold"):
+        raise ValueError("linear_stark_profile must be 'two-level' or 'manifold'")
     wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
     if uv_resonance_support_angstrom is not None and any(
         not np.isfinite(value) or value < 0.0
@@ -6456,7 +6935,19 @@ def metal_line_mass_absorption_coefficient(
                     / (BOLTZMANN * atmosphere.temperature)
                 ) / partition
             )
-            if metal_state.metal_level_dissolution and dissolves(ion):
+            if (
+                metal_state.metal_level_dissolution
+                and dissolves(ion)
+                and (
+                    ion.ionization_energy_ev is None
+                    or lower.energy_wavenumber
+                    < ion.ionization_energy_ev * EV_TO_WAVENUMBER
+                )
+            ):
+                # Occupation probabilities describe bound levels.  Keep the
+                # LTE resonance-population approximation for autoionizing
+                # lower states, as in the transition-survival calculation;
+                # their negative binding energy must not erase the line.
                 lower_population = lower_population * (
                     metal_rydberg_level_occupation_probability(
                         ion,
@@ -6610,8 +7101,12 @@ def metal_line_mass_absorption_coefficient(
         is_mg_ii_4481 = (
             ion.element == "Mg" and ion.charge == 1 and 4478.0 < center < 4487.0
         )
-        is_mg_ii_4852 = (
-            ion.element == "Mg" and ion.charge == 1 and 4848.0 < center < 4857.0
+        mg_ii_series_rate = (
+            mg_ii_kurucz_electron_stark_rate_coefficient(
+                lower_level, upper_level, atmosphere.temperature
+            )
+            if ion.element == "Mg" and ion.charge == 1
+            else None
         )
         is_mg_i_3835 = (
             ion.element == "Mg" and ion.charge == 0 and 3825.0 < center < 3845.0
@@ -6798,12 +7293,8 @@ def metal_line_mass_absorption_coefficient(
                     center, atmosphere.temperature
                 ) * metal_state.electron_density
             )
-        elif is_mg_ii_4852:
-            electron_stark_rate = (
-                mg_ii_4852_electron_stark_rate_coefficient(
-                    center, atmosphere.temperature
-                ) * metal_state.electron_density
-            )
+        elif mg_ii_series_rate is not None:
+            electron_stark_rate = mg_ii_series_rate * metal_state.electron_density
         elif is_mg_i_3835:
             electron_stark_rate = (
                 mg_i_3835_electron_stark_rate_coefficient(
@@ -6924,6 +7415,53 @@ def metal_line_mass_absorption_coefficient(
             static_half_window = (
                 30.0 * frequency_scale * center_cm**2 / LIGHT_SPEED * 1.0e8
             )
+            upper_manifold = lower_manifold = None
+            if (
+                quasistatic_series_rate is None
+                and linear_stark_profile == "manifold"
+            ):
+                upper_manifold = rydberg_stark_manifold(
+                    atomic_database, ion, upper_level
+                )
+                lower_manifold = rydberg_stark_manifold(
+                    atomic_database, ion, lower_level
+                )
+                microfield_correlation = (
+                    np.clip(
+                        0.09 * np.maximum(ionic_microfield_charge_sum, 0.0) ** (1.0 / 6.0)
+                        / np.sqrt(atmosphere.temperature),
+                        0.0,
+                        0.8,
+                    )
+                    if rydberg_correlated_microfields
+                    else np.zeros(atmosphere.n_depth)
+                )
+                upper_critical_beta = hydrogenic_critical_microfield_beta(
+                    np.maximum(ionic_microfield_charge_sum, np.finfo(np.float64).tiny),
+                    max(1.0, float(upper_effective_n)),
+                    core_charge,
+                )
+                if upper_manifold is not None:
+                    # No bound-state component lies beyond the largest shift at
+                    # the critical field; 30 impact widths cover the Voigt
+                    # wings of the outermost components.
+                    critical_coupling = np.log(np.maximum(
+                        upper_critical_beta * ionic_microfield_scale
+                        * _STARK_COUPLING_PER_MICROFIELD_SCALE,
+                        _STARK_MANIFOLD_FIELD_HZ[0],
+                    ))
+                    log_field = np.log(_STARK_MANIFOLD_FIELD_HZ)
+                    maximum_shift = np.interp(
+                        critical_coupling, log_field, upper_manifold.maximum_shift_hz
+                    )
+                    if lower_manifold is not None:
+                        maximum_shift = maximum_shift + np.interp(
+                            critical_coupling, log_field, lower_manifold.maximum_shift_hz
+                        )
+                    static_half_window = (
+                        1.02 * maximum_shift * center_cm**2 / LIGHT_SPEED * 1.0e8
+                        + 30.0 * np.maximum(gaussian_sigma, lorentz_hwhm)
+                    )
             for depth in range(atmosphere.n_depth):
                 local_scale = float(frequency_scale[depth])
                 sigma = float(gaussian_sigma[depth])
@@ -6937,6 +7475,7 @@ def metal_line_mass_absorption_coefficient(
                     10.0 * sigma,
                     100.0 * hwhm,
                     float(static_half_window[depth]),
+                    float(resonance_half_window),
                 )
                 start = int(np.searchsorted(wavelength, center - half_window))
                 stop = int(np.searchsorted(
@@ -6946,10 +7485,29 @@ def metal_line_mass_absorption_coefficient(
                     continue
                 selected_wavelength = wavelength[start:stop]
 
-                combined_profile = _quasistatic_line_profile(
-                    selected_wavelength, center, sigma, hwhm, local_scale, mixing
-                )
-                area = trapezoid(combined_profile, selected_wavelength)
+                if upper_manifold is not None:
+                    combined_profile = manifold_quasistatic_line_profile(
+                        selected_wavelength, center, sigma, hwhm,
+                        float(ionic_microfield_scale[depth])
+                        * _STARK_COUPLING_PER_MICROFIELD_SCALE,
+                        upper_manifold, lower_manifold,
+                        float(upper_critical_beta[depth]),
+                        float(microfield_correlation[depth]),
+                        core_charge,
+                        half_window,
+                    )
+                    # Normalized analytically to unit bound strength.
+                    area = 1.0
+                else:
+                    combined_profile = _quasistatic_line_profile(
+                        selected_wavelength, center, sigma, hwhm, local_scale, mixing,
+                        half_window,
+                    )
+                    # The normalization is a property of the line, not of the
+                    # requested wavelengths: integrate over its full support.
+                    area = _quasistatic_line_profile_area(
+                        center, sigma, hwhm, local_scale, mixing, half_window
+                    )
                 if not np.isfinite(area) or area <= 0.0:
                     continue
                 selected_cm = selected_wavelength * 1.0e-8

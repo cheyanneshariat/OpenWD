@@ -11,12 +11,16 @@ restart heuristics.
 from __future__ import annotations
 
 from dataclasses import replace
+import logging
+import time
 from typing import Callable, Literal, Mapping
 
 import numpy as np
 from numpy.typing import NDArray
 
 from ._compat import trapezoid
+
+_LOGGER = logging.getLogger(__name__)
 from ._material_response import temperature_response_probes
 from ._energy_balance import (
     discrete_radiative_cell_energy_balance,
@@ -1457,6 +1461,28 @@ def solve_adaptive_lte_structure(
                 "convective_flux_interface": convective_flux_interface,
                 "transport": transport,
             }
+        return evaluation
+
+    # Every structure evaluation (opacity, transfer and convection at one
+    # temperature) is logged with its phase and wall time, so long phases
+    # that accept no iteration for many evaluations remain observable.
+    untimed_evaluate_log_temperature = evaluate_log_temperature
+    structure_evaluation_count = 0
+
+    def evaluate_log_temperature(
+        log_temperature: FloatArray, need_jacobian: bool
+    ) -> NonlinearEvaluation[dict[str, object]]:
+        nonlocal structure_evaluation_count
+        started = time.perf_counter()
+        evaluation = untimed_evaluate_log_temperature(log_temperature, need_jacobian)
+        structure_evaluation_count += 1
+        _LOGGER.info(
+            "structure evaluation %d: phase %s, jacobian %s, %.1f s",
+            structure_evaluation_count,
+            solver_phase,
+            need_jacobian,
+            time.perf_counter() - started,
+        )
         return evaluation
 
     log_temperature_from_state = np.zeros(

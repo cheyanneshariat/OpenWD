@@ -1,16 +1,20 @@
 """Fast checks of the public D6 configuration, data and scoring surface."""
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
 from wd_spectra import D6Config, compute_d6, select_physics
 from wd_spectra.d6 import (
     SDSS_J1637_LOG_NUMBER_ABUNDANCE,
+    atmosphere_with_bulk_metal_state,
+    bulk_metal_lte_state,
     continuum_d6_atmosphere,
     gray_d6_atmosphere,
     synthesize_d6_spectrum,
 )
-from wd_spectra.metals import IONIZATION_ENERGY_EV
+from wd_spectra.metals import IONIZATION_ENERGY_EV, metal_line_mass_absorption_coefficient
 from wd_spectra.models.common import ModelData
 from wd_spectra.models.d6 import _atomic_inputs
 from wd_spectra.opacity import optical_depth_from_mass_opacity
@@ -90,6 +94,67 @@ def test_formal_spectrum_is_finite_and_records_its_physics(j1637_inputs):
     assert np.all(spectrum.surface_flux_lambda > 0.0)
     assert spectrum.metadata["composition"] == "hydrogen-helium-free-bulk-metals"
     assert spectrum.metadata["transfer_discretization"] == "formal-linear"
+
+
+def test_nonideal_populations_retain_oxygen_autoionizing_multiplet(j1637_inputs):
+    database, _, _ = j1637_inputs
+    atmosphere = gray_d6_atmosphere(
+        12_500.0, 5.75, database, SDSS_J1637_LOG_NUMBER_ABUNDANCE, n_depth=8,
+    )
+    state = bulk_metal_lte_state(
+        atmosphere, database, SDSS_J1637_LOG_NUMBER_ABUNDANCE,
+        include_nonideal_partitions=True,
+    )
+    atmosphere = atmosphere_with_bulk_metal_state(atmosphere, state)
+    lines = [line for line in database.ions[("O", 0)].transitions
+             if 6258.0 < line.wavelength_vacuum_angstrom < 6271.0]
+    assert len(lines) == 7
+    wavelength = np.arange(6255.0, 6275.0, 0.025)
+    options = dict(
+        transition_keys=tuple(("O", 0, line.lower_index, line.upper_index) for line in lines),
+        include_rydberg_dissolution=True,
+    )
+    opacity = metal_line_mass_absorption_coefficient(
+        atmosphere, wavelength, database, state, **options,
+    )
+    # Hold the nonideal ion populations and partitions fixed: autoionizing
+    # resonances retain their population prescription when bound-level
+    # occupation weights are enabled.  Previously every line became zero.
+    reference = metal_line_mass_absorption_coefficient(
+        atmosphere, wavelength, database,
+        replace(state, metal_level_dissolution=False), **options,
+    )
+    assert np.max(reference) > 0.0
+    np.testing.assert_allclose(opacity, reference, rtol=1.0e-12, atol=0.0)
+
+
+@pytest.mark.parametrize("nonideal", [False, True])
+def test_frozen_formal_lines_survive_window_changes_and_record_provenance(j1637_inputs, nonideal):
+    database, photo, _ = j1637_inputs
+    atmosphere = gray_d6_atmosphere(
+        12_500.0, 5.75, database, SDSS_J1637_LOG_NUMBER_ABUNDANCE, n_depth=8,
+    )
+    keys = tuple(("Mg", 1, line.lower_index, line.upper_index)
+                 for line in database.ions[("Mg", 1)].transitions
+                 if 5400.0 < line.wavelength_vacuum_angstrom < 5406.0)
+    assert keys
+    wave = np.arange(5300.0, 5500.0, 0.2)
+    inside = (wave >= 5380.0) & (wave <= 5420.0)
+    options = dict(maximum_metal_lines=0, n_angle=2, include_linear_stark_quasistatic=True,
+                   linear_stark_profile="manifold", microturbulent_velocity_kms=3.0,
+                   include_nonideal_partitions=nonideal)
+    full = synthesize_d6_spectrum(
+        atmosphere, wave, database, photo, SDSS_J1637_LOG_NUMBER_ABUNDANCE,
+        line_transition_keys=iter(keys), **options,
+    )
+    part = synthesize_d6_spectrum(
+        atmosphere, wave[inside], database, photo, SDSS_J1637_LOG_NUMBER_ABUNDANCE,
+        line_transition_keys=keys[::-1] + keys, **options,
+    )
+    np.testing.assert_allclose(part.surface_flux_lambda, full.surface_flux_lambda[inside], rtol=1e-12)
+    assert part.metadata['explicit_line_transition_count'] == len(keys)
+    assert part.metadata['explicit_line_transition_sha256'] == full.metadata['explicit_line_transition_sha256']
+    assert part.metadata['nonideal_partition_functions'] is nonideal
 
 
 def test_hollands_scores_are_zero_for_the_digitized_model_itself():

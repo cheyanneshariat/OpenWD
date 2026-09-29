@@ -19,6 +19,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from dataclasses import replace
+import hashlib
+import json
 from pathlib import Path
 import re
 from types import MappingProxyType
@@ -1944,6 +1946,7 @@ def _metal_opacity(
     oxygen_i_series_stark_minimum_effective_n: float | None = None,
     include_oxygen_i_quasistatic_microfields: bool = False,
     include_linear_stark_quasistatic: bool = False,
+    linear_stark_profile: str = "manifold",
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
     include_metal_series_pseudocontinuum: bool = False,
@@ -2042,6 +2045,7 @@ def _metal_opacity(
                 include_oxygen_i_quasistatic_microfields
             ),
             include_linear_stark_quasistatic=include_linear_stark_quasistatic,
+            linear_stark_profile=linear_stark_profile,
             include_rydberg_dissolution=include_rydberg_dissolution,
             rydberg_dissolution_cutoff_probability=(
                 rydberg_dissolution_cutoff_probability
@@ -2330,6 +2334,7 @@ def d6_structure_opacity_function(
     metal_series_pseudocontinuum_elements: Iterable[str] = ("O", "Mg"),
     rydberg_correlated_microfields: bool = True,
     include_linear_stark_quasistatic: bool = False,
+    linear_stark_profile: str = "manifold",
     include_oxygen_i_series_stark: bool = False,
     profile_edge_optical_depth: float | None = None,
 ) -> Callable[[Atmosphere, MetalLTEState], tuple[FloatArray, FloatArray]]:
@@ -2357,6 +2362,7 @@ def d6_structure_opacity_function(
             rydberg_correlated_microfields=rydberg_correlated_microfields,
             topbase_photoionization_database=topbase_photoionization_database,
             include_linear_stark_quasistatic=include_linear_stark_quasistatic,
+            linear_stark_profile=linear_stark_profile,
             include_oxygen_i_series_stark=include_oxygen_i_series_stark,
             profile_edge_optical_depth=profile_edge_optical_depth,
         )
@@ -2390,6 +2396,7 @@ def radiative_equilibrium_d6_atmosphere(
     rydberg_correlated_microfields: bool = True,
     topbase_photoionization_database: TOPbasePhotoionizationDatabase | None = None,
     include_linear_stark_quasistatic: bool = False,
+    linear_stark_profile: str = "manifold",
     include_oxygen_i_series_stark: bool = False,
     profile_edge_optical_depth: float | None = None,
     n_angle: int = 3,
@@ -2530,6 +2537,7 @@ def radiative_equilibrium_d6_atmosphere(
         metal_series_pseudocontinuum_elements=metal_series_pseudocontinuum_elements,
         rydberg_correlated_microfields=rydberg_correlated_microfields,
         include_linear_stark_quasistatic=include_linear_stark_quasistatic,
+        linear_stark_profile=linear_stark_profile,
         include_oxygen_i_series_stark=include_oxygen_i_series_stark,
         profile_edge_optical_depth=profile_edge_optical_depth,
     )
@@ -2658,6 +2666,7 @@ def synthesize_d6_spectrum(
     reference_element: str = "C",
     minimum_metal_oscillator_strength: float = 1.0e-6,
     maximum_metal_lines: int | None = 25_000,
+    line_transition_keys: Iterable[tuple[str, int, int, int]] | None = None,
     microturbulent_velocity_kms: float = 0.0,
     include_lines: bool = True,
     n_angle: int = 4,
@@ -2667,6 +2676,7 @@ def synthesize_d6_spectrum(
     include_metal_series_pseudocontinuum: bool = True,
     metal_series_pseudocontinuum_elements: Iterable[str] = ("O", "Mg"),
     rydberg_correlated_microfields: bool = True,
+    include_nonideal_partitions: bool = False,
     **line_options: object,
 ) -> Spectrum:
     """Synthesize a hydrogen/helium-free LTE D6 spectrum.
@@ -2676,6 +2686,10 @@ def synthesize_d6_spectrum(
     emergent flux uses the same piecewise-linear formal solution as DZ.
     ``line_options`` forwards explicitly named line-physics ablations (for
     example the diagnostic O I series-Stark modes) to the opacity routine.
+    ``line_transition_keys`` freezes the transition list across wavelength
+    windows and numerical refinements; it supersedes ``maximum_metal_lines``.
+    The optional nonideal partitions are a fixed-structure EOS diagnostic,
+    not a claim of a reconverged nonideal atmosphere.
     """
 
     wavelength = np.ascontiguousarray(wavelength_angstrom, dtype=np.float64)
@@ -2690,11 +2704,16 @@ def synthesize_d6_spectrum(
     if not np.isfinite(microturbulent_velocity_kms) or microturbulent_velocity_kms < 0.0:
         raise ValueError("microturbulent_velocity_kms must be finite and non-negative")
     elements = tuple(metal_series_pseudocontinuum_elements)
+    keys = None if line_transition_keys is None else tuple(sorted({
+        (_canonical_element(element), int(charge), int(lower), int(upper))
+        for element, charge, lower, upper in line_transition_keys
+    }))
     state = bulk_metal_lte_state(
         atmosphere,
         atomic_database,
         log_number_abundance,
         reference_element=reference_element,
+        include_nonideal_partitions=include_nonideal_partitions,
     )
     atmosphere = atmosphere_with_bulk_metal_state(atmosphere, state)
     absorption, scattering = _metal_opacity(
@@ -2705,6 +2724,7 @@ def synthesize_d6_spectrum(
         photoionization_database,
         minimum_oscillator_strength=minimum_metal_oscillator_strength,
         maximum_lines=maximum_metal_lines,
+        line_transition_keys=keys,
         include_lines=include_lines,
         microturbulent_velocity_kms=microturbulent_velocity_kms,
         include_rydberg_dissolution=include_rydberg_dissolution,
@@ -2769,6 +2789,12 @@ def synthesize_d6_spectrum(
             "transfer": "LTE absorption plus coherent-isotropic electron scattering",
             "minimum_metal_oscillator_strength": float(minimum_metal_oscillator_strength),
             "maximum_metal_lines": maximum_metal_lines,
+            "explicit_line_transition_count": None if keys is None else len(keys),
+            "explicit_line_transition_sha256": (
+                None if keys is None
+                else hashlib.sha256(json.dumps(keys).encode("ascii")).hexdigest()
+            ),
+            "nonideal_partition_functions": bool(include_nonideal_partitions),
             "microturbulent_velocity_kms": float(microturbulent_velocity_kms),
             "line_physics_options": {
                 str(key): value for key, value in line_options.items()
