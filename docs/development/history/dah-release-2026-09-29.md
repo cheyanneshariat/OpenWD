@@ -71,7 +71,30 @@ remains a comparison operation and is absent from the physical prediction.
 
 ## Qualification evidence
 
-Final-candidate validation is recorded in `results/dah-release-final`.
-The release evidence summary will record its completed status and input hash
-before this candidate is pushed. No interrupted or partial run counts as a
-full-suite qualification.
+The [local evidence summary](dah-release-evidence-2026-09-29.json) records
+commit `1a53fd4`, the validation input hash, and the completed cases from
+`results/dah-release-final-v2`. Numerical inputs stayed unchanged during
+that run.
+
+- Fast and component checks: **1710 passed**, with one existing optional
+  Koester-spectrum check skipped because its cached observation was absent.
+- Fixed-atmosphere spectra: **21 passed**, including all eight paper objects
+  at relative tolerance `2e-8`, with no fitted scales or parameter changes.
+- Cold starts: **four passed** — J1007+1237, J1254+5612, radiative G 76−48,
+  and the existing DZ PG1225 control. The two DAH spectra differ from the
+  paper controls by at most `3.05e-14` and `2.27e-5`, respectively, in
+  relative flux. Both pass all five required equilibrium checks on the
+  underlying nonmagnetic structure. G 76−48 passes on the refined 200-layer
+  grid with convection disabled.
+- An isolated wheel built from numerical commit `2935f3a` passed **27 checks
+  in each of the pure-Python and native installations**, including the
+  J1007 paper spectrum, CLI, profiles, and bundled H2db data. Subsequent
+  commits change only test bookkeeping and documentation.
+
+The remaining local cold starts were intentionally interrupted or left
+unstarted when validation moved to GitHub Actions. Accordingly, the local
+runner records a failed overall status and `full_qualification=false`;
+this is **not** a completed full-suite pass. The release PR requests the
+complete GitHub matrix with the `full-validation` label, including all
+25 cold cases and fresh fast/spectral preflight checks. Its GitHub
+`qualification` check remains the release gate.
