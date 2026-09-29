@@ -227,6 +227,8 @@ translated zero-field profile. Magnetic Lyman/Paschen/Brackett data,
 thermally decentered atoms and polarimetric output are absent. Strong-field
 molecular chemistry is absent, which limits cool-star applications.
 Agreement with eight objects does not guarantee an unbiased parameter fit.
+At zero field the default still uses Kurucz/Griem profiles; select unified
+profiles to recover the ordinary DA line-profile limit.
 
 Scientific use should cite the relevant ingredients and observational sources:
 

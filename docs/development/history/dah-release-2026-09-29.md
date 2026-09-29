@@ -33,7 +33,11 @@ and deferred local-energy constraints. Flux rows in optically thin layers
 can be nearly dependent, leaving their temperatures poorly constrained.
 Radiative starts now enforce flux and local energy immediately with a fresh,
 unregularized, equilibrated Newton tangent and frozen equation weights.
-Broyden updates are disabled across changed energy-equation weights.
+Broyden updates are disabled across changed energy-equation weights. Warm
+starts that already bypass convective conditioning use the same fresh energy
+tangents. Their old formal-flux continuation count is no longer meaningful;
+the restart regression now checks the actual energy phase, rebuilt Jacobian
+and rejection of an unfinished state by the physical certificate.
 
 The 6680-K, log-g=7.96 G 76−48 atmosphere also requires more resolution at
 its steep ionization transition. A failed production 100-layer DA attempt
@@ -67,7 +71,7 @@ remains a comparison operation and is absent from the physical prediction.
 
 ## Qualification evidence
 
-Final-candidate validation is recorded in `results/dah-release-qualified`.
+Final-candidate validation is recorded in `results/dah-release-final`.
 The release evidence summary will record its completed status and input hash
 before this candidate is pushed. No interrupted or partial run counts as a
 full-suite qualification.

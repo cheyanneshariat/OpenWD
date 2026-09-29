@@ -1232,7 +1232,7 @@ def test_adaptive_helium_structure_retains_trace_metal_feedback_metadata(
     ]
 
 
-def test_adaptive_helium_checkpoint_resumes_in_formal_flux_phase():
+def test_adaptive_helium_checkpoint_resumes_with_fresh_energy_tangents():
     seed = gray_helium_atmosphere(9_000.0, 8.0, n_depth=8)
     atmosphere = radiative_equilibrium_helium_atmosphere(
         9_000.0,
@@ -1257,9 +1257,20 @@ def test_adaptive_helium_checkpoint_resumes_in_formal_flux_phase():
     assert not atmosphere.metadata["initial_convective_gradient_projection"]
     assert atmosphere.metadata["convective_preconditioner_iterations"] == 0
     assert atmosphere.metadata["convective_preconditioner_iteration_limit"] == 0
-    assert atmosphere.metadata["formal_flux_continuations"] == 2
-    assert atmosphere.metadata["radiative_equilibrium_iterations"] == 3
+    # A restart bypasses convective conditioning, so local energy is active
+    # immediately. Its fresh tangent has no stale secant history to repair by
+    # repeating the same one-step solve. The unfinished state must still fail
+    # physical certification.
+    assert atmosphere.metadata["formal_flux_continuations"] == 0
+    assert atmosphere.metadata["radiative_equilibrium_iterations"] == 1
+    assert atmosphere.metadata["local_energy_completion_used"]
+    segments = atmosphere.metadata["nonlinear_solver_segments"]
+    assert len(segments) == 1 and segments[0]["phase"] == "local-energy-completion"
+    assert segments[0]["iteration_history"][0]["jacobian_recomputed"]
     assert not atmosphere.metadata["radiative_equilibrium_converged"]
+    certificate = atmosphere.metadata["equilibrium_certificate"]
+    assert not certificate["verified"]
+    assert {"all_depth_flux", "local_energy", "temperature_stationarity"} <= set(certificate["failures"])
 
 
 def test_nonideal_dense_helium_increases_first_ionization(atomic_root: Path):
