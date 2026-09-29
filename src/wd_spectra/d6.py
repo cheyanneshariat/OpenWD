@@ -2046,6 +2046,7 @@ def _metal_opacity(
             ),
             include_linear_stark_quasistatic=include_linear_stark_quasistatic,
             linear_stark_profile=linear_stark_profile,
+            mg_ii_kurucz_series_widths=True,
             include_rydberg_dissolution=include_rydberg_dissolution,
             rydberg_dissolution_cutoff_probability=(
                 rydberg_dissolution_cutoff_probability

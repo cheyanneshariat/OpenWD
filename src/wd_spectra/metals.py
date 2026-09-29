@@ -6593,6 +6593,7 @@ def metal_line_mass_absorption_coefficient(
     oxygen_i_quasistatic_minimum_effective_n: float = 6.5,
     include_linear_stark_quasistatic: bool = False,
     linear_stark_profile: str = "two-level",
+    mg_ii_kurucz_series_widths: bool = False,
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
     rydberg_dissolution_elements: Iterable[str] | None = None,
@@ -6651,6 +6652,8 @@ def metal_line_mass_absorption_coefficient(
     (Holtsmark) linear-Stark envelope to every genuine Rydberg line (see
     :func:`linear_stark_rydberg_level`), weighted depth by depth by
     :func:`linear_stark_mixing_fraction`; the oscillator strength is conserved.
+    ``mg_ii_kurucz_series_widths`` gives every Mg II 2p6-core multiplet its
+    Kurucz electron width (D6); otherwise only 4f-8g (4852 A) uses Kurucz.
     ``rydberg_dissolution_elements`` limits ``include_rydberg_dissolution`` to
     the named elements; None (the default) dissolves every element's lines.
     ``uv_resonance_support_angstrom`` supplies already-decided minimum support
@@ -7101,12 +7104,22 @@ def metal_line_mass_absorption_coefficient(
         is_mg_ii_4481 = (
             ion.element == "Mg" and ion.charge == 1 and 4478.0 < center < 4487.0
         )
+        # D6 opts into Kurucz widths for the whole Mg II series; other
+        # families keep their validated 4f-8g-only line-specific width.
         mg_ii_series_rate = (
             mg_ii_kurucz_electron_stark_rate_coefficient(
                 lower_level, upper_level, atmosphere.temperature
             )
             if ion.element == "Mg" and ion.charge == 1
-            else None
+            and mg_ii_kurucz_series_widths
+            else (
+                mg_ii_4852_electron_stark_rate_coefficient(
+                    center, atmosphere.temperature
+                )
+                if ion.element == "Mg" and ion.charge == 1
+                and 4848.0 < center < 4857.0
+                else None
+            )
         )
         is_mg_i_3835 = (
             ion.element == "Mg" and ion.charge == 0 and 3825.0 < center < 3845.0
