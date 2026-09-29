@@ -29,6 +29,30 @@ Protected cold starts reach 3000 K at log g = 8, with additional checks at
 4000, 5000, and 20000 K. See [tested points](../tested-temperature-ranges.md)
 and [limitations](../limitations.md) for settings and the scope of that evidence.
 
+## Radiative atmospheres with convection disabled
+
+Set `DAConfig(mixing_length_alpha=None)` to solve a radiative atmosphere.
+The solver enforces local heating/cooling balance from its first iteration;
+it skips the ML2 gradient conditioner when there is no convective transport.
+Its energy solve uses a fresh temperature-response matrix with consistent
+equation weights on every step.
+
+For `quality="production"`, the initial 100-layer grid gets up to 40 Newton
+iterations. If it fails equilibrium, the code interpolates that numerical
+seed onto 200 layers and solves the same equations again. This resolves steep
+hydrogen-ionization transitions that can stall the coarser grid. A supplied
+finer radiative restart retains its depth resolution. Temperature, gravity,
+chemistry, opacity prescriptions, convection and convergence tolerances are
+unchanged. The finer atmosphere must pass its own complete equilibrium
+certificate; exhausting both attempts still returns an unconverged warning.
+The refinement and initial failure diagnostics are recorded in atmosphere
+metadata under `radiative_depth_refinement`.
+
+This path also serves the default DAH prescription on a nonmagnetic atmosphere
+when the field suppresses convection.
+The G 76−48 regression uses 6680 K and log g = 7.96, with molecular chemistry,
+zero magnetic field in the structure calculation and convection disabled.
+
 ## Spectrum synthesis
 
 `compute_da` uses monotone cubic (PCHIP) source interpolation by default to

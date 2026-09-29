@@ -22,6 +22,7 @@ OpenWD provides plane-parallel models for these classes:
 | DO/DAO | Hot helium or hydrogen–helium | NLTE hydrogen and helium (LTE charge closure) | [DO/DAO](docs/models/DO-DAO.md) |
 | PG 1159 | Hot helium–carbon–oxygen | NLTE He, C and O; trace elements in the line formation | [PG 1159](docs/models/PG1159.md) |
 | D6 | Hydrogen/helium-free carbon–oxygen with heavier elements | LTE | [D6](docs/models/D6.md) |
+| DAH | Magnetic hydrogen spectra, normalized Kurucz/Griem profiles on a DA structure | LTE | [DAH](docs/models/DAH.md) |
 
 Every class is calculated from a cold start and reports whether the result
 passed its numerical convergence checks. The guides describe each class's

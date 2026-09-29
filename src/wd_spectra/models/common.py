@@ -37,6 +37,7 @@ ConvergenceStatus = Literal[
 
 _MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
 _MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v4"
+_MODEL_FAMILY_PHYSICS_REVISIONS = {"DAH": "dah-kurucz-griem-v4"}
 
 
 class AtmosphereConvergenceWarning(RuntimeWarning):
@@ -193,6 +194,12 @@ class ModelData:
         return self.cache / "tlusty-atoms"
 
     @property
+    def h2db_balmer_subset(self) -> Path:
+        """Schimeczek--Wunner H2db Balmer transitions and state energies."""
+
+        return self.cache / "h2db/h2db_balmer_subset.npz"
+
+    @property
     def h2_h2_cia(self) -> Path:
         return (
             self.cache
@@ -239,7 +246,10 @@ def model_request_fingerprint(
 
     request = {
         "schema": _MODEL_REQUEST_FINGERPRINT_SCHEMA,
-        "physics_revision": _MODEL_PHYSICS_REVISION,
+        "physics_revision": _MODEL_PHYSICS_REVISION + (
+            ":" + _MODEL_FAMILY_PHYSICS_REVISIONS[str(spectral_type)]
+            if str(spectral_type) in _MODEL_FAMILY_PHYSICS_REVISIONS else ""
+        ),
         "spectral_type": str(spectral_type),
         "config": _jsonable(config),
         "data_root": str(data.root.resolve()),

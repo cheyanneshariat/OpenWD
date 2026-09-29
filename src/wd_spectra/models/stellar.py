@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from pathlib import Path
 from types import MappingProxyType
@@ -383,6 +383,15 @@ def compute_da(
         full_depth = (
             100 if config.quality == "production" else resolution.n_depth
         )
+        refine_radiative_grid = (
+            config.quality == "production"
+            and config.mixing_length_alpha is None
+            and config.atmosphere_solver == "adaptive-newton"
+        )
+        if refine_radiative_grid and atmosphere is not None:
+            # Retain a previously refined warm start. Compressing its steep
+            # ionization transition back onto 100 layers can recreate failure.
+            full_depth = max(full_depth, atmosphere.n_depth)
         if (
             initial_atmosphere is None
             and config.multigrid_initialization
@@ -437,19 +446,28 @@ def compute_da(
                 + "-depth multigrid seed"
             )
 
+        iteration_offset = 0
+        depth_refinements = 0
+
         def full_callback(iteration, current_atmosphere, status):
             if iteration_callback is None:
                 return
             record = dict(status)
             record["coarse_grid"] = False
-            iteration_callback(iteration, current_atmosphere, record)
+            record["depth_points"] = current_atmosphere.n_depth
+            record["radiative_depth_refinements"] = depth_refinements
+            iteration_callback(iteration + iteration_offset, current_atmosphere, record)
 
         atmosphere = radiative_equilibrium_hydrogen_atmosphere(
             config.effective_temperature,
             config.logg,
             n_depth=full_depth,
             n_continuum_wavelength=resolution.n_continuum,
-            max_iterations=resolution.maximum_iterations,
+            max_iterations=(
+                min(40, resolution.maximum_iterations)
+                if refine_radiative_grid and full_depth == 100
+                else resolution.maximum_iterations
+            ),
             n_angle=min(resolution.n_angle, 3),
             initial_temperature=(
                 None if atmosphere is None else atmosphere.temperature
@@ -460,6 +478,45 @@ def compute_da(
             iteration_callback=full_callback,
             **relaxation_kwargs,
         )
+        if (
+            refine_radiative_grid
+            and full_depth == 100
+            and atmosphere_convergence_status(atmosphere) != "converged"
+        ):
+            # A radiative hydrogen ionization transition can be too steep for
+            # the initial mass mesh. Re-solve the SAME equations on 200 layers;
+            # the unfinished 100-layer state is only an interpolated seed.
+            # The fine solve must earn its own complete equilibrium certificate.
+            coarse = atmosphere
+            iteration_offset = int(coarse.metadata["radiative_equilibrium_iterations"])
+            depth_refinements = 1
+            atmosphere = radiative_equilibrium_hydrogen_atmosphere(
+                config.effective_temperature,
+                config.logg,
+                n_depth=2 * full_depth,
+                n_continuum_wavelength=resolution.n_continuum,
+                max_iterations=resolution.maximum_iterations,
+                n_angle=min(resolution.n_angle, 3),
+                initial_temperature=coarse.temperature,
+                initial_column_mass=coarse.column_mass,
+                iteration_callback=full_callback,
+                **relaxation_kwargs,
+            )
+            atmosphere = replace(atmosphere, metadata={
+                **atmosphere.metadata,
+                "radiative_depth_refinement": {
+                    "initial_depth_points": coarse.n_depth,
+                    "final_depth_points": atmosphere.n_depth,
+                    "initial_certificate_failures": coarse.metadata["equilibrium_certificate"]["failures"],
+                    "initial_maximum_flux_residual": coarse.metadata["maximum_all_depth_total_flux_residual"],
+                    "initial_maximum_local_energy_residual": coarse.metadata["maximum_relative_cell_energy_balance_residual"],
+                    "initial_iterations": iteration_offset,
+                    "stellar_parameters_changed": False,
+                },
+                "radiative_equilibrium_iterations_including_depth_refinement": (
+                    iteration_offset + atmosphere.metadata["radiative_equilibrium_iterations"]
+                ),
+            })
     assert atmosphere is not None
     if config.use_cool_mean_3d_temperature_differential:
         atmosphere = (

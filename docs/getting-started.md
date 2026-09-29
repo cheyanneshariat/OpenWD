@@ -90,8 +90,8 @@ certificate and the independent final-spectrum flux check, even with
 Replace the configuration above, keeping the same `run_model` call:
 
 ```python
-from wd_spectra import (D6Config, DABConfig, DAOConfig, DAZConfig, DBConfig,
-                        DOConfig, DQConfig, DZConfig, PG1159Config)
+from wd_spectra import (D6Config, DABConfig, DAHConfig, DAOConfig, DAZConfig,
+                        DBConfig, DOConfig, DQConfig, DZConfig, PG1159Config)
 
 helium = DBConfig(effective_temperature=22_000, logg=8.0, quality="standard")
 mixed = DABConfig(effective_temperature=20_000, logg=8.0,
@@ -107,6 +107,10 @@ hot_mixed = DAOConfig(effective_temperature=60_000, logg=8.0,
 hot_carbon_oxygen = PG1159Config(effective_temperature=110_000, logg=7.0,
                                  refine_upper_atmosphere=True)
 carbon_oxygen = D6Config(quality="standard")  # SDSS J1637+3631 defaults
+magnetic = DAHConfig(effective_temperature=22_642, logg=8.37,
+                     magnetic_field_megagauss=45.09, field_geometry="dipole",
+                     dipole_inclination_deg=66.0,
+                     dipole_offset_radius=(0.0, 0.0, 0.17))
 ```
 
 `log_hydrogen_to_helium=-2` means N(H)/N(He) = 0.01, not a hydrogen mass
@@ -118,7 +122,10 @@ abundances are relative to hydrogen, and the defaults describe G29-38.
 `PG1159Config` takes mass fractions (normalized once); its defaults describe
 PG 1424+535. `D6Config` takes log number ratios to carbon, has no hydrogen or
 helium, and defaults to the Hollands et al. (2025) solution for SDSS
-J1637+3631; see the [D6 guide](models/D6.md). The sections below cover the classes with their own requirements.
+J1637+3631; see the [D6 guide](models/D6.md). `DAHConfig` defaults to normalized Kurucz/Griem profiles and scalar magnetic
+synthesis on a nonmagnetic DA structure. It adds a magnetic
+field, uniform or an offset dipole (the example is J2149−0728 from Hardy et
+al. 2023); see the [DAH guide](models/DAH.md). The sections below cover the classes with their own requirements.
 
 ### DQ helium/carbon atmospheres
 

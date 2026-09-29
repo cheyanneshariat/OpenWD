@@ -139,6 +139,25 @@ installed with OpenWD.
 
 [D6 models](models/D6.md) are LTE and qualified at one star, SDSS J1637+3631 (15680 K, log g = 6.3). Molecules and negative ions are omitted, so they do not yet apply to the cool D6 stars; hot D6 stars need NLTE. Known line-data differences from the Hollands et al. Koester model are listed in the guide.
 
+## DAH
+
+[DAH models](models/DAH.md) default to normalized Kurucz/Griem Balmer
+profiles and scalar magnetic transfer on a nonmagnetic DA structure.
+The equilibrium certificate applies to that underlying structure; magnetic
+opacities do not feed back on its temperature profile. The eight fixed-parameter
+paper comparisons span dipole polar fields from 6.13 to 437.1 MG, but neither
+those examples nor the input bounds establish a validated parameter grid.
+
+The historical Stark approximation has no separate Doppler convolution or
+neutral self broadening, and translating a zero-field profile is not a
+simultaneous Stark–Zeeman calculation. Magnetic Lyman/Paschen/Brackett data,
+decentered atoms, strong-field molecular chemistry and disk-integrated Q/U/V
+are absent. The earlier mean-field magnetic structure, magnetic EOS, RWA
+continuum, full IQUV transfer and cyclotron opacity remain explicit options.
+The [DAH guide](models/DAH.md) separates these options from the paper default
+and explains why smooth continuum corrections belong to observational
+comparisons rather than the physical prediction.
+
 ## PG 1159
 
 [PG 1159 models](models/PG1159.md) are qualified from a cold start for three
