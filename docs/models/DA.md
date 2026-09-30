@@ -29,6 +29,43 @@ Protected cold starts reach 3000 K at log g = 8, with additional checks at
 4000, 5000, and 20000 K. See [tested points](../tested-temperature-ranges.md)
 and [limitations](../limitations.md) for settings and the scope of that evidence.
 
+## Paper comparisons
+
+The paper tests both the predicted spectral-energy distribution and the
+resolved Balmer profiles. The grid comparison uses six fixed parameter pairs:
+5000, 10000, 20000 and 30000 K at log g = 8, plus log g = 7 and 9 at
+20000 K. Each OpenWD atmosphere is relaxed at its own temperature and gravity
+with the pure-H EOS, line profiles and ML2/alpha=0.7 convection described above.
+The blue curves are the public Koester DA grid distributed through SVO; they
+are comparison spectra, not input atmospheres for OpenWD.
+
+[![DA surface-flux spectra compared with the Koester grid](../assets/da-paper-grid.png)](../assets/da-paper-grid.pdf)
+
+[Download the grid comparison (PDF)](../assets/da-paper-grid.pdf).
+The left panels show the UV--IR distribution and the right panels the optical
+spectrum. Both curves are surface `F_lambda`, with no fitted flux scale or
+continuum normalization. This tests continuum and line agreement at the
+displayed points, rather than certifying every model between them.
+
+The observed comparison holds the parameters from
+[Koester et al. (2009)](https://doi.org/10.1051/0004-6361/200912531)
+fixed for six SPY/UVES stars, spanning 8615--32959 K. OpenWD calculates an
+atmosphere at each parameter pair; the Koester reference is bilinearly
+interpolated to the same values. Both predictions are convolved to
+`R = 18500` and normalized with the same local sideband procedure as the
+observations, since the echelle spectra are not spectrophotometric. Observed
+pixels are median-binned to 0.20 Å for display.
+
+[![Observed SPY Balmer profiles with Koester and OpenWD predictions](../assets/da-paper-spy.png)](../assets/da-paper-spy.pdf)
+
+[Download the SPY comparison (PDF)](../assets/da-paper-spy.pdf).
+G29-38 and PG 1015+161 contain trace metals, but the displayed broad Balmer
+profiles are tested with pure-H models. The close agreement between the two
+codes does not remove their shared cool-star line-core residuals: the
+one-dimensional LTE and local-convection approximations still matter.
+These are the archived paper curves; current synthesis defaults and their
+separate regression checks are described below.
+
 ## Radiative atmospheres with convection disabled
 
 Set `DAConfig(mixing_length_alpha=None)` to solve a radiative atmosphere.

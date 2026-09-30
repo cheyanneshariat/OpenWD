@@ -144,7 +144,10 @@ objects test the prescription at higher fields.
 | J1351+5419 | 13937 | 8.43 | 368.52 | 34 | (0, 0, 0.07) |
 | J2247+1456 | 19000 | 8.00 | 437.10 | 10 | (0, 0, −0.15) |
 
-![Observed and predicted spectra with a single flux scale](../assets/dah-paper-unscaled.png)
+[![Observed and predicted spectra with a single flux scale](../assets/dah-paper-unscaled.png)](../assets/dah-paper-unscaled.pdf)
+
+[Download the single-scale comparison (PDF)](../assets/dah-paper-unscaled.pdf)
+or the [paper's smoothly rescaled comparison (PDF)](../assets/dah-paper-rescaled.pdf).
 
 The figure above uses one flux scale per object. The
 [smoothly rescaled version](../assets/dah-paper-rescaled.png) used in the

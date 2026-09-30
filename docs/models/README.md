@@ -5,6 +5,13 @@
 Use the configuration for your composition with `run_model`. It selects the
 implemented material treatment before solving a new atmosphere.
 
+Each guide includes the paper's comparison figures, with inline previews,
+downloadable PDFs, and an explanation of the model inputs and display
+processing. The figures preserve the paper snapshots; they are not regenerated
+when defaults change. The [figure manifest](../assets/paper-figures.json)
+records source filenames and checksums. Current convergence qualifications
+remain listed separately under [tested points](../tested-temperature-ranges.md).
+
 | Configuration | Composition | Populations | Details |
 | --- | --- | --- | --- |
 | `DAConfig` | Pure hydrogen | LTE | [DA physics](DA.md) |
