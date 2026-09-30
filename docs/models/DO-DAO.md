@@ -31,6 +31,49 @@ shared-solver LTE initialization. They do not take a saved atmosphere. `quick`
 skips the LTE initialization and attempts two coupled Newton iterations; it is
 a smoke check, not a production equilibrium calculation.
 
+## Paper comparison
+
+The paper's six-panel figure combines three SDSS DOs, two SDSS DAOs and
+the CALSPEC hot DA standard GD 153. The DO points are illustrative fixed
+models for stars from [Hügelmeyer et al. (2005)](https://doi.org/10.1051/0004-6361:20053280).
+The two DAO parameter sets come from
+[Tremblay et al. (2011)](https://doi.org/10.1088/0004-637X/730/2/128),
+and GD 153 uses [Bohlin et al. (2020)](https://doi.org/10.3847/1538-3881/ab94b4).
+
+| Object | Configuration | Teff (K) | log g | log10 N(H)/N(He) |
+| --- | --- | ---: | ---: | ---: |
+| GD 153 | DAO, near-pure-H limit | 40204 | 7.82 | 6.00 |
+| SDSS J0342-0722 | DO | 50000 | 8.00 | Pure He |
+| SDSS J0341+0053 | DO | 60000 | 8.00 | Pure He |
+| SDSS J1404+0457 | DO | 70000 | 8.00 | Pure He |
+| SDSS J0827+3130 | DAO | 78550 | 7.33 | 2.41 |
+| SDSS J0348+0046 | DAO | 90730 | 7.15 | 2.12 |
+
+[![Six observed DO, DAO and hot DA spectra with restricted-NLTE predictions](../assets/do-dao-paper.png)](../assets/do-dao-paper.pdf)
+
+[Download the comparison (PDF)](../assets/do-dao-paper.pdf).
+Every atmosphere was calculated from a fresh LTE initialization followed by
+continuation to the full restricted-NLTE equations. Temperature and H/He
+populations are solved together; the charge and pressure closure remains LTE.
+The DOs and SDSS DAOs use 40 depths and three angles. GD 153 uses 80 depths,
+four angles and eight He II shells; its solid and dashed predictions retain
+eight and 20 H I levels, respectively. Only the final equations determine
+whether a model passes the convergence checks.
+
+Observations are SDSS spectra except for GD 153 (HST/STIS). Models are
+convolved with the wavelength-dependent instrument resolution and shifted
+by fixed comparison velocities. Data retain their observed vacuum frame;
+missing or masked pixels remain gaps. Data and predictions are independently
+pseudo-continuum normalized with the same procedure, so the figure tests
+line profiles rather than an absolute spectral-energy distribution.
+
+No temperatures, gravities or abundances were fitted to these spectra.
+The DAO literature parameters were derived using models with CNO opacity;
+these calculations contain H and He only. Visible line-core residuals and
+the LTE charge closure therefore remain physical limitations even when a
+cold start converges. The older diagnostic comparison set and its numerical
+scores are retained under [observational checks](#observational-checks-and-remaining-limitations).
+
 ## Solver and retained atom
 
 Logarithmic temperatures and independent elemental population ratios are
@@ -227,10 +270,11 @@ but never reads them to initialize a public calculation.
 
 ## Observational checks and remaining limitations
 
-The [cold-only six-object comparison](../assets/do-dao-cold-observed.pdf) uses
+The earlier [cold-only six-object comparison](../assets/do-dao-cold-observed.pdf) uses
 the same stacked-spectrum style as the DZ/DQ paper figures. The
 [full comparison set](../assets/do-dao-cold-variants.pdf) includes all three
-GD153 grids. No stellar parameters were fitted. Display normalization differs
+GD153 grids. This older selection differs from the paper sample above.
+No stellar parameters were fitted. Display normalization differs
 from the line-local protocol used for quantitative scores.
 
 At 50,000 K, J034227's observed chi-square is 1.80% lower than legacy.

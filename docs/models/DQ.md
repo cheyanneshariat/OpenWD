@@ -58,6 +58,45 @@ separate requests, allowing for their memory requirements. Progress is printed
 and written to `worker/progress.json` and `worker/automatic-phases.json` under
 `run_model` (directly in the chosen directory under `compute_dq`).
 
+## Paper comparison
+
+The paper compares four SDSS stars at published temperature, gravity and
+carbon abundance, without refitting. J0940 uses
+[Koester & Kepler (2019)](https://doi.org/10.1051/0004-6361/201935946);
+the other three use
+[Blouin & Dufour (2019)](https://doi.org/10.1093/mnras/stz2915).
+
+| Object | Teff (K) | log g | log10 N(C)/N(He) | Initialization of the plotted model |
+| --- | ---: | ---: | ---: | --- |
+| SDSS J0940+0210 | 7256 | 8.094 | -5.769 | Re-relaxed saved atmosphere |
+| SDSS J1225+4706 | 6294 | 7.924 | -5.33 | Public cold start |
+| SDSS J0804+1714 | 5364 | 7.885 | -7.19 | Re-relaxed saved atmosphere |
+| SDSS J1803+2320 | 4400 | 7.694 | -7.79 | Re-relaxed saved atmosphere |
+
+[![SDSS DQ spectra and predictions scaled using published masses and parallaxes](../assets/dq-paper.png)](../assets/dq-paper.pdf)
+
+[Download the comparison (PDF)](../assets/dq-paper.pdf).
+The models combine the dense-He EOS, coupled He/C/C2 chemistry, completed
+Swan and C-A opacity, and refractive transfer described below. The saved
+research starting states were re-relaxed with the paper's stride-four
+structure sampling; all four plotted results passed the atmosphere checks
+and the independent 0.2% bolometric-flux test. The warm-start rows are
+spectral comparisons, not evidence of public cold-start convergence at those
+points. Public `run_model` still starts from scratch.
+
+Surface flux is converted to flux at Earth using `(R/d)^2`, with
+`R^2 = G M / g` and the published masses and parallaxes. No flux factor is
+fitted. Predictions are convolved with the wavelength-dependent SDSS
+line-spread function, and both spectra are averaged in the same 5 Å bins
+after invalid pixels are masked. Shading is the propagated pipeline
+one-sigma error, without inter-pixel covariance. No extra velocity or
+extinction correction is applied to the SDSS vacuum wavelengths.
+
+The Swan-band pattern is recognizable, but continuum and band-profile
+discrepancies grow toward the coolest object. J0804 and J1803 are peculiar
+DQs: their inclusion exposes the limitations of the molecular profiles and
+does not extend the module's qualified scope to DQp stars.
+
 ## What is required for success
 
 The same shared nonlinear solver, ML2 helpers and screened-domain controller

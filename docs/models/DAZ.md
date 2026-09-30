@@ -33,6 +33,34 @@ python examples/one_shot_daz.py --teff 11820 --logg 8.40 \
 `compute_daz` is also available for in-memory calculations. The automatic
 interface never routes DAZ through a helium or pure-DA substitute on failure.
 
+## Paper comparison
+
+The paper's seven-object polluted-star figure contains two hydrogen-host
+examples: **G149-28** (8600 K, log g = 8.10; DESI DR1) and
+**GALEX J1931+0117** (20890 K, log g = 7.90; VLT/UVES), in the first and
+last panels. Their parameters and metal abundances are fixed to
+[Zuckerman et al. (2011)](https://doi.org/10.1088/0004-637X/739/2/101)
+and [Vennes et al. (2011)](https://doi.org/10.1111/j.1365-2966.2011.18323.x),
+respectively. The five middle panels use the helium-host
+[DZ/DBZ module](DZ.md#paper-comparison).
+
+[![Seven polluted white dwarfs, including the G149-28 and GALEX J1931 DAZ models](../assets/dz-daz-paper.png)](../assets/dz-daz-paper.pdf)
+
+[Download the comparison (PDF)](../assets/dz-daz-paper.pdf).
+Each DAZ atmosphere is relaxed at the displayed composition with metals
+included in charge balance and structural opacity, then synthesized with the
+more detailed metal line list. Number abundances in these two panels are
+relative to hydrogen; the middle panels use helium. The plotted DAZ models
+retain the paper's Stout strengths, Unsold neutral-H metal-line widths and
+Stark-only Lyman setting described below.
+
+For display, predictions are convolved to `R = 2000` for G149-28 and
+`R = 40970` for GALEX J1931+0117. Observations and models are independently
+pseudo-continuum normalized on rest-frame vacuum wavelengths. This compares
+Balmer and metal-line shapes without fitting temperature, gravity or
+abundances; it does not test absolute flux calibration. Remaining differences,
+including Ca II cores and metal-line strengths, are visible in the panels.
+
 ## Physics and paper comparisons
 
 The preset uses the shared adaptive DA solver, ML2/alpha=0.7, the DA hydrogen

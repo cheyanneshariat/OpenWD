@@ -16,6 +16,31 @@ python examples/one_shot_dab.py --teff 20000 --logg 8.0 --log-h-he -2 \
 `--log-h-he` means `log10[N(H)/N(He)]`. Standard calculations typically take
 3--20 minutes, with cool mixtures and low-gravity production models slower.
 
+## Paper comparison
+
+The paper fixes `log_hydrogen_to_helium = -2` and compares six homogeneous
+H/He atmospheres with the Montreal DB/DBA grid of
+[Cukanovaite et al. (2021)](https://doi.org/10.1093/mnras/staa3684).
+The temperature sequence is 9000, 15000, 20000 and 30000 K at log g = 8;
+two additional models have log g = 7 and 9 at 20000 K. The composition is
+one hydrogen nucleus per 100 helium nuclei throughout the atmosphere.
+
+[![Mixed H/He surface-flux spectra compared with the Montreal grid](../assets/dab-paper-grid.png)](../assets/dab-paper-grid.pdf)
+
+[Download the comparison (PDF)](../assets/dab-paper-grid.pdf).
+Each OpenWD structure is relaxed with the shared H/He charge-neutrality
+solution, the hydrogen and helium opacities, and ML2/alpha=1.25 convection.
+Both species therefore affect the temperature structure as well as the
+final spectrum. The left panels show 900--30000 Å surface flux and the right
+panels show the optical hydrogen and helium features. Neither curve is
+rescaled or continuum-normalized for the plot, and the comparison grid does
+not provide OpenWD's temperature structure.
+
+This is a fixed-composition comparison between atmosphere codes, not an
+observational abundance fit or a test of a stratified H/He layer. The archived
+paper spectra and the current molecular cold-start checks below answer
+different questions; the six plotted points do not validate cooler mixtures.
+
 ## Cool mixtures
 
 Use `run_model(DABConfig(...), output_directory)` for automatic molecular

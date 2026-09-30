@@ -1,0 +1,192 @@
+{
+  "schema": 1,
+  "scope": "Archived paper figures. PDFs are byte-for-byte copies of the manuscript assets; previews are for GitHub display. These snapshots are not new model calculations or qualification of the current source tree.",
+  "source_workspace_paths": "Paths identify the separate paper workspace, not dependencies required to use the released package.",
+  "manuscript_source": "paper/manuscript.tex",
+  "manuscript_sha256": "a2ac57d6bb2754612bd42e4c1b2daa050af87ef3f649cd7beef64d2a74ee8a2d",
+  "documentation_base_commit": "5dacf2b688d41644c154d65cc2bc0a45aa2a6999",
+  "preview_rendering": "New PNG previews: pdftoppm -singlefile -scale-to 1800 -png. Existing DAH previews retained.",
+  "figures": [
+    {
+      "pdf": "da-paper-grid.pdf",
+      "preview": "da-paper-grid.png",
+      "guides": [
+        "DA.md"
+      ],
+      "paper_source": "paper/figures/da_koester_grid.pdf",
+      "pdf_sha256": "772046f6c2cc0f3dc08ef66702e59c0b1f645a0e8215740cebcd36a76156d02d",
+      "preview_sha256": "460afbd7f506348e2e02a764e87127bd623d520d6a025e6d6bb6cd73884e8ccd",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/plot_current_da_koester_six_model_grid.py",
+        "sha256_at_import": "e954c4c14b798b0165fe6c7d57987d6f7a6f329b91e7501531ceacc8b7d152f3",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "da-paper-spy.pdf",
+      "preview": "da-paper-spy.png",
+      "guides": [
+        "DA.md"
+      ],
+      "paper_source": "paper/figures/da_spy_balmer_profiles.pdf",
+      "pdf_sha256": "8aa9bd16f3ceed96d74c160809a584b8c8146cd0d1aea6d8b527c9b6bfcc65a9",
+      "preview_sha256": "0aa8e396d81a5f135ae32cfba1ad3780ec408766aab21b8519e311468442b342",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/make_da_spy_balmer_paper_figure.py",
+        "sha256_at_import": "4670ae7fae3461dccbc9e800b4c6131409ddf4c6ea371e4a4b99db356a477825",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "db-paper-grid.pdf",
+      "preview": "db-paper-grid.png",
+      "guides": [
+        "DB.md"
+      ],
+      "paper_source": "paper/figures/db_tremblay_grid.pdf",
+      "pdf_sha256": "f1991499b09ca36166e4dd13c88bbdf35dfb4ba0936d425cbcf310f75998db89",
+      "preview_sha256": "df1277753c14d254dfc574c39c08013d94f42feae1ab2ad0cfd3890dcda42d5c",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/plot_current_db_tremblay_six_model_grid.py",
+        "sha256_at_import": "5acb2cbc8268b81da45e0ab12269d04f582cdc91a0297602c45fcd565354c5a6",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "db-paper-spy.pdf",
+      "preview": "db-paper-spy.png",
+      "guides": [
+        "DB.md"
+      ],
+      "paper_source": "paper/figures/db_spy_helium_profiles.pdf",
+      "pdf_sha256": "d9d6026f38fdeb0e990f670f192ebc02b7350b060824107d4b6f95b6fbf9d1c8",
+      "preview_sha256": "ad825ef05ef9cb2d7a18b91f7495a5aecb34c5494297597755183c250ba7789a",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/make_db_spy_helium_paper_figure.py",
+        "sha256_at_import": "512af9d282a9d087051afa09e91f2506aec351058b002287cbb684d03dda1c1c",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "dab-paper-grid.pdf",
+      "preview": "dab-paper-grid.png",
+      "guides": [
+        "DAB.md"
+      ],
+      "paper_source": "paper/figures/dab_montreal_grid.pdf",
+      "pdf_sha256": "1b777c19bd4806ba241d37c2ff352a6f8701a56faea65adc02fd17aafe6ea64f",
+      "preview_sha256": "751b6b6fceb11197a8f47342cf963f31532db002f5a76c66b6707ccb45141c74",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/plot_current_dab_montreal_six_model_grid.py",
+        "sha256_at_import": "1b2e400d151441576482bdf60cd8fc11f05236d8913e66dd7a9c355ce49ca759",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "dz-daz-paper.pdf",
+      "preview": "dz-daz-paper.png",
+      "guides": [
+        "DZ.md",
+        "DAZ.md"
+      ],
+      "paper_source": "paper/figures/dz_seven_object_optical.pdf",
+      "pdf_sha256": "ef095f66cf0f9516ea6845b403aad9672c5da85cd423d0fbef4e437163924930",
+      "preview_sha256": "845bab63a1b102dfeba9c7508ed8905fb11c6b0b4897398e586c9452c2329a90",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/make_dz_five_object_paper_figure.py",
+        "sha256_at_import": "515c27ccf8d6093ac1d000e50effe6e66b45e77d8c967a89af14c2dccf3c14f2",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "dq-paper.pdf",
+      "preview": "dq-paper.png",
+      "guides": [
+        "DQ.md"
+      ],
+      "paper_source": "paper/figures/dq_four_object_optical.pdf",
+      "pdf_sha256": "4175b6433b65cbfbb264d3f548d0f35cebff32fc8f6b649b1a1f49ba1537b42d",
+      "preview_sha256": "1c53c6b27d6861e1fd8a415fb687b8f0ccd12d4f17cad47c907ad752444b1d84",
+      "plotter_in_paper_workspace": {
+        "path": "release/OpenWD/research/plot_dq_paper_comparison.py",
+        "sha256_at_import": "d8092b7c6d2ddd53408faf2cf20ecfbc708fdec4860eb1bd5435fdc81d2dc5fe",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "do-dao-paper.pdf",
+      "preview": "do-dao-paper.png",
+      "guides": [
+        "DO-DAO.md"
+      ],
+      "paper_source": "paper/figures/do_dao_six_object_optical.pdf",
+      "pdf_sha256": "21932157aae2b459d77e4ecdcbe0f18b4658dc8bee31a362801f87c547333c0d",
+      "preview_sha256": "a3e9524541a28faee1901c58a5bcd7419a967d1cc9fcce1aff2c0f05600b7312",
+      "plotter_in_paper_workspace": {
+        "path": "release/OpenWD/research/plot_hot_paper_sdss.py",
+        "sha256_at_import": "678cdeddd1ee7db551d89beaf0786332817d37aff53994c9d4fd3f99f8ab487f",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "pg1159-paper.pdf",
+      "preview": "pg1159-paper.png",
+      "guides": [
+        "PG1159.md"
+      ],
+      "paper_source": "paper/figures/pg1424_fuse_sdss_panels.pdf",
+      "pdf_sha256": "6deda7f0864a50840a0301b8cb252592157a773897c095a8da73f19267ef573f",
+      "preview_sha256": "bc5b61a2caf203d59e94e05e2144b556c0ec96ff4e0d389627bb4c26be1a8243",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/make_pg1424_uv_optical_paper_figure.py",
+        "sha256_at_import": "8e8a7622c6b9ff027dd070bd939fd686498eb78d73bef6730f474f8af266270b",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "d6-paper.pdf",
+      "preview": "d6-paper.png",
+      "guides": [
+        "D6.md"
+      ],
+      "paper_source": "paper/figures/d6_j1637_gtc_openwd.pdf",
+      "pdf_sha256": "5661aa3f618852ad6276e35a033391e04d000550865996b8ccb6fead78704d3f",
+      "preview_sha256": "473b3b8e8f40384d658b953970e87fe2979975dfe702b401f53db168cc4be8c0",
+      "plotter_in_paper_workspace": {
+        "path": "scripts/make_j1637_gtc_paper_figure.py",
+        "sha256_at_import": "25b9824e77def664b38a0eff155374a77c54730fb36caf0f5b380f59e58456f7",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "dah-paper-rescaled.pdf",
+      "preview": "dah-paper-rescaled.png",
+      "guides": [
+        "DAH.md"
+      ],
+      "paper_source": "paper/figures/dah_eight_object_optical.pdf",
+      "pdf_sha256": "777dec8b014480c41521cc75d00a2600aa4d9d52fa1d8579fd37a7d4bcae9ff9",
+      "preview_sha256": "901ace549a2430f795b0dc40ddd3aafcab1d98bf4a22bd36e5d9651c82939d8b",
+      "plotter_in_paper_workspace": {
+        "path": "release/OpenWD-dah/research/plot_dah_paper.py",
+        "sha256_at_import": "807aa373cc7bca649f7dd528cd48e31826d72ea65e166a6ae5af60c5a5732cac",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    },
+    {
+      "pdf": "dah-paper-unscaled.pdf",
+      "preview": "dah-paper-unscaled.png",
+      "guides": [
+        "DAH.md"
+      ],
+      "paper_source": "paper/figures/dah_eight_object_optical_unscaled.pdf",
+      "pdf_sha256": "feb31bc99380de90a726a781e88d1a358703323f54c59a5c1d3476b35d564e86",
+      "preview_sha256": "07de943c241e7cbfe06394a0e9b45e960aef1a11e49d27c7efd7ddb815c97934",
+      "plotter_in_paper_workspace": {
+        "path": "release/OpenWD-dah/research/plot_dah_paper.py",
+        "sha256_at_import": "807aa373cc7bca649f7dd528cd48e31826d72ea65e166a6ae5af60c5a5732cac",
+        "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      }
+    }
+  ]
+}
