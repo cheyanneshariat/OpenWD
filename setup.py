@@ -9,7 +9,7 @@ setup(
     ext_modules=[
         Extension(
             "wd_spectra._rt",
-            sources=["csrc/rt_core.c"],
+            sources=["csrc/rt_core.c", "csrc/stark_profiles.c"],
             optional=True,
             extra_compile_args=optimization_flags,
         )
