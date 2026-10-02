@@ -44,6 +44,8 @@ def _metal_line_opacity_sampling_grid(
     line_centers_angstrom: FloatArray,
     *,
     maximum_wing_sampled_lines: int = 1_000,
+    opacity_sampling_resolution: float | None = None,
+    effective_temperature: float | None = None,
 ) -> tuple[FloatArray, int]:
     """Return a bounded transfer grid for a ranked structural line list.
 
@@ -55,6 +57,17 @@ def _metal_line_opacity_sampling_grid(
     an arbitrary trapezoidal wavelength weight set by the next unrelated
     transition.  This bounds the grid growth without changing the selected
     opacity contributors or assigning weak lines artificially broad bins.
+
+    With ``opacity_sampling_resolution`` every selected line is instead
+    sampled by a uniform logarithmic grid of that resolving power, as in
+    classical opacity sampling, and no line-centered stencils are added.
+    Line-centered samples carry trapezoidal weights that overstate the
+    blocking of any core narrower than the stencil (4% of the bolometric
+    flux at 15,600 K with a 20,000-line list), and their number grows with
+    the line budget.  A uniform grid is an unbiased sample of the line
+    opacity at a cost independent of the number of lines.  It spans the
+    line centers inside the band holding all but 1e-4 of the Planck flux at
+    ``effective_temperature`` on either side.
     """
 
     centers = np.asarray(line_centers_angstrom, dtype=np.float64)
@@ -64,12 +77,39 @@ def _metal_line_opacity_sampling_grid(
         raise ValueError("maximum_wing_sampled_lines must be non-negative")
     if centers.size == 0:
         return centers.copy(), 0
-    n_wing = min(int(maximum_wing_sampled_lines), int(centers.size))
+    n_wing = (
+        0 if opacity_sampling_resolution is not None
+        else min(int(maximum_wing_sampled_lines), int(centers.size))
+    )
     samples: list[FloatArray] = []
     if n_wing:
         offsets = np.asarray((-2.0, -0.5, 0.0, 0.5, 2.0))
         samples.append((centers[:n_wing, np.newaxis] + offsets).ravel())
-    if n_wing < centers.size:
+    if n_wing < centers.size and opacity_sampling_resolution is not None:
+        if not np.isfinite(opacity_sampling_resolution) or opacity_sampling_resolution <= 0.0:
+            raise ValueError("opacity_sampling_resolution must be positive")
+        if effective_temperature is None:
+            raise ValueError("opacity sampling requires effective_temperature")
+        # Planck cumulative flux fraction, in x = hc/(lambda k T).
+        x = np.geomspace(1.0e-3, 60.0, 4000)
+        cumulative = np.concatenate(([0.0], np.cumsum(
+            0.5 * np.diff(x) * (x[1:] ** 3 / np.expm1(x[1:]) + x[:-1] ** 3 / np.expm1(x[:-1]))
+        )))
+        cumulative /= cumulative[-1]
+        hc_over_k_angstrom = 1.438776877e8
+        lam_short = hc_over_k_angstrom / (
+            effective_temperature * np.interp(1.0 - 1.0e-4, cumulative, x)
+        )
+        lam_long = hc_over_k_angstrom / (
+            effective_temperature * np.interp(1.0e-4, cumulative, x)
+        )
+        lower = max(float(np.min(centers)), lam_short)
+        upper = min(float(np.max(centers)), lam_long)
+        if upper > lower:
+            samples.append(np.exp(np.arange(
+                np.log(lower), np.log(upper), 1.0 / opacity_sampling_resolution
+            )))
+    elif n_wing < centers.size:
         core_offsets = np.asarray((-0.05, 0.0, 0.05))
         samples.append(
             (centers[n_wing:, np.newaxis] + core_offsets).ravel()
@@ -235,6 +275,7 @@ def gray_hydrogen_atmosphere(
     include_molecules: bool = False,
     include_negative_hydrogen: bool = False,
     trihydrogen_ion_partition_model: str | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     r"""Construct an LTE, hydrostatic Eddington-gray pure-H atmosphere.
 
@@ -260,7 +301,9 @@ def gray_hydrogen_atmosphere(
     if not np.isfinite(hopf_constant) or hopf_constant <= 0.0:
         raise ValueError("hopf_constant must be finite and positive")
 
-    tau = np.geomspace(tau_min, tau_max, n_depth, dtype=np.float64)
+    tau = photosphere_concentrated_optical_depths(
+        tau_min, tau_max, n_depth, depth_concentration
+    )
     temperature = effective_temperature * (
         0.75 * (tau + hopf_constant)
     ) ** 0.25
@@ -315,6 +358,7 @@ def hydrogen_continuum_atmosphere(
     include_negative_hydrogen: bool = False,
     trihydrogen_ion_partition_model: str | None = None,
     h2_h2_cia_table: H2H2CollisionInducedAbsorptionTable | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     r"""Construct a gray-temperature atmosphere with a physical pressure scale.
 
@@ -337,6 +381,7 @@ def hydrogen_continuum_atmosphere(
         include_molecules=include_molecules,
         include_negative_hydrogen=include_negative_hydrogen,
         trihydrogen_ion_partition_model=trihydrogen_ion_partition_model,
+        depth_concentration=depth_concentration,
     )
     from .opacity import rosseland_mean_hydrogen_continuum_opacity
 
@@ -453,6 +498,52 @@ def hydrogen_continuum_atmosphere(
     )
 
 
+def photosphere_concentrated_optical_depths(
+    tau_min: float,
+    tau_max: float,
+    n_depth: int,
+    concentration: float = 0.0,
+) -> FloatArray:
+    """Return Rosseland depths, optionally concentrated near the photosphere.
+
+    ``concentration = 0`` gives the historical logarithmically uniform grid.
+    Otherwise the point density per ln(tau) is
+    ``t(tau) + concentration * exp(-((log10 tau + 0.5) / 1.2)**2)``, where
+    ``t`` falls smoothly from 1 below tau ~ 1e-3 to 1/2 in the optically
+    thin upper layers.  This is a quadrature choice, not physics: with about
+    40 points the uniform grid leaves a factor of two in optical depth per
+    interval across 0.01 < tau < 10, where both the structure's Feautrier
+    flux and the formal emergent flux acquire their discretization error
+    (1-2% of the bolometric flux in polluted helium atmospheres).  The
+    additional photospheric points are taken only from the upper layers,
+    which contribute negligibly to that error, so the deep convective
+    spacing is never coarser than the uniform grid's and the cost is
+    unchanged.
+    """
+
+    if not 0.0 < tau_min < tau_max:
+        raise ValueError("require 0 < tau_min < tau_max")
+    if n_depth < 3:
+        raise ValueError("n_depth must be at least 3")
+    if not np.isfinite(concentration) or concentration < 0.0:
+        raise ValueError("depth concentration must be finite and non-negative")
+    if concentration == 0.0:
+        return np.geomspace(tau_min, tau_max, n_depth)
+    log_tau = np.linspace(np.log(tau_min), np.log(tau_max), 8192)
+    log10_tau = log_tau / np.log(10.0)
+    upper_layer_weight = 0.5 + 0.5 / (1.0 + np.exp(-(log10_tau + 3.0) / 0.4))
+    density = upper_layer_weight + concentration * np.exp(
+        -((log10_tau + 0.5) / 1.2) ** 2
+    )
+    cumulative = np.concatenate(([0.0], np.cumsum(
+        0.5 * (density[1:] + density[:-1]) * np.diff(log_tau)
+    )))
+    cumulative /= cumulative[-1]
+    tau = np.exp(np.interp(np.linspace(0.0, 1.0, n_depth), cumulative, log_tau))
+    tau[0], tau[-1] = tau_min, tau_max
+    return tau
+
+
 def gray_helium_atmosphere(
     effective_temperature: float,
     logg: float,
@@ -465,6 +556,7 @@ def gray_helium_atmosphere(
     correlated_microfields: bool = True,
     neutral_radius_scale: float = 0.5,
     helium_reos3_table: HeliumREOS3Table | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Construct an LTE Eddington-gray, hydrostatic pure-He atmosphere."""
 
@@ -480,7 +572,9 @@ def gray_helium_atmosphere(
         raise ValueError("rosseland_opacity must be finite and positive")
     if not np.isfinite(hopf_constant) or hopf_constant <= 0.0:
         raise ValueError("hopf_constant must be finite and positive")
-    tau = np.geomspace(tau_min, tau_max, n_depth)
+    tau = photosphere_concentrated_optical_depths(
+        tau_min, tau_max, n_depth, depth_concentration
+    )
     temperature = effective_temperature * (0.75 * (tau + hopf_constant)) ** 0.25
     column_mass = tau / rosseland_opacity
     pressure = 10.0**logg * column_mass
@@ -530,6 +624,7 @@ def gray_hydrogen_helium_atmosphere(
     correlated_microfields: bool = True,
     hydrogen_neutral_radius_scale: float = 0.5,
     helium_neutral_radius_scale: float = 0.5,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Construct a homogeneous atomic H/He Eddington-gray atmosphere."""
 
@@ -545,7 +640,9 @@ def gray_hydrogen_helium_atmosphere(
         raise ValueError("rosseland_opacity must be finite and positive")
     if not np.isfinite(hopf_constant) or hopf_constant <= 0.0:
         raise ValueError("hopf_constant must be finite and positive")
-    tau = np.geomspace(tau_min, tau_max, n_depth)
+    tau = photosphere_concentrated_optical_depths(
+        tau_min, tau_max, n_depth, depth_concentration
+    )
     temperature = effective_temperature * (
         0.75 * (tau + hopf_constant)
     ) ** 0.25
@@ -603,6 +700,7 @@ def hydrogen_helium_continuum_atmosphere(
     include_helium_dimer_ion: bool = True,
     include_helium_three_body_cia: bool = True,
     include_rydberg_bound_free: bool = True,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Gray-temperature mixed atmosphere with a physical pressure scale."""
 
@@ -618,6 +716,7 @@ def hydrogen_helium_continuum_atmosphere(
         correlated_microfields=correlated_microfields,
         hydrogen_neutral_radius_scale=hydrogen_neutral_radius_scale,
         helium_neutral_radius_scale=helium_neutral_radius_scale,
+        depth_concentration=depth_concentration,
     )
     from .mixture import rosseland_mean_hydrogen_helium_continuum_opacity
 
@@ -763,7 +862,9 @@ def helium_continuum_atmosphere(
     metal_abundances: Mapping[str, float] | None = None,
     log_hydrogen_abundance: float | None = None,
     include_dense_helium_metal_ionization: bool = True,
+    metal_occupation_probability_partitions: bool = False,
     helium_reos3_table: HeliumREOS3Table | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Gray-temperature He atmosphere with a physical pressure scale.
 
@@ -791,6 +892,7 @@ def helium_continuum_atmosphere(
             include_helium_dimer_ion=include_helium_dimer_ion,
             include_helium_three_body_cia=include_helium_three_body_cia,
             include_rydberg_bound_free=include_rydberg_bound_free,
+            depth_concentration=depth_concentration,
         )
 
     seed = gray_helium_atmosphere(
@@ -799,6 +901,7 @@ def helium_continuum_atmosphere(
         correlated_microfields=correlated_microfields,
         neutral_radius_scale=neutral_radius_scale,
         helium_reos3_table=helium_reos3_table,
+        depth_concentration=depth_concentration,
     )
     from .helium import rosseland_mean_helium_continuum_opacity
 
@@ -833,6 +936,7 @@ def helium_continuum_atmosphere(
                 point,
                 metal_database,
                 metal_abundances,
+                occupation_probability_partitions=metal_occupation_probability_partitions,
                 reference_species="He",
                 include_dense_helium_ionization=(
                     include_dense_helium_metal_ionization
@@ -897,6 +1001,7 @@ def helium_continuum_atmosphere(
             provisional,
             metal_database,
             metal_abundances,
+            occupation_probability_partitions=metal_occupation_probability_partitions,
             reference_species="He",
             include_dense_helium_ionization=include_dense_helium_metal_ionization,
             log_hydrogen_abundance=log_hydrogen_abundance,
@@ -1009,6 +1114,8 @@ def radiative_equilibrium_hydrogen_atmosphere(
     include_metal_lines: bool = True,
     minimum_metal_oscillator_strength: float = 1.0e-2,
     maximum_metal_lines: int | None = 1_000,
+    metal_line_opacity_sampling_resolution: float | None = None,
+    depth_concentration: float = 0.0,
     iteration_callback: Callable[
         [int, Atmosphere, Mapping[str, object]], None
     ]
@@ -1139,6 +1246,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
             include_negative_hydrogen=include_negative_hydrogen,
             trihydrogen_ion_partition_model=trihydrogen_ion_partition_model,
             h2_h2_cia_table=h2_h2_cia_table,
+            depth_concentration=depth_concentration,
         )
     else:
         if initial_atmosphere.hydrogen_lte_state is None:
@@ -1264,6 +1372,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
                 )
             )
     metal_wing_sampled_lines = 0
+    structure_line_transition_keys: tuple[tuple[str, int, int, int], ...] = ()
     if metal_database is not None and metal_abundances is not None:
         from .metals import metal_lte_state, selected_metal_lines
 
@@ -1296,12 +1405,22 @@ def radiative_equilibrium_hydrogen_atmosphere(
             ion_stage_weight,
             flux_weighted=True,
         ) if include_metal_lines else []
+        structure_line_transition_keys = tuple(
+            (ion.element, ion.charge, line.lower_index, line.upper_index)
+            for ion, line in structure_lines
+        )
         metal_centers = np.asarray(
             [line.wavelength_vacuum_angstrom for _, line in structure_lines]
         )
         if metal_centers.size:
             metal_grid, metal_wing_sampled_lines = (
-                _metal_line_opacity_sampling_grid(metal_centers)
+                _metal_line_opacity_sampling_grid(
+                    metal_centers,
+                    opacity_sampling_resolution=(
+                        metal_line_opacity_sampling_resolution
+                    ),
+                    effective_temperature=effective_temperature,
+                )
             )
             wavelength = np.unique(np.concatenate((
                 wavelength,
@@ -1542,6 +1661,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
                         minimum_metal_oscillator_strength
                     ),
                     maximum_lines=maximum_metal_lines,
+                    transition_keys=structure_line_transition_keys,
                 )
         hydrogen_structure_absorption_cache.clear()
         hydrogen_structure_absorption_cache.update(
@@ -1759,6 +1879,13 @@ def radiative_equilibrium_hydrogen_atmosphere(
             "radiative_equilibrium_wing_sampled_metal_lines": int(
                 metal_wing_sampled_lines
             ),
+            "radiative_equilibrium_metal_line_opacity_sampling_resolution": (
+                None if metal_line_opacity_sampling_resolution is None
+                else float(metal_line_opacity_sampling_resolution)
+            ),
+            "radiative_equilibrium_depth_concentration": float(
+                depth_concentration
+            ),
             "radiative_equilibrium_metal_line_selection": (
                 "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"
             ),
@@ -1821,9 +1948,12 @@ def radiative_equilibrium_helium_atmosphere(
     unified_allard_table: AllardUnifiedLymanTable | None = None,
     allard_stark_weight: float = 0.5,
     include_dense_helium_metal_ionization: bool = True,
+    metal_occupation_probability_partitions: bool = False,
     include_metal_lines: bool = True,
     minimum_metal_oscillator_strength: float = 1.0e-2,
     maximum_metal_lines: int | None = 1_000,
+    metal_line_opacity_sampling_resolution: float | None = None,
+    depth_concentration: float = 0.0,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
@@ -2060,6 +2190,7 @@ def radiative_equilibrium_helium_atmosphere(
     else:
         seed = helium_continuum_atmosphere(
             effective_temperature, logg, n_depth=n_depth, tau_min=tau_min,
+            depth_concentration=depth_concentration,
             correlated_microfields=correlated_microfields,
             neutral_radius_scale=neutral_radius_scale,
             include_helium_dimer_ion=include_helium_dimer_ion,
@@ -2069,6 +2200,7 @@ def radiative_equilibrium_helium_atmosphere(
             metal_database=metal_database,
             metal_abundances=metal_abundances,
             log_hydrogen_abundance=log_hydrogen_abundance,
+            metal_occupation_probability_partitions=metal_occupation_probability_partitions,
             include_dense_helium_metal_ionization=(
                 include_dense_helium_metal_ionization
             ),
@@ -2209,6 +2341,7 @@ def radiative_equilibrium_helium_atmosphere(
         if line_grids:
             wavelength = np.unique(np.concatenate((wavelength, *line_grids)))
     metal_wing_sampled_lines = 0
+    structure_line_transition_keys: tuple[tuple[str, int, int, int], ...] = ()
     if (
         metal_database is not None
         and metal_abundances is not None
@@ -2220,6 +2353,7 @@ def radiative_equilibrium_helium_atmosphere(
             seed,
             metal_database,
             metal_abundances,
+            occupation_probability_partitions=metal_occupation_probability_partitions,
             log_hydrogen_abundance=log_hydrogen_abundance,
             include_dense_helium_ionization=(
                 include_dense_helium_metal_ionization
@@ -2248,12 +2382,26 @@ def radiative_equilibrium_helium_atmosphere(
             ion_stage_weight,
             flux_weighted=True,
         )
+        # The opacity must contain exactly the lines the frequency grid was
+        # built to sample; a second, unweighted ranking would swap near-UV
+        # blanketing for unsampled EUV and IR lines and could change the set
+        # between Newton iterations.
+        structure_line_transition_keys = tuple(
+            (ion.element, ion.charge, line.lower_index, line.upper_index)
+            for ion, line in structure_lines
+        )
         metal_centers = np.asarray(
             [line.wavelength_vacuum_angstrom for _, line in structure_lines]
         )
         if metal_centers.size:
             metal_grid, metal_wing_sampled_lines = (
-                _metal_line_opacity_sampling_grid(metal_centers)
+                _metal_line_opacity_sampling_grid(
+                    metal_centers,
+                    opacity_sampling_resolution=(
+                        metal_line_opacity_sampling_resolution
+                    ),
+                    effective_temperature=effective_temperature,
+                )
             )
             wavelength = np.unique(np.concatenate((wavelength, metal_grid)))
     if log_hydrogen_abundance is not None and include_trace_hydrogen_lines:
@@ -2426,6 +2574,7 @@ def radiative_equilibrium_helium_atmosphere(
                 result,
                 metal_database,
                 metal_abundances,
+                occupation_probability_partitions=metal_occupation_probability_partitions,
                 reference_species="He",
                 include_dense_helium_ionization=(
                     include_dense_helium_metal_ionization
@@ -2483,6 +2632,7 @@ def radiative_equilibrium_helium_atmosphere(
                 current,
                 metal_database,
                 metal_abundances,
+                occupation_probability_partitions=metal_occupation_probability_partitions,
                 reference_species="He",
                 include_dense_helium_ionization=(
                     include_dense_helium_metal_ionization
@@ -2523,6 +2673,7 @@ def radiative_equilibrium_helium_atmosphere(
                     ca_ii_he_profile_table=ca_ii_he_profile_table,
                     minimum_oscillator_strength=minimum_metal_oscillator_strength,
                     maximum_lines=maximum_metal_lines,
+                    transition_keys=structure_line_transition_keys,
                 )
         if current.hydrogen_lte_state is not None:
             hydrogen_opacity = (hydrogen_continuum_mass_absorption_coefficient
@@ -2768,6 +2919,10 @@ def radiative_equilibrium_helium_atmosphere(
             "radiative_equilibrium_maximum_metal_lines": maximum_metal_lines,
             "radiative_equilibrium_wing_sampled_metal_lines": int(
                 metal_wing_sampled_lines
+            ),
+            "radiative_equilibrium_metal_line_opacity_sampling_resolution": (
+                None if metal_line_opacity_sampling_resolution is None
+                else float(metal_line_opacity_sampling_resolution)
             ),
             "radiative_equilibrium_metal_line_selection": (
                 "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"

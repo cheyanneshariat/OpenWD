@@ -33,3 +33,24 @@ See the [microphysics audit](../../../docs/development/history/microphysics-audi
 for the reviewed cold-start and literature/observational comparisons, including
 remaining limitations. Historical spectra are preserved as evidence, not
 asserted to be unchanged by the approved physics correction.
+
+## Update 2026-10-01: flux-conserving numerics (physics revision `openwd-0.1.3-qmhd-undoubled-v5-flux-conserving`)
+
+User-approved recapture after a numerics review. The emergent spectra of every
+family conserve flux to 0.0-0.75% of sigma Teff^4. Before, the errors were up
+to 16% (DZ) and 2-3% (DA/DB/DAB). Two settings are now on by default in DA,
+DB, DAB, DZ and DAZ:
+
+- `synthesis_transfer_depth_refinement=4` subdivides each structure depth
+  interval for the final formal solution.
+- `photospheric_depth_concentration=1` concentrates the structure depths
+  across 0.01 < tau < 10 at fixed point count.
+
+DZ/DAZ structures also absorb the opacity-sampled synthesis line list. The
+fixed controls change by the refined formal solution (about 1-3% for DB/DAB,
+up to 7% blue continuum for the coarse historical G149-28 checkpoint). The
+cold controls change by the new depth grid. Every replacement cold structure
+is a fresh public cold start with a verified certificate (see the
+manifests). The DA and DB canary work guards were raised from 45 to 70 and
+from 60 to 90 iterations. These are work limits, not tolerances. The
+spectral and structure tolerances are unchanged.

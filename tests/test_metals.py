@@ -706,7 +706,39 @@ def test_dense_helium_ionization_fit_has_published_sign_and_coefficients():
     )
     np.testing.assert_allclose(shift, [0.0, -0.0328044, -1.245666], rtol=2e-7)
     assert dense_helium_ionization_potential_shift_ev("Si", 1.0, 6000.0) == 0.0
-    assert dense_helium_ionization_potential_shift_ev("Mg", 1.0, 15_000.0) == 0.0
+    # Outside the tested 2000--10000 K range the fit is held at its edge, so
+    # the ionization balance stays continuous instead of jumping at 10000 K.
+    edge = dense_helium_ionization_potential_shift_ev("Mg", 1.0, 10_000.0)
+    assert dense_helium_ionization_potential_shift_ev("Mg", 1.0, 15_000.0) == edge
+    assert dense_helium_ionization_potential_shift_ev("Mg", 0.0, 15_000.0) == 0.0
+    assert dense_helium_ionization_potential_shift_ev(
+        "Ca", 3.0, 6000.0
+    ) == dense_helium_ionization_potential_shift_ev("Ca", 1.5, 6000.0)
+
+
+def test_dense_helium_saha_recovers_ideal_limit_at_low_density():
+    """Blouin et al. use full partition functions with I + Delta I."""
+
+    from wd_spectra.models.common import ModelData
+
+    atmosphere = gray_helium_atmosphere(8000.0, 8.0, n_depth=12)
+    database = read_stout_atomic_database(
+        ModelData.default().stout, elements=("Ca",), maximum_charge=2
+    )
+    abundances = {"Ca": -9.0}
+    nonideal = metal_lte_state(
+        atmosphere, database, abundances, reference_species="He",
+        include_dense_helium_ionization=True,
+    )
+    ideal = metal_lte_state(
+        atmosphere, database, abundances, reference_species="He",
+        include_dense_helium_ionization=False,
+    )
+    ratio = lambda state: state.ion_number_density["Ca"][1] / state.ion_number_density["Ca"][0]
+    density = atmosphere.mass_density
+    shift = dense_helium_ionization_potential_shift_ev("Ca", density, atmosphere.temperature)
+    expected = np.exp(-shift * 1.602176634e-12 / (1.380649e-16 * atmosphere.temperature))
+    np.testing.assert_allclose(ratio(nonideal) / ratio(ideal), expected, rtol=0.05)
 
 
 def test_ca_ii_helium_impact_width_uses_hammond_laboratory_measurements():
@@ -717,11 +749,32 @@ def test_ca_ii_helium_impact_width_uses_hammond_laboratory_measurements():
     assert ca_ii_helium_impact_rate_coefficient(3969.591, 5200.0) == pytest.approx(
         conversion * 1.28e-20
     )
+    # Temperature dependence from Hammond's Lennard-Jones fits (a = 4.09 at
+    # 5.5e5 cm/s): gamma ~ v^(3/5) B(a), a ~ v^(6/5), with v ~ sqrt(T).
+    from wd_spectra.metals import lennard_jones_impact_broadening_integral as b
+
+    speed = np.sqrt(2.0)
+    expected = speed**0.6 * b(4.09 * speed**1.2) / b(4.09)
     assert ca_ii_helium_impact_rate_coefficient(3934.777, 10_400.0) == pytest.approx(
-        conversion * 1.71e-20 * 2.0**0.2285
+        conversion * 1.71e-20 * expected
     )
+    assert 1.3 < float(expected) < 1.4
     with pytest.raises(ValueError, match="Ca II H or K"):
         ca_ii_helium_impact_rate_coefficient(4227.0, 5200.0)
+
+
+def test_lennard_jones_width_integral_matches_classical_and_hammond_values():
+    from math import cos, gamma, pi
+
+    from wd_spectra.metals import lennard_jones_impact_broadening_integral as b
+
+    # Pure van der Waals: B(0) = -Gamma(-2/5) cos(pi/5) / 5, i.e. the 8.08
+    # coefficient of the Lindholm--Foley width.
+    assert float(b(0.0)) == pytest.approx(-gamma(-0.4) * cos(pi / 5.0) / 5.0, rel=2e-4)
+    assert 4.0 * pi * (3.0 * pi / 8.0) ** 0.4 * float(b(0.0)) == pytest.approx(8.08, rel=2e-3)
+    # Hammond (1975) quotes B/2 = 0.316 (K, a = 4.09) and 0.258 (H, a = 1.63).
+    assert float(b(4.09)) / 2.0 == pytest.approx(0.316, rel=0.01)
+    assert float(b(1.63)) / 2.0 == pytest.approx(0.258, rel=0.01)
 
 
 def test_ca_ii_electron_stark_width_uses_experimental_fwhm():
@@ -890,7 +943,7 @@ def test_o_i_optical_electron_stark_widths_use_literature_values(
     assert recovered_fwhm == pytest.approx(published_fwhm)
 
 
-def test_unsold_helium_width_reproduces_ca_k_laboratory_scale():
+def test_unsold_helium_width_reproduces_hammond_ca_k_unsold_estimate():
     levels = (
         AtomicLevel(1, 0.0, 2.0, "3p6.4s.(2S<1/2>)"),
         AtomicLevel(2, 25_414.4, 4.0, "3p6.4p.(2Po<3/2>)"),
@@ -906,12 +959,44 @@ def test_unsold_helium_width_reproduces_ca_k_laboratory_scale():
     measured = ca_ii_helium_impact_rate_coefficient(3934.777, 5200.0)
     assert predicted is not None
     assert hydrogen is not None
-    assert float(predicted) == pytest.approx(float(measured), rel=0.10)
+    # Hammond (1975) quotes 3.34e-9 cm3 s-1 for his own Unsold estimate of
+    # Ca II K in He at 5200 K, roughly half of his laboratory width.  The
+    # hydrogenic <r^2> must carry the 1/Z^2 of the Ca+ core (Z = 2).
+    assert float(predicted) == pytest.approx(3.34e-9, rel=0.06)
+    assert 0.45 < float(predicted) / float(measured) < 0.65
     assert float(hydrogen) > float(predicted)
 
     excited_rate = unsold_helium_impact_rate_coefficient(ion, excited, 5200.0)
     assert excited_rate is not None
     assert float(excited_rate) > 2.0 * float(predicted)
+
+
+def test_unsold_width_uses_parent_limit_above_first_ionization_limit():
+    neutral = AtomicIon(
+        "Mg", 0, ATOMIC_MASS_U["Mg"], IONIZATION_ENERGY_EV["Mg"][0],
+        (
+            AtomicLevel(1, 0.0, 1.0, "3s2.(1S<0>)"),
+            AtomicLevel(2, 57_812.8, 1.0, "3p2.(3P<0>)"),
+            AtomicLevel(3, 83_511.3, 3.0, "3p.3d.(3Do<1>)"),
+        ),
+        (),
+    )
+    ion = AtomicIon(
+        "Mg", 1, ATOMIC_MASS_U["Mg"], IONIZATION_ENERGY_EV["Mg"][1],
+        (
+            AtomicLevel(1, 0.0, 2.0, "2p6.3s.(2S<1/2>)"),
+            AtomicLevel(2, 35_669.3, 2.0, "2p6.3p.(2Po<1/2>)"),
+        ),
+        (),
+    )
+    line = AtomicTransition(2, 3, 1.3e8, "E1", 3891.3, 0.89)
+    # 3p3d lies 0.7 eV below the Mg II 3p limit but above the ground limit.
+    assert unsold_hydrogen_impact_rate_coefficient(neutral, line, 8000.0) is None
+    rate = unsold_hydrogen_impact_rate_coefficient(
+        neutral, line, 8000.0, parent_ion=ion
+    )
+    assert rate is not None
+    assert 1.0e-9 < float(rate) < 1.0e-7
 
 
 def test_unsold_bulk_oxygen_perturber_has_polarizability_mass_scaling():
@@ -1923,3 +2008,112 @@ def test_ca_ii_temperature_density_grid_interpolates_both_dimensions(
     assert cross_section[0, 0] == pytest.approx(np.sqrt(4.0e-18 * 4.0e-17))
     assert cross_section[0, 1] == pytest.approx(0.5e-18)
     assert cross_section[0, 2] == pytest.approx(4.0e-17)
+
+
+def test_exact_voigt_matches_faddeeva_and_compiled_kernel():
+    from scipy.special import wofz
+
+    from wd_spectra import metals
+
+    x = np.concatenate([-np.logspace(-3, 4, 800)[::-1], [0.0], np.logspace(-3, 4, 800)])
+    for y in (1.0e-6, 1.0e-3, 0.1, 1.0, 10.0, 1.0e3):
+        reference = wofz(x + 1j * y).real
+        assert np.max(np.abs(metals._humlicek_w4(x, np.full_like(x, y)) / reference - 1.0)) < 1.0e-4
+
+    # Frequency Lorentzian: far wings follow (lambda/lambda0)^2 asymmetry.
+    center, hwhm = 3934.78, 27.5
+    wavelength = np.asarray([center - 800.0, center + 800.0])
+    profile = metals._voigt_profile_per_angstrom(wavelength, center, 0.03, hwhm)
+    symmetric = hwhm / np.pi / (800.0**2 + hwhm**2)
+    np.testing.assert_allclose(profile / symmetric, (wavelength / center) ** 2, rtol=2e-3)
+
+    if metals._rt is None:
+        pytest.skip("compiled kernel unavailable")
+    grid = np.linspace(2500.0, 6000.0, 20001)
+    rng = np.random.default_rng(3)
+    centers = np.asarray([2852.96, 3934.78, 4227.9])
+    arrays = (
+        grid, centers, np.asarray([1.0, 2.0, 3.0]),
+        rng.uniform(0.005, 0.05, (3, 4)), 10.0 ** rng.uniform(-3, 1.5, (3, 4)),
+        np.asarray([50.0, 500.0, 100.0]), rng.uniform(0.5, 2.0, (3, 4)),
+    )
+    compiled = np.zeros((grid.size, 4))
+    metals._accumulate_lte_metal_line_profiles(*arrays, compiled)
+    saved, metals._rt = metals._rt, None
+    try:
+        reference = np.zeros((grid.size, 4))
+        metals._accumulate_lte_metal_line_profiles(*arrays, reference)
+    finally:
+        metals._rt = saved
+    np.testing.assert_allclose(compiled, reference, rtol=1e-12, atol=1e-12 * reference.max())
+
+
+def test_verner_population_counts_every_level_of_the_ground_term(tmp_path: Path):
+    levels = (
+        AtomicLevel(1, 0.0, 1.0, "3s2.3p2.(3P<0>)"),
+        AtomicLevel(2, 77.1, 3.0, "3s2.3p2.(3P<1>)"),
+        AtomicLevel(3, 223.2, 5.0, "3s2.3p2.(3P<2>)"),
+        AtomicLevel(4, 6298.8, 5.0, "3s2.3p2.(1D<2>)"),
+    )
+    silicon = AtomicIon("Si", 0, ATOMIC_MASS_U["Si"], IONIZATION_ENERGY_EV["Si"][0], levels, ())
+    ion = AtomicIon(
+        "Si", 1, ATOMIC_MASS_U["Si"], IONIZATION_ENERGY_EV["Si"][1],
+        (AtomicLevel(1, 0.0, 2.0, "3s2.3p.(2Po<1/2>)"),), (),
+    )
+    database = AtomicDatabase(MappingProxyType({("Si", 0): silicon, ("Si", 1): ion}))
+    path = tmp_path / "photo.dat"
+    path.write_text(
+        "14 14 8.152E+00 1.000E+02 2.317E+01 2.506E+01 2.057E+01 3.546E+00 2.837E-07 1.672E-05 4.207E-01\n",
+        encoding="ascii",
+    )
+    photoionization = read_verner_photoionization_database(path, elements=("Si",))
+    atmosphere = gray_helium_atmosphere(8000.0, 8.0, n_depth=6)
+    state = metal_lte_state(atmosphere, database, {"Si": -7.0}, reference_species="He")
+    wavelength = np.asarray([1300.0, 1400.0])
+    opacity = metal_bound_free_mass_absorption_coefficient(
+        atmosphere, wavelength, database, state, photoionization
+    )
+    kt = 1.380649e-16 * atmosphere.temperature
+    term = sum(
+        level.statistical_weight * np.exp(-level.energy_wavenumber * 1.98644586e-16 / kt)
+        for level in levels[:3]
+    )
+    fit = photoionization.fits[("Si", 0)]
+    photon_ev = 12398.419843320026 / wavelength
+    stimulated = -np.expm1(-12398.419843320026 / wavelength[:, None] * 1.602176634e-12 / kt[None, :])
+    expected = (
+        fit.cross_section(photon_ev)[:, None]
+        * state.ion_number_density["Si"][0][None, :]
+        * term[None, :] / state.partition_function[("Si", 0)][None, :]
+        * stimulated / atmosphere.mass_density[None, :]
+    )
+    np.testing.assert_allclose(opacity, expected, rtol=1e-10)
+    # The lowest J level alone carries only about a ninth of that population.
+    assert np.all(term > 5.0)
+
+
+def test_trace_hydrogen_levels_are_not_dissolved_by_neutral_helium():
+    # Reverted 2026-10-01: the HM88 hard-sphere neutral-He term erased the
+    # observed Hdelta of WD J1013+0259; trace H keeps charged dissolution only.
+    atmosphere = gray_helium_atmosphere(12_000.0, 8.0, n_depth=20)
+    database = AtomicDatabase(MappingProxyType({
+        ("Ca", 0): AtomicIon("Ca", 0, ATOMIC_MASS_U["Ca"], IONIZATION_ENERGY_EV["Ca"][0],
+                             (AtomicLevel(1, 0.0, 1.0, "4s2.(1S<0>)"),), ()),
+        ("Ca", 1): AtomicIon("Ca", 1, ATOMIC_MASS_U["Ca"], IONIZATION_ENERGY_EV["Ca"][1],
+                             (AtomicLevel(1, 0.0, 2.0, "4s.(2S<1/2>)"),), ()),
+    }))
+    state = metal_lte_state(
+        atmosphere, database, {"Ca": -9.0}, reference_species="He",
+        log_hydrogen_abundance=-4.0,
+    )
+    w = state.trace_hydrogen_state.level_occupation_probability
+    deepest = np.argmax(atmosphere.helium_lte_state.neutral_he_density)
+    from wd_spectra.eos import hydrogen_level_distribution
+
+    charged_only = hydrogen_level_distribution(
+        state.trace_hydrogen_state.neutral_h_density,
+        state.electron_density,
+        atmosphere.temperature,
+        correlated_microfields=True,
+    ).occupation_probability
+    np.testing.assert_allclose(w[deepest], charged_only[deepest], rtol=1e-12)

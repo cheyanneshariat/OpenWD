@@ -52,15 +52,15 @@ COLD_TESTS = {
         for case in ("dz-pg1225", "pg1159-pg1424", "d6-j1637")
     },
     "db-10000": CANARY
-    + "test_protected_db_cold_starts_converge_without_fallback[10000.0-60]",
+    + "test_protected_db_cold_starts_converge_without_fallback[10000.0-90]",
     "db-22000": CANARY
-    + "test_protected_db_cold_starts_converge_without_fallback[22000.0-60]",
+    + "test_protected_db_cold_starts_converge_without_fallback[22000.0-90]",
     "db-22000-standard": CANARY
     + "test_standard_db_22000_enters_exact_flux_verification",
     "da-5000": CANARY
-    + "test_protected_da_cold_starts_converge_without_fallback[5000.0-45]",
+    + "test_protected_da_cold_starts_converge_without_fallback[5000.0-70]",
     "da-20000": CANARY
-    + "test_protected_da_cold_starts_converge_without_fallback[20000.0-45]",
+    + "test_protected_da_cold_starts_converge_without_fallback[20000.0-70]",
     "da-3000": CANARY
     + "test_ultracool_da_cold_starts_converge_with_exact_flux_verification[3000.0]",
     "da-4000": CANARY

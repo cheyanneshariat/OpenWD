@@ -66,10 +66,26 @@ including Ca II cores and metal-line strengths, are visible in the panels.
 The preset uses the shared adaptive DA solver, ML2/alpha=0.7, the DA hydrogen
 line/molecular policy, Stout metal lines through charge 3, and Verner
 photoionization. It retains the established Feautrier atmosphere solver and
-formal-integral final synthesis. As in DZ, the atmosphere uses a
-composition-dependent budget for significant metal lines; final synthesis
-includes a more detailed line list. No forced atmosphere/spectrum grid matching
-or experimental wavelength-refinement loop is enabled.
+formal-integral final synthesis.
+
+As in DZ, the emitted spectrum is flux conserving. Before, the structure used
+up to 8000 line-centered lines while the synthesis used 20,000, and the formal
+solution ran on the bare structure depths. Totals were 0.984, 0.991 and 1.040
+of sigma Teff^4 for G149-28, G29-38 and GALEX J1931+0117. They are now
+1.005, 1.003 and 1.001. Three settings do this:
+
+- The structure absorbs the synthesis line list (f >= 1e-4), opacity-sampled
+  at R = 1000 (`structure_opacity_sampling_resolution`).
+- Its depths are concentrated across the photosphere
+  (`photospheric_depth_concentration=1`).
+- The formal solution subdivides each depth interval four times
+  (`synthesis_transfer_depth_refinement=4`).
+
+Standard cold starts for these three objects took 220, 243 and 295 s. The
+previous settings took 165, 267 and 771 s, so the heavily polluted GALEX
+J1931+0117 is now much faster. `structure_opacity_sampling_resolution=None`,
+`photospheric_depth_concentration=0` and
+`synthesis_transfer_depth_refinement=1` restore the previous numerics.
 Dense-helium ionization corrections and helium-perturber profiles are
 not applied to hydrogen hosts.
 
@@ -94,7 +110,10 @@ independence, exact reproduction of a paper atmosphere, or the integral of a
 separately sampled final spectrum.
 
 Metals remain trace contributors in the thermodynamic derivatives used by
-ML2. Ca II can use a reduced scattering source in the final spectrum while
-the atmospheric populations and extinction remain LTE; this is not a full
-metal-NLTE atmosphere. A low-temperature pure-DA validation does not establish
+ML2. Ca II H and K can use complete-redistribution source functions in the
+final spectrum while the atmospheric populations and extinction remain LTE;
+this is not a full metal-NLTE atmosphere. The shared metal-opacity revisions
+of the 2026-09-30 audit (exact frequency Voigt profiles, `1/Z^2` Unsold
+radii, structure line identity) also apply to DAZ models; see the
+[DZ guide](DZ.md). A low-temperature pure-DA validation does not establish
 the same validity range for arbitrary metal abundances.

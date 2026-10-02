@@ -34,10 +34,10 @@ def test_native_pseudo_voigt_matches_numpy(native, monkeypatch):
         center = rng.uniform(100., 100000.)
         sigma, gamma = 10. ** rng.uniform(-7, 2, 2)
         wave = center + np.r_[0., np.geomspace(1.e-8, 1000., 120)]
-        monkeypatch.setattr(metals, "_rt", None)
         reference = metals._pseudo_voigt_profile_per_angstrom(wave, center, sigma, gamma)
-        monkeypatch.setattr(metals, "_rt", native)
-        actual = metals._stark_impact_profile(wave, center, sigma, gamma)
+        # The manifold path uses the exact Voigt core; check the C kernel itself.
+        actual = np.empty_like(wave)
+        native.pseudo_voigt_profile(wave, center, sigma, gamma, actual)
         np.testing.assert_allclose(actual, reference, rtol=2.e-13, atol=1.e-290)
 
 

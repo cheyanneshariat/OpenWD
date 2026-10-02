@@ -41,3 +41,13 @@ def test_strict_fixed_synthesis_is_rejected_before_reading_checkpoint(tmp_path, 
     monkeypatch.setattr(cli, "load_atmosphere_checkpoint", lambda *a, **k: pytest.fail("read checkpoint"))
     with pytest.raises(SystemExit):
         cli.one_shot_main("DB")
+
+
+def test_dz_cli_hydrogen_abundance_accepts_none_and_empty_abundances_fail_early():
+    from wd_spectra.models.cli import _optional_float
+    from wd_spectra.models.stellar import DZConfig, compute_dz
+
+    assert _optional_float("none") is None
+    assert _optional_float("-6.5") == -6.5
+    with pytest.raises(ValueError, match="at least one element"):
+        compute_dz(DZConfig(abundances={}))

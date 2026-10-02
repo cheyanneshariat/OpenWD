@@ -10,7 +10,7 @@ from wd_spectra.eos import hydrogenic_critical_microfield_beta
 from wd_spectra.metals import (
     _STARK_MANIFOLD_FIELD_HZ,
     _deposit_segments,
-    _pseudo_voigt_profile_per_angstrom,
+    _voigt_profile_per_angstrom,
     manifold_quasistatic_line_profile,
     rydberg_stark_manifold,
 )
@@ -81,7 +81,8 @@ def test_profile_conserves_area_and_reduces_to_impact_at_weak_fields(database):
     lower = _manifold(database, ("Mg", 1), "2p6.4f.(2Fo<7/2>)")
     center = 5403.06
     wavelength = np.arange(center - 60.0, center + 60.0, 0.01)
-    impact = _pseudo_voigt_profile_per_angstrom(wavelength, center, 0.03, 0.05)
+    # The impact core is the exact frequency-space Voigt profile (2026-09-30 audit).
+    impact = _voigt_profile_per_angstrom(wavelength, center, 0.03, 0.05)
     weak = manifold_quasistatic_line_profile(wavelength, center, 0.03, 0.05, 1.0e5, upper, lower)
     assert trapezoid(weak, wavelength) == pytest.approx(trapezoid(impact, wavelength), rel=1.0e-3)
     assert np.max(np.abs(weak - impact)) < 1.0e-3 * np.max(impact)
@@ -135,7 +136,7 @@ def test_truncated_pattern_ends_at_the_largest_bound_shift(database):
         wavelength, center, sigma, hwhm, coupling, upper, None, beta_critical,
         support_half_width=300.0,
     )
-    impact = _pseudo_voigt_profile_per_angstrom(wavelength, center, sigma, hwhm)
+    impact = _voigt_profile_per_angstrom(wavelength, center, sigma, hwhm)
     beyond = np.abs(wavelength - center) > 1.05 * edge_angstrom + 30.0 * hwhm
     assert np.all(profile[beyond] <= 1.0001 * impact[beyond])
 

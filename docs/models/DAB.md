@@ -55,3 +55,18 @@ production quality, the normal package installation, and additional public data.
 [cool-model setup](../getting-started.md#cool-helium-and-mixed-atmospheres),
 [tested points](../tested-temperature-ranges.md), and
 [physical limitations](../limitations.md#physical-approximations).
+
+## Flux conservation (2026-10-01)
+
+Two numerics settings are on by default:
+
+- `photospheric_depth_concentration=1` concentrates the structure depths
+  across 0.01 < tau < 10 at an unchanged point count.
+- `synthesis_transfer_depth_refinement=4` subdivides each depth interval for
+  the final formal solution.
+
+Before, the 40-point standard structures emitted up to 2-3% more than
+sigma Teff^4. The bare-grid formal solution partly cancelled this, so the
+totals looked right while the structure was not. Standard-quality totals
+are now within about 0.75% (see the [DZ guide](DZ.md) for the method). Setting
+both to 0 and 1 restores the previous numerics.
