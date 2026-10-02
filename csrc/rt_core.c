@@ -419,6 +419,72 @@ holtsmark_distribution(double beta, const struct HoltsmarkTable *table)
 }
 
 /*
+ * Real part of the Faddeeva function w(x + i y) for y >= 0: Humlicek (1982,
+ * JQSRT 27, 437) region algorithm W4, about 1e-4 relative accuracy.  Complex
+ * arithmetic is written out explicitly so the kernel stays C89/MSVC
+ * portable.  Mirrors wd_spectra.metals._humlicek_w4.
+ */
+typedef struct { double re, im; } openwd_complex;
+
+static openwd_complex cx(double re, double im) { openwd_complex z; z.re = re; z.im = im; return z; }
+static openwd_complex cx_add(openwd_complex a, openwd_complex b) { return cx(a.re + b.re, a.im + b.im); }
+static openwd_complex cx_mul(openwd_complex a, openwd_complex b) {
+    return cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+}
+static openwd_complex cx_scale(openwd_complex a, double s) { return cx(a.re * s, a.im * s); }
+static openwd_complex cx_div(openwd_complex a, openwd_complex b) {
+    const double d = b.re * b.re + b.im * b.im;
+    return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d);
+}
+/* c0 + t (c1 + t (c2 + ...)) evaluated from the highest coefficient. */
+static openwd_complex cx_poly(const double *c, int n, openwd_complex t) {
+    openwd_complex r = cx(c[n - 1], 0.0);
+    int k;
+    for (k = n - 2; k >= 0; --k) {
+        r = cx_add(cx_mul(r, t), cx(c[k], 0.0));
+    }
+    return r;
+}
+
+static double
+humlicek_w4_real(double x, double y)
+{
+    const openwd_complex t = cx(y, -x);
+    const double s = fabs(x) + y;
+    if (s >= 15.0) {
+        return cx_div(cx_scale(t, 0.5641896),
+                      cx_add(cx(0.5, 0.0), cx_mul(t, t))).re;
+    }
+    if (s >= 5.5) {
+        const openwd_complex u = cx_mul(t, t);
+        return cx_div(cx_mul(t, cx_add(cx(1.410474, 0.0), cx_scale(u, 0.5641896))),
+                      cx_add(cx(0.75, 0.0), cx_mul(u, cx_add(cx(3.0, 0.0), u)))).re;
+    }
+    if (y >= 0.195 * fabs(x) - 0.176) {
+        static const double numerator[5] = {
+            16.4955, 20.20933, 11.96482, 3.778987, 0.5642236};
+        static const double denominator[6] = {
+            16.4955, 38.82363, 39.27121, 21.69274, 6.699398, 1.0};
+        return cx_div(cx_poly(numerator, 5, t), cx_poly(denominator, 6, t)).re;
+    }
+    {
+        /* Polynomials in u = t^2 with the published alternating signs. */
+        static const double numerator[7] = {
+            36183.31, -3321.9905, 1540.787, -219.0313, 35.76683,
+            -1.320522, 0.56419};
+        static const double denominator[8] = {
+            32066.6, -24322.84, 9022.228, -2186.181, 364.2191,
+            -61.57037, 1.841439, -1.0};
+        const openwd_complex u = cx_mul(t, t);
+        const double magnitude = exp(u.re);
+        const openwd_complex exponential = cx(magnitude * cos(u.im), magnitude * sin(u.im));
+        const openwd_complex rational = cx_div(
+            cx_mul(t, cx_poly(numerator, 7, u)), cx_poly(denominator, 8, u));
+        return exponential.re - rational.re;
+    }
+}
+
+/*
  * Accumulate ordinary LTE metal-line extinction.  Width and population
  * construction remain in Python; this kernel removes the expensive
  * line/depth/profile Python loop used by cool metal-dominated atmospheres.
@@ -432,7 +498,6 @@ accumulate_lte_metal_line_profiles(PyObject *self, PyObject *args)
     int index;
     const double pi = 3.1415926535897932384626433832795;
     const double light_speed = 2.99792458e10;
-    const double log_two = 0.69314718055994530941723212145818;
 
     (void)self;
     if (!PyArg_ParseTuple(
@@ -503,8 +568,8 @@ accumulate_lte_metal_line_profiles(PyObject *self, PyObject *args)
                 const double sigma = gaussian_sigma[line_depth];
                 const double gamma = lorentz_hwhm[line_depth];
                 double half_window = 0.25;
-                double gaussian_fwhm, lorentz_fwhm, width, ratio, mixing;
-                double profile_scale;
+                double per_angstrom, sigma_nu, gamma_nu, scale;
+                double center_frequency, profile_scale;
                 Py_ssize_t start, stop;
 
                 if (minimum_half_window[line] > half_window) {
@@ -524,41 +589,25 @@ accumulate_lte_metal_line_profiles(PyObject *self, PyObject *args)
                     continue;
                 }
 
-                gaussian_fwhm =
-                    2.0 * sqrt(2.0 * log_two) * fmax(sigma, 1.0e-12);
-                lorentz_fwhm = 2.0 * fmax(gamma, 0.0);
-                width = pow(
-                    pow(gaussian_fwhm, 5.0) +
-                    2.69269 * pow(gaussian_fwhm, 4.0) * lorentz_fwhm +
-                    2.42843 * pow(gaussian_fwhm, 3.0) *
-                        lorentz_fwhm * lorentz_fwhm +
-                    4.47163 * gaussian_fwhm * gaussian_fwhm *
-                        pow(lorentz_fwhm, 3.0) +
-                    0.07842 * gaussian_fwhm * pow(lorentz_fwhm, 4.0) +
-                    pow(lorentz_fwhm, 5.0),
-                    0.2);
-                ratio = lorentz_fwhm / width;
-                mixing = 1.36603 * ratio - 0.47719 * ratio * ratio +
-                         0.11116 * ratio * ratio * ratio;
-                if (mixing < 0.0) {
-                    mixing = 0.0;
-                } else if (mixing > 1.0) {
-                    mixing = 1.0;
-                }
+                /* Exact Voigt in frequency (impact Lorentzian and thermal
+                 * Gaussian are both frequency profiles), returned per
+                 * Angstrom at line centre: phi_nu c / lambda0^2.  Mirrors
+                 * wd_spectra.metals._voigt_profile_per_angstrom. */
+                per_angstrom = light_speed / (center_cm * center_cm) * 1.0e-8;
+                sigma_nu = fmax(sigma, 1.0e-12) * per_angstrom;
+                gamma_nu = fmax(gamma, 0.0) * per_angstrom;
+                scale = 1.0 / (sigma_nu * sqrt(2.0));
+                center_frequency = light_speed / center_cm;
                 profile_scale = strength[line] * frequency_conversion *
-                    population_scale[line_depth];
+                    population_scale[line_depth] * scale / sqrt(pi) *
+                    per_angstrom;
 
                 for (wave = start; wave < stop; ++wave) {
-                    const double offset = wavelength[wave] - line_center;
-                    const double normalized_offset = offset / width;
-                    const double gaussian =
-                        2.0 * sqrt(log_two) / (sqrt(pi) * width) *
-                        exp(-4.0 * log_two * normalized_offset * normalized_offset);
-                    const double lorentz =
-                        2.0 / (pi * width) /
-                        (1.0 + 4.0 * normalized_offset * normalized_offset);
-                    const double profile =
-                        mixing * lorentz + (1.0 - mixing) * gaussian;
+                    const double detuning =
+                        light_speed / (wavelength[wave] * 1.0e-8) -
+                        center_frequency;
+                    const double profile = humlicek_w4_real(
+                        detuning * scale, gamma_nu * scale);
                     absorption[wave * n_depth + depth] +=
                         profile * profile_scale;
                 }

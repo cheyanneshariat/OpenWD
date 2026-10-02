@@ -176,9 +176,12 @@ def test_public_dz_option_only_changes_synthesis(monkeypatch):
     monkeypatch.setattr(stellar, '_helium_tables', lambda *args: (None, None))
     monkeypatch.setattr(stellar.ModelData, 'require', lambda *args, **kwargs: None)
     monkeypatch.setattr(stellar, 'read_stout_atomic_database', lambda *args, **kwargs: SimpleNamespace(source='test'))
-    monkeypatch.setattr(stellar, 'read_verner_photoionization_database', lambda *args, **kwargs: None)
+    monkeypatch.setattr(stellar, 'read_verner_photoionization_database', lambda *args, **kwargs: SimpleNamespace(fits={}, source='test'))
+    monkeypatch.setattr(stellar, 'read_verner_phfit2_database', lambda *args, **kwargs: {})
+    monkeypatch.setattr(stellar, '_polluted_helium_level_resolved_photoionization', lambda *args, **kwargs: None)
     monkeypatch.setattr(stellar, 'warn_if_atmosphere_not_converged', lambda *args: 'unconverged')
-    config = DZConfig(abundances={}, dense_helium_eos='ideal',
+    # A DZ model needs at least one metal; the trace Fe abundance is inert here.
+    config = DZConfig(abundances={'Fe': -10.0}, dense_helium_eos='ideal',
                       unified_metal_helium_profiles='off', ca_ii_resonance_source='lte')
     compute_dz(config, [4000., 5000.], synthesis_transfer='formal-linear')
     compute_dz(config, [4000., 5000.], synthesis_transfer='formal-pchip')

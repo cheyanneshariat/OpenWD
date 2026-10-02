@@ -27,11 +27,15 @@ def test_reviewed_baselines_and_historical_inputs_are_unchanged(mode, count):
             assert record["source_public_cold_start"]
             certificate = record["source_equilibrium_certificate"]
             assert certificate["verified"]
-            assert set(certificate["checks"]) == {
+            required = {
                 "all_depth_flux", "local_energy", "temperature_stationarity",
                 "source_closure", "boundary_screening",
             }
-            assert all(check["passed"] for check in certificate["checks"].values())
+            # Newer certificates also list unmeasured optional checks
+            # (surface/photospheric flux); every required check must pass.
+            assert set(certificate.get("required_checks", required)) == required
+            assert required <= set(certificate["checks"])
+            assert all(certificate["checks"][name]["passed"] for name in required)
         assert record["transfer_discretization"] == (
             "formal-pchip" if record["case"].startswith("da-") else "formal-linear"
         )

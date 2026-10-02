@@ -73,8 +73,17 @@ class DAZConfig:
     balmer_self_broadening_truncation_closure: str = "stark-core"
     atmosphere_solver: Literal["adaptive-newton"] = "adaptive-newton"
     maximum_metal_charge: int = 3
+    # Flux conservation, as for DZ: the structure absorbs the opacity-sampled
+    # synthesis line list on photosphere-concentrated depths, and the formal
+    # solution subdivides each depth interval.  None/0/1 restore the
+    # historical line-centered structure and bare-grid formal solution.
     structure_maximum_metal_lines: int | None = None
+    structure_minimum_metal_oscillator_strength: float | None = None
+    structure_opacity_sampling_resolution: float | None = 1000.0
+    photospheric_depth_concentration: float = 1.0
     formal_maximum_metal_lines: int | None = None
+    formal_minimum_metal_oscillator_strength: float = 1.0e-4
+    synthesis_transfer_depth_refinement: int = 4
     ca_ii_resonance_source: Literal["chianti-reduced", "lte"] = "chianti-reduced"
     metal_neutral_h_broadening: Literal["barklem", "unsold"] = "unsold"
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
@@ -164,6 +173,23 @@ def compute_daz(
     )
     if formal_lines < 1:
         raise ValueError("metal line limits must be positive")
+    if config.structure_opacity_sampling_resolution is not None:
+        # Flux conservation needs the structure to absorb the synthesis line
+        # list; opacity sampling keeps its cost nearly independent of it.
+        if config.structure_maximum_metal_lines is None:
+            structure_lines = formal_lines
+            line_policy = "opacity sampling: synthesis line list"
+        structure_minimum_oscillator_strength = (
+            config.formal_minimum_metal_oscillator_strength
+            if config.structure_minimum_metal_oscillator_strength is None
+            else config.structure_minimum_metal_oscillator_strength
+        )
+    else:
+        structure_minimum_oscillator_strength = (
+            0.01
+            if config.structure_minimum_metal_oscillator_strength is None
+            else config.structure_minimum_metal_oscillator_strength
+        )
     allard = None
     if config.lyman_profile_source == "allard":
         allard = _allard_lyman_profiles_for_effective_temperature(
@@ -215,8 +241,12 @@ def compute_daz(
             trihydrogen_ion_partition_model=h3,
             mixing_length_alpha=config.mixing_length_alpha,
             structure_solver=config.atmosphere_solver,
-            minimum_metal_oscillator_strength=0.01,
+            minimum_metal_oscillator_strength=structure_minimum_oscillator_strength,
             maximum_metal_lines=structure_lines,
+            metal_line_opacity_sampling_resolution=(
+                config.structure_opacity_sampling_resolution
+            ),
+            depth_concentration=config.photospheric_depth_concentration,
             initial_temperature=None if atmosphere is None else atmosphere.temperature,
             initial_column_mass=None if atmosphere is None else atmosphere.column_mass,
             iteration_callback=iteration_callback,
@@ -231,8 +261,9 @@ def compute_daz(
         wave,
         include_molecular_absorption=molecules,
         include_dense_helium_metal_ionization=False,
-        minimum_metal_oscillator_strength=1e-4,
+        minimum_metal_oscillator_strength=config.formal_minimum_metal_oscillator_strength,
         maximum_metal_lines=formal_lines,
+        transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
         ca_ii_resonance_collision_strengths=(
             str(data.ca_ii_chianti_collisions) if reduced_ca else None
         ),
@@ -255,6 +286,10 @@ def compute_daz(
             metal_opacity_in_structure=True,
             structure_maximum_metal_lines=structure_lines,
             structure_metal_line_budget_policy=line_policy,
+            structure_minimum_metal_oscillator_strength=structure_minimum_oscillator_strength,
+            structure_opacity_sampling_resolution=config.structure_opacity_sampling_resolution,
+            photospheric_depth_concentration=config.photospheric_depth_concentration,
+            synthesis_transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
             summed_metal_number_fraction=metal_fraction,
             metal_thermodynamic_derivatives="trace-metal approximation: Q-MHD hydrogen derivatives",
             molecular_equilibrium=molecules,

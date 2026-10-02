@@ -2153,6 +2153,16 @@ def solve_adaptive_lte_structure(
             )
 
     thermal_metadata = None
+    # The formal phase stops when its accepted (line-searched) step is small.
+    # In optically thin outer layers the flux equations barely constrain T,
+    # so a residual already at round-off can leave a large unrestricted
+    # Newton proposal that the line search keeps rejecting.  The certificate
+    # measures that proposal, so complete with local energy balance (which
+    # does constrain those layers) whenever it is not yet stationary.
+    final_unrestricted_step = (
+        result.history[-1].unrestricted_maximum_step
+        if result.history else None
+    )
     if (
         enforce_local_energy_balance
         and not energy_completion_active
@@ -2167,6 +2177,10 @@ def solve_adaptive_lte_structure(
                 )
             )
             >= flux_tolerance
+            or (
+                final_unrestricted_step is not None
+                and final_unrestricted_step >= temperature_tolerance
+            )
         )
     ):
         solver_iteration_offset += result.iterations

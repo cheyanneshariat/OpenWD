@@ -87,6 +87,107 @@ def planck_lambda_angstrom(wavelength_angstrom: ArrayLike, temperature: ArrayLik
     )
 
 
+def _depth_refined_transfer_inputs(
+    column_mass,
+    temperature,
+    wavelength,
+    absorption,
+    scattering,
+    emission_source,
+    factor: int,
+):
+    """Interpolate converged-structure transfer inputs onto a finer depth grid.
+
+    Structure grids carry roughly 40 points over ten decades of column mass,
+    i.e. a factor of about two in optical depth per interval near the
+    photosphere.  That spacing is adequate for the structure's second-order
+    Feautrier flux but the piecewise-linear formal solution then misses
+    several per cent of the emergent flux of cool, steep, convective helium
+    atmospheres.  Opacities are interpolated linearly in log-log against
+    column mass, the temperature likewise, the Planck function is evaluated
+    exactly at the interpolated temperature, and any departure of the
+    emission source from Planck (CRD Ca II lines) is interpolated as a ratio.
+    """
+
+    if factor == 1:
+        return column_mass, absorption, scattering, emission_source
+    log_mass = np.log(column_mass)
+    fine = np.interp(
+        np.linspace(0.0, log_mass.size - 1.0, (log_mass.size - 1) * factor + 1),
+        np.arange(log_mass.size, dtype=np.float64),
+        log_mass,
+    )
+    tiny = np.finfo(np.float64).tiny
+
+    def log_interpolate(values):
+        logs = np.log(np.maximum(values, tiny))
+        right = np.searchsorted(log_mass, fine, side="right").clip(1, log_mass.size - 1)
+        left = right - 1
+        weight = (fine - log_mass[left]) / (log_mass[right] - log_mass[left])
+        return np.exp(logs[..., left] * (1.0 - weight) + logs[..., right] * weight)
+
+    fine_temperature = log_interpolate(temperature)
+    native_planck = planck_lambda_angstrom(
+        wavelength[:, np.newaxis], np.asarray(temperature)[np.newaxis, :]
+    )
+    resolved = native_planck > tiny * 1.0e20
+    ratio = np.where(
+        resolved, emission_source / np.where(resolved, native_planck, 1.0), 1.0
+    )
+    right = np.searchsorted(log_mass, fine, side="right").clip(1, log_mass.size - 1)
+    left = right - 1
+    weight = (fine - log_mass[left]) / (log_mass[right] - log_mass[left])
+    fine_ratio = ratio[:, left] * (1.0 - weight) + ratio[:, right] * weight
+    fine_emission = np.ascontiguousarray(
+        planck_lambda_angstrom(wavelength[:, np.newaxis], fine_temperature[np.newaxis, :])
+        * fine_ratio
+    )
+    return (
+        np.exp(fine),
+        np.ascontiguousarray(log_interpolate(absorption)),
+        np.ascontiguousarray(log_interpolate(scattering)),
+        fine_emission,
+    )
+
+
+def _ca_ii_crd_emission_source(
+    atmosphere,
+    wavelength,
+    absorption,
+    scattering,
+    planck,
+    probabilities,
+    line_extinction,
+    n_angle,
+):
+    """Return the thermal-emission source including CRD Ca II H/K lines.
+
+    The linear solver forms ``S = (kappa B + sigma J)/chi``.  With the H/K
+    source functions fixed by complete redistribution, the lines are pure
+    extinction whose emissivity is ``kappa_L S_L``; folding that into the
+    emission term leaves the coherent background scattering unchanged.
+    """
+
+    if probabilities is None:
+        return planck
+    from .cool_metal_nlte import ca_ii_crd_resonance_source_functions
+
+    sources = ca_ii_crd_resonance_source_functions(
+        atmosphere, wavelength, absorption, scattering, line_extinction,
+        probabilities, n_angle=n_angle,
+    )
+    lines = line_extinction(wavelength)
+    per_angstrom = LIGHT_SPEED / (wavelength * 1.0e-8) ** 2 * 1.0e-8
+    line_sum = sum(lines.values())
+    emission = sum(
+        lines[key] * sources[key][np.newaxis, :] for key in lines
+    ) * per_angstrom[:, np.newaxis]
+    return np.ascontiguousarray(
+        ((absorption - line_sum) * planck + emission)
+        / np.maximum(absorption, np.finfo(np.float64).tiny)
+    )
+
+
 def synthesize_gray_spectrum(
     atmosphere: Atmosphere,
     wavelength_angstrom: ArrayLike,
@@ -192,6 +293,7 @@ def synthesize_balmer_spectrum(
     n_angle: int = 4,
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip"] = "formal-linear",
+    transfer_depth_refinement: int = 1,
 ) -> Spectrum:
     """Synthesize hydrogen lines on a supplied pure-H atmosphere structure.
 
@@ -373,6 +475,7 @@ def synthesize_balmer_spectrum(
         )
     absorption = line_opacity + continuum_absorption
     metal_line_scattering = np.zeros_like(absorption)
+    ca_ii_probabilities = None
     if metal_database is not None and metal_state is not None:
         from .metals import (
             metal_bound_free_mass_absorption_coefficient,
@@ -422,31 +525,30 @@ def synthesize_balmer_spectrum(
                 ca_ii_resonance_scattering_probabilities,
             )
 
-            probabilities = ca_ii_resonance_scattering_probabilities(
+            ca_ii_probabilities = ca_ii_resonance_scattering_probabilities(
                 atmosphere,
                 metal_database,
                 ca_ii_resonance_collision_strengths,
             )
-            for (lower_index, upper_index), record in probabilities.items():
-                ca_ii_extinction = metal_line_mass_absorption_coefficient(
-                    atmosphere,
-                    wavelength,
-                    metal_database,
-                    metal_state,
-                    ca_ii_he_profile_table=ca_ii_he_profile_table,
-                    ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
-                    minimum_oscillator_strength=(
-                        minimum_metal_oscillator_strength
-                    ),
-                    maximum_lines=None,
-                    transition_keys=(
-                        ("Ca", 1, lower_index, upper_index),
-                    ),
-                )
-                metal_line_scattering += (
-                    record.probability[np.newaxis, :] * ca_ii_extinction
-                )
-            absorption -= metal_line_scattering
+            ca_ii_crd_atmosphere = atmosphere
+
+            def ca_ii_line_extinction(grid):
+                return {
+                    (lower_index, upper_index): metal_line_mass_absorption_coefficient(
+                        ca_ii_crd_atmosphere,
+                        grid,
+                        metal_database,
+                        metal_state,
+                        ca_ii_he_profile_table=ca_ii_he_profile_table,
+                        ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
+                        minimum_oscillator_strength=(
+                            minimum_metal_oscillator_strength
+                        ),
+                        maximum_lines=None,
+                        transition_keys=(("Ca", 1, lower_index, upper_index),),
+                    )
+                    for lower_index, upper_index in ca_ii_probabilities
+                }
         elif ca_ii_resonance_scattering_fraction > 0.0:
             ca_ii = metal_database.ions.get(("Ca", 1))
             if ca_ii is not None:
@@ -486,10 +588,32 @@ def synthesize_balmer_spectrum(
             wavelength[:, np.newaxis], atmosphere.temperature[np.newaxis, :]
         )
     )
+    emission_source = _ca_ii_crd_emission_source(
+        atmosphere, wavelength, absorption, scattering, planck,
+        ca_ii_probabilities,
+        ca_ii_line_extinction if ca_ii_probabilities is not None else None,
+        n_angle,
+    )
+    if int(transfer_depth_refinement) != transfer_depth_refinement or transfer_depth_refinement < 1:
+        raise ValueError("transfer_depth_refinement must be a positive integer")
+    if transfer_depth_refinement > 1:
+        # Formal solution only, on subdivided structure intervals; see
+        # _depth_refined_transfer_inputs.
+        (
+            transfer_column_mass, absorption, scattering, emission_source,
+        ) = _depth_refined_transfer_inputs(
+            atmosphere.column_mass, atmosphere.temperature, wavelength,
+            absorption, scattering, emission_source,
+            int(transfer_depth_refinement),
+        )
+        optical_depth = optical_depth_from_mass_opacity(
+            transfer_column_mass, absorption + scattering
+        )
     source, coupled, transfer_metadata = solve_spectrum_source(
-        optical_depth, planck, absorption, scattering,
+        optical_depth, emission_source, absorption, scattering,
         wavelength=wavelength, n_angle=n_angle, discretization=transfer_discretization,
     )
+    transfer_metadata["transfer_depth_refinement"] = int(transfer_depth_refinement)
     if transfer_discretization == "formal-pchip":
         from ._monotone_formal import CubicFormal
 
@@ -699,6 +823,7 @@ def synthesize_hydrogen_spectrum(
     n_angle: int = 4,
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip"] = "formal-linear",
+    transfer_depth_refinement: int = 1,
 ) -> Spectrum:
     """Synthesize the Lyman through Brackett series on a pure-H atmosphere."""
 
@@ -751,6 +876,7 @@ def synthesize_hydrogen_spectrum(
         n_angle=n_angle,
         backend=backend,
         transfer_discretization=transfer_discretization,
+        transfer_depth_refinement=transfer_depth_refinement,
     )
 
 
@@ -792,16 +918,24 @@ def synthesize_helium_spectrum(
     ca_ii_helium_impact_scale: float = 1.0,
     ca_ii_resonance_scattering_fraction: float = 0.0,
     ca_ii_resonance_collision_strengths: str | None = None,
+    ca_ii_resonance_redistribution: Literal["complete", "coherent"] = "complete",
     c2_cross_section_table: object | None = None,
     include_dense_helium_metal_ionization: bool = True,
+    metal_occupation_probability_partitions: bool = False,
     minimum_metal_oscillator_strength: float = 1.0e-4,
     maximum_metal_lines: int | None = 20_000,
     excluded_metal_line_elements: Iterable[str] = (),
     n_angle: int = 4,
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip", "optical-depth", "feautrier-optical-depth", "column-mass"] = "formal-linear",
+    transfer_depth_refinement: int = 1,
 ) -> Spectrum:
     """Synthesize an LTE pure-He spectrum with tabulated He I profiles.
+
+    ``transfer_depth_refinement`` subdivides each structure depth interval
+    for the final transfer solution only (see
+    :func:`_depth_refined_transfer_inputs`); opacities are still evaluated on
+    the structure's own depth points.
 
     ``stark_table`` may be a parsed :class:`HeliumStarkTable` or a path to
     ``Beauchamp25_LD.txt``.  Requiring an explicit table keeps the optional
@@ -874,6 +1008,7 @@ def synthesize_helium_spectrum(
             metal_abundances,
             include_dense_helium_ionization=include_dense_helium_metal_ionization,
             log_hydrogen_abundance=log_hydrogen_abundance,
+            occupation_probability_partitions=metal_occupation_probability_partitions,
         )
         atmosphere = atmosphere_with_metal_electrons(atmosphere, metal_state)
     absorption = helium_continuum_mass_absorption_coefficient(
@@ -903,6 +1038,7 @@ def synthesize_helium_spectrum(
                 include_occupation_probability=include_occupation_probability,
             )
     metal_line_scattering = np.zeros_like(absorption)
+    ca_ii_probabilities = None
     if metal_database is not None and metal_state is not None:
         from .metals import (
             metal_bound_free_mass_absorption_coefficient,
@@ -952,27 +1088,43 @@ def synthesize_helium_spectrum(
                 ca_ii_resonance_scattering_probabilities,
             )
 
-            probabilities = ca_ii_resonance_scattering_probabilities(
+            ca_ii_probabilities = ca_ii_resonance_scattering_probabilities(
                 atmosphere,
                 metal_database,
                 ca_ii_resonance_collision_strengths,
             )
-            for (lower_index, upper_index), record in probabilities.items():
-                ca_ii_extinction = metal_line_mass_absorption_coefficient(
-                    atmosphere,
-                    wavelength,
-                    metal_database,
-                    metal_state,
-                    ca_ii_he_profile_table=ca_ii_he_profile_table,
-                    ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
-                    minimum_oscillator_strength=minimum_metal_oscillator_strength,
-                    maximum_lines=None,
-                    transition_keys=(("Ca", 1, lower_index, upper_index),),
-                )
-                metal_line_scattering += (
-                    record.probability[np.newaxis, :] * ca_ii_extinction
-                )
-            absorption -= metal_line_scattering
+            ca_ii_crd_atmosphere = atmosphere
+            if ca_ii_resonance_redistribution not in ("complete", "coherent"):
+                raise ValueError("ca_ii_resonance_redistribution must be 'complete' or 'coherent'")
+
+            def ca_ii_line_extinction(grid):
+                return {
+                    (lower_index, upper_index): metal_line_mass_absorption_coefficient(
+                        ca_ii_crd_atmosphere,
+                        grid,
+                        metal_database,
+                        metal_state,
+                        ca_ii_he_profile_table=ca_ii_he_profile_table,
+                        ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
+                        minimum_oscillator_strength=(
+                            minimum_metal_oscillator_strength
+                        ),
+                        maximum_lines=None,
+                        transition_keys=(("Ca", 1, lower_index, upper_index),),
+                    )
+                    for lower_index, upper_index in ca_ii_probabilities
+                }
+
+            if ca_ii_resonance_redistribution == "coherent":
+                # Monochromatic coherent scattering with the same
+                # probabilities (the pre-2026-09-30 treatment), for controls.
+                for key, extinction in ca_ii_line_extinction(wavelength).items():
+                    metal_line_scattering += (
+                        ca_ii_probabilities[key].probability[np.newaxis, :]
+                        * extinction
+                    )
+                absorption -= metal_line_scattering
+                ca_ii_probabilities = None
         elif ca_ii_resonance_scattering_fraction > 0.0:
             ca_ii = metal_database.ions.get(("Ca", 1))
             if ca_ii is not None:
@@ -1066,13 +1218,34 @@ def synthesize_helium_spectrum(
             wavelength[:, np.newaxis], atmosphere.temperature[np.newaxis, :]
         )
     )
+    emission_source = _ca_ii_crd_emission_source(
+        atmosphere, wavelength, absorption, scattering, planck,
+        ca_ii_probabilities,
+        ca_ii_line_extinction if ca_ii_probabilities is not None else None,
+        n_angle,
+    )
+    if int(transfer_depth_refinement) != transfer_depth_refinement or transfer_depth_refinement < 1:
+        raise ValueError("transfer_depth_refinement must be a positive integer")
+    transfer_column_mass = atmosphere.column_mass
+    if transfer_depth_refinement > 1:
+        (
+            transfer_column_mass, absorption, scattering, emission_source,
+        ) = _depth_refined_transfer_inputs(
+            atmosphere.column_mass, atmosphere.temperature, wavelength,
+            absorption, scattering, emission_source,
+            int(transfer_depth_refinement),
+        )
+        optical_depth = optical_depth_from_mass_opacity(
+            transfer_column_mass, absorption + scattering
+        )
     source, coupled, transfer_metadata = solve_spectrum_source(
-        optical_depth, planck, absorption, scattering,
+        optical_depth, emission_source, absorption, scattering,
         wavelength=wavelength, n_angle=n_angle,
-        column_mass=(atmosphere.column_mass if transfer_discretization == "column-mass" else None),
+        column_mass=(transfer_column_mass if transfer_discretization == "column-mass" else None),
         discretization=("optical-depth" if transfer_discretization == "feautrier-optical-depth" else transfer_discretization),
     )
     transfer_metadata["transfer_discretization"] = transfer_discretization
+    transfer_metadata["transfer_depth_refinement"] = int(transfer_depth_refinement)
     if transfer_discretization == "formal-linear":
         flux = emergent_flux(optical_depth, source, n_angle=n_angle, backend=backend)
     elif transfer_discretization == "formal-pchip":

@@ -1,39 +1,182 @@
 {
-  "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+  "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
   "source_files": {
-    "src/openwd.egg-info/PKG-INFO": "baca38a787a1ff862b782628e75b4c45cc4b5d8b82d7450bbb95512a1e04874b",
-    "src/openwd.egg-info/SOURCES.txt": "6ca26592a80dbf258d50c0b4cc0b57b5e3dd286d8a88d2b9651da7f27168b913",
-    "src/openwd.egg-info/dependency_links.txt": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-    "src/openwd.egg-info/requires.txt": "26bc3bd9b77226e459d5039f842f9c57c93500b23d011788e318da9bc98f8674",
-    "src/openwd.egg-info/top_level.txt": "ccbd8af53c56613f51cdcac3eb9dcbdb8d0a2fed131f53002196caa30f6d9f8f",
-    "src/wd_spectra/__init__.py": "07a77c88135013340bcd8f5170862ee95cf119ec05ceb3c56c4de7167b8fb73b",
+    "src/wd_spectra/__init__.py": "1a3e6163b22ba32e7604e60fbe5ccdf65cddb5d71cb70f7e35847db519f96c09",
     "src/wd_spectra/_compat.py": "f7b61243c0e2e72a6c9a8f03c718679278f5fe6dc08cafb10228c9a04cb38b66",
-    "src/wd_spectra/_convergence.py": "fb49244e9828fcd8cabc32386bf718073e9ae8cbfc6e539f90a39898e1656c42",
-    "src/wd_spectra/_domain.py": "2baf1d16c8e47ccbf3846c372d1fbdd6948430becb96412f98b809f8b9a0ebb2",
+    "src/wd_spectra/_convergence.py": "6a5f7d12effe62f34a422064aecb2c6c28866a1e8a9700417b46711e72b48600",
+    "src/wd_spectra/_cool/__init__.py": "3c6f15b149c00f34655c2e065f6266e89e55f45d84428218ad0f24d2dc300c3f",
+    "src/wd_spectra/_cool/audit_dense_spectrum.py": "902f023879d8bb0ecc1ef74ff148d450c9cc1249d9d5c8667f5df7ffb674f471",
+    "src/wd_spectra/_cool/augmented_ml2_proposal.py": "e00aa3b6a352e6f5e25c199e23d35762defd6a8f8f7f60c6d958431ae4364dea",
+    "src/wd_spectra/_cool/bounded_nonlinear_proposal.py": "dc642f4300ab3a6d119cdab3f39fe2ecd62990a2ecd37773bcc0403fdd72411e",
+    "src/wd_spectra/_cool/chang_helium_potential.py": "b27addf169bdb7a19961e3ab0f58adb409f460c460b532588143d747098844c2",
+    "src/wd_spectra/_cool/check_cool_db_transport_seed.py": "e7bed18b988be19bf00e60db863659798489bce1873a3b5f76931e129bb7065e",
+    "src/wd_spectra/_cool/check_data.py": "bdd03f17f2b404897fac9d9a7c0d2e0c7572a93423da09b7c3a3482dba2bf793",
+    "src/wd_spectra/_cool/check_molecular_dab_result.py": "3402a844d63962fe61d3b353f5518903feb8f7fa21cd66cf1b89af50a553e9db",
+    "src/wd_spectra/_cool/compatible_coordinate_solve.py": "0638f38ff5ff852465a7534c0fc5964376e350f8558445846699cb2cd07cd914",
+    "src/wd_spectra/_cool/compatible_temperature_coordinates.py": "c75fab698d9d51c738f1f3e90334d25170089006e9e7670b78cc386483eec9e7",
+    "src/wd_spectra/_cool/convective_consistency_experiment.py": "d262058361a8717a15fac2685221d5013716cd901ba9459bdcd9b6f6ab676313",
+    "src/wd_spectra/_cool/convective_mesh_prolongation.py": "4a1182f1ce296e1eba2bea7523fa7379f7a4613b8107a93424555dd77be0424b",
+    "src/wd_spectra/_cool/dense_direct_spectrum.py": "f493dbd470c1829852717581a9301aaf30cc69354e30f7fb0e7e82b9018840c7",
+    "src/wd_spectra/_cool/dense_helium_atomic_experiment.py": "6e30c03fe8f5e414046892ecc5548822f3e2c954b6edc0da68c4575a68939dfb",
+    "src/wd_spectra/_cool/dense_helium_chemical_equilibrium.py": "fde75b9f97c2ea4acdf51acf7427352b8774b864bfdf97ad052caf6964ab2419",
+    "src/wd_spectra/_cool/dense_helium_fluid_experiment.py": "c05bc4d2ddd4697e86cfe66299354de16c9898579e3b22841b16086ae404b058",
+    "src/wd_spectra/_cool/dense_helium_limits.py": "53e6dd0e8f953eb7f57f3e0cf9cf6442bd58c36bd77028a4c351f87ad4da44d3",
+    "src/wd_spectra/_cool/dense_helium_materials.py": "20a824d8f212d6a6ea9f816d16af615de95182668256eee79aa9c9a99b3f66a9",
+    "src/wd_spectra/_cool/dense_helium_molecular_experiment.py": "3a1b3666b765ccea11791e8d0dc964faceafcbf5f00fa44c34172309b9b6556b",
+    "src/wd_spectra/_cool/dense_iteration_resume.py": "57a304fafc5a1752b510bcf22e092520df3c5b603752c28b642f7fd2497566cc",
+    "src/wd_spectra/_cool/dense_mesh_hierarchy.py": "a4b7fb9987aed578f9b7dd65e1fbf6e70493438a22e3fc39d6b57f40b265eeb6",
+    "src/wd_spectra/_cool/dense_temperature_predictor.py": "f2b66ddd75a41a87c9b6125b4b8d7ee8ceb850bd304f11ca3e94a7cd2322ebac",
+    "src/wd_spectra/_cool/dense_thermal_verification.py": "776ea15dd4e2273266e740f44f189adad07ffa6516ca9ac1aa70524bf4604552",
+    "src/wd_spectra/_cool/discrete_dense_transport_seed.py": "72a4abffdb125e35da7d3dc6737df4acdd2450a6c8b691b0982b85365e2df1e1",
+    "src/wd_spectra/_cool/domain_extension_experiment.py": "291cb15466b210976a46c57201871174707d85f57da7bc85e17b8a181288c24a",
+    "src/wd_spectra/_cool/equilibrated_temperature_step.py": "7b783c96fbd1bec947ea7bb18f693eef8cb51b17efb9e6425fff7699bc482d29",
+    "src/wd_spectra/_cool/exact_convective_trial_projection.py": "b7fc8d669905f735f2592853ea2f1560f12c6c5e767fa325c01259bbd3a61636",
+    "src/wd_spectra/_cool/exact_dense_tangent_experiment.py": "3491978c6351a3fe573798860b8d7f099f8d27355be2ec7b22f6fdfe91616a18",
+    "src/wd_spectra/_cool/exact_ml2_trial_projector.py": "7a0e82687f2da56b04fc3150c41acdcb9bef54d74b450b508395c40b8b8b6e7a",
+    "src/wd_spectra/_cool/experiment_source_archive.py": "e7b5d896fdd1f6bbb48f1d60ec1bad26e38086603c06b01187ebb03716c6af56",
+    "src/wd_spectra/_cool/extended_thermal_wavelength_experiment.py": "f7e310904ae5eca0bf6f46351f8c96c9018b85058cbfdef9a49460be9dee1c56",
+    "src/wd_spectra/_cool/frozen_energy_linearization.py": "f13dfd0631c5f83490e328baaaaab83ee0aa30a50c7c687a1c6a7ee029b9ecad",
+    "src/wd_spectra/_cool/full_coupled_dense_experiment.py": "33676540c993ccf6e63007ef047b078fc217ec03c60b88fb5532310d8c86d1b5",
+    "src/wd_spectra/_cool/full_ml2_manifold_projection.py": "eee93aaa055bc5ce9d3eb98593669f09926e09890eafca28d018ececa67dd280",
+    "src/wd_spectra/_cool/helium_dimer_eos_experiment.py": "bf5883af580a048263d246cf09b55e52fb2da448650c46429313c9a597e5e91c",
+    "src/wd_spectra/_cool/helium_dimer_state_sum.py": "a3e703b4560eb86b134e394aef4bdd89d7134a1a42fc34ecca76cb497a5ef3f5",
+    "src/wd_spectra/_cool/heminus_join_experiment.py": "067fa04335a2501006cd7018ca28af9d099ff171dfb26f724ba58dbf6b170cce",
+    "src/wd_spectra/_cool/inverse_ml2_proposal.py": "71ffd732e4cd3d83ba0f0b29acd79c6a0556e226436f064e77a372c0d4c4b8e2",
+    "src/wd_spectra/_cool/mass_conservative_feautrier.py": "985b63976ebdb34cfd09860cf81164bf5d88c2cb80d47a7447c5ca0a18987388",
+    "src/wd_spectra/_cool/mass_transfer_experiment.py": "c9e24ac3ed25b7b53ed03eec9935ab630723737d51dbe8eaf4714ca79b6f2dc9",
+    "src/wd_spectra/_cool/matched_molecular_synthesis.py": "ae7d6f85cfc6dd435c24dc5780130dec4bd2e282dd3bba6329b535e08cfeeeac",
+    "src/wd_spectra/_cool/measured_proposal_guard.py": "92675c2ba1de77148cd822823fb98e0844e3b2e024dc710b8c86a478222d617a",
+    "src/wd_spectra/_cool/physical_detuning_stark_experiment.py": "ec41767f08c5693704bc77e5fa01817c2060a86320b80368a9a2ab312b9e4724",
+    "src/wd_spectra/_cool/precise_molecular_chemistry.py": "f504709da1aa92d56bac36de23da91acece638ba137a4fa8735c68c9eac28b17",
+    "src/wd_spectra/_cool/pseudo_time_dense_experiment.py": "949cc91acd3de4aea44a2672e09e18fb577e656c4dd9283663a695040bf0295d",
+    "src/wd_spectra/_cool/radiative_rate_proposal.py": "5819a9c265cd9ca1be18b49bf95b53af77db65c979835e52d58ca10e5ad98bd9",
+    "src/wd_spectra/_cool/research_paths.py": "de264b62b8c05f257e00437533b751e421f65f08c798273d2f7a28535a003167",
+    "src/wd_spectra/_cool/run_cool_db.py": "3a80b25ffd51d2ba3e0a12885a53d92982f8c0af6731a2acd36756dd9795c4ed",
+    "src/wd_spectra/_cool/run_molecular_dab_experiment.py": "69d8a54e0f39383dfe82330dc87bfa8dcf208676a418d21e1840880e468ae00c",
+    "src/wd_spectra/_cool/run_molecular_dab_mass_experiment.py": "ea8e477b0055861537d801264239d9f167d7717290c4335810f61a524ac834ec",
+    "src/wd_spectra/_cool/scaled_ml2_compatibility.py": "f87a93ee2012ae598d083ac500a36a9af534c07b70eee1f203e8e7f5c2a4c479",
+    "src/wd_spectra/_cool/smooth_h2_thermodynamics_experiment.py": "bd8b4706dfd17c597213556825686648aa24e02ef1adc79976b18ced7be213c8",
+    "src/wd_spectra/_cool/smooth_reos3_experiment.py": "6f0c4b3c2a740eef9e6987f5689abad86508d6b04d712dd9134490d2023b924c",
+    "src/wd_spectra/_cool/solver_step_experiments.py": "b2a7419a47652bd7c6aecf9f75e436b0e86f83a757d9a6e2cc4c4aa501c6f08f",
+    "src/wd_spectra/_cool/stable_feautrier_experiment.py": "febeb672db6227fc64ca3d9c63367bc2a56296a5a604ef20402f3c85ab45b554",
+    "src/wd_spectra/_cool/stable_helium_thermodynamics_experiment.py": "e30f82af9b982004fcd717455ea405bdce2e9d425bebf32d27b30307a3d1687b",
+    "src/wd_spectra/_cool/stark_density_edge_experiment.py": "441f2e10604b79eb39927add0cd18cc22fc689766874ba10c4f4336d338e3ad4",
+    "src/wd_spectra/_cool/state_sum_h2_experiment.py": "60f085a599137ba0bab18541bd958692def28cf442a62c48c575038989928115",
+    "src/wd_spectra/_cool/tangent_ml2_materials.py": "161c77bd5cd54644eab1f8a1de3b94841a410fea77e4db3f64e63ec08e48dd7c",
+    "src/wd_spectra/_cool/thermal_relaxation_experiment.py": "a33f043cb1d45f84bea01933abae8edb1198ab77f4399b6dace795e86ae1b5da",
+    "src/wd_spectra/_domain.py": "727b2b17f53cee009c637820b72a21999fa08f875cae26bab4e67768ddcb3b2a",
+    "src/wd_spectra/_dq/__init__.py": "6349a31af621111fbbeed9d7e13a42f011ff8079260e5353cf6bc688dad52959",
+    "src/wd_spectra/_dq/automatic_conditioning.py": "7f9fb13ed77d88cc9ff37f52967dc3c548ea7219ec88dd0a53b0eb131f1df594",
+    "src/wd_spectra/_dq/base.py": "6b81a4c4f3585986930a40b4b29da1d5098167e060ea3652ae26b792099a1c9e",
+    "src/wd_spectra/_dq/c2_ca.py": "3e20f74502d71e97f4ffba76ffe46070b48bc4e440055e6db47a8d7396854450",
+    "src/wd_spectra/_dq/continuum_batches.py": "6a5f7c16c0c37340d56fc89f4ffba1ca3a2a3250b2c1a39b07499e106d1ae4ba",
+    "src/wd_spectra/_dq/convective_consistency_experiment.py": "a6dbe9331762670184ca2ae265e03909ed7da300a310570717c0fe00556896e5",
+    "src/wd_spectra/_dq/data.py": "9f75b603386490c1660687be6e899b2ee367ee4aec173e3869685689dc715d0b",
+    "src/wd_spectra/_dq/dq_augmented_conditioned_cold.py": "802485a3026055107ca5d0a26b90492dcd8c10d04daf104505d1b40fd98a1c7c",
+    "src/wd_spectra/_dq/dq_augmented_convection.py": "1e1cb34a9202425fb35214dbd4c6550b8ab2ed9582428d5b9a95f9cc126daff8",
+    "src/wd_spectra/_dq/dq_augmented_current_norm.py": "00707e4229489caeb12dfa98004617ae65a06265b01c87c0596091661dced4fe",
+    "src/wd_spectra/_dq/dq_augmented_material_scaling.py": "68a6aacb341a17abc3e89b68b81a147474f85d460617ccb6bfc346cef584f0ad",
+    "src/wd_spectra/_dq/dq_augmented_probe_reuse.py": "3561231c5a1ec964d237caf5638a38f0f9c00b26702da921ec39138c7b2adffa",
+    "src/wd_spectra/_dq/dq_bounded_carbon_lines.py": "8bb03c0b309665c0bab786a6b2f4bbdff9419619409912902c71a348e1579841",
+    "src/wd_spectra/_dq/dq_bounded_helium_lines.py": "276740ccf09bda884579e181cc1bc589e8609db1fabd5efbe0f1195d7ebc745e",
+    "src/wd_spectra/_dq/dq_current_energy_experiment.py": "e5bdd62572a2ad0ac70ef5d85e491430e0abb232cdd9c5d3d8a5389e86016728",
+    "src/wd_spectra/_dq/dq_dense_continuum_inputs.py": "0f176371748b92560f138109194208a7360c6e640e8109023c6d05e446074475",
+    "src/wd_spectra/_dq/dq_eos_corner_subspace.py": "59974dac786ce55d7a9064776d409c69e458fe0b4d731cb1206be9fd883a5e1d",
+    "src/wd_spectra/_dq/dq_eos_knot_model.py": "e634ff8826e239326b4865b7cbead730123341340f3388edf2d8c2f4efae70e0",
+    "src/wd_spectra/_dq/dq_eos_knot_search.py": "ffd374050ca7ca8d579a839995f4bd10b2bdefa9003bc40a4a6e596baf4674d6",
+    "src/wd_spectra/_dq/dq_eos_knot_tangent.py": "61c0c90391955b7e1c10616b193ff2d0784ebf13066fca859a9bbc043afdb453",
+    "src/wd_spectra/_dq/dq_exact_opacity_cache.py": "a4c5f0ede6877eac18b7bb1cfb88100270695701c2ba691eb856a6f342391d0c",
+    "src/wd_spectra/_dq/dq_explicit_gradient.py": "0171aad780ca9714ec99a11a554cc884fb16cb8a15c4c5fee08e09398693b41a",
+    "src/wd_spectra/_dq/dq_finite_material_coordinates.py": "411955491b9d5411a99f1182f04bd607bcc60359870f4d884b6afb7dc7ac8ae8",
+    "src/wd_spectra/_dq/dq_hornkohl_bounded_energy.py": "bbbfc15e7e16284012e9249da2e0bff17dbd392776877961e6d81f4184f41b48",
+    "src/wd_spectra/_dq/dq_hornkohl_cell.py": "5ffad0b967d01bedf16644de1b9e8f9b9ff34003979c813fd4c63acf97687ff7",
+    "src/wd_spectra/_dq/dq_hornkohl_cell_energy.py": "adbc4c4dd49509ec1cf5f6bbcc7d5faeb18f7383e86cf48061c473ee454bf5b4",
+    "src/wd_spectra/_dq/dq_hornkohl_consistent.py": "fb8e0df1fd33e76027725d86257f9396ab0c1f7485f90a45998ce47fbdd805fc",
+    "src/wd_spectra/_dq/dq_hornkohl_gated_energy.py": "37dff9c10393b33467331e9e3e405dcf3952fe315b504e1ced78b2ec9afc1c2f",
+    "src/wd_spectra/_dq/dq_internal_domain_proposal.py": "af1394f57ea8ad73312ea0509c5e20cca2a49ce74e1ecdf33beb858bece5f620",
+    "src/wd_spectra/_dq/dq_pair_virial_quadrature.py": "3c085308bc85c49cf19d283f5cfcf155d6625fedda5811cbd8ccc5728ff8b7bc",
+    "src/wd_spectra/_dq/dq_refined_convection.py": "a9df1d310b43afddcc00af81e9de4750d53dc4ac271eec04e9670d616596467e",
+    "src/wd_spectra/_dq/dq_refined_convection_cold.py": "86ab49d410e929308bb3bf45444b24dfb3371313ddca74d8ccb0e85c50423a45",
+    "src/wd_spectra/_dq/dq_refractive_finite_volume.py": "e152f921236d9ca5e36381dfbd3fabdf8452bbcca7a5b0220139c5f1e0bad23e",
+    "src/wd_spectra/_dq/dq_refractive_fv_response.py": "cac39d967320fdecf4c05e62a61d6c12f60702e1fab1ec57d252057812893ea1",
+    "src/wd_spectra/_dq/dq_refractive_material.py": "aa24f38093a85aabe6cba5468615b0844740ffcc1b67a27b63acca27c48cafaa",
+    "src/wd_spectra/_dq/dq_refractive_material_coordinates.py": "876032a2f619b414ec32524b86ddc82ee87b4f4b5f8101c283a376226f4e5282",
+    "src/wd_spectra/_dq/dq_refractive_ray_bundles.py": "9fb1494a9e74edbf2ebd1dae4b7f933f74e97b8973c1adfad257a8dc444aec28",
+    "src/wd_spectra/_dq/dq_reos_secant_response.py": "4ee717d9c9f120d5a0a9bd8e6683ff26110bf235ddf7d7d62529ceb6be51c3d8",
+    "src/wd_spectra/_dq/dq_reos_secant_thermodynamics.py": "86566314dabad54e36371d868d759f142f2d2cbe88833fd21ce650ae7d6d73c6",
+    "src/wd_spectra/_dq/dq_swan_depth_integral.py": "a653ed7fd43ba3ef06b919658795642094955262623d4192131c4d5fb478111c",
+    "src/wd_spectra/_dq/dq_thermal_corner_experiment.py": "c54a0b77f9c0188ac1b064825c3e810328ac525dab38502c2f0ade74199d3ab9",
+    "src/wd_spectra/_dq/dq_thermal_corner_trial.py": "b4fa3c6dea7aa5ce92a9703ab6bb1cecac4e458c5d5e25d741623fb8bf6d7095",
+    "src/wd_spectra/_dq/dq_thermal_manifold.py": "114efd821630eec2ec3adb919d224e252a95f3e6d267eb25eba981ad83cf4e8d",
+    "src/wd_spectra/_dq/dq_uv_sampling_experiment.py": "ddf708690c440ad855c13f9f20f7723492e70237236c20be4d76a8cdd4b54c68",
+    "src/wd_spectra/_dq/dqsolution_sampling.py": "5502c98f45a97d6a8dce6d66992c51e9889c65df84947ff9f4a3bd19defc1103",
+    "src/wd_spectra/_dq/dqsolution_sampling_cold.py": "9f6ef498c9ed83bb5ab5314cacd275be41254fbde5c43350df7822fdf15987a4",
+    "src/wd_spectra/_dq/inexact_thermal.py": "ab3822ed9490745213579e2bd2bf78bb07a57723b4e59910bc9b81624bc02bf8",
+    "src/wd_spectra/_dq/measured_proposal_guard.py": "92675c2ba1de77148cd822823fb98e0844e3b2e024dc710b8c86a478222d617a",
+    "src/wd_spectra/_dq/nonlinear_material_model.py": "fb0b49f4958d4dccd09e9ea5f78f0d9711f1ebe0de0a188cd01f6384ffa080c8",
+    "src/wd_spectra/_dq/phase_energy_scale.py": "31adda30ece190c90257cf194a1492537637ae0f59993a0d7b05748529d387a2",
+    "src/wd_spectra/_dq/planck_remainder.py": "ab15f69b270e4565f2d6696b9c5ca9ab0da2ce45e0ea9f00058ace4abdec1647",
+    "src/wd_spectra/_dq/provenance.py": "f8d4e8c4103a857fbb5d4a4fa59f182e71fbc82bd30ddc416c224e59cc04b43a",
+    "src/wd_spectra/_dq/runtime.py": "f75d6ff7d29dfb1df194e26ec797ee029e4e175aaf42dab3b8141fbe84f5795d",
+    "src/wd_spectra/_dq/scaled_ml2_compatibility.py": "f87a93ee2012ae598d083ac500a36a9af534c07b70eee1f203e8e7f5c2a4c479",
+    "src/wd_spectra/_dq/superadiabatic.py": "8339ca42b6688bd2642ca177c1a6039d3631f657459c74ca103c3a4c6c76869b",
+    "src/wd_spectra/_dq/swan_strength_cache.py": "7f5ca10d5e343564baa336c57d38c3b3fce662e7421b1aa730a37c79aa52e608",
+    "src/wd_spectra/_dq/thermal_balance.py": "813622806aa1a2dc2cc0628352831ce3f0f23f1dc39e362683303137d36c0155",
+    "src/wd_spectra/_dq/validation.py": "c825faf47a5be5c5a26b5b020ca2267fcc9b28f5f2b14f6e65e0b11dda17f4b3",
+    "src/wd_spectra/_dq/worker.py": "9b96af39ae94b3bc9534c31e93180684f1e98136f02c4f35b55a09be75c98f80",
     "src/wd_spectra/_energy_balance.py": "1b1a27d3deea8587e39d27f2f68021d365b1e68019185db9604ad6c12b0e5575",
+    "src/wd_spectra/_hot_rates.py": "41018adcd1136b3748774a2797ab61c9e994ce041243b98b6f9b17043adedb1c",
+    "src/wd_spectra/_hot_recovery.py": "add58f4bd3470471d273c7c350a54d3ab7906fcb0a77fbd79855daea9f717057",
+    "src/wd_spectra/_hot_recovery_fresh.py": "900bd510f0db514903ecefcbba4212957527c4908fb71b049ca4f24c894ced70",
+    "src/wd_spectra/_hot_response.py": "d6f0a343c1767aebc352d2473f274b6b80b993628698ec72b11ce17b948350d7",
+    "src/wd_spectra/_hot_structure.py": "18e3b95f1e8058ec46ee865f48625a2569369f5b115037f989f029878667a934",
+    "src/wd_spectra/_hydrogenic_stark.py": "218a01f9f10b296e01017d4afa5ebdaa298e37f020bd6e5dd964dd03340e7c21",
     "src/wd_spectra/_linear_scattering.py": "b938d32bdb55383c1e7a4dd251622b907394fe59490fe03d8aeb06035880a119",
-    "src/wd_spectra/_mass_feautrier.py": "c7695c7b2d89d419dfd573eb78b1a9385137313998f0e96a3595384bfa82c835",
+    "src/wd_spectra/_mass_feautrier.py": "8290ea65e4ee97ff49901f4d496318071b12bbbcf6760184cf468f84ea2cfde6",
     "src/wd_spectra/_material_response.py": "32cef3f3304f4537a3fcef3ce919f783f4b322a8d8080e0cb5a3070fe490ef87",
     "src/wd_spectra/_mixed_cia.py": "2bed1c691ed16b5e446087548034d7a82a6f5e9ebbee95a96371faf32e5617a1",
     "src/wd_spectra/_mixed_molecules.py": "65aee9641e88b9a0454a6cb87b30c64cb353cd17dc1b43c84fcc367ed732a4d9",
     "src/wd_spectra/_ml2_auxiliary.py": "ee8feae497fd8fdf64dbec16c45f17c8b5b3076e0717ba67843dbd8345ac4b22",
     "src/wd_spectra/_monotone_formal.py": "37629dc8d10745014487111f0e795e4e8380a6794d219345d853cdf6358afec8",
+    "src/wd_spectra/_nlte_radiative_integrals.py": "e1f974df4c583421819b402ab1ed23aa0d4daf64ccdc7633c846ebe7804b60f0",
+    "src/wd_spectra/_pg1159_acceleration.py": "d2a2eb35c7c36a1ae23872cf089d00f8f7022b564f372d504f1f3d81925efbfd",
+    "src/wd_spectra/_pg1159_ali_temperature.py": "1496eaa2fb4305f3e983fafec6d2b19425cd2396e98d6ef227524ba87d3ce8e0",
+    "src/wd_spectra/_pg1159_builder.py": "c0165a0a918491e357e94152c61aa64c8193f6f716c01187414b78e5aa483048",
+    "src/wd_spectra/_pg1159_helium.py": "13fca7369c60f2227fb96ea2b6043f0f783b863fb6ad37e3bc36dcb4374d1846",
+    "src/wd_spectra/_pg1159_reference.py": "960616c782b04baeea08bc2eaf74c1d1740062c09ceb2e6903f6c0c6b69f88d1",
+    "src/wd_spectra/_pg1159_response.py": "c979a9a9157afb358dbca32c6f6e857087a2c6468b10cddad2432905568e787a",
+    "src/wd_spectra/_pg1159_structure.py": "e0cce6c122f7546ba454c51b883cb36c41f0c63bd2baba77291ba6b5e9d61157",
+    "src/wd_spectra/_pg1159_transfer.py": "97dde44701440c7268e714340efdea8cb14f44377cc6c944fcf7e9f147d4b9bd",
+    "src/wd_spectra/_provenance.py": "f0431b134d3a207f18a8720095631026e5c1e0592a2d9b2da5f270ffc16e63d7",
     "src/wd_spectra/_rosseland.py": "63cce2717885c7d21b169efbb9cb91c13eaf92f3bf16c88175d84224a7cb2d4b",
-    "src/wd_spectra/_rt.cpython-312-darwin.so": "1d832af88fc56811ee8e6dd2247390b84a7a2f30bcdb8ae5a99e99fedfa79f36",
+    "src/wd_spectra/_rt.cpython-311-darwin.so": "ae00c82074cc71d0d0a8647ebf9122686952e3306b111f8076dae35445f6852d",
+    "src/wd_spectra/_rt.cpython-39-darwin.so": "6eb377414d38a2923d0d29fcc1e51efef64a1d5b32ece6b9c36443d4064cd396",
     "src/wd_spectra/_spectrum_source.py": "b0f3cf15a5f8e6711782462bf4b1629f1ef7c977b437714366d9b81ea9aad34c",
-    "src/wd_spectra/_stable_feautrier.py": "ad5ed45ef1193f347b3a1abf39fe9da7dc35a8e94395d4295c0a5b30348b1de0",
+    "src/wd_spectra/_stable_feautrier.py": "15ee2e3f4fd81cdd73adab93206834208b17bfc43840ed2605b976cd958e23cc",
     "src/wd_spectra/_thermal_conditioning.py": "e1ab00a4cf768f4697442da7d816deb2348ca1a97ceded065be00c4b8a6ec207",
-    "src/wd_spectra/adaptive_structure.py": "625f1691bc49f47443a2dd23c5f1892c79074854b50f5ac9de580104222a236b",
-    "src/wd_spectra/atmosphere.py": "fc61cf2e616cb3e2f222c79b65dbd1dff9598f53ff4842febe44f54fe223e257",
+    "src/wd_spectra/adaptive_structure.py": "127df56c269a3d4c937f54e2fc06245bada2744698d182bca39c56a7d425a9c0",
+    "src/wd_spectra/atmosphere.py": "e64f3919b6b92a7865c7a69a65f452784b0e3e55b5c6ce209b239ce77e4cfb34",
+    "src/wd_spectra/c2_overlap.py": "0088bd515f1d2a85d86d72dd9d74456cc7c843453f0358d0795ec1b949e82a2b",
+    "src/wd_spectra/c2_profiles.py": "91f9e8b56bc6d544ccc7d2eb9df2bd4324c3006ff287cf64dab77a57968abe34",
+    "src/wd_spectra/carbon_molecular.py": "8f13a04e5c940b87e4c53ab4fa28c4b370fd55643dc7a677702e8e6b76a677e1",
     "src/wd_spectra/chianti.py": "0901be4909cb378361a82a5ddc50325f3ae074d261bea7d322b6035b3df80f84",
     "src/wd_spectra/conduction.py": "bc44c9cad575bbc3862f3e43d9db5fa495fbbd78e36f3db8ee481050a251250c",
     "src/wd_spectra/constants.py": "2cef8b5a7cc2294b1fdfeb1f688162f0418d42fe6ef41446f2f4923e281947cf",
-    "src/wd_spectra/convection.py": "53384c8f9e2dd048bcc6efe9193d704bd9db6ee4c04df3282c7144275e33f99c",
+    "src/wd_spectra/convection.py": "d99718d95607b2acfc3d8f2505bae3376a592971921cf602fa629136501313d9",
     "src/wd_spectra/cool_da.py": "737c76766369d5762ee1796a7b237adb49feccf37d80628d56862b8027d31330",
-    "src/wd_spectra/cool_metal_nlte.py": "b7250a2cfb986eeb27f4c48969edc5f64754cc2b94ab0abdc22c3aa716fd4903",
+    "src/wd_spectra/cool_metal_nlte.py": "e7fe430a8e92e67097fd8be8597a5475fb55a6c589a8e80ec0b8d6b07d81cd50",
+    "src/wd_spectra/d6.py": "a65d9a913dcb5d0cc21c265e6d1903fd53bdc087eb5b14d1b72a3fbe6051c68b",
     "src/wd_spectra/data/atomic/feii_melendez_barbuy_2009.dat": "02e68d3cec5044cc0fec026ae24e89ac810bd83a9836e5601ef5d03ebc14cb9a",
     "src/wd_spectra/data/conduction/README.txt": "760d5da022e1223d884f99c6d0160722fcd32b8a1a323b63e0c060cf842f2fa3",
     "src/wd_spectra/data/conduction/potekhin_condtab21wd.dat": "e07643047afdc848ed119a3f8cddeb959dac0f66272e7a40764f178e72b0403e",
+    "src/wd_spectra/data/dq/c2-8states-r15000.npz": "672f52e821de4040599b9150be317785f4c8dfacea8e77ec53c9283e42b239ab",
+    "src/wd_spectra/data/dq/c2-ca-2024.npz": "5594b764c7cb3bc43d0ff37c560fc0329025dd0b24553d902c6b3205fc998fd3",
+    "src/wd_spectra/data/dq/c2-ca-historical.npz": "451ab7f01f791e41d210906656f995a66be467c8839f94406f796dc4c08f473e",
+    "src/wd_spectra/data/dq/correction.npz": "83f850be158c2d15f44a67c3785745b3a2cca19a5187aa5047ff792971c7d7f7",
+    "src/wd_spectra/data/dq/hornkohl_calibrated.npz": "d7a8df19e3fe81e394d2e91e389853c7d8a84111efd78f5eede2ad2062256c90",
+    "src/wd_spectra/data/dq/manifest.json": "7709f4785966ac4daddeb4f8ffc24c947b4b90a627ce37775f0ae82b237ce108",
+    "src/wd_spectra/data/dq/report.json": "b009f34a02afa6a7df66a8a28cfdc7ea89f2ffa57eb406d32fa2ef145b33bb21",
+    "src/wd_spectra/data/dq/swan-completed.npz": "89f65fedf0b936a20dea3f4cc6ef9de87edc9467f1aa882e96463012e0cee943",
     "src/wd_spectra/data/gaunt/gauntff.dat": "07312b2068393c39acac6fb7478003060210b936b0547e8569749a792b851cf7",
     "src/wd_spectra/data/molecular/barklem_collet_h2_partition.csv": "9f176e6b733a6501d9169963e57fc4245f67ba1a1c4140e28e192df176241ee2",
     "src/wd_spectra/data/molecular/h2_photoabsorption_1nm.csv": "a222f997581531c97538fadf8ebef1359c4a3e0e54f7979ad557f6705270c1c6",
@@ -55,10 +198,13 @@
     "src/wd_spectra/data/runtime/cache/allard-tlusty205/laquasi.dat": "8aee190c56d18368395462eb50d406b514373d24bef6d2e2dee37b7c1c5efa81",
     "src/wd_spectra/data/runtime/cache/allard-tlusty205/lbquasi.dat": "9407aabd4893e11ca25fdac26dafa9f5d92f7a5c2a86f0f053332068aa21f622",
     "src/wd_spectra/data/runtime/cache/allard-tlusty205/lgquasi.dat": "9f2d397dc65c46d5cf67c0284280797ca70003030474bf33b3606ba4e1c62334",
+    "src/wd_spectra/data/runtime/cache/ccc/e-H_XSEC_LS.zip": "18c13459fe64bb67e77127b436630efb9f909f6eda1ef64c16c6e5ec19408dff",
     "src/wd_spectra/data/runtime/cache/chianti/ca_2/ca_2.elvlc": "ce2a5a5af982f80a41644963a091fd2fad83db4139607b29fcbb79c988af4a85",
     "src/wd_spectra/data/runtime/cache/chianti/ca_2/ca_2.scups": "6982803dbde3f35f27b2589425c6af0c0f921a071dbc0edcf396efedb7a3a110",
     "src/wd_spectra/data/runtime/cache/chianti/ca_2/ca_2.wgfa": "d052242fc199bf549e92ef84a4cd4da22c082178ba496e6b5b3aca54809b3caa",
+    "src/wd_spectra/data/runtime/cache/chianti/o_6/o_6.scups": "8cdce571572b42d08acf9c8c69c9d74916ce8e02bc8ca3df85fd186967e8962d",
     "src/wd_spectra/data/runtime/cache/dense-eos/he-reos3-table3.dat": "f67c76b03df5be453f4bb96f57c9cf822f997a83114d551c313208aecbd745a1",
+    "src/wd_spectra/data/runtime/cache/h2db/h2db_balmer_subset.npz": "ccceb1520fd4307e09dac2f29a22eb503891245d9986c8a6fdddf1cfaf8daba7",
     "src/wd_spectra/data/runtime/cache/helium-stark/Beauchamp25_LD.txt": "790da75f779434215afdfa3147d147c6c5117322577e658a613d04aed4a6ebfa",
     "src/wd_spectra/data/runtime/cache/helium-stark/Beauchamp25_NLD.txt": "a4650f8b0b9635f16dd32c7d69a61dda787bf6b49a148fae0c19e82b49f80f58",
     "src/wd_spectra/data/runtime/cache/helium-stark/Tremblay26.txt": "732547fc9aeb3581692145172901cc6502302bcd3611d2df907338d2473a82d0",
@@ -1474,59 +1620,145 @@
     "src/wd_spectra/data/runtime/cache/metal-opacity/unified-metal-he/cai-4227-density-4000K.dat": "7a999d36253cd801d7e29e578e3de2419925e13fb4d72c4c7c3da37dd4d33903",
     "src/wd_spectra/data/runtime/cache/metal-opacity/unified-metal-he/cai-4227-temperature-nhe5e21.dat": "9b7d1857a9112265c2ac61a751df0c3d2b559900094271da6919aec17b42892d",
     "src/wd_spectra/data/runtime/cache/metal-opacity/unified-metal-he/mgi-2852-density-6000K.dat": "ff1774f0c4a6e9437f4f5ca832ab813970bc07befe2f68c2487710b3414b62f5",
+    "src/wd_spectra/data/runtime/cache/metal-opacity/verner-phfit2.f": "8df982535a4a2b952e33ca2ffb6d81600e156d7373fbf547a0c0170c1cecc296",
     "src/wd_spectra/data/runtime/cache/metal-opacity/verner-photoionization.dat": "a53e73b0af4cc6b801aef67b84bd964e3ed8c9c4992f214e4a69dc7e4443f389",
     "src/wd_spectra/data/runtime/cache/molecular-opacity/CIA_Borysow_H2H2_0060-7000K_0.6-500um.dat": "a7f342a635e8c7092bb4d5ef30aca50f9de1a54e047b706f48d6c59237010fe2",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-al2-uv.tsv": "5c41e58c8d0edd109b2f84de2ab5cabb2eb7df3ddae66a75b8dcc41f1a8f9b59",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-c2-uv.tsv": "09a0f2c4a08b9c13b47b92329db89ef03758526c666e22a3a90960cf8c46829b",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-ca1-uv.tsv": "5edbec7445698b37e9d05ecd7a89effbffc8a166125ee9da84645f0fd1ffa451",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-ca1.tsv": "691775b88d62b0d311df18f099c863cfda2dbb687e915d9acb868064c0916ec7",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-ca2-uv.tsv": "dd2c28e06e40fe674f9a5ba63aa5cef7a659eb5035326319c00b3326dd1ece48",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-ca2.tsv": "ed7a0f6304ed4d300533813cdd1f4b8b78f504bd4f0d46f022639421549b1cb4",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-fe1-uv.tsv": "2e816e95c2eec8c7daeefbbbe2546a198db52d1ac2b02785dd2cf6f56105b8f3",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-fe2-uv.tsv": "fa91ab12a934ea6a06b327d903fa72580e654f037d4fd850299b37d5fbd3259a",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-mg1-uv.tsv": "f2cf06e853dd5f13c13bd25c04460dfdbd1629acdb8147a970d4e6db4f3bc82b",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-mg1.tsv": "5941149b7b19f035d502572cf3f237e5359e9f683ac0614e3e54db26c4fca5fc",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-mg2-uv.tsv": "99ed7d2b7c61f2e0d1b04025c9e489b1a2c34c99d22aa3b4cd047651f7cf48ef",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-mg2.tsv": "57b4242d5d856ff70baa24b5c70a3efbe869dc56b9c579dfd22eb10055843b0f",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-na1-uv.tsv": "b6ee800bd7e13f6ceeba42eaf6011779a61544b1b50dafafebf929e945fe2cfe",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-na1.tsv": "c8d25e0912cfe46377d25ba8b26d4cbca462c36c86b9df48fb29a26a0525bbcb",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-o1-uv.tsv": "e9dcb4164f1ec87eb770e1299af6ec0bc1fafe66fe18ca79b3174ee860217d04",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-o1.tsv": "053df0e3e62bdd6e7566547d4f03de3d3385a2af37c8fe5eb33973070b8e2bc9",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-si1-uv.tsv": "2c6a44698c699988c290e3c0eb061f4648b9d6bcffe5249ddfe455f5cd22ae8e",
+    "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-si2-uv.tsv": "2a871f1f24c835a89637f074fc6203c7e4a082e72082bb49be1ba023a96e7eb2",
     "src/wd_spectra/data/runtime/cache/nist-asd-strong/nist-asd-si2.tsv": "1f13984a0cb4a1d2e727797b923a594f8638e050c532a719212d51f5d1872c88",
+    "src/wd_spectra/data/runtime/cache/norad/cr1.px.txt": "87bcfce2ac7c3c4291940e24ee50f47743d51a070cb238d0498e44d62f15ff10",
+    "src/wd_spectra/data/runtime/cache/norad/fe1.px.txt": "ab4c37d08ca3cb59a200ef401a51bfdb342ff417caa0e8ed871ab80a1806f36a",
+    "src/wd_spectra/data/runtime/cache/sirocco-atomic/c_2_levels.dat": "ed297aa3397b01217db485dd9dab0634111e09a9d1a8ddf63307c67370fe2ecf",
+    "src/wd_spectra/data/runtime/cache/sirocco-atomic/c_2_phot.dat": "eb04f7f5b4cd57bb0da4a94d81210590af6f53f6367653a13470c23f1531e554",
+    "src/wd_spectra/data/runtime/cache/sirocco-atomic/o_2_levels.dat": "678fca7d7500f64e1dadb8693dbc9a08ee4cca3dfcc97b96168b7aa29e742db2",
+    "src/wd_spectra/data/runtime/cache/sirocco-atomic/o_2_phot.dat": "10225d051973b1e038c736283033a99615429d5c1f760056ec4b8c76532e7d21",
+    "src/wd_spectra/data/runtime/cache/sirocco-atomic/o_6_levels.dat": "6f896dc2ee4fddce1142c5e80f21d51d2845313fe827f09a9083a4927913f29c",
+    "src/wd_spectra/data/runtime/cache/sirocco-atomic/o_6_phot.dat": "d583f9a9a3d6c3a6d98df20dae880cc00f0bcd7aa07e1aab4e12aed59207a9a7",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/al2_20+9lev.dat": "62054ccc4e827a868437e013c00585f24ca3ebc9e271129eac8dad02e045db8e",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/c1_28+12lev.dat": "2d6d069cfb1e429d7e6a38e228729f156628b3033ec37b41932ba6585c126eaa",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/c3.dat": "6e8e9517c3d2f5d5e25a2200d53a302f43451d8cc2a6f947113d8a6863f1395e",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/c4_35+2lev.dat": "024b8335b3d416f8d079afa15d6935597e9b786ae4738f2d0a2991c9a1554979",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/fe2p_14+11lev.rap": "54d314b75e6826b84ca80d6705a436f698f66d43b3a3bb022e6d84ca5816f8c3",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/he1_14lev.dat": "6e6ee5a204499600b240b6fabf59056106bd15f68399df99a3b81a4d84eb8ed8",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/mg1_12+6lev.dat": "8bef9a8fde605065aaa4380f9e9a8ace549f8edc292dd0cac71e94b6282d5307",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/mg2_21+4lev.dat": "02d86f5702e1b7be51d87ef26939cd027b09afce7804a84bf4e7cb5352312c87",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/ne1_23+12lev.dat": "1b8463eab829793ffab8d1c15cd34230b77c75d5b3e4f5f4d15a03ebb78ce32e",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/o1_23+10lev.dat": "55c31ec8550a16268d978349fb9aee1eee1a0fce7a1ceb93da6e1b4b10176ba3",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/o4.dat": "c2b6304ffafc1ddf0a736b47d27928d20121be3a3f5021d406998d69e6cda616",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/o5.dat": "bda1ff41b35833dcfd55d470a6d6d3399800eb620d32bf80629ce4126b88cb6a",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/o6.dat": "3c955a831b2e260ed465a01584aefe1526ebe3b49b0bfd61ddd0f3dd16c6d8e8",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/s2_23+10lev.dat": "79d19fca41737511f56a9545aab6dff2ee3bef102525c8b3eede4eadd2786d9d",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/si1_16+6lev.dat": "e36dc88e8d268b072e1e098e0e33d3661a2e4b56689b333d1c3e262e731054a8",
+    "src/wd_spectra/data/runtime/cache/tlusty-atoms/si2_36+4lev.dat": "a194209c8c876ed7b3f80cbf9d24b1299516977a071aa53dc58f8ec9abdbaf8e",
+    "src/wd_spectra/data/runtime/cache/tlusty-source/AAAREADME": "992f7abf84287d5ce8097bae3e55c674ccb1d14d243aa7092b140e5c9e9f01e1",
+    "src/wd_spectra/data/runtime/cache/tlusty-source/tlusty200.f": "e5368b9677f2b36ab5e652c49ec3203e9c4e4171430678fb027359f28039040b",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/C_III-V": "83c735e114df871c8fbdb70f5b538f7dd52491a6164905ceddd9d03945e70dad",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/C_IV_syn": "41101863441856554db3313bd521854ca2355aee8013434c171a7704a7d61e36",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/O_III-VII": "7024f483ddd787e6529188fd8750a55fb71615aa4d1b1f94c0ad8ee4ef82802d",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/O_III_syn": "c25821742b9ad2021ac603c222337b5931a6b857aadc30589ef9160dbaee8106",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/O_IV_syn": "ab8e570e214657eadd0e850a02e7a4309a34de2327133316b648f39f0a2505ba",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/O_VII_syn": "818833682725667d091e1af43ae761429b7a0390ef040353549debbfe79fc45b",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/O_VI_syn": "f6b381b0a09ba275e237bbb27b1023f0838a103d16800b464a9688053f397220",
+    "src/wd_spectra/data/runtime/cache/tmad-atoms/O_V_syn": "a710984370e0985e82500d26ed01aae0bf8326293f2347dc332fdf1dd430ee84",
+    "src/wd_spectra/data/runtime/cool-models/molecular-hnc-electron-domain-table.npz": "4bf3134197d7309ccb6ee227bf2a659c30438ec263e322cb020aec8371fc10e7",
     "src/wd_spectra/data/stark/LICENSE.txt": "38129f95f350841be398684668f7917958bcb167e3ab148e7dad4824d20d66a6",
     "src/wd_spectra/data/stark/README.txt": "0d69097706168e5307378ccb303df709515710d72db705aa8b4b0da917d4fb9d",
+    "src/wd_spectra/data/stark/kurucz_mg_ii_electron_widths.csv": "9080abe4eff66f794f6b1de4838a0a7eb8b2563335bbe8fa753420842db26180",
     "src/wd_spectra/data/stark/tremblay_balmer_conv": "89448fa9cdf69f5485ba361218233b912e01f416abfbcf964719bcb20d1ffeff",
     "src/wd_spectra/data/stark/tremblay_brackett_conv": "be455a325ab9577010080853a99afe30efe5f26a7cb8694f3498cdd61b149de1",
     "src/wd_spectra/data/stark/tremblay_lyman_conv": "f6752cbd56b367c714b7ff3032b56fc8ffbe9da0e67f179b6d7f37bc4a085bef",
     "src/wd_spectra/data/stark/tremblay_paschen_conv": "823e955b5acb49d01f1fba316cf5ea7e67befac06d5966d8934d17c7ea9f4786",
+    "src/wd_spectra/data/validation/dah/g76-48.npz": "7ebb1b3b518fa92806e04cf6c969ce1aecc890a28598b1424eff22228b4a5322",
+    "src/wd_spectra/data/validation/dah/gd9.npz": "52a05cbfb88ee66ff6c4db3e1d258cbb654f01bf52251ed5b38df0ec51fbebac",
+    "src/wd_spectra/data/validation/dah/j0732+3646.npz": "aa6e7bc483fd996a70a361899a9866d84de03da0a06eda4084b50c92b14528ff",
+    "src/wd_spectra/data/validation/dah/j0908+0921.npz": "6ddb9e40b1968661720f9bb90670992a636a66a5c74f1cabd0158539cf3abb55",
+    "src/wd_spectra/data/validation/dah/j1018+0111.npz": "bb8aff858e407e64de192c30111f30711a57e58ce58dd5ddde5c79e571fb6d0d",
+    "src/wd_spectra/data/validation/dah/j1033+2309.npz": "43b74ab27e9c45ad55b69efabd40609ff4a69d16b7e3364103c2e0a197566538",
+    "src/wd_spectra/data/validation/dah/j1034+0327.npz": "9eecbea05ae4696cbd47fdeda8e3e9a8dc23d2bcd50b20f3a858bea887098f4e",
+    "src/wd_spectra/data/validation/dah/j1154+0117.npz": "d46742915e9170f17a5f568f9777113ba35bbc7c76c8471750951bbba60c8048",
+    "src/wd_spectra/data/validation/dah/j1254+5612.npz": "c3cb3a46345422e0e0b59431c0ba79a60b917aad05111c08bea8e65da334e051",
+    "src/wd_spectra/data/validation/dah/j1351+5419.npz": "edc0470ea46af99115fc89020baeb8f69aeda3e700af57bda428a4cf8b0cec93",
+    "src/wd_spectra/data/validation/dah/j2149-0728.npz": "46cb978f7b3bd181d06db414709a8093a8d97df2e9839080cf69d1f81f9a3428",
+    "src/wd_spectra/data/validation/dah/j2247+1456.npz": "0c3d693fd245a5aac42a2301fa6a7aa5546b15bd223f2462cb9348792c35daf6",
+    "src/wd_spectra/data/validation/hollands2025_j1637_figure1.npz": "0d73b36c40d96105249d3f39e09c039f99874a45e45b78a4dc13dcfa9d896c96",
     "src/wd_spectra/dense_eos.py": "e40aa3f426408e8243c2b8735cf179265db94caec39db747c913ce82513111d8",
-    "src/wd_spectra/eos.py": "92a67176b4964b717318a1871aa5726b182230e20d22641a95198077e978a488",
-    "src/wd_spectra/gaunt.py": "81aecb56fdf676440ec363697fbb5235cee3d96f770cae1a64cf260de868f907",
-    "src/wd_spectra/helium.py": "2348fe56c4280ee61399c75ab33f346a57f45e385f4ef2a3de64d494f50c22e1",
+    "src/wd_spectra/dense_helium_continuum.py": "8e7fd2b76aa66210e740f8d4b3ab9d7e7770b7b5bcaf3380d38c383a25ce4e9e",
+    "src/wd_spectra/eos.py": "6551bfee89ca490214fb57567262cbe3f85e31dd1befb521ae399039d7968c97",
+    "src/wd_spectra/gaunt.py": "b678e3306ad4c0ab236e5f9fea5147ea392ac8ddac0dd6a3215330968f574490",
+    "src/wd_spectra/helium.py": "cc1eb66d19dfbf828935dc14813548d67c42c8b78c9007f5bd7554f4d3857f63",
+    "src/wd_spectra/helium_collisions.py": "92fe00945731ed0d83dcec7721d02a98ae79692ef5a71c054fd73abe15fc62a6",
     "src/wd_spectra/helium_ii_stark.py": "5ad40303370008ee4f9c6fefc8e8947e23c343e6055a3b5707a0bed1cd7c6353",
     "src/wd_spectra/helium_molecular.py": "7589f8ae88ea63987d4f0df92f7a7f5f9c1372903aad23b8be97a90f0218abe0",
     "src/wd_spectra/helium_neutral.py": "4bf2c6b005b15c174f70bd891313b5ff366cc87e58ad5e1cd967c1e7a94ad2a0",
+    "src/wd_spectra/helium_nlte.py": "ff0078585bda3173442221cccc4386ee588d995455a33a3f2092c0b998a7478e",
     "src/wd_spectra/helium_stark.py": "be62a92e248e538eb52286562b4f72df420cd7f23c125d11bc0be76c9f8f7d53",
+    "src/wd_spectra/hot_nlte.py": "ddc02728eef27e929b8dc4e9c556345c91b0a833905079fb5b09abca7afe5bb8",
     "src/wd_spectra/hydrogen_self.py": "da6d718eee8b147f431b6297ba80c97a8d616c95683a67d680dff7a69d0214e1",
-    "src/wd_spectra/metals.py": "e95b9fc91b0491c555b553da1d519ef0c4a617de8f7af947e469b4ec650e188b",
+    "src/wd_spectra/kurucz_griem.py": "c5ab4f9bbb2545a4a4f7524466e725de85c27028ff404861dedb19a58fc20d96",
+    "src/wd_spectra/light_metal_nlte.py": "1b7b4031456af4184a3cbdf5bc2e4df9b497c6d6a58421692aa7b6dd25067fa5",
+    "src/wd_spectra/magnetic.py": "86769f05b8131d8a3df5542aa62e52cbe641eddf696433ba3643674d3a853009",
+    "src/wd_spectra/magnetic_atomic.py": "fa1102ef87ad52bba5e2f93c2850cc00dd07c492cee38f4792e0b9658efadb66",
+    "src/wd_spectra/magnetic_continuum.py": "2b4cb34ae38b2c057989568752872e7d169f0edb04ee719742cd1ef6c3f7e7b7",
+    "src/wd_spectra/magnetic_eos.py": "7bc16bc5315ca64a6fdca0437abf2723cd27284bc0a543e02401d3c372119ff9",
+    "src/wd_spectra/metals.py": "a96664cda54a2f558fa9f2c1b36893478fb0628900d4b990f6ca0efad54c6b67",
     "src/wd_spectra/mixture.py": "7a6717f766caf82d69d95c34c06d5327897e34190a388aba8de3a03d5175d580",
-    "src/wd_spectra/models/__init__.py": "11efe3851cd18ae3ae44dbe458558fc54e17b35f9a3343fa22ec8774f6126ce0",
-    "src/wd_spectra/models/automatic.py": "382d8fcb3c1002808bdb0a7f10bce27f24dd2ea37f519ce1d09be1daebd44fd2",
-    "src/wd_spectra/models/cli.py": "cb7334ad76bc1ae0476bbddf14eec3442901a5211cc93765fda0564ae460a677",
-    "src/wd_spectra/models/common.py": "358be68da44591b88b038741a1c94c16dbc21c449973805a6d827d3df5f60a1d",
-    "src/wd_spectra/models/daz.py": "feb894f48e1d687a29378eb1cacfa7cd825bc68e33ec51072e3e8d5f314b71bf",
-    "src/wd_spectra/models/selection.py": "54f4a9ed14db2fe00ccc1f2f2fcb7c6b64397149f5aa45ed981715d8f8a0ee87",
-    "src/wd_spectra/models/stellar.py": "9da2298473c1c3848460903a5c195a850c9b67f5e33ba9ac5e3db68aa0f3ceee",
+    "src/wd_spectra/models/__init__.py": "b2a21582d5c152662886e8d129a4b3996e2f5e8998dd8f9aa478b451515a721c",
+    "src/wd_spectra/models/automatic.py": "ff503aae9ded61f365ec6dcd1933373cbdd4c218094e11bbd52fdb80a68204bb",
+    "src/wd_spectra/models/cli.py": "ba547cbde59166bbf68dec7b870b314c2ecc12f908ae856dc49ae53b90ebe6f3",
+    "src/wd_spectra/models/common.py": "cd2a3373c07fd0def70e1c02350e604848d70df4c8edd1b859814458d819ce00",
+    "src/wd_spectra/models/d6.py": "69796ef716f38bdfde7706ae57e7beaa8bcce73e0ae2fda1b05a0d312a39bf41",
+    "src/wd_spectra/models/dah.py": "8a4b7fd45e9b8cef80dbddf01e4f1c766b1babd94637362903eadd34a1d12e74",
+    "src/wd_spectra/models/daz.py": "ebf3cc7bd8cea11cf5eda37e723254849599d72a1dd3f8af79001d3ea4901e61",
+    "src/wd_spectra/models/dq.py": "bf7694a610176f741675f99538d889e15c1cf48d3c859e8be65357e372bd8ff1",
+    "src/wd_spectra/models/hot.py": "4f00a70da3e9b287e36388ab33d54c71b47cd48b9a6bd8cc16732b3ae0a48cf8",
+    "src/wd_spectra/models/pg1159.py": "5808ac6fbd3f5ae1b24048a0ad3e82bbba733c56f7c945c992addee1f288e2ea",
+    "src/wd_spectra/models/selection.py": "0c4a4621e4cdff409525e20f29a8e3680872885808083a9ce06e27f35182310a",
+    "src/wd_spectra/models/stellar.py": "768abd5ca5652f3f61a317aa82f810a51f10a3aa666cfbdfa9094fd6e1f30cae",
     "src/wd_spectra/molecules.py": "54b82cedd72740640cba63a08f8b5560a7f119cbc73ca4189f7a4a84e2e805ff",
-    "src/wd_spectra/nonlinear.py": "55240cd17e5af12822d4f2d2b9fcbbe08a2847168cbbcd8177cdd564f0c706ce",
+    "src/wd_spectra/multilevel_nlte.py": "64dfc6a982467be1101001da520fc822460e2cb6a5828d9b96ba5fed513f6165",
+    "src/wd_spectra/nlte.py": "435255bbff91088f47d94aeab92954f6d83128cf15f03adae7a5392f53b4e9be",
+    "src/wd_spectra/nlte_core.py": "164cb1f6c4a68cc3d0ff7d5c4bce43172e6d5002a87a95f369dc03dd65515319",
+    "src/wd_spectra/nonlinear.py": "f2dc7f7fe368a123296317386801d80568b5afaafc0f1306f13afd3e7ac0e744",
     "src/wd_spectra/opacity.py": "206dd7a267634a4ca667ee141651a848f1547a67056fb9f6191ce380bd827795",
+    "src/wd_spectra/pg1159.py": "002d9b1c52e905b37dfc4df76aa125c7ee2f8376b032f190648e80a38bf4b3ff",
+    "src/wd_spectra/pg1159_oxygen.py": "ead1c2644fc812e29ae10e4a6bd5dab760432d55789cd32b129426bf5a30a203",
+    "src/wd_spectra/pg1159_presets.py": "93ed9aa3c1f06587c188e72ec93456286201c3a0de20c5d5785306577f2a1782",
     "src/wd_spectra/quasimolecular.py": "816317eae60f536bb5d4ac3e19145cd84db70bd151942267d7470fcde3882b7e",
-    "src/wd_spectra/radiative_transfer.py": "4673ebcf2011fbfa682a3c8c375586210c0837be96672a7d18e0bb9d87554510",
-    "src/wd_spectra/spectrum.py": "5a0dbc073151fe45c843dac04c100bd2d47995f59b4ecd19e5835e7daac8a702",
+    "src/wd_spectra/radiative_transfer.py": "45efce429e8c14d823a171083ac3718858bc958f89a0b4809c5a15a66380954a",
+    "src/wd_spectra/spectrum.py": "6373aed2c9c2308ff8a03fde02bbb41bdcf567e6573be8cb934ad0e80a2e3e32",
     "src/wd_spectra/stark.py": "d2821a76e7af79d64fd27d20b542a34c6137138fd1b0919409fb5059ef3eddbd",
-    "src/wd_spectra/validation/__init__.py": "60b16f75c03f354515613704f234266bbe846f9a431ce251339ad49fdf1f7a10",
+    "src/wd_spectra/validation/__init__.py": "351462fbd1bc8122f094188307b4d48f80d731546bb86fc69474cf66c94a4948",
+    "src/wd_spectra/validation/hollands_d6.py": "26faef6bc25727992f3e288628a638fbf0ef4dee48a8f42864c4a8824816bec0",
     "src/wd_spectra/validation/koester.py": "e23700e6c953a4ba08aa2327b11f7dba31175cefabf47714df8ae15a98dd913a",
-    "csrc/rt_core.c": "03b4a8c9beee728bb9d6642ae3d03d68c922159670bc205c7b451a54c4521c5e"
+    "src/wd_spectra/validation/magnetic_da.py": "6e479be461375f1a124f738afcdc0d589c12e9b9bfc53284cc64dc5b04d25792",
+    "src/wd_spectra/validation/observed.py": "6b8a82368e15d7eed804adc5234526bdf7304c94f12bd3f1f338ac475a6147c5",
+    "csrc/rt_core.c": "6e9e40e52f41b1ab47b12338bbf05579fd50f836a814188512bfcbf25e265931"
   },
   "records": [
     {
       "case": "da-20000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-20000.npz",
       "historical_sha256": "505a923905598cab4f419c5675d5a54a7d566ab51ead52359aa7f6adb1a661ad",
-      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/microphysics-audit-20260910/cold/cold/da-20000/diagnostics/da-20000/atmosphere.npz",
-      "structure_sha256": "fe12edf37fe9badda4356cb3460a9cbb651f946c83782482b1300fe26c6a3c15",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-20000/atmosphere.npz",
+      "structure_sha256": "fcd8eb4a48e31827ddf626f4ad68ea170d94e7d265959f5899c05578550d8630",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1542,7 +1774,9 @@
         "balmer_self_broadening_prescription": null,
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
-        "multigrid_initialization": false
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1550,54 +1784,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 4.345918513948277e-08,
+            "value": 3.052719521612346e-08,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 0.00042604767320051257,
+            "value": 0.0002730217186662726,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 4.6346085650128543e-05,
+            "value": 2.971305758414644e-05,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 2.953267667694834e-15,
+            "value": 2.9661354054838843e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 1.4312359184112916e-05,
+            "value": 1.4355208272323066e-05,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "1285a067c3f98857c54e5eb79517a9107e394fa36b4359505b7eab1051a76eed",
+      "source_metadata_sha256": "54a760099e98c2dbbe9a26e6d13db15d26879d791251930d90224fa77d16a54b",
       "transfer_discretization": "formal-pchip",
-      "source_error": 8.587092424761055e-12,
-      "output_sha256": "17814564cd2b6515a7400e8e35c860a2c590f4e812b0443b16bd31b48287e46d"
+      "source_error": 5.214830210362491e-12,
+      "output_sha256": "86d64e994e2593d8503564779b5e892bbbdc12af827263c88bc725423a918ca9"
     },
     {
       "case": "da-3000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-3000.npz",
       "historical_sha256": "eb3393a6ef5ce609ea09acad869502390f5df20ba50c1bbc96418cca0e2dbddb",
-      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/microphysics-audit-20260910/cold/cold/da-3000/diagnostics/da-3000/atmosphere.npz",
-      "structure_sha256": "af4cc718a698f29f7054613f3380dd9d7d21f175508d5981a3bf3a1d81bc1cd8",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-3000/atmosphere.npz",
+      "structure_sha256": "5212e5755524f3d71731cc63b89ca962327c7b52d5d9ecf2ee62af6c6a0a0886",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1613,7 +1866,9 @@
         "balmer_self_broadening_prescription": null,
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
-        "multigrid_initialization": false
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1621,54 +1876,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 0.0012691038349081918,
+            "value": 0.0008630668700586597,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 0.00018005382273448,
+            "value": 0.00017876325176387792,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 4.631782453934363e-05,
+            "value": 4.592096951228086e-05,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.8590978686122274e-15,
+            "value": 1.569042335022781e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 1.4979905955567533e-213,
+            "value": 4.0641985744810075e-211,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "4193dbd7658419b662850a0c9fe9bfb55d0d9acdc115287da32ca73f2a382c47",
+      "source_metadata_sha256": "30ae8e93ba15e1fa135b7846675b6718e98f823385a25db19344da0b5749619f",
       "transfer_discretization": "formal-pchip",
-      "source_error": 8.395338804651014e-12,
-      "output_sha256": "bc22ab761aff91472d2f90ff9a8d018729110c6a34c78b24b08fc70196e879e1"
+      "source_error": 1.2990324341140104e-12,
+      "output_sha256": "64a7e8133edcf105f5a45bc3089e25b84fe8c8a51f34c18bfda03a35f1aecb77"
     },
     {
       "case": "da-4000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-4000.npz",
       "historical_sha256": "7edd9babda32b1ddd06844508f96940a676680af060794e28446c40c26bb25bb",
-      "structure_input": "/private/tmp/openwd-release-20260911-FrrS82/results/release-final/cold/da-4000/diagnostics/da-4000/atmosphere.npz",
-      "structure_sha256": "3b424538ab423d747929b657a2af4bbc153c4a0fd865081c220287bbfc8b0838",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-4000/atmosphere.npz",
+      "structure_sha256": "b688a0a1724f1371ff72ef9d8cbdf98709cfcbc499a4a3c52f1839f8d1f4da9e",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1684,7 +1958,9 @@
         "balmer_self_broadening_prescription": null,
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
-        "multigrid_initialization": false
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1692,54 +1968,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 5.176181316457473e-06,
+            "value": 7.139426862812215e-06,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 3.865261101826018e-06,
+            "value": 0.00020439037144473937,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 5.956129607298521e-07,
+            "value": 7.667048015136402e-05,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 2.4546255297644345e-15,
+            "value": 2.218835976730803e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 2.0706208060228527e-35,
+            "value": 5.553614004665993e-36,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "4f63ac4e19e70e9ace1833d5aace6b5e28e49759e0b41a3ebf4d17d3aa709119",
+      "source_metadata_sha256": "03bd55ec617643339cfb34410d101b5f769bbfe75d2b013315bcceeb828a2144",
       "transfer_discretization": "formal-pchip",
-      "source_error": 4.896925165790638e-12,
-      "output_sha256": "e1e3526524f14c6d8f3537edbc3c62e173a4f563ac2b80a6d35e31f1f87f1ecf"
+      "source_error": 6.924774351187161e-12,
+      "output_sha256": "f4e63a92938fa28f2a0944312e1bd6ce90c987a403bdcef63399f8e5e5edc091"
     },
     {
       "case": "da-5000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-5000.npz",
       "historical_sha256": "d4b82f6f7036898ad2282eb0b36779b77028290f4a708402429a6cf1e5258777",
-      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/figure1-microphysics-20260910/models/t05000_g8.00/atmosphere.npz",
-      "structure_sha256": "4aafd3de31cfa050ede1b54aae1eec9617e8ed4355f114fc7a3384af309e1d79",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-5000/atmosphere.npz",
+      "structure_sha256": "8efd5239658f3270d7971fc5ec2408e00dec96731ab1402999d6b79d9a764df8",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1755,7 +2050,9 @@
         "balmer_self_broadening_prescription": null,
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
-        "multigrid_initialization": false
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1763,54 +2060,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 2.84412589990346e-06,
+            "value": 3.276749146241542e-06,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 1.1676790954183688e-05,
+            "value": 9.01740200614852e-06,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 2.5155724117098544e-06,
+            "value": 1.961302139363852e-06,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.6067546883038622e-15,
+            "value": 1.2342019764229412e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 0.0008528635536645297,
+            "value": 0.0007971626696856104,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "5500f153511dc2d3db1d76fc17f0f93b53c39a3c862f68584ff34c79421b5ccd",
+      "source_metadata_sha256": "4ca04aa334fcd1033e4e70fc79ab360aa504bbcefee51b1e24ecb7cda278eea7",
       "transfer_discretization": "formal-pchip",
-      "source_error": 6.764492602329178e-12,
-      "output_sha256": "9e0bc721356f65189161942aaab8ac3325432522c93dc0aee7fb4a8c4a83535c"
+      "source_error": 5.6201260296124035e-12,
+      "output_sha256": "4167d98c50a50bf01f82a1dd46cab45fec62e55b18d6890201f2030fbc1c9297"
     },
     {
       "case": "dab-20000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/dab-20000.npz",
       "historical_sha256": "a10ac50017df7c63d8923540e743e1e838bacd2f490ed43d2c2cde168d5f512a",
-      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/microphysics-audit-20260910/cold/cold/dab-20000/model/atmosphere.npz",
-      "structure_sha256": "be375e19cc33ab14c1aabc760aca001eb8ea0faaec4ad6db27bc7a73d28bee4c",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/dab-20000/model/atmosphere.npz",
+      "structure_sha256": "fcafc708ab1863a3ab2ee83c5b59e1ddcbaec90afa6a1b108e89a176c25936e2",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1826,7 +2142,9 @@
         "balmer_self_broadening_truncation_closure": "stark-core",
         "neutral_broadening": "unsold",
         "include_molecules": false,
-        "h2_he_cia_path": null
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1834,54 +2152,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 8.580328847429541e-08,
+            "value": 6.705400901196867e-09,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 0.00156400535995138,
+            "value": 0.0015742777475574038,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 0.00018056242359065777,
+            "value": 0.00015142867645501212,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.3490528069834902e-15,
+            "value": 1.2736937953086177e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 1.6715750510469358e-41,
+            "value": 1.0614016954738978e-40,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "3432f57e09650e94e8741cd837fd8dd5414f9d550fc0e4f43bb7515ecbda32f2",
+      "source_metadata_sha256": "0f94e3ceb25653f6086028d503ebd65316e744cadab05b2bcc7a4bc020e25f96",
       "transfer_discretization": "formal-linear",
-      "source_error": 5.310204453611028e-16,
-      "output_sha256": "6ca97ec24d991f9ba5b9c44f9578729907ac94fa8b31493691ceef6907175b01"
+      "source_error": 1.5102921697911956e-15,
+      "output_sha256": "6c1058d0e4ecc1508e979e2e4adad963a5cf8a49c99f806261d8bddb5413b16d"
     },
     {
       "case": "db-10000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/db-10000.npz",
       "historical_sha256": "9dc94bff2f6fa2e7c78c72980894c7a2dcbfa28cc218099d7ba82c0ae28ad430",
-      "structure_input": "/private/tmp/openwd-release-20260911-FrrS82/results/release-final/cold/db-10000/diagnostics/db-10000/atmosphere.npz",
-      "structure_sha256": "4a7f592069148495bd0a0dd8ca69381564f251fd9dad8a9bbaa5d4258a9b409a",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/db-10000/atmosphere.npz",
+      "structure_sha256": "4f0f235dff432144fb85c666bbb2377b0db422ef8a033dc6adcbbdfadcdad159",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1890,7 +2227,9 @@
         "quality": "production",
         "mixing_length_alpha": 1.25,
         "atmosphere_solver": "adaptive-newton",
-        "neutral_broadening": "unsold"
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1898,54 +2237,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 0.0005581717548256426,
+            "value": 0.0003199395346049627,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 4.286187516099758e-05,
+            "value": 1.8128723986455994e-08,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 1.3193270222089382e-05,
+            "value": 3.1298930665002445e-06,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.5587933127361499e-15,
+            "value": 1.2604871097716865e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 8.047933427297098e-26,
+            "value": 1.687326959035414e-24,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "e7603cc97ad687e382bf9e4cbc6d066325b5b6f8bcadf63366dd95fca08dcc60",
+      "source_metadata_sha256": "681d1f9041692fbc10e1fc837c318fc9277c3276f5ca360633b3c58a929eeecd",
       "transfer_discretization": "formal-linear",
-      "source_error": 6.461418342966754e-16,
-      "output_sha256": "e235ea665cc4af543b26eaac9f6dd729b99bddd1273fdb4576fef2c4f0294942"
+      "source_error": 3.2416799222655622e-15,
+      "output_sha256": "7a3e88a83b0616c87dc9eada0a962421491310fc3ef2a07f8acb65cb984c182d"
     },
     {
       "case": "db-22000",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/db-22000.npz",
       "historical_sha256": "5a173fdad17b118be448b80ad2add1004302db80b7a4de46891311395bc570f9",
-      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/microphysics-audit-20260910/cold/cold/db-22000/diagnostics/db-22000/atmosphere.npz",
-      "structure_sha256": "a0c0e584c992a352b4502b2429ad08931640fa6df658b54265af6261b3cc80a0",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/db-22000/atmosphere.npz",
+      "structure_sha256": "ce8f6a458e6770ed4364147e3fa06c43fedb25affe9e60a64713a9193986204f",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -1954,7 +2312,9 @@
         "quality": "production",
         "mixing_length_alpha": 1.25,
         "atmosphere_solver": "adaptive-newton",
-        "neutral_broadening": "unsold"
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1962,54 +2322,73 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 1.8412420477176283e-09,
+            "value": 1.836983587466534e-07,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 0.0004785615446278936,
+            "value": 4.4219013160221615e-05,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 4.839853062367214e-05,
+            "value": 5.283285669221982e-05,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.857755556541182e-15,
+            "value": 1.377219580025386e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 4.710229400531084e-16,
+            "value": 6.106034891984727e-16,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "50323ab379dcd47870a2d9f5c1147d6300a11db2ad0949958fd62c30c6ca0235",
+      "source_metadata_sha256": "160254ac9002672b71fe3360d4e74b483b29fc94a78fae4b88d709805765b4c5",
       "transfer_discretization": "formal-linear",
-      "source_error": 3.8047266779025334e-16,
-      "output_sha256": "6499ab07c92d21ff354ac66ed5093397a92c829123f69b1f89bb80fbea7caed2"
+      "source_error": 7.3413116485806e-16,
+      "output_sha256": "5796b62501d18ac19548a770e840b465715f8fd6dcd89890a49af3bf984e4586"
     },
     {
       "case": "db-22000-standard",
       "mode": "cold",
-      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+      "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/db-22000-standard.npz",
       "historical_sha256": "d603badf6456c6b3e039ae44b68fdafeefb6711112f4039e5c90a2a283356cd4",
-      "structure_input": "/private/tmp/openwd-release-20260911-FrrS82/results/release-standard-db-capture/atmosphere.npz",
-      "structure_sha256": "d0bf01830814a34362cc61bccfb59d286c684d579e4d4c8381da8185110a865f",
+      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/db-22000-standard/atmosphere.npz",
+      "structure_sha256": "5caeb359f4dfb48df12969ce61de01e82d0ba2106a461475a84a932db38e0a40",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
@@ -2018,7 +2397,9 @@
         "quality": "standard",
         "mixing_length_alpha": 1.25,
         "atmosphere_solver": "adaptive-newton",
-        "neutral_broadening": "unsold"
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -2026,45 +2407,64 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 4.713720525018061e-10,
+            "value": 5.170743611060402e-09,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
           "local_energy": {
-            "value": 0.001688168764332239,
+            "value": 2.3065017134240113e-05,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 0.0002803076057844578,
+            "value": 4.310342435799141e-06,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.2645124893930304e-15,
+            "value": 1.0868972621445967e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 2.157070395329159e-16,
+            "value": 2.579390932559562e-16,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           }
         },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
         "failures": [],
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "4bd831e08a35bd46a0502f6653a0c57794f5c3e5b11a8d79444812d46d6ddfbb",
+      "source_metadata_sha256": "8bb27161bdc5db5f16d24b43774ef04548e8cdf0dc66c7e64d7b8b83e51e27e9",
       "transfer_discretization": "formal-linear",
-      "source_error": 3.7481284418747327e-16,
-      "output_sha256": "7da5bd053a285cb51c32bdb4c3836269e2e54ffec893b19139b9fe3bf9a5f6a3"
+      "source_error": 3.810562401803157e-16,
+      "output_sha256": "b78d4de5cfdfa36f259e8e8fc59a3978bb087af6375ff92e751b2ceda29c0103"
     }
   ]
 }
