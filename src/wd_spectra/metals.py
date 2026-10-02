@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import csv
 from dataclasses import dataclass, field, replace
+from functools import lru_cache
 from importlib.resources import files
 from pathlib import Path
 import re
@@ -5912,6 +5913,119 @@ def _deposit_segments(
     return np.diff(cumulative[: size + 1])
 
 
+def _stark_impact_profile(wavelength, center, gaussian_sigma, lorentz_hwhm):
+    """Impact core for the manifold path: the exact frequency-space Voigt.
+
+    The native pseudo-Voigt kernel is not used because it drops the
+    ``(lambda/lambda0)^2`` asymmetry of the far impact wings.
+    """
+    return _voigt_profile_per_angstrom(
+        wavelength, center, gaussian_sigma, lorentz_hwhm
+    )
+
+
+def _compiled_manifold_profile(
+    wavelength, center, gaussian_sigma, lorentz_hwhm, coupling_hz,
+    upper, lower, maximum_beta, support_half_width, segment_probability,
+    interval_fraction, missing, bound_probability,
+):
+    """The reference profile algorithm with fused C component deposition.
+
+    No atomic, field, grid, or convolution approximation is changed.  Keep
+    the NumPy path below as the fallback and an independent numerical check.
+    """
+    from scipy.signal import fftconvolve
+
+    to_angstrom = -center**2 / (LIGHT_SPEED * 1.0e8)
+    width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
+    half_extent = (
+        float(support_half_width) if support_half_width is not None
+        else float(np.max(np.abs(wavelength - center)))
+    ) + 1.0e-6
+    dense_field = min(21.0, maximum_beta) * coupling_hz
+    log_field = np.log(max(dense_field, _STARK_MANIFOLD_FIELD_HZ[0]))
+    dense_shift = float(np.interp(
+        log_field, np.log(_STARK_MANIFOLD_FIELD_HZ), upper.maximum_shift_hz
+    ))
+    if lower is not None:
+        dense_shift += float(np.interp(
+            log_field, np.log(_STARK_MANIFOLD_FIELD_HZ), lower.maximum_shift_hz
+        ))
+    fine_half = min(half_extent, abs(to_angstrom) * dense_shift + 64.0 * width)
+    fine_step = max(
+        _STARK_FINE_STEP_PER_WIDTH * width, 2.0 * fine_half / _STARK_FINE_BINS
+    )
+    coarse_step = max(fine_step, 2.0 * half_extent / _STARK_COARSE_BINS)
+    half_bins = int(np.ceil(fine_half / fine_step))
+    fine_grid = fine_step * (np.arange(2 * half_bins + 1) - half_bins)
+    fine_mass = np.empty(fine_grid.size)
+    coarse_size = 0
+    if half_extent > fine_half:
+        half_bins = int(np.ceil(half_extent / coarse_step))
+        coarse_size = 2 * half_bins + 1
+    coarse_mass = np.empty(coarse_size)
+    stride = _STARK_PROFILE_FIELD_STRIDE
+    core_weight, inner_mass = _rt.stark_manifold_bins(
+        np.ascontiguousarray(upper.shifts_hz[::stride]),
+        np.ascontiguousarray(upper.weights[::stride]),
+        None if lower is None else np.ascontiguousarray(lower.shifts_hz[::stride]),
+        None if lower is None else np.ascontiguousarray(lower.weights[::stride]),
+        segment_probability, interval_fraction, to_angstrom, fine_half,
+        fine_step, coarse_step, missing, fine_mass, coarse_mass,
+    )
+    kernel = _stark_impact_profile(
+        center + fine_grid, center, gaussian_sigma, lorentz_hwhm
+    )
+    kernel_sum = float(np.sum(kernel))
+    if kernel_sum > 0.0 and np.isfinite(kernel_sum):
+        fine_mass = fftconvolve(fine_mass, kernel / kernel_sum, mode="same")
+    # The native stark_profile_finish evaluates a pseudo-Voigt impact core,
+    # so the exact frequency-space Voigt core and wings are added here.
+    fine_profile = np.maximum(fine_mass, 0.0) / fine_step
+    offset = wavelength - center
+    result = core_weight * _stark_impact_profile(
+        wavelength, center, gaussian_sigma, lorentz_hwhm
+    )
+    inside = np.abs(offset) <= fine_half
+    result[inside] += np.interp(offset[inside], fine_grid, fine_profile)
+    if coarse_size:
+        coarse_grid = coarse_step * (np.arange(coarse_size) - coarse_size // 2)
+        outside = ~inside
+        result[outside] += (
+            np.interp(offset[outside], coarse_grid, coarse_mass / coarse_step)
+            + inner_mass * _stark_impact_profile(
+                wavelength[outside], center, gaussian_sigma, lorentz_hwhm
+            )
+        )
+    return result / max(bound_probability, np.finfo(np.float64).tiny)
+
+
+@lru_cache(maxsize=512)
+def _stark_field_probabilities(
+    coupling_hz: float, maximum_beta: float, correlation: float,
+    radiator_core_charge: float, stride: int,
+) -> tuple[FloatArray, FloatArray, FloatArray, FloatArray]:
+    """Reuse identical depth/upper-level field distributions across lines.
+
+    Keys contain the complete physical state used here, with no rounding or
+    interpolation.  The bounded cache holds at most about 9 MiB on the
+    default field grid; a new atmospheric state cannot reuse stale values.
+    """
+    field = _STARK_MANIFOLD_FIELD_HZ[::stride]
+    beta = field / max(coupling_hz, np.finfo(np.float64).tiny)
+    cumulative = hooper_microfield_cumulative_probability(
+        np.minimum(beta, maximum_beta), correlation, radiator_core_charge
+    )
+    probability = np.diff(cumulative)
+    # The segment crossing the critical field stops at that field.
+    fraction = np.clip(
+        (maximum_beta - beta[:-1]) / (beta[1:] - beta[:-1]), 0.0, 1.0
+    )
+    for value in (beta, cumulative, probability, fraction):
+        value.flags.writeable = False
+    return beta, cumulative, probability, fraction
+
+
 def manifold_quasistatic_line_profile(
     wavelength: FloatArray,
     center: float,
@@ -5944,19 +6058,12 @@ def manifold_quasistatic_line_profile(
 
     stride = _STARK_PROFILE_FIELD_STRIDE
     field = _STARK_MANIFOLD_FIELD_HZ[::stride]
-    beta = field / max(coupling_hz, np.finfo(np.float64).tiny)
     # Field probabilities from the same (Hooper-correlated) distribution as
     # the Q-MHD occupation probabilities, integrated exactly between the
     # tabulated fields; fields above the critical one dissolve the level.
-    bounded_beta = np.minimum(beta, maximum_beta)
-    cumulative = hooper_microfield_cumulative_probability(
-        bounded_beta, correlation, radiator_core_charge
-    )
-    segment_probability = np.diff(cumulative)
-    # Fraction of each field interval below the critical field; the shift
-    # range of the interval that crosses it ends at the critical field.
-    interval_fraction = np.clip(
-        (maximum_beta - beta[:-1]) / (beta[1:] - beta[:-1]), 0.0, 1.0
+    beta, cumulative, segment_probability, interval_fraction = _stark_field_probabilities(
+        float(coupling_hz), float(maximum_beta), float(correlation),
+        float(radiator_core_charge), stride,
     )
     to_angstrom = -center**2 / (LIGHT_SPEED * 1.0e8)
     width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
@@ -5988,6 +6095,12 @@ def manifold_quasistatic_line_profile(
     # it is unshifted.
     missing = float(cumulative[0])
     bound_probability = missing + float(np.sum(segment_probability[used]))
+    if getattr(_rt, "stark_manifold_bins", None) is not None:
+        return _compiled_manifold_profile(
+            wavelength, center, gaussian_sigma, lorentz_hwhm, coupling_hz,
+            upper, lower, maximum_beta, support_half_width, segment_probability,
+            interval_fraction, missing, bound_probability,
+        )
     upper_shift = upper.shifts_hz[::stride]
     upper_weight = upper.weights[::stride]
     if lower is None:

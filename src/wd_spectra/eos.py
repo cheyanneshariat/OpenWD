@@ -262,11 +262,13 @@ def hooper_microfield_cumulative_probability(
         + 3.0 * log_beta
         - np.logaddexp(0.0, np.log(coefficient_2) + 1.5 * log_beta)
     )
+    # Both logistic branches need the same decaying exponential. Reuse it
+    # without changing the original +/-745 clamps or either division; this
+    # also avoids overflow in the unused branch of np.where.
+    exponential = np.exp(-np.minimum(np.abs(log_ratio), 745.0))
+    denominator = 1.0 + exponential
     probability = np.where(
-        log_ratio >= 0.0,
-        1.0 / (1.0 + np.exp(-np.minimum(log_ratio, 745.0))),
-        np.exp(np.maximum(log_ratio, -745.0))
-        / (1.0 + np.exp(np.maximum(log_ratio, -745.0))),
+        log_ratio >= 0.0, 1.0 / denominator, exponential / denominator
     )
     return probability
 

@@ -2,6 +2,10 @@
 #include <Python.h>
 #include <math.h>
 
+PyObject *openwd_pseudo_voigt_profile(PyObject *, PyObject *);
+PyObject *openwd_stark_manifold_bins(PyObject *, PyObject *);
+PyObject *openwd_stark_profile_finish(PyObject *, PyObject *);
+
 /* Maximum hot NLTE metal-line profile half-window as a fraction of the line's
    central wavelength (matches wd_spectra.metals.LINE_WINDOW_MAX_FRACTION).
    The LTE metal-line kernel is not bounded. */
@@ -2309,6 +2313,12 @@ cleanup:
 }
 
 static PyMethodDef module_methods[] = {
+    {"pseudo_voigt_profile", openwd_pseudo_voigt_profile, METH_VARARGS,
+     PyDoc_STR("pseudo_voigt_profile(wavelength, center, sigma, gamma, output) -> None")},
+    {"stark_manifold_bins", openwd_stark_manifold_bins, METH_VARARGS,
+     PyDoc_STR("Deposit the existing Stark field-segment pattern on fine and coarse grids.")},
+    {"stark_profile_finish", openwd_stark_profile_finish, METH_VARARGS,
+     PyDoc_STR("Interpolate uniform Stark grids and add the impact profile.")},
     {"positive_rate_equilibrium", positive_rate_equilibrium, METH_VARARGS,
      PyDoc_STR("positive_rate_equilibrium(matrix, conservation_weights, total_population, output) -> None")},
     {"cubic_table_interpolate", cubic_table_interpolate, METH_VARARGS,
