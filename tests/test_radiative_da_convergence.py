@@ -121,13 +121,17 @@ def test_g76_48_radiative_da_cold_start():
     if directory:
         save_model_result(result, directory / "nonmagnetic-structure")
     m = result.atmosphere.metadata
-    assert result.atmosphere.n_depth == 200
+    # The photosphere-concentrated 100-layer mesh (2026-10-01) resolves the
+    # steep radiative ionization transition directly; the 200-layer re-solve
+    # remains the fallback whenever 100 layers cannot be certified.
+    assert result.atmosphere.n_depth in (100, 200)
     assert result.atmosphere.effective_temperature == 6680.0
     assert result.atmosphere.logg == 7.96
     assert m["maximum_convective_flux_fraction"] == 0.0
     assert m["convective_preconditioner_iterations"] == 0
-    assert m["radiative_depth_refinement"]["initial_depth_points"] == 100
-    assert m["radiative_depth_refinement"]["stellar_parameters_changed"] is False
+    if result.atmosphere.n_depth == 200:
+        assert m["radiative_depth_refinement"]["initial_depth_points"] == 100
+        assert m["radiative_depth_refinement"]["stellar_parameters_changed"] is False
     assert m["equilibrium_certificate"]["verified"], m["equilibrium_certificate"]
     assert m["maximum_all_depth_total_flux_residual"] < 2e-3
     assert m["maximum_relative_cell_energy_balance_residual"] < 2e-3
