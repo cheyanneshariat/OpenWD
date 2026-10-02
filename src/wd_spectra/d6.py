@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from dataclasses import replace
 import hashlib
 import json
+import lzma
 from pathlib import Path
 import re
 from types import MappingProxyType
@@ -918,7 +919,12 @@ def read_norad_ls_photoionization(
         )
     expected_atomic_number = ATOMIC_NUMBER[symbol]
     expected_residual_electrons = expected_atomic_number - stage - 1
-    with source.open(encoding="ascii") as stream:
+    # The bundled NORAD tables are xz-compressed; plain text is also read.
+    opened = (
+        lzma.open(source, "rt", encoding="ascii") if source.suffix == ".xz"
+        else source.open(encoding="ascii")
+    )
+    with opened as stream:
         while True:
             line = stream.readline()
             if not line:
@@ -1167,7 +1173,7 @@ def read_norad_ls_photoionization(
         raise ValueError(f"no usable NORAD photoionization sections in {source}")
     return TOPbasePhotoionizationDatabase(
         tuple(sections),
-        f"NORAD/Iron Project LS photoionization: {source.name}",
+        f"NORAD/Iron Project LS photoionization: {source.name.removesuffix('.xz')}",
     )
 
 
@@ -1376,13 +1382,14 @@ def tlusty_observed_term_excitation_overrides(
 
 NORAD_LEVEL_RESOLVED_FILES = MappingProxyType(
     {
+        # Bundled xz-compressed; each SHA-256 is of the decompressed text.
         # Bautista (1997, A&AS 122, 167), Iron Project R-matrix, LS coupling.
-        "fe1.px.txt": (
+        "fe1.px.txt.xz": (
             "https://norad.astronomy.osu.edu/fe1/fe1.px.txt",
             "ab4c37d08ca3cb59a200ef401a51bfdb342ff417caa0e8ed871ab80a1806f36a",
             "Fe", 0,
         ),
-        "cr1.px.txt": (
+        "cr1.px.txt.xz": (
             "https://norad.astronomy.osu.edu/cr1/cr1.px.txt",
             "87bcfce2ac7c3c4291940e24ee50f47743d51a070cb238d0498e44d62f15ff10",
             "Cr", 0,

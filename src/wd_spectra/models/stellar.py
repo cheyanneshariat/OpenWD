@@ -1047,7 +1047,7 @@ def _polluted_helium_level_resolved_photoionization(
     norad = [
         (data.norad / name, element, charge)
         for name, (_, _, element, charge) in NORAD_LEVEL_RESOLVED_FILES.items()
-        if wanted(element, charge) and (data.norad / name).is_file()
+        if wanted(element, charge)
     ]
     if not (tlusty or rap or sirocco or norad):
         return None
@@ -1055,6 +1055,7 @@ def _polluted_helium_level_resolved_photoionization(
         *(entry[0] for entry in tlusty),
         *(entry[0] for entry in rap),
         *(path for entry in sirocco for path in entry[:2]),
+        *(entry[0] for entry in norad),
         fetch_command="python scripts/fetch_metal_data.py",
     )
     parts = []

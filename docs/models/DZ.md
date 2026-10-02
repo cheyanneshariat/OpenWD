@@ -54,8 +54,9 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   C II, Al II, Fe I/II). The default keeps the paper-figure Stout data.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
-  level-resolved cross sections are used when their files are present in the
-  cache, for terms identified with observed levels within 0.5 eV.
+  level-resolved cross sections are bundled (xz-compressed, checksummed) and
+  required; they are used for terms identified with observed levels within
+  0.5 eV.
 - Ca II H and K use complete-redistribution source functions solved
   exactly with the linear formal Lambda operator. Collisional transfer
   between the two 4p levels feeds the partner line instead of thermalizing

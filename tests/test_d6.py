@@ -181,6 +181,22 @@ def test_d6_uses_expanded_tlusty_neutral_carbon_oxygen_photoionization_atoms():
     assert D6_TLUSTY_RAP_FILES["fe2p_14+11lev.rap"][2:] == ("Fe", 1)
 
 
+
+def test_bundled_norad_tables_match_their_pinned_checksums():
+    import hashlib
+    import lzma
+
+    from wd_spectra.d6 import NORAD_LEVEL_RESOLVED_FILES
+
+    root = ModelData.default().norad
+    for name, (_, checksum, _, _) in NORAD_LEVEL_RESOLVED_FILES.items():
+        assert name.endswith(".xz")
+        digest = hashlib.sha256()
+        with lzma.open(root / name, "rb") as stream:
+            for block in iter(lambda: stream.read(1 << 20), b""):
+                digest.update(block)
+        assert digest.hexdigest() == checksum, name
+
 def test_bulk_metal_state_closes_particle_pressure_charge_nuclei_and_mass():
     database = _ground_state_database(("C", "O"))
     atmosphere = gray_d6_atmosphere(
