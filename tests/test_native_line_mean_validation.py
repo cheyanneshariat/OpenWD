@@ -1,7 +1,10 @@
 import numpy as np
 import pytest
 
-from wd_spectra import _rt
+try:
+    from wd_spectra import _rt
+except ImportError:  # pragma: no cover - source-only installation
+    _rt = None
 
 
 pytestmark = pytest.mark.skipif(
