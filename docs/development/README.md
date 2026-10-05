@@ -6,6 +6,9 @@ Use the [user guide](../getting-started.md) for model generation. This section
 is for changing the implementation and checking it safely; detailed previous
 investigations live in the [research history](history/README.md).
 
+The [hydrogen-line and native-boundary fixes](physics-boundary-fixes-2026-10-05.md)
+document their reproduction tests and validation status.
+
 ## A short development loop, then full qualification
 
 From the repository root:
