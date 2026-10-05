@@ -37,6 +37,19 @@ Spectrum changes for DA 4000 K, DA 5000 K, and DAB 9000 K, with atmospheric stru
 
 ## Validation status
 
+### Approved reference update — 2026-10-05
+
+The user approved separate, versioned corrected references for the three
+density-edge cases. Their [reference record](../../tests/data/approved_regressions/stark_density_floor_2026_10_05/README.md)
+documents the physical correction and provenance. Previous fixed controls,
+historical atmospheres, cold controls, and every tolerance are preserved.
+The updated local checks passed: 1575 ordinary component tests (1 skipped,
+44 deselected), 226 cool-component tests (8 skipped), and all 21 fixed-spectrum
+cases. Both official reports confirm unchanged inputs during their runs.
+Full cold-start qualification is pending.
+
+### Initial comparison against previous references
+
 Checks run on 2026-10-05 gave the results below. Three fixed-atmosphere spectrum
 checks fail. Full validation from newly calculated atmospheres remains required
 before merge.
@@ -60,9 +73,9 @@ repaired default retains the three failed checks.
 | DAB 9000 K | 7 / 3000 | 938.9–1216.4 | 5.19 × 10⁻⁹ |
 
 Small changes to the optical spectra do not justify relaxing the failed
-thresholds. The density policy and changed reference spectra need review.
-If the policy is accepted, reviewed reference updates and full validation
-remain required under the [development policy](README.md).
+thresholds. The density policy and changed reference spectra were reviewed
+before the user approved the versioned updates above. Full validation remains
+required under the [development policy](README.md).
 
 ## Reproduce the regression checks
 
