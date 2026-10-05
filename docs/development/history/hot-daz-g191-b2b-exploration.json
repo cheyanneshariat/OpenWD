@@ -1,0 +1,3790 @@
+{
+  "target": "G191-B2B",
+  "date": "2026-10-02",
+  "observationally_validated": false,
+  "reference": "https://doi.org/10.1093/mnras/stt1604",
+  "scope": "Fixed published parameters and abundances; short metal NLTE iterations on a fixed H/He host",
+  "cases": {
+    "baseline": {
+      "label": "Baseline 40 / 54",
+      "model_directory": "results/hot-daz/g191-b2b-higher-ions",
+      "comparison_directory": "results/hot-daz/g191-b2b-higher-ions-comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "compact Stout; Verner ground/Kramers excited continua; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 40,
+            "3": 54,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "population_defect_history": [
+          1.0,
+          0.999983330706264,
+          0.9999679671639561,
+          0.9999374252088077,
+          0.9998773551098082,
+          0.999759883087891,
+          0.9994986893601918,
+          0.9983118504546856,
+          0.9944692771471323,
+          0.9893892136786908,
+          0.9676826321210569,
+          0.9387513476882204,
+          0.7802773600411701,
+          0.5771751576940342,
+          0.11317136603204618,
+          0.0815197704170913,
+          0.07186129275232928,
+          0.07198800406686066,
+          0.0671202174921104,
+          0.06341567707488859,
+          0.06393747285198646,
+          0.029010141721425343,
+          0.0232499429204986,
+          0.02098298297319758,
+          0.01741944459169184,
+          0.018152140189455424,
+          0.014534497804153855,
+          0.011993641976172439,
+          0.009694774450480101,
+          0.009133636314939445,
+          0.009263725440699777,
+          0.009364661219967485,
+          0.009387002991575667,
+          0.009319515169176939,
+          0.009472285201558168,
+          0.009394964427141847,
+          0.009163235621720856,
+          0.009570105575601376,
+          0.009196616344244863,
+          0.008574727993864401,
+          0.008080200753257974,
+          0.007426180890519277,
+          0.007110900088077045,
+          0.0065508138286991605,
+          0.0053960263169183014,
+          0.005123273171611755,
+          0.004730767396982174,
+          0.003919764569930237,
+          0.0036531054751119006,
+          0.0033560597658655635,
+          0.0032729878862143564,
+          0.003149489751662714,
+          0.003064590495810253,
+          0.0030197592692704682,
+          0.0029330444920420413,
+          0.002890965964332478,
+          0.002738741068040545,
+          0.00268229136082058,
+          0.002669300954071413,
+          0.0026485368924487013,
+          0.0025669065198447496,
+          0.0023400719635423128,
+          0.00218635146847304,
+          0.0020202177648463325,
+          0.0019774183750308214,
+          0.0018672692493677495,
+          0.0018250111240363076,
+          0.0014880642225841773,
+          0.001257982790858666,
+          0.0009919754160482627,
+          0.0008258778484511425,
+          0.0007502523606311148,
+          0.0005140805092131333,
+          0.0004609262466939665,
+          0.00038798999790554643,
+          0.0003268235725813043,
+          0.00029575712647213296,
+          0.0002475438468576652,
+          0.0002211561758786504,
+          0.00020206164147711813,
+          0.00018017017432443374,
+          0.00015712798463393256,
+          0.00014837059530558777,
+          0.00016001465871643035,
+          0.00018069537469059556,
+          0.0002290176460750307,
+          0.00020289721974117925,
+          0.00017238500811111643,
+          0.00010782431999398035,
+          8.475004331419552e-05
+        ],
+        "accelerated_updates": 76,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 145486,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.8263884220519605,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 3.477932339265615e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.4364767864898407e-15,
+        "host_atmosphere_convergence": "converged",
+        "host_effective_temperature": 52500.0,
+        "host_logg": 7.53,
+        "host_log_hydrogen_to_helium": 5.0,
+        "smoke_only": false,
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "converged": true,
+        "iterations": 90,
+        "population_defect": 8.475004331419552e-05,
+        "comparison_to_observation_completed": false,
+        "radiation_grid_refined_with_host": true
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.054642414326486484,
+          "median_absolute_residual": 0.02675095736899602,
+          "chi2_per_pixel": 8.704272037077393,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 61.3583798810378,
+          "continuum_coefficients": [
+            8.96632619890268e-23,
+            1.224747107552699e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 7.753965074009509,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.4559845269559093,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 9.34519883882047,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.46628245847135125,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.037797695319031266,
+          "median_absolute_residual": 0.02718245170507766,
+          "chi2_per_pixel": 17.8529781898936,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.633656566303,
+          "continuum_coefficients": [
+            9.010279311181951e-23,
+            -1.033529872970627e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.032512084148288066,
+          "median_absolute_residual": 0.01819697012055188,
+          "chi2_per_pixel": 7.973026218734217,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.68293601980949,
+          "continuum_coefficients": [
+            8.874174182846696e-23,
+            -1.0719569297620803e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.02740688547588436,
+          "median_absolute_residual": 0.012698448087724468,
+          "chi2_per_pixel": 4.694417378608753,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 74.23423956754587,
+          "continuum_coefficients": [
+            8.975975010477625e-23,
+            -7.184478236835798e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "c7b1d9f214424af980a32b52b81552b2e1896a996eb496caca69f1256fde54c6",
+      "population_sha256": "34e238487cabff6b694d20b6f40794bef09244a923f708a266858b8837fcf385"
+    },
+    "control": {
+      "label": "Short control 40 / 54",
+      "model_directory": "results/hot-daz/explore-control",
+      "comparison_directory": "results/hot-daz/explore-control/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "compact Stout; Verner ground/Kramers excited continua; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 40,
+            "3": 54,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {},
+        "population_defect_history": [
+          0.08561883578217747,
+          0.0440532046874742,
+          0.02480627947742101,
+          0.015321239749397617
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 1,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 26003,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.8263884220519605,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 7.763554031043192e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.1891653339963964e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "control",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {},
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "34e238487cabff6b694d20b6f40794bef09244a923f708a266858b8837fcf385",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "converged": false,
+        "iterations": 4,
+        "population_defect": 0.015321239749397617
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.054823030661838974,
+          "median_absolute_residual": 0.026749476890694013,
+          "chi2_per_pixel": 8.763659449963006,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 61.07121425527932,
+          "continuum_coefficients": [
+            8.966325340115683e-23,
+            1.2247457788143537e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 7.716742439046191,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.4537955893692941,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 9.299743773981001,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.46401445971082433,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.037793033928864024,
+          "median_absolute_residual": 0.027182453482192115,
+          "chi2_per_pixel": 17.850286419578044,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.590685422158,
+          "continuum_coefficients": [
+            9.010279494331354e-23,
+            -1.033534715302699e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.032921469836409305,
+          "median_absolute_residual": 0.018019273675267566,
+          "chi2_per_pixel": 8.230515375409436,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.14307173461994,
+          "continuum_coefficients": [
+            8.874172188178111e-23,
+            -1.0719883253950257e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.027978068087271057,
+          "median_absolute_residual": 0.012954463826313711,
+          "chi2_per_pixel": 4.932329216021339,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.51637400308014,
+          "continuum_coefficients": [
+            8.975962457541854e-23,
+            -7.186259408079748e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "a84df3dafaef0a88aa4159ff6331109d7372a869c83adc425b2c8447e695f67f",
+      "population_sha256": "cdd94ee9b25eb74f2194c690ff57b993e25320bf7b79a01b7c445b192951202e",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.08561883578217747,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 7.753965074007401,
+            "1176.370": 9.345198838819375
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.05464241432648713,
+            "lyalpha": 0.03779329040642793,
+            "siiv_1393": 0.03251208414747876,
+            "siiv_1402": 0.027406885477214756
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.015321239749397617,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 7.716742439046191,
+            "1176.370": 9.299743773981001
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.054823030661838974,
+            "lyalpha": 0.037793033928864024,
+            "siiv_1393": 0.032921469836409305,
+            "siiv_1402": 0.027978068087271057
+          }
+        }
+      ]
+    },
+    "op": {
+      "label": "OP tables, 40 / 54",
+      "model_directory": "results/hot-daz/explore-op",
+      "comparison_directory": "results/hot-daz/explore-op/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "Stout; selected TLUSTY/OP photoionization with Verner/Kramers fallbacks; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 40,
+            "3": 54,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {
+          "C": [
+            2,
+            3
+          ]
+        },
+        "population_defect_history": [
+          0.7017464118545733,
+          0.35313694795625233,
+          0.1780518059524712,
+          0.01683533782350013,
+          0.013270961435960757,
+          0.010142954979159168,
+          0.008445778286967635,
+          0.007023515748274945,
+          0.0065236512456375816,
+          0.004985983991073263,
+          0.004325342299377705,
+          0.003614209398250862
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 9,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 28588,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.8263884220519605,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 9.70444253880399e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.4550416675769798e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "op",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {},
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "34e238487cabff6b694d20b6f40794bef09244a923f708a266858b8837fcf385",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "converged": false,
+        "iterations": 12,
+        "population_defect": 0.003614209398250862
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.06162637189431501,
+          "median_absolute_residual": 0.02747894303961379,
+          "chi2_per_pixel": 11.13550906155622,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 50.60590469421414,
+          "continuum_coefficients": [
+            8.966311866377428e-23,
+            1.2244230419972788e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 6.2908161884980975,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.36994167712901455,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 7.620400706238306,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.38022296123664956,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779294977385276,
+          "median_absolute_residual": 0.027182369959518282,
+          "chi2_per_pixel": 17.850123918097133,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.550346069523,
+          "continuum_coefficients": [
+            9.010279994013745e-23,
+            -1.0335468876150507e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.032881289606366285,
+          "median_absolute_residual": 0.018190249710301032,
+          "chi2_per_pixel": 8.20924582270828,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.1051264127391,
+          "continuum_coefficients": [
+            8.87417520364274e-23,
+            -1.0719409576072753e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.02791083385515724,
+          "median_absolute_residual": 0.012886270139808143,
+          "chi2_per_pixel": 4.911605623046879,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.4419608138876,
+          "continuum_coefficients": [
+            8.975972576554344e-23,
+            -7.184815091020852e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "40b7016e66dbf8190140e513a9a25f7069f60fcc48df4d337276b7673d05279e",
+      "population_sha256": "de9a96e68a100c9d5c47004cf0f78b4cc168d487816e8f04f71a70d0ea45345e",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.7017464118545733,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 7.753965395417541,
+            "1176.370": 9.345199237080324
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.05464241277043188,
+            "lyalpha": 0.03779330948971003,
+            "siiv_1393": 0.03251206267898387,
+            "siiv_1402": 0.02740686478703816
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.01683533782350013,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 6.302861919334547,
+            "1176.370": 7.6369443893925
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.0615587113731694,
+            "lyalpha": 0.03779296683905877,
+            "siiv_1393": 0.03274783509100563,
+            "siiv_1402": 0.027757777909128346
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.007023515748274945,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 6.289863830755432,
+            "1176.370": 7.619338860757819
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.06163081485825546,
+            "lyalpha": 0.03779294967875546,
+            "siiv_1393": 0.0329167939959681,
+            "siiv_1402": 0.02794615824815603
+          }
+        },
+        {
+          "iteration": 12,
+          "defect": 0.003614209398250862,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 6.2908161884980975,
+            "1176.370": 7.620400706238306
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.06162637189431501,
+            "lyalpha": 0.03779294977385276,
+            "siiv_1393": 0.032881289606366285,
+            "siiv_1402": 0.02791083385515724
+          }
+        }
+      ]
+    },
+    "ciii": {
+      "label": "C III enlarged, 80 / 54",
+      "model_directory": "results/hot-daz/explore-ciii-only",
+      "comparison_directory": "results/hot-daz/explore-ciii-only/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "compact Stout; Verner ground/Kramers excited continua; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 80,
+            "3": 54,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {},
+        "population_defect_history": [
+          0.9998013670098996,
+          0.9996239274472937,
+          0.9992672464742149,
+          0.9985540389956042,
+          0.997130460308238,
+          0.9942952686338151,
+          0.9886726383070419,
+          0.9776153537025191,
+          0.9562254142617507,
+          0.9161341260728774,
+          0.8452541804493492,
+          0.7319850523580279
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 0,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 32590,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.8264372085895552,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 1.0605040143220027e-15,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.3687324550830396e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "control",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {},
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "34e238487cabff6b694d20b6f40794bef09244a923f708a266858b8837fcf385",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "converged": false,
+        "iterations": 12,
+        "population_defect": 0.7319850523580279
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.04134404571982325,
+          "median_absolute_residual": 0.023321125420663114,
+          "chi2_per_pixel": 4.883172904907905,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 83.88076720822929,
+          "continuum_coefficients": [
+            8.966352491145758e-23,
+            1.2253319310357595e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 10.929930664290012,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.6427523487721937,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 13.02224075578039,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.6497499453074779,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779294289797923,
+          "median_absolute_residual": 0.027182377592493756,
+          "chi2_per_pixel": 17.8501982782399,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.58710581481,
+          "continuum_coefficients": [
+            9.010282037062798e-23,
+            -1.0335377976284429e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.033004776080414355,
+          "median_absolute_residual": 0.018006176149610198,
+          "chi2_per_pixel": 8.284061983842147,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.00155018835937,
+          "continuum_coefficients": [
+            8.874173747066082e-23,
+            -1.071991299012673e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.02807534793721443,
+          "median_absolute_residual": 0.01296242925434643,
+          "chi2_per_pixel": 4.974543084717028,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.35813241307542,
+          "continuum_coefficients": [
+            8.975963034843316e-23,
+            -7.186411862299419e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "9ed9fe30ea6ed0b94bcea4d8c036baa451aa74e09b7dd2dca8943cf1c1482e6a",
+      "population_sha256": "19c84f26595da05bbf3ae7b3d107cda6e18d52d54abcb5ce6bffc28bd0221847",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.9998013670098996,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 7.753960104280319,
+            "1176.370": 9.345192199603577
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.05464244087487648,
+            "lyalpha": 0.03779318270882924,
+            "siiv_1393": 0.032512135770272683,
+            "siiv_1402": 0.027406953985338905
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.9985540389956042,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 10.55114921701187,
+            "1176.370": 12.605484442874776
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.042701133133397545,
+            "lyalpha": 0.03779298210597721,
+            "siiv_1393": 0.0328199079026876,
+            "siiv_1402": 0.027838077676400542
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.9776153537025191,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 10.907604214752759,
+            "1176.370": 13.000308100828677
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.041413075160524095,
+            "lyalpha": 0.03779294973127082,
+            "siiv_1393": 0.0329558040961432,
+            "siiv_1402": 0.028018253884363867
+          }
+        },
+        {
+          "iteration": 12,
+          "defect": 0.7319850523580279,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 10.929930664290012,
+            "1176.370": 13.02224075578039
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.04134404571982325,
+            "lyalpha": 0.03779294289797923,
+            "siiv_1393": 0.033004776080414355,
+            "siiv_1402": 0.02807534793721443
+          }
+        }
+      ]
+    },
+    "large": {
+      "label": "Enlarged, 80 / 100",
+      "model_directory": "results/hot-daz/explore-large-c-continued",
+      "comparison_directory": "results/hot-daz/explore-large-c-continued/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "compact Stout; Verner ground/Kramers excited continua; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 80,
+            "3": 100,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {},
+        "population_defect_history": [
+          0.6660444743209032,
+          0.4993007723844883,
+          0.3327064222466155,
+          0.008029113840152017,
+          0.0069564321442592844,
+          0.0051308737697026915,
+          0.0031389347231046472,
+          0.003195335700726333,
+          0.0013920885191264088,
+          0.001396063689454551,
+          0.0011269384515520964,
+          0.0010031016480284854
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 9,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 37319,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.870016115032702,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 6.227082830018555e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.2406993948873995e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "large-c",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {},
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "d5181c31584d452eb2e7f35a334a34fc6b4fc5fc0e5e221537469020a3d46a00",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "converged": false,
+        "iterations": 12,
+        "population_defect": 0.0010031016480284854
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.03380458364687484,
+          "median_absolute_residual": 0.021390813287206656,
+          "chi2_per_pixel": 3.1924067216284584,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 100.38864338913424,
+          "continuum_coefficients": [
+            8.966374492420229e-23,
+            1.2257387346441337e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 13.304124417166559,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.7823706737161422,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 15.746252282353195,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.7856655971220072,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.037792165658195834,
+          "median_absolute_residual": 0.02718227514891558,
+          "chi2_per_pixel": 17.849443818797223,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.463297551972,
+          "continuum_coefficients": [
+            9.010287721160863e-23,
+            -1.0335397212002372e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.0330310654218083,
+          "median_absolute_residual": 0.01800742146699108,
+          "chi2_per_pixel": 8.301147437731435,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 91.95196932583075,
+          "continuum_coefficients": [
+            8.874180161663785e-23,
+            -1.0719968625943152e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.028099952434994673,
+          "median_absolute_residual": 0.012962377996068197,
+          "chi2_per_pixel": 4.98553823437533,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.31054788006315,
+          "continuum_coefficients": [
+            8.975969559786526e-23,
+            -7.186458334685408e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "575b56932759b6ca1abf9304bcf353f2116c43e4d738772519e4f24ad994dfa7",
+      "population_sha256": "5f3b0ac7f9ff6cb70256ed76b6a6ef3aa69215e5fa889cd4134f839624b534a6",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.6660444743209032,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.310690269869289,
+            "1176.370": 15.755371708543104
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03378377244088682,
+            "lyalpha": 0.03779216201202537,
+            "siiv_1393": 0.03300082491860234,
+            "siiv_1402": 0.028070412896467754
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.008029113840152017,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.309215646971952,
+            "1176.370": 15.752115472065224
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03379138439365227,
+            "lyalpha": 0.03779216313058535,
+            "siiv_1393": 0.03302208004414175,
+            "siiv_1402": 0.028092053069867853
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.003195335700726333,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.303385448081494,
+            "1176.370": 15.74570067280906
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03380604415181033,
+            "lyalpha": 0.03779216597795583,
+            "siiv_1393": 0.03302433412555652,
+            "siiv_1402": 0.02809259982096615
+          }
+        },
+        {
+          "iteration": 12,
+          "defect": 0.0010031016480284854,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.304124417166559,
+            "1176.370": 15.746252282353195
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03380458364687484,
+            "lyalpha": 0.037792165658195834,
+            "siiv_1393": 0.0330310654218083,
+            "siiv_1402": 0.028099952434994673
+          }
+        }
+      ]
+    },
+    "large_op": {
+      "label": "OP tables, 80 / 100",
+      "model_directory": "results/hot-daz/explore-large-c-op",
+      "comparison_directory": "results/hot-daz/explore-large-c-op/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "Stout; selected TLUSTY/OP photoionization with Verner/Kramers fallbacks; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 80,
+            "3": 100,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {
+          "C": [
+            2,
+            3
+          ]
+        },
+        "population_defect_history": [
+          0.657884836830604,
+          0.43326189285487027,
+          0.2669575178529911,
+          0.025898388400578835,
+          0.007546300295736954,
+          0.007057613802853919,
+          0.006575675116824523,
+          0.004607666464751368,
+          0.00396742378231966,
+          0.0032620462485769075,
+          0.002715184331671202,
+          0.0019291585514997496
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 9,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 40104,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.870016115032702,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 8.694830848164038e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.3132935141273728e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "large-c-op",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {},
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "d5181c31584d452eb2e7f35a334a34fc6b4fc5fc0e5e221537469020a3d46a00",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "converged": false,
+        "iterations": 12,
+        "population_defect": 0.0019291585514997496
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.04560047874153244,
+          "median_absolute_residual": 0.02383622869253582,
+          "chi2_per_pixel": 5.987093147973302,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 76.26749699199962,
+          "continuum_coefficients": [
+            8.966344354147624e-23,
+            1.2250954579958326e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 9.858240979108725,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.5797298938763236,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 11.776212296578185,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.5875788536803461,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.037792405440234565,
+          "median_absolute_residual": 0.027182300194385167,
+          "chi2_per_pixel": 17.849594445148746,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.470685193094,
+          "continuum_coefficients": [
+            9.010284693280275e-23,
+            -1.0335430310643552e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.03288341649568686,
+          "median_absolute_residual": 0.018195442884910817,
+          "chi2_per_pixel": 8.21076492298706,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.09755612015036,
+          "continuum_coefficients": [
+            8.874179684840959e-23,
+            -1.0719466928916859e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.02791252045257998,
+          "median_absolute_residual": 0.012884088672859229,
+          "chi2_per_pixel": 4.912643047632497,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.43194509327677,
+          "continuum_coefficients": [
+            8.975977378101406e-23,
+            -7.184817346019511e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "2086c39f6ce210d26751b744998ef4c69ce4d0cb4cddfe535d91572169f148e6",
+      "population_sha256": "3608430f07217664a120e0d71733e70efd46651374087427e1498d6a68485cab",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.657884836830604,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.310690855203585,
+            "1176.370": 15.755372362662703
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03378377091541878,
+            "lyalpha": 0.037792167223746835,
+            "siiv_1393": 0.033000824802093716,
+            "siiv_1402": 0.028070410365264895
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.025898388400578835,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 9.878039068102543,
+            "1176.370": 11.79993502153815
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.04551902415939159,
+            "lyalpha": 0.03779241384039247,
+            "siiv_1393": 0.03287038637683089,
+            "siiv_1402": 0.027899954815550822
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.004607666464751368,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 9.857990801676738,
+            "1176.370": 11.77597387708042
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.04560138554856522,
+            "lyalpha": 0.03779240434821091,
+            "siiv_1393": 0.03289134768997102,
+            "siiv_1402": 0.027918877544899582
+          }
+        },
+        {
+          "iteration": 12,
+          "defect": 0.0019291585514997496,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 9.858240979108725,
+            "1176.370": 11.776212296578185
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.04560047874153244,
+            "lyalpha": 0.037792405440234565,
+            "siiv_1393": 0.03288341649568686,
+            "siiv_1402": 0.02791252045257998
+          }
+        }
+      ]
+    },
+    "iron": {
+      "label": "80 / 100 + Fe continuum",
+      "model_directory": "results/hot-daz/explore-large-c-fe",
+      "comparison_directory": "results/hot-daz/explore-large-c-fe/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "compact Stout; Verner ground/Kramers excited continua; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 80,
+            "3": 100,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {},
+        "population_defect_history": [
+          0.6047246295741209,
+          0.43489811542873347,
+          0.2788141640777393,
+          0.04952323957504412,
+          0.024551596264655154,
+          0.013456578721176357,
+          0.012000000729556329,
+          0.007898575735032705,
+          0.005526818506244559,
+          0.005511287022962931,
+          0.00532307793153989,
+          0.005187616247215859
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 9,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 37337,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.870016115032702,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 5.776130862799969e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.4275035014008365e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "fe-continuum",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {
+          "Fe": -5.301029995663981
+        },
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "d5181c31584d452eb2e7f35a334a34fc6b4fc5fc0e5e221537469020a3d46a00",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "background_experiment": "LTE Fe bound-free continuum only",
+        "converged": false,
+        "iterations": 12,
+        "population_defect": 0.005187616247215859
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.03312939162943349,
+          "median_absolute_residual": 0.020904597653440438,
+          "chi2_per_pixel": 3.057924708796411,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 102.30203364285723,
+          "continuum_coefficients": [
+            8.966378559171255e-23,
+            1.2257607317482152e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 13.580382823621784,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.7986164986047938,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 16.063700695718865,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.8015048135126834,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779294863940794,
+          "median_absolute_residual": 0.027182332502001694,
+          "chi2_per_pixel": 17.849930729958654,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.628790606386,
+          "continuum_coefficients": [
+            9.010287709587861e-23,
+            -1.0335312222153631e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.032546865932645865,
+          "median_absolute_residual": 0.018608167849114343,
+          "chi2_per_pixel": 8.002081364654861,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.51611974818069,
+          "continuum_coefficients": [
+            8.874218866309953e-23,
+            -1.0715083683981722e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.027497238242734916,
+          "median_absolute_residual": 0.012711822772486503,
+          "chi2_per_pixel": 4.751378218078694,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.77631765518801,
+          "continuum_coefficients": [
+            8.976023061730162e-23,
+            -7.178550566977339e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "ee5f3f454d52924e9a29d97e4e1bc4dda9b1977e1b2d9df1586b6cd9e264a8f6",
+      "population_sha256": "38f563b6421734a6a76095b2d2dc229c25c5f61a7ff7ea03d5d395218126cb98",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.6047246295741209,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.310690269869186,
+            "1176.370": 15.755371708543347
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03378377244088579,
+            "lyalpha": 0.03779216201202474,
+            "siiv_1393": 0.03300082491860309,
+            "siiv_1402": 0.02807041289646757
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.04952323957504412,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.588038716620051,
+            "1176.370": 16.07339687289572
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03310941831452522,
+            "lyalpha": 0.03779293100358239,
+            "siiv_1393": 0.032490816892265566,
+            "siiv_1402": 0.027452775753885713
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.007898575735032705,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.580777662143806,
+            "1176.370": 16.064345813744815
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03312800680374013,
+            "lyalpha": 0.03779294860483954,
+            "siiv_1393": 0.032555864609038226,
+            "siiv_1402": 0.027502036278914208
+          }
+        },
+        {
+          "iteration": 12,
+          "defect": 0.005187616247215859,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 13.580382823621784,
+            "1176.370": 16.063700695718865
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03312939162943349,
+            "lyalpha": 0.03779294863940794,
+            "siiv_1393": 0.032546865932645865,
+            "siiv_1402": 0.027497238242734916
+          }
+        }
+      ]
+    },
+    "larger_op": {
+      "label": "OP tables, 120 / 150",
+      "model_directory": "results/hot-daz/explore-larger-c-op",
+      "comparison_directory": "results/hot-daz/explore-larger-c-op/comparison",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "Stout; selected TLUSTY/OP photoionization with Verner/Kramers fallbacks; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 120,
+            "3": 150,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {
+          "C": [
+            2,
+            3
+          ]
+        },
+        "population_defect_history": [
+          0.997186520127825,
+          0.9943916638486529,
+          0.9888581551391966,
+          0.9779799906920047,
+          0.956932861909723,
+          0.9174529011542323,
+          0.8475328556971352,
+          0.7354521126867412,
+          0.5816408577227858,
+          0.006423028063308766,
+          0.005368773479183939,
+          0.0035878995999211955
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 3,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 52237,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.9161251416306113,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 6.95586467853123e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0)",
+        "source_closure_residual": 1.3251501301206772e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "op",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "extra_background_abundances": {},
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py changed",
+        "numerical_identity": {
+          "numerical_code": "ff20e593a46674fc400a91185de106cf278ab67a32b509429ca5cca295449c93",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "seed_population_sha256": "3608430f07217664a120e0d71733e70efd46651374087427e1498d6a68485cab",
+        "limitations": [
+          "fixed H/He structure and populations",
+          "no complete Fe/Ni line blanketing",
+          "provisional atoms and collisions",
+          "intermediate iterates are exploratory"
+        ],
+        "converged": false,
+        "iterations": 12,
+        "population_defect": 0.0035878995999211955
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.03596164882370345,
+          "median_absolute_residual": 0.021513956508555532,
+          "chi2_per_pixel": 3.6382629281420145,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 95.15524981304551,
+          "continuum_coefficients": [
+            8.966367685758121e-23,
+            1.2255448440241043e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 12.561378835270231,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.7386923117971789,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 14.883504227306881,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.74261843557021,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779185049878122,
+          "median_absolute_residual": 0.027182265712903275,
+          "chi2_per_pixel": 17.84906176508136,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.391136050761,
+          "continuum_coefficients": [
+            9.010289850805779e-23,
+            -1.0335357657276115e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.032883487805071145,
+          "median_absolute_residual": 0.01820057617658355,
+          "chi2_per_pixel": 8.210896435546898,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.09520285400043,
+          "continuum_coefficients": [
+            8.87418606805603e-23,
+            -1.0719436977325902e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.027910087600393003,
+          "median_absolute_residual": 0.012881688099985855,
+          "chi2_per_pixel": 4.911864037334899,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.4304359591909,
+          "continuum_coefficients": [
+            8.975983814460195e-23,
+            -7.184778110954149e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "fits_roundtrip_verified": true,
+      "spectrum_sha256": "6477735e91db8088a541a75ad9b0a2e36f90ee0dc30f6510fa9d8eac105f2680",
+      "population_sha256": "8f2771ca148adda61d2c5ca8fe406e3588b8a2fec2e9f075b9aa4f8fef47f630",
+      "saved_iterates": [
+        {
+          "iteration": 1,
+          "defect": 0.997186520127825,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 9.858240393162552,
+            "1176.370": 11.776211616238532
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.045600481198089106,
+            "lyalpha": 0.03779000025020512,
+            "siiv_1393": 0.032883419550255866,
+            "siiv_1402": 0.027912524545862134
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.9779799906920047,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 12.258756612759697,
+            "1176.370": 14.548778266870045
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03685303558714509,
+            "lyalpha": 0.037791609127197416,
+            "siiv_1393": 0.03288308701520679,
+            "siiv_1402": 0.027910772532456503
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.7354521126867412,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 12.548740365572922,
+            "1176.370": 14.871315826945496
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03599392044209575,
+            "lyalpha": 0.037791829115423864,
+            "siiv_1393": 0.03288290889286415,
+            "siiv_1402": 0.027909793965760817
+          }
+        },
+        {
+          "iteration": 12,
+          "defect": 0.0035878995999211955,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 12.561378835270231,
+            "1176.370": 14.883504227306881
+          },
+          "normalized_rms": {
+            "ciii_1175": 0.03596164882370345,
+            "lyalpha": 0.03779185049878122,
+            "siiv_1393": 0.032883487805071145,
+            "siiv_1402": 0.027910087600393003
+          }
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "All new screens are unconverged; EW stability is not full population convergence.",
+    "Atomic completeness and realistic collision rates remain unresolved.",
+    "OP tables cover selected levels; high levels still use approximate cross-sections.",
+    "Fe test includes LTE ground bound-free opacity only; no Fe/Ni line forest or thermal feedback.",
+    "Ni continuum screen could not be run: cached Ni IV+ ionization energies and Verner fits absent.",
+    "No diffusion equilibrium or levitation-modified abundance profile was imposed."
+  ],
+  "op_data_coverage": {
+    "2": {
+      "file": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/src/wd_spectra/data/runtime/cache/tlusty-atoms/c3.dat",
+      "sha256": "6e8e9517c3d2f5d5e25a2200d53a302f43451d8cc2a6f947113d8a6863f1395e",
+      "selected_levels": 120,
+      "matched_levels": 59,
+      "levels": [
+        {
+          "level": 1,
+          "label": "2s2.(1S<0>)",
+          "threshold_hz": 1.157921368673293e+16,
+          "op_label": "CIII 1Se 1",
+          "op_formula": 125
+        },
+        {
+          "level": 2,
+          "label": "2s.2p.(3Po<0>)",
+          "threshold_hz": 1.0009288723169582e+16,
+          "op_label": "CIII 3Po 1",
+          "op_formula": 115
+        },
+        {
+          "level": 3,
+          "label": "2s.2p.(3Po<1>)",
+          "threshold_hz": 1.000857851483658e+16,
+          "op_label": "CIII 3Po 1",
+          "op_formula": 115
+        },
+        {
+          "level": 4,
+          "label": "2s.2p.(3Po<2>)",
+          "threshold_hz": 1.000688888454329e+16,
+          "op_label": "CIII 3Po 1",
+          "op_formula": 115
+        },
+        {
+          "level": 5,
+          "label": "2s.2p.(1Po<1>)",
+          "threshold_hz": 8510776721441498.0,
+          "op_label": "CIII 1Po 1",
+          "op_formula": 123
+        },
+        {
+          "level": 6,
+          "label": "2p2.(3P<0>)",
+          "threshold_hz": 7459294847195870.0,
+          "op_label": "CIII 3Pe 1",
+          "op_formula": 127
+        },
+        {
+          "level": 7,
+          "label": "2p2.(3P<1>)",
+          "threshold_hz": 7458434442841410.0,
+          "op_label": "CIII 3Pe 1",
+          "op_formula": 127
+        },
+        {
+          "level": 8,
+          "label": "2p2.(3P<2>)",
+          "threshold_hz": 7457007130948871.0,
+          "op_label": "CIII 3Pe 1",
+          "op_formula": 127
+        },
+        {
+          "level": 9,
+          "label": "2p2.(1D<2>)",
+          "threshold_hz": 7205957329110175.0,
+          "op_label": "CIII 1De 1",
+          "op_formula": 126
+        },
+        {
+          "level": 10,
+          "label": "2p2.(1S<0>)",
+          "threshold_hz": 6107405340826426.0,
+          "op_label": "CIII 1Se 2",
+          "op_formula": 130
+        },
+        {
+          "level": 11,
+          "label": "2s.3s.(3S<1>)",
+          "threshold_hz": 4437767606977529.0,
+          "op_label": "CIII 3Se 1",
+          "op_formula": 140
+        },
+        {
+          "level": 12,
+          "label": "2s.3s.(1S<0>)",
+          "threshold_hz": 4169235707743021.5,
+          "op_label": "CIII 1Se 3",
+          "op_formula": 152
+        },
+        {
+          "level": 13,
+          "label": "2s.3p.(1Po<1>)",
+          "threshold_hz": 3816648898511848.5,
+          "op_label": "CIII 1Po 2",
+          "op_formula": 141
+        },
+        {
+          "level": 14,
+          "label": "2s.3p.(3Po<0>)",
+          "threshold_hz": 3793437167658739.0,
+          "op_label": "CIII 3Po 2",
+          "op_formula": 135
+        },
+        {
+          "level": 15,
+          "label": "2s.3p.(3Po<1>)",
+          "threshold_hz": 3793267185335052.5,
+          "op_label": "CIII 3Po 2",
+          "op_formula": 135
+        },
+        {
+          "level": 16,
+          "label": "2s.3p.(3Po<2>)",
+          "threshold_hz": 3792875056799990.0,
+          "op_label": "CIII 3Po 2",
+          "op_formula": 135
+        },
+        {
+          "level": 17,
+          "label": "2s.3d.(3D<1>)",
+          "threshold_hz": 3484492645500914.0,
+          "op_label": "CIII 3De 1",
+          "op_formula": 146
+        },
+        {
+          "level": 18,
+          "label": "2s.3d.(3D<2>)",
+          "threshold_hz": 3484459668330537.0,
+          "op_label": "CIII 3De 1",
+          "op_formula": 146
+        },
+        {
+          "level": 19,
+          "label": "2s.3d.(3D<3>)",
+          "threshold_hz": 3484375426649838.5,
+          "op_label": "CIII 3De 1",
+          "op_formula": 146
+        },
+        {
+          "level": 20,
+          "label": "2s.3d.(1D<2>)",
+          "threshold_hz": 3290466067305943.0,
+          "op_label": "CIII 1De 2",
+          "op_formula": 159
+        },
+        {
+          "level": 21,
+          "label": "2p.3s.(3Po<0>)",
+          "threshold_hz": 2339113075277565.0,
+          "op_label": "CIII 3Po 3",
+          "op_formula": 182
+        },
+        {
+          "level": 22,
+          "label": "2p.3s.(3Po<1>)",
+          "threshold_hz": 2338143846260853.0,
+          "op_label": "CIII 3Po 3",
+          "op_formula": 182
+        },
+        {
+          "level": 23,
+          "label": "2p.3s.(3Po<2>)",
+          "threshold_hz": 2336093865433048.5,
+          "op_label": "CIII 3Po 3",
+          "op_formula": 182
+        },
+        {
+          "level": 24,
+          "label": "2s.4s.(3S<1>)",
+          "threshold_hz": 2301921122730543.5,
+          "op_label": "CIII 3Se 2",
+          "op_formula": 170
+        },
+        {
+          "level": 25,
+          "label": "2p.3s.(1Po<1>)",
+          "threshold_hz": 2285458019899473.0,
+          "op_label": "CIII 1Po 4",
+          "op_formula": 176
+        },
+        {
+          "level": 26,
+          "label": "2s.4s.(1S<0>)",
+          "threshold_hz": 2234037917295772.2,
+          "op_label": "CIII 1Se 4",
+          "op_formula": 173
+        },
+        {
+          "level": 27,
+          "label": "2s.4p.(3Po<0>)",
+          "threshold_hz": 2051981452363823.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 28,
+          "label": "2s.4p.(3Po<1>)",
+          "threshold_hz": 2051913999060770.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 29,
+          "label": "2s.4p.(3Po<2>)",
+          "threshold_hz": 2051770398473391.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 30,
+          "label": "2p.3p.(1P<1>)",
+          "threshold_hz": 1994238726820902.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 31,
+          "label": "2s.4d.(3D<1>)",
+          "threshold_hz": 1943545021342931.5,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 32,
+          "label": "2s.4d.(3D<2>)",
+          "threshold_hz": 1943082441580240.2,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 33,
+          "label": "2s.4d.(3D<3>)",
+          "threshold_hz": 1942383625360640.8,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 34,
+          "label": "2s.4f.(3Fo<2>)",
+          "threshold_hz": 1925786215508387.8,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 35,
+          "label": "2s.4f.(3Fo<3>)",
+          "threshold_hz": 1925609337958166.2,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 36,
+          "label": "2s.4f.(3Fo<4>)",
+          "threshold_hz": 1925357812085903.2,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 37,
+          "label": "2s.4p.(1Po<1>)",
+          "threshold_hz": 1913778927980568.5,
+          "op_label": "CIII+1__ 2",
+          "op_formula": 110
+        },
+        {
+          "level": 38,
+          "label": "2s.4f.(1Fo<3>)",
+          "threshold_hz": 1904850508996414.0,
+          "op_label": "CIII+1__ 2",
+          "op_formula": 110
+        },
+        {
+          "level": 39,
+          "label": "2p.3p.(3D<1>)",
+          "threshold_hz": 1893612488915824.8,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 40,
+          "label": "2p.3p.(3D<2>)",
+          "threshold_hz": 1892878596978641.8,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 41,
+          "label": "2p.3p.(3D<3>)",
+          "threshold_hz": 1891710305769815.2,
+          "op_label": "CIII+3__ 1",
+          "op_formula": 107
+        },
+        {
+          "level": 42,
+          "label": "2s.4d.(1D<2>)",
+          "threshold_hz": 1859567757592886.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 43,
+          "label": "2p.3p.(3S<1>)",
+          "threshold_hz": 1767657985404164.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 44,
+          "label": "2p.3p.(3P<0>)",
+          "threshold_hz": 1695494643046524.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 45,
+          "label": "2p.3p.(3P<1>)",
+          "threshold_hz": 1694862380752603.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 46,
+          "label": "2p.3p.(3P<2>)",
+          "threshold_hz": 1693750150733423.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 47,
+          "label": "2p.3d.(1Do<2>)",
+          "threshold_hz": 1605380028096304.2,
+          "op_label": "CIII 1D_ 3",
+          "op_formula": 110
+        },
+        {
+          "level": 48,
+          "label": "2p.3p.(1D<2>)",
+          "threshold_hz": 1592580988686912.8,
+          "op_label": "CIII 1D_ 3",
+          "op_formula": 110
+        },
+        {
+          "level": 49,
+          "label": "2p.3d.(3Fo<2>)",
+          "threshold_hz": 1584522567415871.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 50,
+          "label": "2p.3d.(3Fo<3>)",
+          "threshold_hz": 1583786876723940.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 51,
+          "label": "2p.3d.(3Fo<4>)",
+          "threshold_hz": 1582716917441339.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 52,
+          "label": "2p.3d.(3Do<1>)",
+          "threshold_hz": 1456542066473047.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 53,
+          "label": "2p.3d.(3Do<2>)",
+          "threshold_hz": 1456155034409768.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 54,
+          "label": "2p.3d.(3Do<3>)",
+          "threshold_hz": 1455580931852698.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 55,
+          "label": "2s.5s.(1S<0>)",
+          "threshold_hz": 1430809380840615.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 56,
+          "label": "2s.5s.(3S<1>)",
+          "threshold_hz": 1388227159898753.2,
+          "op_label": "CIII+3__ 4",
+          "op_formula": 109
+        },
+        {
+          "level": 57,
+          "label": "2p.3d.(3Po<2>)",
+          "threshold_hz": 1383217028340656.8,
+          "op_label": "CIII+3__ 4",
+          "op_formula": 109
+        },
+        {
+          "level": 58,
+          "label": "2p.3d.(3Po<1>)",
+          "threshold_hz": 1382446861516053.5,
+          "op_label": "CIII+3__ 4",
+          "op_formula": 109
+        },
+        {
+          "level": 59,
+          "label": "2p.3d.(3Po<0>)",
+          "threshold_hz": 1382018158301115.8,
+          "op_label": "CIII+3__ 4",
+          "op_formula": 109
+        },
+        {
+          "level": 60,
+          "label": "2p.3d.(1Fo<3>)",
+          "threshold_hz": 1345170367495877.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 61,
+          "label": "2s.5p.(1Po<1>)",
+          "threshold_hz": 1288596832539155.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 62,
+          "label": "2s.5p.(3Po<2>)",
+          "threshold_hz": 1259368566846447.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 63,
+          "label": "2s.5p.(3Po<1>)",
+          "threshold_hz": 1259269335542848.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 64,
+          "label": "2s.5p.(3Po<0>)",
+          "threshold_hz": 1259197685145386.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 65,
+          "label": "2p.3p.(1S<0>)",
+          "threshold_hz": 1233512966306235.5,
+          "op_label": "CIII+1__ 5",
+          "op_formula": 111
+        },
+        {
+          "level": 66,
+          "label": "2s.5d.(3D<1>)",
+          "threshold_hz": 1221487091646023.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 67,
+          "label": "2s.5d.(3D<2>)",
+          "threshold_hz": 1221482594759153.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 68,
+          "label": "2s.5d.(3D<3>)",
+          "threshold_hz": 1221469703683459.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 69,
+          "label": "2s.5g.(3G<3>)",
+          "threshold_hz": 1189030360973112.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 70,
+          "label": "2s.5g.(3G<4>)",
+          "threshold_hz": 1189030360973112.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 71,
+          "label": "2s.5g.(1G<4>)",
+          "threshold_hz": 1189027363048531.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 72,
+          "label": "2s.5g.(3G<5>)",
+          "threshold_hz": 1189021966784289.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 73,
+          "label": "2s.5d.(1D<2>)",
+          "threshold_hz": 1186658103252956.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 74,
+          "label": "2p.3d.(1Po<1>)",
+          "threshold_hz": 1185027532073898.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 75,
+          "label": "2s.5f.(3Fo<2>)",
+          "threshold_hz": 1171861846488367.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 76,
+          "label": "2s.5f.(3Fo<3>)",
+          "threshold_hz": 1171820774921621.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 77,
+          "label": "2s.5f.(3Fo<4>)",
+          "threshold_hz": 1171756319543151.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 78,
+          "label": "2s.5f.(1Fo<3>)",
+          "threshold_hz": 1120654296737388.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 79,
+          "label": "2s.6s.(3S<1>)",
+          "threshold_hz": 940837581259154.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 80,
+          "label": "2s.6p.(3Po<0>)",
+          "threshold_hz": 875142560975324.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 81,
+          "label": "2s.6p.(3Po<1>)",
+          "threshold_hz": 875118877371145.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 82,
+          "label": "2s.6p.(3Po<2>)",
+          "threshold_hz": 875087099370596.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 83,
+          "label": "2s.6p.(1Po<1>)",
+          "threshold_hz": 873334812453586.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 84,
+          "label": "2s.6d.(3D<1>)",
+          "threshold_hz": 843712319678604.0,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 85,
+          "label": "2s.6d.(3D<2>)",
+          "threshold_hz": 843712319678604.0,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 86,
+          "label": "2s.6d.(3D<3>)",
+          "threshold_hz": 843712319678604.0,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 87,
+          "label": "2s.6g.(1G<4>)",
+          "threshold_hz": 825892655975087.8,
+          "op_label": "CIII+1__ 7",
+          "op_formula": 111
+        },
+        {
+          "level": 88,
+          "label": "2s.6g.(3G<3>)",
+          "threshold_hz": 825892056390171.2,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 89,
+          "label": "2s.6g.(3G<4>)",
+          "threshold_hz": 825892056390171.2,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 90,
+          "label": "2s.6g.(3G<5>)",
+          "threshold_hz": 825886060541008.9,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 91,
+          "label": "2s.6d.(1D<2>)",
+          "threshold_hz": 824671001708737.6,
+          "op_label": "CIII+1__ 7",
+          "op_formula": 111
+        },
+        {
+          "level": 92,
+          "label": "2s.6h.(1Ho<5>)",
+          "threshold_hz": 823370801818389.9,
+          "op_label": "CIII+1__ 7",
+          "op_formula": 111
+        },
+        {
+          "level": 93,
+          "label": "2s.6h.(3Ho<4>)",
+          "threshold_hz": 823370801818389.9,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 94,
+          "label": "2s.6h.(3Ho<5>)",
+          "threshold_hz": 823370801818389.9,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 95,
+          "label": "2s.6h.(3Ho<6>)",
+          "threshold_hz": 823370801818389.9,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 96,
+          "label": "2s.6f.(3Fo<2>)",
+          "threshold_hz": 821160731818014.2,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 97,
+          "label": "2s.6f.(3Fo<3>)",
+          "threshold_hz": 821151738044274.2,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 98,
+          "label": "2s.6f.(3Fo<4>)",
+          "threshold_hz": 821139146761038.2,
+          "op_label": "CIII+3__ 6",
+          "op_formula": 109
+        },
+        {
+          "level": 99,
+          "label": "2s.6f.(1Fo<3>)",
+          "threshold_hz": 813008475507619.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 100,
+          "label": "2s.7s.(3S<1>)",
+          "threshold_hz": 678370183657530.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 101,
+          "label": "2s.7p.(1Po<1>)",
+          "threshold_hz": 639906811296129.4,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 102,
+          "label": "2s.7d.(3D<1>)",
+          "threshold_hz": 617662210912529.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 103,
+          "label": "2s.7d.(3D<2>)",
+          "threshold_hz": 617662210912529.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 104,
+          "label": "2s.7d.(3D<3>)",
+          "threshold_hz": 617662210912529.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 105,
+          "label": "2s.7g.(1G<4>)",
+          "threshold_hz": 606857690726208.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 106,
+          "label": "2s.7g.(3G<3>)",
+          "threshold_hz": 606857690726208.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 107,
+          "label": "2s.7g.(3G<4>)",
+          "threshold_hz": 606857690726208.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 108,
+          "label": "2s.7g.(3G<5>)",
+          "threshold_hz": 606857690726208.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 109,
+          "label": "2s.7d.(1D<2>)",
+          "threshold_hz": 605970305050530.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 110,
+          "label": "2s.7h.(1Ho<5>)",
+          "threshold_hz": 604897048050888.4,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 111,
+          "label": "2s.7h.(3Ho<4>)",
+          "threshold_hz": 604897048050888.4,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 112,
+          "label": "2s.7h.(3Ho<5>)",
+          "threshold_hz": 604897048050888.4,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 113,
+          "label": "2s.7h.(3Ho<6>)",
+          "threshold_hz": 604897048050888.4,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 114,
+          "label": "2s.7f.(3Fo<2>)",
+          "threshold_hz": 604741155972729.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 115,
+          "label": "2s.7f.(3Fo<3>)",
+          "threshold_hz": 604741155972729.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 116,
+          "label": "2s.7f.(3Fo<4>)",
+          "threshold_hz": 604741155972729.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 117,
+          "label": "2s.7i.(1I<6>)",
+          "threshold_hz": 604486332383429.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 118,
+          "label": "2s.7i.(3I<5>)",
+          "threshold_hz": 604486332383429.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 119,
+          "label": "2s.7i.(3I<6>)",
+          "threshold_hz": 604486332383429.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 120,
+          "label": "2s.7i.(3I<7>)",
+          "threshold_hz": 604486332383429.0,
+          "op_label": null,
+          "op_formula": null
+        }
+      ]
+    },
+    "3": {
+      "file": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/src/wd_spectra/data/runtime/cache/tlusty-atoms/c4_35+2lev.dat",
+      "sha256": "024b8335b3d416f8d079afa15d6935597e9b786ae4738f2d0a2991c9a1554979",
+      "selected_levels": 150,
+      "matched_levels": 89,
+      "levels": [
+        {
+          "level": 1,
+          "label": "1s2.2s.(2S<1/2>)",
+          "threshold_hz": 1.559446375441885e+16,
+          "op_label": "C IV 2Se 1",
+          "op_formula": 105
+        },
+        {
+          "level": 2,
+          "label": "1s2.2p.(2Po<1/2>)",
+          "threshold_hz": 1.366128806410081e+16,
+          "op_label": "C IV 2Po 1",
+          "op_formula": 104
+        },
+        {
+          "level": 3,
+          "label": "1s2.2p.(2Po<3/2>)",
+          "threshold_hz": 1.365807428895105e+16,
+          "op_label": "C IV 2Po 1",
+          "op_formula": 104
+        },
+        {
+          "level": 4,
+          "label": "1s2.3s.(2S<1/2>)",
+          "threshold_hz": 6515315118229612.0,
+          "op_label": "C IV 2Se 2",
+          "op_formula": 105
+        },
+        {
+          "level": 5,
+          "label": "1s2.3p.(2Po<1/2>)",
+          "threshold_hz": 5999639113299231.0,
+          "op_label": "C IV 2Po 2",
+          "op_formula": 104
+        },
+        {
+          "level": 6,
+          "label": "1s2.3p.(2Po<3/2>)",
+          "threshold_hz": 5998694767056531.0,
+          "op_label": "C IV 2Po 2",
+          "op_formula": 104
+        },
+        {
+          "level": 7,
+          "label": "1s2.3d.(2D<3/2>)",
+          "threshold_hz": 5854851347783552.0,
+          "op_label": "C IV 2De 1",
+          "op_formula": 104
+        },
+        {
+          "level": 8,
+          "label": "1s2.3d.(2D<5/2>)",
+          "threshold_hz": 5854575538722190.0,
+          "op_label": "C IV 2De 1",
+          "op_formula": 104
+        },
+        {
+          "level": 9,
+          "label": "1s2.4s.(2S<1/2>)",
+          "threshold_hz": 3562395382024573.0,
+          "op_label": "C IV 2Se 3",
+          "op_formula": 105
+        },
+        {
+          "level": 10,
+          "label": "1s2.4p.(2Po<1/2>)",
+          "threshold_hz": 3353679872764971.5,
+          "op_label": "C IV 2Po 3",
+          "op_formula": 105
+        },
+        {
+          "level": 11,
+          "label": "1s2.4p.(2Po<3/2>)",
+          "threshold_hz": 3353284146720413.0,
+          "op_label": "C IV 2Po 3",
+          "op_formula": 105
+        },
+        {
+          "level": 12,
+          "label": "1s2.4d.(2D<3/2>)",
+          "threshold_hz": 3292947916623331.5,
+          "op_label": "C IV 2De 2",
+          "op_formula": 104
+        },
+        {
+          "level": 13,
+          "label": "1s2.4d.(2D<5/2>)",
+          "threshold_hz": 3292830997564712.5,
+          "op_label": "C IV 2De 2",
+          "op_formula": 104
+        },
+        {
+          "level": 14,
+          "label": "1s2.4f.(2Fo<5/2>)",
+          "threshold_hz": 3290036931856151.5,
+          "op_label": "C IV 2Fo 1",
+          "op_formula": 2
+        },
+        {
+          "level": 15,
+          "label": "1s2.4f.(2Fo<7/2>)",
+          "threshold_hz": 3290036931856151.5,
+          "op_label": "C IV 2Fo 1",
+          "op_formula": 2
+        },
+        {
+          "level": 16,
+          "label": "1s2.5s.(2S<1/2>)",
+          "threshold_hz": 2242735963229791.8,
+          "op_label": "C IV 2Se 4",
+          "op_formula": 104
+        },
+        {
+          "level": 17,
+          "label": "1s2.5p.(2Po<1/2>)",
+          "threshold_hz": 2138153364256490.2,
+          "op_label": "C IV 2Po 4",
+          "op_formula": 104
+        },
+        {
+          "level": 18,
+          "label": "1s2.5p.(2Po<3/2>)",
+          "threshold_hz": 2137943509535889.5,
+          "op_label": "C IV 2Po 4",
+          "op_formula": 104
+        },
+        {
+          "level": 19,
+          "label": "1s2.5d.(2D<3/2>)",
+          "threshold_hz": 2107235768062952.8,
+          "op_label": "C IV 2De 3",
+          "op_formula": 104
+        },
+        {
+          "level": 20,
+          "label": "1s2.5d.(2D<5/2>)",
+          "threshold_hz": 2107175809571351.8,
+          "op_label": "C IV 2De 3",
+          "op_formula": 104
+        },
+        {
+          "level": 21,
+          "label": "1s2.5f.(2Fo<5/2>)",
+          "threshold_hz": 2105562926147312.0,
+          "op_label": "C IV 2Fo 2",
+          "op_formula": 2
+        },
+        {
+          "level": 22,
+          "label": "1s2.5f.(2Fo<7/2>)",
+          "threshold_hz": 2105562926147312.0,
+          "op_label": "C IV 2Fo 2",
+          "op_formula": 2
+        },
+        {
+          "level": 23,
+          "label": "1s2.5g.(2G<7/2>)",
+          "threshold_hz": 2105446007088689.5,
+          "op_label": "C IV 2Ge 1",
+          "op_formula": 2
+        },
+        {
+          "level": 24,
+          "label": "1s2.5g.(2G<9/2>)",
+          "threshold_hz": 2105446007088689.5,
+          "op_label": "C IV 2Ge 1",
+          "op_formula": 2
+        },
+        {
+          "level": 25,
+          "label": "1s2.6s.(2S<1/2>)",
+          "threshold_hz": 1540717960180351.8,
+          "op_label": "C IV 2Se 5",
+          "op_formula": 103
+        },
+        {
+          "level": 26,
+          "label": "1s2.6p.(2Po<1/2>)",
+          "threshold_hz": 1481050267264611.5,
+          "op_label": "C IV 2Po 5",
+          "op_formula": 104
+        },
+        {
+          "level": 27,
+          "label": "1s2.6p.(2Po<3/2>)",
+          "threshold_hz": 1480936346130572.0,
+          "op_label": "C IV 2Po 5",
+          "op_formula": 104
+        },
+        {
+          "level": 28,
+          "label": "1s2.6d.(2D<3/2>)",
+          "threshold_hz": 1463158653371171.5,
+          "op_label": "C IV 2De 4",
+          "op_formula": 104
+        },
+        {
+          "level": 29,
+          "label": "1s2.6d.(2D<5/2>)",
+          "threshold_hz": 1463122678276211.2,
+          "op_label": "C IV 2De 4",
+          "op_formula": 104
+        },
+        {
+          "level": 30,
+          "label": "1s2.6f.(2Fo<5/2>)",
+          "threshold_hz": 1462175334108930.0,
+          "op_label": "C IV 2Fo 3",
+          "op_formula": 2
+        },
+        {
+          "level": 31,
+          "label": "1s2.6f.(2Fo<7/2>)",
+          "threshold_hz": 1462175334108930.0,
+          "op_label": "C IV 2Fo 3",
+          "op_formula": 2
+        },
+        {
+          "level": 32,
+          "label": "1s2.6g.(2G<7/2>)",
+          "threshold_hz": 1462073404673211.8,
+          "op_label": "C IV 2Ge 2",
+          "op_formula": 2
+        },
+        {
+          "level": 33,
+          "label": "1s2.6g.(2G<9/2>)",
+          "threshold_hz": 1462073404673211.8,
+          "op_label": "C IV 2Ge 2",
+          "op_formula": 2
+        },
+        {
+          "level": 34,
+          "label": "1s2.6h.(2Ho<9/2>)",
+          "threshold_hz": 1462043425427412.2,
+          "op_label": "C IV 2Ho 1",
+          "op_formula": 2
+        },
+        {
+          "level": 35,
+          "label": "1s2.6h.(2Ho<11/2>)",
+          "threshold_hz": 1462043425427412.2,
+          "op_label": "C IV 2Ho 1",
+          "op_formula": 2
+        },
+        {
+          "level": 36,
+          "label": "1s2.7s.(2S<1/2>)",
+          "threshold_hz": 1123361889775649.2,
+          "op_label": "C IV 2Se 6",
+          "op_formula": 103
+        },
+        {
+          "level": 37,
+          "label": "1s2.7p.(2Po<1/2>)",
+          "threshold_hz": 1086100685170830.1,
+          "op_label": "C IV 2Po 6",
+          "op_formula": 104
+        },
+        {
+          "level": 38,
+          "label": "1s2.7p.(2Po<3/2>)",
+          "threshold_hz": 1086100685170830.1,
+          "op_label": "C IV 2Po 6",
+          "op_formula": 104
+        },
+        {
+          "level": 39,
+          "label": "1s2.7d.(2D<3/2>)",
+          "threshold_hz": 1074915428562851.5,
+          "op_label": "C IV 2De 5",
+          "op_formula": 104
+        },
+        {
+          "level": 40,
+          "label": "1s2.7d.(2D<5/2>)",
+          "threshold_hz": 1074915428562851.5,
+          "op_label": "C IV 2De 5",
+          "op_formula": 104
+        },
+        {
+          "level": 41,
+          "label": "1s2.7f.(2Fo<5/2>)",
+          "threshold_hz": 1074258883079829.6,
+          "op_label": "C IV 2Fo 4",
+          "op_formula": 2
+        },
+        {
+          "level": 42,
+          "label": "1s2.7f.(2Fo<7/2>)",
+          "threshold_hz": 1074258883079829.6,
+          "op_label": "C IV 2Fo 4",
+          "op_formula": 2
+        },
+        {
+          "level": 43,
+          "label": "1s2.7g.(2G<7/2>)",
+          "threshold_hz": 1074147959870371.2,
+          "op_label": "C IV 2Ge 3",
+          "op_formula": 2
+        },
+        {
+          "level": 44,
+          "label": "1s2.7g.(2G<9/2>)",
+          "threshold_hz": 1074147959870371.2,
+          "op_label": "C IV 2Ge 3",
+          "op_formula": 2
+        },
+        {
+          "level": 45,
+          "label": "1s2.7h.(2Ho<9/2>)",
+          "threshold_hz": 1074141964021212.5,
+          "op_label": "C IV 2Ho 2",
+          "op_formula": 2
+        },
+        {
+          "level": 46,
+          "label": "1s2.7h.(2Ho<11/2>)",
+          "threshold_hz": 1074141964021212.5,
+          "op_label": "C IV 2Ho 2",
+          "op_formula": 2
+        },
+        {
+          "level": 47,
+          "label": "1s2.7i.(2I<11/2>)",
+          "threshold_hz": 1074135968172051.8,
+          "op_label": "C IV 2Ie 1",
+          "op_formula": 2
+        },
+        {
+          "level": 48,
+          "label": "1s2.7i.(2I<13/2>)",
+          "threshold_hz": 1074135968172051.8,
+          "op_label": "C IV 2Ie 1",
+          "op_formula": 2
+        },
+        {
+          "level": 49,
+          "label": "1s2.8s.(2S<1/2>)",
+          "threshold_hz": 855194538170072.9,
+          "op_label": "C IV 2Se 7",
+          "op_formula": 103
+        },
+        {
+          "level": 50,
+          "label": "1s2.8p.(2Po<1/2>)",
+          "threshold_hz": 830338745477289.4,
+          "op_label": "C IV 2Po 7",
+          "op_formula": 104
+        },
+        {
+          "level": 51,
+          "label": "1s2.8p.(2Po<3/2>)",
+          "threshold_hz": 830338745477289.4,
+          "op_label": "C IV 2Po 7",
+          "op_formula": 104
+        },
+        {
+          "level": 52,
+          "label": "1s2.8d.(2D<3/2>)",
+          "threshold_hz": 822906890443471.9,
+          "op_label": "C IV 2De 6",
+          "op_formula": 105
+        },
+        {
+          "level": 53,
+          "label": "1s2.8d.(2D<5/2>)",
+          "threshold_hz": 822906890443471.9,
+          "op_label": "C IV 2De 6",
+          "op_formula": 105
+        },
+        {
+          "level": 54,
+          "label": "1s2.8f.(2Fo<5/2>)",
+          "threshold_hz": 822466195530212.9,
+          "op_label": "C IV 2Fo 5",
+          "op_formula": 2
+        },
+        {
+          "level": 55,
+          "label": "1s2.8f.(2Fo<7/2>)",
+          "threshold_hz": 822466195530212.9,
+          "op_label": "C IV 2Fo 5",
+          "op_formula": 2
+        },
+        {
+          "level": 56,
+          "label": "1s2.8k.(2Ko<13/2>)",
+          "threshold_hz": 822409234963191.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 57,
+          "label": "1s2.8k.(2Ko<15/2>)",
+          "threshold_hz": 822409234963191.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 58,
+          "label": "1s2.8h.(2Ho<9/2>)",
+          "threshold_hz": 822376257792814.0,
+          "op_label": "C IV 2Ho 3",
+          "op_formula": 2
+        },
+        {
+          "level": 59,
+          "label": "1s2.8h.(2Ho<11/2>)",
+          "threshold_hz": 822376257792814.0,
+          "op_label": "C IV 2Ho 3",
+          "op_formula": 2
+        },
+        {
+          "level": 60,
+          "label": "1s2.8g.(2G<7/2>)",
+          "threshold_hz": 822376257792814.0,
+          "op_label": "C IV 2Ge 4",
+          "op_formula": 2
+        },
+        {
+          "level": 61,
+          "label": "1s2.8g.(2G<9/2>)",
+          "threshold_hz": 822376257792814.0,
+          "op_label": "C IV 2Ge 4",
+          "op_formula": 2
+        },
+        {
+          "level": 62,
+          "label": "1s2.8i.(2I<11/2>)",
+          "threshold_hz": 822373259868231.1,
+          "op_label": "C IV 2Ie 2",
+          "op_formula": 2
+        },
+        {
+          "level": 63,
+          "label": "1s2.8i.(2I<13/2>)",
+          "threshold_hz": 822373259868231.1,
+          "op_label": "C IV 2Ie 2",
+          "op_formula": 2
+        },
+        {
+          "level": 64,
+          "label": "1s2.9s.(2S<1/2>)",
+          "threshold_hz": 672743846155851.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 65,
+          "label": "1s2.9p.(2Po<1/2>)",
+          "threshold_hz": 655397854535973.2,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 66,
+          "label": "1s2.9p.(2Po<3/2>)",
+          "threshold_hz": 655397854535973.2,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 67,
+          "label": "1s2.9d.(2D<3/2>)",
+          "threshold_hz": 650145490671811.9,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 68,
+          "label": "1s2.9d.(2D<5/2>)",
+          "threshold_hz": 650145490671811.9,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 69,
+          "label": "1s2.9f.(2Fo<5/2>)",
+          "threshold_hz": 649845698213812.5,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 70,
+          "label": "1s2.9f.(2Fo<7/2>)",
+          "threshold_hz": 649845698213812.5,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 71,
+          "label": "1s2.9g.(2G<7/2>)",
+          "threshold_hz": 649815718968011.2,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 72,
+          "label": "1s2.9g.(2G<9/2>)",
+          "threshold_hz": 649815718968011.2,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 73,
+          "label": "1s2.9k.(2Ko<13/2>)",
+          "threshold_hz": 649800729345112.4,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 74,
+          "label": "1s2.9k.(2Ko<15/2>)",
+          "threshold_hz": 649800729345112.4,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 75,
+          "label": "1s2.9i.(2I<11/2>)",
+          "threshold_hz": 649767752174729.8,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 76,
+          "label": "1s2.9i.(2I<13/2>)",
+          "threshold_hz": 649767752174729.8,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 77,
+          "label": "1s2.9h.(2Ho<9/2>)",
+          "threshold_hz": 649767752174729.8,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 78,
+          "label": "1s2.9h.(2Ho<11/2>)",
+          "threshold_hz": 649767752174729.8,
+          "op_label": "C IV+2__ 1",
+          "op_formula": 102
+        },
+        {
+          "level": 79,
+          "label": "1s2.10s.(2S<1/2>)",
+          "threshold_hz": 543023649579252.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 80,
+          "label": "1s2.10p.(2Po<1/2>)",
+          "threshold_hz": 530438362192412.1,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 81,
+          "label": "1s2.10p.(2Po<3/2>)",
+          "threshold_hz": 530438362192412.1,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 82,
+          "label": "1s2.10d.(2D<3/2>)",
+          "threshold_hz": 526633995900391.75,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 83,
+          "label": "1s2.10d.(2D<5/2>)",
+          "threshold_hz": 526633995900391.75,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 84,
+          "label": "1s2.10f.(2Fo<5/2>)",
+          "threshold_hz": 526370178537352.56,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 85,
+          "label": "1s2.10f.(2Fo<7/2>)",
+          "threshold_hz": 526370178537352.56,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 86,
+          "label": "1s2.10g.(2G<7/2>)",
+          "threshold_hz": 526346195140711.94,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 87,
+          "label": "1s2.10g.(2G<9/2>)",
+          "threshold_hz": 526346195140711.94,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 88,
+          "label": "1s2.10h.(2Ho<9/2>)",
+          "threshold_hz": 526340199291549.56,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 89,
+          "label": "1s2.10h.(2Ho<11/2>)",
+          "threshold_hz": 526340199291549.56,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 90,
+          "label": "1s2.10i.(2I<11/2>)",
+          "threshold_hz": 526337201366971.9,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 91,
+          "label": "1s2.10i.(2I<13/2>)",
+          "threshold_hz": 526337201366971.9,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 92,
+          "label": "1s2.10k.(2Ko<13/2>)",
+          "threshold_hz": 526337201366971.9,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 93,
+          "label": "1s2.10k.(2Ko<15/2>)",
+          "threshold_hz": 526337201366971.9,
+          "op_label": "C IV+2__ 2",
+          "op_formula": 104
+        },
+        {
+          "level": 94,
+          "label": "1s2.11s.(2S<1/2>)",
+          "threshold_hz": 447488786988390.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 95,
+          "label": "1s2.11p.(2Po<1/2>)",
+          "threshold_hz": 438057316259712.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 96,
+          "label": "1s2.11p.(2Po<3/2>)",
+          "threshold_hz": 438057316259712.8,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 97,
+          "label": "1s2.11d.(2D<3/2>)",
+          "threshold_hz": 435182306587491.94,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 98,
+          "label": "1s2.11d.(2D<5/2>)",
+          "threshold_hz": 435182306587491.94,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 99,
+          "label": "1s2.11f.(2Fo<5/2>)",
+          "threshold_hz": 435011424886432.7,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 100,
+          "label": "1s2.11f.(2Fo<7/2>)",
+          "threshold_hz": 435011424886432.7,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 101,
+          "label": "1s2.11g.(2G<7/2>)",
+          "threshold_hz": 434993437338952.56,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 102,
+          "label": "1s2.11g.(2G<9/2>)",
+          "threshold_hz": 434993437338952.56,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 103,
+          "label": "1s2.11h.(2Ho<9/2>)",
+          "threshold_hz": 434987441489790.25,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 104,
+          "label": "1s2.11h.(2Ho<11/2>)",
+          "threshold_hz": 434987441489790.25,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 105,
+          "label": "1s2.11i.(2I<11/2>)",
+          "threshold_hz": 434987441489790.25,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 106,
+          "label": "1s2.11i.(2I<13/2>)",
+          "threshold_hz": 434987441489790.25,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 107,
+          "label": "1s2.11k.(2Ko<13/2>)",
+          "threshold_hz": 434984443565212.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 108,
+          "label": "1s2.11k.(2Ko<15/2>)",
+          "threshold_hz": 434984443565212.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 109,
+          "label": "1s2.12s.(2S<1/2>)",
+          "threshold_hz": 375121885551770.9,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 110,
+          "label": "1s2.12p.(2Po<1/2>)",
+          "threshold_hz": 367872903917330.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 111,
+          "label": "1s2.12p.(2Po<3/2>)",
+          "threshold_hz": 367872903917330.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 112,
+          "label": "1s2.12d.(2D<3/2>)",
+          "threshold_hz": 365663433501871.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 113,
+          "label": "1s2.12d.(2D<5/2>)",
+          "threshold_hz": 365663433501871.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 114,
+          "label": "1s2.12f.(2Fo<5/2>)",
+          "threshold_hz": 365525528971191.3,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 115,
+          "label": "1s2.12f.(2Fo<7/2>)",
+          "threshold_hz": 365525528971191.3,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 116,
+          "label": "1s2.12g.(2G<7/2>)",
+          "threshold_hz": 365513537272871.75,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 117,
+          "label": "1s2.12g.(2G<9/2>)",
+          "threshold_hz": 365513537272871.75,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 118,
+          "label": "1s2.12h.(2Ho<9/2>)",
+          "threshold_hz": 365507541423711.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 119,
+          "label": "1s2.12h.(2Ho<11/2>)",
+          "threshold_hz": 365507541423711.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 120,
+          "label": "1s2.12i.(2I<11/2>)",
+          "threshold_hz": 365507541423711.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 121,
+          "label": "1s2.12i.(2I<13/2>)",
+          "threshold_hz": 365507541423711.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 122,
+          "label": "1s2.12k.(2Ko<13/2>)",
+          "threshold_hz": 365504543499130.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 123,
+          "label": "1s2.12k.(2Ko<15/2>)",
+          "threshold_hz": 365504543499130.0,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 124,
+          "label": "1s2.13s.(2S<1/2>)",
+          "threshold_hz": 318988745715853.2,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 125,
+          "label": "1s2.13p.(2Po<1/2>)",
+          "threshold_hz": 313301682787591.6,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 126,
+          "label": "1s2.13p.(2Po<3/2>)",
+          "threshold_hz": 313301682787591.6,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 127,
+          "label": "1s2.13d.(2D<3/2>)",
+          "threshold_hz": 311562886531189.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 128,
+          "label": "1s2.13d.(2D<5/2>)",
+          "threshold_hz": 311562886531189.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 129,
+          "label": "1s2.13f.(2Fo<5/2>)",
+          "threshold_hz": 311448965397151.7,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 130,
+          "label": "1s2.13f.(2Fo<7/2>)",
+          "threshold_hz": 311448965397151.7,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 131,
+          "label": "1s2.13g.(2G<7/2>)",
+          "threshold_hz": 311439971623411.6,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 132,
+          "label": "1s2.13g.(2G<9/2>)",
+          "threshold_hz": 311439971623411.6,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 133,
+          "label": "1s2.13h.(2Ho<9/2>)",
+          "threshold_hz": 311436973698830.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 134,
+          "label": "1s2.13h.(2Ho<11/2>)",
+          "threshold_hz": 311436973698830.5,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 135,
+          "label": "1s2.13i.(2I<11/2>)",
+          "threshold_hz": 311433975774252.75,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 136,
+          "label": "1s2.13i.(2I<13/2>)",
+          "threshold_hz": 311433975774252.75,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 137,
+          "label": "1s2.13k.(2Ko<13/2>)",
+          "threshold_hz": 311433975774252.75,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 138,
+          "label": "1s2.13k.(2Ko<15/2>)",
+          "threshold_hz": 311433975774252.75,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 139,
+          "label": "1s2.14s.(2S<1/2>)",
+          "threshold_hz": 274574493063151.28,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 140,
+          "label": "1s2.14p.(2Po<1/2>)",
+          "threshold_hz": 270026641475291.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 141,
+          "label": "1s2.14p.(2Po<3/2>)",
+          "threshold_hz": 270026641475291.44,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 142,
+          "label": "1s2.14d.(2D<3/2>)",
+          "threshold_hz": 268635604470171.78,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 143,
+          "label": "1s2.14d.(2D<5/2>)",
+          "threshold_hz": 268635604470171.78,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 144,
+          "label": "1s2.14f.(2Fo<5/2>)",
+          "threshold_hz": 268542668808191.84,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 145,
+          "label": "1s2.14f.(2Fo<7/2>)",
+          "threshold_hz": 268542668808191.84,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 146,
+          "label": "1s2.14g.(2G<7/2>)",
+          "threshold_hz": 268533675034451.78,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 147,
+          "label": "1s2.14g.(2G<9/2>)",
+          "threshold_hz": 268533675034451.78,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 148,
+          "label": "1s2.14h.(2Ho<9/2>)",
+          "threshold_hz": 268530677109872.34,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 149,
+          "label": "1s2.14h.(2Ho<11/2>)",
+          "threshold_hz": 268530677109872.34,
+          "op_label": null,
+          "op_formula": null
+        },
+        {
+          "level": 150,
+          "label": "1s2.14i.(2I<11/2>)",
+          "threshold_hz": 268530677109872.34,
+          "op_label": null,
+          "op_formula": null
+        }
+      ]
+    }
+  },
+  "validation": {
+    "targeted_tests_passed": 101,
+    "command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 PYTHONPATH=src:research python -m pytest -q tests/test_hot_trace_metals.py tests/test_hot_trace_checkpoint.py tests/test_hot_daz_benchmark.py tests/test_hot_daz_comparison.py tests/test_hot_trace_levitation.py tests/test_hot_public.py tests/test_light_metal_nlte.py",
+    "new_checks": [
+      "Warm starts conserve represented particles and do not inherit convergence",
+      "Callback spectra are evaluated states and stopping does not grant convergence",
+      "Real C III/C IV OP tables preserve Planck detailed balance and Kirchhoff law",
+      "Frozen H/He reuse rejects changes to host equations or physical tables",
+      "All eight comparison FITS files preserve convergence flags, pass checksums, and round-trip intrinsic predictions exactly"
+    ]
+  },
+  "interpretation": [
+    "C III/C IV atom size has a much larger effect on the C III multiplet than adding the next ion stage did.",
+    "Tabulated photoionization data weaken C III at fixed atom size; choosing approximate cross-sections solely for a better observed match is unjustified.",
+    "At 120/150 C III/C IV levels with partial OP tables, the two cleaner C III equivalent widths reach 73.9/74.3 percent of observation, versus 45.6/46.6 percent in the baseline.",
+    "The selected 80/100 atom reaches about 78 percent with approximate photoionization; LTE Fe continuum changes that by about 2 percent relative.",
+    "New spectra are not converged or atom-complete; these are decisions about promising experiments, not fitted abundances or a levitation solution."
+  ],
+  "ew_stability_checks": {
+    "large_12_more_iterations_relative_change": {
+      "1175.987": -0.0004932766497912633,
+      "1176.370": -0.0005788137759367151
+    },
+    "larger_op_iteration8_to12_relative_change": {
+      "1175.987": 0.0010071504652358065,
+      "1176.370": 0.0008195912522617199
+    }
+  }
+}

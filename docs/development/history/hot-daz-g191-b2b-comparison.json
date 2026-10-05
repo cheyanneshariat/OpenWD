@@ -1,0 +1,610 @@
+{
+  "date": "2026-10-02",
+  "target": "G191-B2B",
+  "reference": "https://doi.org/10.1093/mnras/stt1604",
+  "scope": "fixed published H/He/C/Si composition; experimental fixed-host NLTE; no abundance fitting",
+  "observationally_validated": false,
+  "abundance_fitting_qualified": false,
+  "host_config": {
+    "effective_temperature": 52500.0,
+    "logg": 7.53,
+    "log_hydrogen_to_helium": 5.0,
+    "quality": "standard",
+    "maximum_helium_ii_level": 32,
+    "maximum_hydrogen_level": 8,
+    "population_maximum_iterations": 120,
+    "population_tolerance": 0.0001,
+    "hydrogenic_collision_model": "tlusty-mihalas",
+    "helium_i_profile": "Tremblay26.txt",
+    "helium_ii_interpolation": "series-adaptive"
+  },
+  "host_initialization": {
+    "cold_start": false,
+    "checkpoint": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-model/host-stage-0.000-final.npz",
+    "checkpoint_sha256": "76df666a3fbc405314248a4d77e752ecf0e5ac8ec518e65dc902f23d08fdf5c8",
+    "fixed_temperature_population_initialization": true,
+    "method": "full NLTE from a numerical checkpoint; independent final certificate required"
+  },
+  "host_convergence_certificate": {
+    "schema": 1,
+    "scope": "declared equations on the structure grid",
+    "verified": true,
+    "checks": {
+      "all_depth_flux": {
+        "value": 5.296652005881697e-12,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "surface_flux": {
+        "value": 3.928635194938579e-12,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "photospheric_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "local_energy": {
+        "value": 2.290977291610335e-05,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "temperature_stationarity": {
+        "value": 0.00011256820275204626,
+        "tolerance": 0.0003,
+        "passed": true,
+        "measured": true
+      },
+      "source_closure": {
+        "value": 1.5392272304784722e-15,
+        "tolerance": 1e-06,
+        "passed": true,
+        "measured": true
+      },
+      "boundary_screening": {
+        "value": 1.3831575185958676e-06,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      }
+    },
+    "required_checks": [
+      "all_depth_flux",
+      "local_energy",
+      "temperature_stationarity",
+      "source_closure",
+      "boundary_screening"
+    ],
+    "failures": [],
+    "independent_grid_validation": false,
+    "full_physics_validation": false
+  },
+  "host_population_defect": 2.444613151569748e-05,
+  "numerical_identity": {
+    "numerical_code": "22cb11f5efbe371a6f0a23c966bf8ddfcc8b637095c97194b165949cbb7e55de",
+    "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+  },
+  "models": {
+    "compact": {
+      "metadata": {
+        "levels_per_charge": {
+          "C": {
+            "2": 20,
+            "3": 30,
+            "4": 1
+          },
+          "Si": {
+            "2": 30,
+            "3": 23,
+            "4": 1
+          }
+        },
+        "converged": true,
+        "iterations": 20,
+        "population_defect": 0.000723302694737366,
+        "population_wavelength_points": 12767,
+        "source_closure_residual": 1.3231849526494572e-15,
+        "maximum_particle_conservation_error": 2.4322236373036846e-16
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.07474930412190034,
+          "median_absolute_residual": 0.02802426471940045,
+          "chi2_per_pixel": 16.516845714662818,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 30.93418986746097,
+          "continuum_coefficients": [
+            8.966134702484121e-23,
+            1.2255355852499699e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 3.7080141900508026,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.218055805031092,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 4.5431414492338895,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.22668187169351375,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03778191671080209,
+          "median_absolute_residual": 0.02716537251779566,
+          "chi2_per_pixel": 17.843031807580335,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7688.3098814382265,
+          "continuum_coefficients": [
+            9.010261586770055e-23,
+            -1.033463746912813e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.044253448524443136,
+          "median_absolute_residual": 0.013421141889376265,
+          "chi2_per_pixel": 15.711082118737488,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 82.99321296893862,
+          "continuum_coefficients": [
+            8.873169214571257e-23,
+            -1.0862981110261662e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.04116760859858965,
+          "median_absolute_residual": 0.01465722936959446,
+          "chi2_per_pixel": 11.13809425457853,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 66.14708515331236,
+          "continuum_coefficients": [
+            8.974582361318095e-23,
+            -7.396533214949673e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      }
+    },
+    "compact_refined": {
+      "metadata": {
+        "levels_per_charge": {
+          "C": {
+            "2": 20,
+            "3": 30,
+            "4": 1
+          },
+          "Si": {
+            "2": 30,
+            "3": 23,
+            "4": 1
+          }
+        },
+        "converged": true,
+        "iterations": 22,
+        "population_defect": 8.84032508787335e-05,
+        "population_wavelength_points": 119014,
+        "source_closure_residual": 1.4067032947502703e-15,
+        "maximum_particle_conservation_error": 3.477932339265615e-16
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.07462900777257371,
+          "median_absolute_residual": 0.028023586445079407,
+          "chi2_per_pixel": 16.46271157971022,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 31.11378101286951,
+          "continuum_coefficients": [
+            8.966134952700869e-23,
+            1.2255393536138945e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 3.7303249763830326,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.21936782710684474,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 4.570326333392819,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.2280382724333491,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.037786624758081366,
+          "median_absolute_residual": 0.027183253827879283,
+          "chi2_per_pixel": 17.845666779992733,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7688.35630663969,
+          "continuum_coefficients": [
+            9.010261604943526e-23,
+            -1.0334637353726405e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.04356736454443625,
+          "median_absolute_residual": 0.013121227268809155,
+          "chi2_per_pixel": 15.153943894063934,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 83.69520545183417,
+          "continuum_coefficients": [
+            8.873173816752803e-23,
+            -1.0862275099748324e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.04026209910269569,
+          "median_absolute_residual": 0.014419616610841957,
+          "chi2_per_pixel": 10.573472119556781,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 66.98316126036588,
+          "continuum_coefficients": [
+            8.974597190334966e-23,
+            -7.394436681960671e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      }
+    },
+    "expanded": {
+      "metadata": {
+        "levels_per_charge": {
+          "C": {
+            "2": 40,
+            "3": 54,
+            "4": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 1
+          }
+        },
+        "converged": true,
+        "iterations": 22,
+        "population_defect": 7.983363260693032e-05,
+        "population_wavelength_points": 21961,
+        "source_closure_residual": 1.4221583524587082e-15,
+        "maximum_particle_conservation_error": 6.080559093259211e-16
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.05484158709203371,
+          "median_absolute_residual": 0.026749294381258504,
+          "chi2_per_pixel": 8.769768752096658,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 61.04095383086391,
+          "continuum_coefficients": [
+            8.966327236793419e-23,
+            1.2247239898280776e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 7.712679465681067,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.45355665961267955,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 9.295226078154581,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.46378904745872557,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779337189170424,
+          "median_absolute_residual": 0.02718264847186458,
+          "chi2_per_pixel": 17.850358505471903,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.713726544526,
+          "continuum_coefficients": [
+            9.010278186436872e-23,
+            -1.0335078276508186e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.03246080961076663,
+          "median_absolute_residual": 0.018714540625869525,
+          "chi2_per_pixel": 7.944874451662124,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.73424534473068,
+          "continuum_coefficients": [
+            8.874265292134172e-23,
+            -1.0708731149964259e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.027400734998522826,
+          "median_absolute_residual": 0.01266616299961687,
+          "chi2_per_pixel": 4.713225888902925,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.9401262767215,
+          "continuum_coefficients": [
+            8.976052277581575e-23,
+            -7.172631784362426e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      }
+    },
+    "expanded_refined": {
+      "metadata": {
+        "levels_per_charge": {
+          "C": {
+            "2": 40,
+            "3": 54,
+            "4": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 1
+          }
+        },
+        "converged": true,
+        "iterations": 22,
+        "population_defect": 8.173494263974575e-05,
+        "population_wavelength_points": 137402,
+        "source_closure_residual": 1.4103664852907748e-15,
+        "maximum_particle_conservation_error": 7.296670911911054e-16
+      },
+      "metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.05466375973875956,
+          "median_absolute_residual": 0.026750722729568743,
+          "chi2_per_pixel": 8.711271681559495,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 61.32432367695283,
+          "continuum_coefficients": [
+            8.966328065963618e-23,
+            1.2247251745609659e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 7.749333064308583,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.4557121340921071,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 9.339775727666265,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.4660118701569494,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779797070639916,
+          "median_absolute_residual": 0.027182610485996683,
+          "chi2_per_pixel": 17.85301488130913,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.756310299463,
+          "continuum_coefficients": [
+            9.010278226489737e-23,
+            -1.0335079603349276e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.0319666690019919,
+          "median_absolute_residual": 0.01887667286656103,
+          "chi2_per_pixel": 7.637623539164026,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 93.4560887179208,
+          "continuum_coefficients": [
+            8.874266521886022e-23,
+            -1.0708536523173675e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.026751057228120448,
+          "median_absolute_residual": 0.01251846019877545,
+          "chi2_per_pixel": 4.4486423624183296,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 74.85763178191917,
+          "continuum_coefficients": [
+            8.976064813588772e-23,
+            -7.170866649601388e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      }
+    }
+  },
+  "sensitivity": {
+    "ciii_1175": {
+      "compact_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.0008987836451949116,
+        "rms_on_score_mask": 0.00013254390970591048
+      },
+      "expanded_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.001162248805142263,
+        "rms_on_score_mask": 0.00021290116730755023
+      },
+      "atom_expansion_on_refined_grid": {
+        "maximum_normalized_flux_difference": 0.11951146145072988,
+        "rms_on_score_mask": 0.022628227068646905
+      },
+      "resolution_144000_to_114000": {
+        "maximum_normalized_flux_difference": 0.0009952600672290535,
+        "rms_on_score_mask": 0.00023809956226930587
+      }
+    },
+    "lyalpha": {
+      "compact_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.008279282701242341,
+        "rms_on_score_mask": 0.00015065024120025752
+      },
+      "expanded_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.012419291734041216,
+        "rms_on_score_mask": 0.00024512481988059044
+      },
+      "atom_expansion_on_refined_grid": {
+        "maximum_normalized_flux_difference": 0.05944669397392355,
+        "rms_on_score_mask": 0.0006930088306760712
+      },
+      "resolution_144000_to_114000": {
+        "maximum_normalized_flux_difference": 0.002014859397137747,
+        "rms_on_score_mask": 2.946610341056888e-05
+      }
+    },
+    "siiv_1393": {
+      "compact_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.007468150376549687,
+        "rms_on_score_mask": 0.0010988564766523184
+      },
+      "expanded_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.008229568843561075,
+        "rms_on_score_mask": 0.0011116913395712005
+      },
+      "atom_expansion_on_refined_grid": {
+        "maximum_normalized_flux_difference": 0.04516537476984672,
+        "rms_on_score_mask": 0.018255868283989413
+      },
+      "resolution_144000_to_114000": {
+        "maximum_normalized_flux_difference": 0.002321451358483162,
+        "rms_on_score_mask": 0.0005283529173503765
+      }
+    },
+    "siiv_1402": {
+      "compact_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.009658049196448415,
+        "rms_on_score_mask": 0.0015790242308403538
+      },
+      "expanded_radiation_grid": {
+        "maximum_normalized_flux_difference": 0.011027607110539295,
+        "rms_on_score_mask": 0.0017064152502585753
+      },
+      "atom_expansion_on_refined_grid": {
+        "maximum_normalized_flux_difference": 0.04775239150756572,
+        "rms_on_score_mask": 0.016335558128949983
+      },
+      "resolution_144000_to_114000": {
+        "maximum_normalized_flux_difference": 0.002813922708270078,
+        "rms_on_score_mask": 0.0007167781172124547
+      }
+    }
+  },
+  "tests": {
+    "passed": 88,
+    "command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python -m pytest -q tests/test_hot_trace_metals.py tests/test_hot_daz_benchmark.py tests/test_hot_daz_comparison.py tests/test_hot_trace_checkpoint.py tests/test_hot_public.py tests/test_light_metal_nlte.py"
+  },
+  "conclusions": [
+    "Expanded atoms still underpredict isolated C III equivalent widths by factors 2.1-2.2.",
+    "Atom expansion approximately doubles C III strength; atom-size convergence is not established.",
+    "Radiation-grid refinement changes the isolated C III equivalent widths by less than 1%.",
+    "Si IV is closer, with 2.7-3.2% conditional normalized-flux RMS in retained pixels; not a statistically satisfactory validated fit.",
+    "Ly alpha plus the fixed diagnostic ISM screen is too deep in the wings; conditional RMS 3.8%.",
+    "Approximate atomic rates and missing other-metal blanketing both require further development."
+  ],
+  "artifacts": {
+    "prediction.fits": {
+      "path": "results/hot-daz/g191-b2b-comparison/prediction.fits",
+      "sha256": "33038fb1a102c7e8d36fd0844c25850c0176b5d88b96827d9aa758f45d19d8fd"
+    },
+    "comparison.fits": {
+      "path": "results/hot-daz/g191-b2b-comparison/comparison.fits",
+      "sha256": "116596dd1717bc0834d40b4670d17c2ad187be37ca2e823b3da4c24e165da40f"
+    },
+    "comparison.png": {
+      "path": "results/hot-daz/g191-b2b-comparison/comparison.png",
+      "sha256": "b593c7e624f8f116d80a02dce4ce46eb84d6fdcd710df4fca994b2c46fcb7bb1"
+    },
+    "comparison.pdf": {
+      "path": "results/hot-daz/g191-b2b-comparison/comparison.pdf",
+      "sha256": "27db6b9e86966d5eabfee7630d5ef34d47c5d102d29ba48fb389cb867a5bf5cf"
+    },
+    "comparison.json": {
+      "path": "results/hot-daz/g191-b2b-comparison/comparison.json",
+      "sha256": "7dce116625abe9feef1167e08b010b161fa3291879fcf56156ca809a6a1687c0"
+    }
+  }
+}

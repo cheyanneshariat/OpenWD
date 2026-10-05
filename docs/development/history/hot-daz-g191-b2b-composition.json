@@ -1,0 +1,1543 @@
+{
+  "cases": {
+    "CSi": {
+      "directory": "results/hot-daz/composition-csi",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "Stout; selected TLUSTY/OP photoionization with Verner/Kramers fallbacks; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 1.2304215887860683e-05,
+        "maximum_trace_electron_fraction_bound": 6.1929163038235566e-06,
+        "levels_per_charge": {
+          "C": {
+            "2": 240,
+            "3": 243,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {
+          "C": [
+            2,
+            3
+          ]
+        },
+        "explicit_collision_records": 2767,
+        "explicit_collision_sources": [
+          "CHIANTI carbon snapshot c_3.scups; 8800b6692a135fcb58138bdb56894c75d8f14f60d1bb6914f9ef5f9e865a64b9",
+          "CHIANTI carbon snapshot c_4.scups; 5f68c7367b5d3cbb61de333046ccad233f768bf9099551c84fed14c9e85a6b7c"
+        ],
+        "population_defect_history": [
+          0.0008185471897879313
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 0,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 72059,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.9992085110666545,
+          "Si": 0.13460548930074925
+        },
+        "maximum_particle_conservation_error": 2.2689853329680086e-16,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0); missing thresholds from Verner & Yakovlev 1995",
+        "source_closure_residual": 1.461386756771843e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "composition-csi",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482
+        },
+        "nlte_elements": [
+          "C",
+          "Si"
+        ],
+        "lte_background_elements": [],
+        "abundance_choices": {
+          "C": {
+            "number_ratio": 1.72e-07,
+            "inferred_from_ion": "III"
+          },
+          "Si": {
+            "number_ratio": 3.68e-07,
+            "inferred_from_ion": "IV"
+          }
+        },
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py, light_metal_nlte.py changed",
+        "numerical_identity": {
+          "numerical_code": "a49e0a7ccf7a3bc53f64973d092ee578b50f30721f873cdc689237000c672ebc",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "all_metals_maximum_mass_ratio": 1.2304215887860683e-05,
+        "all_metals_maximum_electron_bound": 6.1929163038235566e-06,
+        "seed_population_sha256": "488dff2b5354c3526b5bbd7a561364577a29bc52c91e23b7950148dbef7e799c",
+        "research_code_sha256": {
+          "explore_hot_composition.py": "2b955fcaee9dea5b04bae79674de6d555861bca57decd485b3a7109a5c105b0b",
+          "hot_trace_composition.py": "d6728840fa77aa6aec962b59fd2b6f851eb9a2ce019d4a56ab08f6d6ae6eed70",
+          "hot_trace_collisions.py": "4aaa3793eca5cf634dc298dd977efa5d8ab78328cb5079c983a046d9bbe9891b"
+        },
+        "limitations": [
+          "H/He structure response",
+          "Fe/Ni NLTE populations",
+          "inner-shell P/Ni absorption",
+          "predicted-energy Fe/Ni lines",
+          "complete atoms and accurate collisions for the new light metals",
+          "short unconverged exploration; no abundance fit"
+        ],
+        "converged": false,
+        "iterations": 1,
+        "population_defect": 0.0008185471897879313
+      },
+      "progress": [
+        {
+          "iteration": 1,
+          "defect": 0.0008185471897879313,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 14.940221638527973,
+            "1176.370": 17.535868307667847
+          }
+        }
+      ],
+      "original_diagnostic_metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.030726131388866516,
+          "median_absolute_residual": 0.018946859243490433,
+          "chi2_per_pixel": 2.602286725195188,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 111.34797438844413,
+          "continuum_coefficients": [
+            8.966386220841448e-23,
+            1.2259489168890078e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 14.940221638527973,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.8785840317098471,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 17.535868307667847,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.8749592092104974,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03779586681407705,
+          "median_absolute_residual": 0.027182241583960987,
+          "chi2_per_pixel": 17.851281570898053,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7691.298766479162,
+          "continuum_coefficients": [
+            9.010291353376772e-23,
+            -1.0335303605222231e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.03287038701681009,
+          "median_absolute_residual": 0.018209715545615235,
+          "chi2_per_pixel": 8.202561810541644,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.12278001696339,
+          "continuum_coefficients": [
+            8.874189066484712e-23,
+            -1.0719325605409184e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.027892480375416,
+          "median_absolute_residual": 0.012876775659469486,
+          "chi2_per_pixel": 4.904697800536812,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 73.45095961823873,
+          "continuum_coefficients": [
+            8.975987303503051e-23,
+            -7.184584688583499e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "file_sha256": {
+        "spectrum.npz": "73636001ec4d5a69fb0048c7c8133fc6d5b646cf537d05e9a94db8976e769c21",
+        "populations.npz": "dcd2a2de7df04bdca016fbd723edfef1dfce1d40d264c9e805ce2b636c966b00",
+        "metadata.json": "1cea828ca82cef811d31cb3b164ec0f9063ebd3b8c7d5e5199e1c4e3df68d454",
+        "comparison/prediction.fits": "8ae018c209a416bb8606b3245b5d09ce491aad061d21179079507a9035cf7f6e"
+      }
+    },
+    "Light": {
+      "directory": "results/hot-daz/composition-light",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "Stout; selected TLUSTY/OP photoionization with Verner/Kramers fallbacks; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 3.207281695012663e-05,
+        "maximum_trace_electron_fraction_bound": 1.6077147209182305e-05,
+        "levels_per_charge": {
+          "C": {
+            "2": 240,
+            "3": 243,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          },
+          "N": {
+            "2": 40,
+            "3": 60,
+            "4": 40,
+            "5": 1
+          },
+          "O": {
+            "2": 40,
+            "3": 60,
+            "4": 40,
+            "5": 10,
+            "6": 1
+          },
+          "Al": {
+            "2": 40,
+            "3": 20,
+            "4": 1
+          },
+          "P": {
+            "2": 30,
+            "3": 50,
+            "4": 40,
+            "5": 1
+          },
+          "S": {
+            "2": 30,
+            "3": 60,
+            "4": 40,
+            "5": 30,
+            "6": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {
+          "C": [
+            2,
+            3
+          ]
+        },
+        "explicit_collision_records": 2767,
+        "explicit_collision_sources": [
+          "CHIANTI carbon snapshot c_3.scups; 8800b6692a135fcb58138bdb56894c75d8f14f60d1bb6914f9ef5f9e865a64b9",
+          "CHIANTI carbon snapshot c_4.scups; 5f68c7367b5d3cbb61de333046ccad233f768bf9099551c84fed14c9e85a6b7c"
+        ],
+        "population_defect_history": [
+          1.0,
+          0.9999999999438542,
+          0.9999999999010476,
+          0.9999999998182347,
+          0.9999999996586642,
+          0.9999999993458906,
+          0.9999999987289927,
+          0.9999999975065191
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 0,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 150618,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.9992085110666545,
+          "Si": 0.13460548930074925,
+          "N": 0.9159738327532666,
+          "O": 0.9048182578838018,
+          "Al": 0.004492646253542853,
+          "P": 0.16521445175078237,
+          "S": 0.7388307060723948
+        },
+        "maximum_particle_conservation_error": 2.782345871412492e-15,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0); missing thresholds from Verner & Yakovlev 1995",
+        "source_closure_residual": 1.3877045682604822e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "composition-light",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482,
+          "N": -6.665546248849069,
+          "O": -6.3851027839668655,
+          "Al": -6.795880017344075,
+          "P": -7.785156151952302,
+          "S": -6.767003889607846
+        },
+        "nlte_elements": [
+          "C",
+          "Si",
+          "N",
+          "O",
+          "Al",
+          "P",
+          "S"
+        ],
+        "lte_background_elements": [],
+        "abundance_choices": {
+          "C": {
+            "number_ratio": 1.72e-07,
+            "inferred_from_ion": "III"
+          },
+          "Si": {
+            "number_ratio": 3.68e-07,
+            "inferred_from_ion": "IV"
+          },
+          "N": {
+            "number_ratio": 2.16e-07,
+            "inferred_from_ion": "V"
+          },
+          "O": {
+            "number_ratio": 4.12e-07,
+            "inferred_from_ion": "IV"
+          },
+          "Al": {
+            "number_ratio": 1.6e-07,
+            "inferred_from_ion": "III"
+          },
+          "P": {
+            "number_ratio": 1.64e-08,
+            "inferred_from_ion": "V"
+          },
+          "S": {
+            "number_ratio": 1.71e-07,
+            "inferred_from_ion": "IV"
+          }
+        },
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py, light_metal_nlte.py changed",
+        "numerical_identity": {
+          "numerical_code": "a49e0a7ccf7a3bc53f64973d092ee578b50f30721f873cdc689237000c672ebc",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "all_metals_maximum_mass_ratio": 3.207281695012663e-05,
+        "all_metals_maximum_electron_bound": 1.6077147209182305e-05,
+        "seed_population_sha256": "488dff2b5354c3526b5bbd7a561364577a29bc52c91e23b7950148dbef7e799c",
+        "research_code_sha256": {
+          "explore_hot_composition.py": "dd32a2188a29ab98af1401bd5191b48d04948b2c20a15cdfbf6253dc066e66c4",
+          "hot_trace_composition.py": "d6728840fa77aa6aec962b59fd2b6f851eb9a2ce019d4a56ab08f6d6ae6eed70",
+          "hot_trace_collisions.py": "4aaa3793eca5cf634dc298dd977efa5d8ab78328cb5079c983a046d9bbe9891b"
+        },
+        "limitations": [
+          "H/He structure response",
+          "Fe/Ni NLTE populations",
+          "inner-shell P/Ni absorption",
+          "predicted-energy Fe/Ni lines",
+          "complete atoms and accurate collisions for the new light metals",
+          "short unconverged exploration; no abundance fit"
+        ],
+        "converged": false,
+        "iterations": 8,
+        "population_defect": 0.9999999975065191
+      },
+      "progress": [
+        {
+          "iteration": 1,
+          "defect": 1.0,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 14.940188113822105,
+            "1176.370": 17.53583056567779
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.9999999998182347,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 15.27016404354113,
+            "1176.370": 17.906303038054805
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.9999999975065191,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 15.282092697854154,
+            "1176.370": 17.91930686874701
+          }
+        }
+      ],
+      "original_diagnostic_metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.030309587552972014,
+          "median_absolute_residual": 0.01903422563074908,
+          "chi2_per_pixel": 2.5276124673975544,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 113.64781288328452,
+          "continuum_coefficients": [
+            8.966386990486386e-23,
+            1.2259690483076789e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 15.282092697854154,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.8986883153607091,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 17.91930686874701,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.8940910305891933,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.03757203992332772,
+          "median_absolute_residual": 0.026959136021547092,
+          "chi2_per_pixel": 17.635343428539965,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7677.257610646952,
+          "continuum_coefficients": [
+            9.014383479789738e-23,
+            -9.420516386029543e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.03207273222532351,
+          "median_absolute_residual": 0.018981513989693388,
+          "chi2_per_pixel": 7.709221750628994,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 93.10268271078783,
+          "continuum_coefficients": [
+            8.874234160172673e-23,
+            -1.0708031389210094e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.027004577326665412,
+          "median_absolute_residual": 0.012454854838814367,
+          "chi2_per_pixel": 4.561640835066288,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 74.22180922517913,
+          "continuum_coefficients": [
+            8.976068827578707e-23,
+            -7.17239312603615e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "file_sha256": {
+        "spectrum.npz": "b058bae761bf1dd812481d12ec69d4cfff2d1f8028072b07def9ac96e700cc81",
+        "populations.npz": "01a5b2cf05aa16d56fe15043fb77b2fc522d2637744c80d4175cb673656fa8b2",
+        "metadata.json": "85756e50bbf638e2ea66decf9b7021d0f987d9734c83678b8db494b3c6c00697",
+        "comparison/prediction.fits": "bdf8f2d31629f7ee8a10c8137202319446c5e0655fe6afd63f78717b75408ebb"
+      }
+    },
+    "All": {
+      "directory": "results/hot-daz/composition-all",
+      "metadata": {
+        "experimental": true,
+        "atmosphere_recomputed": false,
+        "host_populations_updated": false,
+        "electron_density_updated": false,
+        "observationally_validated": false,
+        "metal_free_free_included": false,
+        "abundance_convention": "log10 N(Z)/N(H)",
+        "atom": "Stout; selected TLUSTY/OP photoionization with Verner/Kramers fallbacks; approximate collisions",
+        "omitted_levels": "inert LTE reservoir; no omitted-level line opacity",
+        "maximum_trace_mass_ratio": 3.207281695012663e-05,
+        "maximum_trace_electron_fraction_bound": 1.6077147209182305e-05,
+        "levels_per_charge": {
+          "C": {
+            "2": 240,
+            "3": 243,
+            "4": 10,
+            "5": 1
+          },
+          "Si": {
+            "2": 50,
+            "3": 40,
+            "4": 30,
+            "5": 1
+          },
+          "N": {
+            "2": 40,
+            "3": 60,
+            "4": 40,
+            "5": 1
+          },
+          "O": {
+            "2": 40,
+            "3": 60,
+            "4": 40,
+            "5": 10,
+            "6": 1
+          },
+          "Al": {
+            "2": 40,
+            "3": 20,
+            "4": 1
+          },
+          "P": {
+            "2": 30,
+            "3": 50,
+            "4": 40,
+            "5": 1
+          },
+          "S": {
+            "2": 30,
+            "3": 60,
+            "4": 40,
+            "5": 30,
+            "6": 1
+          }
+        },
+        "initial_population_guess_supplied": true,
+        "tabulated_photoionization_stages": {
+          "C": [
+            2,
+            3
+          ]
+        },
+        "explicit_collision_records": 2767,
+        "explicit_collision_sources": [
+          "CHIANTI carbon snapshot c_3.scups; 8800b6692a135fcb58138bdb56894c75d8f14f60d1bb6914f9ef5f9e865a64b9",
+          "CHIANTI carbon snapshot c_4.scups; 5f68c7367b5d3cbb61de333046ccad233f768bf9099551c84fed14c9e85a6b7c"
+        ],
+        "population_defect_history": [
+          1.0,
+          0.9999999988026593,
+          0.9999999978686034,
+          0.9999999961273672,
+          0.9999999928221254,
+          0.9999999864409969,
+          0.9999999739972112,
+          0.9999999495492639
+        ],
+        "stopped_by_callback": false,
+        "accelerated_updates": 0,
+        "acceleration_depth": 6,
+        "population_wavelength_points": 206118,
+        "convergence_scope": "fixed-host metal populations",
+        "represented_lte_fraction_minimum": {
+          "C": 0.9992085110666545,
+          "Si": 0.13460548930074925,
+          "N": 0.9159738327532666,
+          "O": 0.9048182578838018,
+          "Al": 0.004492646253542853,
+          "P": 0.16521445175078237,
+          "S": 0.7388307060723948
+        },
+        "maximum_particle_conservation_error": 1.0614610082999135e-15,
+        "atomic_database_source": "Atomic Line List v3.00b4 Stout database (CC BY 4.0); missing thresholds from Verner & Yakovlev 1995; Kurucz GF100 optical replacement: gfFUV99-fe-ni.gf",
+        "source_closure_residual": 1.4112473091284098e-15,
+        "exploratory": true,
+        "smoke_only": false,
+        "case": "composition-all",
+        "host_parameters": {
+          "teff": 52500.0,
+          "logg": 7.53,
+          "log_h_he": 5.0
+        },
+        "abundances": {
+          "C": -6.764471553092451,
+          "Si": -6.434152181326482,
+          "N": -6.665546248849069,
+          "O": -6.3851027839668655,
+          "Al": -6.795880017344075,
+          "P": -7.785156151952302,
+          "S": -6.767003889607846,
+          "Fe": -5.301029995663981,
+          "Ni": -5.995678626217358
+        },
+        "nlte_elements": [
+          "C",
+          "Si",
+          "N",
+          "O",
+          "Al",
+          "P",
+          "S"
+        ],
+        "lte_background_elements": [
+          "Fe",
+          "Ni"
+        ],
+        "abundance_choices": {
+          "C": {
+            "number_ratio": 1.72e-07,
+            "inferred_from_ion": "III"
+          },
+          "Si": {
+            "number_ratio": 3.68e-07,
+            "inferred_from_ion": "IV"
+          },
+          "N": {
+            "number_ratio": 2.16e-07,
+            "inferred_from_ion": "V"
+          },
+          "O": {
+            "number_ratio": 4.12e-07,
+            "inferred_from_ion": "IV"
+          },
+          "Al": {
+            "number_ratio": 1.6e-07,
+            "inferred_from_ion": "III"
+          },
+          "P": {
+            "number_ratio": 1.64e-08,
+            "inferred_from_ion": "V"
+          },
+          "S": {
+            "number_ratio": 1.71e-07,
+            "inferred_from_ion": "IV"
+          },
+          "Fe": {
+            "number_ratio": 5e-06,
+            "inferred_from_ion": "V"
+          },
+          "Ni": {
+            "number_ratio": 1.01e-06,
+            "inferred_from_ion": "V"
+          }
+        },
+        "host_directory": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-seeded",
+        "host_atmosphere_convergence": "converged",
+        "host_reuse_scope": "verified identical H/He code and data; only hot_trace_metals.py, light_metal_nlte.py changed",
+        "numerical_identity": {
+          "numerical_code": "a49e0a7ccf7a3bc53f64973d092ee578b50f30721f873cdc689237000c672ebc",
+          "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+        },
+        "all_metals_maximum_mass_ratio": 0.00036793161390321965,
+        "all_metals_maximum_electron_bound": 0.00017458536075529995,
+        "seed_population_sha256": "488dff2b5354c3526b5bbd7a561364577a29bc52c91e23b7950148dbef7e799c",
+        "research_code_sha256": {
+          "explore_hot_composition.py": "dd32a2188a29ab98af1401bd5191b48d04948b2c20a15cdfbf6253dc066e66c4",
+          "hot_trace_composition.py": "d6728840fa77aa6aec962b59fd2b6f851eb9a2ce019d4a56ab08f6d6ae6eed70",
+          "hot_trace_collisions.py": "4aaa3793eca5cf634dc298dd977efa5d8ab78328cb5079c983a046d9bbe9891b"
+        },
+        "limitations": [
+          "H/He structure response",
+          "Fe/Ni NLTE populations",
+          "inner-shell P/Ni absorption",
+          "predicted-energy Fe/Ni lines",
+          "complete atoms and accurate collisions for the new light metals",
+          "short unconverged exploration; no abundance fit"
+        ],
+        "converged": false,
+        "iterations": 8,
+        "population_defect": 0.9999999495492639
+      },
+      "progress": [
+        {
+          "iteration": 1,
+          "defect": 1.0,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 14.851057536934745,
+            "1176.370": 17.727793357341454
+          }
+        },
+        {
+          "iteration": 4,
+          "defect": 0.9999999961273672,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 16.309414523917745,
+            "1176.370": 19.356084214989743
+          }
+        },
+        {
+          "iteration": 8,
+          "defect": 0.9999999495492639,
+          "ciii_equivalent_widths_mA": {
+            "1175.987": 16.501455076675146,
+            "1176.370": 19.56787680307294
+          }
+        }
+      ],
+      "original_diagnostic_metrics": {
+        "ciii_1175": {
+          "retained_pixels": 206,
+          "excluded_pixels": 25,
+          "normalized_rms": 0.029845592089715715,
+          "median_absolute_residual": 0.019055282989549116,
+          "chi2_per_pixel": 2.4543036918465666,
+          "observed_full_window_equivalent_width_mA": 133.16578040626575,
+          "predicted_full_window_equivalent_width_mA": 121.20693148210361,
+          "continuum_coefficients": [
+            8.977780136657387e-23,
+            1.0419030352902918e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included",
+          "isolated_components": {
+            "1175.987": {
+              "observed_aperture_ew_mA": 17.004886384575208,
+              "predicted_aperture_ew_mA": 16.501455076675146,
+              "observed_statistical_error_mA": 0.6973348848044507,
+              "predicted_to_observed_ew_ratio": 0.9703949031757887,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            },
+            "1176.370": {
+              "observed_aperture_ew_mA": 20.041926667062572,
+              "predicted_aperture_ew_mA": 19.56787680307294,
+              "observed_statistical_error_mA": 0.608144395088343,
+              "predicted_to_observed_ew_ratio": 0.9763470911821718,
+              "half_width_kms": 20.0,
+              "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+            }
+          }
+        },
+        "lyalpha": {
+          "retained_pixels": 4690,
+          "excluded_pixels": 705,
+          "normalized_rms": 0.037084159317357285,
+          "median_absolute_residual": 0.02658947357100161,
+          "chi2_per_pixel": 17.157281662068403,
+          "observed_full_window_equivalent_width_mA": 6919.155034877699,
+          "predicted_full_window_equivalent_width_mA": 7689.638229273963,
+          "continuum_coefficients": [
+            9.028715727481998e-23,
+            -8.105458729741451e-25
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1393": {
+          "retained_pixels": 53,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.030505422034268103,
+          "median_absolute_residual": 0.014976045559556006,
+          "chi2_per_pixel": 7.036113460271078,
+          "observed_full_window_equivalent_width_mA": 97.8873732813112,
+          "predicted_full_window_equivalent_width_mA": 92.45399194869293,
+          "continuum_coefficients": [
+            8.926346252479998e-23,
+            1.9078613852164405e-26
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        },
+        "siiv_1402": {
+          "retained_pixels": 46,
+          "excluded_pixels": 19,
+          "normalized_rms": 0.03699174045339262,
+          "median_absolute_residual": 0.015263125546845835,
+          "chi2_per_pixel": 7.370689695499402,
+          "observed_full_window_equivalent_width_mA": 82.38618417025872,
+          "predicted_full_window_equivalent_width_mA": 78.91072902278891,
+          "continuum_coefficients": [
+            9.023907539227882e-23,
+            -1.0852555691030274e-24
+          ],
+          "equivalent_width_scope": "full window includes blends/nonphotospheric absorption; not a clean elemental EW",
+          "score_scope": "conditional on local continuum; pixel correlations/systematic errors not included"
+        }
+      },
+      "file_sha256": {
+        "spectrum.npz": "2bc57132da307f82955d4ff94b8602cc987979c5f7d5f0ea6e9546c65a25f500",
+        "populations.npz": "633b614a144d28c5d88d36c1baaf43e989d457cc7d05cbc921f9ce0ee4ddeb4a",
+        "metadata.json": "a3ee6f6a3352bbdf4188cd2943b09b804f8cbf8dd4bdbf89a6fc948f729587f0",
+        "comparison/prediction.fits": "28d4ade3e9b7412480f29f53c82d2dfe4bd7528b6550d166e9705b926105cbc8"
+      }
+    }
+  },
+  "additional_diagnostics": {
+    "metrics": {
+      "NV1238": {
+        "element": "N",
+        "ion": "V",
+        "rest_wavelength": 1238.821,
+        "instrument": "e140h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 15,
+        "observed_aperture_ew_mA": 73.1156879742051,
+        "observed_statistical_error_mA": 0.2916464156791032,
+        "aperture_blend_pixels": 7,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.36770030413688676,
+            "aperture_ew_mA": -0.017568664732544405,
+            "continuum_coefficients": [
+              8.990500739096224e-23,
+              -1.1888855010671523e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.09870149332058466,
+            "aperture_ew_mA": 82.86709549053116,
+            "continuum_coefficients": [
+              9.00063682265785e-23,
+              -1.167438580036783e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.09754837284604821,
+            "aperture_ew_mA": 82.68415856689452,
+            "continuum_coefficients": [
+              9.013463053158876e-23,
+              -1.1076075991000296e-24
+            ],
+            "converged": false
+          }
+        }
+      },
+      "NV1242": {
+        "element": "N",
+        "ion": "V",
+        "rest_wavelength": 1242.804,
+        "instrument": "e140h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 22,
+        "observed_aperture_ew_mA": 53.77554257466335,
+        "observed_statistical_error_mA": 0.2447439694196206,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.3891959588924221,
+            "aperture_ew_mA": -0.010450256356735662,
+            "continuum_coefficients": [
+              8.988177842246078e-23,
+              1.3483468406556886e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.1517554075398913,
+            "aperture_ew_mA": 76.92206295621803,
+            "continuum_coefficients": [
+              8.993365733588862e-23,
+              1.337171331591719e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.15584170209397866,
+            "aperture_ew_mA": 77.21151653132472,
+            "continuum_coefficients": [
+              9.024293071622387e-23,
+              1.092724067474077e-24
+            ],
+            "converged": false
+          }
+        }
+      },
+      "OIV1338": {
+        "element": "O",
+        "ion": "IV",
+        "rest_wavelength": 1338.615,
+        "instrument": "e140h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 23,
+        "observed_aperture_ew_mA": 16.45178939122244,
+        "observed_statistical_error_mA": 0.3725615145544293,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.12360975503348018,
+            "aperture_ew_mA": -0.0013557732352670793,
+            "continuum_coefficients": [
+              8.935098143751436e-23,
+              1.3742296856356267e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.09774416158481379,
+            "aperture_ew_mA": 3.647902239397884,
+            "continuum_coefficients": [
+              8.935055413786901e-23,
+              1.3755726881889633e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.09175134661118545,
+            "aperture_ew_mA": 4.45262022572837,
+            "continuum_coefficients": [
+              8.985953413940847e-23,
+              1.0343417337593424e-24
+            ],
+            "converged": false
+          }
+        }
+      },
+      "OIV1343": {
+        "element": "O",
+        "ion": "IV",
+        "rest_wavelength": 1343.514,
+        "instrument": "e140h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 24,
+        "observed_aperture_ew_mA": 22.306132073506276,
+        "observed_statistical_error_mA": 0.4804896390485511,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.16522434544127035,
+            "aperture_ew_mA": 0.011753372079969958,
+            "continuum_coefficients": [
+              8.881582258107124e-23,
+              -2.3628086427785697e-25
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.12300288973897276,
+            "aperture_ew_mA": 5.844569105291542,
+            "continuum_coefficients": [
+              8.883496991202852e-23,
+              -2.612438877064339e-25
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.11420532366474997,
+            "aperture_ew_mA": 6.828447266712715,
+            "continuum_coefficients": [
+              8.918074072848804e-23,
+              1.3727265538134465e-25
+            ],
+            "converged": false
+          }
+        }
+      },
+      "AlIII1854": {
+        "element": "Al",
+        "ion": "III",
+        "rest_wavelength": 1854.716,
+        "instrument": "e230h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 17,
+        "observed_aperture_ew_mA": 17.06209325694569,
+        "observed_statistical_error_mA": 1.148760472577109,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.09829617199808585,
+            "aperture_ew_mA": 0.00020966854240294622,
+            "continuum_coefficients": [
+              8.607320391922683e-23,
+              8.608620593875742e-26
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.04987994918316108,
+            "aperture_ew_mA": 7.806944947724271,
+            "continuum_coefficients": [
+              8.607347909534478e-23,
+              8.624405037921624e-26
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.02931851324163732,
+            "aperture_ew_mA": 13.083999424082451,
+            "continuum_coefficients": [
+              8.635560704309979e-23,
+              -2.7186721731544765e-25
+            ],
+            "converged": false
+          }
+        }
+      },
+      "AlIII1862": {
+        "element": "Al",
+        "ion": "III",
+        "rest_wavelength": 1862.79,
+        "instrument": "e230h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 18,
+        "observed_aperture_ew_mA": 11.131635545829702,
+        "observed_statistical_error_mA": 0.9659704870236169,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.060761892001199615,
+            "aperture_ew_mA": -7.572899511786019e-05,
+            "continuum_coefficients": [
+              8.623781099252003e-23,
+              2.921019780945521e-25
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.03542273916186023,
+            "aperture_ew_mA": 4.279208437564093,
+            "continuum_coefficients": [
+              8.62379501642242e-23,
+              2.9215874578818102e-25
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.022074177109315037,
+            "aperture_ew_mA": 7.109759292162172,
+            "continuum_coefficients": [
+              8.627401370327155e-23,
+              3.1253492787704497e-25
+            ],
+            "converged": false
+          }
+        }
+      },
+      "PV1117": {
+        "element": "P",
+        "ion": "V",
+        "rest_wavelength": 1117.977,
+        "instrument": "fuv",
+        "velocity_kms": 14.21,
+        "velocity_source": "published line catalogue",
+        "gaussian_resolving_power": 20000.0,
+        "half_width_kms": 35.0,
+        "retained_pixels": 7,
+        "observed_aperture_ew_mA": 70.84415255009628,
+        "observed_statistical_error_mA": 0.22484278668386423,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.3278150998845058,
+            "aperture_ew_mA": -0.005561933379718709,
+            "continuum_coefficients": [
+              8.861462386449334e-23,
+              2.5023491537301283e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.21562732315552435,
+            "aperture_ew_mA": 56.86146662799192,
+            "continuum_coefficients": [
+              8.864788190775788e-23,
+              2.4404048909149347e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.21665029152876114,
+            "aperture_ew_mA": 60.201000672268705,
+            "continuum_coefficients": [
+              8.867832606551019e-23,
+              2.458683646488652e-24
+            ],
+            "converged": false
+          }
+        }
+      },
+      "PV1128": {
+        "element": "P",
+        "ion": "V",
+        "rest_wavelength": 1128.008,
+        "instrument": "fuv",
+        "velocity_kms": 14.88,
+        "velocity_source": "published line catalogue",
+        "gaussian_resolving_power": 20000.0,
+        "half_width_kms": 35.0,
+        "retained_pixels": 6,
+        "observed_aperture_ew_mA": 43.422489691990286,
+        "observed_statistical_error_mA": 0.22631744746251456,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.2754068490392406,
+            "aperture_ew_mA": -1.9241141552033838,
+            "continuum_coefficients": [
+              8.527560164349591e-23,
+              -4.110613730067077e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.24879900026722693,
+            "aperture_ew_mA": 42.728287612301514,
+            "continuum_coefficients": [
+              8.540894693321474e-23,
+              -3.801349820840754e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.24800254772179364,
+            "aperture_ew_mA": 47.74763941045686,
+            "continuum_coefficients": [
+              8.554192212244181e-23,
+              -3.627744150444089e-24
+            ],
+            "converged": false
+          }
+        }
+      },
+      "SIV1062": {
+        "element": "S",
+        "ion": "IV",
+        "rest_wavelength": 1062.662,
+        "instrument": "fuv",
+        "velocity_kms": 22.85,
+        "velocity_source": "published line catalogue",
+        "gaussian_resolving_power": 20000.0,
+        "half_width_kms": 35.0,
+        "retained_pixels": 6,
+        "observed_aperture_ew_mA": 15.403984027539837,
+        "observed_statistical_error_mA": 0.2977480910970577,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.08884643928525851,
+            "aperture_ew_mA": -0.0026545955845903722,
+            "continuum_coefficients": [
+              9.116432094429267e-23,
+              -1.3319269679133214e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.02994850176748811,
+            "aperture_ew_mA": 9.95886370359005,
+            "continuum_coefficients": [
+              9.116442933637824e-23,
+              -1.3317324737949673e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.01718050558611468,
+            "aperture_ew_mA": 12.588720505907583,
+            "continuum_coefficients": [
+              9.142451780421755e-23,
+              -1.7171094403183583e-24
+            ],
+            "converged": false
+          }
+        }
+      },
+      "SIV1072": {
+        "element": "S",
+        "ion": "IV",
+        "rest_wavelength": 1072.974,
+        "instrument": "fuv",
+        "velocity_kms": 27.66,
+        "velocity_source": "published line catalogue",
+        "gaussian_resolving_power": 20000.0,
+        "half_width_kms": 35.0,
+        "retained_pixels": 6,
+        "observed_aperture_ew_mA": 18.966092645519243,
+        "observed_statistical_error_mA": 0.5316292394520573,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.10831803741073867,
+            "aperture_ew_mA": -0.0013590176285928914,
+            "continuum_coefficients": [
+              9.196999616526922e-23,
+              1.1876856476197453e-25
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.027156952807161856,
+            "aperture_ew_mA": 14.133675581948236,
+            "continuum_coefficients": [
+              9.200105878811531e-23,
+              1.7662748622245138e-25
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.018444384788135225,
+            "aperture_ew_mA": 18.085627791843127,
+            "continuum_coefficients": [
+              9.206374406689437e-23,
+              2.5565429760815426e-25
+            ],
+            "converged": false
+          }
+        }
+      },
+      "FeV1409": {
+        "element": "Fe",
+        "ion": "V",
+        "rest_wavelength": 1409.453,
+        "instrument": "e140h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 24,
+        "observed_aperture_ew_mA": 28.50244194652749,
+        "observed_statistical_error_mA": 0.4469966062316255,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.2078152922960849,
+            "aperture_ew_mA": 0.0011044531897398718,
+            "continuum_coefficients": [
+              8.879584099991699e-23,
+              -5.156660603603094e-25
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.2078229305147795,
+            "aperture_ew_mA": -0.0004971367928171991,
+            "continuum_coefficients": [
+              8.879584552034164e-23,
+              -5.156620430731702e-25
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.0752845429305285,
+            "aperture_ew_mA": 18.869655662916276,
+            "continuum_coefficients": [
+              8.948159226063211e-23,
+              -9.557200504818845e-25
+            ],
+            "converged": false
+          }
+        }
+      },
+      "NiV1306": {
+        "element": "Ni",
+        "ion": "V",
+        "rest_wavelength": 1306.624,
+        "instrument": "e140h",
+        "velocity_kms": 23.8,
+        "velocity_source": "fixed photospheric 23.8 km/s",
+        "gaussian_resolving_power": 144000.0,
+        "half_width_kms": 20.0,
+        "retained_pixels": 23,
+        "observed_aperture_ew_mA": 19.167377418536454,
+        "observed_statistical_error_mA": 0.3158012582438947,
+        "aperture_blend_pixels": 0,
+        "predictions": {
+          "CSi": {
+            "normalized_rms": 0.13775915679132342,
+            "aperture_ew_mA": 0.002211945335857388,
+            "continuum_coefficients": [
+              8.965508581913229e-23,
+              -1.2923540040615892e-24
+            ],
+            "converged": false
+          },
+          "Light": {
+            "normalized_rms": 0.1377593487507796,
+            "aperture_ew_mA": 0.0021579404974733005,
+            "continuum_coefficients": [
+              8.96550252707146e-23,
+              -1.2923486481675373e-24
+            ],
+            "converged": false
+          },
+          "All": {
+            "normalized_rms": 0.08944223306594579,
+            "aperture_ew_mA": 6.314803098376749,
+            "continuum_coefficients": [
+              9.008007180308385e-23,
+              -1.1591425763785992e-24
+            ],
+            "converged": false
+          }
+        }
+      }
+    },
+    "models": {
+      "CSi": {
+        "directory": "results/hot-daz/composition-csi",
+        "converged": false,
+        "population_defect": 0.0008185471897879313
+      },
+      "Light": {
+        "directory": "results/hot-daz/composition-light",
+        "converged": false,
+        "population_defect": 0.9999999975065191
+      },
+      "All": {
+        "directory": "results/hot-daz/composition-all",
+        "converged": false,
+        "population_defect": 0.9999999495492639
+      }
+    },
+    "qualifications": [
+      "conditional local continuum fit on sidebands only",
+      "aperture EWs include unmasked blends; RMS excludes catalogue contaminants",
+      "Gaussian instrumental approximation; FUSE resolution assumed R=20000",
+      "FUSE uses published line velocities; residual catalogue/coadd offsets remain, especially P V",
+      "no added ISM absorbers in these windows",
+      "short iterates are not converged models"
+    ]
+  },
+  "atomic_audit": {
+    "abundance_reference": "https://doi.org/10.1093/mnras/stt1604",
+    "abundances": {
+      "C": {
+        "number_ratio": 1.72e-07,
+        "inferred_from_ion": "III"
+      },
+      "N": {
+        "number_ratio": 2.16e-07,
+        "inferred_from_ion": "V"
+      },
+      "O": {
+        "number_ratio": 4.12e-07,
+        "inferred_from_ion": "IV"
+      },
+      "Al": {
+        "number_ratio": 1.6e-07,
+        "inferred_from_ion": "III"
+      },
+      "Si": {
+        "number_ratio": 3.68e-07,
+        "inferred_from_ion": "IV"
+      },
+      "P": {
+        "number_ratio": 1.64e-08,
+        "inferred_from_ion": "V"
+      },
+      "S": {
+        "number_ratio": 1.71e-07,
+        "inferred_from_ion": "IV"
+      },
+      "Fe": {
+        "number_ratio": 5e-06,
+        "inferred_from_ion": "V"
+      },
+      "Ni": {
+        "number_ratio": 1.01e-06,
+        "inferred_from_ion": "V"
+      }
+    },
+    "alternatives": {
+      "N": {
+        "number_ratio": 1.58e-07,
+        "inferred_from_ion": "IV"
+      },
+      "P": {
+        "number_ratio": 8.4e-08,
+        "inferred_from_ion": "IV"
+      },
+      "S": {
+        "number_ratio": 5.23e-08,
+        "inferred_from_ion": "VI"
+      },
+      "Fe": {
+        "number_ratio": 1.83e-06,
+        "inferred_from_ion": "IV"
+      },
+      "Ni": {
+        "number_ratio": 3.24e-07,
+        "inferred_from_ion": "IV"
+      }
+    },
+    "atomic_files": {
+      "verner95.dat": {
+        "url": "https://www.pa.uky.edu/~verner/dima/photo/table1.dat",
+        "sha256": "fd0a315f100a78f8edb6b3fb12c0022246309cbc834394cbd0e8e5305d00b393"
+      },
+      "gfFUV99.dat.gz": {
+        "url": "https://tlusty.oca.eu/tlusty/Synspec49/data/gfFUV99.dat.gz",
+        "sha256": "1ae40c9bec4aecc4d48b152263de12364acdadc8fdf156cf28891f9ae48c0cdb"
+      }
+    },
+    "ionization_threshold_supplements_ev": {
+      "Al 3": 120.0,
+      "Al 4": 153.8,
+      "Al 5": 190.5,
+      "Al 6": 241.4,
+      "Al 7": 284.6,
+      "Al 8": 330.1,
+      "Al 9": 399.4,
+      "Al 10": 442.1,
+      "Al 11": 2086.0,
+      "Al 12": 2304.0,
+      "Ni 3": 54.9,
+      "Ni 4": 76.1,
+      "Ni 5": 108.0,
+      "Ni 6": 133.0,
+      "Ni 7": 162.0,
+      "Ni 8": 193.0,
+      "Ni 9": 224.6,
+      "Ni 10": 321.0,
+      "Ni 11": 352.1,
+      "Ni 12": 384.0,
+      "Ni 13": 430.2,
+      "Ni 14": 463.7,
+      "Ni 15": 498.4,
+      "Ni 16": 571.3,
+      "Ni 17": 607.1,
+      "Ni 18": 1541.0,
+      "Ni 19": 1648.0,
+      "Ni 20": 1756.0,
+      "Ni 21": 1894.0,
+      "Ni 22": 2011.0,
+      "Ni 23": 2131.0,
+      "Ni 24": 2295.0,
+      "Ni 25": 2399.0,
+      "Ni 26": 10290.0,
+      "Ni 27": 10780.0
+    },
+    "iron_group_input_line_counts": {
+      "26.02": 10556,
+      "28.02": 3653,
+      "28.03": 2744,
+      "26.03": 3288,
+      "28.04": 4185,
+      "28.05": 2690,
+      "26.04": 1350,
+      "26.05": 349,
+      "26.06": 36
+    },
+    "iron_group": "LTE populations, measured-level UV lines; not complete NLTE blanketing",
+    "missing_species": [
+      "Ge: detected in the paper, but no abundance in its Table 10; no Ge atom here"
+    ],
+    "missing_physics": [
+      "H/He structure response",
+      "Fe/Ni NLTE populations",
+      "inner-shell P/Ni absorption",
+      "predicted-energy Fe/Ni lines",
+      "complete atoms and accurate collisions for the new light metals"
+    ]
+  },
+  "input_manifest": {
+    "hlsp_wd-linelist_hst_stis_g191-b2b_e230h_v1_coadd-spec.fits": {
+      "url": "https://archive.stsci.edu/missions/hlsp/wd-linelist/hst_coadd/hlsp_wd-linelist_hst_stis_g191-b2b_e230h_v1_coadd-spec.fits",
+      "sha256": "fc0589964f71e5dd00881de04755db5f877758a1906719970ae65e9fc669b2fb",
+      "bytes": 4294080
+    },
+    "hlsp_wd-linelist_hst_stis_g191-b2b_e230h_v1_linelist.txt": {
+      "url": "https://archive.stsci.edu/missions/hlsp/wd-linelist/linelists/hlsp_wd-linelist_hst_stis_g191-b2b_e230h_v1_linelist.txt",
+      "sha256": "360a67cba913aab9e7095a6ed7bb32b22c8d428879a29d9b039453aac451d274",
+      "bytes": 7325
+    },
+    "hlsp_wd-linelist_fuse_spec_g191-b2b_fuv_v1_coadd-spec.fits": {
+      "url": "https://archive.stsci.edu/missions/hlsp/wd-linelist/fuse_coadd/hlsp_wd-linelist_fuse_spec_g191-b2b_fuv_v1_coadd-spec.fits",
+      "sha256": "a2f2338544a7ab35a0b07dbc839d35a7806397f43c3a430fcafa984924d27eb1",
+      "bytes": 181440
+    },
+    "hlsp_wd-linelist_fuse_spec_g191-b2b_fuv_v1_linelist.txt": {
+      "url": "https://archive.stsci.edu/missions/hlsp/wd-linelist/linelists/hlsp_wd-linelist_fuse_spec_g191-b2b_fuv_v1_linelist.txt",
+      "sha256": "b21b51a6b1be4ad7ed45317cb356d00457aedea42ca97cd6fb5d3ca0a27a445f",
+      "bytes": 21636
+    },
+    "gfFUV99.dat.gz": {
+      "url": "https://tlusty.oca.eu/tlusty/Synspec49/data/gfFUV99.dat.gz",
+      "sha256": "1ae40c9bec4aecc4d48b152263de12364acdadc8fdf156cf28891f9ae48c0cdb",
+      "bytes": 2492884
+    },
+    "linelist_README": {
+      "url": "https://tlusty.oca.eu/tlusty/Synspec49/data/linelist_README",
+      "sha256": "8bbc0db2abff033bcc4201cfbd8e8975003f34e7534734d3f2749922ae84c443",
+      "bytes": 4070
+    },
+    "verner95.dat": {
+      "url": "https://www.pa.uky.edu/~verner/dima/photo/table1.dat",
+      "sha256": "fd0a315f100a78f8edb6b3fb12c0022246309cbc834394cbd0e8e5305d00b393",
+      "bytes": 128896
+    },
+    "verner95.tex": {
+      "url": "https://www.pa.uky.edu/~verner/dima/photo/paper.tex",
+      "sha256": "be694ab3172ced7c09b0a810fc827d8aae9e205910491952554383e1002c003c",
+      "bytes": 19777
+    }
+  },
+  "source_hashes": {
+    "src/wd_spectra/hot_trace_metals.py": "afdf562cd139572cd30691bb14cde47eb495edae1a174800109a537c22d67e74",
+    "research/hot_trace_composition.py": "d6728840fa77aa6aec962b59fd2b6f851eb9a2ce019d4a56ab08f6d6ae6eed70",
+    "research/explore_hot_composition.py": "dd32a2188a29ab98af1401bd5191b48d04948b2c20a15cdfbf6253dc066e66c4",
+    "research/compare_hot_composition.py": "d0eec17fcd1658bda501488029b47b4c62e35be3332d15c21f3e92fbf7398a68",
+    "research/compare_hot_daz_benchmark.py": "94012ce8d0f80264f060eac08186607407c501acf1b413532ff7960faca50b8d",
+    "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/research/summarize_hot_composition.py": "2840a3152cafa25d1b94bde1c71f890558308888aa3856c5bcd0f9275af2851a"
+  },
+  "verification": "147 distinct targeted tests passed; added atoms recover Planck LTE; Fe/Ni Kirchhoff; FITS checksums/abundances checked",
+  "scope": "Nine Table-10 elements; seven NLTE, Fe/Ni LTE. Fixed H/He structure. No fitted abundances or levitation profile.",
+  "interpretation": "C III aperture EWs improve, but Si IV 1402 worsens and O IV/Fe V/Ni V remain weak. Population defects remain near unity; spectral trends are exploratory."
+}

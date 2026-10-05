@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-02",
+  "base_commit": "ce71818",
+  "scope": "Numerical integration only; gray H/He background with Planck-initialized host populations. No observed abundance validation.",
+  "command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python research/run_hot_trace_diagnostic.py --smoke --output results/hot-daz/smoke-accelerated",
+  "host_depths": 8,
+  "python": "3.9",
+  "transfer_backend": "compiled",
+  "tests": {
+    "new_trace_and_benchmark_tests": 13,
+    "existing_hot_public_and_light_metal_nlte_tests": 68,
+    "all_passed": true
+  },
+  "host_parameters": {
+    "teff": 52500.0,
+    "logg": 7.53,
+    "log_h_he": 5.0
+  },
+  "abundances": {
+    "C": -6.764471553092451,
+    "Si": -6.434152181326482
+  },
+  "levels_per_charge": {
+    "C": {
+      "2": 20,
+      "3": 30,
+      "4": 1
+    },
+    "Si": {
+      "2": 30,
+      "3": 23,
+      "4": 1
+    }
+  },
+  "converged": true,
+  "iterations": 18,
+  "population_defect": 0.0005862845299867249,
+  "population_defect_history": [
+    0.9916779483906936,
+    0.6150903530154453,
+    0.4742645528705109,
+    0.22485831983682847,
+    0.09149661188661261,
+    0.07269829491249326,
+    0.05825984440585123,
+    0.04465548469393033,
+    0.03817099613952339,
+    0.03308284349906656,
+    0.028133394375504238,
+    0.020954980875569747,
+    0.01046748290596381,
+    0.005047155163445012,
+    0.0024756032280574755,
+    0.0016194182736190186,
+    0.0011699224943837066,
+    0.0005862845299867249
+  ],
+  "accelerated_updates": 15,
+  "population_wavelength_points": 12767,
+  "represented_lte_fraction_minimum": {
+    "C": 0.3188840391561349,
+    "Si": 0.658240373907387
+  },
+  "maximum_particle_conservation_error": 2.1654061996965878e-16,
+  "maximum_trace_mass_ratio": 1.2304215887860682e-05,
+  "maximum_trace_electron_fraction_bound": 6.329979822046722e-06,
+  "source_closure_residual": 7.967812482758234e-16
+}

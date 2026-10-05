@@ -5,6 +5,34 @@ from .hot_nlte import HotPopulationState
 from .constants import LIGHT_SPEED, PLANCK
 from . import multilevel_nlte as hydrogen
 
+_RADIATION_RESPONSE_WORKING_BYTES = 128 * 1024**2
+
+
+def _continuum_response_integrals(mean_response, boltzmann, weights):
+    """Integrate the same rates without a second full radiation tangent.
+
+    A 185-depth tangent occupies several gigabytes. Bounding the temporary
+    stimulated-emission array avoids evicting the reusable transfer bases.
+    Chunking changes only the order of the wavelength summation.
+    """
+    nw, nd, count = mean_response.shape
+    block = max(1, _RADIATION_RESPONSE_WORKING_BYTES // (nd*count*8))
+    if block >= nw:
+        plain = mean_response.transpose(1,2,0).reshape(nd*count,-1)
+        stimulated = (mean_response*boltzmann[:,:,None]).transpose(1,2,0).reshape(nd*count,-1)
+        up, down = plain@weights, stimulated@weights
+    else:
+        up = np.zeros((nd*count,weights.shape[1]))
+        down = np.zeros_like(up)
+        for start in range(0,nw,block):
+            stop = min(start+block,nw)
+            local = mean_response[start:stop]
+            up += local.reshape(stop-start,-1).T@weights[start:stop]
+            stimulated = local*boltzmann[start:stop,:,None]
+            down += stimulated.reshape(stop-start,-1).T@weights[start:stop]
+    return (up.reshape(nd,count,-1).transpose(0,2,1),
+            down.reshape(nd,count,-1).transpose(0,2,1))
+
 
 class PreparedHeliumRates:
     def __init__(self, model, atmosphere, wave, groups):
@@ -163,11 +191,8 @@ class HeliumRadiationResponse:
                 rhs[:,lo[i],:]+=net
                 rhs[:,hi[i],:]-=net
             offset+=len(keys)
-        plain=mean_response.transpose(1,2,0).reshape(nd*count,-1)
-        stimulated=(mean_response*self.boltzmann[:,:,None]).transpose(1,2,0).reshape(nd*count,-1)
         for weights,lower,upper in self.continua:
-            up=(plain@weights).reshape(nd,count,-1).transpose(0,2,1)
-            down=(stimulated@weights).reshape(nd,count,-1).transpose(0,2,1)
+            up,down=_continuum_response_integrals(mean_response,self.boltzmann,weights)
             down*=self.reference[:,lower,None]/self.reference[:,upper,None,None]
             net=self.population[:,lower,None]*up-self.population[:,upper,None,None]*down
             rhs[:,lower,:]+=net
@@ -235,10 +260,7 @@ class HydrogenRadiationResponse:
             net=(self.population[:,lo]*up-self.population[:,hi]*down)[:,None]*lines[offset+i]
             rhs[:,lo,:]+=net
             rhs[:,hi,:]-=net
-        plain=mean_response.transpose(1,2,0).reshape(nd*count,-1)
-        stimulated=(mean_response*self.boltzmann[:,:,None]).transpose(1,2,0).reshape(nd*count,-1)
-        up=(plain@self.weights).reshape(nd,count,-1).transpose(0,2,1)
-        down=(stimulated@self.weights).reshape(nd,count,-1).transpose(0,2,1)
+        up,down=_continuum_response_integrals(mean_response,self.boltzmann,self.weights)
         down*=self.reference[:,:-1,None]/self.reference[:,-1,None,None]
         rhs[:,:-1,:]+=self.population[:,:-1,None]*up-self.population[:,-1,None,None]*down
         rhs[:,-1,:]=0.
