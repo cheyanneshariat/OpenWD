@@ -565,6 +565,48 @@ def test_compiled_hydrogen_convolution_matches_python_reference(
     ),
     reason="optional compiled hydrogen convolution is not built",
 )
+def test_compiled_hydrogen_nonuniform_endpoint_uses_last_profile_node():
+    """An exact nonuniform-grid endpoint must not form an OOB bracket."""
+    log_alpha = np.array(
+        [-2.0, -1.5, -0.7, -0.2, 0.3, 0.9, 1.4, 2.0],
+        dtype=np.float64,
+    )
+    log_profile = np.linspace(0.0, -3.0, log_alpha.size, dtype=np.float64)
+    # Keep a canary immediately after each view: the endpoint path must read
+    # the final node, not the one-past-the-end element.
+    log_alpha_buffer = np.empty(log_alpha.size + 1, dtype=np.float64)
+    log_profile_buffer = np.empty(log_profile.size + 1, dtype=np.float64)
+    log_alpha_buffer[:-1] = log_alpha
+    log_profile_buffer[:-1] = log_profile
+    log_alpha_buffer[-1] = np.nan
+    log_profile_buffer[-1] = np.nan
+    field_strength = 1.0
+    detuning = np.array([10.0 ** log_alpha[-1]], dtype=np.float64)
+    calculated = opacity_module._rt.hydrogen_stark_lorentz_convolution(
+        detuning,
+        log_alpha_buffer[:-1],
+        log_profile_buffer[:-1],
+        np.array([0.0], dtype=np.float64),
+        np.array([0.0], dtype=np.float64),
+        field_strength,
+        0.5,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+    )
+    expected = np.array([10.0 ** log_profile[-1] / field_strength])
+    np.testing.assert_allclose(calculated, expected, rtol=0.0, atol=0.0)
+
+
+@pytest.mark.skipif(
+    opacity_module._rt is None
+    or not hasattr(
+        opacity_module._rt, "hydrogen_stark_lorentz_convolution"
+    ),
+    reason="optional compiled hydrogen convolution is not built",
+)
 def test_parallel_hydrogen_profiles_match_serial_result(monkeypatch):
     atmosphere = gray_hydrogen_atmosphere(10_000.0, 8.0, n_depth=6)
     line = BALMER_LINES[0]

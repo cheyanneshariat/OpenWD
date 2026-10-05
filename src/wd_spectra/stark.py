@@ -40,7 +40,8 @@ class StarkLine:
         Keeping this state construction separate lets the neutral-broadening
         convolution reuse it for every quadrature abscissa.  The interpolation
         is identical to :meth:`wavelength_profile`; only redundant work is
-        removed.
+        removed. Below the density grid, keep the whole Doppler-convolved
+        boundary profile on its tabulated physical wavelength scale.
         """
 
         if not np.isfinite(temperature) or temperature <= 0.0:
@@ -78,7 +79,13 @@ class StarkLine:
                     * t_weight
                     * self.log_profile[ne_index, t_index]
                 )
-        field_strength = 1.25e-9 * electron_density ** (2.0 / 3.0)
+        # The tables already include thermal Doppler broadening. Scaling
+        # their lowest-density shape with a smaller, out-of-table ne would
+        # squeeze that thermal core toward zero width. Preserve the entire
+        # physical edge profile below the grid; in-range and high-density
+        # field scaling retain their previous floating-point operations.
+        field_density = max(electron_density, 10.0 ** self.log_electron_density[0])
+        field_strength = 1.25e-9 * field_density ** (2.0 / 3.0)
         return field_strength, local_log_profile
 
     def wavelength_profile(
@@ -94,8 +101,11 @@ class StarkLine:
         ``alpha = abs(delta_lambda) / F0`` and
         ``F0 = 1.25e-9 ne**(2/3)``.  Bilinear interpolation is performed in
         log electron density and log temperature, and linear interpolation in
-        log alpha/log profile. Queries outside the density or temperature grid
-        are clipped to its boundary.
+        log alpha/log profile. Temperature queries use the boundary shape
+        outside its grid. Below the density grid the complete physical
+        wavelength profile is held at the density edge. Above the grid the
+        boundary shape retains the existing ne**(2/3) field extrapolation.
+        These edge policies do not provide new out-of-domain Stark data.
         """
 
         wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)

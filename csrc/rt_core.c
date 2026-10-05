@@ -1070,6 +1070,12 @@ linear_interpolate(
     double target)
 {
     Py_ssize_t right;
+    /* A NaN target satisfies neither endpoint comparison.  Without this
+     * guard upper_bound_double returns zero and the interpolation bracket
+     * would read wavelength[-1]/values[-n_depth]. */
+    if (isnan(target)) {
+        return NAN;
+    }
     if (target <= wavelength[0]) {
         return values[depth];
     }
@@ -1143,6 +1149,30 @@ metal_line_mean_intensity(PyObject *self, PyObject *args)
         views[7].shape[0] != n_line || views[7].shape[1] != n_depth) {
         PyErr_SetString(PyExc_ValueError, "line-mean array shapes are inconsistent");
         goto cleanup_line_mean;
+    }
+
+    {
+        const double *wavelength = (const double *)views[0].buf;
+        const double *center = (const double *)views[3].buf;
+        for (index = 0; index < n_wave; ++index) {
+            if (!isfinite(wavelength[index]) || wavelength[index] <= 0.0 ||
+                (index > 0 && wavelength[index] <= wavelength[index - 1])) {
+                PyErr_SetString(
+                    PyExc_ValueError,
+                    "line-mean wavelength grid must be finite, positive, and strictly increasing"
+                );
+                goto cleanup_line_mean;
+            }
+        }
+        for (line = 0; line < n_line; ++line) {
+            if (!isfinite(center[line]) || center[line] <= 0.0) {
+                PyErr_SetString(
+                    PyExc_ValueError,
+                    "line centers must be finite and positive"
+                );
+                goto cleanup_line_mean;
+            }
+        }
     }
 
     {
@@ -1756,7 +1786,7 @@ stark_profile_at_detuning(
         const double query = log10(scaled_alpha);
         if (query <= log_alpha[0]) {
             local_log_profile = log_profile[0];
-        } else if (query > log_alpha[n_alpha - 1]) {
+        } else if (query >= log_alpha[n_alpha - 1]) {
             const double slope =
                 (log_profile[n_alpha - 1] - log_profile[n_alpha - 2]) /
                 (log_alpha[n_alpha - 1] - log_alpha[n_alpha - 2]);
@@ -1777,6 +1807,12 @@ stark_profile_at_detuning(
                 upper = lower + 1;
             } else {
                 upper = upper_bound_double(log_alpha, n_alpha, query);
+                /* The endpoint is handled above.  Keep the interpolation
+                 * bracket valid if a future search change nevertheless
+                 * returns the one-past-the-end index. */
+                if (upper >= n_alpha) {
+                    upper = n_alpha - 1;
+                }
                 lower = upper - 1;
             }
             const double fraction =
