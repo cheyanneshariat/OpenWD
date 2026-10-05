@@ -122,3 +122,21 @@ corrections in the EOS. Both methods are independently source-checked.
 Low-level synthesis routines retain their explicit legacy defaults, including
 the directional-intensity interface. Other public models' synthesis defaults
 are unchanged.
+
+## Flux conservation (2026-10-01)
+
+Two numerics settings are on by default:
+
+- `photospheric_depth_concentration` concentrates the structure depths
+  across 0.01 < tau < 10 at an unchanged point count. For DA the default is
+  3 on the 40-layer standard mesh and 1 for 100 layers. With 40 layers the
+  steep 10-12 kK hydrogen photosphere left 0.5% excess flux at 1 (0.2-0.3%
+  at 3). The 100-layer production mesh already resolves it.
+- `synthesis_transfer_depth_refinement=4` subdivides each depth interval for
+  the final formal solution.
+
+Before, the 40-point standard structures emitted up to 2-3% more than
+sigma Teff^4. The bare-grid formal solution partly cancelled this, so the
+totals looked right while the structure was not. Standard-quality totals
+are now within about 0.75% (see the [DZ guide](DZ.md) for the method). Setting
+both to 0 and 1 restores the previous numerics.

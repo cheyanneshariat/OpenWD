@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from dataclasses import replace
 import hashlib
 import json
+import lzma
 from pathlib import Path
 import re
 from types import MappingProxyType
@@ -49,6 +50,7 @@ from .light_metal_nlte import (
 )
 from .metals import (
     ATOMIC_MASS_U,
+    ground_term_levels,
     ATOMIC_NUMBER,
     AtomicDatabase,
     AtomicIon,
@@ -78,8 +80,10 @@ EV_TO_ERG = 1.602_176_634e-12
 ATOMIC_MASS_UNIT = 1.660_539_068_92e-24
 RYDBERG_ENERGY_EV = 13.605_693_122_994
 
+# Stout labels iron-group terms with NIST seniority/sequence prefixes
+# (``a5D``, ``z7Do``); the prefix is optional so those terms are counted.
 _LS_TERM_PATTERN = re.compile(
-    r"\((?P<multiplicity>\d+)(?P<letter>[SPDFGHIKLMNOQRTUVWX])"
+    r"\((?:[a-z])?(?P<multiplicity>\d+)(?P<letter>[SPDFGHIKLMNOQRTUVWX])"
     r"(?P<odd>o?)<[^>]+>\)"
 )
 _LS_ANGULAR_MOMENTUM = MappingProxyType({
@@ -646,20 +650,9 @@ def stout_ground_term_centroid_ev(ion: AtomicIon) -> float:
     An unparseable ground label returns zero (no fine-structure information).
     """
 
-    levels = [
-        level for level in ion.levels
-        if np.isfinite(level.energy_wavenumber) and level.statistical_weight > 0.0
-    ]
-    if not levels:
+    members = ground_term_levels(ion)
+    if not members:
         return 0.0
-    ground = min(levels, key=lambda level: level.energy_wavenumber)
-    if re.search(r"<[^>]+>\)", ground.label) is None:
-        return 0.0
-
-    def term(label: str) -> str:
-        return re.sub(r"<[^>]+>\)", ")", label)
-
-    members = [level for level in levels if term(level.label) == term(ground.label)]
     weights = np.asarray([level.statistical_weight for level in members])
     energies = np.asarray([level.energy_wavenumber for level in members])
     return float(np.sum(weights * energies) / np.sum(weights) / EV_TO_WAVENUMBER)
@@ -926,7 +919,12 @@ def read_norad_ls_photoionization(
         )
     expected_atomic_number = ATOMIC_NUMBER[symbol]
     expected_residual_electrons = expected_atomic_number - stage - 1
-    with source.open(encoding="ascii") as stream:
+    # The bundled NORAD tables are xz-compressed; plain text is also read.
+    opened = (
+        lzma.open(source, "rt", encoding="ascii") if source.suffix == ".xz"
+        else source.open(encoding="ascii")
+    )
+    with opened as stream:
         while True:
             line = stream.readline()
             if not line:
@@ -1175,7 +1173,7 @@ def read_norad_ls_photoionization(
         raise ValueError(f"no usable NORAD photoionization sections in {source}")
     return TOPbasePhotoionizationDatabase(
         tuple(sections),
-        f"NORAD/Iron Project LS photoionization: {source.name}",
+        f"NORAD/Iron Project LS photoionization: {source.name.removesuffix('.xz')}",
     )
 
 
@@ -1310,6 +1308,136 @@ def d6_tlusty_excitation_energy_overrides(
         if oxygen_3p_5p is not None:
             result[("O", 0, 6)] = oxygen_3p_5p
     return result
+
+
+_TLUSTY_LS_LABEL = re.compile(
+    r"^[A-Z][a-z]?\s*[IVXL]+\s+(?P<multiplicity>\d)(?P<letter>[SPDFGHIK])"
+    r"(?P<parity>[eo])\s+(?P<index>\d+)$"
+)
+
+
+def tlusty_observed_term_excitation_overrides(
+    datasets: Iterable[tuple[str | Path, str, int]],
+    atomic_database: AtomicDatabase,
+    *,
+    identification_tolerance_ev: float = 0.3,
+) -> dict[tuple[str, int, int], float]:
+    """Rebase identified TLUSTY model terms onto observed Stout energies.
+
+    TLUSTY/Opacity-Project term energies are theoretical; the Si I ``1D``
+    term, for example, lies 0.02 eV low, which moves its edge by 4 A.  A
+    model level is identified with an observed term only through its label,
+    ``'Si I 1De 1'`` meaning the first even ``1D`` term, matched to the
+    Stout term of the same LS symmetry and ordinal.  Superlevels and
+    unlabelled levels keep their theoretical energy.  The tolerance is an
+    identification guard, not a fitted quantity: a pairing whose model and
+    observed energies differ by more than it is rejected as a probable
+    misidentification rather than applied.
+    """
+
+    result: dict[tuple[str, int, int], float] = {}
+    for atom_path, element, charge in datasets:
+        symbol = _canonical_element(element)
+        ion = atomic_database.ions.get((symbol, int(charge)))
+        if ion is None or ion.ionization_energy_ev is None:
+            continue
+        try:
+            observed = stout_ls_term_excitation_overrides(
+                atomic_database, symbol, int(charge)
+            )
+        except ValueError:
+            continue
+        data = read_tlusty_photoionization_threshold_data(atom_path)
+        source_threshold = PLANCK * data.threshold_frequency_hz / EV_TO_ERG
+        positive = source_threshold > 0.0
+        if not np.any(positive):
+            continue
+        source_ground_threshold = float(np.max(source_threshold[positive]))
+        ground_term = stout_ground_term_centroid_ev(ion)
+        label_count: dict[str, int] = {}
+        for label in data.level_label:
+            label_count[label] = label_count.get(label, 0) + 1
+        for level_index, (label, edge) in enumerate(
+            zip(data.level_label, source_threshold)
+        ):
+            match = _TLUSTY_LS_LABEL.match(label)
+            # A repeated label marks fine-structure-resolved levels that
+            # already carry their own J energies; leave those untouched.
+            if match is None or edge <= 0.0 or label_count[label] > 1:
+                continue
+            key = (
+                int(match.group("multiplicity")),
+                _LS_ANGULAR_MOMENTUM[match.group("letter")],
+                int(match.group("parity") == "o"),
+                int(match.group("index")),
+            )
+            excitation = observed.get(key)
+            if excitation is None:
+                continue
+            model = ground_term + source_ground_threshold - float(edge)
+            if abs(excitation - model) <= identification_tolerance_ev:
+                result[(symbol, int(charge), level_index + 1)] = float(excitation)
+    return result
+
+
+NORAD_LEVEL_RESOLVED_FILES = MappingProxyType(
+    {
+        # Bundled xz-compressed; each SHA-256 is of the decompressed text.
+        # Bautista (1997, A&AS 122, 167), Iron Project R-matrix, LS coupling.
+        "fe1.px.txt.xz": (
+            "https://norad.astronomy.osu.edu/fe1/fe1.px.txt",
+            "ab4c37d08ca3cb59a200ef401a51bfdb342ff417caa0e8ed871ab80a1806f36a",
+            "Fe", 0,
+        ),
+        "cr1.px.txt.xz": (
+            "https://norad.astronomy.osu.edu/cr1/cr1.px.txt",
+            "87bcfce2ac7c3c4291940e24ee50f47743d51a070cb238d0498e44d62f15ff10",
+            "Cr", 0,
+        ),
+    }
+)
+
+
+def read_identified_norad_photoionization(
+    path: str | Path,
+    element: str,
+    charge: int,
+    atomic_database: AtomicDatabase,
+    *,
+    maximum_photon_energy_ev: float = 60.0,
+    identification_tolerance_ev: float = 0.5,
+) -> TOPbasePhotoionizationDatabase:
+    """Read NORAD LS terms that can be identified with observed Stout terms.
+
+    Each R-matrix term is matched to the Stout term of the same LS symmetry
+    and ordinal and placed at its observed energy.  A pairing whose
+    theoretical and observed energies differ by more than
+    ``identification_tolerance_ev`` is rejected as a probable ordinal slip
+    (a term missing from one list), not corrected.  Unidentified terms are
+    omitted rather than placed at a theoretical energy.
+    """
+
+    overrides = stout_ls_term_excitation_overrides(atomic_database, element, charge)
+    theory = read_norad_ls_photoionization(
+        path, element, charge, atomic_database,
+        maximum_photon_energy_ev=maximum_photon_energy_ev,
+    )
+    observed = read_norad_ls_photoionization(
+        path, element, charge, atomic_database,
+        maximum_photon_energy_ev=maximum_photon_energy_ev,
+        excitation_energy_overrides_ev=overrides,
+        only_excitation_overrides=True,
+    )
+    theoretical = {section.level_index: section.excitation_energy_ev for section in theory.sections}
+    kept = tuple(
+        section for section in observed.sections
+        if abs(section.excitation_energy_ev - theoretical[section.level_index])
+        <= identification_tolerance_ev
+    )
+    return TOPbasePhotoionizationDatabase(
+        kept,
+        observed.source + f"; {len(kept)} identified terms within {identification_tolerance_ev:g} eV",
+    )
 
 
 def merge_topbase_photoionization_databases(
@@ -2168,7 +2296,7 @@ def _structure_wavelength_grid(
     sigma = centers * np.sqrt(
         BOLTZMANN * seed.effective_temperature
         / (masses * ATOMIC_MASS_UNIT * LIGHT_SPEED**2)
-        + (microturbulent_velocity_kms * 1.0e5 / LIGHT_SPEED) ** 2
+        + 0.5 * (microturbulent_velocity_kms * 1.0e5 / LIGHT_SPEED) ** 2
     )
     thermal = (
         centers[:, np.newaxis]

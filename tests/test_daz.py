@@ -77,10 +77,15 @@ def test_metals_and_hydrogen_chemistry_are_shared_by_structure_and_spectrum(wiri
     assert a["mixing_length_alpha"] == 0.7
     # Preserve the established atmosphere/synthesis sampling policy. Detailed
     # final synthesis need not force every weak line into the atmosphere solve.
-    assert a["minimum_metal_oscillator_strength"] == 0.01
+    # Flux conservation: the structure absorbs the synthesis line list,
+    # opacity-sampled, and the formal solution refines the depth grid.
+    assert a["minimum_metal_oscillator_strength"] == 1e-4
     assert s["minimum_metal_oscillator_strength"] == 1e-4
-    assert a["maximum_metal_lines"] == 1000
+    assert a["maximum_metal_lines"] == 20_000
     assert s["maximum_metal_lines"] == 20_000
+    assert a["metal_line_opacity_sampling_resolution"] == 1000.0
+    assert a["depth_concentration"] == 1.0
+    assert s["transfer_depth_refinement"] == 4
     assert a["n_angle"] == 3
     assert s["n_angle"] == 4
     assert "transfer_discretization" not in s

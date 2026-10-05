@@ -2,22 +2,22 @@
   {
     "case": "da-12000-public",
     "cold_metadata": {
-      "path": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/da-flux-normalization-20260910/public-cold-default/cubic/metadata.json",
-      "sha256": "6f4b99492634c5944ab1152601d6a5018a3fc326eb645d4a2fc7b6d2d4d379d8"
+      "path": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/da-12000-public-cold2/metadata.json",
+      "sha256": "730e9e0eaf8c6dc7ad9fcad6c6c75ad968dd645c27e46291956a0b5395d42644"
     },
     "cold_atmosphere": {
-      "path": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/da-flux-normalization-20260910/public-cold-default/cubic/atmosphere.npz",
-      "sha256": "7a3ab3304fcfd34d3149ba3fc8b5073df9be1bdec2c558d91b04f4fa4a152a78"
+      "path": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/da-12000-public-cold2/atmosphere.npz",
+      "sha256": "4a9a8a5c87fd7afb0e58b54617a6f1bf18020fec9e0ddc89d93c2cc4238c9335"
     },
-    "spectrum": {
-      "path": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD/results/da-flux-normalization-20260910/public-cold-default/cubic/spectrum.txt",
-      "sha256": "ff2f981d08a647cc20bb79e4c1cb142db71fb1e6fb55964f35ac17ceecd17e7f"
-    },
-    "selection": "Every fourth evaluated wavelength, 900-300000 Angstrom",
+    "spectrum": "fixed-atmosphere public-default synthesis of the cold atmosphere on the previous control wavelengths",
+    "selection": "previous control wavelengths (every fourth evaluated 900-300000 A of the 2026-09-10 control)",
     "atmosphere_cold_start_verified": true,
     "interpolation": "formal-pchip",
+    "transfer_depth_refinement": 4,
+    "photospheric_depth_concentration": "3 (standard 40-layer default)",
+    "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
     "historical_controls_preserved": true,
-    "reason": "User-approved cubic default after corrected cold-start/paper comparisons"
+    "reason": "User-approved flux-conserving numerics (2026-10-01): photosphere-concentrated depths and depth-refined formal solution"
   },
   {
     "case": "da-20000",

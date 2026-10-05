@@ -1,12 +1,20 @@
 {
-  "source_run": "dq-j1235-uv-refined-cold-v1",
-  "source_spectrum_sha256": "703eb50754ade8f7d0443522e290b9bb9143db275d43353bd35352de0c703700",
-  "fixture_sha256": "edc9a09d5961f5515a2153deaf168b6dd7d8889a8869a26042b8de57342d1c46",
-  "parameters": {
-    "effective_temperature": 9347.0,
-    "logg": 8.041,
-    "log_carbon_to_helium": -4.107
-  },
-  "scope": "Fixed-state spectral regression only. Never input to a cold-start test.",
-  "points": 79
+ "source_run": "dq-j1235-uv-refined-cold-v1",
+ "source_spectrum_sha256": "703eb50754ade8f7d0443522e290b9bb9143db275d43353bd35352de0c703700",
+ "fixture_sha256": "fa6bd61985ad0b3d5a86586207fc2be3c679765a7736e7c9660874fcaa574e95",
+ "parameters": {
+  "effective_temperature": 9347.0,
+  "logg": 8.041,
+  "log_carbon_to_helium": -4.107
+ },
+ "scope": "Fixed-state spectral regression only. Never input to a cold-start test.",
+ "points": 79,
+ "reapprovals": [
+  {
+   "date": "2026-10-01",
+   "previous_fixture_sha256": "edc9a09d5961f5515a2153deaf168b6dd7d8889a8869a26042b8de57342d1c46",
+   "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
+   "reason": "Shared metal-line physics of the 2026-09-30 DZ audit: carbon impact profiles are now exact Voigt in frequency (compiled kernel), C I Verner photoionization covers the whole ground term. Structure arrays unchanged."
+  }
+ ]
 }

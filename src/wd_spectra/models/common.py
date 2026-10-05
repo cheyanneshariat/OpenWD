@@ -36,8 +36,16 @@ ConvergenceStatus = Literal[
 ]
 
 _MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
-_MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v4"
-_MODEL_FAMILY_PHYSICS_REVISIONS = {"DAH": "dah-kurucz-griem-v4"}
+_MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving"
+_MODEL_FAMILY_PHYSICS_REVISIONS = {
+    "DAH": "dah-kurucz-griem-v4",
+    # Shared metal physics revised by the 2026-09-30 DZ audit: ground-term
+    # bound-free populations, 1/Z^2 Unsold radii, frequency Voigt profiles,
+    # structure line identity and continuous dense-He ionization.
+    "DZ": "metal-audit-2026-09-30",
+    "DAZ": "metal-audit-2026-09-30",
+    "D6": "metal-audit-2026-09-30",
+}
 
 
 class AtmosphereConvergenceWarning(RuntimeWarning):
@@ -131,6 +139,14 @@ class ModelData:
     @property
     def verner_photoionization(self) -> Path:
         return self.cache / "metal-opacity/verner-photoionization.dat"
+
+    @property
+    def verner_phfit2(self) -> Path:
+        return self.cache / "metal-opacity/verner-phfit2.f"
+
+    @property
+    def norad(self) -> Path:
+        return self.cache / "norad"
 
     @property
     def barklem_neutral_h_broadening(self) -> Path:

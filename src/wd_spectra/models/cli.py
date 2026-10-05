@@ -25,6 +25,12 @@ from .stellar import (
 )
 
 
+def _optional_float(text: str) -> float | None:
+    if text.strip().lower() == "none":
+        return None
+    return float(text)
+
+
 def _assignment(value: str) -> tuple[str, float]:
     try:
         element, raw = value.split("=", 1)
@@ -95,9 +101,12 @@ def one_shot_main(spectral_type: str) -> None:
         parser.add_argument("--h3plus-partition",
                             choices=("neale-tennyson-1995", "none"),
                             default="neale-tennyson-1995")
-    if kind in {"DAB", "DZ"}:
-        parser.add_argument("--log-h-he", type=float,
-                            default=-2.0 if kind == "DAB" else -6.16)
+    if kind == "DAB":
+        parser.add_argument("--log-h-he", type=float, default=-2.0)
+    if kind == "DZ":
+        parser.add_argument("--log-h-he", type=_optional_float,
+                            default=DZConfig().log_hydrogen_abundance,
+                            help="log10 N(H)/N(He), or 'none' for a hydrogen-free atmosphere")
     if kind == "DZ":
         parser.add_argument("--abundance", action="append", type=_assignment,
                             help="replace defaults with Element=log10(N/He)")

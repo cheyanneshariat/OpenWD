@@ -270,6 +270,9 @@ def compute_dah(
                 include_molecules=molecules,
                 mixing_length_alpha=mixing_length_alpha,
                 balmer_self_broadening_prescription=self_broadening,
+                # DAH keeps the historical uniform DA mesh until its own
+                # magnetic synthesis adopts the flux-conserving numerics.
+                photospheric_depth_concentration=0.0,
             ),
             np.asarray([4_000.0, 5_000.0]),
             data=data,

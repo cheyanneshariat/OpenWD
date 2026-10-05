@@ -84,3 +84,102 @@ def test_ca_ii_scattering_includes_radiative_branching_and_electron_destruction(
     assert np.all(
         high_density[(1, 5)].probability < low_density[(1, 5)].probability
     )
+
+
+def test_ca_ii_fine_structure_transfer_is_not_counted_as_destruction(tmp_path: Path):
+    scups = tmp_path / "ca_2.scups"
+    scups.write_text(
+        """1 4 2.296e-1 0.0 1.0 2 2 1.0
+0.0 1.0
+2.0 2.0
+4 5 1.0e-2 0.0 1.0 2 2 1.0
+0.0 1.0
+5.6 5.6
+-1
+""",
+        encoding="ascii",
+    )
+    atmosphere = replace(
+        gray_helium_atmosphere(10_000.0, 8.0, n_depth=8),
+        electron_density=np.full(8, 1.0e16),
+    )
+    records = ca_ii_resonance_scattering_probabilities(
+        atmosphere, _calcium_database(), scups
+    )
+    for key, record in records.items():
+        assert record.fine_structure_partner in records
+        assert record.fine_structure_partner != key
+        assert np.all(record.fine_structure_transfer > 0.0)
+        np.testing.assert_allclose(
+            record.probability + record.fine_structure_transfer
+            + record.destruction_probability,
+            1.0,
+        )
+
+
+def _isothermal_crd_inputs(probability: float):
+    from wd_spectra.cool_metal_nlte import ResonanceScatteringProbability
+
+    atmosphere = gray_helium_atmosphere(8000.0, 8.0, n_depth=40)
+    atmosphere = replace(atmosphere, temperature=np.full(atmosphere.n_depth, 8000.0))
+    wavelength = np.linspace(3800.0, 4100.0, 1501)
+    centers = {(1, 4): 3969.6, (1, 5): 3934.8}
+    background = np.full((wavelength.size, atmosphere.n_depth), 0.01)
+
+    def line_extinction(grid):
+        return {
+            key: 1.0e3 * 0.5 / np.pi / ((grid[:, None] - center) ** 2 + 0.25)
+            * np.ones(atmosphere.n_depth)[None, :]
+            for key, center in centers.items()
+        }
+
+    probabilities = {
+        key: ResonanceScatteringProbability(
+            probability=np.full(atmosphere.n_depth, probability),
+            resonant_einstein_a=1.0,
+            total_radiative_rate=1.0,
+            source="test",
+            fine_structure_partner=other,
+            fine_structure_transfer=np.zeros(atmosphere.n_depth),
+        )
+        for key, other in (((1, 4), (1, 5)), ((1, 5), (1, 4)))
+    }
+    absorption = background + sum(line_extinction(wavelength).values())
+    return atmosphere, wavelength, absorption, line_extinction, probabilities
+
+
+def test_ca_ii_crd_source_recovers_lte_without_scattering():
+    from wd_spectra.cool_metal_nlte import (
+        _planck_frequency,
+        ca_ii_crd_resonance_source_functions,
+    )
+
+    atmosphere, wavelength, absorption, lines, probabilities = _isothermal_crd_inputs(0.0)
+    sources = ca_ii_crd_resonance_source_functions(
+        atmosphere, wavelength, absorption, np.zeros_like(absorption),
+        lines, probabilities, n_angle=3,
+    )
+    planck = _planck_frequency(np.asarray([3934.8]), atmosphere.temperature)[0]
+    np.testing.assert_allclose(sources[(1, 5)], planck, rtol=1e-12)
+
+
+def test_ca_ii_crd_source_follows_sqrt_epsilon_surface_law():
+    from wd_spectra.cool_metal_nlte import (
+        _planck_frequency,
+        ca_ii_crd_resonance_source_functions,
+    )
+
+    epsilon = 1.0e-2
+    atmosphere, wavelength, absorption, lines, probabilities = (
+        _isothermal_crd_inputs(1.0 - epsilon)
+    )
+    sources = ca_ii_crd_resonance_source_functions(
+        atmosphere, wavelength, absorption, np.zeros_like(absorption),
+        lines, probabilities, n_angle=4,
+    )
+    planck = _planck_frequency(np.asarray([3934.8]), atmosphere.temperature)[0]
+    ratio = sources[(1, 5)] / planck
+    # Isothermal CRD: S(0)/B is of order sqrt(epsilon) and S -> B at depth.
+    assert 0.3 * np.sqrt(epsilon) < ratio[0] < 3.0 * np.sqrt(epsilon)
+    assert ratio[-1] == pytest.approx(1.0, rel=0.02)
+    assert np.all(np.diff(ratio) >= -1e-12)

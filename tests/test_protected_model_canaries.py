@@ -168,7 +168,10 @@ def _progress_callback(label, capsys):
 
 @pytest.mark.parametrize(
     "effective_temperature,maximum_expected_iterations",
-    [(10_000.0, 60), (22_000.0, 60)],
+    # Work guards, not physical tolerances. The flux-conserving
+    # photosphere-concentrated depths (2026-10-01) took 82 and 55 iterations;
+    # with uniform depths the 10 kK model needed 158 and did not certify.
+    [(10_000.0, 90), (22_000.0, 90)],
 )
 def test_protected_db_cold_starts_converge_without_fallback(
     effective_temperature,
@@ -229,7 +232,9 @@ def test_standard_db_22000_enters_exact_flux_verification(capsys):
 
 @pytest.mark.parametrize(
     "effective_temperature,maximum_expected_iterations",
-    [(5_000.0, 45), (20_000.0, 45)],
+    # Work guards, not physical tolerances. Photosphere-concentrated depths
+    # (2026-10-01) took 64 and 50 iterations, against 45 and 33 uniform.
+    [(5_000.0, 70), (20_000.0, 70)],
 )
 def test_protected_da_cold_starts_converge_without_fallback(
     effective_temperature,
@@ -292,3 +297,33 @@ def test_ultracool_da_cold_starts_converge_with_exact_flux_verification(
     assert not metadata["initial_bolometric_rescaling_enabled"]
     assert not metadata["initial_temperature_was_supplied"]
     assert result.metadata["atmosphere_initialization"] == "gray"
+
+
+def test_standard_dab_12000_completes_thin_layer_energy_balance(capsys):
+    """A converged flux residual must not hide a non-stationary surface mode.
+
+    In optically thin outer layers the total flux barely constrains T, so the
+    formal-flux phase can accept a line-searched step at round-off residual
+    while its unrestricted Newton proposal is a 0.6% surface sawtooth.  That
+    state must be completed with local energy balance, not handed back to fail
+    the stationarity certificate (2026-10-01).
+    """
+    from wd_spectra.models import DABConfig, compute_dab
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", AtmosphereConvergenceWarning)
+        result = compute_dab(
+            DABConfig(
+                effective_temperature=12_000.0,
+                logg=8.0,
+                log_hydrogen_to_helium=-2.0,
+                quality="standard",
+            ),
+            _FORMAL_WAVELENGTH,
+            iteration_callback=_progress_callback("DAB-12000K-standard", capsys),
+        )
+    metadata = result.atmosphere.metadata
+    certificate = metadata["equilibrium_certificate"]
+    assert certificate["verified"], certificate["failures"]
+    assert metadata["local_energy_completion_used"]
+    assert not [w for w in caught if issubclass(w.category, AtmosphereConvergenceWarning)]
