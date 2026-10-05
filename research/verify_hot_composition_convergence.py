@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import numpy as np
-from astropy.io import fits
 
 from compare_hot_daz_benchmark import compare
 from wd_spectra.models.common import ModelData
@@ -111,6 +110,7 @@ def verify(model,replay,previous,output):
             difference=float(np.max(abs(other-population)/np.maximum(population,floor)))
             if difference>1e-8:raise ValueError('fresh restart changed saved populations unexpectedly')
             population_differences[element]=difference
+    from astropy.io import fits
     with fits.open(output/'strict-comparison/prediction.fits',checksum=True) as hdus:
         for hdu in hdus:
             if hdu.verify_checksum()!=1 or hdu.verify_datasum()!=1:raise ValueError('FITS checksum failure')
