@@ -74,6 +74,82 @@ the LTE charge closure therefore remain physical limitations even when a
 cold start converges. The older diagnostic comparison set and its numerical
 scores are retained under [observational checks](#observational-checks-and-remaining-limitations).
 
+## Trace metals in hot DA/DAO atmospheres (experimental)
+
+`wd_spectra.hot_trace_metals.solve_hot_trace_metals` adds NLTE trace metals to
+a converged DA/DAO atmosphere. The H/He atmosphere is held fixed: its
+temperatures, densities, electron densities and H/He populations are not
+changed, and the metals do not feed back into the energy balance. The metal
+statistical-equilibrium populations are iterated together with a radiation
+field that includes the host opacity and the metal line and continuum opacity.
+This is a research capability, not a qualified public preset.
+
+### G191-B2B comparison
+
+[![FUSE and HST/STIS spectra of G191-B2B compared with the NLTE trace-metal model](../assets/g191b2b-trace-metals-paper.png)](../assets/g191b2b-trace-metals-paper.pdf)
+
+[Download the comparison (PDF)](../assets/g191b2b-trace-metals-paper.pdf).
+The H/He atmosphere (T_eff = 52,500 K, log g = 7.53, N(He)/N(H) = 1e-5) is a
+public DAO cold start at production resolution (80 depths, four angles). C, N,
+O, Al, Si, P, S, Fe and Ni are then solved in NLTE on that fixed atmosphere,
+also starting from LTE populations, at the abundances of
+[Preval et al. (2013)](https://doi.org/10.1093/mnras/stt1604). No parameter is
+fitted. The model reproduces the P V, Si IV, C III and Al III lines and the
+Fe V forest; O IV is too weak and the N V doublet too strong.
+
+How the model and figure were made:
+
+* **Model atoms.** C, N, O, Al, Si, P and S keep the lowest Stout levels of
+  consecutive ions from the doubly ionized stage upward, with the highest stage
+  represented by its ground level. Fe and Ni IV–VII keep all bound levels, with
+  the Fe/Ni VIII ground on top (3804 explicit levels). Fe/Ni UV lines come from
+  Kurucz's measured-level lists (gfFUV99); EUV resonance transitions missing
+  from them are added from the Kurucz `.pos` files. Fe/Ni lines of lower stages
+  keep LTE opacity; higher stages carry none.
+* **Rates.** Verner ground-state photoionization, Opacity Project cross
+  sections for C III–IV and O IV–VI, hydrogenic cross sections for other
+  excited levels, CHIANTI collision strengths for C and O and van Regemorter
+  rates otherwise. Recombination missing from the truncated Fe/Ni atoms is
+  added from the CHIANTI totals with its detailed-balance inverse.
+* **Iteration and convergence.** The first statistical-equilibrium solution
+  from LTE is adopted in full; later updates use a line-weighted approximate
+  lambda operator and ion-wise Anderson acceleration. The populations are
+  converged when the undamped update changes the emergent flux by less than
+  3e-3 at every wavelength longward of 900 Å (the figure's model was
+  converged to 1e-3).
+* **Comparison.** The model is shifted to the photospheric velocity
+  (23.8 km/s), convolved with the instrument resolution (R = 20,000 for FUSE,
+  144,000 for STIS E140H/E230H) and averaged over the observed pixels. Data
+  and model are normalized independently, with the same quadratic envelope fit,
+  in each 20 Å panel. Interstellar lines identified in the MAST HLSP line lists
+  are shaded. The 1335.7 Å line, listed there as photospheric N III/Ni IV, is
+  also shaded: it lies within about 1 km/s of interstellar C II* 1335.71 Å at
+  the velocity of the second (Hyades) cloud, and the atomic data contain no
+  N III line near this wavelength. The model contains no interstellar
+  absorption.
+
+All atomic data and the observations are bundled in
+`src/wd_spectra/data/hot_daz` with checksums and provenance. To reproduce the
+model and figure:
+
+```bash
+python research/hot_daz_g191b2b.py --quality production --tolerance 1e-3 --output g191b2b-80
+python research/plot_g191b2b_validation.py --model g191b2b-80 --output g191b2b.pdf
+```
+
+The production cold start is expensive on one thread: 5.3 h for the H/He host
+and 4.8 h for the metals at the 1e-3 tolerance used for the figure (the run
+would have stopped after about 3.1 h at the default 3e-3). The 40-depth version
+(`--quality standard`) is the canary test
+`tests/test_hot_daz_g191b2b_canary.py`. The fixed host is the main physical
+limitation: adding the metal opacity without relaxing the temperatures leaves
+flux errors of up to 14%, and an exploratory relaxation changes the C III,
+Al III and S IV equivalent widths by 19–28%. Radiative levitation and
+stratification, other observed species (e.g. Ge) and accurate collision rates
+for most ions are not included. The development record, convergence studies
+and numerical choices are in
+[hot DA/DAO trace metals](../development/hot-daz-trace-metals.md).
+
 ## Solver and retained atom
 
 Logarithmic temperatures and independent elemental population ratios are

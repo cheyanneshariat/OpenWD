@@ -4,6 +4,7 @@ No level-index identity is assumed. Each mapping requires configuration,
 multiplicity, orbital term, J, and an independently checked level energy.
 This is a research adapter; data stay outside the frozen host's table cache.
 """
+from hot_daz_data import data_file
 import hashlib
 import json
 import re
@@ -75,15 +76,15 @@ def carbon_collisions(directory, database, counts, *, charges=(2,3), low_level_l
         prefix = f'c_{charge+1}'
         for suffix in ('elvlc','scups'):
             name = prefix+'.'+suffix
-            actual = hashlib.sha256((directory/name).read_bytes()).hexdigest()
+            actual = hashlib.sha256(data_file(directory,name).read_bytes()).hexdigest()
             if actual != manifest[name]['sha256']:
                 raise ValueError(f'CHIANTI input checksum changed: {name}')
         ion = database.ions['C',charge]
-        mapping, rows = map_chianti_levels(directory/(prefix+'.elvlc'), ion)
+        mapping, rows = map_chianti_levels(data_file(directory,prefix+'.elvlc'), ion)
         selected = sorted(ion.levels,key=lambda l:l.energy_wavenumber)[:counts[charge]]
         selected = {l.index for l in selected}
         energies = {l.index:l.energy_wavenumber for l in ion.levels}
-        raw = read_chianti_scaled_collision_components(directory/(prefix+'.scups'))
+        raw = read_chianti_scaled_collision_components(data_file(directory,prefix+'.scups'))
         kept = []
         radiative = {(t.lower_index,t.upper_index) for t in ion.transitions if t.einstein_a>0}
         for (a,b), component in raw.items():

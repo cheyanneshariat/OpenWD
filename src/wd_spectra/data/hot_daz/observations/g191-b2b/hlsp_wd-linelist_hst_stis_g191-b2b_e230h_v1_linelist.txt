@@ -1,0 +1,114 @@
+#TELESCOP= 'HST'                  / Observatory name.
+#INSTRUME= 'STIS'                 / Instrument name.
+#EXPTIME = 77743                  / Effective exposure time (sec).
+#RADESYS = 'ICRS'                 / Astrometric reference system.
+#RA_TARG = 76.377596              / Right ascension of object (deg).
+#DEC_TARG= 52.830846              / Declination of object (deg).
+#DATE-OBS= '2000-03-18T02:52:52'  / Time at start of first obs used in coadd.
+#EXPSTART= 51621.12               / Start of first obs used in coadd (MJD).
+#EXPEND  = 55202.851              / End of last obs used in coadd (MJD).
+#WAVEMIN = 1650.00                / Minimum wavelength in spectrum.
+#WAVEMAX = 3150.00                / Maximum wavelength in spectrum.
+#TARGNAME= 'G191-B2B'             / Target name.
+#EQUINOX = 2000.                  / Equinox of the coordinates.
+#HLSPLEAD= 'Simon Preval'         / HLSP Lead.
+#CITATION= 'Preval, et al. 2013, MNRAS, 436:659' / Reference for HLSP methodology.
+#PR_INV_L= 'Preval'               / PI Last Name.
+#PR_INV_F= 'Simon '               / PI First Name.
+#AIRORVAC= 'VAC'		  / Wavelengths in AIR or VACUUM?
+#BITPIX  = 8                      / 8-bit bytes.
+#NAXIS   = 2                      / 2-dimensional table.
+#NAXIS1  = 46                     / Width of table in bytes.
+#NAXIS2  = 55                     / Number of rows in table.
+#PCOUNT  = 0                      / Size of spectral data area.
+#GCOUNT  = 1                      / One data group (required keyword).
+#TFIELDS = 12                     / Number of fields in each row.
+#TTYPE1  = 'WAVEOBS'              / Observed wavelength.
+#TFORM1  = '1E'
+#TUNIT1  = 'ANGSTROM'             / Units Angstrom.
+#TTYPE2  = 'WOBSUNC'              / Observed wavelength uncertainty.
+#TFORM2  = '1E'
+#TUNIT2  = 'MANGSTROM'            / Units Milliangstrom.
+#TTYPE3  = 'EQWIDTH'              / Equivalent width.
+#TFORM3  = '1E'
+#TUNIT3  = 'MANGSTROM'            / Units Milliangstrom.
+#TTYPE4  = 'EQWUNC'               / Equivalent width uncertainty.
+#TFORM4  = '1E'
+#TUNIT4  = 'MANGSTROM'            / Units Milliangstrom.
+#TTYPE5  = 'METAL'                / Name of metal.
+#TFORM5  = '2A'
+#TTYPE6  = 'ION'                  / Ionisation stage of the metal.
+#TFORM6  = '4A'
+#TTYPE7  = 'WAVEREST'             / Rest/Laboratory wavelength.
+#TFORM7  = '1E'
+#TUNIT7  = 'ANGSTROM'             / Units Angstrom.
+#TTYPE8  = 'WRESTUNC'             / Rest/Laboratory wavelength uncertainty.
+#TFORM8  = '1E'
+#TUNIT8  = 'MANGSTROM'            / Units Milliangstrom.
+#TTYPE9  = 'VELOCITY'             / Absorber velocity.
+#TFORM9  = '1E'
+#TUNIT9  = 'KMS-1'                / Units Kilometres per second.
+#TTYPE10 = 'VUNSTAT'              / Absorber velocity uncertainty using column 2.
+#TFORM10 = '1E'
+#TUNIT10 = 'KMS-1'                / Units Kilometres per second.
+#TTYPE11 = 'VUNTOTAL'             / Absorber velocity uncertainty adding columns 2 and 8 in quadrature.
+#TFORM11 = '1E'
+#TUNIT11 = 'KMS-1'                / Units Kilometres per second.
+#TTYPE12 = 'ORIGIN'               / Origin of absorption feature. PHOT=Photosphere, ISM1=Local Interstellar Cloud, ISM2=Hyades Cloud.
+#TFORM12 = '4A'
+#END
+1651.714 2.525 15.386 1.303 "Fe" "IV" 1651.577 2.400 24.92 0.46 0.63 "PHOT"
+1653.045 3.630 9.216 2.073 "Fe" "IV" 1652.902 2.400 25.91 0.66 0.79 "PHOT"
+1653.537 3.053 7.527 1.853 "Al" "V" 1653.400 1700.000 24.77 0.55 308.24 "PHOT"
+1653.537 3.053 7.527 1.853 "Ni" "VI" 1653.401 24.000 24.59 0.55 4.39 "PHOT"
+1653.537 3.053 7.527 1.853 "Fe" "IV" 1653.407 2.400 23.50 0.55 0.70 "PHOT"
+1654.875 3.918 7.023 1.295 "Fe" "V" 1654.744 15.000 23.68 0.71 2.81 "PHOT"
+1656.249 3.519 17.260 1.624 "Fe" "IV" 1656.111 2.400 25.01 0.64 0.77 "PHOT"
+1656.787 2.544 8.602 1.154 "Fe" "IV" 1656.652 2.400 24.35 0.46 0.63 "PHOT"
+1656.787 2.544 8.602 1.154 "C" "III" 1656.665 27.000 22.00 0.46 4.91 "PHOT"
+1658.566 3.764 4.140 1.058 "Fe" "IV" 1658.433 2.500 24.13 0.68 0.82 "PHOT"
+1660.242 2.868 7.345 1.894 "Fe" "IV" 1660.103 2.500 25.14 0.52 0.69 "PHOT"
+1661.714 3.732 12.233 2.669 "Fe" "IV" 1661.573 2.500 25.59 0.67 0.81 "PHOT"
+1662.447 2.801 8.211 1.970 "Fe" "IV" 1662.319 2.500 23.17 0.51 0.68 "PHOT"
+1662.652 2.422 7.260 1.823 "Fe" "IV" 1662.519 2.500 24.05 0.44 0.63 "PHOT"
+1662.652 2.422 7.260 1.823 "O" "V" 1662.538 0.000 20.62 0.44 0.44 "PHOT"
+1670.897 1.716 13.419 2.015 "Al" "II" 1670.787 2.500 19.69 0.31 0.54 "ISM1"
+1670.842 0.921 32.970 2.178 "Al" "II" 1670.787 2.500 9.79 0.17 0.48 "ISM2"
+1673.818 2.083 7.770 1.485 "Fe" "IV" 1673.670 2.500 26.55 0.37 0.58 "PHOT"
+1673.818 2.083 7.770 1.485 "Fe" "IV" 1673.679 2.500 24.94 0.37 0.58 "PHOT"
+1675.785 3.313 8.193 2.213 "Fe" "IV" 1675.661 2.500 22.15 0.59 0.74 "PHOT"
+1676.570 3.454 6.605 2.048 "Ni" "IV" 1676.421 25.000 26.71 0.62 4.51 "PHOT"
+1676.570 3.454 6.605 2.048 "P" "IV" 1676.426 2.500 25.81 0.62 0.76 "PHOT"
+1676.570 3.454 6.605 2.048 "Fe" "V" 1676.429 16.000 25.28 0.62 2.93 "PHOT"
+1687.824 4.544 13.263 3.486 "Fe" "IV" 1687.683 2.500 25.06 0.81 0.92 "PHOT"
+1699.022 3.392 11.802 2.964 "Fe" "IV" 1698.884 2.600 24.38 0.60 0.75 "PHOT"
+1712.896 3.053 7.696 2.066 "Fe" "IV" 1712.759 2.600 24.04 0.53 0.70 "PHOT"
+1718.043 2.827 12.796 2.651 "Ni" "V" 1717.885 26.000 27.59 0.49 4.56 "PHOT"
+1718.043 2.827 12.796 2.651 "Fe" "IV" 1717.896 2.600 25.67 0.49 0.67 "PHOT"
+1718.043 2.827 12.796 2.651 "N" "III" 1717.909 26.000 23.40 0.49 4.56 "PHOT"
+1718.299 4.389 21.279 2.432 "Fe" "IV" 1718.163 2.600 23.80 0.77 0.89 "PHOT"
+1718.687 2.888 27.815 4.090 "N" "IV" 1718.550 26.000 23.94 0.50 4.56 "PHOT"
+1718.687 2.888 27.815 4.090 "Fe" "IV" 1718.562 2.600 21.84 0.50 0.68 "PHOT"
+1722.682 4.911 40.292 3.588 "O" "V" 1722.530 260.000 26.48 0.85 45.26 "PHOT"
+1722.682 4.911 40.292 3.588 "Si" "IV" 1722.562 2.600 20.91 0.85 0.97 "PHOT"
+1724.199 2.472 13.168 2.231 "Fe" "IV" 1724.055 2.600 25.08 0.43 0.62 "PHOT"
+1724.199 2.472 13.168 2.231 "Ni" "IV" 1724.070 26.000 22.47 0.43 4.54 "PHOT"
+1725.752 8.929 19.833 2.947 "Fe" "IV" 1725.627 2.700 21.76 1.55 1.62 "PHOT"
+1828.134 4.912 6.968 2.071 "Fe" "IV" 1827.979 3.000 25.46 0.81 0.94 "PHOT"
+1854.862 2.382 17.655 2.172 "Al" "III" 1854.716 3.100 23.54 0.38 0.63 "PHOT"
+1862.929 3.557 11.543 1.892 "Al" "III" 1862.790 3.100 22.35 0.57 0.76 "PHOT"
+2344.359 1.249 12.130 1.688 "Fe" "II" 2344.214 0.490 18.56 0.16 0.17 "ISM1"
+2344.280 0.767 32.601 2.007 "Fe" "II" 2344.214 0.490 8.50 0.10 0.12 "ISM2"
+2374.609 2.510 5.528 1.744 "Fe" "II" 2374.461 0.500 18.67 0.32 0.32 "ISM1"
+2374.524 2.608 11.977 2.314 "Fe" "II" 2374.461 0.500 7.99 0.33 0.34 "ISM2"
+2382.914 0.421 25.350 1.083 "Fe" "II" 2382.765 0.510 18.79 0.05 0.08 "ISM1"
+2382.834 0.288 67.497 1.285 "Fe" "II" 2382.765 0.510 8.73 0.04 0.07 "ISM2"
+2586.817 0.880 10.289 0.931 "Fe" "II" 2586.650 0.600 19.39 0.10 0.12 "ISM1"
+2586.728 0.569 29.795 1.157 "Fe" "II" 2586.650 0.600 9.08 0.07 0.10 "ISM2"
+2600.340 0.484 25.466 1.158 "Fe" "II" 2600.173 0.600 19.31 0.06 0.09 "ISM1"
+2600.253 0.332 67.326 1.360 "Fe" "II" 2600.173 0.600 9.26 0.04 0.08 "ISM2"
+2796.535 0.718 65.004 2.474 "Mg" "II" 2796.352 7.000 19.59 0.08 0.75 "ISM1"
+2796.432 0.807 132.093 3.281 "Mg" "II" 2796.352 7.000 8.59 0.09 0.76 "ISM2"
+2803.716 0.521 45.293 1.733 "Mg" "II" 2803.531 7.000 19.74 0.06 0.75 "ISM1"
+2803.614 0.523 123.568 2.744 "Mg" "II" 2803.531 7.000 8.84 0.06 0.75 "ISM2"
+2853.041 2.245 21.730 2.738 "Mg" "I" 2852.964 0.730 8.06 0.24 0.25 "ISM2"

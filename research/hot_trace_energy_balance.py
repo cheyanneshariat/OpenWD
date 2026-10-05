@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
+from wd_spectra._compat import trapezoid
 from wd_spectra.constants import STEFAN_BOLTZMANN
 from wd_spectra._hot_structure import HotEquations
 from wd_spectra._mass_feautrier import mass_emissivity_energy
@@ -33,7 +34,7 @@ def audit_energy_balance(host,model,database,photo,abundances,counts,thresholds,
     report={};arrays={'wavelength':wave,'column_mass':atmosphere.column_mass}
     def evaluate(label,coefficients):
         _,field,closure=transfer_field(atmosphere,coefficients,n_angle=model.n_angle)
-        relative_flux=np.trapz(field.interface_flux,wave,axis=0)/target-1
+        relative_flux=trapezoid(field.interface_flux,wave,axis=0)/target-1
         energy,emission=mass_emissivity_energy(wave,atmosphere.column_mass,
             coefficients.thermal_emissivity,field.mean_intensity,coefficients.true_absorption)
         energy_residual=energy/np.maximum(abs(emission),1e-30*target)

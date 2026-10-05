@@ -9,6 +9,7 @@ import gzip
 import hashlib
 import json
 import numpy as np
+from hot_daz_data import cache_directory, data_file
 from wd_spectra.metals import (ATOMIC_NUMBER, AtomicDatabase,
     VernerPhotoionizationDatabase, read_pg1159_atomic_database,
     read_verner_photoionization_database, read_kurucz_gf100_atomic_database)
@@ -152,7 +153,7 @@ def load_composition_data(data, directory, *, iron_group=True, kurucz_positions=
     photo=VernerPhotoionizationDatabase(fits,photo.source+'; P/Ni outer shell: Verner & Yakovlev 1995')
     counts={}
     if iron_group:
-        converted=Path(directory)/'gfFUV99-fe-ni.gf'
+        converted=cache_directory()/'gfFUV99-fe-ni.gf'
         counts=convert_iron_group_lines(paths['gfFUV99.dat.gz'],converted)
         db=read_kurucz_gf100_atomic_database([converted],db,elements=('Fe','Ni'),
             minimum_wavelength_angstrom=880.,maximum_wavelength_angstrom=1990.)
@@ -162,7 +163,7 @@ def load_composition_data(data, directory, *, iron_group=True, kurucz_positions=
         sums=dict(line.split()[::-1] for line in (Path(kurucz_positions)/'SHA256SUMS').read_text().splitlines())
         files=[]
         for name in KURUCZ_POSITION_FILES:
-            path=Path(kurucz_positions)/name
+            path=data_file(kurucz_positions,name)
             if hashlib.sha256(path.read_bytes()).hexdigest()!=sums[name]:
                 raise ValueError(f'Kurucz positions checksum mismatch: {path}')
             files.append(path)

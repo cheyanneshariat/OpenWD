@@ -1,0 +1,11 @@
+    1
+   26    7  5.2800e+05  4.1776e+06  0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00
+   26    7  9.2054e-02  4.1024e-02  0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00
+-1
+%file:  fe_7.rrparams
+%parameters for dielectronic recombination rate coefficients
+%reference:  Mazzotta, P., Mazzitelli, G., Colafrancesco, S.,
+    Vittorio, N., 1998, A\&ASS, 133, 403
+ produced for the CHIANTI atomic database for astrophysical spectroscopy
+ created by Ken Dere (GMU):  Thu Feb  8 15:10:19 2007
+-1

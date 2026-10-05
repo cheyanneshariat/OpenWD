@@ -1,0 +1,12 @@
+    3
+   28    8  1.7500e-11  6.9900e-01
+-1
+%file:  ni_8.rrparams
+% radiative recombination parameters, interpolated from:
+  Shull, J. M., Van Steenberg, M., 1982, ApJSS, 48, 95
+  Landini, M., Monsignori Fossi, B. C., 1990, A\&ASS, 82, 229
+  Landini, M., Monsignori Fossi, B. C., 1991, A\&ASS, 91, 183
+  Mazzitelli, G., Mattioli, M., 2002, ADNDT, 82, 313
+ produced for the CHIANTI atomic database for astrophysical spectroscopy
+ created by Ken Dere (GMU):  Thu Feb  8 12:16:39 2007
+-1
