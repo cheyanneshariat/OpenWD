@@ -141,7 +141,9 @@ The production cold start is expensive on one thread: 5.3 h for the H/He host
 and 4.8 h for the metals at the 1e-3 tolerance used for the figure (the run
 would have stopped after about 3.1 h at the default 3e-3). The 40-depth version
 (`--quality standard`) is the canary test
-`tests/test_hot_daz_g191b2b_canary.py`. The fixed host is the main physical
+`tests/test_hot_daz_g191b2b_canary.py` (2.7 h on one thread: 1.9 h for the
+host and 50 min, 13 iterations, for the metals); it compares the comparison
+windows and seven line equivalent widths with a stored reference at the 1% level. The fixed host is the main physical
 limitation: adding the metal opacity without relaxing the temperatures leaves
 flux errors of up to 14%, and an exploratory relaxation changes the C III,
 Al III and S IV equivalent widths by 19–28%. Radiative levitation and
@@ -324,6 +326,10 @@ python -m pytest tests/test_hot_public.py tests/test_hot_error_boundary.py tests
 # Seven expensive fresh calculations using the installed data.
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
   python -m pytest -m canary tests/test_hot_cold_canary.py
+
+# Experimental trace metals: 40-depth G191-B2B cold start (about 3 h).
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  python -m pytest -m canary tests/test_hot_daz_g191b2b_canary.py
 ```
 
 The ordinary tests use small synthetic collision fixtures to keep fast CI

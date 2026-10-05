@@ -202,7 +202,7 @@
         "sha256_at_import": "410bb63ea2b7d8a81c0a07e47fc9148877d1e6ed73c7eb55b918aa7b6430c20c",
         "command": "python research/plot_g191b2b_validation.py --model <run> --output <figure>.pdf",
         "model": "research/hot_daz_g191b2b.py --quality production (80 depths, 4 angles)",
-        "scope": "Reproduces the archived PNG pixel for pixel from the 80-depth model and the bundled observations."
+        "scope": "Regenerates the archived PDF (identical when rasterized) from the 80-depth model and the bundled observations."
       }
     }
   ]

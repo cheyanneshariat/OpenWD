@@ -5,6 +5,7 @@ import gzip
 import numpy as np
 import pytest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'research'))
+from hot_daz_data import ATOMIC
 from hot_trace_composition import (OuterShellFit, outer_shell_fits,
                                   convert_iron_group_lines, load_composition_data)
 from wd_spectra.atmosphere import gray_hydrogen_atmosphere
@@ -69,8 +70,7 @@ def test_partial_warm_start_includes_new_element_lte_in_callback():
  ('N',{2:8,3:8,4:8,5:1}),('O',{2:8,3:8,4:8,5:1}),
  ('Al',{2:8,3:8,4:1}),('P',{2:8,3:8,4:8,5:1}),('S',{2:8,3:8,4:8,5:1})])
 def test_added_atoms_preserve_planck_detailed_balance(element,counts):
-    directory=Path(__file__).resolve().parents[1]/'results/hot-daz/multimetal-data'
-    if not (directory/'verner95.dat').exists():pytest.skip('downloaded research atomic data not present')
+    directory=ATOMIC
     db,photo,_=load_composition_data(ModelData.default(),directory,iron_group=False)
     atmosphere=gray_hydrogen_atmosphere(52500.,7.53,n_depth=3,tau_max=2.)
     ref=fixed_electron_metal_reference(atmosphere,db,{element:-7.})
@@ -88,8 +88,7 @@ def test_added_atoms_preserve_planck_detailed_balance(element,counts):
 
 def test_iron_group_lte_opacity_obeys_kirchhoff():
     from wd_spectra.light_metal_nlte import hot_metal_line_nlte_coefficients
-    directory=Path(__file__).resolve().parents[1]/'results/hot-daz/multimetal-data'
-    if not (directory/'gfFUV99.dat.gz').exists():pytest.skip('downloaded research atomic data not present')
+    directory=ATOMIC
     db,photo,_=load_composition_data(ModelData.default(),directory)
     atmosphere=gray_hydrogen_atmosphere(52500.,7.53,n_depth=3,tau_max=2.)
     ref=fixed_electron_metal_reference(atmosphere,db,{'Fe':np.log10(5e-6),'Ni':np.log10(1.01e-6)})
@@ -127,8 +126,7 @@ def test_population_restart_restores_all_saved_elements(tmp_path):
 def test_promoted_nickel_lines_and_lte_remainder_recover_full_lte():
     from wd_spectra.light_metal_nlte import hot_metal_line_nlte_coefficients
     from wd_spectra.hot_trace_metals import _atom_selection
-    directory=Path(__file__).resolve().parents[1]/'results/hot-daz/multimetal-data'
-    if not (directory/'gfFUV99.dat.gz').exists():pytest.skip('downloaded research atomic data not present')
+    directory=ATOMIC
     db,photo,_=load_composition_data(ModelData.default(),directory)
     atmosphere=gray_hydrogen_atmosphere(52500.,7.53,n_depth=3,tau_max=2.)
     ref=fixed_electron_metal_reference(atmosphere,db,{'Ni':np.log10(1.01e-6)})
