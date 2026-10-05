@@ -33,7 +33,7 @@ For He/C/O mass fractions of 0.33/0.50/0.17, the stored mean-charge error falls 
 
 ![Fixed-atmosphere spectrum changes](../assets/physics-boundary-fixes-2026-10-05/07_fixed_spectrum_impact.png)
 
-Spectrum changes for DA 4000 K, DA 5000 K, and DAB 9000 K, with atmospheric structures held fixed. The panels use different vertical scales. Optical relative changes stay below 5.2 × 10⁻⁹, while three far-UV reference checks fail. The density fix removes artificial line narrowing even where its effect on the optical spectrum is small.
+Initial spectrum changes for DA 4000 K, DA 5000 K, and DAB 9000 K against the previous references. Atmospheric structures are held fixed. The panels use different vertical scales. Optical relative changes stay below 5.2 × 10⁻⁹. The approved versioned references now pass all 21 fixed-spectrum checks. The density fix removes artificial line narrowing even where its effect on the optical spectrum is small.
 
 ## Validation status
 
@@ -46,7 +46,10 @@ historical atmospheres, cold controls, and every tolerance are preserved.
 The updated local checks passed: 1575 ordinary component tests (1 skipped,
 44 deselected), 226 cool-component tests (8 skipped), and all 21 fixed-spectrum
 cases. Both official reports confirm unchanged inputs during their runs.
-Full cold-start qualification is pending.
+A genuine 4000 K production cold-start canary also passed against the unchanged
+cold controls and independent physical gates. Full 25-case cold-start
+qualification is pending. A repository maintainer must add the
+`full-validation` PR label to request the protected qualification workflow.
 
 ### Initial comparison against previous references
 
