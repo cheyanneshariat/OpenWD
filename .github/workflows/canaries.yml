@@ -25,6 +25,7 @@ jobs:
     outputs:
       required: ${{ steps.select.outputs.required }}
       requested: ${{ steps.select.outputs.requested }}
+      cold_cases: ${{ steps.select.outputs.cold_cases }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,13 +60,13 @@ jobs:
           path: results/preflight-*
 
   cold-model:
-    needs: preflight
+    needs: [plan, preflight]
     runs-on: ubuntu-latest
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        case: [da-radiative-g76-48, dah-j1007+1237, dah-j1254+5612, do-50000, dao-60000, dz-pg1225, pg1159-pg1424, d6-j1637, da-3000, da-4000, da-5000, da-20000, db-10000, db-22000, db-22000-standard, dab-20000, dense-db-5000, dense-db-8000, molecular-dab-7500, molecular-dab-9000, molecular-dab-10000, daz-g29-38, daz-g149-28, daz-galex1931, dq-j1235]
+        case: ${{ fromJSON(needs.plan.outputs.cold_cases) }}
     env:
       OPENWD_RESEARCH_DATA: ${{ github.workspace }}/.cache/molecular-opacity
     steps:
@@ -101,11 +102,37 @@ jobs:
           path: results/validation
           retention-days: 14
 
+  d6-regression:
+    name: J1637 warm trajectory regression
+    needs: preflight
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    # Two full-resolution updates measured ~77 minutes locally; hosted CPU
+    # speed has varied by roughly a factor of two. Keep a generous work guard.
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[test]'
+      - name: Require compiled acceleration
+        run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'stark_manifold_bins')"
+      - name: Two measured warm-start steps, full-resolution physics
+        run: python tools/validate.py regression --case d6-j1637 --jobs 1 --timeout 13800 --output results/d6-regression
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d6-warm-regression
+          path: results/d6-regression
+          retention-days: 14
+
   qualification:
     # Require this stable check in branch protection, not a matrix job.
     # A skipped matrix is NOT a physical pass.
     if: always()
-    needs: [plan, preflight, cold-model]
+    needs: [plan, preflight, cold-model, d6-regression]
     runs-on: ubuntu-latest
     steps:
       - name: Check qualification was actually performed when required
@@ -115,11 +142,21 @@ jobs:
           REQUESTED: ${{ needs.plan.outputs.requested }}
           PREFLIGHT_RESULT: ${{ needs.preflight.result }}
           COLD_RESULT: ${{ needs.cold-model.result }}
+          D6_RESULT: ${{ needs.d6-regression.result }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           test "$PLAN_RESULT" = success
           if [ "$REQUESTED" = true ]; then
             test "$PREFLIGHT_RESULT" = success
             test "$COLD_RESULT" = success
+            if [ "$EVENT_NAME" = pull_request ]; then
+              test "$D6_RESULT" = success
+              echo "PR regression checks passed: J1637 used a bounded warm trajectory and fixed spectrum. Full-suite cold-start qualification was not performed."
+              echo "J1637: two-step warm trajectory and fixed spectrum. Other protected cases: cold starts. Full-suite cold-start qualification was not performed." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "All protected cold-start cases passed, including J1637."
+              echo "All protected cold-start cases passed, including J1637." >> "$GITHUB_STEP_SUMMARY"
+            fi
           elif [ "$REQUIRED" = true ]; then
             echo "::error::Physics/qualification inputs changed. Add the full-validation PR label when this candidate is ready. Remove it or use a draft PR while iterating. No cold-start qualification has passed."
             exit 1

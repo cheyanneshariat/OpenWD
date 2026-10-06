@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "scope": "bounded warm trajectory and fixed-atmosphere spectrum",
+  "cold_start_qualification": false,
+  "steps": 2,
+  "config": {
+    "effective_temperature": 15680.0,
+    "logg": 6.3,
+    "abundances": {
+      "C": 0.0,
+      "O": 0.27,
+      "Ne": -1.86,
+      "Mg": -2.33,
+      "Al": -4.0,
+      "Si": -1.76,
+      "S": -2.84,
+      "Ca": -2.85,
+      "Fe": -3.0
+    },
+    "reference_element": "C",
+    "quality": "standard",
+    "mixing_length_alpha": 1.25,
+    "structure_maximum_metal_lines": null,
+    "formal_maximum_metal_lines": null,
+    "include_rydberg_dissolution": true,
+    "include_metal_series_pseudocontinuum": true,
+    "metal_series_pseudocontinuum_elements": [
+      "O",
+      "Mg",
+      "C"
+    ],
+    "include_linear_stark_quasistatic": true,
+    "linear_stark_profile": "manifold",
+    "include_oxygen_i_series_stark": true,
+    "microturbulent_velocity_kms": 0.0,
+    "line_profile_edge_optical_depth": 0.001
+  },
+  "source_name": "d6-j1637-openwd-v5-coldstart/atmosphere.npz",
+  "source_sha256": "86e963f5ab7178065264fa18a43d6e2a29a132fd1659e317f7b0d80868ddb932",
+  "source_cold_certificate": {
+    "schema": 1,
+    "scope": "declared equations on the structure grid",
+    "verified": true,
+    "checks": {
+      "all_depth_flux": {
+        "value": 4.423480692850035e-09,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "surface_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "photospheric_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "local_energy": {
+        "value": 0.00014367091560790876,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "temperature_stationarity": {
+        "value": 0.00015934034866658134,
+        "tolerance": 0.0003,
+        "passed": true,
+        "measured": true
+      },
+      "source_closure": {
+        "value": 1.911806824396143e-15,
+        "tolerance": 1e-06,
+        "passed": true,
+        "measured": true
+      },
+      "boundary_screening": {
+        "value": 4.4220126337291185e-16,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      }
+    },
+    "required_checks": [
+      "all_depth_flux",
+      "local_energy",
+      "temperature_stationarity",
+      "source_closure",
+      "boundary_screening"
+    ],
+    "failures": [],
+    "independent_grid_validation": false,
+    "full_physics_validation": false
+  },
+  "source_request": {
+    "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+    "code_sha256": "02d4d7a088743db2efd2b317dfa2121b3dae30a33f9238b4554c0d40909042a6",
+    "data_sha256": "026dc590d5d7fa8f035c5fed5f1847010d101e096dbe378af5900bc2a716b985",
+    "config": {
+      "effective_temperature": 15680.0,
+      "logg": 6.3,
+      "abundances": {
+        "C": 0.0,
+        "O": 0.27,
+        "Ne": -1.86,
+        "Mg": -2.33,
+        "Al": -4.0,
+        "Si": -1.76,
+        "S": -2.84,
+        "Ca": -2.85,
+        "Fe": -3.0
+      },
+      "reference_element": "C",
+      "quality": "standard",
+      "mixing_length_alpha": 1.25,
+      "structure_maximum_metal_lines": null,
+      "formal_maximum_metal_lines": null,
+      "include_rydberg_dissolution": true,
+      "include_metal_series_pseudocontinuum": true,
+      "metal_series_pseudocontinuum_elements": [
+        "O",
+        "Mg",
+        "C"
+      ],
+      "include_linear_stark_quasistatic": true,
+      "linear_stark_profile": "manifold",
+      "include_oxygen_i_series_stark": true,
+      "microturbulent_velocity_kms": 0.0,
+      "line_profile_edge_optical_depth": 0.001
+    }
+  },
+  "reference_commit": "21e5c690ea77d0f8793ce148a672f25f58d414f0",
+  "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving:metal-audit-2026-09-30",
+  "data_sha256": "c7cb251ae4365b8a987aed2a33cd1d9f3f9655916b20790576916945072bf676",
+  "code_sha256": "1a79af25d42143a8b82380dc191032a0cab6c82871cb9b4cc8f63556eb7d9b3f",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "numpy": "2.5.3",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "perturbation": "T * exp(0.015 * exp(-((log10(tau) + 2) / 1)**2))",
+  "metrics": [
+    "maximum_all_depth_total_flux_residual",
+    "maximum_relative_cell_energy_balance_residual",
+    "maximum_log_temperature_correction",
+    "scattering_source_maximum_relative_residual"
+  ],
+  "output_sha256": "0b06d1b0e86fad7db60fa266d0eb3d55251ce12bcfcf9037aa86487c78e2d882",
+  "timings_seconds": {
+    "trajectory": 4613.992657708004,
+    "fixed_spectrum": 126.975760624744
+  },
+  "seed_sha256": "97232692b517ee39b660e0d6534ed0e23422e9901a9e9d0d47c6e05185b2a035"
+}

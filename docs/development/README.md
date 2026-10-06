@@ -17,6 +17,7 @@ From the repository root:
 python -m pip install -e '.[test]'
 python tools/validate.py fast
 python tools/validate.py spectra --jobs 2
+python tools/validate.py regression --case d6-j1637 --jobs 1
 python tools/validate.py cold --case da-4000 --case db-22000 --jobs 2
 ```
 
@@ -81,6 +82,15 @@ Only a successful `full` report is a full-suite qualification; a green subset
 or fixed-atmosphere comparison is not. See [telemetry](solver-telemetry.md)
 and [performance](performance.md) for interpreting diagnostics and threading.
 
+J1637 also has a bounded warm-trajectory regression. It freshly computes
+two measured solver steps from a deliberately perturbed frozen atmosphere
+at the standard 48-layer/25,000-line resolution and compares complete depth
+profiles and residuals. Its fixed-atmosphere optical spectrum is in the
+`spectra` tier. These checks support a short PR loop without claiming that
+an interrupted trajectory establishes cold convergence. The original public
+J1637 cold canary remains in `cold` and `full`; use it for release validation
+and cold-start investigations. See the [reference provenance](../../tests/data/d6_regressions/README.md).
+
 ## GitHub checks
 
 Fast/component and fixed-spectrum checks run on pull requests and pushes to
@@ -90,14 +100,19 @@ obsolete checks for that PR without cancelling unrelated main-branch work.
 The expensive qualification workflow is explicit: add a **full-validation**
 label to a non-draft PR when the candidate is ready. Remove the label or return
 the PR to draft while iterating. A new commit on a labelled PR is a new candidate
-and must be requalified. Without the label, numerical changes leave the cheap
+and must rerun its selected checks. On PRs, J1637 uses its bounded warm
+trajectory plus fixed spectrum, while the other protected models retain
+their cold starts. Without the label, numerical changes leave the cheap
 `qualification` check failing with an explanation; skipped atmosphere jobs
-are never called successful qualification. Prose and ordinary unit-test edits
+are never called successful qualification. A successful PR check explicitly
+reports its J1637 warm-regression coverage; it is not a full-suite cold-start
+qualification. Prose and ordinary unit-test edits
 do not require cold starts. Unknown paths and shared numerical/data/checker
 changes conservatively require the full suite.
 
 Maintainers can also run **protected model canaries → Run workflow** for the
-selected branch; the weekly scheduled full run remains enabled. There is no
+selected branch; these manual runs and the weekly schedule still include
+J1637's full cold start. There is no
 automatic expensive merge-push rerun. The cold matrix runs one star per job,
 after cheap preflight checks, and retains logs/results even on failure.
 
@@ -119,15 +134,17 @@ cannot make the suite certify the wrong code.
 
 Local solver or physics work stays unpushed until its final-candidate checks pass. The
 maintained GitHub branch is `main`; additional published development branches
-are not required. A change is eligible to be pushed only after:
+are not required. A final candidate is eligible for merge only after:
 
 1. the fast and fixed-spectrum suites pass;
-2. full protected no-fallback cold-start qualification passes;
+2. the protected PR checks pass (J1637's warm regression and the other cold cases);
 3. any affected paper-spectrum regressions have been rerun in the validation
    workspace; and
 4. the model-request physics revision is updated if equations or physical data
    changed.
 
+Before release, full protected no-fallback cold-start qualification must also
+pass, including J1637. The weekly and manual full runs provide that coverage.
 These are final-candidate requirements, not an instruction to rerun everything
 after every edit. Documentation/interface-only changes need the relevant
 tests; the full atmosphere suite is reserved for changes that affect numerical
