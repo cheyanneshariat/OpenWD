@@ -208,6 +208,12 @@ def test_finite_svd_failure_retries_identical_newton_system(monkeypatch,rank_def
     np.testing.assert_allclose(actual,expected,rtol=2e-12,atol=2e-13)
 
 
+def test_chunked_radiation_response_matches_independent_atomic_solve(atom, monkeypatch):
+    import wd_spectra._hot_rates as rates
+    monkeypatch.setattr(rates, '_RADIATION_RESPONSE_WORKING_BYTES', 8192)
+    test_mixed_analytic_radiation_response_matches_independent_atomic_solve(atom, 8, 6.)
+
+
 def test_nonfinite_newton_system_cannot_use_svd_recovery():
     from wd_spectra._hot_structure import _least_squares
     with pytest.raises(ValueError,match='non-finite'):

@@ -17,7 +17,7 @@ import math
 from pathlib import Path
 import re
 from types import MappingProxyType
-from typing import Sequence, Iterable, Mapping
+from typing import Callable, Sequence, Iterable, Mapping
 
 import numpy as np
 from ._compat import trapezoid
@@ -344,6 +344,21 @@ def _static_pattern_arrays(
     return np.ascontiguousarray(index), np.ascontiguousarray(table)
 
 
+def _pseudo_voigt_peak_per_angstrom(gaussian_sigma, lorentz_hwhm):
+    """Line-centre value of the area-normalized Thompson pseudo-Voigt."""
+    sigma = np.maximum(np.asarray(gaussian_sigma, dtype=np.float64), 1.0e-12)
+    gaussian_fwhm = 2.0 * np.sqrt(2.0 * np.log(2.0)) * sigma
+    lorentz_fwhm = 2.0 * np.maximum(np.asarray(lorentz_hwhm, dtype=np.float64), 0.0)
+    width = (gaussian_fwhm**5 + 2.69269 * gaussian_fwhm**4 * lorentz_fwhm
+             + 2.42843 * gaussian_fwhm**3 * lorentz_fwhm**2
+             + 4.47163 * gaussian_fwhm**2 * lorentz_fwhm**3
+             + 0.07842 * gaussian_fwhm * lorentz_fwhm**4 + lorentz_fwhm**5) ** 0.2
+    ratio = lorentz_fwhm / width
+    mixing = np.clip(1.36603 * ratio - 0.47719 * ratio**2 + 0.11116 * ratio**3, 0.0, 1.0)
+    return (mixing * 2.0 / (np.pi * width)
+            + (1.0 - mixing) * 2.0 * np.sqrt(np.log(2.0)) / (np.sqrt(np.pi) * width))
+
+
 def _accumulate_metal_line_profiles_python(
     wavelength: FloatArray,
     planck: FloatArray,
@@ -448,6 +463,14 @@ def _accumulate_metal_line_profiles_python(
             )
 
 
+# Aligned block sizes of the compiled block deposit (csrc/rt_core.c).
+_METAL_PROFILE_BLOCK_SIZES = (16, 64, 256, 1024, 4096)
+
+
+def _metal_block_count(n_wave: int) -> int:
+    return sum(n_wave // size for size in _METAL_PROFILE_BLOCK_SIZES)
+
+
 def _accumulate_metal_line_profiles(
     wavelength: FloatArray,
     planck: FloatArray,
@@ -470,8 +493,18 @@ def _accumulate_metal_line_profiles(
     depth_major: bool = False,
     planck_depth_major: FloatArray | None = None,
     static_pattern: Sequence[tuple[int, int] | None] | None = None,
+    block_absorption: FloatArray | None = None,
+    block_emissivity: FloatArray | None = None,
+    block_tolerance: float = 0.0,
 ) -> None:
     """Dispatch profile accumulation to C while retaining a NumPy fallback.
+
+    ``block_absorption``/``block_emissivity`` (shape ``(depth,
+    _metal_block_count(n_wave), 2)``, depth-major outputs only) enable the
+    compiled block deposit: profile segments linear to ``block_tolerance``
+    over aligned blocks are accumulated as midpoint value/slope and must be
+    added afterwards with ``_rt.expand_metal_line_blocks``.  The NumPy path
+    ignores them and accumulates exactly.
 
     With ``depth_major=True`` the ``absorption`` and ``emissivity`` outputs are
     C-contiguous ``(depth, wavelength)`` arrays and ``planck_depth_major`` is
@@ -536,6 +569,22 @@ def _accumulate_metal_line_profiles(
             / (COMPOSITE_POINTS - 1)
         ),
     )
+    if block_absorption is not None:
+        if not depth_major:
+            raise ValueError("the block deposit requires depth-major outputs")
+        pattern_arguments = (
+            True,
+            None if pattern_arrays is None else pattern_arrays[0],
+            None if pattern_arrays is None else pattern_arrays[1],
+            float(COMPOSITE_LOG_BETA_MIN),
+            float(
+                (COMPOSITE_LOG_BETA_MAX - COMPOSITE_LOG_BETA_MIN)
+                / (COMPOSITE_POINTS - 1)
+            ),
+            block_absorption,
+            block_emissivity,
+            float(block_tolerance),
+        )
     compiled(
         *(
             np.ascontiguousarray(value, dtype=np.float64)
@@ -696,41 +745,76 @@ def _profile_weighted_line_means(
     and final formal solution use the same profile definition.
     """
 
-    compiled = None if _rt is None else getattr(
-        _rt, "metal_line_mean_intensity", None
+    fields = (intensity,) if lambda_diagonal is None else (intensity, lambda_diagonal)
+    means = _profile_weighted_line_field_means(
+        wavelength, fields, center, gaussian_sigma, lorentz_hwhm,
+        integrated_strength=integrated_strength,
+        static_frequency_scale=static_frequency_scale,
+        static_amplitude=static_amplitude,
+        static_ion_motion_hwhm_beta=static_ion_motion_hwhm_beta,
+        static_pattern=static_pattern,
     )
-    if compiled is None:
-        mean_intensity, mean_lambda = _profile_weighted_line_means_python(
-            wavelength,
-            intensity,
-            lambda_diagonal,
-            center,
-            gaussian_sigma,
-            lorentz_hwhm,
-        )
-    else:
+    return means[0], (np.zeros_like(means[0]) if lambda_diagonal is None else means[1])
+
+
+def _profile_weighted_line_field_means(
+    wavelength: FloatArray,
+    fields: Sequence[FloatArray],
+    center: FloatArray,
+    gaussian_sigma: FloatArray,
+    lorentz_hwhm: FloatArray,
+    *,
+    block_tolerance: float = 0.0,
+    integrated_strength: FloatArray | None = None,
+    static_frequency_scale: FloatArray | None = None,
+    static_amplitude: FloatArray | None = None,
+    static_ion_motion_hwhm_beta: FloatArray | None = None,
+    static_pattern: Sequence[tuple[int, int] | None] | None = None,
+) -> list[FloatArray]:
+    """Profile means of several (wavelength, depth) fields in one pass.
+
+    Every field shares one quadrature, so equal integrands give identical
+    means (exact detailed balance between upward and downward rates).
+    ``block_tolerance=0`` is the exact window trapezoid, bit-identical to
+    one call per field.  A positive value sums profile segments that are
+    linear to that relative tolerance over aligned blocks of grid intervals
+    (see ``metal_line_profile_means`` in csrc/rt_core.c); the normalization
+    uses the same quadrature, so a constant field is returned exactly.  The
+    Python fallback and the static-Stark components always use the exact
+    trapezoid.
+    """
+
+    if not 0.0 <= block_tolerance < 1.0:
+        raise ValueError("block_tolerance must be in [0, 1)")
+    compiled = None if _rt is None else getattr(_rt, "metal_line_profile_means", None)
+    legacy = None if _rt is None else getattr(_rt, "metal_line_mean_intensity", None)
+    if compiled is not None:
         wavelength = np.ascontiguousarray(wavelength, dtype=np.float64)
-        intensity = np.ascontiguousarray(intensity, dtype=np.float64)
+        fields = tuple(np.ascontiguousarray(field, dtype=np.float64) for field in fields)
         center = np.ascontiguousarray(center, dtype=np.float64)
         gaussian_sigma = np.ascontiguousarray(gaussian_sigma, dtype=np.float64)
         lorentz_hwhm = np.ascontiguousarray(lorentz_hwhm, dtype=np.float64)
-        mean_intensity = np.empty_like(gaussian_sigma)
-        mean_lambda = np.empty_like(gaussian_sigma)
-        compiled(
-            wavelength,
-            intensity,
-            (
-                intensity
-                if lambda_diagonal is None
-                else np.ascontiguousarray(lambda_diagonal, dtype=np.float64)
-            ),
-            center,
-            gaussian_sigma,
-            lorentz_hwhm,
-            mean_intensity,
-            mean_lambda,
-            lambda_diagonal is not None,
-        )
+        means = [np.empty_like(gaussian_sigma) for _ in fields]
+        compiled(wavelength, fields, center, gaussian_sigma, lorentz_hwhm,
+                 tuple(means), float(block_tolerance))
+    else:
+        means = []
+        for first in range(0, len(fields), 2):
+            pair = fields[first:first + 2]
+            if legacy is None:
+                mean_j, mean_l = _profile_weighted_line_means_python(
+                    wavelength, pair[0], pair[1] if len(pair) > 1 else None,
+                    center, gaussian_sigma, lorentz_hwhm)
+            else:
+                pair = tuple(np.ascontiguousarray(field, dtype=np.float64) for field in pair)
+                mean_j = np.empty_like(np.asarray(gaussian_sigma, dtype=np.float64))
+                mean_l = np.empty_like(mean_j)
+                legacy(np.ascontiguousarray(wavelength, dtype=np.float64), pair[0],
+                       pair[-1], np.ascontiguousarray(center, dtype=np.float64),
+                       np.ascontiguousarray(gaussian_sigma, dtype=np.float64),
+                       np.ascontiguousarray(lorentz_hwhm, dtype=np.float64),
+                       mean_j, mean_l, len(pair) > 1)
+            means.extend([mean_j, mean_l][:len(pair)])
 
     static_inputs = (
         integrated_strength,
@@ -738,7 +822,7 @@ def _profile_weighted_line_means(
         static_amplitude,
     )
     if all(value is None for value in static_inputs):
-        return mean_intensity, mean_lambda
+        return means
     if any(value is None for value in static_inputs):
         raise ValueError(
             "integrated_strength, static_frequency_scale, and "
@@ -766,7 +850,7 @@ def _profile_weighted_line_means(
             continue
         center_cm = line_center * 1.0e-8
         center_frequency = LIGHT_SPEED / center_cm
-        for depth in range(intensity.shape[1]):
+        for depth in range(fields[0].shape[1]):
             local_field = field_scale[line_index, depth]
             local_amplitude = amplitude[line_index, depth]
             if local_field <= 0.0 or local_amplitude <= 0.0:
@@ -819,16 +903,12 @@ def _profile_weighted_line_means(
             normalization = trapezoid(profile_weight, local_wavelength)
             if normalization <= 0.0:
                 continue
-            mean_intensity[line_index, depth] = trapezoid(
-                intensity[start:stop, depth] * profile_weight,
-                local_wavelength,
-            ) / normalization
-            if lambda_diagonal is not None:
-                mean_lambda[line_index, depth] = trapezoid(
-                    lambda_diagonal[start:stop, depth] * profile_weight,
+            for field, mean in zip(fields, means):
+                mean[line_index, depth] = trapezoid(
+                    field[start:stop, depth] * profile_weight,
                     local_wavelength,
                 ) / normalization
-    return mean_intensity, mean_lambda
+    return means
 
 
 def _classical_electron_stark_rate_per_electron(
@@ -5089,6 +5169,24 @@ def _accumulate_bound_free_nlte(cross_section, lower_population, mass_density,
     emissivity += base * (1. - exponential) * planck * upper_departure[None, :]
 
 
+def metal_thermal_arrays(atmosphere: Atmosphere, wavelength_angstrom: ArrayLike):
+    """``(exp(-h nu/kT), B_lambda, B_lambda depth-major)`` on (wavelength, depth).
+
+    Exactly the arrays the bound-free and line coefficient functions build
+    internally; computing them once lets several elements share them.
+    """
+    wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
+    wavelength_cm = wavelength * 1.0e-8
+    exponential = np.exp(
+        -PLANCK * LIGHT_SPEED
+        / (wavelength_cm[:, np.newaxis] * BOLTZMANN * atmosphere.temperature)
+    )
+    planck = planck_lambda_angstrom(
+        wavelength[:, np.newaxis], atmosphere.temperature[np.newaxis, :]
+    )
+    return exponential, planck, np.ascontiguousarray(planck.T)
+
+
 def light_metal_bound_free_nlte_coefficients(
     atmosphere: Atmosphere,
     wavelength_angstrom: ArrayLike,
@@ -5106,6 +5204,9 @@ def light_metal_bound_free_nlte_coefficients(
     continuum_parent_mapping: Mapping[
         tuple[str, int, int], tuple[str, int, int]
     ] | None = None,
+    include_explicit_kramers: bool = False,
+    kramers_cumulative: bool = False,
+    thermal_arrays: tuple[FloatArray, FloatArray] | None = None,
 ) -> tuple[FloatArray, FloatArray]:
     """Return NLTE bound-free absorption and emissivity.
 
@@ -5121,18 +5222,30 @@ def light_metal_bound_free_nlte_coefficients(
     TLUSTY threshold table and explicit level counts adds the same
     level-resolved OP/analytic cross sections used by the statistical-
     equilibrium rates; this is the TMAP RBF closure needed by compact C/O
-    population atoms.
+    population atoms. ``include_explicit_kramers`` also includes selected
+    excited levels without a threshold table, using the same Kramers
+    fallback as the explicit-level rate solver. Zero level counts then
+    exclude an ion from the bound-free opacity. The default is unchanged.
+
+    ``kramers_cumulative`` evaluates all Kramers levels together.  Their
+    cross sections are ``sigma0 (E_i/E)^3`` above each edge, so the summed
+    opacity at photon energy E is ``E^-3`` times a cumulative sum over the
+    levels whose edge lies below E (sorted once), instead of one pass over
+    the grid per level.  The per-level nonnegativity clip can act only where
+    ``b_i < b_c exp(-E_i/kT)`` (the stimulated term is largest at the edge);
+    those level/depth pairs keep the per-level accumulation.  The result is
+    the same sum in a different floating-point order.
+    ``thermal_arrays`` optionally supplies ``(exp(-h nu/kT), B_lambda)`` on
+    (wavelength, depth), as returned by :func:`metal_thermal_arrays`, so that
+    several calls on one grid share them.
     """
 
     wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
     wavelength_cm = wavelength * 1.0e-8
     photon_energy_ev = PLANCK * LIGHT_SPEED / wavelength_cm / EV_TO_ERG
-    exponential = np.exp(
-        -PLANCK * LIGHT_SPEED
-        / (wavelength_cm[:, np.newaxis] * BOLTZMANN * atmosphere.temperature)
-    )
-    planck = planck_lambda_angstrom(
-        wavelength[:, np.newaxis], atmosphere.temperature[np.newaxis, :]
+    exponential, planck = (
+        metal_thermal_arrays(atmosphere, wavelength)[:2]
+        if thermal_arrays is None else thermal_arrays[:2]
     )
     absorption = np.zeros((wavelength.size, atmosphere.n_depth))
     emissivity = np.zeros_like(absorption)
@@ -5140,6 +5253,11 @@ def light_metal_bound_free_nlte_coefficients(
         tuple(lte_state.log_number_abundance)
         if elements is None else tuple(element.strip().capitalize() for element in elements)
     )
+    # Kramers terms for the cumulative evaluation: edge energy, and per depth
+    # sigma0 E_i^3 n_i^*/rho times b_i and times b_c.
+    kramers_edges: list[float] = []
+    kramers_lower: list[FloatArray] = []
+    kramers_upper: list[FloatArray] = []
     for element in selected_elements:
         stages = atomic_database.ion_stages(element)
         populations = lte_state.ion_number_density[element]
@@ -5163,7 +5281,9 @@ def light_metal_bound_free_nlte_coefficients(
             )
             levels = (
                 (ground,)
-                if threshold_table is None or explicit_count is None
+                if explicit_count is None or (
+                    threshold_table is None and not include_explicit_kramers
+                )
                 else tuple(sorted(
                     ion.levels, key=lambda level: level.energy_wavenumber
                 )[: int(explicit_count)])
@@ -5223,11 +5343,14 @@ def light_metal_bound_free_nlte_coefficients(
                         / threshold_ev
                     )
                     sigma0 = 6.30e-18 * effective_n / effective_charge**2
-                    cross_section = np.where(
-                        photon_energy_ev >= threshold_ev,
-                        sigma0 * (threshold_ev / photon_energy_ev) ** 3,
-                        0.0,
-                    )
+                    if kramers_cumulative:
+                        cross_section = sigma0
+                    else:
+                        cross_section = np.where(
+                            photon_energy_ev >= threshold_ev,
+                            sigma0 * (threshold_ev / photon_energy_ev) ** 3,
+                            0.0,
+                        )
                 lower_population = (
                     populations[ion.charge]
                     * level.statistical_weight
@@ -5245,9 +5368,44 @@ def light_metal_bound_free_nlte_coefficients(
                 upper_departure = departure(
                     upper_key, (element, upper_ion.charge)
                 )
+                if np.ndim(cross_section) == 0:
+                    # Kramers level of the cumulative evaluation.
+                    edge_stimulation = np.exp(
+                        -threshold_ev * EV_TO_ERG
+                        / (BOLTZMANN * atmosphere.temperature)
+                    )
+                    clipped = lower_departure < upper_departure * edge_stimulation
+                    scale = (cross_section * threshold_ev**3 * lower_population
+                             / atmosphere.mass_density)
+                    kramers_edges.append(threshold_ev)
+                    kramers_lower.append(np.where(clipped, 0.0, scale * lower_departure))
+                    kramers_upper.append(np.where(clipped, 0.0, scale * upper_departure))
+                    if np.any(clipped):
+                        _accumulate_bound_free_nlte(
+                            np.where(photon_energy_ev >= threshold_ev,
+                                     cross_section * (threshold_ev / photon_energy_ev) ** 3,
+                                     0.0),
+                            np.where(clipped, lower_population, 0.0),
+                            atmosphere.mass_density, lower_departure, upper_departure,
+                            exponential, planck, absorption, emissivity)
+                    continue
                 _accumulate_bound_free_nlte(cross_section, lower_population,
                     atmosphere.mass_density, lower_departure, upper_departure,
                     exponential, planck, absorption, emissivity)
+    if kramers_edges:
+        order = np.argsort(kramers_edges, kind="stable")
+        edges = np.asarray(kramers_edges)[order]
+        zero = np.zeros((1, atmosphere.n_depth))
+        cumulative_lower = np.concatenate((zero, np.cumsum(np.asarray(kramers_lower)[order], axis=0)))
+        cumulative_upper = np.concatenate((zero, np.cumsum(np.asarray(kramers_upper)[order], axis=0)))
+        # Levels with E >= E_i contribute (the per-level test of the
+        # direct evaluation).
+        count = np.searchsorted(edges, photon_energy_ev, side="right")
+        inverse_cube = photon_energy_ev[:, np.newaxis] ** -3
+        lower_sum = cumulative_lower[count] * inverse_cube
+        upper_sum = cumulative_upper[count] * inverse_cube
+        absorption += lower_sum - upper_sum * exponential
+        emissivity += upper_sum * (1.0 - exponential) * planck
     return np.ascontiguousarray(absorption), np.ascontiguousarray(emissivity)
 
 
@@ -5276,8 +5434,28 @@ def hot_metal_line_nlte_coefficients(
     hydrogenic_linear_stark_components: bool = False,
     extend_strong_uv_resonance_wings: bool = True,
     strong_uv_resonance_core_optical_depth: float = 1.0e3,
+    line_center_opacity: dict | None = None,
+    profile_block_tolerance: float = 0.0,
+    thermal_arrays: tuple[FloatArray, FloatArray, FloatArray] | None = None,
 ) -> tuple[FloatArray, FloatArray]:
     """Return ordinary hot-metal NLTE line absorption and emissivity.
+
+    ``profile_block_tolerance`` > 0 accumulates each impact profile over
+    aligned blocks of grid points wherever its local linear form is accurate
+    to that relative tolerance (value and slope at the block midpoint,
+    checked at both block ends), then expands the blocks onto the grid.
+    Broad Stark-damped deep-layer profiles and far wings then cost a few
+    hundred block terms instead of every point of a window spanning up to
+    10% of the wavelength.  Quasi-static Stark components and the NumPy
+    fallback are always accumulated point by point. 0 (default) is exact.
+    ``thermal_arrays`` optionally supplies :func:`metal_thermal_arrays` for
+    this grid (shared between calls).
+
+    If ``line_center_opacity`` is a dict, it receives for every included
+    transition ``(element, charge, lower, upper)`` the net impact-profile
+    absorption at the line centre per unit mass (shape: depth). This is the
+    quantity used to weight an approximate lambda operator by the line's share
+    of the total opacity; it does not change the returned coefficients.
 
     Thermal Doppler, natural damping, and the standard SYNSPEC classical
     electron-impact Stark damping are included.  The latter uses
@@ -5364,11 +5542,26 @@ def hot_metal_line_nlte_coefficients(
         for transition in ion.transitions:
             key = (ion.element, ion.charge, transition.upper_index)
             upper_rate[key] = upper_rate.get(key, 0.0) + transition.einstein_a
-    planck = planck_lambda_angstrom(
-        wavelength[:, np.newaxis], atmosphere.temperature[np.newaxis, :]
-    )
-    planck_depth_major = np.ascontiguousarray(planck.T)
+    if thermal_arrays is None:
+        planck = planck_lambda_angstrom(
+            wavelength[:, np.newaxis], atmosphere.temperature[np.newaxis, :]
+        )
+        planck_depth_major = np.ascontiguousarray(planck.T)
+    else:
+        planck, planck_depth_major = thermal_arrays[1], thermal_arrays[2]
     lte_population_cache = {}
+    if not 0.0 <= profile_block_tolerance < 1.0:
+        raise ValueError("profile_block_tolerance must be in [0, 1)")
+    block_expand = (
+        None if _rt is None or profile_block_tolerance == 0.0
+        else getattr(_rt, "expand_metal_line_blocks", None)
+    )
+    block_buffers = (
+        None if block_expand is None else tuple(
+            np.zeros((atmosphere.n_depth, _metal_block_count(wavelength.size), 2))
+            for _ in range(2)
+        )
+    )
 
     # TMAP's z_Mikro = [sum_i Z_i^(3/2) n_i]^(2/3).  Explicit C/O ion
     # populations provide their contributions.  The remaining charge is
@@ -5446,6 +5639,11 @@ def hot_metal_line_nlte_coefficients(
             depth_major=True,
             planck_depth_major=planck_depth_major,
             static_pattern=list(profile_batch["static_pattern"]),
+            **({} if block_buffers is None else dict(
+                block_absorption=block_buffers[0],
+                block_emissivity=block_buffers[1],
+                block_tolerance=profile_block_tolerance,
+            )),
         )
         for values in profile_batch.values():
             values.clear()
@@ -5641,10 +5839,24 @@ def hot_metal_line_nlte_coefficients(
         profile_batch["lower_departure"].append(lower_departure)
         profile_batch["upper_departure"].append(upper_departure)
         profile_batch["exponential"].append(exponential)
+        if line_center_opacity is not None:
+            key = (ion.element, ion.charge, line.lower_index, line.upper_index)
+            center_cm = center * 1.0e-8
+            net = np.maximum(lower_departure - upper_departure * exponential, 0.0)
+            value = (
+                integrated_cross_section * line.absorption_oscillator_strength
+                * _pseudo_voigt_peak_per_angstrom(gaussian_sigma, lorentz_hwhm)
+                * 1.0e8 * center_cm**2 / LIGHT_SPEED
+                * lower_population / atmosphere.mass_density * net
+            )
+            line_center_opacity[key] = line_center_opacity.get(key, 0.0) + value
         # Keep peak memory independent of the ultimately selected line list.
         if len(profile_batch["center"]) >= 256:
             flush_profile_batch()
     flush_profile_batch()
+    if block_buffers is not None:
+        block_expand(wavelength, planck_depth_major, block_buffers[0],
+                     block_buffers[1], absorption, emissivity)
     return np.ascontiguousarray(absorption.T), np.ascontiguousarray(emissivity.T)
 
 
@@ -6371,6 +6583,13 @@ def solve_reduced_light_metal_levels_nlte(
     electron_excitation_collision_scale: float = 1.0,
     approximate_lambda_diagonal: ArrayLike | None = None,
     previous_population_state: ReducedLightMetalLevelState | None = None,
+    total_recombination_rate_coefficients: Mapping[
+        int, Callable[[FloatArray], FloatArray]
+    ] | None = None,
+    lambda_line_fraction: Mapping[tuple[str, int, int, int], ArrayLike] | None = None,
+    profile_block_tolerance: float = 0.0,
+    rate_cache: dict | None = None,
+    kramers_cumulative: bool = False,
 ) -> ReducedLightMetalLevelState:
     """Solve an explicit-level bound-bound/bound-free statistical equilibrium.
 
@@ -6381,6 +6600,43 @@ def solve_reduced_light_metal_levels_nlte(
     photoionization uses the Verner fit; excited levels use an explicitly
     labelled hydrogenic Kramers approximation.  Allowed electron-impact
     excitation uses TLUSTY's Van Regemorter prescription.
+
+    ``total_recombination_rate_coefficients`` maps a recombining (parent)
+    charge to its published total recombination coefficient alpha(T), in
+    cm^3 s^-1 per parent-ion particle.  A truncated atom recombines only into
+    its explicit levels; where alpha exceeds that explicit radiative
+    recombination, the remainder (recombination into omitted levels and
+    dielectronic recombination, assumed to cascade to the ground state) links
+    the parent ground level to the recombined ion's ground level.  Its inverse
+    follows from the LTE reference, so a Planck field still recovers LTE.
+    The default (None) leaves the rate equations unchanged.
+
+    ``lambda_line_fraction`` maps a transition ``(element, charge, lower,
+    upper)`` to its line-centre share of the total extinction (per depth).
+    The profile-averaged ``approximate_lambda_diagonal`` of that line is then
+    multiplied by this share (clipped to [0, 1]); a line without an entry is
+    not preconditioned. Overlapping lines and continua therefore no longer
+    claim the whole local operator. Only the iteration path changes.
+    ``profile_block_tolerance`` > 0 evaluates the profile-averaged fields with
+    the block quadrature of :func:`_profile_weighted_line_field_means`: the
+    profile is replaced by its local linear form over aligned blocks of grid
+    intervals wherever that is accurate to this relative tolerance.  Broad
+    Stark-damped profiles in deep layers then cost a few hundred block terms
+    instead of every grid point of a window spanning up to 10% of the
+    wavelength. Upward and downward rates share the quadrature, so detailed
+    balance remains exact. The default 0 is the exact window trapezoid.
+    ``rate_cache`` is an optional dict owned by the caller.  The first call
+    stores the electron-impact bound-bound coefficients, which depend only on
+    the atmosphere (T, n_e), the atom and the collision data; later calls
+    with the same dict reuse them.  Pass one dict per element and only while
+    the atmosphere, atom, ``lte_state``, collision data and photoionization
+    tables are unchanged (e.g. the iterations of a fixed-host solve).
+    ``kramers_cumulative`` integrates the photoionization and recombination
+    rates of all hydrogenic-Kramers levels together: with
+    ``sigma = sigma0 (E_i/E)^3`` above each edge, the trapezoid rate is
+    ``sigma0 E_i^3`` times a prefix sum (over the grid, up to the last point
+    above the edge) of the same integrand weights, so one pass over the grid
+    replaces one per level.  The sum is the same up to floating-point order.
     """
 
     symbol = element.strip().capitalize()
@@ -6985,27 +7241,6 @@ def solve_reduced_light_metal_levels_nlte(
             intensity / vacuum_radiation, 0.0
         )
         component_center_array = np.asarray(component_center, dtype=np.float64)
-        component_occupation, component_mean_lambda = (
-            _profile_weighted_line_means(
-                wavelength,
-                photon_occupation_field,
-                lambda_diagonal,
-                component_center_array,
-                np.stack(component_gaussian),
-                np.stack(component_lorentz),
-                integrated_strength=np.asarray(
-                    component_integrated_strength, dtype=np.float64
-                ),
-                static_frequency_scale=np.stack(
-                    component_static_frequency_scale
-                ),
-                static_amplitude=np.stack(component_static_amplitude),
-                static_ion_motion_hwhm_beta=np.stack(
-                    component_static_ion_motion_hwhm_beta
-                ),
-                static_pattern=component_static_pattern,
-            )
-        )
         # Integrate spontaneous+stimulated downward rates with the same
         # profile and local thermodynamic factor as the upward rate. In a
         # Planck field exp(-h nu/kT)*(1+n_nu) == n_nu pointwise. Replacing
@@ -7013,26 +7248,32 @@ def solve_reduced_light_metal_levels_nlte(
         # balance for broad/sparse profiles and rounded tabulated wavelengths.
         inverse_occupation_field = np.exp(-PLANCK*LIGHT_SPEED /
             (wavelength_cm*BOLTZMANN*temperature[None,:])) * (1+photon_occupation_field)
-        component_inverse, _ = (
-            _profile_weighted_line_means(
-                wavelength,
-                inverse_occupation_field,
-                None,
-                component_center_array,
-                np.stack(component_gaussian),
-                np.stack(component_lorentz),
-                integrated_strength=np.asarray(
-                    component_integrated_strength, dtype=np.float64
-                ),
-                static_frequency_scale=np.stack(
-                    component_static_frequency_scale
-                ),
-                static_amplitude=np.stack(component_static_amplitude),
-                static_ion_motion_hwhm_beta=np.stack(
-                    component_static_ion_motion_hwhm_beta
-                ),
-                static_pattern=component_static_pattern,
-            )
+        # One pass over every profile for all fields; at zero block tolerance
+        # bit-identical to separate means.
+        line_means = _profile_weighted_line_field_means(
+            wavelength,
+            (photon_occupation_field, inverse_occupation_field)
+            + (() if lambda_diagonal is None else (lambda_diagonal,)),
+            component_center_array,
+            np.stack(component_gaussian),
+            np.stack(component_lorentz),
+            block_tolerance=profile_block_tolerance,
+            integrated_strength=np.asarray(
+                component_integrated_strength, dtype=np.float64
+            ),
+            static_frequency_scale=np.stack(
+                component_static_frequency_scale
+            ),
+            static_amplitude=np.stack(component_static_amplitude),
+            static_ion_motion_hwhm_beta=np.stack(
+                component_static_ion_motion_hwhm_beta
+            ),
+            static_pattern=component_static_pattern,
+        )
+        component_occupation, component_inverse = line_means[:2]
+        component_mean_lambda = (
+            np.zeros_like(component_occupation)
+            if lambda_diagonal is None else line_means[2]
         )
         component_weight_array = np.asarray(component_weight, dtype=np.float64)
         all_component_range = component_range + reservoir_component_range
@@ -7057,6 +7298,14 @@ def solve_reduced_light_metal_levels_nlte(
             )
     bound_photon_occupation = all_bound_photon_occupation[:len(bound_bound)]
     bound_lambda_diagonal = all_bound_lambda_diagonal[:len(bound_bound)]
+    if lambda_line_fraction is not None:
+        for bound_index, (lower, upper, transition, _) in enumerate(bound_bound):
+            fraction = lambda_line_fraction.get((
+                symbol, int(state_charge[lower]),
+                transition.lower_index, transition.upper_index))
+            bound_lambda_diagonal[bound_index] *= (
+                0.0 if fraction is None
+                else np.clip(np.asarray(fraction, dtype=np.float64), 0.0, 1.0))
     bound_inverse_occupation = all_bound_inverse_occupation[:len(bound_bound)]
     reservoir_inverse_occupation = all_bound_inverse_occupation[len(bound_bound):]
     reservoir_photon_occupation = all_bound_photon_occupation[len(bound_bound):]
@@ -7084,6 +7333,7 @@ def solve_reduced_light_metal_levels_nlte(
     collisional_ionization = {}
     continuum_target = {}
     cross_section_source = {}
+    kramers_levels: list[tuple[int, float, float]] = []
     for charge in charges[:-1]:
         ion = stages[charge]
         next_ground = selected_levels[charge + 1][0]
@@ -7170,18 +7420,21 @@ def solve_reduced_light_metal_levels_nlte(
                 sigma0 = 6.30e-18 * effective_n / effective_charge**2
                 threshold_cross_section = sigma0
                 source = "hydrogenic Kramers excited-level approximation"
-                cross_section = np.where(
+                cross_section = None if kramers_cumulative else np.where(
                     photon_energy_ev >= threshold_ev,
                     sigma0 * (threshold_ev / photon_energy_ev) ** 3,
                     0.0,
                 )
                 threshold_cross_section_includes_gbar = False
-            photo_actual[index] = _photoionization_rate(
-                wavelength, intensity, cross_section
-            )
-            photo_recombination[index] = _photoionization_rate(
-                wavelength, recombination_radiation, cross_section
-            )
+            if cross_section is None:
+                kramers_levels.append((index, sigma0, threshold_ev))
+            else:
+                photo_actual[index] = _photoionization_rate(
+                    wavelength, intensity, cross_section
+                )
+                photo_recombination[index] = _photoionization_rate(
+                    wavelength, recombination_radiation, cross_section
+                )
             # The inverse three-body rate is constructed below by detailed
             # balance, just like the radiative recombination rate.
             threshold_u = (
@@ -7201,6 +7454,30 @@ def solve_reduced_light_metal_levels_nlte(
             )
             continuum_target[index] = target
             cross_section_source[index] = source
+
+    if kramers_levels:
+        # Trapezoid weight of each grid point (an excluded neighbour adds no
+        # integrand but its half interval belongs to the last included point).
+        spacing = np.diff(wavelength)
+        point_weight = 0.5 * (np.concatenate(([0.0], spacing)) + np.concatenate((spacing, [0.0])))
+        kernel_weight = (point_weight * wavelength
+                         * (12.566370614359172953850573533118 * 1.0e-8 / (PLANCK * LIGHT_SPEED))
+                         * photon_energy_ev ** -3)
+        # Points with E >= E_i are the leading (short-wavelength) prefix.
+        last_point = np.searchsorted(-photon_energy_ev,
+                                     -np.asarray([edge for _, _, edge in kramers_levels]),
+                                     side="right") - 1
+        ends = np.unique(last_point[last_point >= 0])
+        for field, target_rates in ((intensity, photo_actual),
+                                    (recombination_radiation, photo_recombination)):
+            prefix = {}
+            if ends.size:
+                segments = np.add.reduceat(field[:ends[-1] + 1] * kernel_weight[:ends[-1] + 1, np.newaxis],
+                                           np.concatenate(([0], ends[:-1] + 1)), axis=0)
+                prefix = dict(zip(ends.tolist(), np.cumsum(segments, axis=0)))
+            for (index, sigma0, edge), end in zip(kramers_levels, last_point):
+                target_rates[index] = (sigma0 * edge**3 * prefix[int(end)] if end >= 0
+                                       else np.zeros(atmosphere.n_depth))
 
     def psm20_l_mixing_coefficients(
         record: PSM20AngularMomentumMixingCollision,
@@ -7546,6 +7823,130 @@ def solve_reduced_light_metal_levels_nlte(
             * np.exp(min(u, 700.0)),
         )
 
+    # A pair can have several radiative multipoles (e.g. M1 and E2), but
+    # electron excitation is one rate for that level pair. Prefer an E1
+    # channel for the approximate Van Regemorter prescription when present.
+    collision_representatives = {}
+    for i, (lower, upper, transition, _) in enumerate(bound_bound):
+        pair = (lower, upper)
+        prior = collision_representatives.get(pair)
+        priority = (transition.transition_type == "E1", transition.absorption_oscillator_strength,
+                    transition.einstein_a)
+        if prior is None or priority > prior[0]:
+            collision_representatives[pair] = (priority, i)
+
+    recombination_top_up = []
+    recombination_top_up_metadata = {}
+    for parent_charge, coefficient in (total_recombination_rate_coefficients or {}).items():
+        if parent_charge not in charges or parent_charge - 1 not in charges:
+            raise ValueError(
+                f"total recombination for {symbol} {parent_charge:+d} needs that "
+                "ion and the recombined ion in the reduced atom"
+            )
+        alpha = np.asarray(coefficient(np.asarray(temperature)), dtype=np.float64)
+        if alpha.shape != temperature.shape or np.any(~np.isfinite(alpha)) or np.any(alpha < 0.0):
+            raise ValueError("total recombination coefficients must be finite and non-negative")
+        parent_ground = state_index[
+            (symbol, parent_charge, selected_levels[parent_charge][0].index)
+        ]
+        recombined_ground = state_index[
+            (symbol, parent_charge - 1, selected_levels[parent_charge - 1][0].index)
+        ]
+        explicit_lowers = tuple(
+            lower for lower, target in continuum_target.items()
+            if target == parent_ground
+        )
+        # Per parent-ground particle, as the explicit photo-recombination.
+        required = (
+            electron_density * alpha * lte_ion[parent_charge]
+            / np.maximum(lte_level[parent_ground], tiny)
+        )
+        supplied = np.zeros(atmosphere.n_depth)
+        for lower in explicit_lowers:
+            supplied += (
+                np.asarray(photo_recombination[lower]) * lte_level[lower]
+                / np.maximum(lte_level[parent_ground], tiny)
+            )
+        missing = np.maximum(required - supplied, 0.0)
+        recombination_top_up.append((recombined_ground, parent_ground, missing))
+        recombination_top_up_metadata[int(parent_charge)] = dict(
+            explicit_fraction_minimum=float(np.min(supplied / np.maximum(required, tiny))),
+            explicit_fraction_maximum=float(np.max(supplied / np.maximum(required, tiny))),
+        )
+
+    # Bound-bound rates for all transitions and depths at once.  Every array
+    # expression repeats the scalar operation order of the per-depth form, and
+    # the matrix updates below are applied in the same per-element order.
+    n_bound = len(bound_bound)
+    bound_lower = np.asarray([item[0] for item in bound_bound], dtype=np.intp)
+    bound_upper = np.asarray([item[1] for item in bound_bound], dtype=np.intp)
+    bound_a = np.asarray([item[2].einstein_a for item in bound_bound], dtype=np.float64)
+    bound_weight_ratio = np.asarray([
+        state_level[upper].statistical_weight / state_level[lower].statistical_weight
+        for lower, upper, _, _ in bound_bound], dtype=np.float64)
+    bound_gap = np.asarray([
+        (state_level[upper].energy_wavenumber - state_level[lower].energy_wavenumber)
+        * PLANCK * LIGHT_SPEED for lower, upper, _, _ in bound_bound], dtype=np.float64)
+    bound_up = np.zeros((n_bound, atmosphere.n_depth), dtype=np.float64)
+    bound_down = np.zeros_like(bound_up)
+    if n_bound:
+        inverse_all = np.exp(np.minimum(
+            bound_gap[:, np.newaxis] / (BOLTZMANN * temperature[np.newaxis, :]), 700.0
+        )) * bound_inverse_occupation
+        effective_photon = np.array(bound_photon_occupation, dtype=np.float64)
+        effective_inverse = np.array(inverse_all, dtype=np.float64)
+        if previous_population is not None:
+            old_lower = previous_population[bound_lower]
+            old_upper = previous_population[bound_upper]
+            denominator = bound_weight_ratio[:, np.newaxis] * old_lower - old_upper
+            usable = (bound_lambda_diagonal > 0.0) & (denominator > 0.0)
+            old_source = np.zeros_like(denominator)
+            old_source[usable] = old_upper[usable] / denominator[usable]
+            usable &= (old_source >= 0.0) & np.isfinite(old_source)
+            if np.any(usable):
+                photon_u = bound_photon_occupation[usable]
+                inverse_u = inverse_all[usable]
+                source_u = old_source[usable]
+                coefficient = np.minimum(np.minimum(
+                    np.maximum(bound_lambda_diagonal[usable], 0.0), 0.999),
+                    inverse_u / (1.0 + source_u))
+                positive = source_u > 0.0
+                coefficient[positive] = np.minimum(
+                    coefficient[positive], photon_u[positive] / source_u[positive])
+                coefficient *= 1.0 - 16.0 * np.finfo(float).eps
+                effective_photon[usable] = photon_u - coefficient * source_u
+                effective_inverse[usable] = inverse_u - coefficient * (1.0 + source_u)
+        cached = None if rate_cache is None else rate_cache.get("bound_collisions")
+        if cached is not None and cached[0].shape == bound_up.shape:
+            collision_up, collision_down = cached
+        else:
+            collision_up = np.zeros_like(bound_up)
+            collision_down = np.zeros_like(bound_up)
+            for (lower, upper), (_, bound_index) in collision_representatives.items():
+                transition = bound_bound[bound_index][2]
+                lower_level = state_level[lower]
+                upper_level = state_level[upper]
+                collision_record = (
+                    None if collision_data is None else collision_data.get((
+                        symbol, int(state_charge[lower]),
+                        lower_level.index, upper_level.index))
+                )
+                for depth in range(atmosphere.n_depth):
+                    collision_up[bound_index, depth], collision_down[bound_index, depth] = (
+                        collision_coefficients(
+                            transition, lower_level, upper_level,
+                            int(state_charge[lower]), depth, collision_record,
+                        )
+                    )
+            if rate_cache is not None:
+                rate_cache["bound_collisions"] = (collision_up, collision_down)
+        bound_up = (bound_weight_ratio[:, np.newaxis] * bound_a[:, np.newaxis] * effective_photon
+                    + collision_scale * electron_density[np.newaxis, :] * collision_up)
+        bound_down = (bound_a[:, np.newaxis] * effective_inverse
+                      + collision_scale * electron_density[np.newaxis, :] * collision_down)
+    bound_rows = np.stack((bound_lower, bound_upper, bound_upper, bound_lower), axis=1).ravel()
+    bound_columns = np.stack((bound_lower, bound_lower, bound_upper, bound_upper), axis=1).ravel()
+
     populations = np.empty_like(lte_level)
     for depth in range(atmosphere.n_depth):
         matrix = np.zeros((n_state, n_state), dtype=np.float64)
@@ -7556,60 +7957,12 @@ def solve_reduced_light_metal_levels_nlte(
             matrix[upper, upper] -= downward
             matrix[lower, upper] += downward
 
-        for bound_index, (
-            lower, upper, transition, fine_components
-        ) in enumerate(bound_bound):
-            center = transition.wavelength_vacuum_angstrom
-            upper_level = state_level[upper]
-            photon_occupation = float(
-                bound_photon_occupation[bound_index, depth]
-            )
-            local_lambda = float(bound_lambda_diagonal[bound_index, depth])
-            lower_level = state_level[lower]
-            energy_gap = (upper_level.energy_wavenumber-lower_level.energy_wavenumber)*PLANCK*LIGHT_SPEED
-            inverse_occupation = np.exp(min(energy_gap/(BOLTZMANN*temperature[depth]),700.)) * bound_inverse_occupation[bound_index,depth]
-            effective_photon_occupation = photon_occupation
-            effective_inverse_occupation = inverse_occupation
-            if previous_population is not None and local_lambda > 0.0:
-                old_lower = previous_population[lower, depth]
-                old_upper = previous_population[upper, depth]
-                denominator = (
-                    upper_level.statistical_weight
-                    / lower_level.statistical_weight
-                    * old_lower
-                    - old_upper
-                )
-                if denominator > 0.0:
-                    effective_photon_occupation,effective_inverse_occupation = _mali_radiative_occupations(
-                        photon_occupation,inverse_occupation,local_lambda,old_upper/denominator)
-            radiative_up = (
-                upper_level.statistical_weight / lower_level.statistical_weight
-                * transition.einstein_a * effective_photon_occupation
-            )
-            radiative_down = transition.einstein_a * effective_inverse_occupation
-            collision_key = (
-                symbol,
-                int(state_charge[lower]),
-                lower_level.index,
-                upper_level.index,
-            )
-            collision_record = (
-                None if collision_data is None else collision_data.get(collision_key)
-            )
-            q_up, q_down = collision_coefficients(
-                transition,
-                lower_level,
-                upper_level,
-                int(state_charge[lower]),
-                depth,
-                collision_record,
-            )
-            add_pair(
-                lower,
-                upper,
-                radiative_up + collision_scale * electron_density[depth] * q_up,
-                radiative_down + collision_scale * electron_density[depth] * q_down,
-            )
+        if n_bound:
+            # Same sequence of additions as add_pair over the transitions
+            # (x - y == x + (-y) exactly).
+            np.add.at(matrix, (bound_rows, bound_columns), np.stack((
+                -bound_up[:, depth], bound_up[:, depth],
+                -bound_down[:, depth], bound_down[:, depth]), axis=1).ravel())
 
         for lower, upper, record in collision_only:
             lower_level = state_level[lower]
@@ -7779,6 +8132,15 @@ def solve_reduced_light_metal_levels_nlte(
             downward = max(radiative_downward + collision_downward, tiny)
             add_pair(lower, target, upward, downward)
 
+        for recombined_ground, parent_ground, missing in recombination_top_up:
+            downward = float(missing[depth])
+            if downward > 0.0:
+                upward = (
+                    downward * lte_level[parent_ground, depth]
+                    / max(lte_level[recombined_ground, depth], tiny)
+                )
+                add_pair(recombined_ground, parent_ground, upward, downward)
+
         solution = _positive_rate_equilibrium(matrix,conservation_weight[:,depth],
             represented_system_population[depth])
         populations[:, depth] = solution
@@ -7824,6 +8186,7 @@ def solve_reduced_light_metal_levels_nlte(
             "bound_bound_transitions": len(bound_bound),
             "lte_bound_bound_couplings": len(reservoir_bound_bound),
             "effective_dielectronic_couplings": len(effective_dielectronic),
+            "recombination_top_up": recombination_top_up_metadata,
             "formal_level_mapping": (
                 "native population levels"
                 if formal_level_mapping is None

@@ -83,6 +83,26 @@ def structure_wavelength(config, n_continuum):
     return wave[wave > 0]
 
 
+def _model_from_config(config, data):
+    """Rebuild the declared H/He atom for matching fixed-state line formation."""
+    validate_config(config)
+    resolution = numerical_resolution(config.quality)
+    mixed = isinstance(config, DAOConfig)
+    helium_i_path = data.cache / "helium-stark" / config.helium_i_profile
+    return HotNLTEModel(
+        read_ccc_hydrogen_collision_data(data.ccc_hydrogen_collisions, maximum_level=8),
+        read_helium_stark_table(helium_i_path),
+        read_helium_ii_stark_table(data.helium_ii_stark, thermodynamic_interpolation=config.helium_ii_interpolation),
+        read_tlusty_helium_collision_data(data.tlusty_source, data.tlusty_helium_atom),
+        maximum_helium_ii_level=config.maximum_helium_ii_level,
+        maximum_hydrogen_level=getattr(config, 'maximum_hydrogen_level', 8),
+        log_hydrogen_to_helium=config.log_hydrogen_to_helium if mixed else None,
+        n_angle=resolution.n_angle,
+        population_maximum_iterations=config.population_maximum_iterations,
+        population_tolerance=config.population_tolerance,
+        hydrogenic_collision_model=config.hydrogenic_collision_model)
+
+
 def _compute(config, wavelength=None, *, data=None, initial_atmosphere=None, iteration_callback=None):
     validate_config(config)
     # Cold public runs are reproducible; restarts need population/EOS provenance
@@ -110,18 +130,7 @@ def _compute(config, wavelength=None, *, data=None, initial_atmosphere=None, ite
         identity[name] = digest.hexdigest()
     resolution = numerical_resolution(config.quality)
     mixed = isinstance(config, DAOConfig)
-    model = HotNLTEModel(
-        read_ccc_hydrogen_collision_data(data.ccc_hydrogen_collisions, maximum_level=8),
-        read_helium_stark_table(helium_i_path),
-        read_helium_ii_stark_table(data.helium_ii_stark, thermodynamic_interpolation=config.helium_ii_interpolation),
-        read_tlusty_helium_collision_data(data.tlusty_source, data.tlusty_helium_atom),
-        maximum_helium_ii_level=config.maximum_helium_ii_level,
-        maximum_hydrogen_level=getattr(config, 'maximum_hydrogen_level', 8),
-        log_hydrogen_to_helium=config.log_hydrogen_to_helium if mixed else None,
-        n_angle=resolution.n_angle,
-        population_maximum_iterations=config.population_maximum_iterations,
-        population_tolerance=config.population_tolerance,
-        hydrogenic_collision_model=config.hydrogenic_collision_model)
+    model = _model_from_config(config, data)
     seed_function = hydrogen_helium_continuum_atmosphere if mixed else helium_continuum_atmosphere
     args = (config.effective_temperature, config.logg)
     if mixed:
