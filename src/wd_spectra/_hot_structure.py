@@ -67,12 +67,12 @@ class HotEquations:
         # without building hundreds of identically constrained columns.
         self.planck_temperature_only = nlte_fraction == 0 and not fixed_temperature
         self.nd = seed.n_depth
-        self.nhe = 15+model.maximum_helium_ii_level
+        self.nhe = 1+he._helium_i_atom(model.helium_i_atom).n_terms+model.maximum_helium_ii_level
         self.nh = 0 if model.log_hydrogen_to_helium is None else model.maximum_hydrogen_level+1
         self.indices = np.r_[np.arange(self.nhe-1), np.arange(self.nhe, self.nhe+self.nh-1)] if self.nh else np.arange(self.nhe-1)
         self.continua = np.r_[np.full(self.nhe-1, self.nhe-1), np.full(max(0,self.nh-1), self.nhe+self.nh-1)]
         groups = model._line_problems(seed)
-        grids = [structure_wave, he.default_neutral_helium_continuum_wavelength(),
+        grids = [structure_wave, he.default_neutral_helium_continuum_wavelength(model.helium_i_atom),
                  he.default_helium_ii_continuum_wavelength(model.maximum_helium_ii_level)]
         if self.nh:
             grids.append(hydrogen._default_continuum_wavelength(model.maximum_hydrogen_level))

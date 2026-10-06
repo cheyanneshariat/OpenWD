@@ -147,8 +147,17 @@ class TlustyHeliumCollisionData:
                 transition += 1
         return rate.reshape(temperature_array.shape + (19, 19))
 
-    def term_rate_matrix(self, temperature: ArrayLike) -> FloatArray:
-        """Return coefficients for the first nine TLUSTY-14 He I terms.
+    def term_rate_matrix(
+        self,
+        temperature: ArrayLike,
+        term_groups: tuple[tuple[int, ...], ...] = _TERM_FINE_INDEX,
+        n_terms: int = 14,
+    ) -> FloatArray:
+        """Return coefficients for the leading terms built from the 19 LS states.
+
+        ``term_groups`` lists, for each leading model-atom term, its constituent
+        COLLHE states; the default is the first nine TLUSTY-14 He I terms.  A
+        24-term atom whose first 19 terms are the LS states uses singletons.
 
         A rate out of an averaged lower term is weighted by the constituent
         statistical populations; rates into an averaged upper term are
@@ -157,11 +166,11 @@ class TlustyHeliumCollisionData:
         """
 
         fine = self.fine_structure_rate_matrix(temperature)
-        output = np.zeros(fine.shape[:-2] + (14, 14), dtype=np.float64)
-        for lower_term, lower_group in enumerate(_TERM_FINE_INDEX):
+        output = np.zeros(fine.shape[:-2] + (n_terms, n_terms), dtype=np.float64)
+        for lower_term, lower_group in enumerate(term_groups):
             lower_weight = np.sum(_FINE_STATISTICAL_WEIGHT[list(lower_group)])
-            for upper_term in range(lower_term + 1, len(_TERM_FINE_INDEX)):
-                upper_group = _TERM_FINE_INDEX[upper_term]
+            for upper_term in range(lower_term + 1, len(term_groups)):
+                upper_group = term_groups[upper_term]
                 upward = np.zeros(fine.shape[:-2], dtype=np.float64)
                 for lower in lower_group:
                     weight = _FINE_STATISTICAL_WEIGHT[lower] / lower_weight
@@ -185,7 +194,7 @@ class TlustyHeliumCollisionData:
         if (
             np.any(~np.isfinite(temperature_array))
             or np.any(temperature_array <= 0.0)
-            or binding.shape != (14,)
+            or binding.shape != self.ionization_scale.shape
             or np.any(~np.isfinite(binding))
             or np.any(binding <= 0.0)
         ):
@@ -301,7 +310,7 @@ def read_tlusty_helium_collision_data(
             if numbers.size >= 9:
                 values.append(float(numbers[7]))
         ionization_scale = np.asarray(values, dtype=np.float64)
-        if ionization_scale.shape != (14,) or np.any(ionization_scale <= 0.0):
+        if ionization_scale.ndim != 1 or ionization_scale.size < 1 or np.any(ionization_scale <= 0.0):
             raise ValueError("unexpected TLUSTY He I ionization scale table")
     return TlustyHeliumCollisionData(
         fit_start_index=np.ascontiguousarray(start),

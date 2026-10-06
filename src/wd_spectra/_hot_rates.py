@@ -39,8 +39,12 @@ class PreparedHeliumRates:
         self.model,self.atmosphere,self.wave=model,atmosphere,wave
         self.kwargs=dict(maximum_helium_ii_level=model.maximum_helium_ii_level,
             helium_i_collision_data=model.helium_i_collision_data,
-            hydrogenic_collision_model=model.hydrogenic_collision_model)
-        self.neutral,self.total_ion,self.neutral_occupation=he._neutral_helium_reference_populations(atmosphere)
+            hydrogenic_collision_model=model.hydrogenic_collision_model,
+            helium_i_atom=model.helium_i_atom,
+            conservation_row=model.helium_conservation_row)
+        self.atom=he._helium_i_atom(model.helium_i_atom)
+        self.n_neutral=n_neutral=self.atom.n_terms
+        self.neutral,self.total_ion,self.neutral_occupation=he._neutral_helium_reference_populations(atmosphere,model.helium_i_atom)
         self.ion,self.continuum,self.ion_occupation=he._reference_populations(atmosphere,model.maximum_helium_ii_level)
         zero=np.zeros(atmosphere.n_depth);one=np.ones(atmosphere.n_depth)
         zero_mean=np.zeros((len(wave),atmosphere.n_depth))
@@ -55,11 +59,11 @@ class PreparedHeliumRates:
             keys=[];lower_indices=[];upper_indices=[];upward=[];downward=[]
             for lower,upper in group:
                 if group_number==0:
-                    f=he.HELIUM_I_14_OSCILLATOR_STRENGTH.get((lower,upper),0.)
+                    f=self.atom.oscillator_strength.get((lower,upper),0.)
                     if f<=0:continue
-                    nu=he.HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[lower-1]-he.HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[upper-1]
-                    up,_=he._neutral_helium_bound_bound_radiative_rates(atmosphere,lower-1,upper-1,f,self.neutral,self.neutral_occupation,one)
-                    _,spont=he._neutral_helium_bound_bound_radiative_rates(atmosphere,lower-1,upper-1,f,self.neutral,self.neutral_occupation,zero)
+                    nu=self.atom.threshold_frequency_hz[lower-1]-self.atom.threshold_frequency_hz[upper-1]
+                    up,_=he._neutral_helium_bound_bound_radiative_rates(atmosphere,lower-1,upper-1,f,self.neutral,self.neutral_occupation,one,model.helium_i_atom)
+                    _,spont=he._neutral_helium_bound_bound_radiative_rates(atmosphere,lower-1,upper-1,f,self.neutral,self.neutral_occupation,zero,model.helium_i_atom)
                     lo,hi=lower-1,upper-1
                 else:
                     line=he.helium_ii_shell_transition(lower,upper)
@@ -67,11 +71,11 @@ class PreparedHeliumRates:
                     args=(atmosphere.temperature,line,self.ion[:,lower-1],self.ion[:,upper-1],self.ion_occupation[:,lower-1],self.ion_occupation[:,upper-1])
                     up,_=he._bound_bound_radiative_rates(*args,one)
                     _,spont=he._bound_bound_radiative_rates(*args,zero)
-                    lo,hi=14+lower-1,14+upper-1
+                    lo,hi=n_neutral+lower-1,n_neutral+upper-1
                 keys.append((lower,upper));lower_indices.append(lo);upper_indices.append(hi)
                 upward.append(up);downward.append(spont*LIGHT_SPEED**2/(2*PLANCK*nu**3))
             self.line_updates.append((keys,np.array(lower_indices),np.array(upper_indices),np.array(upward).T,np.array(downward).T))
-        self.neutral_zero=he._neutral_helium_continuum_radiative_rates(atmosphere,self.neutral,self.total_ion,wave,zero_mean)[1]
+        self.neutral_zero=he._neutral_helium_continuum_radiative_rates(atmosphere,self.neutral,self.total_ion,wave,zero_mean,model.helium_i_atom)[1]
         self.ion_zero=he._continuum_radiative_rates(atmosphere,self.ion,self.continuum,wave,zero_mean)[1]
         self.ground_fraction=self.ion[:,0]/np.maximum(self.total_ion,np.finfo(float).tiny)
 
@@ -81,12 +85,13 @@ class PreparedHeliumRates:
             intensity=np.column_stack([fields[k] for k in keys])
             rate[:,lo,hi]+=up*intensity
             rate[:,hi,lo]+=down*intensity
-        up,down=he._neutral_helium_continuum_radiative_rates(self.atmosphere,self.neutral,self.total_ion,self.wave,mean)
-        rate[:,:14,14]+=up
-        rate[:,14,:14]+=(down-self.neutral_zero)/np.maximum(self.ground_fraction[:,None],np.finfo(float).tiny)
+        m=self.n_neutral
+        up,down=he._neutral_helium_continuum_radiative_rates(self.atmosphere,self.neutral,self.total_ion,self.wave,mean,self.model.helium_i_atom)
+        rate[:,:m,m]+=up
+        rate[:,m,:m]+=(down-self.neutral_zero)/np.maximum(self.ground_fraction[:,None],np.finfo(float).tiny)
         up,down=he._continuum_radiative_rates(self.atmosphere,self.ion,self.continuum,self.wave,mean)
-        rate[:,14:-1,-1]+=up
-        rate[:,-1,14:-1]+=down-self.ion_zero
+        rate[:,m:-1,-1]+=up
+        rate[:,-1,m:-1]+=down-self.ion_zero
         return rate
 
     def state(self, mean, neutral_fields, ion_fields, hydrogen_fields):
@@ -153,7 +158,8 @@ class HeliumRadiationResponse:
         fields=profiles.fields(mean)
         population,reference=population_arrays(rates.state(mean,*fields))
         # Hydrogen has its own conservation row and response below.
-        n=15+rates.model.maximum_helium_ii_level
+        m=rates.n_neutral
+        n=m+1+rates.model.maximum_helium_ii_level
         population,reference=population[:,:n],reference[:,:n]
         density=reference.sum(axis=1)[:,None]
         self.reference=reference/density
@@ -171,8 +177,8 @@ class HeliumRadiationResponse:
         self.boltzmann=_boltzmann(key,np.asarray(rates.atmosphere.temperature,dtype=np.float64).tobytes())
         self.continua=[]
         for count,first,cross,lower,upper in (
-            (14,0,he.neutral_helium_term_photoionization_cross_section,np.arange(14),14),
-            (rates.model.maximum_helium_ii_level,1,he.helium_ii_photoionization_cross_section,np.arange(14,n-1),n-1)):
+            (m,0,rates.atom.photoionization,np.arange(m),m),
+            (rates.model.maximum_helium_ii_level,1,he.helium_ii_photoionization_cross_section,np.arange(m,n-1),n-1)):
             weights,_=_kernel(key,count,first,cross)
             self.continua.append((weights,lower,upper))
 
