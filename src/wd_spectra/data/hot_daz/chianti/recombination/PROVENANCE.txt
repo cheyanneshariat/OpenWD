@@ -1,0 +1,9 @@
+CHIANTI recombination parameter files (rrparams/drparams).
+fe_5..fe_7, ni_5..ni_7 (and the light-metal files): raw files from
+https://raw.githubusercontent.com/chianti-atomic/chianti-database/master/<el>/<ion>/<ion>.<kind>
+downloaded 2026-10-02. That repository was removed from GitHub by 2026-10-04.
+fe_8, ni_8: extracted 2026-10-04 from the official CHIANTI 11.0.2 database tarball
+https://download.chiantidatabase.org/CHIANTI_11.0.2_database.tar.gz
+(607363221 bytes, sha256 abbb8c418b0092439d692b72d92ead22a01c3d89bf2f3659d46a2cb81682cd79).
+The fe_5..fe_7 and ni_5..ni_7 files are byte-identical in that tarball.
+Per-file checksums: SHA256SUMS.

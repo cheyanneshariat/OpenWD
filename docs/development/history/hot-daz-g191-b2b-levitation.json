@@ -1,0 +1,251 @@
+{
+  "experimental": true,
+  "diffusion_equilibrium_solved": false,
+  "spectrum_with_diffusion_predicted": false,
+  "existing_spectrum_altered": false,
+  "host_parameters": {
+    "teff": 52500.0,
+    "logg": 7.53,
+    "log_h_he": 5.0
+  },
+  "abundances": {
+    "C": -6.764471553092451,
+    "Si": -6.434152181326482
+  },
+  "numerical_identity": {
+    "numerical_code": "22cb11f5efbe371a6f0a23c966bf8ddfcc8b637095c97194b165949cbb7e55de",
+    "physical_data": "06e2d4661ed49d129d95650c81c0935dc546d234cae8a871fc6d66c804384cc1"
+  },
+  "quadrature_wavelength_points": [
+    145486,
+    290948,
+    137402
+  ],
+  "tested_atoms": [
+    {
+      "C": {
+        "2": 40,
+        "3": 54,
+        "4": 10,
+        "5": 1
+      },
+      "Si": {
+        "2": 50,
+        "3": 40,
+        "4": 30,
+        "5": 1
+      }
+    },
+    {
+      "C": {
+        "2": 40,
+        "3": 54,
+        "4": 10,
+        "5": 1
+      },
+      "Si": {
+        "2": 50,
+        "3": 40,
+        "4": 30,
+        "5": 1
+      }
+    },
+    {
+      "C": {
+        "2": 40,
+        "3": 54,
+        "4": 1
+      },
+      "Si": {
+        "2": 50,
+        "3": 40,
+        "4": 1
+      }
+    }
+  ],
+  "maximum_bulk_force_over_g": 0.011449496945720911,
+  "checks_region_g_cm2": [
+    0.0001,
+    1.0
+  ],
+  "checks": {
+    "C": {
+      "maximum_quadrature_relative_change": 0.004215797625344075,
+      "maximum_atom_expansion_relative_change": 0.0015250392852290684
+    },
+    "Si": {
+      "maximum_quadrature_relative_change": 0.006638936121284078,
+      "maximum_atom_expansion_relative_change": 0.5737831379745135
+    }
+  },
+  "line_depth_estimates": {
+    "1175.987": {
+      "element": "C",
+      "core_mass": 0.05225453096362452,
+      "background_mass": 0.07063555238129504,
+      "compact_g_rad_over_g": 4.753805500065658,
+      "expanded_g_rad_over_g": 4.75146047876011,
+      "finer_g_rad_over_g": 4.733404543420751,
+      "bound_bound_g_rad_over_g": 3.786607895042356,
+      "hst_band_g_rad_over_g": 0.5155753062982904,
+      "mean_charge": 3.340955457073206,
+      "homogeneous_support_acceleration_over_g": 0.8178390440272303,
+      "ion_contributions_to_g_rad_over_g": {
+        "2": 0.8352442513224525,
+        "3": 3.916216195902361,
+        "4": 3.1535348784237765e-08,
+        "5": 0.0
+      },
+      "required_dln_abundance_dln_mass_without_radiation": 19.489041869493473,
+      "required_dln_abundance_dln_mass_with_radiation": -93.30761872151615
+    },
+    "1176.37": {
+      "element": "C",
+      "core_mass": 0.0487847881055101,
+      "background_mass": 0.07056481406567149,
+      "compact_g_rad_over_g": 4.746361161837797,
+      "expanded_g_rad_over_g": 4.743950386962029,
+      "finer_g_rad_over_g": 4.726053952914871,
+      "bound_bound_g_rad_over_g": 3.7724091849225223,
+      "hst_band_g_rad_over_g": 0.5476942509455046,
+      "mean_charge": 3.3287930176903555,
+      "homogeneous_support_acceleration_over_g": 0.8183497944717264,
+      "ion_contributions_to_g_rad_over_g": {
+        "2": 0.893597671273776,
+        "3": 3.8503526850741387,
+        "4": 3.0614158928551685e-08,
+        "5": 0.0
+      },
+      "required_dln_abundance_dln_mass_without_radiation": 19.50125423677888,
+      "required_dln_abundance_dln_mass_with_radiation": -93.12048114851545
+    },
+    "1393.755": {
+      "element": "Si",
+      "core_mass": 0.0018976368058896997,
+      "background_mass": 0.053520484409676376,
+      "compact_g_rad_over_g": 0.29115549206541896,
+      "expanded_g_rad_over_g": 0.2920882402945319,
+      "finer_g_rad_over_g": 0.29212855800337345,
+      "bound_bound_g_rad_over_g": 0.2724305909723793,
+      "hst_band_g_rad_over_g": 0.1812938745500047,
+      "mean_charge": 4.043054067095198,
+      "homogeneous_support_acceleration_over_g": 0.9095077068216224,
+      "ion_contributions_to_g_rad_over_g": {
+        "2": 0.004897745442607227,
+        "3": 0.2748311446293804,
+        "4": 0.012359350222544975,
+        "5": 0.0
+      },
+      "required_dln_abundance_dln_mass_without_radiation": 50.6848777946857,
+      "required_dln_abundance_dln_mass_with_radiation": 34.405195871507026
+    },
+    "1402.77": {
+      "element": "Si",
+      "core_mass": 0.002622591386114795,
+      "background_mass": 0.05292985677619539,
+      "compact_g_rad_over_g": 0.36005853656985426,
+      "expanded_g_rad_over_g": 0.364221896817993,
+      "finer_g_rad_over_g": 0.3639692698238235,
+      "bound_bound_g_rad_over_g": 0.33627179402620894,
+      "hst_band_g_rad_over_g": 0.19422112274849349,
+      "mean_charge": 4.010995118107953,
+      "homogeneous_support_acceleration_over_g": 0.9100819409576678,
+      "ion_contributions_to_g_rad_over_g": {
+        "2": 0.00970350897257646,
+        "3": 0.3427768107898917,
+        "4": 0.011741577055526116,
+        "5": 0.0
+      },
+      "required_dln_abundance_dln_mass_without_radiation": 50.71621945990621,
+      "required_dln_abundance_dln_mass_with_radiation": 30.433282755711158
+    }
+  },
+  "formation_caveat": "monochromatic tau=1 interpolation; not a line contribution function",
+  "gradient_caveat": "zero-drift force-balance diagnostic with electron-pressure electric field; no thermal diffusion, ion-specific mobilities, accretion or wind; forces must be recomputed before integrating an abundance profile",
+  "inputs": {
+    "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-higher-ions/populations.npz": "34e238487cabff6b694d20b6f40794bef09244a923f708a266858b8837fcf385",
+    "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-higher-ions/metadata.json": "703640d81de8394b7188036a068e404d20092c40f9c74428056479a1e740ec50",
+    "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-higher-ions-force/forces.npz": "318270ca662fedf8c447e589861ff4c87b4fad7491159282023befde982d0630",
+    "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-higher-ions-force-finer/forces.npz": "c46e3781461f5fd2c828ccb86c9606c47055c897f7e6c0a487348930d4f2e656",
+    "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-hot-daz/results/hot-daz/g191-b2b-levitation-force/forces.npz": "f0df343e5540869739089488bb7b404e233a7bfbf5d114d863e5acc914d2a728"
+  },
+  "literature": [
+    {
+      "reference": "Rauch et al. 2013, sections 4.3\u20134.4",
+      "url": "https://doi.org/10.1051/0004-6361/201322336",
+      "note": "Their 60000 K/logg 7.60 diffusion model did not improve the UV metal-line fit; this is context, not the parameters used for our Preval 52500 K/logg 7.53 benchmark."
+    }
+  ],
+  "metal_convergence": {
+    "converged": true,
+    "iterations": 90,
+    "population_defect": 8.475004331419552e-05,
+    "population_wavelength_points": 145486,
+    "source_closure_residual": 1.4364767864898407e-15,
+    "levels_per_charge": {
+      "C": {
+        "2": 40,
+        "3": 54,
+        "4": 10,
+        "5": 1
+      },
+      "Si": {
+        "2": 50,
+        "3": 40,
+        "4": 30,
+        "5": 1
+      }
+    }
+  },
+  "spectral_comparison": {
+    "normalized_rms": {
+      "ciii_1175": 0.054642414326486484,
+      "lyalpha": 0.037797695319031266,
+      "siiv_1393": 0.032512084148288066,
+      "siiv_1402": 0.02740688547588436
+    },
+    "clean_ciii_components": {
+      "1175.987": {
+        "observed_aperture_ew_mA": 17.004886384575208,
+        "predicted_aperture_ew_mA": 7.753965074009509,
+        "observed_statistical_error_mA": 0.6973348848044507,
+        "predicted_to_observed_ew_ratio": 0.4559845269559093,
+        "half_width_kms": 20.0,
+        "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+      },
+      "1176.370": {
+        "observed_aperture_ew_mA": 20.041926667062572,
+        "predicted_aperture_ew_mA": 9.34519883882047,
+        "observed_statistical_error_mA": 0.608144395088343,
+        "predicted_to_observed_ew_ratio": 0.46628245847135125,
+        "half_width_kms": 20.0,
+        "scope": "fixed aperture; statistical error excludes continuum uncertainty"
+      }
+    },
+    "higher_ions_relative_ew_changes": {
+      "1175.987": 0.0005977301094799436,
+      "1176.370": 0.000580646828396647
+    },
+    "radiation_grid_relative_ew_changes": {
+      "1175.987": 0.004918508843603009,
+      "1176.370": 0.004980316626187253
+    }
+  },
+  "tests": {
+    "targeted_tests_passed": 98,
+    "ion_force_partition_closure": "passed at 2e-11 relative tolerance",
+    "support_acceleration_zero_gradient_roundtrip": "passed at 1e-12 absolute tolerance",
+    "fits_checksums_and_prediction_roundtrip": "passed"
+  },
+  "remaining_work": [
+    "converged atomic selections and audited rates",
+    "Fe/Ni and other metal blanketing",
+    "coupled abundance-versus-depth transport with boundary conditions",
+    "spectrum recomputed from converged stratification and comparison to data"
+  ],
+  "analysis_code_sha256": {
+    "research/hot_trace_levitation.py": "4c0f97174a592340ad2f0cf1dc3129880bbaca6a2a0b149c76ee94ccb301e2b2",
+    "research/assess_hot_trace_levitation.py": "b061b688cdedf4b50ec137c18e65847628daaedcbc5ac5adbb02bacba2335ddd",
+    "research/resynthesize_hot_trace.py": "3071be0506194022cbdd6d7ae946e2d859a94129c93d7187c2681b801a6e4862"
+  }
+}

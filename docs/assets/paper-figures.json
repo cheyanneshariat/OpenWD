@@ -187,6 +187,23 @@
         "sha256_at_import": "807aa373cc7bca649f7dd528cd48e31826d72ea65e166a6ae5af60c5a5732cac",
         "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
       }
+    },
+    {
+      "pdf": "g191b2b-trace-metals-paper.pdf",
+      "preview": "g191b2b-trace-metals-paper.png",
+      "guides": [
+        "DO-DAO.md"
+      ],
+      "paper_source": "paper/figures/g191b2b_fuse_stis_panels.pdf",
+      "pdf_sha256": "a9a135cff6105558be69fb948bc31cbd24fa75a718a368266e8c4be7e3b60cd4",
+      "preview_sha256": "e886f4049e2d0b73c879c11e322f68611d964bb692b6412079201f4357a388fe",
+      "plotter_in_repository": {
+        "path": "research/plot_g191b2b_validation.py",
+        "sha256_at_import": "410bb63ea2b7d8a81c0a07e47fc9148877d1e6ed73c7eb55b918aa7b6430c20c",
+        "command": "python research/plot_g191b2b_validation.py --model <run> --output <figure>.pdf",
+        "model": "research/hot_daz_g191b2b.py --quality production (80 depths, 4 angles)",
+        "scope": "Regenerates the archived PDF (identical when rasterized) from the 80-depth model and the bundled observations."
+      }
     }
   ]
 }

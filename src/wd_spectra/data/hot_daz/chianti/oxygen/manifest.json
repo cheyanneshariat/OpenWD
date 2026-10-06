@@ -1,0 +1,42 @@
+{
+  "o_3.elvlc": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_3/o_3.elvlc",
+    "sha256": "2bd4da43c855325c8d4c5c6640f539945106219e51231095596797801ec7e297",
+    "bytes": 16161
+  },
+  "o_3.scups": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_3/o_3.scups",
+    "sha256": "c45303a6d6a4dd931aece7c1023ac80d19692c35d78de534b4c145ddfe7e9333",
+    "bytes": 6781193
+  },
+  "o_4.elvlc": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_4/o_4.elvlc",
+    "sha256": "73281e91f605977186a25798bed25c31f74e9a76a727e2954178538c7b899eb3",
+    "bytes": 18748
+  },
+  "o_4.scups": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_4/o_4.scups",
+    "sha256": "5bd169d70125a3a52553f0d2b60346a5796eb192bc3b0ae3b67eabc0747406d4",
+    "bytes": 9007336
+  },
+  "o_5.elvlc": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_5/o_5.elvlc",
+    "sha256": "041886ff6e3e44a5d920d81250cc381f601d068019c08f6bd551cdbe2cb69247",
+    "bytes": 15076
+  },
+  "o_5.scups": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_5/o_5.scups",
+    "sha256": "1f3bcc2676da55957943f57c59a9513f1666f60ab570b2ca3694660118afb5bc",
+    "bytes": 5957742
+  },
+  "o_6.elvlc": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_6/o_6.elvlc",
+    "sha256": "f76e37026275ece28b3a5e50ca8f51767d848847d3ec3e189f1a0f82c57d01d2",
+    "bytes": 115849
+  },
+  "o_6.scups": {
+    "url": "https://sohoftp.nascom.nasa.gov/solarsoft/packages/chianti/dbase/o/o_6/o_6.scups",
+    "sha256": "8cdce571572b42d08acf9c8c69c9d74916ce8e02bc8ca3df85fd186967e8962d",
+    "bytes": 149469
+  }
+}

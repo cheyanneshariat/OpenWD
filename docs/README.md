@@ -21,6 +21,9 @@ inspect its convergence status, then change the parameters for your application.
 - [Performance](development/performance.md): compiled acceleration and threads.
 - [Solver diagnostics](development/solver-telemetry.md): interpreting iteration
   logs and convergence evidence.
+- [Hot DA/DAO trace metals](development/hot-daz-trace-metals.md): experimental
+  fixed-host NLTE metals (C, N, O, Al, Si, P, S, Fe, Ni) and the G191-B2B
+  benchmark; development record, not a validated preset.
 - [Research history](development/history/README.md): dated investigations,
   rejected experiments, and detailed validation records. These are not the
   current user instructions.
