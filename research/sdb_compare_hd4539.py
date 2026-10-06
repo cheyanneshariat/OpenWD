@@ -52,10 +52,10 @@ def gaussian_convolve(wavelength, flux, resolving_power):
     return np.exp(log_grid), smoothed
 
 
-def load_observation():
+def load_observation(directory=OBS):
     arms = {}
     for arm in ('uvb', 'vis'):
-        data = fits.getdata(OBS / f'coadd-{arm}.fits', 1)
+        data = fits.getdata(Path(directory) / f'coadd-{arm}.fits', 1)
         good = np.isfinite(data['FLUX']) & np.isfinite(data['ERR'])
         arms[arm] = (data['WAVE'][good], data['FLUX'][good], data['ERR'][good])
     return arms

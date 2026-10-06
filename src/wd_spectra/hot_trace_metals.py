@@ -336,6 +336,7 @@ def solve_hot_trace_metals(
     require_convergence: bool = True,
     iteration_callback=None,
     state_callback=None,
+    trace_mass_limit: float = 1e-3,
 ) -> TraceMetalResult:
     """Iterate explicit trace-metal statistical equilibrium and combined transfer.
 
@@ -437,8 +438,10 @@ def solve_hot_trace_metals(
                        for e in abundances) / atmosphere.electron_density
     metadata.update(maximum_trace_mass_ratio=float(np.max(mass_ratio)),
                     maximum_trace_electron_fraction_bound=float(np.max(charge_bound)))
-    if np.max(mass_ratio) > 1e-3 or np.max(charge_bound) > 1e-2:
-        raise ValueError("mixture exceeds fixed-background trace limits (mass 1e-3; electrons 1e-2)")
+    # ``trace_mass_limit`` bounds the metal mass fraction neglected by the fixed
+    # host (1e-3 suits white dwarfs; solar-like sdB C/N/O is ~1e-3 to 1e-2).
+    if np.max(mass_ratio) > trace_mass_limit or np.max(charge_bound) > 1e-2:
+        raise ValueError(f"mixture exceeds fixed-background trace limits (mass {trace_mass_limit:g}; electrons 1e-2)")
     defaults = {"C": {2: 20, 3: 30, 4: 1}, "Si": {2: 30, 3: 23, 4: 1}}
     if levels_per_charge is None and set(abundances) - set(defaults):
         raise ValueError("additional elements require explicit levels_per_charge")
