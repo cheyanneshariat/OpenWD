@@ -101,10 +101,18 @@ Standard quality, one Apple-silicon process, compiled backend:
 
 | Model | Wall time | Peak memory | Certificate | Flux / σT⁴ (100 Å–100 µm) |
 | --- | --- | --- | --- | --- |
-| Paper metals, Stout lines | 279 s | 1.9 GB | all 5 gates | 1.00018 |
-| Paper metals, with supplements | 270 s | 1.9 GB | all 5 gates | 1.00009 |
+| Paper metals, Stout lines (post-rebase) | 335 s | 1946 MiB | all 5 gates | 1.00018 |
+| Paper metals, with supplements (post-rebase) | 285 s | 1981 MiB | all 5 gates | 1.00009 |
 | Metal-free control | 204 s | 1.5 GB | all 5 gates | – |
 | All metals at log N/H = -20 | 311 s | 1.9 GB | all 5 gates | – |
+
+The two paper-metal timings are fresh cold starts on numerical commit
+`9028e4d`, rebased onto `39664f1`. The two control timings are earlier
+pre-rebase measurements. The runs were not isolated timing experiments;
+these values do not establish a speedup from adding line supplements.
+The default 900–30000 Å spectrum contains about 0.870 of σTeff⁴ for this
+hot star. The flux ratios in the table use the separate 100 Å–100 µm
+integration, not the finite default output range.
 
 - With all metals at -20, the model reproduces the metal-free preset:
   |ΔT/T| < 7 × 10⁻⁴ on column mass below the top layer (0.18% at the top
@@ -129,6 +137,11 @@ continuum. The constants are 0.98–1.02 for STIS and 0.98–1.10 for FUSE.
 
 Red curves are the published model of the paper's Figure 1, recovered from
 the vector graphics of the PDF by `research/extract_williams2026_figure1.py`.
+They are comparison material attributed to Williams et al. (2026), not
+OpenWD predictions or an independently distributed author model grid.
+Redistribution terms for those curves and the new external atomic tables
+need maintainer review before merge or release; OpenWD's BSD licence does
+not relicense them.
 
 ![HS 0209+0832: the six windows of the paper's Figure 1](../assets/hs0209-niobium/hs0209-figure1-windows.png)
 
@@ -185,10 +198,10 @@ The STIS data prefer 82.8 km/s, not the 76–78 km/s of the paper's Table 3
 - Direct centroids of ten photospheric lines give a median of 82.4 km/s.
 - The lines of the published Figure 1 model are at 83–86 km/s.
 
-Thus, the Table 3 velocities are about 6 km/s lower than the data and the
-paper's own plotted model. The plotted fit agrees with the data, so the
-difference is probably in the reported values only. We do not know the
-cause.
+This comparison finds an approximately 6 km/s offset from the reported
+Table 3 velocities. We do not know its cause. The adopted 82.8 km/s is a
+diagnostic alignment for these figures, not an independent correction to
+the paper's systemic velocity.
 
 ## Reproduce
 
