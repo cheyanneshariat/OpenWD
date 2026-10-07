@@ -148,6 +148,14 @@ def main():
         raise SystemExit('an element is either NLTE (--abundance) or LTE (--lte-abundance)')
     if lte_abundances:
         lte_database = read_pg1159_atomic_database(data.stout, elements=tuple(lte_abundances))
+        # Stout lacks ionization energies above e.g. Al IV (Al IV -> V: 120 eV);
+        # such a stage closes the Saha ladder (the higher ions are negligible
+        # below ~50 kK).
+        top = {e: min((ion.charge for ion in lte_database.ion_stages(e) if ion.ionization_energy_ev is None),
+                      default=None) for e in lte_abundances}
+        lte_database = replace(lte_database, ions={k: v for k, v in lte_database.ions.items()
+                                                   if top[k[0]] is None or k[1] <= top[k[0]]},
+                               _line_selection_cache={}, _unsold_hydrogen_coefficient_cache={})
         lte_reference = fixed_electron_metal_reference(atmosphere, lte_database, lte_abundances)
         unity = {(e, ion.charge): np.ones(atmosphere.n_depth)
                  for e in lte_abundances for ion in lte_database.ion_stages(e)}
