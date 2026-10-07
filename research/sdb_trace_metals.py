@@ -37,6 +37,7 @@ from wd_spectra.models.common import ModelData
 from wd_spectra.models.hot import _model_from_config
 
 import hot_daz_data as bundled
+from sdb_heavy_lines import HeavyLines
 from hot_trace_collisions import carbon_collisions
 from hot_trace_oxygen_collisions import oxygen_collisions
 
@@ -61,6 +62,9 @@ ELEMENT_LEVELS = {
     'S': {1: 30, 2: 45, 3: 10, 4: 1},
 }
 CARBON_LEVELS = ELEMENT_LEVELS['C']
+# NIST ASD ionization energies (eV) for stages Stout leaves blank.
+NIST_IONIZATION_EV = {('Ti', 3): 43.26717, ('Ti', 4): 99.299, ('Ni', 3): 54.92, ('Ni', 4): 76.06,
+                      ('Zn', 3): 59.573, ('Zn', 4): 82.6}
 LINES = {'C II 3920': 3920.68, 'C II 4267': 4267.26, 'C II 6578': 6578.05, 'C II 6583': 6582.88,
          'C II 4074': 4074.52, 'C III 4647': 4647.42, 'C III 4650': 4650.25, 'C III 4651': 4651.47,
          'C III 5696': 5695.92, 'C III 4069': 4068.92, 'C III 4187': 4186.90,
@@ -102,6 +106,8 @@ def main():
     parser.add_argument('--lte-abundance', action='append', default=[],
                         help='ELEMENT=log10 N/N(H) added as LTE line opacity of all its ions (e.g. Fe=-4.8)')
     parser.add_argument('--lte-minimum-oscillator-strength', type=float, default=1e-4)
+    parser.add_argument('--heavy-abundance', action='append', default=[],
+                        help='ELEMENT=log10 N/N(H) for Z > 30 (sdb_heavy_lines.py: LTE, Kurucz/literature lines)')
     parser.add_argument('--damping', type=float, default=0.5, help='solver mixing (solve_hot_trace_metals default 0.5)')
     parser.add_argument('--acceleration-depth', type=int, default=6, help='Anderson history (0: none)')
     parser.add_argument('--no-accelerated-lambda', action='store_true', help='plain Lambda iteration (diagnostic)')
@@ -155,9 +161,13 @@ def main():
         raise SystemExit('an element is either NLTE (--abundance) or LTE (--lte-abundance)')
     if lte_abundances:
         lte_database = read_pg1159_atomic_database(data.stout, elements=tuple(lte_abundances))
-        # Stout lacks ionization energies above e.g. Al IV (Al IV -> V: 120 eV);
-        # such a stage closes the Saha ladder (the higher ions are negligible
-        # below ~50 kK).
+        # Stout lacks some ionization energies; NIST ASD values fill those that
+        # matter at sdB temperatures.  A stage still lacking one (e.g. Al IV,
+        # 120 eV to Al V) closes the Saha ladder.
+        lte_database = replace(lte_database, ions={
+            k: (replace(v, ionization_energy_ev=NIST_IONIZATION_EV[k])
+                if v.ionization_energy_ev is None and k in NIST_IONIZATION_EV else v)
+            for k, v in lte_database.ions.items()}, _line_selection_cache={}, _unsold_hydrogen_coefficient_cache={})
         top = {e: min((ion.charge for ion in lte_database.ion_stages(e) if ion.ionization_energy_ev is None),
                       default=None) for e in lte_abundances}
         lte_database = replace(lte_database, ions={k: v for k, v in lte_database.ions.items()
@@ -166,6 +176,9 @@ def main():
         lte_reference = fixed_electron_metal_reference(atmosphere, lte_database, lte_abundances)
         unity = {(e, ion.charge): np.ones(atmosphere.n_depth)
                  for e in lte_abundances for ion in lte_database.ion_stages(e)}
+
+    heavy_abundances = dict((k, float(v)) for k, v in (item.split('=') for item in args.heavy_abundance))
+    heavy = HeavyLines(atmosphere, heavy_abundances) if heavy_abundances else None
 
     def background(wave):
         base = model.transfer_coefficients(atmosphere, wave, state)
@@ -177,13 +190,20 @@ def main():
         roundoff = (emission < 0) & (-emission < 1e-30 * np.max(np.abs(emission), axis=0))
         if roundoff.any():
             base = replace(base, thermal_emissivity=np.where(roundoff, 0.0, emission))
-        if not lte_abundances:
+        if not lte_abundances and heavy is None:
             return base
+        if not lte_abundances:
+            absorption, emission = heavy.coefficients(wave)
+            return replace(base, true_absorption=base.true_absorption + absorption,
+                           thermal_emissivity=base.thermal_emissivity + emission)
         # Line opacity only: the bound-free edges of trace Fe lie in the EUV.
         absorption, emission = hot_metal_line_nlte_coefficients(
             atmosphere, wave, lte_database, lte_reference, unity, elements=tuple(lte_abundances),
             minimum_oscillator_strength=args.lte_minimum_oscillator_strength, maximum_lines=None,
             include_static_linear_stark=False, profile_block_tolerance=1e-4)
+        if heavy is not None:
+            heavy_absorption, heavy_emission = heavy.coefficients(wave)
+            absorption, emission = absorption + heavy_absorption, emission + heavy_emission
         return replace(base, true_absorption=base.true_absorption + absorption,
                        thermal_emissivity=base.thermal_emissivity + emission)
 
@@ -205,6 +225,7 @@ def main():
     (args.output / 'run-summary.json').write_text(json.dumps(dict(
         host=dict(lte=str(args.lte_model), hybrid=str(args.hybrid_model), **summary), abundances=abundances,
         lte_abundances=lte_abundances, lte_minimum_oscillator_strength=args.lte_minimum_oscillator_strength,
+        heavy_abundances=heavy_abundances, heavy_lines=0 if heavy is None else len(heavy.lines),
         levels_per_charge=counts, converged=bool(result.converged), iterations=int(result.iterations),
         population_defect=float(result.population_defect), elapsed_seconds=time.monotonic() - start,
         chianti_collision_pairs={k: v['selected_pairs'] for k, v in audit.items()}, history=history,
