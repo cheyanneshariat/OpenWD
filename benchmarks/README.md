@@ -1,6 +1,6 @@
 # Contained solver benchmarks
 
-These benchmarks measure a single Jacobian at a fixed initial state. They do
+The LTE and hot-cache benchmarks measure a single Jacobian at a fixed initial state. They do
 not solve a cold atmosphere or certify model convergence. Both variants use
 the current checkout: `baseline` disables the relevant reuse option and
 `candidate` enables it. Build the native extension and install the bundled
@@ -56,7 +56,9 @@ separately.
 ## Separate public cold-start evidence
 
 The fixed-state scripts above use same-checkout off/on controls. A separate
-serial screen compared the pinned release with the frozen candidate through
+serial screen compared the pinned release with the original frozen
+cache/robustness candidate, without the subsequent native frequency-Voigt
+changes, through
 public `run_model` calls, using standard settings, default wavelengths and
 absent initial states. The observer saved callback diagnostics/checkpoints and
 source/data/native identities, with numerical threads pinned to one.
@@ -80,3 +82,12 @@ These public-call observations supplement the contained component comparisons.
 They do not provide repeated full-model timing statistics or an isolated
 source-hunk attribution. See [qualification details](../docs/solver-cache-validation.md)
 for the scope and frozen protocol identities.
+
+## Native frequency-Voigt opacity benchmark
+
+`benchmark_d6_voigt_opacity.py` compares released Python frequency-Voigt
+evaluation/assembly with the new native methods at a retained atmosphere.
+It requires a separate released checkout and archived atmosphere; it does
+not run a cold solve. See
+[native frequency-Voigt validation](../docs/native-frequency-voigt-validation.md#reproduction)
+for commands, input sizes, numerical checks and timing limitations.

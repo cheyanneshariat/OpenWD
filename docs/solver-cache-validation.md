@@ -1,9 +1,12 @@
 # Contained solver improvements
 
-This change is based on released commit
+This report covers the original cache/robustness bundle, based on released commit
 `d9640656dce01bc6fc788c612d7a153c0d51c756`. Qualification on 2026-10-06/07 used
 short component tests, fixed atmospheres and reduced Jacobian fixtures, plus
 one completed public DAZ cold-start pair and bounded standard D6 attempts.
+Those measurements did not include the native frequency-Voigt optimization;
+its separate evidence is documented in
+[native frequency-Voigt validation](native-frequency-voigt-validation.md).
 
 ## Changes
 
@@ -31,7 +34,8 @@ excluded.
 ## Measurements
 
 Python 3.9.16, NumPy 1.26.4 and SciPy 1.11.1 on macOS arm64, with numerical
-threads pinned to one. The native extension was unchanged. The LTE comparison
+threads pinned to one. The native extension was unchanged in these cache-bundle
+measurements. The LTE comparison
 used five warmed alternating pairs on eight-depth fixtures, 80 continuum
 points and at most 16 structure metal lines. Both variants use the candidate
 source, toggling reuse off/on.
@@ -48,8 +52,9 @@ Residuals and Jacobians were bitwise identical. Metal-opacity builds fell
 from four to two per measured Jacobian in DAZ, DZ and D6. These reductions
 measure Jacobian construction, not complete model runtime or convergence.
 The LTE timings preceded promotion of the three independent hot-only source
-changes; their LTE/EOS source matches the final staged candidate. All selected
-regression tests and hot comparisons used the complete staged production code.
+changes; their LTE/EOS source matches the final cache/robustness candidate.
+All selected regression tests and hot comparisons used the complete production
+code of that bundle, without the subsequent native frequency-Voigt changes.
 
 Reduced real-atom DO and DAO fixtures at eight and sixteen depths also
 preserved bitwise-identical seeds, states, residuals and Jacobians. They
@@ -63,8 +68,8 @@ physics bundle is retained; memory scaling needs broader qualification.
 Fresh processes called the public `run_model` with `require_convergence=True`,
 standard quality, the default wavelength grid and no initial atmosphere,
 checkpoint, neighbor, warmup or line-budget override. The release checkout
-was pinned to the commit above; the candidate used this frozen numerical
-patch. Runs were serial on the same macOS arm64 Python/NumPy/SciPy stack and
+was pinned to the commit above; the candidate used only the frozen
+cache/robustness patch described here. Runs were serial on the same macOS arm64 Python/NumPy/SciPy stack and
 one-thread controls stated above. Source, data and loaded-native SHA256
 inventories and lossless callback checkpoints were retained.
 
@@ -141,3 +146,26 @@ See [benchmark instructions](../benchmarks/README.md) for reproducible
 contained comparisons. Complete D6/hot cold-start convergence, cross-platform
 performance and broader spectral qualification remain outside this commit's
 evidence. The completed DAZ pair qualifies its declared structure grid.
+
+## Combined performance candidate
+
+The cache/robustness and native frequency-Voigt bundles were combined without
+additional numerical edits for a fresh J1637 cold start on 2026-10-07.
+Before launch, 131 focused tests passed in 2.51 seconds, both new native APIs
+were available, and an eight-depth D6 Jacobian comparison retained bitwise
+residual/Jacobian equality with Rosseland reuse off/on, reducing material
+builds from four to two. These are contained checks; their test count overlaps
+the separate bundle screens above.
+
+The combined public standard J1637 cold start uses no supplied atmosphere,
+checkpoint or warmup and has an eight-hour work cap. Its final convergence,
+spectrum and whole-model runtime remain pending as of 2026-10-07. Intermediate
+callback timing is not a completed cold-start speedup measurement.
+
+The PR applies these same numerical changes on top of main commit
+`cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5`, preserving the subsequently merged
+physics/boundary fixes and bounded J1637 regression. The historical measurements
+above use their declared released baseline; they are not a requalification of
+that newer main branch. Integration checks run through the existing PR CI.
+No new convective phase-handoff, conditioning-normalization, bounded-direction
+or Jacobian-refresh experiment is included.

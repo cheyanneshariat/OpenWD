@@ -1,10 +1,13 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <math.h>
+#include "humlicek_w4.h"
 
 PyObject *openwd_pseudo_voigt_profile(PyObject *, PyObject *);
 PyObject *openwd_stark_manifold_bins(PyObject *, PyObject *);
 PyObject *openwd_stark_profile_finish(PyObject *, PyObject *);
+PyObject *openwd_frequency_voigt_profile(PyObject *, PyObject *);
+PyObject *openwd_stark_frequency_profile_finish(PyObject *, PyObject *);
 
 /* Maximum hot NLTE metal-line profile half-window as a fraction of the line's
    central wavelength (matches wd_spectra.metals.LINE_WINDOW_MAX_FRACTION).
@@ -486,6 +489,14 @@ humlicek_w4_real(double x, double y)
             cx_mul(t, cx_poly(numerator, 7, u)), cx_poly(denominator, 8, u));
         return exponential.re - rational.re;
     }
+}
+
+/* Reuse W4 from the manifold translation unit without changing the static
+ * ordinary LTE evaluator or its opportunities for inlining. */
+double
+openwd_humlicek_w4_real(double x, double y)
+{
+    return humlicek_w4_real(x, y);
 }
 
 /*
@@ -2990,6 +3001,10 @@ static PyMethodDef module_methods[] = {
      PyDoc_STR("Deposit the existing Stark field-segment pattern on fine and coarse grids.")},
     {"stark_profile_finish", openwd_stark_profile_finish, METH_VARARGS,
      PyDoc_STR("Interpolate uniform Stark grids and add the impact profile.")},
+    {"frequency_voigt_profile", openwd_frequency_voigt_profile, METH_VARARGS,
+     PyDoc_STR("frequency_voigt_profile(wavelength, center, sigma, gamma, output) -> None")},
+    {"stark_frequency_profile_finish", openwd_stark_frequency_profile_finish, METH_VARARGS,
+     PyDoc_STR("Interpolate uniform Stark grids and add the frequency-space Voigt impact profile.")},
     {"positive_rate_equilibrium", positive_rate_equilibrium, METH_VARARGS,
      PyDoc_STR("positive_rate_equilibrium(matrix, conservation_weights, total_population, output) -> None")},
     {"cubic_table_interpolate", cubic_table_interpolate, METH_VARARGS,

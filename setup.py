@@ -10,6 +10,7 @@ setup(
         Extension(
             "wd_spectra._rt",
             sources=["csrc/rt_core.c", "csrc/stark_profiles.c"],
+            depends=["csrc/humlicek_w4.h"],
             optional=True,
             extra_compile_args=optimization_flags,
         )
