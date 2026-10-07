@@ -47,15 +47,21 @@ TARGETS = {
                     masks=XSHOOTER_MASKS, bands=XSHOOTER_BANDS),
     'lsiv14116': dict(name='LS IV−14°116', source='Dorsch et al. 2020', instrument='UVES',
                       observation=OBS / 'dorsch2020/lsiv_uves_srnt.fits', power=(40970., 42310.), split=4650.,
-                      velocity=0.0, vsini=9.0,
+                      velocity=0.0, vsini=9.0, frame_velocity=-154.0,
                       # Interstellar Ca II K, H and Na D2, D1 in the stellar rest frame
                       # (v_rad = -154 km/s, Dorsch et al. 2020), observed air A.
                       interstellar=(3935.71, 3970.54, 5892.73, 5898.70)),
     'feige46': dict(name='Feige 46', source='Latour et al. 2019; Dorsch et al. 2020', instrument='UVES',
                     observation=OBS / 'dorsch2020/f46_uves_sr.fits', power=(40970., 42310.), split=4570.,
-                    velocity=0.0, edge_trim=40.0, vsini=9.0),
+                    velocity=0.0, edge_trim=40.0, vsini=9.0, frame_velocity=89.0),
 }
 ORDER = ('hd4539', 'feige38', 'lsiv14116', 'feige46')
+# Telluric bands (observed air A): H2O 5880-5990 and O2 gamma 6270-6330.  The
+# UVES co-adds were shifted to the stellar rest frame, which moves these
+# bands by -frame_velocity (the stellar radial velocity removed, km/s).
+TELLURIC_AIR = ((5880.0, 5990.0), (6270.0, 6330.0))
+ELEMENT_ORDER = ('C', 'N', 'O', 'Ne', 'Mg', 'Al', 'Si', 'P', 'S', 'Ar', 'Ca', 'Ti', 'Cr', 'Fe', 'Co', 'Ni', 'Zn',
+                 'Ge', 'Sr', 'Y', 'Zr', 'Sn')
 # Feige 46's UVES co-add is order-merged but not continuum-corrected: its flux
 # falls by 30-50% within 20-40 A of each chip edge, which no broad continuum
 # follows; 'edge_trim' (A) removes those edges inside the range.
@@ -218,8 +224,21 @@ def main():
         gaps = np.flatnonzero(steps > 5 * np.median(steps[steps > 0])) + 1
         wave, observed, model = (np.insert(a, gaps, np.nan) for a in (wave, observed, model))
         bands = target.get('bands', BANDS)
+        # Observed flux inside telluric bands in light gray (frame of the plotted spectrum).
+        shift = 1 - target.get('frame_velocity', 0.0) / LIGHT_SPEED_KMS
+        telluric = np.zeros(wave.size, dtype=bool)
+        for lower, upper in TELLURIC_AIR:
+            telluric |= (wave >= air_to_vacuum(lower) * shift) & (wave <= air_to_vacuum(upper) * shift)
+        for line in target.get('interstellar', ()):  # interstellar, not telluric: keep dark
+            telluric &= np.abs(wave - air_to_vacuum(line)) > 1.0
+        clean = np.where(telluric, np.nan, observed)
+        # Overlap one sample at each band edge so the two traces join.
+        edges = np.flatnonzero(np.diff(telluric.astype(int)) != 0)
+        affected = telluric.copy(); affected[edges] = True; affected[np.minimum(edges + 1, wave.size - 1)] = True
+        tell = np.where(affected, observed, np.nan)
         for ax, (lower, upper) in zip(row, bands):
-            ax.plot(wave, observed, color='.30', lw=.50, rasterized=True)
+            ax.plot(wave, clean, color='.30', lw=.50, rasterized=True)
+            ax.plot(wave, tell, color='.75', lw=.50, rasterized=True)
             ax.plot(wave, model, color='#d95f02', lw=.60)
             # Crop each panel to this star's data inside the band.
             inside = wave[(wave >= lower) & (wave <= upper) & np.isfinite(observed)]
@@ -242,12 +261,24 @@ def main():
                  + rf'$T_{{\rm eff}}={host["teff"]:.0f}\,$K, $\log g={host["logg"]:.2f}$, '
                  + rf'$\log(N_{{\rm He}}/N_{{\rm H}})={host["log_he_h"]:.2f}$')
         row[0].set_title(label + '   [' + target['source'] + ']', fontsize=10, loc='left', pad=3)
+        # Adopted metal abundances, log N(X)/N(H): NLTE elements, then LTE line opacity.
+        nlte = summary['abundances']
+        lte = {**summary.get('lte_abundances', {}),
+               **{e: v for e, v in summary.get('heavy_abundances', {}).items() if e not in nlte}}
+        fmt = lambda values: ', '.join(f'{e} {values[e]:.2f}'.replace('-', '\u2212')
+                                       for e in ELEMENT_ORDER if e in values)
+        row[1].text(.008, .05, r'$\log N_{\rm X}/N_{\rm H}$ (NLTE): ' + fmt(nlte) + '\n'
+                    + r'$\log N_{\rm X}/N_{\rm H}$ (LTE): ' + fmt(lte), transform=row[1].transAxes,
+                    ha='left', va='bottom', fontsize=6.3, color='.2', linespacing=1.3)
         stored[key + '__wavelength'], stored[key + '__observed'], stored[key + '__model'] = wave, observed, model
         report['cases'][key] = dict(name=target['name'], instrument=target['instrument'],
                                     resolving_power=target['power'], arm_split_air=target['split'],
                                     velocity_km_s=target['velocity'], masks_air=target.get('masks', ()),
                                     edge_trim_angstrom=target.get('edge_trim', 0.0),
                                     vsini_km_s=target.get('vsini', 0.0),
+                                    telluric_bands_air=TELLURIC_AIR,
+                                    telluric_frame_velocity_km_s=target.get('frame_velocity', 0.0),
+                                    heavy_abundances=summary.get('heavy_abundances', {}),
                                     normalization='paper upper-envelope helper per contiguous segment',
                                     display_bands_vacuum=target.get('bands', BANDS),
                                     parameters=host, abundances=summary['abundances'],
