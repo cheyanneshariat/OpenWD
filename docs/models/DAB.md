@@ -70,3 +70,29 @@ sigma Teff^4. The bare-grid formal solution partly cancelled this, so the
 totals looked right while the structure was not. Standard-quality totals
 are now within about 0.75% (see the [DZ guide](DZ.md) for the method). Setting
 both to 0 and 1 restores the previous numerics.
+
+## Trace metals
+
+`DABConfig(abundances={...})` adds trace metals to the same homogeneous
+atomic H/He atmosphere. Abundances are **log10 N(Z)/N(H)**, as for DAZ, so
+hydrogen may dominate (DABZ/DAZB) or helium may (DBAZ). The H/He EOS,
+hydrogen frequency grid and thermodynamic derivatives are those of the
+metal-free mixture. The metals share its charge closure at fixed H and He
+nuclei densities and add bound-bound and Verner/phfit2 bound-free opacity to
+the structure (opacity-sampled at R = 1000) and to the final spectrum.
+`maximum_metal_charge` (default 4) may be an element mapping;
+`metal_classical_electron_stark=True` adds the SYNSPEC classical electron
+width to metal lines without tabulated Stark widths. Molecular mixtures are
+rejected rather than silently run without metals.
+
+This differs from the DZ preset, whose He EOS treats hydrogen as a trace
+species: use DZ for helium-dominated stars with little hydrogen, and DAB
+for hydrogen-rich or genuinely mixed hosts. With explicit metal opacity the
+solver takes its Rosseland depth scale from the full structure opacity grid,
+so compare structures on column mass.
+
+At the HS 0209+0832 parameters (35800 K, log g = 7.90, log H/He = 1.90),
+a standard cold start with every metal at log N(Z)/N(H) = -20 reproduces the
+metal-free preset to |dT/T| < 7e-4 on column mass and to 0.14% in emergent
+flux. See the [niobium development note](../development/niobium.md) for the
+nine-metal model and its comparison with the observed FUV spectrum.

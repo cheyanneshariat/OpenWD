@@ -925,6 +925,7 @@ def synthesize_helium_spectrum(
     minimum_metal_oscillator_strength: float = 1.0e-4,
     maximum_metal_lines: int | None = 20_000,
     excluded_metal_line_elements: Iterable[str] = (),
+    metal_classical_electron_stark: bool = False,
     n_angle: int = 4,
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip", "optical-depth", "feautrier-optical-depth", "column-mass"] = "formal-linear",
@@ -1081,6 +1082,7 @@ def synthesize_helium_spectrum(
             minimum_oscillator_strength=minimum_metal_oscillator_strength,
             maximum_lines=maximum_metal_lines,
             excluded_elements=excluded_metal_line_elements,
+            include_classical_electron_stark=metal_classical_electron_stark,
         )
         absorption += metal_lines
         if ca_ii_resonance_collision_strengths is not None:
@@ -1111,6 +1113,9 @@ def synthesize_helium_spectrum(
                         ),
                         maximum_lines=None,
                         transition_keys=(("Ca", 1, lower_index, upper_index),),
+                        include_classical_electron_stark=(
+                            metal_classical_electron_stark
+                        ),
                     )
                     for lower_index, upper_index in ca_ii_probabilities
                 }
@@ -1146,6 +1151,9 @@ def synthesize_helium_spectrum(
                         ),
                         maximum_lines=None,
                         transition_keys=resonance_keys,
+                        include_classical_electron_stark=(
+                            metal_classical_electron_stark
+                        ),
                     )
                     metal_line_scattering = (
                         ca_ii_resonance_scattering_fraction * ca_ii_extinction
@@ -1434,6 +1442,16 @@ def synthesize_hydrogen_helium_spectrum(
             "the H/He ratio belongs to the atmosphere EOS, not spectrum synthesis"
         )
     kwargs.setdefault("include_hydrogen_series_pseudocontinuum", True)
+    if kwargs.get("metal_database") is not None:
+        # Trace metals re-solve the H/He/metal charge balance at the fixed
+        # H and He nuclei densities of the mixture.
+        log_ratio = np.log10(
+            atmosphere.hydrogen_lte_state.hydrogen_nuclei_density
+            / atmosphere.helium_lte_state.helium_nuclei_density
+        )
+        if np.ptp(log_ratio) > 1.0e-9:
+            raise ValueError("metal synthesis requires a homogeneous H/He ratio")
+        kwargs["log_hydrogen_abundance"] = float(np.mean(log_ratio))
     spectrum = synthesize_helium_spectrum(
         atmosphere,
         wavelength_angstrom,
@@ -1441,7 +1459,11 @@ def synthesize_hydrogen_helium_spectrum(
         **kwargs,
     )
     metadata = dict(spectrum.metadata)
-    metadata["composition"] = "homogeneous-hydrogen-helium"
+    metadata["composition"] = (
+        "metal-polluted-homogeneous-hydrogen-helium"
+        if kwargs.get("metal_database") is not None
+        else "homogeneous-hydrogen-helium"
+    )
     metadata["log_hydrogen_to_helium"] = atmosphere.metadata.get(
         "log_hydrogen_to_helium"
     )

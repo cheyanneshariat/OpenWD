@@ -24,6 +24,8 @@ inspect its convergence status, then change the parameters for your application.
 - [Hot DA/DAO trace metals](development/hot-daz-trace-metals.md): experimental
   fixed-host NLTE metals (C, N, O, Al, Si, P, S, Fe, Ni) and the G191-B2B
   benchmark; development record, not a validated preset.
+- [Niobium and HS 0209+0832](development/niobium.md): bundled Nb I--VI data
+  and a nine-metal H/He model compared with the FUSE and STIS spectra.
 - [Research history](development/history/README.md): dated investigations,
   rejected experiments, and detailed validation records. These are not the
   current user instructions.

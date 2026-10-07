@@ -203,6 +203,19 @@ and published atomic/molecular continuum tables. Source identifiers and
 checksums are recorded in the corresponding OpenWD readers. Redistribution of
 these numerical data does not place them under the OpenWD source-code license.
 
+## Niobium atomic data
+
+`src/wd_spectra/data/runtime/cache/metal-opacity/niobium/` contains unmodified
+NIST ASD 5.12 exports (Kramida, Ralchenko, Reader and the NIST ASD Team,
+doi:10.18434/T4W30F), retrieved on 2026-10-07: the Nb I--VI energy levels,
+the Nb IV transition probabilities, which are almost all from Tauheed & Reader
+(2005, Phys. Scr. 72, 158), and the Nb ionization energies. It also contains
+a hand transcription of the Nb III transition probabilities in Table 7 of
+Nilsson et al. (2010, A&A 511, A16, doi:10.1051/0004-6361/200913574). The
+article itself is not redistributed. Query URLs and checksums are in
+`NIOBIUM_ATOMIC_DATA_FILES` in `metals.py`. Cite NIST ASD and the original
+sources when using these data.
+
 ## Korg.jl Stancil (1994) table transcription
 
 The numerical Stancil (1994) H2+/He2+ opacity-table transcription used as

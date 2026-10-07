@@ -132,6 +132,15 @@ class DABConfig:
     # historical uniform depths and bare-grid formal solution.
     photospheric_depth_concentration: float = 1.0
     synthesis_transfer_depth_refinement: int = 4
+    # Optional trace metals, log10 N(Z)/N(H).  They join the H/He charge
+    # closure and the structural (opacity-sampled) and final opacity of the
+    # same homogeneous atomic mixture.  None keeps the metal-free preset.
+    abundances: Mapping[str, float] | None = None
+    maximum_metal_charge: int | Mapping[str, int] = 4
+    metal_classical_electron_stark: bool = False
+    structure_opacity_sampling_resolution: float = 1000.0
+    formal_maximum_metal_lines: int | None = None
+    formal_minimum_metal_oscillator_strength: float = 1.0e-4
 
 
 GD40_ABUNDANCES = MappingProxyType(
@@ -789,6 +798,84 @@ def _cached_mixed_molecular_data(h2_he_path: str, h2_h2_path: str, identity):
         read_borysow_h2_h2_cia_table(h2_h2_path))
 
 
+def _dab_trace_metals(config: DABConfig, data: ModelData) -> dict | None:
+    """Resolve the optional DAB trace-metal data and line budgets."""
+
+    if config.abundances is None:
+        return None
+    if config.include_molecules:
+        raise ValueError("trace metals are not supported in the molecular H/He workflow")
+    if not config.abundances or any(
+        not np.isfinite(value) for value in config.abundances.values()
+    ):
+        raise ValueError("DAB abundances must contain finite log10 N(Z)/N(H) values")
+    if set(config.abundances) & {"H", "He"}:
+        raise ValueError("DAB abundances specify metals; set H/He with log_hydrogen_to_helium")
+    if not np.isfinite(config.structure_opacity_sampling_resolution) or (
+        config.structure_opacity_sampling_resolution <= 0.0
+    ):
+        raise ValueError("structure_opacity_sampling_resolution must be finite and positive")
+    if not isinstance(config.metal_classical_electron_stark, bool):
+        raise ValueError("metal_classical_electron_stark must be boolean")
+    elements = tuple(config.abundances)
+    data.require(
+        data.stout,
+        data.verner_photoionization,
+        data.verner_phfit2,
+        fetch_command="python scripts/fetch_metal_data.py",
+    )
+    atomic = read_stout_atomic_database(
+        data.stout, elements=elements, maximum_charge=config.maximum_metal_charge
+    )
+    top_charge = max(ion.charge for ion in atomic.ions.values())
+    photo = read_verner_photoionization_database(
+        data.verner_photoionization, elements=elements, maximum_charge=top_charge
+    )
+    # photo.dat omits Ti, Ni and other iron-group ions; phfit2 supplies them.
+    # Neither covers Nb (Z = 41), whose bound-free opacity is therefore absent.
+    supplement = read_verner_phfit2_database(
+        data.verner_phfit2,
+        elements=elements,
+        maximum_charge=top_charge,
+        exclude=tuple(photo.fits),
+    )
+    fits = {
+        key: fit
+        for key, fit in {**photo.fits, **supplement}.items()
+        if key in atomic.ions
+    }
+    photo = VernerPhotoionizationDatabase(
+        MappingProxyType(fits),
+        source=photo.source + (
+            "; Verner phfit2 (Verner & Yakovlev 1995) for "
+            + ", ".join(f"{e} {c}" for e, c in sorted(supplement) if (e, c) in fits)
+            if any(key in fits for key in supplement) else ""
+        ),
+    )
+    formal_lines = (
+        (1000 if config.quality == "quick" else 20_000)
+        if config.formal_maximum_metal_lines is None
+        else int(config.formal_maximum_metal_lines)
+    )
+    if formal_lines < 1:
+        raise ValueError("metal line limits must be positive")
+    return {
+        "database": atomic,
+        "photoionization": photo,
+        # The shared charge closure references He nuclei.
+        "helium_abundances": {
+            element: float(value) + float(config.log_hydrogen_to_helium)
+            for element, value in config.abundances.items()
+        },
+        "formal_lines": formal_lines,
+        "ions_without_photoionization": sorted(
+            f"{element} {charge}"
+            for (element, charge), ion in atomic.ions.items()
+            if ion.ionization_energy_ev is not None and (element, charge) not in fits
+        ),
+    }
+
+
 def compute_dab(
     config: DABConfig = DABConfig(),
     wavelength: ArrayLike | None = None,
@@ -831,6 +918,34 @@ def compute_dab(
     resolution = numerical_resolution(config.quality)
     wave = validate_wavelength(wavelength)
     he_i, he_ii = _helium_tables(data)
+    metals = _dab_trace_metals(config, data)
+    metal_structure = {} if metals is None else dict(
+        metal_database=metals["database"],
+        metal_abundances=metals["helium_abundances"],
+        metal_photoionization_database=metals["photoionization"],
+        homogeneous_metal_host=True,
+        metal_classical_electron_stark=config.metal_classical_electron_stark,
+        include_dense_helium_metal_ionization=False,
+        # The structure absorbs the synthesis line list, opacity-sampled.
+        minimum_metal_oscillator_strength=(
+            config.formal_minimum_metal_oscillator_strength
+        ),
+        maximum_metal_lines=metals["formal_lines"],
+        metal_line_opacity_sampling_resolution=(
+            config.structure_opacity_sampling_resolution
+        ),
+    )
+    metal_synthesis = {} if metals is None else dict(
+        metal_database=metals["database"],
+        metal_abundances=metals["helium_abundances"],
+        metal_photoionization_database=metals["photoionization"],
+        metal_classical_electron_stark=config.metal_classical_electron_stark,
+        include_dense_helium_metal_ionization=False,
+        minimum_metal_oscillator_strength=(
+            config.formal_minimum_metal_oscillator_strength
+        ),
+        maximum_metal_lines=metals["formal_lines"],
+    )
     if config.lyman_profile_source == "allard":
         allard = _allard_lyman_profiles_for_effective_temperature(
             config.effective_temperature,
@@ -895,6 +1010,7 @@ def compute_dab(
                 checkpoint_matches_request
             ),
             iteration_callback=iteration_callback,
+            **metal_structure,
         )
     assert atmosphere is not None
     if relax_atmosphere:
@@ -925,6 +1041,7 @@ def compute_dab(
         ),
         n_angle=resolution.n_angle,
         transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
+        **metal_synthesis,
     )
     return ModelResult(
         "DAB",
@@ -971,6 +1088,30 @@ def compute_dab(
             "atmosphere_convergence_status": convergence_status,
             "checkpoint_matches_model_request": checkpoint_matches_request,
             "model_request_fingerprint": request_fingerprint,
+            "trace_metals": None if metals is None else {
+                "abundance_reference": "hydrogen",
+                "log_number_abundance_to_hydrogen": dict(config.abundances),
+                "atomic_lines": "; ".join(sorted({
+                    ion.source for ion in metals["database"].ions.values()
+                })),
+                "ion_stages": {
+                    element: [ion.charge for ion in metals["database"].ion_stages(element)]
+                    for element in metals["database"].elements
+                },
+                "photoionization": metals["photoionization"].source,
+                "ions_without_photoionization": metals["ions_without_photoionization"],
+                "metal_electron_feedback": "shared H/He/metal charge closure at fixed H and He nuclei",
+                "metal_opacity_in_structure": True,
+                "structure_opacity_sampling_resolution": config.structure_opacity_sampling_resolution,
+                "formal_maximum_metal_lines": metals["formal_lines"],
+                "minimum_metal_oscillator_strength": config.formal_minimum_metal_oscillator_strength,
+                "metal_line_broadening": (
+                    "thermal, radiative, Unsold neutral H/He"
+                    + (", SYNSPEC classical electron Stark"
+                       if config.metal_classical_electron_stark else "")
+                ),
+                "metal_thermodynamic_derivatives": "trace-metal approximation: H/He mixture derivatives",
+            },
         },
     )
 
