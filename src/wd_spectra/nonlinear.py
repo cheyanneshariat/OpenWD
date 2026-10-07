@@ -561,6 +561,20 @@ def solve_trust_region_newton(
     analytic_restart_used_at_state = False
     correction_pending = iteration_correction is not None
 
+    def accepted_step_converged() -> bool:
+        """Apply the same accepted-state predicate at every iteration exit."""
+        return bool(
+            np.max(np.abs(evaluation.residual)) < residual_tolerance
+            and last_step_maximum < step_tolerance
+            # Preserve the caller's explicit limited-proposal certificate
+            # policy at the iteration cap as well as between iterations.
+            and (not last_proposal_limited or converge_when_proposal_limited)
+            and (
+                convergence_test is None
+                or convergence_test(state, evaluation, last_step_maximum)
+            )
+        )
+
     def stationary_result_if_converged(
         iteration: int,
         stationary_step: float,
@@ -599,21 +613,7 @@ def solve_trust_region_newton(
 
     for iteration in range(1, maximum_iterations + 1):
         residual = evaluation.residual
-        residual_maximum = float(np.max(np.abs(residual)))
-        if (
-            residual_maximum < residual_tolerance
-            and last_step_maximum < step_tolerance
-            # A bounded proposal cannot by itself certify stationarity; a
-            # caller may still accept it when its convergence test verifies
-            # the physical equations directly.
-            and (not last_proposal_limited or converge_when_proposal_limited)
-            and (
-                convergence_test is None
-                or convergence_test(
-                    state, evaluation, last_step_maximum
-                )
-            )
-        ):
+        if accepted_step_converged():
             return finished(
                 "residual-and-step-converged", True, iteration - 1
             )
@@ -1110,15 +1110,7 @@ def solve_trust_region_newton(
         if accepted_state_handoff is not None and accepted_state_handoff(state.copy(), evaluation):
             return finished("accepted-state-phase-handoff", False, iteration)
 
-    final_converged = bool(
-        np.max(np.abs(evaluation.residual)) < residual_tolerance
-        and last_step_maximum < step_tolerance
-        and not last_proposal_limited
-        and (
-            convergence_test is None
-            or convergence_test(state, evaluation, last_step_maximum)
-        )
-    )
+    final_converged = accepted_step_converged()
     return finished(
         (
             "iteration-limit-converged"

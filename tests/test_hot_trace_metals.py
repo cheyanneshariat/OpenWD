@@ -143,6 +143,36 @@ def test_nonconvergence_is_not_hidden_by_tiny_damping(atmosphere, atoms):
                                         require_convergence=False, **options)
     assert not result.converged and result.population_defect > 1e-3
 
+
+def test_deferred_callbacks_keep_their_original_iteration(atmosphere, atoms):
+    records = []
+
+    def callback(iteration, defect, states, synthesize):
+        records.append((iteration, defect, states, synthesize, synthesize()))
+        return iteration == 3
+
+    with pytest.warns(TraceMetalConvergenceWarning):
+        result = solve_hot_trace_metals(
+            atmosphere, thermal_background(atmosphere), {"Si": -7.},
+            np.linspace(1393., 1404., 40), atomic_database=atoms[0],
+            photoionization_database=atoms[1],
+            levels_per_charge={"Si": {2: 3, 3: 3, 4: 1}},
+            state_callback=callback, require_convergence=False,
+            maximum_iterations=4, tolerance=1e-10,
+        )
+    assert result.iterations == 3 and len(records) == 3
+    assert len({id(record[2]) for record in records}) == 3
+    for iteration, defect, states, synthesize, immediate in records:
+        deferred = synthesize()
+        assert deferred.metadata["exploratory_iteration"] == iteration
+        assert deferred.metadata["population_defect"] == defect
+        assert deferred.metadata["element_population_defects"] == immediate.metadata["element_population_defects"]
+        assert max(deferred.metadata["element_population_defects"].values()) == defect
+        assert deferred.metadata["worst_population_defect"] == immediate.metadata["worst_population_defect"]
+        np.testing.assert_array_equal(deferred.surface_flux_lambda,
+                                      immediate.surface_flux_lambda)
+        assert states["Si"] is not None
+
 def test_trace_limit_rejects_bulk_mixture(atmosphere, atoms):
     with pytest.raises(ValueError, match="trace limits"):
         solve_hot_trace_metals(atmosphere, thermal_background(atmosphere), {"C": -1.},

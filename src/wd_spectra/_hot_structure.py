@@ -50,7 +50,8 @@ def _least_squares(matrix, rhs, *, rcond):
 class HotEquations:
     population_scale = .1
 
-    def __init__(self, seed, model, structure_wave, *, fixed_temperature=False, nlte_fraction=1.):
+    def __init__(self, seed, model, structure_wave, *, fixed_temperature=False, nlte_fraction=1.,
+                 reuse_accepted_state=True):
         self.seed, self.model = seed, model
         structure_wave=np.asarray(structure_wave,dtype=float)
         if (structure_wave.ndim != 1 or len(structure_wave)<2 or
@@ -87,6 +88,8 @@ class HotEquations:
         self.jacobian_evaluation = None
         self.rate_cache = None
         self.profile_cache = None
+        self.reuse_accepted_state = reuse_accepted_state
+        self.last_physics = None
         self.linear_solver_drivers = set()
 
     def prepare(self, log_t):
@@ -159,7 +162,8 @@ class HotEquations:
 
     def _residual(self, x, coefficients=None, prepared=None, response=None):
         key = x.tobytes()
-        if key == self.last_key:
+        canonical = coefficients is None and prepared is None and response is None
+        if canonical and key == self.last_key:
             return self.last_evaluation
         self.evaluations += 1
         nt = 0 if self.fixed_temperature else self.nd
@@ -173,7 +177,7 @@ class HotEquations:
             raise RecoverableEvaluationError('Trial leaves positive total extinction/bottom absorption/emission domain')
         if response is None:
             try:
-                _, field, closure = transfer_field(a,c,n_angle=self.model.n_angle,check_source=False)
+                source, field, closure = transfer_field(a,c,n_angle=self.model.n_angle,check_source=False)
             except InvalidRadiationFieldError as exc:
                 raise RecoverableEvaluationError(str(exc)) from exc
             mean = field.mean_intensity
@@ -229,9 +233,16 @@ class HotEquations:
             nlte_populations_converged=change < self.model.population_tolerance,
             nlte_maximum_relative_population_change=change,surface_flux_ratio=float(flux[0]+1))
         current = population_status(current, diagnostics['nlte_populations_converged'], 1,change)
-        self.last_key = key
-        self.last_evaluation = NonlinearEvaluation(residual,None,(a,current,diagnostics))
-        return self.last_evaluation
+        evaluation = NonlinearEvaluation(residual,None,(a,current,diagnostics))
+        # Commit the bundle only after all physical checks succeed. Failed
+        # trials and externally supplied probe coefficients/radiation may
+        # replace atomic caches without replacing the canonical anchor.
+        if canonical:
+            self.last_key, self.last_evaluation = key, evaluation
+            self.last_physics = ((key, (a,ref,groups,cache), c, source, field, candidate,
+                                  self.rate_cache.last_rate_matrix)
+                                 if self.reuse_accepted_state else None)
+        return evaluation
 
     def evaluate(self,x,jacobian):
         if jacobian and x.tobytes() == self.jacobian_key:
@@ -243,10 +254,15 @@ class HotEquations:
         step = 1e-5
         nt = 0 if self.fixed_temperature else self.nd
         t = np.log(self.seed.temperature) if self.fixed_temperature else x[:nt]
-        a, reference, groups, cache = self.prepare(t)
+        anchor = (self.last_physics if self.reuse_accepted_state and self.last_physics is not None
+                  and self.last_physics[0] == x.tobytes() else None)
+        a, reference, groups, cache = self.prepare(t) if anchor is None else anchor[1]
         self.prepared={t.tobytes():(a,reference,groups,cache)}
-        base_c = self.model.transfer_coefficients(a,self.wave,base.payload[1],_cache=cache)
-        source, field, _ = transfer_field(a,base_c,n_angle=self.model.n_angle,check_source=False)
+        if anchor is None:
+            base_c = self.model.transfer_coefficients(a,self.wave,base.payload[1],_cache=cache)
+            source, field, _ = transfer_field(a,base_c,n_angle=self.model.n_angle,check_source=False)
+        else:
+            _, _, base_c, source, field, candidate, helium_rate = anchor
         flux = trapezoid(field.interface_flux,self.wave,axis=0)/self.target-1
         ext = base_c.true_absorption+base_c.scattering
         tau = optical_depth_from_mass_opacity(a.column_mass,ext)
@@ -264,7 +280,8 @@ class HotEquations:
                 self.profile_cache is None or self.profile_cache.groups is not groups):
             self.rate_residual(x,a,reference,groups,field.mean_intensity,prepare_cache=True)
         response_type=MixedRadiationResponse if self.nh else HeliumRadiationResponse
-        rate_response=(response_type(self.rate_cache,self.profile_cache,field.mean_intensity)
+        rate_response=(response_type(self.rate_cache,self.profile_cache,field.mean_intensity,
+                       **({"state":candidate, "rate_matrix":helium_rate} if anchor is not None else {}))
                        if not self.planck_temperature_only else None)
         response_operator=MassResponseOperator(tau,self.wave,source,base_c.scattering/ext,
             a.column_mass,extinction=ext,n_angle=self.model.n_angle,

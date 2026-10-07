@@ -2726,6 +2726,7 @@ def radiative_equilibrium_d6_atmosphere(
     return solve_adaptive_lte_structure(
         seed,
         wavelength,
+        reuse_material_probe_rosseland=True,
         with_temperature=with_temperature,
         true_absorption=true_absorption,
         scattering_opacity=scattering_opacity,

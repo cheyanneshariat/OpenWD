@@ -2155,8 +2155,11 @@ def hummer_mihalas_hydrogen_helium_lte(
             helium_ion_fractions = weights / np.sum(
                 weights, axis=-1, keepdims=True
             )
+            # Preserve the tiny neutral tail and its material derivatives
+            # when the ion fraction rounds close to unity.
             candidate_neutral_hydrogen = (
-                hydrogen_nuclei * (1.0 - hydrogen_ion_fraction)
+                hydrogen_nuclei
+                * np.exp(-np.logaddexp(0.0, log_hydrogen_ion_ratio))
             )
             candidate_neutral_helium = (
                 helium_nuclei * helium_ion_fractions[..., 0]
@@ -2190,7 +2193,9 @@ def hummer_mihalas_hydrogen_helium_lte(
             log_hydrogen_ion_ratio
             - np.logaddexp(0.0, log_hydrogen_ion_ratio)
         )
-        neutral_hydrogen = hydrogen_nuclei * (1.0 - hydrogen_ion_fraction)
+        neutral_hydrogen = hydrogen_nuclei * np.exp(
+            -np.logaddexp(0.0, log_hydrogen_ion_ratio)
+        )
         proton_density = hydrogen_nuclei * hydrogen_ion_fraction
         (
             neutral_partition,

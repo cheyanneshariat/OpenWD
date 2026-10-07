@@ -76,6 +76,30 @@ def test_small_limited_accepted_step_cannot_certify_stationarity(maximum_iterati
     assert result.history and all(r.proposal_limited for r in result.history)
 
 
+@pytest.mark.parametrize('maximum_iterations', [1, 2])
+def test_limited_physical_certificate_is_consistent_at_iteration_limit(maximum_iterations):
+    def evaluate(x, need):
+        return NonlinearEvaluation(x, np.eye(2) if need else None, {})
+    options = dict(
+        maximum_iterations=maximum_iterations,
+        allow_initial_convergence=False,
+        step_builder=lambda *args: NonlinearProposal(np.array([-1e-8, 0.]), True),
+        converge_when_proposal_limited=True,
+    )
+    accepted = solve_trust_region_newton(
+        np.array([1e-4, 0.]), evaluate,
+        convergence_test=lambda *args: True, **options,
+    )
+    assert accepted.converged
+    assert accepted.iterations == 1
+    assert accepted.history[0].proposal_limited
+    refused = solve_trust_region_newton(
+        np.array([1e-4, 0.]), evaluate,
+        convergence_test=lambda *args: False, **options,
+    )
+    assert not refused.converged
+
+
 @pytest.mark.parametrize('settings',[dict(merit_function='invalid'),
     dict(trust_update='invalid'),dict(broyden_updates=1)])
 def test_invalid_policies_fail_before_evaluation(settings):

@@ -308,6 +308,166 @@ def test_jacobian_reuses_identical_residual_base_state():
     )
 
 
+def _evaluate_with_probe_opacity_cache(
+    monkeypatch, *, reuse=None, convection=True, local_energy=True,
+    invalid_probe=None,
+):
+    """Exercise the same one-entry material cache as explicit metal adapters."""
+    import wd_spectra.adaptive_structure as adaptive
+    from wd_spectra.nonlinear import RecoverableEvaluationError
+
+    n = 6
+    mass = np.geomspace(.001, 100., n)
+    wavelength = np.geomspace(500., 1e5, 60)
+    temperature = 5000.*(mass/mass[0])**.15
+    seed = Atmosphere(
+        effective_temperature=8000., logg=8., rosseland_optical_depth=mass,
+        column_mass=mass, gas_pressure=mass*1e8, temperature=temperature,
+        mass_density=np.ones(n), neutral_h_density=np.ones(n),
+        proton_density=np.ones(n), electron_density=np.ones(n), metadata={},
+    )
+    cache = {}
+    opacity_builds = []
+    events = []
+    captured = {}
+
+    def with_temperature(values):
+        direction = np.sign(values[0]-temperature[0])
+        if ((invalid_probe == "hot" and direction > 0 and
+             values[0] > temperature[0]*np.exp(1e-5)) or
+            (invalid_probe == "cold" and direction < 0 and
+             values[0] < temperature[0]*np.exp(-1e-5))):
+            raise RecoverableEvaluationError("probe outside material domain")
+        atmosphere = replace(seed, temperature=np.asarray(values))
+        cache.clear()
+        cache["atmosphere"] = atmosphere
+        return atmosphere
+
+    def absorption(atmosphere):
+        events.append(("absorption", atmosphere.temperature[0]))
+        if cache.get("atmosphere") is not atmosphere:
+            cache.clear()
+            cache["atmosphere"] = atmosphere
+        if "absorption" not in cache:
+            opacity_builds.append(atmosphere)
+            cache["absorption"] = np.broadcast_to(
+                (atmosphere.temperature[None, :]/5000.)**.7,
+                (len(wavelength), n),
+            ).copy()
+        return cache["absorption"]
+
+    def rosseland(atmosphere):
+        events.append(("rosseland", atmosphere.temperature[0]))
+        return adaptive.rosseland_mean_from_opacity_grid(
+            wavelength, absorption(atmosphere), atmosphere.temperature
+        )
+
+    def thermodynamics(atmosphere):
+        events.append(("thermodynamics", atmosphere.temperature[0]))
+        return SimpleNamespace(
+            specific_heat_constant_pressure=np.full(n, 2e8),
+            density_temperature_derivative=np.ones(n),
+            adiabatic_temperature_gradient=np.full(n, .18),
+        )
+
+    class Captured(Exception):
+        pass
+
+    def evaluate_once(initial, evaluate, **options):
+        opacity_builds.clear()
+        events.clear()
+        residual = evaluate(initial, False)
+        jacobian = evaluate(initial, True)
+        captured.update(residual=residual, jacobian=jacobian)
+        raise Captured
+
+    monkeypatch.setattr(adaptive, "solve_trust_region_newton", evaluate_once)
+    options = {} if reuse is None else {"reuse_material_probe_rosseland": reuse}
+    with pytest.raises(Captured):
+        solve_adaptive_lte_structure(
+            seed, wavelength, with_temperature=with_temperature,
+            true_absorption=absorption,
+            scattering_opacity=lambda a: np.zeros((len(wavelength), n)),
+            rosseland_opacity=rosseland, thermodynamics=thermodynamics,
+            mixing_length_alpha=1.25 if convection else None,
+            max_iterations=1, temperature_tolerance=3e-4, flux_tolerance=.003,
+            n_angle=2, initial_temperature_was_supplied=False,
+            use_convective_gradient_preconditioner=False,
+            enforce_local_energy_balance=local_energy,
+            project_initial_convective_gradient=False,
+            use_initial_bolometric_rescaling=False, **options,
+        )
+    base_temperature = captured["residual"].payload["atmosphere"].temperature
+    probes = [a for a in opacity_builds
+              if not np.array_equal(a.temperature, base_temperature)]
+    return captured, probes, events
+
+
+@pytest.mark.parametrize("invalid_probe", [None, "hot", "cold"])
+def test_centered_probe_rosseland_reuse_preserves_residual_and_jacobian(
+    monkeypatch, invalid_probe,
+):
+    baseline, old_probes, _ = _evaluate_with_probe_opacity_cache(
+        monkeypatch, reuse=False, invalid_probe=invalid_probe,
+    )
+    candidate, new_probes, _ = _evaluate_with_probe_opacity_cache(
+        monkeypatch, reuse=True, invalid_probe=invalid_probe,
+    )
+    for name in ("residual", "jacobian"):
+        np.testing.assert_array_equal(
+            baseline[name].residual, candidate[name].residual
+        )
+    np.testing.assert_array_equal(
+        baseline["jacobian"].jacobian, candidate["jacobian"].jacobian
+    )
+    for field in (
+        "radiative_flux_interface", "convective_flux_interface",
+        "cell_energy_balance_relative_residual",
+        "radiative_cell_energy_log_temperature_jacobian",
+        "cell_energy_log_temperature_jacobian",
+    ):
+        np.testing.assert_array_equal(
+            baseline["jacobian"].payload[field],
+            candidate["jacobian"].payload[field],
+        )
+    if invalid_probe is None:
+        assert len(old_probes) == 4
+        assert len(new_probes) == 2
+        assert old_probes[0] is old_probes[2]
+        assert old_probes[1] is old_probes[3]
+    else:
+        # A domain-limited centered stencil retains the same admissible side.
+        assert len(old_probes) == len(new_probes) == 1
+
+
+@pytest.mark.parametrize("convection,local_energy", [(False, True), (True, False)])
+def test_probe_rosseland_reuse_does_no_work_without_centered_convection(
+    monkeypatch, convection, local_energy,
+):
+    baseline, old_probes, old_events = _evaluate_with_probe_opacity_cache(
+        monkeypatch, reuse=False, convection=convection, local_energy=local_energy,
+    )
+    candidate, new_probes, new_events = _evaluate_with_probe_opacity_cache(
+        monkeypatch, reuse=True, convection=convection, local_energy=local_energy,
+    )
+    assert old_events == new_events
+    assert len(old_probes) == len(new_probes)
+    np.testing.assert_array_equal(
+        baseline["jacobian"].jacobian, candidate["jacobian"].jacobian
+    )
+
+
+def test_probe_rosseland_reuse_defaults_to_original_callback_order(monkeypatch):
+    implicit, _, implicit_events = _evaluate_with_probe_opacity_cache(monkeypatch)
+    explicit, _, explicit_events = _evaluate_with_probe_opacity_cache(
+        monkeypatch, reuse=False,
+    )
+    assert implicit_events == explicit_events
+    np.testing.assert_array_equal(
+        implicit["jacobian"].jacobian, explicit["jacobian"].jacobian
+    )
+
+
 def test_collapsed_trial_optical_depth_is_recoverable(monkeypatch):
     import wd_spectra.adaptive_structure as adaptive
     from wd_spectra.nonlinear import RecoverableEvaluationError

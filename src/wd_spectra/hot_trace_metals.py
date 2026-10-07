@@ -14,6 +14,7 @@ It is a development calculation, not a validated abundance-fitting preset.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from copy import deepcopy
 from typing import Callable, Mapping
 import logging
 import warnings
@@ -662,8 +663,12 @@ def solve_hot_trace_metals(
         if iteration_callback is not None:
             iteration_callback(iteration, defect)
         if state_callback is not None:
-            evaluated = states or {e:_damped(None,p,0.) for e,p in proposals.items()}
-            def synthesize_evaluated():
+            # Anderson updates replace entries in ``states`` in place. Retain
+            # the evaluated mapping and diagnostics for callbacks used later.
+            evaluated = dict(states) if states else {e:_damped(None,p,0.) for e,p in proposals.items()}
+            snapshot_metadata = deepcopy(metadata)
+            def synthesize_evaluated(evaluated=evaluated, iteration=iteration,
+                                     defect=defect, metadata=snapshot_metadata):
                 _,field,closure = transfer_field(atmosphere,coefficients(wave,base_final,evaluated),n_angle=n_angle)
                 return Spectrum(wave,field.interface_flux[:,0],{**spectrum_meta,**metadata,
                     'exploratory_iteration':iteration,'population_defect':defect,
