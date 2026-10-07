@@ -1751,6 +1751,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
     return solve_adaptive_lte_structure(
         adaptive_seed,
         wavelength,
+        reuse_material_probe_rosseland=True,
         enforce_local_energy_balance=enforce_local_energy_balance,
         with_temperature=with_temperature,
         true_absorption=true_absorption,
@@ -2812,6 +2813,7 @@ def radiative_equilibrium_helium_atmosphere(
     return solve_adaptive_lte_structure(
         adaptive_seed,
         wavelength,
+        reuse_material_probe_rosseland=True,
         enforce_local_energy_balance=enforce_local_energy_balance,
         with_temperature=with_temperature,
         true_absorption=true_absorption,

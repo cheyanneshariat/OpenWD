@@ -218,3 +218,127 @@ def test_nonfinite_newton_system_cannot_use_svd_recovery():
     from wd_spectra._hot_structure import _least_squares
     with pytest.raises(ValueError,match='non-finite'):
         _least_squares(np.array([[np.nan]]),np.ones(1),rcond=1e-10)
+
+
+def test_completed_anchor_reuses_transfer_and_same_radiation_se_candidate(atom, monkeypatch):
+    import wd_spectra._hot_structure as joint
+    from wd_spectra import multilevel_nlte as hydrogen
+    model = replace(atom, log_hydrogen_to_helium=2.)
+    a = gray_hydrogen_helium_atmosphere(60000., 8., 2., n_depth=3)
+    expected = None
+    original_transfer = joint.transfer_field
+    original_hydrogen = hydrogen.solve_multilevel_hydrogen_statistical_equilibrium
+    counts = {"transfer": 0, "hydrogen_state": 0, "hydrogen_rate": 0}
+    def transfer(*args, **kwargs):
+        counts["transfer"] += 1
+        return original_transfer(*args, **kwargs)
+    def hydrogen_solve(*args, **kwargs):
+        counts["hydrogen_rate" if kwargs.get('_return_rate_matrix') else "hydrogen_state"] += 1
+        return original_hydrogen(*args, **kwargs)
+    monkeypatch.setattr(joint, 'transfer_field', transfer)
+    monkeypatch.setattr(hydrogen, 'solve_multilevel_hydrogen_statistical_equilibrium', hydrogen_solve)
+    for reuse in (False, True):
+        equations = HotEquations(a, model, np.geomspace(25., 100000., 80),
+                                 fixed_temperature=True, reuse_accepted_state=reuse)
+        x = equations.initial_state()
+        x += np.linspace(-.015, .015, len(x))
+        counts.update(transfer=0, hydrogen_state=0, hydrogen_rate=0)
+        result = equations.evaluate(x, True)
+        assert counts == {"transfer": 1 if reuse else 2,
+                          "hydrogen_state": 1 if reuse else 2, "hydrogen_rate": 1}
+        if expected is None:
+            expected = result
+        else:
+            # Reused populations are the SE map evaluated at this radiation,
+            # rather than the deliberately perturbed trial populations.
+            np.testing.assert_array_equal(result.residual, expected.residual)
+            np.testing.assert_array_equal(result.jacobian, expected.jacobian)
+        changed = x.copy()
+        changed[0] += .002
+        counts.update(transfer=0, hydrogen_state=0, hydrogen_rate=0)
+        refreshed = equations.evaluate(changed, True)
+        assert counts["transfer"] == (1 if reuse else 2)
+        assert not np.array_equal(refreshed.residual, result.residual)
+
+
+
+@pytest.mark.parametrize('temperature_trial',[False,True])
+def test_failed_trial_preserves_completed_transfer_anchor(atom, monkeypatch,temperature_trial):
+    import wd_spectra._hot_structure as joint
+    a = gray_helium_atmosphere(60000., 8., n_depth=3)
+    equations = HotEquations(a, atom, np.geomspace(25., 100000., 80))
+    x = equations.initial_state()
+    equations.residual(x)
+    anchor = equations.last_physics
+    original = equations.rate_residual
+    def fail_after_rates(*args, **kwargs):
+        original(*args, **kwargs)
+        raise joint.RecoverableEvaluationError('later physical check failed')
+    monkeypatch.setattr(equations, 'rate_residual', fail_after_rates)
+    trial = x.copy()
+    if temperature_trial:
+        trial[:3] += .01
+    else:
+        trial[3] += .01
+    with pytest.raises(joint.RecoverableEvaluationError, match='later physical check failed'):
+        equations.residual(trial)
+    assert equations.last_physics is anchor
+    monkeypatch.setattr(equations, 'rate_residual', original)
+    calls = []
+    original_transfer = joint.transfer_field
+    def transfer(*args, **kwargs):
+        calls.append(True)
+        return original_transfer(*args, **kwargs)
+    monkeypatch.setattr(joint, 'transfer_field', transfer)
+    result = equations.evaluate(x, True)
+    assert not calls
+    clean = HotEquations(a, atom, equations.wave).evaluate(x, True)
+    np.testing.assert_array_equal(result.residual, clean.residual)
+    np.testing.assert_array_equal(result.jacobian, clean.jacobian)
+
+
+
+@pytest.mark.parametrize('before',[False,True])
+@pytest.mark.parametrize('override',['coefficients','prepared','response'])
+def test_probe_override_cannot_replace_or_hit_canonical_evaluation(atom,before,override):
+    a=gray_helium_atmosphere(60000.,8.,n_depth=3)
+    equations=HotEquations(a,atom,np.geomspace(25.,100000.,80))
+    x=equations.initial_state()
+    pa,pr,pg,pc=equations.prepare(x[:3])
+    if override=='coefficients':
+        c=atom.transfer_coefficients(pa,equations.wave,equations.populations(x,pr),_cache=pc)
+        options={'coefficients':replace(c,thermal_emissivity=c.thermal_emissivity*1.015)}
+    elif override=='prepared':
+        options={'prepared':equations.prepare(x[:3]+.005)}
+    else:
+        mean=planck_lambda_angstrom(equations.wave[:,None],pa.temperature[None,:])*.9
+        options={'response':(mean,np.zeros(a.n_depth))}
+    if before:
+        probe=equations.residual(x,**options)
+        assert equations.last_key is equations.last_evaluation is equations.last_physics is None
+        assert equations.jacobian_key is equations.jacobian_evaluation is None
+        canonical=equations.evaluate(x,True)
+        clean=HotEquations(a,atom,equations.wave).evaluate(x,True)
+        np.testing.assert_array_equal(canonical.residual,clean.residual)
+        np.testing.assert_array_equal(canonical.jacobian,clean.jacobian)
+    else:
+        canonical=equations.evaluate(x,True)
+        saved=(equations.last_key,equations.last_evaluation,equations.last_physics,
+               equations.jacobian_key,equations.jacobian_evaluation)
+        probe=equations.residual(x,**options)
+        assert equations.last_key == saved[0]
+        assert equations.last_evaluation is saved[1]
+        assert equations.last_physics is saved[2]
+        assert equations.jacobian_key == saved[3]
+        assert equations.jacobian_evaluation is saved[4]
+        assert equations.evaluate(x,True) is canonical
+    assert not np.array_equal(probe.residual,canonical.residual)
+
+
+
+def test_reference_switch_does_not_retain_unused_transfer_bundle(atom):
+    a=gray_helium_atmosphere(60000.,8.,n_depth=3)
+    equations=HotEquations(a,atom,np.geomspace(25.,100000.,80),reuse_accepted_state=False)
+    x=equations.initial_state()
+    equations.residual(x)
+    assert equations.last_physics is None

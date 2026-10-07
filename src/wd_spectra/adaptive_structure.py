@@ -227,6 +227,7 @@ def solve_adaptive_lte_structure(
     safeguard_surface_flux: bool = False,
     use_convective_trial_correction: bool = False,
     compute_local_energy_response: bool = False,
+    reuse_material_probe_rosseland: bool = False,
     enforce_local_energy_balance: bool = False,
     physical_temperature_coordinates: bool = True,
     energy_thermal_sweeps: int = 40,
@@ -260,6 +261,11 @@ def solve_adaptive_lte_structure(
     ``compute_local_energy_response`` adds a direct thermal-energy tangent
     to the evaluation payload for explicitly requested research formulations.
     It is off by default and does not change the residual equations.
+    ``reuse_material_probe_rosseland`` retains each centered material probe's
+    Rosseland vector while its opacity is still cached by the composition
+    callback. This avoids rebuilding its opacity for the convection response.
+    Only depth-sized vectors are retained within the current linearization;
+    the default preserves the callback order of composition-owned adapters.
     ``enforce_local_energy_balance`` imposes flux and local energy from the
     first step when convection is disabled. Convective starts add a completion
     phase when the original formal-flux solution fails cell-local energy or
@@ -302,6 +308,8 @@ def solve_adaptive_lte_structure(
         raise ValueError("ml2 coefficient function must be callable")
     if not isinstance(enforce_local_energy_balance, bool):
         raise ValueError("local energy enforcement flag must be boolean")
+    if not isinstance(reuse_material_probe_rosseland, bool):
+        raise ValueError("material-probe Rosseland reuse flag must be boolean")
     if not isinstance(physical_temperature_coordinates, bool):
         raise ValueError("temperature-coordinate selection must be boolean")
     if (
@@ -691,6 +699,7 @@ def solve_adaptive_lte_structure(
         hotter: Atmosphere,
         transport: Mapping[str, FloatArray],
         logarithmic_step: float,
+        probe_rosseland: FloatArray | None = None,
     ) -> tuple[
         tuple[FloatArray, FloatArray, FloatArray],
         tuple[FloatArray, FloatArray, FloatArray],
@@ -706,7 +715,11 @@ def solve_adaptive_lte_structure(
         superadiabatic excess is differentiated analytically.
         """
         hot_thermo = thermodynamics(hotter)
-        hot_rosseland = np.asarray(rosseland_opacity(hotter), dtype=np.float64)
+        hot_rosseland = (
+            np.asarray(rosseland_opacity(hotter), dtype=np.float64)
+            if probe_rosseland is None
+            else probe_rosseland
+        )
         base_fields = (
             current.temperature,
             current.mass_density,
@@ -1058,14 +1071,28 @@ def solve_adaptive_lte_structure(
         )
         jacobian = None
         if need_jacobian:
+            probe_rosseland: dict[int, FloatArray] = {}
+            retain_probe_rosseland = bool(
+                reuse_material_probe_rosseland
+                and local_energy_active
+                and transport is not None
+            )
 
             def material_probe(offset):
                 point = with_temperature(current_temperature * np.exp(offset))
-                return (
+                probe = (
                     point,
                     np.asarray(true_absorption(point), dtype=np.float64),
                     np.asarray(scattering_opacity(point), dtype=np.float64),
                 )
+                if retain_probe_rosseland:
+                    # The opposite probe otherwise displaces this state from
+                    # the composition's one-entry opacity cache. Retain its
+                    # small mean-opacity vector, not another spectral grid.
+                    probe_rosseland[id(point)] = np.asarray(
+                        rosseland_opacity(point), dtype=np.float64
+                    ).copy()
+                return probe
 
             primary_probe, opposite_probe, logarithmic_step = (
                 temperature_response_probes(
@@ -1197,11 +1224,13 @@ def solve_adaptive_lte_structure(
                         hotter,
                         transport,
                         logarithmic_step,
+                        probe_rosseland.get(id(hotter)),
                     )
                 )
                 if centered_material_response:
                     _, cold_ml2_responses = convection_coefficient_response(
-                        current, colder, transport, -logarithmic_step
+                        current, colder, transport, -logarithmic_step,
+                        probe_rosseland.get(id(colder)),
                     )
                     ml2_responses = tuple(
                         0.5 * (hot + cold)

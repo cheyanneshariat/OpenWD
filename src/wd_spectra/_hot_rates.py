@@ -90,15 +90,20 @@ class PreparedHeliumRates:
         return rate
 
     def state(self, mean, neutral_fields, ion_fields, hydrogen_fields):
+        rate = self.rate_matrix(mean, neutral_fields, ion_fields)
         helium=he.solve_coupled_helium_statistical_equilibrium(self.atmosphere,self.model.collision_data,
             **self.kwargs,neutral_line_mean_intensity_nu=neutral_fields,helium_ii_line_mean_intensity_nu=ion_fields,
-            _rate_matrix=self.rate_matrix(mean,neutral_fields,ion_fields))
+            _rate_matrix=rate)
         h=None
         if self.model.log_hydrogen_to_helium is not None:
             h=hydrogen.solve_multilevel_hydrogen_statistical_equilibrium(self.atmosphere,self.model.collision_data,
                 maximum_level=self.model.maximum_hydrogen_level,line_mean_intensity_nu=hydrogen_fields,
                 continuum_wavelength_angstrom=self.wave,continuum_mean_intensity_lambda=mean)
-        return HotPopulationState(helium,h)
+        state = HotPopulationState(helium,h)
+        # The caller may attach these to a completed radiation evaluation.
+        # They are never reused by matching only an atmosphere or array id.
+        self.last_rate_matrix = rate
+        return state
 
 
 class PreparedLineAverages:
@@ -145,13 +150,23 @@ class HeliumRadiationResponse:
     factorization per depth and solve its differentiated conservation system;
     no radiation/population lag or approximate lambda operator is introduced.
     """
-    def __init__(self, rates, profiles, mean):
+    def __init__(self, rates, profiles, mean, *, state=None, rate_matrix=None):
+        # Supplied state/rates must belong to this exact material and mean field.
         from scipy.linalg import lu_factor
         from .hot_nlte import population_arrays
         from ._nlte_radiative_integrals import _kernel, _boltzmann
         self.rates,self.profiles=rates,profiles
         fields=profiles.fields(mean)
-        population,reference=population_arrays(rates.state(mean,*fields))
+        if rate_matrix is None:
+            rate_matrix = rates.rate_matrix(mean, *fields[:2])
+        if state is None:
+            # A helium-only response must not solve and discard hydrogen.
+            helium = he.solve_coupled_helium_statistical_equilibrium(
+                rates.atmosphere, rates.model.collision_data, **rates.kwargs,
+                neutral_line_mean_intensity_nu=fields[0],
+                helium_ii_line_mean_intensity_nu=fields[1], _rate_matrix=rate_matrix)
+            state = HotPopulationState(helium)
+        population,reference=population_arrays(state)
         # Hydrogen has its own conservation row and response below.
         n=15+rates.model.maximum_helium_ii_level
         population,reference=population[:,:n],reference[:,:n]
@@ -159,7 +174,7 @@ class HeliumRadiationResponse:
         self.reference=reference/density
         self.population=population/density
         self.departure=population/reference
-        rate=rates.rate_matrix(mean,*fields[:2])
+        rate=rate_matrix
         matrix=rate.transpose(0,2,1).copy()
         diagonal=np.arange(n)
         matrix[:,diagonal,diagonal]-=rate.sum(axis=2)
@@ -207,7 +222,7 @@ class HeliumRadiationResponse:
 
 class HydrogenRadiationResponse:
     """Exact fixed-material H response, with the atom's conservation closure."""
-    def __init__(self, rates, profiles, mean):
+    def __init__(self, rates, profiles, mean, *, state=None):
         from scipy.linalg import lu_factor
         from ._nlte_radiative_integrals import _kernel, _boltzmann
         a,model=rates.atmosphere,rates.model
@@ -216,7 +231,8 @@ class HydrogenRadiationResponse:
         fields=profiles.fields(mean)[2]
         arguments=dict(maximum_level=levels,line_mean_intensity_nu=fields,
                        continuum_wavelength_angstrom=rates.wave,continuum_mean_intensity_lambda=mean)
-        state=hydrogen.solve_multilevel_hydrogen_statistical_equilibrium(a,model.collision_data,**arguments)
+        if state is None:
+            state=hydrogen.solve_multilevel_hydrogen_statistical_equilibrium(a,model.collision_data,**arguments)
         rate=hydrogen.solve_multilevel_hydrogen_statistical_equilibrium(a,model.collision_data,
                     **arguments,_return_rate_matrix=True)
         reference=np.column_stack((state.lte_population_density,state.lte_proton_density))
@@ -273,9 +289,10 @@ class HydrogenRadiationResponse:
 
 class MixedRadiationResponse:
     """Concatenate independently conserved H and He responses to the same J."""
-    def __init__(self,rates,profiles,mean):
-        self.helium=HeliumRadiationResponse(rates,profiles,mean)
-        self.hydrogen=HydrogenRadiationResponse(rates,profiles,mean)
+    def __init__(self,rates,profiles,mean,*,state=None,rate_matrix=None):
+        self.helium=HeliumRadiationResponse(rates,profiles,mean,state=state,rate_matrix=rate_matrix)
+        self.hydrogen=HydrogenRadiationResponse(rates,profiles,mean,
+                                               state=None if state is None else state.hydrogen)
 
     def log_ratio_response(self,mean_response):
         return np.concatenate((self.helium.log_ratio_response(mean_response),

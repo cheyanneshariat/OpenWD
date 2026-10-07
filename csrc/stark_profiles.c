@@ -5,6 +5,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <math.h>
+#include <stdint.h>
+#include "humlicek_w4.h"
 
 static int
 double_array(PyObject *object, Py_buffer *view, int writable)
@@ -24,6 +26,90 @@ double_array(PyObject *object, Py_buffer *view, int writable)
         return 0;
     }
     return 1;
+}
+
+/* Output may not overwrite inputs that a later profile sample still needs. */
+static int
+arrays_overlap(const Py_buffer *a, const Py_buffer *b)
+{
+    uintptr_t start_a = (uintptr_t)a->buf;
+    uintptr_t start_b = (uintptr_t)b->buf;
+    if (a->len == 0 || b->len == 0) return 0;
+    if (start_a <= start_b) return start_b - start_a < (uintptr_t)a->len;
+    return start_a - start_b < (uintptr_t)b->len;
+}
+
+typedef struct {
+    double center_frequency, per_angstrom, scale, damping;
+} FrequencyVoigt;
+
+static void
+frequency_voigt_setup(FrequencyVoigt *profile, double center,
+                      double sigma, double gamma)
+{
+    const double light_speed = 2.99792458e10;
+    const double center_cm = center * 1.0e-8;
+    const double per_angstrom = light_speed / (center_cm * center_cm) * 1.0e-8;
+    const double sigma_nu = fmax(sigma, 1.0e-12) * per_angstrom;
+    const double gamma_nu = fmax(gamma, 0.0) * per_angstrom;
+    profile->center_frequency = light_speed / center_cm;
+    profile->per_angstrom = per_angstrom;
+    profile->scale = 1.0 / (sigma_nu * sqrt(2.0));
+    profile->damping = gamma_nu * profile->scale;
+}
+
+static double
+frequency_voigt_value(const FrequencyVoigt *profile, double wavelength)
+{
+    const double light_speed = 2.99792458e10;
+    const double pi = 3.1415926535897932384626433832795;
+    const double detuning = light_speed / (wavelength * 1.0e-8)
+        - profile->center_frequency;
+    /* Match the released operation order and line-centre conversion.  The
+     * frequency coordinate supplies wing asymmetry; there is no additional
+     * wavelength-dependent conversion factor. */
+    return openwd_humlicek_w4_real(detuning * profile->scale, profile->damping)
+        * profile->scale / sqrt(pi) * profile->per_angstrom;
+}
+
+PyObject *
+openwd_frequency_voigt_profile(PyObject *self, PyObject *args)
+{
+    PyObject *wave_object, *out_object, *result = NULL;
+    Py_buffer wave = {0}, out = {0};
+    double center, sigma, gamma;
+    FrequencyVoigt profile;
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OdddO:frequency_voigt_profile", &wave_object,
+                          &center, &sigma, &gamma, &out_object)) return NULL;
+    if (!double_array(wave_object, &wave, 0) ||
+        !double_array(out_object, &out, 1)) goto done;
+    if (wave.ndim != 1 || out.ndim != 1 || wave.shape[0] != out.shape[0] ||
+        !isfinite(center) || center <= 0.0 ||
+        !isfinite(sigma) || !isfinite(gamma)) {
+        PyErr_SetString(PyExc_ValueError, "invalid frequency-Voigt arrays or widths");
+        goto done;
+    }
+    if (arrays_overlap(&wave, &out)) {
+        PyErr_SetString(PyExc_ValueError, "frequency-Voigt output must not overlap input");
+        goto done;
+    }
+    frequency_voigt_setup(&profile, center, sigma, gamma);
+    {
+        const double *x = wave.buf;
+        double *y = out.buf;
+        Py_ssize_t i;
+        Py_BEGIN_ALLOW_THREADS
+        for (i = 0; i < wave.shape[0]; ++i) {
+            y[i] = frequency_voigt_value(&profile, x[i]);
+        }
+        Py_END_ALLOW_THREADS
+    }
+    Py_INCREF(Py_None); result = Py_None;
+done:
+    if (wave.obj) PyBuffer_Release(&wave);
+    if (out.obj) PyBuffer_Release(&out);
+    return result;
 }
 
 PyObject *
@@ -301,6 +387,121 @@ openwd_stark_profile_finish(PyObject *self, PyObject *args)
                     + inner_mass*impact;
             }
             out[i] = value/bound;
+        }
+        Py_END_ALLOW_THREADS
+    }
+    Py_INCREF(Py_None); result = Py_None;
+done:
+    for (k = 0; k < 4; ++k) if (v[k].obj) PyBuffer_Release(&v[k]);
+    return result;
+}
+
+/* np.interp on the exact coordinates step * (arange(size) - size//2).
+ * A uniform-grid index avoids a binary search, but use the actual rounded
+ * endpoint coordinates and interpolation operation order of the reference.
+ * The fine mass is clipped before interpolation, not after it.
+ */
+static double
+frequency_uniform_profile(double offset, double step, const double *mass,
+                          Py_ssize_t size, int clip_negative)
+{
+    const Py_ssize_t half = size / 2;
+    const double first = -half * step;
+    const double last = (size - 1 - half) * step;
+    Py_ssize_t left;
+    double a, b, low, high, slope, value;
+    if (offset <= first) {
+        a = mass[0];
+        if (clip_negative && a <= 0.0) a = 0.0;
+        return a / step;
+    }
+    if (offset >= last) {
+        a = mass[size - 1];
+        if (clip_negative && a <= 0.0) a = 0.0;
+        return a / step;
+    }
+    left = (Py_ssize_t)floor(offset / step + half);
+    if (left < 0) left = 0;
+    if (left >= size - 1) left = size - 2;
+    /* Division can round across an exact grid point; recover the same
+     * bracket that a search of the stored Python coordinates would find. */
+    while (left > 0 && offset < (left - half) * step) --left;
+    while (left < size - 2 && offset >= (left + 1 - half) * step) ++left;
+    low = (left - half) * step;
+    high = (left + 1 - half) * step;
+    a = mass[left]; b = mass[left + 1];
+    if (clip_negative) { if (a <= 0.0) a = 0.0; if (b <= 0.0) b = 0.0; }
+    a /= step; b /= step;
+    if (offset == low) return a;
+    slope = (b - a) / (high - low);
+    value = slope * (offset - low) + a;
+    /* Match np.interp's treatment of non-finite endpoint values. */
+    if (isnan(value)) {
+        value = slope * (offset - high) + b;
+        if (isnan(value) && a == b) value = a;
+    }
+    return value;
+}
+
+PyObject *
+openwd_stark_frequency_profile_finish(PyObject *self, PyObject *args)
+{
+    PyObject *objects[4], *result = NULL;
+    Py_buffer v[4] = {{0}};
+    double center, sigma, gamma, fine_step, coarse_step, fine_half;
+    double core_weight, inner_mass, bound;
+    FrequencyVoigt profile;
+    int k;
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OOOdddddddddO:stark_frequency_profile_finish",
+            &objects[0], &objects[1], &objects[2], &center, &sigma, &gamma,
+            &fine_step, &coarse_step, &fine_half, &core_weight, &inner_mass,
+            &bound, &objects[3])) return NULL;
+    for (k = 0; k < 4; ++k) {
+        if (!double_array(objects[k], &v[k], k == 3)) goto done;
+        if (v[k].ndim != 1) {
+            PyErr_SetString(PyExc_ValueError, "profile arrays must be one-dimensional");
+            goto done;
+        }
+    }
+    if (v[0].shape[0] != v[3].shape[0] || v[1].shape[0] < 1 ||
+        v[1].shape[0] % 2 != 1 || (v[2].shape[0] && v[2].shape[0] % 2 != 1) ||
+        !isfinite(center) || center <= 0.0 ||
+        !isfinite(sigma) || !isfinite(gamma) ||
+        !isfinite(fine_step) || fine_step <= 0.0 ||
+        !isfinite(coarse_step) || coarse_step <= 0.0 ||
+        !isfinite(fine_half) || fine_half < 0.0 ||
+        !isfinite(core_weight) || !isfinite(inner_mass) ||
+        !isfinite(bound) || bound <= 0.0) {
+        PyErr_SetString(PyExc_ValueError, "invalid profile grids, widths, or normalization");
+        goto done;
+    }
+    for (k = 0; k < 3; ++k) {
+        if (arrays_overlap(&v[k], &v[3])) {
+            PyErr_SetString(PyExc_ValueError, "profile output must not overlap inputs");
+            goto done;
+        }
+    }
+    frequency_voigt_setup(&profile, center, sigma, gamma);
+    {
+        const double *wave = v[0].buf, *fine = v[1].buf, *coarse = v[2].buf;
+        double *out = v[3].buf;
+        Py_ssize_t i;
+        Py_BEGIN_ALLOW_THREADS
+        for (i = 0; i < v[0].shape[0]; ++i) {
+            const double offset = wave[i] - center;
+            const double impact = frequency_voigt_value(&profile, wave[i]);
+            double value = core_weight * impact;
+            if (isnan(offset)) { out[i] = offset; continue; }
+            if (fabs(offset) <= fine_half) {
+                value += frequency_uniform_profile(
+                    offset, fine_step, fine, v[1].shape[0], 1);
+            } else if (v[2].shape[0]) {
+                value += frequency_uniform_profile(
+                    offset, coarse_step, coarse, v[2].shape[0], 0)
+                    + inner_mass * impact;
+            }
+            out[i] = value / bound;
         }
         Py_END_ALLOW_THREADS
     }

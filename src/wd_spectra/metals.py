@@ -5932,7 +5932,7 @@ def _compiled_manifold_profile(
     upper, lower, maximum_beta, support_half_width, segment_probability,
     interval_fraction, missing, bound_probability,
 ):
-    """The reference profile algorithm with fused C component deposition.
+    """The reference profile algorithm with fused C deposition and assembly.
 
     No atomic, field, grid, or convolution approximation is changed.  Keep
     the NumPy path below as the fallback and an independent numerical check.
@@ -5976,14 +5976,48 @@ def _compiled_manifold_profile(
         segment_probability, interval_fraction, to_angstrom, fine_half,
         fine_step, coarse_step, missing, fine_mass, coarse_mass,
     )
-    kernel = _stark_impact_profile(
-        center + fine_grid, center, gaussian_sigma, lorentz_hwhm
+    # Other scalar types can retain their own arithmetic precision in the
+    # released Python formula; do not silently cast them through the C ABI.
+    native_precision_types = (float, int, np.float64)
+    native_precision = all(
+        type(value) in native_precision_types
+        for value in (center, gaussian_sigma, lorentz_hwhm)
     )
+    native_impact = (
+        getattr(_rt, "frequency_voigt_profile", None) if native_precision else None
+    )
+    if native_impact is not None:
+        kernel = np.empty_like(fine_grid)
+        native_impact(
+            center + fine_grid, center, gaussian_sigma, lorentz_hwhm, kernel
+        )
+    else:
+        # An older optional extension may provide deposition alone.
+        kernel = _stark_impact_profile(
+            center + fine_grid, center, gaussian_sigma, lorentz_hwhm
+        )
     kernel_sum = float(np.sum(kernel))
     if kernel_sum > 0.0 and np.isfinite(kernel_sum):
         fine_mass = fftconvolve(fine_mass, kernel / kernel_sum, mode="same")
-    # The native stark_profile_finish evaluates a pseudo-Voigt impact core,
-    # so the exact frequency-space Voigt core and wings are added here.
+    native_finish = (
+        getattr(_rt, "stark_frequency_profile_finish", None) if native_precision else None
+    )
+    if (
+        native_finish is not None
+        and getattr(wavelength, "ndim", None) == 1
+        and getattr(wavelength, "dtype", None) == np.dtype(np.float64)
+    ):
+        result = np.empty(wavelength.shape, dtype=np.float64)
+        native_finish(
+            np.ascontiguousarray(wavelength), np.ascontiguousarray(fine_mass),
+            coarse_mass, center, gaussian_sigma, lorentz_hwhm, fine_step,
+            coarse_step, fine_half, core_weight, inner_mass,
+            max(bound_probability, np.finfo(np.float64).tiny), result,
+        )
+        return result
+    # The old native finish evaluates a pseudo-Voigt.  Keep released Python
+    # assembly when the new finish is absent or the input shape/precision
+    # requires its original offset arithmetic (for example float32 waves).
     fine_profile = np.maximum(fine_mass, 0.0) / fine_step
     offset = wavelength - center
     result = core_weight * _stark_impact_profile(
