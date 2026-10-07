@@ -95,7 +95,8 @@ def main():
     parser.add_argument('--abundance', action='append', default=[], help='ELEMENT=log10 N/N(H); default C=-4.0')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--data-root', type=Path)
-    parser.add_argument('--maximum-iterations', type=int, default=80)
+    parser.add_argument('--maximum-iterations', type=int, default=120,
+                        help='verification grid: up to 73 iterations with the overlap exclusion')
     parser.add_argument('--step', type=float, default=0.02,
                         help='uniform synthesis step (A) over 3700-7000 A; lines must not fall between samples')
     parser.add_argument('--lte-abundance', action='append', default=[],
