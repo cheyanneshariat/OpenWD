@@ -4,7 +4,6 @@ import importlib.util
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import sys
 import threading
@@ -50,6 +49,8 @@ def test_non_numerical_changes_do_not_trigger_cold_models(path):
         "tests/test_dq_release.py",
         "tests/test_hot_cold_canary.py",
         "tests/test_released_family_canaries.py",
+        "tests/test_d6_regression.py",
+        "tests/d6_regression_support.py",
         "tools/validate.py",
         ".github/workflows/canaries.yml",
         "unknown-input.bin",
@@ -177,6 +178,16 @@ def test_prose_edits_preserve_numerical_key_but_source_and_data_invalidate(
     assert runner.numerical_identity(tmp_path)["sha256"] != second
 
 
+@pytest.mark.parametrize("name", ["test_d6_regression.py", "d6_regression_support.py"])
+def test_warm_checker_changes_invalidate_completed_evidence(tmp_path, name):
+    (tmp_path / "tests").mkdir()
+    path = tmp_path / "tests" / name
+    path.write_text("before")
+    before = runner.numerical_identity(tmp_path)["sha256"]
+    path.write_text("after")
+    assert runner.numerical_identity(tmp_path)["sha256"] != before
+
+
 def test_failed_fast_stage_prevents_expensive_stages(tmp_path, monkeypatch):
     called = []
     monkeypatch.setattr(
@@ -196,14 +207,40 @@ def test_failed_fast_stage_prevents_expensive_stages(tmp_path, monkeypatch):
     ]
 
 
-def test_workflow_preserves_every_cold_case_and_has_no_duplicate_push_trigger():
+def test_pr_warm_regression_and_scheduled_cold_convergence_have_distinct_coverage():
+    pr_cases = policy.selected_cold_cases("pull_request", runner.COLD)
+    assert set(pr_cases) == set(runner.COLD) - {"d6-j1637"}
+    for event in ("schedule", "workflow_dispatch"):
+        assert policy.selected_cold_cases(event, runner.COLD) == list(runner.COLD)
+    warm = runner.commands("regression", ["d6-j1637"])["d6-j1637"]
+    cold = runner.commands("cold", ["d6-j1637"])["d6-j1637"]
+    spectrum = runner.commands("spectra", ["d6-j1637"])["d6-j1637"]
+    assert "two_step_warm_trajectory" in warm[-1]
+    assert "cold_start[d6-j1637]" in cold[-1]
+    assert "fixed_atmosphere_spectrum" in spectrum[-1]
+    with pytest.raises(ValueError):
+        runner.commands("regression", ["da-5000"])
+
+
+def test_bounded_regression_pass_does_not_report_full_qualification(tmp_path, monkeypatch):
+    monkeypatch.setattr(runner, "numerical_identity", lambda: dict(sha256="same", reuse_eligible=True))
+    monkeypatch.setattr(runner, "commands", lambda *args: {"tiny": [sys.executable, "-c", "pass"]})
+    output = tmp_path / "regression"
+    assert runner.main(["regression", "--output", str(output)]) == 0
+    report = json.loads((output / "summary.json").read_text())
+    assert report["status"] == "passed" and report["full_qualification"] is False
+
+
+def test_workflow_preserves_full_cold_dispatch_and_has_no_duplicate_push_trigger():
     workflow = (ROOT / ".github/workflows/canaries.yml").read_text()
-    matrix = re.search(r"case: \[([^\]]+)\]", workflow).group(1)
-    assert set(matrix.split(", ")) == set(runner.COLD)
+    assert "case: ${{ fromJSON(needs.plan.outputs.cold_cases) }}" in workflow
     assert "  push:" not in workflow
     assert "cancel-in-progress:" in workflow
     assert "  qualification:" in workflow and "if: always()" in workflow
     assert 'test "$COLD_RESULT" = success' in workflow
+    assert 'test "$D6_RESULT" = success' in workflow
+    assert "Full-suite cold-start qualification was not performed" in workflow
+    assert "if: github.event_name == 'pull_request'" in workflow
 
 
 def test_protected_node_ids_still_collect_without_running_atmospheres():
@@ -217,10 +254,11 @@ def test_protected_node_ids_still_collect_without_running_atmospheres():
             "-o",
             "addopts=",
             *runner.COLD_TESTS.values(),
+            *runner.REGRESSIONS.values(),
         ],
         cwd=ROOT,
         text=True,
         env=dict(os.environ, PYTHONPATH=str(ROOT / "src")),
     )
-    for node in runner.COLD_TESTS.values():
+    for node in (*runner.COLD_TESTS.values(), *runner.REGRESSIONS.values()):
         assert node in output

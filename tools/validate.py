@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DAH_PAPER = ("j1007+1237", "j1034+0327", "j1154+0117", "j2149-0728",
              "j1254+5612", "j1018+0111", "j1351+5419", "j2247+1456")
 SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
+    "d6-j1637",
     "da-3000",
     "da-4000",
     "da-5000",
@@ -58,7 +59,7 @@ COLD_TESTS = {
     "db-22000-standard": CANARY
     + "test_standard_db_22000_enters_exact_flux_verification",
     "da-5000": CANARY
-    + "test_protected_da_cold_starts_converge_without_fallback[5000.0-70]",
+    + "test_protected_da_cold_starts_converge_without_fallback[5000.0-100]",
     "da-20000": CANARY
     + "test_protected_da_cold_starts_converge_without_fallback[20000.0-70]",
     "da-3000": CANARY
@@ -78,6 +79,9 @@ COLD = tuple(COLD_TESTS) + (
     "daz-g149-28",
     "daz-galex1931",
 )
+REGRESSIONS = {
+    "d6-j1637": "tests/test_d6_regression.py::test_j1637_two_step_warm_trajectory",
+}
 
 
 def commands(tier, cases=()):
@@ -87,12 +91,16 @@ def commands(tier, cases=()):
             "components": pytest + ["tests", "-m", "not canary and not spectral"],
             "cool-components": pytest + ["research/cool_models"],
         }
-    available = SPECTRA if tier == "spectra" else COLD
+    available = SPECTRA if tier == "spectra" else REGRESSIONS if tier == "regression" else COLD
     if set(cases) - set(available):
         raise ValueError(f"unknown {tier} cases: {sorted(set(cases) - set(available))}")
     tasks = {}
     for case in cases or available:
-        if tier == "spectra" and case.startswith("dah-"):
+        if tier == "regression":
+            tasks[case] = pytest + [REGRESSIONS[case]]
+        elif tier == "spectra" and case == "d6-j1637":
+            tasks[case] = pytest + ["tests/test_d6_regression.py::test_j1637_fixed_atmosphere_spectrum"]
+        elif tier == "spectra" and case.startswith("dah-"):
             tasks[case] = pytest + [f"tests/test_dah_paper.py::test_public_default_reproduces_frozen_paper_spectrum[{case[4:]}]"]
         elif tier == "spectra" and case == "dq-j1235":
             tasks[case] = pytest + [
@@ -173,6 +181,8 @@ def numerical_identity(root=ROOT):
         "tests/test_dq_release.py",
         "tests/test_dah_paper.py",
         "tests/test_radiative_da_convergence.py",
+        "tests/test_d6_regression.py",
+        "tests/d6_regression_support.py",
         "tests/conftest.py",
     ):
         if (root / name).is_file():
@@ -291,7 +301,7 @@ def run_task(command, folder, label, stop, timeout):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("tier", choices=("fast", "spectra", "cold", "full"))
+    parser.add_argument("tier", choices=("fast", "spectra", "regression", "cold", "full"))
     parser.add_argument("--case", action="append", default=[])
     parser.add_argument("--jobs", type=int, default=min(2, os.cpu_count() or 1))
     parser.add_argument("--output", type=Path)

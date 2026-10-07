@@ -24,6 +24,11 @@ from wd_spectra.models import (
 
 CONTROLS = Path(__file__).parent / "data/spectral_regressions"
 APPROVED = Path(__file__).parent / "data/approved_regressions/fixed"
+APPROVED_DENSITY_EDGE = (
+    Path(__file__).parent
+    / "data/approved_regressions/stark_density_floor_2026_10_05/fixed"
+)
+DENSITY_EDGE_CASES = frozenset({"da-4000", "da-5000", "dab-9000"})
 pytestmark = pytest.mark.spectral
 CASES = [
     "da-3000",
@@ -48,7 +53,10 @@ def test_checked_scattering_preserves_broad_spectral_controls(case):
             kind
         ](**json.loads(str(saved["config_json"])))
         wave = saved["wavelength"]
-    with np.load(APPROVED / (case + ".npz")) as approved:
+    # Explicitly reviewed density-edge outputs are versioned separately.
+    # Historical structures, earlier approved spectra and tolerances stay intact.
+    approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
+    with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
     molecular = kind == "DA" and config.effective_temperature <= 12000

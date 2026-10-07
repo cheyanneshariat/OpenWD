@@ -38,12 +38,15 @@ ConvergenceStatus = Literal[
 _MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
 _MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving"
 _MODEL_FAMILY_PHYSICS_REVISIONS = {
-    "DAH": "dah-kurucz-griem-v4",
+    "DA": "hydrogen-stark-density-floor-2026-10-05",
+    "DAB": "hydrogen-stark-density-floor-2026-10-05",
+    "DAO": "hydrogen-stark-density-floor-2026-10-05",
+    "DAH": "dah-kurucz-griem-v4:hydrogen-stark-density-floor-2026-10-05",
     # Shared metal physics revised by the 2026-09-30 DZ audit: ground-term
     # bound-free populations, 1/Z^2 Unsold radii, frequency Voigt profiles,
     # structure line identity and continuous dense-He ionization.
-    "DZ": "metal-audit-2026-09-30",
-    "DAZ": "metal-audit-2026-09-30",
+    "DZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05",
+    "DAZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05",
     "D6": "metal-audit-2026-09-30",
 }
 
