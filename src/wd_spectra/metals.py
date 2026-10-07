@@ -2409,6 +2409,299 @@ def read_niobium_atomic_ion(root: str | Path, charge: int) -> AtomicIon:
     return _niobium_atomic_ions(str(directory.resolve()))[int(charge)]
 
 
+# The bundled Stout Zn IV-VI and Cu IV-VI files contain only forbidden (M1/E2)
+# transitions, so these stages add partition functions and charge but no E1
+# absorption.  Rauch et al. computed HFR+CPOL E1 probabilities for Zn IV-V
+# (2014, A&A 564, A41) and Cu IV-VII (2020, A&A 637, A4).  The Zn tables are
+# the unmodified CDS copies, which list both level energies.  The Cu data are
+# distributed only by the GAVO TOSS service.  Its ``toss.data`` level energies
+# do not belong to their transitions (for Zn, 399 of 400 rows disagree with the
+# CDS table), but its vacuum wavelengths, J values, parities, log gf and gA
+# (in the column labelled ``einsteina``) agree with CDS row by row.  Each Cu
+# line is therefore attached to Stout levels by both J values, both parities
+# and its wavenumber.  Lines that reach Rauch's theory-only levels, or match
+# no unique Stout level pair, are left out.  Cu VII is left out because Stout
+# has only its four ground-configuration levels.  Retrieved 2026-10-07.
+_RAUCH_2014_CDS = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/564/A41/"
+_TOSS_CU_QUERY = (
+    "https://dc.g-vo.org/tap/sync?LANG=ADQL&FORMAT=csv&MAXREC=100000&QUERY="
+    "SELECT+vacuum_wavelength%2C+par_init%2C+j_init%2C+par_final%2C+j_final"
+    "%2C+log_gf%2C+einsteina%2C+cf+FROM+toss.data+WHERE+species_name+%3D+"
+    "%27Cu%27+AND+ion_charge+%3D+-{charge}+ORDER+BY+vacuum_wavelength"
+)
+RAUCH_ZN_CU_ATOMIC_DATA_FILES = MappingProxyType(
+    {
+        "rauch2014-ReadMe": (
+            _RAUCH_2014_CDS + "ReadMe",
+            "8f94cb98b0c456de40a814b909f916d7a464732ef1aa956cef850fb0ae65b192",
+        ),
+        "rauch2014-zn4-table1.dat": (
+            _RAUCH_2014_CDS + "table1.dat",
+            "83f58c0a86b8200667030f271fc96dcf2020a406810adc82e551cbce72308e85",
+        ),
+        "rauch2014-zn5-table2.dat": (
+            _RAUCH_2014_CDS + "table2.dat",
+            "75cbfbdb0eb4063c6ca542e93b08610b10acdf12e7da3bdccfeaae85b407580d",
+        ),
+        **{
+            f"toss-cu{charge + 1}.csv": (
+                _TOSS_CU_QUERY.format(charge=charge), checksum,
+            )
+            for charge, checksum in (
+                (3, "bc955d490c35331d20fff7f4f75866db34fbdba47517e7dfe2047b122d342f73"),
+                (4, "aef74c6ab1b482eb17c5f2961babf692867dfb18d03493c17dbb3deba0d5e294"),
+                (5, "26c02104a2441619d0e6eddfcd1378511f709302fc2b34012b0f35758940ae3e"),
+            )
+        },
+    }
+)
+RAUCH_ZN_CU_ION_FILES = MappingProxyType(
+    {
+        ("Zn", 3): "rauch2014-zn4-table1.dat",
+        ("Zn", 4): "rauch2014-zn5-table2.dat",
+        ("Cu", 3): "toss-cu4.csv",
+        ("Cu", 4): "toss-cu5.csv",
+        ("Cu", 5): "toss-cu6.csv",
+    }
+)
+_RAUCH_SOURCE = "Rauch et al. HFR E1 lines on Stout levels"
+# The CDS level energies are rounded to 1 cm^-1; Stout (NIST) agrees within
+# 0.6 cm^-1.  TOSS wavelengths (0.001 A) give wavenumbers within 0.6 cm^-1 of
+# the Stout Ritz values for 99% of matched Cu lines.
+_RAUCH_LEVEL_ENERGY_TOLERANCE_WAVENUMBER = 1.0
+_RAUCH_WAVENUMBER_TOLERANCE = 0.6
+
+
+def _rauch_data_directory(root: Path) -> Path:
+    for candidate in (root / "rauch-zn-cu", root.parent / "rauch-zn-cu"):
+        if all((candidate / name).is_file() for name in RAUCH_ZN_CU_ATOMIC_DATA_FILES):
+            return candidate
+    raise FileNotFoundError(f"could not find the bundled Rauch Zn/Cu data near {root}")
+
+
+@lru_cache(maxsize=4)
+def _rauch_records(directory: str) -> Mapping[tuple[str, int], tuple[dict, ...]]:
+    """Parse the checksum-verified Rauch tables into common records.
+
+    Every record has the vacuum wavelength, both parities and J values, gA,
+    log gf and, for the CDS Zn tables only, both level energies.
+    """
+
+    root = Path(directory)
+    for name, (_, checksum) in RAUCH_ZN_CU_ATOMIC_DATA_FILES.items():
+        if hashlib.sha256((root / name).read_bytes()).hexdigest() != checksum:
+            raise ValueError(f"Rauch Zn/Cu atomic data checksum mismatch: {name}")
+    result = {}
+    for key, name in RAUCH_ZN_CU_ION_FILES.items():
+        records = []
+        if name.endswith(".dat"):
+            # Byte layout from the CDS ReadMe of J/A+A/564/A41.  The tabulated
+            # wavelengths are in air above 2000 A (as in TOSS); the matching
+            # uses the level energies.
+            for line in (root / name).read_text(encoding="ascii").splitlines():
+                wavelength = float(line[3:12])
+                records.append({
+                    "wavelength": (
+                        wavelength if wavelength < 2000.0
+                        else _physical_air_to_vacuum_scalar(wavelength)
+                    ),
+                    "lower_energy": float(line[17:23]),
+                    "lower_parity": line[24],
+                    "lower_j": float(line[27:30]),
+                    "upper_energy": float(line[35:41]),
+                    "upper_parity": line[42],
+                    "upper_j": float(line[45:48]),
+                    "log_gf": float(line[51:56]),
+                    "ga": float(line[59:67]),
+                })
+        else:
+            with (root / name).open(newline="", encoding="ascii") as stream:
+                for row in csv.DictReader(stream):
+                    records.append({
+                        "wavelength": float(row["vacuum_wavelength"]) * 1.0e10,
+                        "lower_energy": None,
+                        "lower_parity": row["par_init"],
+                        "lower_j": float(row["j_init"]),
+                        "upper_energy": None,
+                        "upper_parity": row["par_final"],
+                        "upper_j": float(row["j_final"]),
+                        "log_gf": float(row["log_gf"]),
+                        "ga": float(row["einsteina"]),
+                    })
+        if any(
+            record["lower_parity"] == record["upper_parity"]
+            or record["lower_parity"] not in "eo"
+            or record["upper_parity"] not in "eo"
+            or not record["ga"] > 0.0
+            for record in records
+        ):
+            raise ValueError(f"{name} should contain only E1 lines with positive gA")
+        result[key] = tuple(records)
+    return MappingProxyType(result)
+
+
+def _stout_level_parity(label: str) -> str | None:
+    """Return ``"o"`` or ``"e"`` from a Stout label's final ``(term<J>)``."""
+
+    match = re.search(r"\(([^()<]*)<[^>]+>\)$", label)
+    if match is None or not match.group(1):
+        return None
+    return "o" if match.group(1).endswith("o") else "e"
+
+
+@lru_cache(maxsize=16)
+def _rauch_matched_lines(
+    directory: str, element: str, charge: int, levels: tuple[AtomicLevel, ...]
+) -> tuple[tuple[AtomicTransition, ...], Mapping[str, int]]:
+    """Attach Rauch lines to unique Stout level pairs of one ion."""
+
+    records = _rauch_records(directory)[(element, charge)]
+    groups: dict[tuple[str, float], list[AtomicLevel]] = {}
+    for level in levels:
+        parity = _stout_level_parity(level.label)
+        if parity is not None:
+            groups.setdefault(
+                (parity, 0.5 * (level.statistical_weight - 1.0)), []
+            ).append(level)
+
+    def by_energy(parity: str, j_value: float, energy: float) -> list[AtomicLevel]:
+        return [
+            level for level in groups.get((parity, j_value), ())
+            if abs(level.energy_wavenumber - energy)
+            <= _RAUCH_LEVEL_ENERGY_TOLERANCE_WAVENUMBER
+        ]
+
+    pairs: dict[tuple[int, int], list[tuple[AtomicLevel, AtomicLevel, dict]]] = {}
+    counts = {"published": len(records), "no_stout_pair": 0, "ambiguous": 0}
+    for record in records:
+        if record["lower_energy"] is not None:
+            lowers = by_energy(
+                record["lower_parity"], record["lower_j"], record["lower_energy"]
+            )
+            uppers = by_energy(
+                record["upper_parity"], record["upper_j"], record["upper_energy"]
+            )
+            candidates = [(lower, upper) for lower in lowers for upper in uppers]
+        else:
+            wavenumber = 1.0e8 / record["wavelength"]
+            candidates = [
+                (lower, upper)
+                for lower in groups.get((record["lower_parity"], record["lower_j"]), ())
+                for upper in groups.get((record["upper_parity"], record["upper_j"]), ())
+                if abs(upper.energy_wavenumber - lower.energy_wavenumber - wavenumber)
+                <= _RAUCH_WAVENUMBER_TOLERANCE
+            ]
+        if not candidates:
+            counts["no_stout_pair"] += 1
+        elif len(candidates) > 1:
+            counts["ambiguous"] += 1
+        else:
+            lower, upper = candidates[0]
+            pairs.setdefault((lower.index, upper.index), []).append(
+                (lower, upper, record)
+            )
+    transitions = []
+    counts["shared_stout_pair"] = 0
+    for matches in pairs.values():
+        if len(matches) > 1:
+            counts["shared_stout_pair"] += len(matches)
+            continue
+        lower, upper, record = matches[0]
+        if (
+            upper.energy_wavenumber <= lower.energy_wavenumber
+            or abs(record["lower_j"] - record["upper_j"]) > 1.0
+            or record["lower_j"] == record["upper_j"] == 0.0
+        ):
+            raise ValueError(f"not an allowed {element} E1 transition: {lower.label}")
+        wavelength_cm = 1.0 / (upper.energy_wavenumber - lower.energy_wavenumber)
+        einstein_a = record["ga"] / upper.statistical_weight
+        transitions.append(
+            AtomicTransition(
+                lower.index,
+                upper.index,
+                einstein_a,
+                "E1",
+                wavelength_cm * 1.0e8,
+                ELECTRON_MASS * LIGHT_SPEED * wavelength_cm**2
+                / (8.0 * PI**2 * ELEMENTARY_CHARGE_ESU**2)
+                * upper.statistical_weight / lower.statistical_weight
+                * einstein_a,
+            )
+        )
+    transitions.sort(key=lambda line: line.wavelength_vacuum_angstrom)
+    counts["attached"] = len(transitions)
+    return tuple(transitions), MappingProxyType(counts)
+
+
+def rauch_zn_cu_line_counts(
+    database: AtomicDatabase, root: str | Path
+) -> dict[str, dict[str, int]]:
+    """Report how many Rauch lines attach to each ion's Stout levels."""
+
+    directory = str(_rauch_data_directory(Path(root)).resolve())
+    return {
+        f"{element} {charge}": dict(
+            _rauch_matched_lines(
+                directory, element, charge, database.ions[(element, charge)].levels
+            )[1]
+        )
+        for element, charge in RAUCH_ZN_CU_ION_FILES
+        if (element, charge) in database.ions
+    }
+
+
+def atomic_database_with_rauch_zn_cu_transitions(
+    database: AtomicDatabase, root: str | Path
+) -> AtomicDatabase:
+    """Add the Rauch et al. Zn IV-V and Cu IV-VI E1 lines to Stout ions.
+
+    ``root`` is the Stout directory (or its parent ``metal-opacity`` cache);
+    the pinned files live in its sibling ``rauch-zn-cu`` directory.  Lines are
+    attached to existing Stout levels, so labels, partition functions and the
+    label-based broadening estimates are unchanged; no level is added.  As for
+    Stout and Nb, wavelengths are Ritz values from the Stout level energies
+    and f follows from the published gA.  Stout's forbidden lines are kept.
+    Ions absent from ``database`` are ignored, and repeated calls are
+    idempotent.
+    """
+
+    directory = str(_rauch_data_directory(Path(root)).resolve())
+    ions = dict(database.ions)
+    changed = False
+    for key in RAUCH_ZN_CU_ION_FILES:
+        ion = ions.get(key)
+        if ion is None or _RAUCH_SOURCE in ion.source:
+            continue
+        added, counts = _rauch_matched_lines(directory, key[0], key[1], ion.levels)
+        existing = {
+            (line.lower_index, line.upper_index)
+            for line in ion.transitions if line.transition_type == "E1"
+        }
+        added = tuple(
+            line for line in added
+            if (line.lower_index, line.upper_index) not in existing
+        )
+        reference = "2014" if key[0] == "Zn" else "2020"
+        ions[key] = replace(
+            ion,
+            transitions=ion.transitions + added,
+            source=(
+                f"{ion.source}; {_RAUCH_SOURCE} ({reference}; "
+                f"{len(added)}/{counts['published']} lines)"
+            ),
+        )
+        changed = True
+    if not changed:
+        return database
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=(
+            f"{database.source}; Rauch et al. (2014, 2020) Zn IV-V and Cu IV-VI "
+            "E1 lines (CDS J/A+A/564/A41; GAVO TOSS)"
+        ),
+    )
+
+
 def read_stout_atomic_database(
     root: str | Path,
     *,
@@ -3240,6 +3533,100 @@ def read_kurucz_gf100_atomic_database(
         MappingProxyType(merged_ions),
         base_database.source + "; Kurucz GF100 " + operation + ", ".join(sources),
     )
+
+
+# Kurucz's measured-level ("pos") lists of Fe and Ni IV-VII, bundled for the
+# hot DA/DAO trace-metal module.  The species code in each name is Kurucz's
+# element.charge, so gf2803 is Ni IV.  Stout Ni IV-VII contain only forbidden
+# lines.  SHA256SUMS lists the checksums of the decompressed files.  Kurucz
+# levels are matched to Stout within 0.1 cm^-1.  Fe V (gf2604), Fe VI
+# (gf2605z) and Ni VII (gf2806z) are excluded: their energies differ from
+# Stout by 0.5-3 cm^-1 for some levels, which would be appended a second time
+# (for Ni VII the whole 3d4 5D ground term, doubling its partition function).
+KURUCZ_IRON_GROUP_POSITION_FILES = MappingProxyType(
+    {
+        ("Fe", 3): "gf2603.pos",
+        ("Fe", 6): "gf2606z.pos",
+        ("Ni", 3): "gf2803.pos",
+        ("Ni", 4): "gf2804.pos",
+        ("Ni", 5): "gf2805.pos",
+    }
+)
+_KURUCZ_SUPPLEMENT_SOURCE = "Kurucz GF100 missing-transition supplement"
+# An appended Kurucz level this close to a Stout level of the same weight is
+# treated as a duplicate of it rather than a level missing from Stout.
+_KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER = 5.0
+
+
+def atomic_database_with_kurucz_iron_group_positions(
+    database: AtomicDatabase, directory: str | Path | None = None
+) -> AtomicDatabase:
+    """Add Kurucz measured-level Fe IV, VII and Ni IV-VI lines missing from Stout.
+
+    Uses :func:`read_kurucz_gf100_atomic_database` in its
+    missing-transition mode: Stout levels and lines are kept, Kurucz levels
+    are matched to Stout levels by energy (0.1 cm^-1) and weight, and only
+    transitions between level pairs that Stout does not connect are added,
+    with Kurucz's radiative, Stark and van der Waals constants.  Kurucz levels
+    absent from Stout are appended with a ``Kurucz`` label; a ``ValueError``
+    is raised if one lies within 5 cm^-1 of a Stout level of equal weight.
+    ``directory`` defaults to the bundled ``data/hot_daz/kurucz``, whose xz
+    files are verified against ``SHA256SUMS``.  Only ions present in
+    ``database`` are read, and repeated calls are idempotent.
+    """
+
+    import lzma
+    import tempfile
+
+    root = (
+        Path(str(files("wd_spectra"))) / "data" / "hot_daz" / "kurucz"
+        if directory is None else Path(directory)
+    )
+    needed = {
+        key: name for key, name in KURUCZ_IRON_GROUP_POSITION_FILES.items()
+        if key in database.ions
+        and _KURUCZ_SUPPLEMENT_SOURCE not in database.ions[key].source
+    }
+    if not needed:
+        return database
+    checksums = dict(
+        line.split()[::-1]
+        for line in (root / "SHA256SUMS").read_text(encoding="ascii").splitlines()
+        if line.strip()
+    )
+    with tempfile.TemporaryDirectory(prefix="openwd-kurucz-") as scratch:
+        paths = []
+        for name in needed.values():
+            compressed = root / f"{name}.xz"
+            content = (
+                lzma.decompress(compressed.read_bytes())
+                if compressed.is_file() else (root / name).read_bytes()
+            )
+            if hashlib.sha256(content).hexdigest() != checksums.get(name):
+                raise ValueError(f"Kurucz iron-group checksum mismatch: {name}")
+            path = Path(scratch) / name
+            path.write_bytes(content)
+            paths.append(path)
+        merged = read_kurucz_gf100_atomic_database(
+            paths,
+            database,
+            elements=sorted({element for element, _ in needed}),
+            replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    for key in needed:
+        original = database.ions[key].levels
+        for level in merged.ions[key].levels[len(original):]:
+            if any(
+                existing.statistical_weight == level.statistical_weight
+                and abs(existing.energy_wavenumber - level.energy_wavenumber)
+                <= _KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER
+                for existing in original
+            ):
+                raise ValueError(
+                    f"Kurucz {key[0]} {key[1]} level {level.label!r} duplicates a Stout level"
+                )
+    return merged
 
 
 _NIST_ASD_ACCURACY_PERCENT = MappingProxyType(

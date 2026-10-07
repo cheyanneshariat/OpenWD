@@ -2,7 +2,7 @@
 """Figure 1 of Williams et al. (2026) with the OpenWD HS 0209+0832 model.
 
     python research/plot_hs0209_niobium.py --model DIR --raw RAW --output STEM \
-        [--paper-model CURVES.npz]
+        [--paper-model CURVES.npz] [--compare-model DIR2 --compare-label TEXT]
 
 ``DIR`` holds ``windows.npz`` from ``research/hs0209_niobium.py``; ``RAW`` holds
 the archival HST/STIS E140M HASP coadd and x1d, the CalFUSE ``all`` file and
@@ -13,6 +13,9 @@ continuum adjustment, Doppler shifted by one velocity per instrument, convolved
 with the instrumental profile and averaged over each observed pixel.
 ``--paper-model`` overplots the published fit as recovered from the vector
 graphics of the paper's Figure 1 (research/extract_williams2026_figure1.py).
+``--compare-model`` overplots a second ``windows.npz`` (for example the model
+without the opt-in line supplements) projected in exactly the same way, with
+the velocities fitted to ``DIR``.
 """
 from __future__ import annotations
 
@@ -132,8 +135,9 @@ def stis_lsf(raw: Path, wavelength: float):
     return pixels, profile
 
 
-def fuse_coadd(raw: Path, low: float, high: float, alignment_margin: float = 5.0):
-    """Align FUSE channels to LiF1A, scale to its median and coadd.
+def fuse_coadd(raw: Path, low: float, high: float, alignment_margin: float = 5.0,
+               reference_channel: str = "1ALIF"):
+    """Align FUSE channels to LiF1A (or ``reference_channel``), scale and coadd.
 
     Channel zero points differ by up to ~0.1 A.  Each shift maximizes the
     correlation with LiF1A over the window +/- ``alignment_margin``, which
@@ -143,7 +147,7 @@ def fuse_coadd(raw: Path, low: float, high: float, alignment_margin: float = 5.0
     with fits.open(raw / "c026020100000all4ttagfcal.fit.gz") as hdul:
         channels = {hdu.name: tuple(np.asarray(hdu.data[c], float) for c in ("WAVE", "FLUX", "ERROR"))
                     for hdu in hdul[1:]}
-    reference_wave, reference_flux, reference_error = channels["1ALIF"]
+    reference_wave, reference_flux, reference_error = channels[reference_channel]
     keep = (reference_wave > low) & (reference_wave < high)
     grid = reference_wave[keep]
     used, numerator, denominator = {}, np.zeros_like(grid), np.zeros_like(grid)
@@ -154,7 +158,7 @@ def fuse_coadd(raw: Path, low: float, high: float, alignment_margin: float = 5.0
             continue
         wave, flux, error = wave[good], flux[good], error[good]
         shift, correlation = 0.0, 1.0
-        if name != "1ALIF":
+        if name != reference_channel:
             wide = ((reference_wave > low - alignment_margin)
                     & (reference_wave < high + alignment_margin) & (reference_error > 0))
             wide &= (reference_wave > wave[0] + 0.2) & (reference_wave < wave[-1] - 0.2)
@@ -212,9 +216,13 @@ def main() -> None:
     parser.add_argument("--raw", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--paper-model", type=Path)
+    parser.add_argument("--compare-model", type=Path)
+    parser.add_argument("--compare-label", default="OpenWD, Stout lines only")
+    parser.add_argument("--model-label", default="OpenWD model")
     args = parser.parse_args()
     paper = None if args.paper_model is None else np.load(args.paper_model)
     model = np.load(args.model / "windows.npz")
+    compare = None if args.compare_model is None else np.load(args.compare_model / "windows.npz")
     stis = stis_data(args.raw)
     fuse_kms, _, _ = fuse_velocity(model, args.raw)
 
@@ -228,7 +236,9 @@ def main() -> None:
     })
     figure, axes = plt.subplots(2, 3, figsize=(14.0, 7.8))
     record = {"flux_scale_R_over_d_squared": FLUX_SCALE, "stis_velocity_kms": STIS_VELOCITY_KMS,
-              "fuse_velocity_kms": fuse_kms, "panels": {}}
+              "fuse_velocity_kms": fuse_kms, "model": str(args.model),
+              "compare_model": None if compare is None else str(args.compare_model),
+              "panels": {}}
     for axis, (name, instrument, (low, high), labels) in zip(axes.flat, PANELS):
         if instrument == "HST":
             keep = (stis[0] > low - 0.3) & (stis[0] < high + 0.3)
@@ -256,7 +266,12 @@ def main() -> None:
             axis.plot(paper_wave, paper_flux, color="#e41a1c", lw=1.2,
                       label="Williams et al. (2026) model")
             values.append(paper_flux[(paper_wave >= low) & (paper_wave <= high)])
-        axis.plot(wave, curves["full"] / 1e-12, color="#2166ac", lw=1.3, label="OpenWD model")
+        if compare is not None:
+            compared = model_on_pixels(compare, name, wave, velocity, kernel)["full"]
+            axis.plot(wave, compared / 1e-12, color="#7f7f7f", lw=1.0, ls="--",
+                      label=args.compare_label)
+            values.append(compared[shown] / 1e-12)
+        axis.plot(wave, curves["full"] / 1e-12, color="#2166ac", lw=1.3, label=args.model_label)
         values = np.concatenate(values)
         bottom, top = np.min(values), np.percentile(values, 99.5)
         span = top - bottom
@@ -284,10 +299,14 @@ def main() -> None:
                      "chi2_per_pixel_no_nb": float(np.mean(
                          ((flux[shown] - curves["no_nb"][shown]) / error[shown]) ** 2)),
                      "median_data_over_model": float(np.median(flux[shown] / curves["full"][shown]))})
+        if compare is not None:
+            info["chi2_per_pixel_compare"] = float(np.mean(((flux[shown] - compared[shown])
+                                                           / error[shown]) ** 2))
         record["panels"][name] = info
     handles, names = axes[0, 2].get_legend_handles_labels()
     handles[0].set_label("Observed (FUSE or HST/STIS)")
-    figure.legend(handles, [h.get_label() for h in handles], loc="upper center", ncol=3,
+    figure.legend(handles, [h.get_label() for h in handles], loc="upper center",
+                  ncol=len(handles),
                   frameon=False, fontsize=13, bbox_to_anchor=(0.53, 1.0), handlelength=2.5)
     figure.supxlabel(r"Wavelength (\AA)".replace(r"\AA", "Å"), fontsize=15, y=0.015)
     figure.supylabel(r"Flux ($10^{-12}$ erg s$^{-1}$ cm$^{-2}$ Å$^{-1}$)", fontsize=15, x=0.012)

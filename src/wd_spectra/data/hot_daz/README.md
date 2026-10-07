@@ -8,7 +8,7 @@ checksum below refers to the uncompressed file.
 | Directory | Contents | Source | Checksums |
 | --- | --- | --- | --- |
 | `atomic/` | `verner95.dat` (Verner & Yakovlev 1995 partial cross sections); `gfFUV99.dat.gz` (Kurucz measured-level FUV lines distributed with Synspec) | https://www.pa.uky.edu/~verner/dima/photo/table1.dat ; https://tlusty.oca.eu/tlusty/Synspec49/data/gfFUV99.dat.gz | `research/hot_trace_composition.py:DATA_FILES` |
-| `kurucz/` | `gf2603.pos` ... `gf2806z.pos`: Fe/Ni IV–VII measured-level line lists, used to supplement missing EUV transitions | http://kurucz.harvard.edu/atoms/26xx and /28xx | `kurucz/SHA256SUMS` |
+| `kurucz/` | `gf2603.pos` ... `gf2806z.pos`: Fe/Ni IV–VII measured-level line lists (the code is Kurucz's element.charge, so `gf2803` is Ni IV), used to supplement missing EUV transitions and, for Fe IV, Fe VII and Ni IV–VI, by the opt-in `kurucz-fe-ni` DAB line supplement (`metals.atomic_database_with_kurucz_iron_group_positions`) | http://kurucz.harvard.edu/atoms/26xx and /28xx | `kurucz/SHA256SUMS` |
 | `chianti/recombination/` | `fe_5`–`fe_8`, `ni_5`–`ni_8` `.rrparams`/`.drparams` (Shull & van Steenberg 1982, Badnell 2006; Mazzotta et al. 1998) | CHIANTI database (see `PROVENANCE.txt`; `fe_8`/`ni_8` from the CHIANTI 11.0.2 tarball) | `chianti/recombination/SHA256SUMS` |
 | `chianti/carbon/` | `c_3`, `c_4` `.elvlc`/`.scups` | CHIANTI (sohoftp mirror) | `chianti/carbon/manifest.json` |
 | `chianti/oxygen/` | `o_3`–`o_6` `.elvlc`/`.scups` | CHIANTI (sohoftp mirror) | `chianti/oxygen/manifest.json` |

@@ -1,0 +1,90 @@
+J/A+A/564/A41         ZnIV and ZnV oscillator strengths       (Rauch+, 2014)
+================================================================================
+Stellar laboratories. II. New Zn IV and Zn V oscillator strengths and their
+validation in the hot white dwarfs G191-B2B and RE0503-289.
+    Rauch T., Werner K., Quinet P., Kruk J.W.
+   <Astron. Astrophys. 564, A41 (2014)>
+   =2014A&A...564A..41R
+================================================================================
+ADC_Keywords: Atomic physics
+Keywords: atomic data - line: identification - stars: abundances -
+          stars: individual: G 191-B2B - virtual observatory tools -
+          stars: individual: RE 0503-289
+
+Abstract:
+    For the spectral analysis of high-resolution and high-signal-to-noise
+    (S/N) spectra of hot stars, state-of-the-art non-local thermodynamic
+    equilibrium (NLTE) model atmospheres are mandatory. These are strongly
+    dependent on the reliability of the atomic data that is used for their
+    calculation. In a recent analysis of the ultraviolet (UV) spectrum of
+    the DA-type white dwarf G191-B2B, 21 ZnIV lines were newly identified.
+    Because of the lack of ZnIV data, transition probabilities of the
+    isoelectronic GeVI were adapted for a first, coarse determination of
+    the photospheric Zn abundance.
+
+    Reliable ZnIV and ZnV oscillator strengths are used to improve the Zn
+    abundance determination and to identify more Zn lines in the spectra
+    of G191-B2B and the DO-type white dwarf RE 0503-289.
+
+Description:
+    table1.dat contains calculated HFR oscillator strengths (log gf) and
+    transition probabilities (gA, in 1/s) in Zn IV. CF is the cancellation
+    factor as defined by Cowan (1981). In columns 3 and 6, e is written
+    for even and o for odd.
+
+    table2.dat contains calculated HFR oscillator strengths (log gf) and
+    transition probabilities (gA, in 1/s) in Zn V. CF is the cancellation
+    factor as defined by Cowan (1981). In columns 3 and 6, e is written
+    for even and o for odd.
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName   Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe         80        .   This file
+table1.dat     76      400   Data for ZnIV
+table2.dat     76     1879   Data for ZnV
+--------------------------------------------------------------------------------
+
+See also:
+   J/A+A/546/A55 : Ge V and Ge VI oscillator strengths (Rauch+, 2012)
+
+
+Byte-by-byte Description of file: table1.dat table2.dat
+--------------------------------------------------------------------------------
+  Bytes Format Units  Label   Explanations
+--------------------------------------------------------------------------------
+  4- 12  F9.3  0.1nm  lambda  [261/14514] Wavelength {lambda} ({AA})
+ 18- 23  I6    cm-1   E0      Lower level, energy
+     25  A1    ---    P0      [o/e] lower level, parity
+ 28- 30  F3.1  ---    J0      [0/6] Lower level angular momentum quantum number
+ 36- 41  I6    cm-1   E1      Upper level, energy
+     43  A1    ---    P1      [o/e] upper level, parity
+ 46- 48  F3.1  ---    J1      [0/7] Upper level angular momentum quantum number
+ 52- 56  F5.2  ---    loggf   Calculated HFR log(gf) value (1)
+ 60- 67  E8.3  s-1    gA      gA value (2)
+ 71- 76  F6.3  ---    CF      [-1/1] CF cancellation factor as defined by Cowan
+                              (1981, The theory of atomic structure and spectra,
+                              Los Alamos Series in Basic and Applied Sciences,
+                              Berkeley: University of California Press)
+--------------------------------------------------------------------------------
+Note (1): gf value defined as:
+   g: statistical weight of the lower level and
+   f: oscillator strength
+Note (2): gA value defined as:
+   g: statistical weight of the upper level and
+   A: transition probability
+--------------------------------------------------------------------------------
+
+Acknowledgements:
+   Thomas Rauch, rauch(at)astro.uni-tuebingen.de
+
+References:
+   Rauch et al., Paper I    2012A&A...546A..55R, Cat. J/A+A/546/A55
+
+History:
+   * 03-Apr-2014: on-line data
+   * 15-May-2014: loggA corrected into gA (from author)
+
+================================================================================
+(End)                                        Patricia Vannier [CDS]  07-Mar-2014

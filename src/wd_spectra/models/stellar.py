@@ -26,6 +26,8 @@ from ..helium_ii_stark import read_helium_ii_stark_table
 from ..helium_stark import read_helium_stark_table
 from ..metals import (
     NIST_ASD_STRONG_ION_FILES,
+    atomic_database_with_kurucz_iron_group_positions,
+    atomic_database_with_rauch_zn_cu_transitions,
     read_barklem_neutral_hydrogen_broadening,
     read_ca_i_he_profile_table,
     read_mg_he_red_wing_table,
@@ -141,6 +143,14 @@ class DABConfig:
     structure_opacity_sampling_resolution: float = 1000.0
     formal_maximum_metal_lines: int | None = None
     formal_minimum_metal_oscillator_strength: float = 1.0e-4
+    # Opt-in E1 lines for ions whose Stout files hold only forbidden lines:
+    # "rauch-zn-cu" (Rauch et al. Zn IV-V, Cu IV-VI) and "kurucz-fe-ni"
+    # (Kurucz measured-level Fe IV, VII and Ni IV-VI).  The default keeps
+    # Stout alone.
+    metal_line_supplements: tuple[str, ...] = ()
+
+
+DAB_METAL_LINE_SUPPLEMENTS = ("rauch-zn-cu", "kurucz-fe-ni")
 
 
 GD40_ABUNDANCES = MappingProxyType(
@@ -802,6 +812,8 @@ def _dab_trace_metals(config: DABConfig, data: ModelData) -> dict | None:
     """Resolve the optional DAB trace-metal data and line budgets."""
 
     if config.abundances is None:
+        if config.metal_line_supplements:
+            raise ValueError("metal_line_supplements require trace-metal abundances")
         return None
     if config.include_molecules:
         raise ValueError("trace metals are not supported in the molecular H/He workflow")
@@ -824,9 +836,23 @@ def _dab_trace_metals(config: DABConfig, data: ModelData) -> dict | None:
         data.verner_phfit2,
         fetch_command="python scripts/fetch_metal_data.py",
     )
+    supplements = config.metal_line_supplements
+    if (
+        not isinstance(supplements, tuple)
+        or len(set(supplements)) != len(supplements)
+        or not set(supplements) <= set(DAB_METAL_LINE_SUPPLEMENTS)
+    ):
+        raise ValueError(
+            "metal_line_supplements must be a tuple of distinct names from "
+            + ", ".join(DAB_METAL_LINE_SUPPLEMENTS)
+        )
     atomic = read_stout_atomic_database(
         data.stout, elements=elements, maximum_charge=config.maximum_metal_charge
     )
+    if "rauch-zn-cu" in supplements:
+        atomic = atomic_database_with_rauch_zn_cu_transitions(atomic, data.stout)
+    if "kurucz-fe-ni" in supplements:
+        atomic = atomic_database_with_kurucz_iron_group_positions(atomic)
     top_charge = max(ion.charge for ion in atomic.ions.values())
     photo = read_verner_photoionization_database(
         data.verner_photoionization, elements=elements, maximum_charge=top_charge
@@ -1105,6 +1131,7 @@ def compute_dab(
                 "structure_opacity_sampling_resolution": config.structure_opacity_sampling_resolution,
                 "formal_maximum_metal_lines": metals["formal_lines"],
                 "minimum_metal_oscillator_strength": config.formal_minimum_metal_oscillator_strength,
+                "metal_line_supplements": list(config.metal_line_supplements),
                 "metal_line_broadening": (
                     "thermal, radiative, Unsold neutral H/He"
                     + (", SYNSPEC classical electron Stark"

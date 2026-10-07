@@ -216,6 +216,20 @@ article itself is not redistributed. Query URLs and checksums are in
 `NIOBIUM_ATOMIC_DATA_FILES` in `metals.py`. Cite NIST ASD and the original
 sources when using these data.
 
+## Rauch et al. Zn and Cu oscillator strengths
+
+`src/wd_spectra/data/runtime/cache/metal-opacity/rauch-zn-cu/` contains
+unmodified CDS copies of J/A+A/564/A41, the Zn IV and Zn V HFR oscillator
+strengths of Rauch et al. (2014, A&A 564, A41,
+doi:10.1051/0004-6361/201423491), and Cu IV--VI rows of the Tuebingen
+Oscillator Strengths Service (TOSS) table `toss.data` (Rauch et al. 2020,
+A&A 637, A4, doi:10.1051/0004-6361/201936620; TOSS doi:10.21938/3i01isnuCODnh1zjbCvuwA),
+retrieved on 2026-10-07. CDS permits scientific use with citation of the
+original authors and publication; TOSS requests the acknowledgement quoted in
+that directory's README. Neither states an explicit open licence, and these
+data are not relicensed under OpenWD's source-code license. Query URLs and
+checksums are in `RAUCH_ZN_CU_ATOMIC_DATA_FILES` in `metals.py`.
+
 ## Korg.jl Stancil (1994) table transcription
 
 The numerical Stancil (1994) H2+/He2+ opacity-table transcription used as
