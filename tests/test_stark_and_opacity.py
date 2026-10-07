@@ -68,7 +68,6 @@ from wd_spectra.eos import (
     ideal_hydrogen_lte,
     ideal_hydrogen_thermodynamics,
 )
-from wd_spectra.validation import read_svo_koester_ascii
 
 
 def test_expanded_metal_opacity_grid_bounds_weak_line_sampling():
@@ -667,17 +666,15 @@ def test_balmer_structure_support_omits_only_optically_thin_wings():
 
 
 def test_8000k_halpha_flux_has_no_irregular_grid_spikes():
-    reference = read_svo_koester_ascii(
-        Path(".cache/koester/koester_t08000_g8.00.txt")
-    ) if Path(".cache/koester/koester_t08000_g8.00.txt").exists() else None
-    if reference is None:
-        pytest.skip("cached Koester validation spectrum is unavailable")
-    center = BALMER_LINES[0].wavelength_vacuum_angstrom
-    selected = np.abs(reference.wavelength_angstrom - center) <= 400.0
-    atmosphere = hydrogen_continuum_atmosphere(8_000.0, 8.0, n_depth=30)
-    spectrum = synthesize_hydrogen_spectrum(
-        atmosphere, reference.wavelength_angstrom[selected]
+    # The irregular H-alpha sampling (0.002-72 A steps) of the SVO Koester
+    # 8000 K, log g 8 model; only its wavelengths are stored.
+    sampling = np.loadtxt(
+        Path(__file__).parent / "data/koester_t08000_g8.00_halpha_wavelengths.txt"
     )
+    center = BALMER_LINES[0].wavelength_vacuum_angstrom
+    assert sampling.size == 243 and np.all(np.abs(sampling - center) <= 400.0)
+    atmosphere = hydrogen_continuum_atmosphere(8_000.0, 8.0, n_depth=30)
+    spectrum = synthesize_hydrogen_spectrum(atmosphere, sampling)
     wavelength = spectrum.wavelength_angstrom
     flux = spectrum.surface_flux_lambda
     edge = np.abs(wavelength - center) >= 300.0
