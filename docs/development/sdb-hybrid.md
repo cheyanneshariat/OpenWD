@@ -80,10 +80,51 @@ rescaling.
     20-30 kK and about 2x deeper at 40 kK. Balmer cores are substantially
     deeper than LTE at 35-40 kK.
 
+## Metals (trace NLTE on the fixed hybrid host)
+
+`research/sdb_trace_metals.py` adds metals to a finished hybrid model with the
+hot-DA/DAO fixed-host solver (`solve_hot_trace_metals`). The H/He structure and
+populations stay fixed.
+
+- **NLTE elements: C, N, O, Si, S.** Stout atoms sized to reach the standard
+  sdB optical lines. C II uses 200 levels for the 5133-45 quartets and Si III
+  uses 62 for 4813-29. Collisions come from bundled CHIANTI data for C II-IV and
+  O III, and from the built-in approximation elsewhere. MALI preconditioning
+  is on.
+- **LTE line opacity in the fixed background: Fe, Mg, Al**
+  (`--lte-abundance`). Compact Fe III/IV atoms contain only forbidden 3d^n
+  lines. The optical Fe III 4s-4p lines need a 410-level Fe III atom
+  (60 s per iteration), so iron follows the hybrid (ADS) convention of LTE
+  metals.
+- **`mali_overlap_velocity`** (new opt-in option of `solve_hot_trace_metals`,
+  default off). Lines within this velocity of another element's line are not
+  preconditioned. S III 702.78/702.82 on O III 702.84 made the 30 kK,
+  log g 5.3 model flip-flop for 80 iterations. With 15 km/s (the driver
+  default) it converges, and the fixed point is unchanged.
+
+Validation, at fixed published parameters with no abundances fitted:
+
+- **HD 4539** (Geier 2013 C): the C II 3920/4267/6578/6583 depths match to
+  within 0.02.
+- **Feige 38** (Schneider 2018 parameters, Geier 2013 abundances): N II, O II,
+  Si III 4813-29 and Fe III 4164 lines match to within 0.01-0.02 in depth.
+  Si III 4552-75 and S III reach about 75% and Si IV about 55% of the observed
+  depth. C III is weak there, partly blended and partly in a pixel gap.
+- **Typical-metal grid** (`research/sdb_metal_grid.sh`,
+  `research/sdb_grid_plot_spectra.py --models metals`). The abundances are
+  the Geier (2013) sample medians. All 12 hosts converge from LTE metal
+  populations in 35-73 iterations (6-10 min).
+- **Blanketing check** (`research/sdb_blanketing_check.py`, LTE DA vs DAZ). At
+  Feige 38, metal opacity heats the structure by 1.6-2.4% at fixed column
+  mass. Rerunning on that structure changes metal-line depths by <= 0.01,
+  except Si IV, which strengthens toward the observed value. Blanketing
+  therefore stays opt-in.
+
 ## Limitations and next steps
 
-- No metals in the structure or line formation yet (next step). Iron-group
-  blanketing needs Fe III-VI line opacity in the LTE structure.
+- Metals are not in the default structure. A blanketed structure (LTE DAZ
+  T(m) with the H/He EOS) is a manual, helium-poor-only option, not yet
+  checked at the grid corners.
 - In both He I atoms, n = 5 is a superlevel coupled to n = 4 by
   Van Regemorter-type closures.
 - Radiation pressure is not included in the hydrostatics. It is negligible

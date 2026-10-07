@@ -20,6 +20,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from wd_spectra._compat import trapezoid
+
 from sdb_compare_hd4539 import gaussian_convolve, vacuum_to_air
 from sdb_grid_plot_spectra import SERIES, INK, INK_MUTED, GRID
 
@@ -63,7 +65,7 @@ def equivalent_width_mA(wave, flux, background, line):
     """EW against the fixed background (H/He host plus LTE Mg/Al/Fe), which removes the H/He
     line under a metal line (NLTE-metal lines only: the LTE Mg/Al/Fe lines are in it)."""
     window = np.abs(wave - line) <= 0.6
-    return 1e3 * np.trapz(1.0 - flux[window] / background[window], wave[window])
+    return 1e3 * trapezoid(1.0 - flux[window] / background[window], wave[window])
 
 
 def main():
