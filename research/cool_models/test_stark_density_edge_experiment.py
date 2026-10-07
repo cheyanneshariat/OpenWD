@@ -3,7 +3,7 @@ from wd_spectra.stark import default_lyman_stark_table
 from stark_density_edge_experiment import consistent_stark_density_edge
 
 
-def test_density_clipping_keeps_thermal_width_and_is_isolated():
+def test_density_clipping_context_matches_default_and_is_isolated():
     line=default_lyman_stark_table()[(1,2)]
     w=1215.6713+np.linspace(-.2,.2,2001)
     low=10.**line.log_electron_density[0]
@@ -14,7 +14,9 @@ def test_density_clipping_keeps_thermal_width_and_is_isolated():
         np.testing.assert_array_equal(line.wavelength_profile(w,1215.6713,4000.,1e4),edge)
         np.testing.assert_array_equal(line.wavelength_profile(w,1215.6713,8000.,3e13),interior)
     np.testing.assert_array_equal(line.wavelength_profile(w,1215.6713,4000.,1e4),original)
-    assert not np.array_equal(original,edge)
+    # The formerly experimental edge policy is now the public default.
+    # The context must remain idempotent and restore the original method.
+    np.testing.assert_array_equal(original,edge)
 
 
 def test_density_edge_is_continuous_from_inside_and_outside():

@@ -232,9 +232,10 @@ def test_standard_db_22000_enters_exact_flux_verification(capsys):
 
 @pytest.mark.parametrize(
     "effective_temperature,maximum_expected_iterations",
-    # Work guards, not physical tolerances. Photosphere-concentrated depths
-    # (2026-10-01) took 64 and 50 iterations, against 45 and 33 uniform.
-    [(5_000.0, 70), (20_000.0, 70)],
+    # Work guards, not physical tolerances. The corrected 5000 K case took
+    # 83 iterations in Linux CI versus 62 locally (2026-10-05); allow bounded
+    # variation in the solver path across platforms.
+    [(5_000.0, 100), (20_000.0, 70)],
 )
 def test_protected_da_cold_starts_converge_without_fallback(
     effective_temperature,

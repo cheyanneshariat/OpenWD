@@ -1,4 +1,4 @@
-"""Conservative CI selection; unknown paths require full qualification."""
+"""Conservative CI selection for PR regression checks and full cold runs."""
 
 import json
 import os
@@ -28,6 +28,8 @@ def requires_full(paths):
                 "test_released_family_canaries.py",
                 "test_dah_paper.py",
                 "test_radiative_da_convergence.py",
+                "test_d6_regression.py",
+                "d6_regression_support.py",
             }
         ):
             continue
@@ -50,6 +52,11 @@ def plan(event_name, event, paths):
         label["name"] == "full-validation" for label in pr["labels"]
     )
     return required, requested
+
+
+def selected_cold_cases(event_name, cases):
+    """Only PRs replace J1637 cold convergence with its warm regression."""
+    return [case for case in cases if event_name != "pull_request" or case != "d6-j1637"]
 
 
 def main():
@@ -78,10 +85,17 @@ def main():
         )
         paths = [path for path in paths if path]
     required, requested = plan(os.environ["GITHUB_EVENT_NAME"], event, paths)
-    print(json.dumps(dict(required=required, requested=requested, changed=paths)))
+    from validate import COLD
+
+    # PRs use J1637's bounded warm regression. Scheduled/manual runs retain
+    # its full cold start; neither mode borrows a previous qualification pass.
+    cold_cases = selected_cold_cases(os.environ["GITHUB_EVENT_NAME"], COLD)
+    print(json.dumps(dict(required=required, requested=requested, changed=paths,
+                         cold_cases=cold_cases)))
     with open(os.environ["GITHUB_OUTPUT"], "a") as stream:
         stream.write(f"required={str(required).lower()}\n")
         stream.write(f"requested={str(requested).lower()}\n")
+        stream.write("cold_cases=" + json.dumps(cold_cases) + "\n")
 
 
 if __name__ == "__main__":

@@ -4555,7 +4555,10 @@ def atmosphere_with_metal_electrons(
             singly_ionized_he_density=np.asarray(host[1]),
             doubly_ionized_he_density=np.asarray(host[2]),
             electron_density=np.asarray(metal_state.electron_density),
-            mean_ion_charge=np.asarray((host[1] + 2.0 * host[2]) / helium_state.helium_nuclei_density),
+            mean_ion_charge=np.asarray(
+                (host[1] + 2.0 * host[2])
+                / np.maximum(np.sum(host, axis=0), np.finfo(np.float64).tiny)
+            ),
             neutral_level_population_density=np.asarray(
                 helium_state.neutral_level_population_density * neutral_scale[:, np.newaxis]
             ),
