@@ -101,6 +101,12 @@ def main():
     parser.add_argument('--lte-abundance', action='append', default=[],
                         help='ELEMENT=log10 N/N(H) added as LTE line opacity of all its ions (e.g. Fe=-4.8)')
     parser.add_argument('--lte-minimum-oscillator-strength', type=float, default=1e-4)
+    parser.add_argument('--damping', type=float, default=0.5, help='solver mixing (solve_hot_trace_metals default 0.5)')
+    parser.add_argument('--acceleration-depth', type=int, default=6, help='Anderson history (0: none)')
+    parser.add_argument('--no-accelerated-lambda', action='store_true', help='plain Lambda iteration (diagnostic)')
+    parser.add_argument('--mali-overlap-velocity', type=float, default=15.0,
+                        help='km/s; no MALI for lines this close to another element\'s line (0: off). '
+                             'Needed at 30 kK, log g 5.3 (S III 702.8 on O III 702.8)')
     parser.add_argument('--levels', action='append', default=[],
                         help='override an atom size, ELEMENT:CHARGE=COUNT (e.g. C:1=200)')
     args = parser.parse_args()
@@ -162,6 +168,14 @@ def main():
 
     def background(wave):
         base = model.transfer_coefficients(atmosphere, wave, state)
+        # The metal edges extend the grid to ~5 A, where the host emissivity
+        # underflows and can carry a sign (seen: -2e-301 at 6.55 A).  Zero such
+        # roundoff values; any negative above 1e-30 of the depth's largest
+        # emissivity is a real error and is left for the solver to reject.
+        emission = base.thermal_emissivity
+        roundoff = (emission < 0) & (-emission < 1e-30 * np.max(np.abs(emission), axis=0))
+        if roundoff.any():
+            base = replace(base, thermal_emissivity=np.where(roundoff, 0.0, emission))
         if not lte_abundances:
             return base
         # Line opacity only: the bound-free edges of trace Fe lie in the EUV.
@@ -175,7 +189,9 @@ def main():
     result = solve_hot_trace_metals(
         atmosphere, background, abundances, wavelength,
         data=data, atomic_database=database, levels_per_charge=counts, photoionization_threshold_data=thresholds,
-        collision_data=collisions, accelerated_lambda=True, maximum_iterations=args.maximum_iterations,
+        collision_data=collisions, accelerated_lambda=not args.no_accelerated_lambda,
+        damping=args.damping, acceleration_depth=args.acceleration_depth,
+        mali_overlap_velocity=args.mali_overlap_velocity or None, maximum_iterations=args.maximum_iterations,
         n_angle=model.n_angle, require_convergence=False, iteration_callback=progress,
         # Solar-like sdB carbon is ~0.14% by mass: it changes the host's mean
         # molecular weight and electron density by <0.2%, negligible for the

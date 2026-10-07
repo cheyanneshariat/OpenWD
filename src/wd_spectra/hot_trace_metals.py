@@ -183,6 +183,18 @@ def _atom_selection(database, element, counts):
     return transitions, bf_counts
 
 
+def _cross_element_overlaps(line_wavelength, velocity_kms):
+    """Keys of lines whose centre is within ``velocity_kms`` of another element's line."""
+    items = sorted(line_wavelength.items(), key=lambda item: item[1])
+    centres = np.array([wavelength for _, wavelength in items])
+    elements = np.array([key[0] for key, _ in items])
+    half = centres * velocity_kms / (LIGHT_SPEED * 1e-5)
+    lower = np.searchsorted(centres, centres - half)
+    upper = np.searchsorted(centres, centres + half, side='right')
+    return frozenset(key for index, (key, _) in enumerate(items)
+                     if np.any(elements[lower[index]:upper[index]] != key[0]))
+
+
 def _diagonal_lambda_operator(atmosphere, coefficients, n_angle):
     """Diagonal Lambda* of the current extinction (two-stream sweep).
 
@@ -324,6 +336,7 @@ def solve_hot_trace_metals(
     collision_data=None,
     total_recombination=None,
     accelerated_lambda: bool = False,
+    mali_overlap_velocity: float | None = None,
     convergence_criterion: str = "population",
     profile_block_tolerance: float = 1e-4,
     opacity_check_gate: float | None = 3.0,
@@ -366,6 +379,13 @@ def solve_hot_trace_metals(
     approximate lambda operator of the current radiation field (MALI, as in
     the PG 1159 populations). It changes the iteration path, not the fixed
     point or the convergence test.
+    ``mali_overlap_velocity`` (km/s; default None: off) withholds that
+    preconditioning from every line whose centre lies within this velocity of
+    a line of a *different* element.  There the field is shared with the other
+    species' source function, so a single-line diagonal operator over-corrects:
+    S III 702.78/702.82 on O III 702.84 made a 30 kK, log g 5.3 sdB model
+    flip-flop.  Those lines take the ordinary Lambda step; the fixed point is
+    unchanged.
     ``convergence_criterion="opacity"`` tests the undamped fixed-point
     residual in the quantities that enter the transfer: the change in metal
     absorption/emissivity produced by the proposed populations, relative to the
@@ -406,6 +426,8 @@ def solve_hot_trace_metals(
             or not np.isfinite(damping) or not 0 < damping <= 1
             or isinstance(acceleration_depth, bool) or not isinstance(acceleration_depth, int)
             or acceleration_depth < 0
+            or (mali_overlap_velocity is not None and not (np.isfinite(mali_overlap_velocity)
+                                                         and mali_overlap_velocity > 0))
             or isinstance(n_angle, bool) or not isinstance(n_angle, int) or n_angle < 1):
         raise ValueError("invalid iteration, tolerance, damping or angular settings")
     if set(abundances) - set(ATOMIC_NUMBER) or any(
@@ -500,6 +522,10 @@ def solve_hot_trace_metals(
         (e, charge, line.lower_index, line.upper_index): line.wavelength_vacuum_angstrom
         for e in abundances for charge in sorted(counts[e])
         for line in database.ions[e, charge].transitions}
+    overlapping_lines = frozenset() if mali_overlap_velocity is None else _cross_element_overlaps(
+        {key: line_wavelength[key] for e in abundances for key in selection[e][0]}, mali_overlap_velocity)
+    metadata['mali_overlap_velocity'] = mali_overlap_velocity
+    metadata['mali_overlap_excluded_lines'] = len(overlapping_lines)
     states = {} if initial_populations is None else {
         e:_initial_state(atmosphere,database,reference,e,counts[e],initial_populations.get(e)) for e in abundances}
     history = []
@@ -545,7 +571,8 @@ def solve_hot_trace_metals(
                 index = int(np.clip(np.searchsorted(pop_wave, line_wavelength[key]), 1, len(pop_wave)-1))
                 if abs(pop_wave[index-1]-line_wavelength[key]) < abs(pop_wave[index]-line_wavelength[key]):
                     index -= 1
-                line_fraction[key] = value / np.maximum(total[index], 1e-300)
+                if key not in overlapping_lines:
+                    line_fraction[key] = value / np.maximum(total[index], 1e-300)
             del total
         proposals = {e: solve_reduced_light_metal_levels_nlte(
             atmosphere, database, reference, photo, pop_wave, radiation.mean_intensity,

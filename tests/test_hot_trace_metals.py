@@ -276,6 +276,32 @@ def test_accelerated_lambda_changes_path_not_fixed_point(atoms):
                                plain.spectrum.surface_flux_lambda, rtol=1e-5)
 
 
+def test_cross_element_overlaps_pairs_only_different_elements(atoms):
+    from wd_spectra.hot_trace_metals import _cross_element_overlaps
+    lines = {("S", 2, 3, 21): 702.779, ("S", 2, 3, 20): 702.818, ("O", 2, 2, 12): 702.838,
+             ("C", 2, 1, 5): 977.02, ("C", 2, 2, 6): 977.03}
+    # 15 km/s at 702.8 A is 0.035 A: O III reaches S III 702.818 only.
+    assert _cross_element_overlaps(lines, 15.) == {("S", 2, 3, 20), ("O", 2, 2, 12)}
+    assert _cross_element_overlaps(lines, 30.) == {("S", 2, 3, 21), ("S", 2, 3, 20), ("O", 2, 2, 12)}
+    with pytest.raises(ValueError):
+        _thick_case(atoms, mali_overlap_velocity=0.)
+
+
+@pytest.mark.canary
+def test_mali_overlap_exclusion_changes_path_not_fixed_point(atoms):
+    ali = _thick_case(atoms, tolerance=1e-6, acceleration_depth=6, accelerated_lambda=True)
+    # A velocity spanning the whole window withholds preconditioning from every
+    # line: the plain iteration's fixed point must be recovered.
+    excluded = _thick_case(atoms, tolerance=1e-6, acceleration_depth=6, accelerated_lambda=True,
+                           mali_overlap_velocity=1e5)
+    assert ali.converged and excluded.converged
+    assert ali.metadata["mali_overlap_excluded_lines"] == 0
+    assert excluded.metadata["mali_overlap_excluded_lines"] > 0
+    for element in ("C", "Si"):
+        np.testing.assert_allclose(excluded.populations[element].population_density,
+                                   ali.populations[element].population_density, rtol=2e-4)
+
+
 @pytest.mark.canary
 def test_opacity_criterion_tracks_tight_population_solution(atoms):
     reference = _thick_case(atoms, tolerance=1e-8, acceleration_depth=6, accelerated_lambda=True)

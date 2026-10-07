@@ -2,9 +2,12 @@
 """Plot the optical spectra of finished sdB grid models (hybrid NLTE H/He).
 
     python research/sdb_grid_plot_spectra.py results/sdb/grid --output results/sdb/grid/spectra-so-far.png
+    python research/sdb_grid_plot_spectra.py results/sdb/grid --models metals --output results/sdb/grid/spectra-metals.png
 
-Top: continuum-normalized 3700-7000 A spectra at R = 3000, offset vertically,
+Top: continuum-normalized 3700-7000 A spectra (default R = 3000), offset vertically,
 direct-labelled.  Bottom: key lines at R = 10,000 overlaid (NLTE populations).
+``--models metals`` plots the <tag>-metals models of sdb_metal_grid.sh instead
+(typical sdB metals on the same hosts), with metal-line zooms.
 Colour encodes Teff (fixed slot per temperature; the two He-abundance
 points get their own slots); line style encodes log g (solid: lower,
 dotted: higher at that Teff).  The pseudo-continuum is a smoothed upper envelope of the
@@ -13,6 +16,7 @@ model itself (display only; it dips slightly in the high Balmer series).
 from __future__ import annotations
 
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -26,6 +30,8 @@ from sdb_compare_hd4539 import gaussian_convolve, vacuum_to_air
 
 SERIES = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948']
 INK, INK_MUTED, GRID = '#0b0b0b', '#52514e', '#e4e3df'
+METAL_ZOOMS = [('C II 4267', 4267.3, 3), ('He I 4471 / Mg II 4481', 4476.0, 9), ('Si III 4552-75', 4564.0, 14),
+               ('N II / O II / C III 4630-51', 4641.0, 13), ('He II 4686', 4685.70, 6)]
 ZOOMS = [('Hβ', 4861.33, 40), ('He I 4471', 4471.48, 8), ('He II 4686', 4685.70, 6),
          ('He I 5876', 5875.62, 6), ('He I 6678', 6678.15, 6)]
 
@@ -48,10 +54,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('grid', type=Path)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--models', choices=['hybrid', 'metals'], default='hybrid')
+    parser.add_argument('--resolving-power', type=float, default=3000.0, help='overview panel')
     args = parser.parse_args()
-    finished = []
-    for summary in args.grid.glob('*-hybrid/run-summary.json'):
-        tag = summary.parent.name[:-7]
+    zooms = ZOOMS if args.models == 'hybrid' else METAL_ZOOMS
+    finished, skipped = [], []
+    for summary in args.grid.glob(f'*-{args.models}/run-summary.json'):
+        tag = summary.parent.name[:-len(args.models) - 1]
+        if json.loads(summary.read_text()).get('converged', True) is False:
+            skipped.append(tag)
+            continue
         teff, logg, he = (float(x) for x in re.match(r't(\d+)-g([\d.]+)-he([-\d.]+)', tag).groups())
         finished.append((teff, logg, he, summary.parent))
     finished.sort()
@@ -73,18 +85,19 @@ def main():
     plt.rcParams.update({'font.size': 9, 'axes.edgecolor': INK_MUTED, 'axes.labelcolor': INK,
                          'xtick.color': INK_MUTED, 'ytick.color': INK_MUTED})
     figure = plt.figure(figsize=(11, 4.0 + 0.55 * len(finished)))
-    grid = figure.add_gridspec(2, len(ZOOMS), height_ratios=[1.6 + 0.25 * len(finished), 1.0], hspace=0.42, wspace=0.28)
+    grid = figure.add_gridspec(2, len(zooms), height_ratios=[1.6 + 0.25 * len(finished), 1.0], hspace=0.42, wspace=0.28)
     overview = figure.add_subplot(grid[0, :])
     offset = 0.45
     for index, (teff, logg, he, directory) in enumerate(finished):
         colour = colour_of[(teff, he)]
-        wave, flux = load(directory / 'spectrum.npz', 3000.0)
+        wave, flux = load(directory / 'spectrum.npz', args.resolving_power)
         shift = offset * (len(finished) - 1 - index)
         overview.plot(wave, continuum_normalized(wave, flux) + shift, color=colour, lw=1.0)
         overview.text(7120, 1.0 + shift, f'{teff/1e3:.0f} kK, log g {logg:.1f}, log He/H {he:+.1f}',
                       color=INK, fontsize=8, va='center')
-    for name, centre in [('Hδ', 4101.7), ('Hγ', 4340.5), ('Hβ', 4861.3), ('Hα', 6562.8), ('He I 4026', 4026.2),
-                         ('4471', 4471.5), ('He II 4686', 4685.7), ('4922', 4921.9), ('5876', 5875.6), ('6678', 6678.2)]:
+    markers = [('Hδ', 4101.7), ('Hγ', 4340.5), ('Hβ', 4861.3), ('Hα', 6562.8), ('He I 4026', 4026.2),
+               ('4471', 4471.5), ('He II 4686', 4685.7), ('4922', 4921.9), ('5876', 5875.6), ('6678', 6678.2)]
+    for name, centre in markers:
         overview.axvline(centre, color=GRID, lw=0.8, zorder=0)
         overview.text(centre, 1.12 + offset * (len(finished) - 1), name, rotation=90, fontsize=7,
                       color=INK_MUTED, ha='center', va='bottom')
@@ -92,12 +105,14 @@ def main():
     overview.set_ylim(0.35, 1.12 + offset * (len(finished) - 1) + 0.45)
     overview.set_xlabel('Air wavelength (Å)')
     overview.set_ylabel('Normalized flux + offset')
-    overview.set_title('sdB grid, hybrid NLTE H+He (LTE structure + MALI populations), R = 3000',
+    overview.set_title(('sdB grid, hybrid NLTE H+He (LTE structure + MALI populations)' if args.models == 'hybrid' else
+                        'sdB grid, hybrid NLTE H+He + typical metals (Geier 2013 medians; NLTE C N O Si S, '
+                        'LTE Mg Al Fe; no blanketing)') + f', R = {args.resolving_power:.0f}',
                        color=INK, fontsize=10, loc='left')
     for side in ('top', 'right'):
         overview.spines[side].set_visible(False)
 
-    for column, (name, centre, half) in enumerate(ZOOMS):
+    for column, (name, centre, half) in enumerate(zooms):
         axis = figure.add_subplot(grid[1, column])
         for index, (teff, logg, he, directory) in enumerate(finished):
             colour = colour_of[(teff, he)]
@@ -124,8 +139,11 @@ def main():
                   bbox_to_anchor=(0.5, -0.06))
     figure.text(0.99, 0.005, 'line zooms: NLTE populations, R = 10,000; colour = Teff, solid/dotted = lower/higher log g',
                 ha='right', fontsize=7, color=INK_MUTED)
+    if skipped:
+        figure.text(0.01, 0.005, 'not converged, omitted: ' + ', '.join(sorted(skipped)), ha='left', fontsize=7,
+                    color=INK_MUTED)
     figure.savefig(args.output, dpi=130, bbox_inches='tight')
-    print(f'wrote {args.output} ({len(finished)} models)')
+    print(f'wrote {args.output} ({len(finished)} models; omitted unconverged: {sorted(skipped)})')
 
 
 if __name__ == '__main__':
