@@ -247,6 +247,7 @@ class HeavyLines:
             absorption[lo:hi] += (CLASSICAL_CROSS_SECTION * 10 ** line['log_gf'] / line['lower_weight']
                                   * (lower * stimulated / density)[None, :] * profile)
         wave_cm = wave[:, None] * 1e-8
-        planck = (2 * PLANCK * LIGHT_SPEED ** 2 / wave_cm ** 5 * 1e-8
-                  / np.expm1(PLANCK * LIGHT_SPEED / (wave_cm * BOLTZMANN * temperature[None, :])))
+        # The exponent is capped: B is then ~1e-300 relative, i.e. zero, without overflow.
+        exponent = np.minimum(PLANCK * LIGHT_SPEED / (wave_cm * BOLTZMANN * temperature[None, :]), 700.0)
+        planck = 2 * PLANCK * LIGHT_SPEED ** 2 / wave_cm ** 5 * 1e-8 / np.expm1(exponent)
         return absorption, absorption * planck

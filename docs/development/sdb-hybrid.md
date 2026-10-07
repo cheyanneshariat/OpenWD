@@ -96,11 +96,18 @@ populations stay fixed.
   lines. The optical Fe III 4s-4p lines need a 410-level Fe III atom
   (60 s per iteration), so iron follows the hybrid (ADS) convention of LTE
   metals.
-- **`mali_overlap_velocity`** (new opt-in option of `solve_hot_trace_metals`,
-  default off). Lines within this velocity of another element's line are not
-  preconditioned. S III 702.78/702.82 on O III 702.84 made the 30 kK,
-  log g 5.3 model flip-flop for 80 iterations. With 15 km/s (the driver
-  default) it converges, and the fixed point is unchanged.
+- **`mali_overlap_velocity` / `mali_overlap_mode`** (new opt-in options of
+  `solve_hot_trace_metals`, default off). For each pair of lines of different
+  elements within this velocity, a line keeps its MALI operator only at
+  depths where its share of the line-centre extinction exceeds the other's by
+  10x (`mode="subordinate"`, fixed at the first preconditioned iteration);
+  comparable lines both lose it. S III 702.78/702.82 on O III 702.84 made the
+  30 kK, log g 5.3 model flip-flop; withholding the operator from every
+  overlapping line (`mode="exclude"`) fixed that but left saturated lines such
+  as N III 685.8 (next to a weak Si line) on the slow ordinary iteration, so
+  LS IV-14 116 stalled at a defect of 1.2e-3. The driver uses 15 km/s and
+  `subordinate`: both cases converge (LS IV-14 116 in 41 iterations). The
+  fixed point is unchanged.
 
 Validation, at fixed published parameters with no abundances fitted:
 

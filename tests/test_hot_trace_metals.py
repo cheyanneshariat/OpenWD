@@ -287,6 +287,29 @@ def test_cross_element_overlaps_pairs_only_different_elements(atoms):
         _thick_case(atoms, mali_overlap_velocity=0.)
 
 
+def test_cross_element_overlap_pairs():
+    from wd_spectra.hot_trace_metals import _cross_element_overlap_pairs
+    lines = {("S", 2, 3, 21): 702.779, ("S", 2, 3, 20): 702.818, ("O", 2, 2, 12): 702.838,
+             ("C", 2, 1, 5): 977.02, ("C", 2, 2, 6): 977.03}
+    assert _cross_element_overlap_pairs(lines, 15.) == [(("S", 2, 3, 20), ("O", 2, 2, 12))]
+    assert len(_cross_element_overlap_pairs(lines, 30.)) == 2
+
+
+@pytest.mark.canary
+def test_mali_subordinate_overlap_changes_path_not_fixed_point(atoms):
+    ali = _thick_case(atoms, tolerance=1e-6, acceleration_depth=6, accelerated_lambda=True)
+    subordinate = _thick_case(atoms, tolerance=1e-6, acceleration_depth=6, accelerated_lambda=True,
+                              mali_overlap_velocity=1e5, mali_overlap_mode="subordinate")
+    assert ali.converged and subordinate.converged
+    assert subordinate.metadata["mali_overlap_pairs"] > 0
+    assert subordinate.metadata["mali_overlap_excluded_lines"] == 0
+    for element in ("C", "Si"):
+        np.testing.assert_allclose(subordinate.populations[element].population_density,
+                                   ali.populations[element].population_density, rtol=2e-4)
+    with pytest.raises(ValueError):
+        _thick_case(atoms, mali_overlap_mode="both")
+
+
 @pytest.mark.canary
 def test_mali_overlap_exclusion_changes_path_not_fixed_point(atoms):
     ali = _thick_case(atoms, tolerance=1e-6, acceleration_depth=6, accelerated_lambda=True)

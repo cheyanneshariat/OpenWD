@@ -110,6 +110,10 @@ def main():
                         help='ELEMENT=log10 N/N(H) for Z > 30 (sdb_heavy_lines.py: LTE, Kurucz/literature lines)')
     parser.add_argument('--damping', type=float, default=0.5, help='solver mixing (solve_hot_trace_metals default 0.5)')
     parser.add_argument('--acceleration-depth', type=int, default=6, help='Anderson history (0: none)')
+    parser.add_argument('--mali-overlap-mode', choices=['subordinate', 'exclude'], default='subordinate',
+                        help='overlapping lines: no MALI for the subordinate line of each pair (default) or for both')
+    parser.add_argument('--profile-block-tolerance', type=float, default=1e-4,
+                        help='line-profile block quadrature in the rate equations (0: exact)')
     parser.add_argument('--no-accelerated-lambda', action='store_true', help='plain Lambda iteration (diagnostic)')
     parser.add_argument('--mali-overlap-velocity', type=float, default=15.0,
                         help='km/s; no MALI for lines this close to another element\'s line (0: off). '
@@ -212,7 +216,8 @@ def main():
         data=data, atomic_database=database, levels_per_charge=counts, photoionization_threshold_data=thresholds,
         collision_data=collisions, accelerated_lambda=not args.no_accelerated_lambda,
         damping=args.damping, acceleration_depth=args.acceleration_depth,
-        mali_overlap_velocity=args.mali_overlap_velocity or None, maximum_iterations=args.maximum_iterations,
+        mali_overlap_velocity=args.mali_overlap_velocity or None, profile_block_tolerance=args.profile_block_tolerance,
+        mali_overlap_mode=args.mali_overlap_mode, maximum_iterations=args.maximum_iterations,
         n_angle=model.n_angle, require_convergence=False, iteration_callback=progress,
         # Solar-like sdB carbon is ~0.14% by mass: it changes the host's mean
         # molecular weight and electron density by <0.2%, negligible for the
@@ -230,7 +235,8 @@ def main():
         population_defect=float(result.population_defect), elapsed_seconds=time.monotonic() - start,
         chianti_collision_pairs={k: v['selected_pairs'] for k, v in audit.items()}, history=history,
         element_population_defect_history=result.metadata.get('element_population_defect_history'),
-        worst_population_defect=result.metadata.get('worst_population_defect')),
+        worst_population_defect=result.metadata.get('worst_population_defect'),
+        accelerated_updates=result.metadata.get('accelerated_updates')),
         indent=2, default=str) + '\n')
     print(f'converged={result.converged} iterations={result.iterations} defect={result.population_defect:.3g} '
           f'({time.monotonic() - start:.0f} s)', flush=True)

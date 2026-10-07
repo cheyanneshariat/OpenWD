@@ -58,6 +58,10 @@ _LOGGER = logging.getLogger(__name__)
 # photospheric levels (e.g. Si VI holding 1.4e-5 of Si) are still flagged.
 POPULATION_DEFECT_FLOOR = 1e-6
 POPULATION_DEFECT_MINIMUM_TAU = 1e-6
+# mali_overlap_mode="subordinate": a line keeps its operator next to a foreign
+# line only where the foreign line's share of the line-centre extinction is
+# below this fraction of its own.
+MALI_DOMINANCE_RATIO = 0.1
 
 # Default largest relative change of the emergent flux allowed by the
 # undamped update under convergence_criterion="flux".
@@ -193,6 +197,15 @@ def _cross_element_overlaps(line_wavelength, velocity_kms):
     upper = np.searchsorted(centres, centres + half, side='right')
     return frozenset(key for index, (key, _) in enumerate(items)
                      if np.any(elements[lower[index]:upper[index]] != key[0]))
+
+
+def _cross_element_overlap_pairs(line_wavelength, velocity_kms):
+    """(key, key) pairs of lines of different elements whose centres lie within ``velocity_kms``."""
+    items = sorted(line_wavelength.items(), key=lambda item: item[1])
+    centres = np.array([wavelength for _, wavelength in items])
+    upper = np.searchsorted(centres, centres * (1 + velocity_kms / (LIGHT_SPEED * 1e-5)), side='right')
+    return [(items[i][0], items[j][0]) for i in range(len(items)) for j in range(i + 1, upper[i])
+            if items[j][0][0] != items[i][0][0]]
 
 
 def _diagonal_lambda_operator(atmosphere, coefficients, n_angle):
@@ -337,6 +350,7 @@ def solve_hot_trace_metals(
     total_recombination=None,
     accelerated_lambda: bool = False,
     mali_overlap_velocity: float | None = None,
+    mali_overlap_mode: str = "exclude",
     convergence_criterion: str = "population",
     profile_block_tolerance: float = 1e-4,
     opacity_check_gate: float | None = 3.0,
@@ -385,7 +399,15 @@ def solve_hot_trace_metals(
     species' source function, so a single-line diagonal operator over-corrects:
     S III 702.78/702.82 on O III 702.84 made a 30 kK, log g 5.3 sdB model
     flip-flop.  Those lines take the ordinary Lambda step; the fixed point is
-    unchanged.
+    unchanged.  ``mali_overlap_mode="subordinate"`` withholds the operator,
+    at each depth, only from the line of an overlapping pair with the smaller
+    share of the line-centre extinction at the first preconditioned iteration
+    (then held fixed), and from both where the two shares are within a factor
+    ``1/MALI_DOMINANCE_RATIO``; a clearly dominant line controls the local
+    field and keeps its operator.  Withholding it from both ("exclude") also
+    strips strongly thick lines next to a weak foreign line (N III 685.8 next
+    to a silicon line at log N/N(H) = -6), leaving them on the slow ordinary
+    iteration.
     ``convergence_criterion="opacity"`` tests the undamped fixed-point
     residual in the quantities that enter the transfer: the change in metal
     absorption/emissivity produced by the proposed populations, relative to the
@@ -426,6 +448,7 @@ def solve_hot_trace_metals(
             or not np.isfinite(damping) or not 0 < damping <= 1
             or isinstance(acceleration_depth, bool) or not isinstance(acceleration_depth, int)
             or acceleration_depth < 0
+            or mali_overlap_mode not in ("exclude", "subordinate")
             or (mali_overlap_velocity is not None and not (np.isfinite(mali_overlap_velocity)
                                                          and mali_overlap_velocity > 0))
             or isinstance(n_angle, bool) or not isinstance(n_angle, int) or n_angle < 1):
@@ -522,8 +545,14 @@ def solve_hot_trace_metals(
         (e, charge, line.lower_index, line.upper_index): line.wavelength_vacuum_angstrom
         for e in abundances for charge in sorted(counts[e])
         for line in database.ions[e, charge].transitions}
-    overlapping_lines = frozenset() if mali_overlap_velocity is None else _cross_element_overlaps(
-        {key: line_wavelength[key] for e in abundances for key in selection[e][0]}, mali_overlap_velocity)
+    selected_wavelength = {key: line_wavelength[key] for e in abundances for key in selection[e][0]}
+    overlap_pairs = ([] if mali_overlap_velocity is None or mali_overlap_mode != "subordinate"
+                     else _cross_element_overlap_pairs(selected_wavelength, mali_overlap_velocity))
+    overlapping_lines = (frozenset() if mali_overlap_velocity is None or mali_overlap_mode != "exclude"
+                         else _cross_element_overlaps(selected_wavelength, mali_overlap_velocity))
+    metadata['mali_overlap_mode'] = mali_overlap_mode
+    subordinate = None
+    metadata['mali_overlap_pairs'] = len(overlap_pairs)
     metadata['mali_overlap_velocity'] = mali_overlap_velocity
     metadata['mali_overlap_excluded_lines'] = len(overlapping_lines)
     states = {} if initial_populations is None else {
@@ -574,6 +603,26 @@ def solve_hot_trace_metals(
                 if key not in overlapping_lines:
                     line_fraction[key] = value / np.maximum(total[index], 1e-300)
             del total
+            if overlap_pairs:
+                # Decide once (first preconditioned iteration) which line of each
+                # pair is subordinate at each depth; re-deciding every iteration
+                # switches operators on and off where the shares are close, and
+                # the iteration then wanders (O III 702.84 / S III 702.82).
+                if subordinate is None:
+                    subordinate = {}
+                    for first, second in overlap_pairs:
+                        if first in line_fraction and second in line_fraction:
+                            a, b = line_fraction[first], line_fraction[second]
+                            # Comparable shares: neither line controls the field, so
+                            # neither keeps its single-line operator.
+                            comparable = np.minimum(a, b) >= MALI_DOMINANCE_RATIO * np.maximum(a, b)
+                            mask_first = (a < b) | comparable
+                            mask_second = (b < a) | comparable
+                            subordinate[first] = subordinate.get(first, False) | mask_first
+                            subordinate[second] = subordinate.get(second, False) | mask_second
+                for key, mask in subordinate.items():
+                    if key in line_fraction:
+                        line_fraction[key] = np.where(mask, 0.0, line_fraction[key])
         proposals = {e: solve_reduced_light_metal_levels_nlte(
             atmosphere, database, reference, photo, pop_wave, radiation.mean_intensity,
             e, counts[e],photoionization_threshold_data=thresholds.get(e),

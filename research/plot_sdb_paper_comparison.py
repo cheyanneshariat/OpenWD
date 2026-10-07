@@ -41,7 +41,9 @@ XSHOOTER_BANDS = ((3800.0, 4800.0), (4800.0, 5800.0), (5800.0, 6800.0))
 TARGETS = {
     'hd4539': dict(name='HD 4539', source='Schneider et al. 2018; Geier 2013', instrument='X-shooter',
                    observation=OBS / 'hd4539', power=(9861., 18340.), split=5500., velocity=-3.0,
-                   masks=XSHOOTER_MASKS, bands=XSHOOTER_BANDS),
+                   masks=XSHOOTER_MASKS, bands=XSHOOTER_BANDS,
+                   # Interstellar Ca II K, H and Na D2, D1 (observed frame, air A).
+                   interstellar=(3933.66, 3968.47, 5889.95, 5895.92)),
     'feige38': dict(name='Feige 38', source='Schneider et al. 2018; Geier 2013', instrument='X-shooter',
                     observation=OBS / 'feige38', power=(9861., 18340.), split=5500., velocity=8.5,
                     masks=XSHOOTER_MASKS, bands=XSHOOTER_BANDS),
@@ -153,6 +155,61 @@ def predicted(model_spectrum, target, observed_air):
     return out
 
 
+def prepare(key, models, normalize, maximum_defect=None):
+    """Observed and predicted spectra of one target on the observed grid (vacuum A), normalized
+    per contiguous segment; NaN breaks at gaps; 'clean'/'telluric' split the observation."""
+    target = TARGETS[key]
+    model_dir = models / f'{key}-metals'
+    summary = json.loads((model_dir / 'run-summary.json').read_text())
+    if not summary['converged'] and not (maximum_defect and summary['population_defect'] <= maximum_defect):
+        raise SystemExit(f'{key}: metal populations not converged (defect {summary["population_defect"]:.3g})')
+    host = summary['host']
+    air, observed = observation(target)
+    model = predicted(model_dir / 'spectrum.npz', target, air)
+    wave = air_to_vacuum(air)
+    use = (wave >= LIMITS[0]) & (wave <= LIMITS[1])
+    wave, observed, model = wave[use], observed[use], model[use]
+    keep = np.ones(wave.size, dtype=bool)
+    for lower, upper in target.get('masks', ()):
+        keep &= ~((air[use] >= lower) & (air[use] <= upper))
+    wave, observed, model = wave[keep], observed[keep], model[keep]
+    # Chip/order gaps (> 20 A) bound the normalization segments; smaller
+    # gaps (masked pixels) only break the plotted line.
+    segments = np.split(np.arange(wave.size), np.flatnonzero(np.diff(wave) > 20.0) + 1)
+    trim = target.get('edge_trim', 0.0)
+    if trim:
+        # Every chip edge inside the display range; not the range limits.
+        keep = np.ones(wave.size, dtype=bool)
+        for segment in segments:
+            w = wave[segment]
+            if w[0] > LIMITS[0] + 1.0:
+                keep[segment[w < w[0] + trim]] = False
+            if w[-1] < LIMITS[1] - 1.0:
+                keep[segment[w > w[-1] - trim]] = False
+        wave, observed, model = wave[keep], observed[keep], model[keep]
+        segments = np.split(np.arange(wave.size), np.flatnonzero(np.diff(wave) > 20.0) + 1)
+    observed = np.concatenate([normalize(wave[s], observed[s]) for s in segments])
+    model = np.concatenate([normalize(wave[s], model[s]) for s in segments])
+    steps = np.diff(wave)
+    gaps = np.flatnonzero(steps > 5 * np.median(steps[steps > 0])) + 1
+    wave, observed, model = (np.insert(a, gaps, np.nan) for a in (wave, observed, model))
+    bands = target.get('bands', BANDS)
+    # Observed flux inside telluric bands in light gray (frame of the plotted spectrum).
+    shift = 1 - target.get('frame_velocity', 0.0) / LIGHT_SPEED_KMS
+    telluric = np.zeros(wave.size, dtype=bool)
+    for lower, upper in TELLURIC_AIR:
+        telluric |= (wave >= air_to_vacuum(lower) * shift) & (wave <= air_to_vacuum(upper) * shift)
+    for line in target.get('interstellar', ()):  # interstellar, not telluric: keep dark
+        telluric &= np.abs(wave - air_to_vacuum(line)) > 1.0
+    clean = np.where(telluric, np.nan, observed)
+    # Overlap one sample at each band edge so the two traces join.
+    edges = np.flatnonzero(np.diff(telluric.astype(int)) != 0)
+    affected = telluric.copy(); affected[edges] = True; affected[np.minimum(edges + 1, wave.size - 1)] = True
+    tell = np.where(affected, observed, np.nan)
+    return dict(target=target, summary=summary, host=host, model_dir=model_dir, wave=wave,
+                observed=observed, model=model, clean=clean, telluric=tell, gaps=gaps)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--models', type=Path, default=ROOT / 'results/sdb/paper')
@@ -188,54 +245,11 @@ def main():
         axes.append([fig.add_subplot(grid[row_index + band, 0]) for band in range(len(BANDS))])
         row_index += len(BANDS) + 1
     for row, key in zip(axes, order):
-        target = TARGETS[key]
-        model_dir = args.models / f'{key}-metals'
-        summary = json.loads((model_dir / 'run-summary.json').read_text())
-        if not summary['converged'] and not (args.maximum_defect and summary['population_defect'] <= args.maximum_defect):
-            raise SystemExit(f'{key}: metal populations not converged (defect {summary["population_defect"]:.3g})')
-        host = summary['host']
-        air, observed = observation(target)
-        model = predicted(model_dir / 'spectrum.npz', target, air)
-        wave = air_to_vacuum(air)
-        use = (wave >= LIMITS[0]) & (wave <= LIMITS[1])
-        wave, observed, model = wave[use], observed[use], model[use]
-        keep = np.ones(wave.size, dtype=bool)
-        for lower, upper in target.get('masks', ()):
-            keep &= ~((air[use] >= lower) & (air[use] <= upper))
-        wave, observed, model = wave[keep], observed[keep], model[keep]
-        # Chip/order gaps (> 20 A) bound the normalization segments; smaller
-        # gaps (masked pixels) only break the plotted line.
-        segments = np.split(np.arange(wave.size), np.flatnonzero(np.diff(wave) > 20.0) + 1)
-        trim = target.get('edge_trim', 0.0)
-        if trim:
-            # Every chip edge inside the display range; not the range limits.
-            keep = np.ones(wave.size, dtype=bool)
-            for segment in segments:
-                w = wave[segment]
-                if w[0] > LIMITS[0] + 1.0:
-                    keep[segment[w < w[0] + trim]] = False
-                if w[-1] < LIMITS[1] - 1.0:
-                    keep[segment[w > w[-1] - trim]] = False
-            wave, observed, model = wave[keep], observed[keep], model[keep]
-            segments = np.split(np.arange(wave.size), np.flatnonzero(np.diff(wave) > 20.0) + 1)
-        observed = np.concatenate([normalize(wave[s], observed[s]) for s in segments])
-        model = np.concatenate([normalize(wave[s], model[s]) for s in segments])
-        steps = np.diff(wave)
-        gaps = np.flatnonzero(steps > 5 * np.median(steps[steps > 0])) + 1
-        wave, observed, model = (np.insert(a, gaps, np.nan) for a in (wave, observed, model))
+        prepared = prepare(key, args.models, normalize, args.maximum_defect)
+        target, summary, host, model_dir = (prepared[k] for k in ('target', 'summary', 'host', 'model_dir'))
+        wave, observed, model, gaps = (prepared[k] for k in ('wave', 'observed', 'model', 'gaps'))
+        clean, tell = prepared['clean'], prepared['telluric']
         bands = target.get('bands', BANDS)
-        # Observed flux inside telluric bands in light gray (frame of the plotted spectrum).
-        shift = 1 - target.get('frame_velocity', 0.0) / LIGHT_SPEED_KMS
-        telluric = np.zeros(wave.size, dtype=bool)
-        for lower, upper in TELLURIC_AIR:
-            telluric |= (wave >= air_to_vacuum(lower) * shift) & (wave <= air_to_vacuum(upper) * shift)
-        for line in target.get('interstellar', ()):  # interstellar, not telluric: keep dark
-            telluric &= np.abs(wave - air_to_vacuum(line)) > 1.0
-        clean = np.where(telluric, np.nan, observed)
-        # Overlap one sample at each band edge so the two traces join.
-        edges = np.flatnonzero(np.diff(telluric.astype(int)) != 0)
-        affected = telluric.copy(); affected[edges] = True; affected[np.minimum(edges + 1, wave.size - 1)] = True
-        tell = np.where(affected, observed, np.nan)
         for ax, (lower, upper) in zip(row, bands):
             ax.plot(wave, clean, color='.30', lw=.50, rasterized=True)
             ax.plot(wave, tell, color='.75', lw=.50, rasterized=True)
@@ -296,7 +310,7 @@ def main():
                       loc='lower right', ncol=2, frameon=False, fontsize=9, handlelength=2.3, columnspacing=1.4)
     fig.supxlabel(r'vacuum wavelength [$\mathrm{\AA}$]', fontsize=11, y=.06 / height)
     fig.supylabel('normalized flux', fontsize=11, x=.015)
-    fig.savefig(args.output / f'{args.name}.pdf')
+    fig.savefig(args.output / f'{args.name}.pdf', dpi=400)  # rasterized observed spectra
     fig.savefig(args.output / f'{args.name}.png', dpi=220)
     np.savez_compressed(args.output / f'{args.name}-arrays.npz', **stored)
     report['figure'] = identity(args.output / f'{args.name}.pdf')
