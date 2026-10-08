@@ -1,8 +1,9 @@
 # Experimental hot-subdwarf (sdB) H/He models
 
-Status: research workflow on branch `codex/sdb`, not a public preset. Metals
-are not yet included in the structure. Hot sdOs (above about 40 kK) are out of
-scope for now.
+Status: experimental research workflow included in OpenWD, not a public
+`run_model` preset. The [sdB model guide](../models/sdB.md) includes the paper
+figure and commands for a fresh calculation. Metals are not included in the
+default structure. Hot sdOs (above about 40 kK) are out of scope for now.
 
 ## Method
 

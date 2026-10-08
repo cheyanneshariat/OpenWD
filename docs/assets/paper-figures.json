@@ -204,6 +204,45 @@
         "model": "research/hot_daz_g191b2b.py --quality production (80 depths, 4 angles)",
         "scope": "Regenerates the archived PDF (identical when rasterized) from the 80-depth model and the bundled observations."
       }
+    },
+    {
+      "pdf": "sdb-paper.pdf",
+      "preview": "sdb-paper.png",
+      "guides": [
+        "sdB.md"
+      ],
+      "paper_source": "paper/figures/sdb_two_star_optical.pdf",
+      "preview_source": "paper/figures/sdb_two_star_optical.png",
+      "pdf_sha256": "d649a1ee4c24624808c08c998445ae54352a6c924d714281ef7b26b4d757bee5",
+      "preview_sha256": "d8307f844cc7822cb95096725e02ec0eedaba8e2d34889c84db0226b8d33c913",
+      "preview_rendering": "Byte-for-byte copy of the manuscript PNG preview.",
+      "manuscript_sha256_at_import": "50b0dcdd2a3cad3e14bdee3ad7fa420dbf577cd07a0abf3e14641fb8c40e050d",
+      "documentation_base_commit": "87d5db1a64e9c439f3d4a5aa50ca3e682a8c28e4",
+      "archived_generation_provenance": {
+        "path": "release/OpenWD-sdb/results/sdb/paper/figure/sdb_two_star_optical-provenance.json",
+        "sha256": "a4cdf9a8ebecba756f0c06d3b606f6d2ae77237801485679b685a4698ca19c66",
+        "scope": "Archived model and observation identities in the separate paper workspace; not runtime package dependencies."
+      },
+      "plotter_in_repository": {
+        "path": "research/plot_sdb_paper_comparison.py",
+        "sha256_at_import": "3582dcb8052121af92ef5100b7e1d7c38145face74389d14e9aa1300b3b91f87",
+        "sha256_recorded_in_archived_provenance": "3582dcb8052121af92ef5100b7e1d7c38145face74389d14e9aa1300b3b91f87",
+        "scope": "The archived provenance identifies the plotting revision used for this figure. The current script may differ; reproducing the figure also requires the paper workspace normalization helper and separate model/observation products."
+      },
+      "archived_metal_solves": {
+        "hd4539": {
+          "metal_converged": true,
+          "metal_iterations": 42,
+          "metal_population_defect": 0.0009346973472021384,
+          "accepted_maximum_defect": null
+        },
+        "lsiv14116": {
+          "metal_converged": true,
+          "metal_iterations": 41,
+          "metal_population_defect": 0.0006225065994974955,
+          "accepted_maximum_defect": null
+        }
+      }
     }
   ]
 }

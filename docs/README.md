@@ -11,7 +11,7 @@ inspect its convergence status, then change the parameters for your application.
    and plot the resulting spectrum. A second notebook
    [fits DZ abundances to an observed spectrum](../examples/fit_dz_spectrum.ipynb).
 3. [Choose a model](models/README.md): DA, DAZ, DB, DAB/DBA, DZ/DBZ, DQ,
-   DO/DAO, PG 1159, D6 and DAH.
+   DO/DAO, PG 1159, D6 and DAH, plus the experimental [sdB workflow](models/sdB.md).
 4. [Caveats and limitations](limitations.md): convergence, accuracy, and
    [tested temperatures and compositions](tested-temperature-ranges.md).
 
