@@ -10,6 +10,17 @@ defaults, historical spectra and all regression tolerances are unchanged.
 
 ## Why refine the field bins?
 
+The existing public settings `disk_field_bins=N` and `disk_field_bins=None`
+remain available. The latter keeps every raw surface cell. Increasing `N`
+does not increase the raw surface-grid resolution. On the published
+geometries, requesting 267 equal-weight bins yields 147 occupied bins for
+J1018 and 126 for J1351; their uncompressed default grids have 190 and 162
+cells. These are geometry checks, not new spectrum calculations. The
+lower-level `dipole_surface_cells` function also accepts explicit dense
+angular grids. The new public option combines a dense grid with a
+component-drift binning target. Use the existing settings when they are
+already adequate; this note does not claim that every existing setting fails.
+
 The default compresses the visible surface into 21 projected-weight bins.
 Each bin is synthesized at its mean field. Rapid component motion between
 bins can leave discrete spectral copies rather than a smooth disk integral.

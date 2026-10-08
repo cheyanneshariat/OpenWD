@@ -79,6 +79,10 @@ An offset dipole with a polar field below 100 MG can have local fields above
 Each compressed bin is synthesized at one mean field. In the tested
 high-field examples, components move rapidly between the default bins,
 leaving discrete copies rather than a resolved field-spread profile.
+Larger `disk_field_bins` values and `None` remain supported. They change
+compression, not raw surface resolution; the new option also uses a denser
+surface grid. Explicit dense grids are available at the lower level through
+`dipole_surface_cells`.
 `disk_component_drift_angstrom` builds bins from a 192 × 384 (or denser)
 visible-surface grid. The bin edges lie at equal steps of the accumulated
 drift ∫ max|dλ/dB| dB on a 4001-point field grid. The screen uses Balmer
