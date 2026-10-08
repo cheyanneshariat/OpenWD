@@ -9,8 +9,7 @@ temperature, surface gravity, and composition. It solves the atmospheric
 structure and radiative transfer from scratch, rather than interpolating a
 precomputed spectral grid.
 
-OpenWD provides plane-parallel models for these classes, including an
-experimental hot-subdwarf workflow:
+OpenWD provides plane-parallel models for these classes:
 
 | Class | Atmosphere | Populations | Guide |
 | --- | --- | --- | --- |
@@ -24,7 +23,7 @@ experimental hot-subdwarf workflow:
 | PG 1159 | Hot helium–carbon–oxygen | NLTE He, C and O; trace elements in the line formation | [PG 1159](docs/models/PG1159.md) |
 | D6 | Hydrogen/helium-free carbon–oxygen with heavier elements | LTE | [D6](docs/models/D6.md) |
 | DAH | Magnetic hydrogen spectra, normalized Kurucz/Griem profiles on a DA structure | LTE | [DAH](docs/models/DAH.md) |
-| sdB (experimental) | Lower-gravity hydrogen–helium with trace metals | LTE structure; NLTE H/He and selected metals | [sdB](docs/models/sdB.md) |
+| sdB | Lower-gravity hydrogen–helium with trace metals | LTE structure; NLTE H/He and selected metals | [sdB](docs/models/sdB.md) |
 
 The white-dwarf presets are calculated from a cold start and report whether
 the result passed its numerical convergence checks. The sdB workflow first

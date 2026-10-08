@@ -1,9 +1,10 @@
-# Experimental hot-subdwarf (sdB) H/He models
+# Hot-subdwarf (sdB) H/He models
 
-Status: experimental research workflow included in OpenWD, not a public
-`run_model` preset. The [sdB model guide](../models/sdB.md) includes the paper
-figure and commands for a fresh calculation. Metals are not included in the
-default structure. Hot sdOs (above about 40 kK) are out of scope for now.
+The sdB module uses command-line drivers to calculate an LTE H/He structure
+and NLTE populations and line formation on that structure. The
+[sdB model guide](../models/sdB.md) includes the paper figure and commands for
+a fresh calculation. Metals are not included in the default structure.
+Hot sdOs (above about 40 kK) are out of scope for now.
 
 ## Method
 

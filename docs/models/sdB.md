@@ -2,10 +2,10 @@
 
 [Model guide](README.md) · [Solver development record](../development/sdb-hybrid.md)
 
-OpenWD includes an experimental workflow for hot subdwarf B stars: lower-gravity
+OpenWD includes a module for hot subdwarf B stars: lower-gravity
 hydrogen–helium atmospheres with optional trace metals. It uses an LTE H/He
 temperature structure, followed by NLTE populations and line formation on that
-fixed structure. The research drivers are included in the repository; there is
+fixed structure. The command-line drivers are included in the repository; there is
 currently no `SdBConfig` or sdB selection through `run_model`.
 
 The development grid spans 20,000–40,000 K, log g = 5.0–6.2 and
@@ -115,7 +115,7 @@ also writes `spectrum-lte.npz` with the same synthesis and LTE populations,
 so the NLTE effect can be compared directly. Inspect
 `atmosphere_convergence_status` in the LTE summary, `populations_converged`
 in the hybrid summary and `converged` in the metal summary before using a result;
-these research scripts can save outputs even when a solve has not converged.
+these drivers can save outputs even when a solve has not converged.
 
 The [development record](../development/sdb-hybrid.md) describes the grid checks,
 fixed-point verification and metal comparisons. The repository also includes

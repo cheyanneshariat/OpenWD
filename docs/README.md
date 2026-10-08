@@ -11,7 +11,7 @@ inspect its convergence status, then change the parameters for your application.
    and plot the resulting spectrum. A second notebook
    [fits DZ abundances to an observed spectrum](../examples/fit_dz_spectrum.ipynb).
 3. [Choose a model](models/README.md): DA, DAZ, DB, DAB/DBA, DZ/DBZ, DQ,
-   DO/DAO, PG 1159, D6 and DAH, plus the experimental [sdB workflow](models/sdB.md).
+   DO/DAO, PG 1159, D6, DAH and [sdB](models/sdB.md).
 4. [Caveats and limitations](limitations.md): convergence, accuracy, and
    [tested temperatures and compositions](tested-temperature-ranges.md).
 
@@ -28,9 +28,9 @@ inspect its convergence status, then change the parameters for your application.
 - [Niobium, zinc, copper and nickel lines: HS 0209+0832](development/niobium.md):
   bundled Nb I--VI data, optional Zn, Cu and Ni IV--VI lines, and a nine-metal
   H/He model compared with the FUSE and STIS spectra.
-- [Hot subdwarf (sdB) H/He models](development/sdb-hybrid.md): experimental
+- [Hot subdwarf (sdB) H/He models](development/sdb-hybrid.md):
   LTE-structure + NLTE H/He hybrid for 20-40 kK sdBs, with MALI and opt-in
-  helium-solver options; development record, not a validated preset.
+  helium-solver options, numerical checks and observed comparisons.
 - [Research history](development/history/README.md): dated investigations,
   rejected experiments, and detailed validation records. These are not the
   current user instructions.
