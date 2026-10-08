@@ -2,6 +2,7 @@
 from dataclasses import dataclass,replace
 from types import SimpleNamespace
 import numpy as np
+import pytest
 from discrete_dense_transport_seed import discrete_seed
 from wd_spectra.constants import STEFAN_BOLTZMANN
 from wd_spectra.convection import _ml2_contrast_and_root
@@ -19,14 +20,20 @@ class Column:
     @property
     def n_depth(self): return len(self.temperature)
 
+    @property
+    def logg(self): return float(np.log10(self.gravity))
 
-def test_initializer_solves_same_discrete_transport_with_convective_onset(monkeypatch):
+
+@pytest.mark.parametrize('logg', [7.5, 8.0])
+def test_initializer_solves_same_discrete_transport_with_convective_onset(monkeypatch, logg):
     import discrete_dense_transport_seed as module
     target=STEFAN_BOLTZMANN*5000.**4
     coefficient=target*1e9
     pressure=np.geomspace(1e6,1e13,45)
-    seed=Column(np.full(45,4200.),pressure,np.geomspace(1e-8,100.,45),pressure/1e12)
-    def at(teff,p,t,tau): return Column(t,p,tau,p/1e12,effective_temperature=teff)
+    seed=Column(np.full(45,4200.),pressure,np.geomspace(1e-8,100.,45),pressure/1e12,gravity=10**logg)
+    def at(teff,p,t,tau,*,logg):
+        assert logg == seed.logg
+        return Column(t,p,tau,p/1e12,gravity=10**logg,effective_temperature=teff)
     class Materials:
         def __init__(self,with_temperature,*unused): self.at=with_temperature
         def fields(self,logt):

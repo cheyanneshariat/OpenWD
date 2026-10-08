@@ -1,18 +1,22 @@
 from dataclasses import replace
 from types import SimpleNamespace
 import numpy as np
+import pytest
 from test_discrete_dense_transport_seed import Column
 from wd_spectra.constants import STEFAN_BOLTZMANN
 import convective_mesh_prolongation as module
 
 
-def test_prolongation_preserves_transport_not_just_temperature(monkeypatch):
+@pytest.mark.parametrize('logg', [7.5, 8.0])
+def test_prolongation_preserves_transport_not_just_temperature(monkeypatch, logg):
     target=STEFAN_BOLTZMANN*5000**4
     p=np.geomspace(1e9,1e10,25)
-    seed=Column(4500*(p/p[0])**.21,p,np.geomspace(.1,10,len(p)),p/1e12)
+    seed=Column(4500*(p/p[0])**.21,p,np.geomspace(.1,10,len(p)),p/1e12,gravity=10**logg)
     parent=SimpleNamespace(gas_pressure=p[::2],metadata={
         'convective_flux_fraction_by_interface':np.r_[np.zeros(3),np.linspace(.01,1,10)]})
-    def at(teff,p,t,tau): return Column(t,p,tau,p/1e12,effective_temperature=teff)
+    def at(teff,p,t,tau,*,logg):
+        assert logg == seed.logg
+        return Column(t,p,tau,p/1e12,gravity=10**logg,effective_temperature=teff)
     class Material:
         def __init__(self,at,*unused): self.at=at
         def fields(self,lt):
@@ -33,11 +37,14 @@ def test_prolongation_preserves_transport_not_just_temperature(monkeypatch):
     assert not np.allclose(initialized.temperature,seed.temperature,rtol=1e-4)
 
 
-def test_explicit_stable_projection_changes_temperatures_not_flux(monkeypatch):
+@pytest.mark.parametrize('logg', [7.5, 8.0])
+def test_explicit_stable_projection_changes_temperatures_not_flux(monkeypatch, logg):
     target=STEFAN_BOLTZMANN*5000**4
     p=np.geomspace(1e9,1e10,25)
-    seed=Column(4500*(p/p[0])**.4,p,np.geomspace(.1,10,len(p)),p/1e12)
-    def at(teff,p,t,tau):return Column(t,p,tau,p/1e12,effective_temperature=teff)
+    seed=Column(4500*(p/p[0])**.4,p,np.geomspace(.1,10,len(p)),p/1e12,gravity=10**logg)
+    def at(teff,p,t,tau,*,logg):
+        assert logg == seed.logg
+        return Column(t,p,tau,p/1e12,gravity=10**logg,effective_temperature=teff)
     class Material:
         def __init__(self,at,*unused):self.at=at
         def fields(self,lt):return self.at(np.exp(lt)),None
