@@ -44,6 +44,26 @@ Observatory of Belgium, and licensed under CC BY 4.0. The original license is
 retained beside the tables in
 `src/wd_spectra/data/runtime/cache/metal-opacity/atomic-line-list/stout`.
 
+## Kurucz Cr II atomic line data
+
+`src/wd_spectra/data/atomic/gf2401.all.xz` contains Robert L. Kurucz's full
+Cr II `gf2401.all` list, compressed without changing its contents. These
+independently authored scientific data are not covered by OpenWD's BSD
+source-code license. Credit Robert L. Kurucz and the
+[original atomic-data source](http://kurucz.harvard.edu/atoms/2401/gf2401.all)
+in scientific uses. The decompressed checksum and default supplementation
+policy are recorded in the [atomic-data notes](src/wd_spectra/data/atomic/README.md).
+
+## HIRES comparisons in the DZ guide
+
+The three `docs/assets/wd*-xu2019-hires.png` figures contain OpenWD model
+predictions and normalized spectra derived from public Keck/HIRES data in
+the [Keck Observatory Archive](https://koa.ipac.caltech.edu/), analyzed by
+[Xu et al. (2019)](https://doi.org/10.3847/1538-3881/ab4cee). Credit the
+W. M. Keck Observatory, KOA and the original observers when using these
+observations. They are newly generated comparisons, with data processing and
+model provenance described in the [DZ guide](docs/models/DZ.md#xu-et-al-2019-hires-comparisons).
+
 ## Hot-star NLTE atomic inputs
 
 OpenWD has permission to redistribute the release copies of the hot-star
