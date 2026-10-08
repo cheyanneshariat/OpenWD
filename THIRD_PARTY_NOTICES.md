@@ -47,6 +47,12 @@ OpenWD's BSD source-code license:
   C IV, O IV, O V, and O VI model atoms under `tlusty-source/` and
   `tlusty-atoms/`. Credit Hubeny and Lanz and the Opacity Project as
   appropriate for the selected records.
+- TLUSTY's 24-level He I atom (`tlusty-atoms/he1.dat`, the OSTAR2002/BSTAR2006
+  atom; every LS term through n = 4), obtained unmodified from the TLUSTY
+  website (tlusty.oca.eu, Tlusty2002/database/atom/he1.dat; SHA-256
+  86f265a6bad0dcfa45202153e68b5090f8e284f5caac061dd7aea0d3c0ab7384). Credit
+  Hubeny and Lanz (and Lanz & Hubeny 2003, 2007 for the OSTAR2002/BSTAR2006
+  grids that use it).
 - Tübingen Model-Atom Database (TMAD) C III--V and O III--VII structure and
   formal-synthesis atoms under `tmad-atoms/`. Credit T. Rauch and the TMAD
   contributors; the files retain their embedded authorship headers.

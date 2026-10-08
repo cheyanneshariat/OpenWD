@@ -40,6 +40,8 @@ from .constants import (
     PLANCK,
 )
 from .helium import (
+    _HE_I_P_TO_S_LINE_KEYS,
+    helium_i_rydberg_bound_free_linear_absorption_coefficient,
     HELIUM_I_LINES,
     HELIUM_I_RESONANCE_LINES,
     HELIUM_II_LINES,
@@ -54,7 +56,8 @@ from .helium import (
     neutral_helium_photoionization_cross_section,
 )
 from .helium_ii_stark import HeliumIIStarkTable, read_helium_ii_stark_table
-from .helium_collisions import TlustyHeliumCollisionData
+from .helium_collisions import _TERM_FINE_INDEX, TlustyHeliumCollisionData
+from .helium_i_atom import HeliumIAtom
 from .helium_stark import HeliumStarkTable
 from .multilevel_nlte import (
     HydrogenElectronCollisionData,
@@ -251,6 +254,7 @@ class NeutralHeliumNLTEState:
     converged: bool
     maximum_relative_population_change: float
     metadata: dict[str, object]
+    helium_i_atom: HeliumIAtom | None = None  # None: TLUSTY 14-term atom
 
 
 @dataclass(frozen=True)
@@ -270,6 +274,7 @@ class CoupledHeliumNLTEState:
     converged: bool
     maximum_relative_population_change: float
     metadata: dict[str, object]
+    helium_i_atom: HeliumIAtom | None = None  # None: TLUSTY 14-term atom
 
 
 def helium_ii_shell_transition(lower_level: int, upper_level: int) -> HydrogenLine:
@@ -308,11 +313,13 @@ def helium_ii_shell_transition(lower_level: int, upper_level: int) -> HydrogenLi
 
 def _neutral_helium_reference_populations(
     atmosphere: Atmosphere,
+    helium_i_atom: HeliumIAtom | None = None,
 ) -> tuple[FloatArray, FloatArray, FloatArray]:
     helium = atmosphere.helium_lte_state
     if helium is None:
         raise ValueError("a pure-helium atmosphere with helium_lte_state is required")
-    binding_energy = PLANCK * HELIUM_I_14_THRESHOLD_FREQUENCY_HZ
+    atom = _helium_i_atom(helium_i_atom)
+    binding_energy = PLANCK * atom.threshold_frequency_hz
     excitation_energy = np.maximum(
         HELIUM_FIRST_IONIZATION_ENERGY - binding_energy, 0.0
     )
@@ -329,7 +336,7 @@ def _neutral_helium_reference_populations(
         correlated_microfields=(helium.microfield_model == "qmhd"),
     )
     terms = (
-        HELIUM_I_14_STATISTICAL_WEIGHT[np.newaxis, :]
+        atom.statistical_weight[np.newaxis, :]
         * occupation
         * np.exp(
             -excitation_energy[np.newaxis, :]
@@ -380,6 +387,45 @@ def neutral_helium_term_photoionization_cross_section(
     )
 
 
+
+
+# The coupled He I + He II + He III solvers take a ``helium_i_atom``; None is
+# this TLUSTY 14-term atom, whose data and term mapping are unchanged.
+HELIUM_I_14 = HeliumIAtom(
+    name="TLUSTY 14-term He I (he1_14lev.dat)",
+    threshold_frequency_hz=HELIUM_I_14_THRESHOLD_FREQUENCY_HZ,
+    statistical_weight=HELIUM_I_14_STATISTICAL_WEIGHT,
+    principal_quantum_number=HELIUM_I_14_PRINCIPAL_QUANTUM_NUMBER,
+    multiplicity=np.asarray([1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 0, 0, 0]),
+    orbital_angular_momentum=np.asarray([0, 0, 0, 1, 1] + [-1] * 9),
+    label=HELIUM_I_14_LABEL,
+    oscillator_strength=HELIUM_I_14_OSCILLATOR_STRENGTH,
+    collision_fine_groups=_TERM_FINE_INDEX,
+    photoionization=neutral_helium_term_photoionization_cross_section,
+    source="wd_spectra.helium_nlte HELIUM_I_14_* constants",
+)
+
+
+def _helium_i_atom(helium_i_atom: HeliumIAtom | None) -> HeliumIAtom:
+    return HELIUM_I_14 if helium_i_atom is None else helium_i_atom
+
+
+def _helium_i_line_term_indices(component, atom: HeliumIAtom) -> tuple[int, int]:
+    """Lower and upper model-atom terms of one ``HELIUM_I_LINES`` component."""
+    lower = component.lower_term_index
+    principal = component.upper_principal_quantum_number
+    if atom is HELIUM_I_14:
+        return lower, _neutral_helium_upper_term_index(principal, triplet=lower in (1, 3))
+    # 2s terms (1, 2) go to np; 2p terms (3, 4) to ns or nd.
+    orbital = 1 if lower in (1, 2) else (0 if component.table_key_angstrom in _HE_I_P_TO_S_LINE_KEYS else 2)
+    return lower, atom.term_index(principal, 3 if lower in (1, 3) else 1, orbital)
+
+
+def _helium_i_resonance_upper_index(component, atom: HeliumIAtom) -> int:
+    principal = component.upper_principal_quantum_number
+    if atom is HELIUM_I_14:
+        return 4 if principal == 2 else _neutral_helium_upper_term_index(principal, triplet=False)
+    return atom.term_index(principal, 1, 1)
 def _neutral_helium_bound_bound_radiative_rates(
     atmosphere: Atmosphere,
     lower_index: int,
@@ -388,12 +434,14 @@ def _neutral_helium_bound_bound_radiative_rates(
     lte_population: FloatArray,
     occupation: FloatArray,
     mean_intensity_nu: FloatArray,
+    helium_i_atom: HeliumIAtom | None = None,
 ) -> tuple[FloatArray, FloatArray]:
-    lower_weight = HELIUM_I_14_STATISTICAL_WEIGHT[lower_index]
-    upper_weight = HELIUM_I_14_STATISTICAL_WEIGHT[upper_index]
+    atom = _helium_i_atom(helium_i_atom)
+    lower_weight = atom.statistical_weight[lower_index]
+    upper_weight = atom.statistical_weight[upper_index]
     frequency = (
-        HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[lower_index]
-        - HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[upper_index]
+        atom.threshold_frequency_hz[lower_index]
+        - atom.threshold_frequency_hz[upper_index]
     )
     spontaneous = (
         8.0
@@ -445,6 +493,7 @@ def _neutral_helium_excitation_rate_coefficient(
     oscillator_strength: float,
     *,
     collision_strength_scale: float,
+    helium_i_atom: HeliumIAtom | None = None,
 ) -> FloatArray:
     """Van-Regemorter-style closure for missing He I collision data.
 
@@ -453,12 +502,13 @@ def _neutral_helium_excitation_rate_coefficient(
     dependence of TLUSTY's CREGER (at the same approximate Gaunt factor).
     """
 
+    atom = _helium_i_atom(helium_i_atom)
     energy = PLANCK * (
-        HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[lower_index]
-        - HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[upper_index]
+        atom.threshold_frequency_hz[lower_index]
+        - atom.threshold_frequency_hz[upper_index]
     )
     reduced = energy / (BOLTZMANN * temperature)
-    lower_weight = HELIUM_I_14_STATISTICAL_WEIGHT[lower_index]
+    lower_weight = atom.statistical_weight[lower_index]
     if oscillator_strength > 0.0:
         gaunt = np.clip(0.2 + 0.28 * np.log1p(1.0 / reduced), 0.2, 5.0)
         effective_collision_strength = (
@@ -487,13 +537,15 @@ def _neutral_helium_continuum_radiative_rates(
     lte_continuum: FloatArray,
     wavelength_angstrom: FloatArray,
     mean_intensity_lambda: FloatArray,
+    helium_i_atom: HeliumIAtom | None = None,
 ) -> tuple[FloatArray, FloatArray]:
+    atom = _helium_i_atom(helium_i_atom)
     wavelength = np.ascontiguousarray(wavelength_angstrom, dtype=np.float64)
     mean_lambda = np.asarray(mean_intensity_lambda, dtype=np.float64)
     if mean_lambda.shape != (wavelength.size, atmosphere.n_depth):
         raise ValueError("continuum mean intensity has the wrong shape")
     upward, recombination = continuum_integrals(
-        wavelength, atmosphere.temperature, mean_lambda, 14, neutral_helium_term_photoionization_cross_section, first_level=0)
+        wavelength, atmosphere.temperature, mean_lambda, atom.n_terms, atom.photoionization, first_level=0)
     downward = recombination * _finite_population_ratio(lte_population, lte_continuum[:,None])
     return upward, downward
 
@@ -754,6 +806,8 @@ def solve_coupled_helium_statistical_equilibrium(
     hydrogenic_ionization_collision_rate_multiplier: float | None = None,
     _rate_matrix=None,
     _return_rate_matrix=False,
+    helium_i_atom: HeliumIAtom | None = None,
+    conservation_row: str = "last",
 ) -> CoupledHeliumNLTEState:
     """Solve a single He I + He II + He III statistical-equilibrium matrix.
 
@@ -765,6 +819,13 @@ def solve_coupled_helium_statistical_equilibrium(
 
     if not 2 <= maximum_helium_ii_level <= 32:
         raise ValueError("maximum_helium_ii_level must lie in [2, 32]")
+    # "last" replaces the He III equation by particle conservation (the
+    # historical choice, natural where He III dominates).  "dominant" replaces
+    # the equation of the most populous state instead, so a trace He III or
+    # high He II level keeps its own balance equation; in cool sdB surface
+    # layers (He III/He ~ 1e-18) the "last" system is singular to roundoff.
+    if conservation_row not in ("last", "dominant"):
+        raise ValueError("conservation_row must be 'last' or 'dominant'")
     excitation_collision_multiplier = (
         hydrogenic_collision_rate_multiplier
         if hydrogenic_excitation_collision_rate_multiplier is None
@@ -782,14 +843,15 @@ def solve_coupled_helium_statistical_equilibrium(
         or ionization_collision_multiplier <= 0.0
     ):
         raise ValueError("hydrogenic collision multipliers must be finite and positive")
+    atom = _helium_i_atom(helium_i_atom)
     neutral_lte, helium_ii_total_lte, neutral_occupation = (
-        _neutral_helium_reference_populations(atmosphere)
+        _neutral_helium_reference_populations(atmosphere, atom)
     )
     helium_ii_lte, helium_iii_lte, helium_ii_occupation = (
         _reference_populations(atmosphere, maximum_helium_ii_level)
     )
     n_depth = atmosphere.n_depth
-    n_neutral = 14
+    n_neutral = atom.n_terms
     n_ion = maximum_helium_ii_level
     ion_start = n_neutral
     continuum_index = n_neutral + n_ion
@@ -805,17 +867,19 @@ def solve_coupled_helium_statistical_equilibrium(
         fitted_neutral_collision_rate = (
             None
             if helium_i_collision_data is None
-            else helium_i_collision_data.term_rate_matrix(atmosphere.temperature)
+            else helium_i_collision_data.term_rate_matrix(
+                atmosphere.temperature, atom.collision_fine_groups, atom.n_terms
+            )
         )
 
         for lower in range(n_neutral - 1):
             for upper in range(lower + 1, n_neutral):
-                oscillator_strength = HELIUM_I_14_OSCILLATOR_STRENGTH.get(
+                oscillator_strength = atom.oscillator_strength.get(
                     (lower + 1, upper + 1), 0.0
                 )
                 frequency = (
-                    HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[lower]
-                    - HELIUM_I_14_THRESHOLD_FREQUENCY_HZ[upper]
+                    atom.threshold_frequency_hz[lower]
+                    - atom.threshold_frequency_hz[upper]
                 )
                 supplied = neutral_fields.get((lower + 1, upper + 1))
                 if oscillator_strength <= 0.0:
@@ -843,6 +907,7 @@ def solve_coupled_helium_statistical_equilibrium(
                             neutral_lte,
                             neutral_occupation,
                             mean_intensity,
+                            atom,
                         )
                     )
                 else:
@@ -851,13 +916,15 @@ def solve_coupled_helium_statistical_equilibrium(
                 rate_coefficient = (
                     fitted_neutral_collision_rate[:, lower, upper]
                     * neutral_collision_strength_scale
-                    if fitted_neutral_collision_rate is not None and upper < 9
+                    if fitted_neutral_collision_rate is not None
+                    and upper < atom.n_fitted_collision_terms
                     else _neutral_helium_excitation_rate_coefficient(
                         atmosphere.temperature,
                         lower,
                         upper,
                         oscillator_strength,
                         collision_strength_scale=neutral_collision_strength_scale,
+                        helium_i_atom=atom,
                     )
                 )
                 collisional_up = (
@@ -913,7 +980,7 @@ def solve_coupled_helium_statistical_equilibrium(
                 rate[:, upper_index, lower_index] += radiative_down + collisional_down
 
         neutral_wavelength = (
-            default_neutral_helium_continuum_wavelength()
+            default_neutral_helium_continuum_wavelength(atom)
             if neutral_continuum_wavelength_angstrom is None
             else np.asarray(neutral_continuum_wavelength_angstrom, dtype=np.float64)
         )
@@ -932,13 +999,14 @@ def solve_coupled_helium_statistical_equilibrium(
                 helium_ii_total_lte,
                 np.ascontiguousarray(neutral_wavelength),
                 neutral_mean,
+                atom,
             )
         )
         ion_ground_index = ion_start
         ground_fraction = helium_ii_lte[:, 0] / np.maximum(
             helium_ii_total_lte, np.finfo(np.float64).tiny
         )
-        binding_energy = PLANCK * HELIUM_I_14_THRESHOLD_FREQUENCY_HZ
+        binding_energy = PLANCK * atom.threshold_frequency_hz
         effective_level = np.sqrt(HYDROGEN_IONIZATION_ENERGY / binding_energy)
         fitted_neutral_ionization_rate = (
             helium_i_collision_data.ionization_rate_coefficient(
@@ -1039,9 +1107,10 @@ def solve_coupled_helium_statistical_equilibrium(
         matrix = rate[depth].T.copy()
         matrix[np.diag_indices(n_state)] -= np.sum(rate[depth], axis=1)
         matrix *= reference[depth][np.newaxis, :]
-        matrix[-1] = reference[depth]
+        row = -1 if conservation_row == "last" else int(np.argmax(reference[depth]))
+        matrix[row] = reference[depth]
         rhs = np.zeros(n_state)
-        rhs[-1] = active_density[depth]
+        rhs[row] = active_density[depth]
         scale = np.maximum(
             np.max(np.abs(matrix), axis=1), np.finfo(np.float64).tiny
         )
@@ -1058,11 +1127,20 @@ def solve_coupled_helium_statistical_equilibrium(
                 f"non-physical coupled helium rate solution at depth {depth}"
             )
         populations[depth] = departure * reference[depth]
-    populations[:, -1] = active_density - np.sum(populations[:, :-1], axis=1)
-    if np.any(populations[:, -1] <= 0.0):
-        raise NonphysicalPopulationError("coupled helium normalization removed He III")
+    # Enforce particle conservation by a common scale factor.  Recovering
+    # He III as the difference between the total and the other states loses
+    # all precision when He III is a trace ion (e.g. ~1e-6 of He in sdB
+    # atmospheres near 30 kK), and solver roundoff can then make it negative.
+    # The conservation row is solved to roundoff (~1e-15); a larger defect
+    # means the linear solution itself is invalid.
+    total = np.sum(populations, axis=1)
+    if np.any(~(np.abs(total / active_density - 1.0) <= 1.0e-8)):
+        raise NonphysicalPopulationError(
+            "coupled helium normalization: rate solution violates particle conservation")
+    populations *= (active_density / total)[:, np.newaxis]
     departure = populations / reference
     return CoupledHeliumNLTEState(
+        helium_i_atom=None if atom is HELIUM_I_14 else atom,
         neutral_population_density=np.ascontiguousarray(
             populations[:, :n_neutral]
         ),
@@ -1091,7 +1169,9 @@ def solve_coupled_helium_statistical_equilibrium(
         ),
         metadata={
             "model_atom": (
-                f"TLUSTY-14 He I + hydrogenic He II n=1-{n_ion} + He III"
+                (f"TLUSTY-14 He I + hydrogenic He II n=1-{n_ion} + He III"
+                 if atom is HELIUM_I_14 else
+                 f"{atom.name} + hydrogenic He II n=1-{n_ion} + He III")
             ),
             "helium_ii_radiation_coupled_transition_count": len(
                 ion_fields
@@ -1137,12 +1217,14 @@ def solve_coupled_helium_statistical_equilibrium(
     )
 
 
-def default_neutral_helium_continuum_wavelength() -> FloatArray:
-    """Return a grid resolving all 14 He I photoionization thresholds."""
+def default_neutral_helium_continuum_wavelength(
+    helium_i_atom: HeliumIAtom | None = None,
+) -> FloatArray:
+    """Return a grid resolving every He I photoionization threshold of the atom."""
 
     edges = (
         _LIGHT_SPEED_ANGSTROM_PER_SECOND
-        / HELIUM_I_14_THRESHOLD_FREQUENCY_HZ
+        / _helium_i_atom(helium_i_atom).threshold_frequency_hz
     )
     base = np.geomspace(100.0, 1.025 * float(np.max(edges)), 520)
     edge_points = np.ravel(
@@ -1158,6 +1240,7 @@ def _prepare_neutral_helium_continuum_transfer_problem(
     wavelength_angstrom: ArrayLike,
     *,
     lte_absorption: FloatArray | None = None,
+    helium_i_atom: HeliumIAtom | None = None,
 ) -> _ContinuumTransferProblem:
     wavelength = np.ascontiguousarray(wavelength_angstrom, dtype=np.float64)
     if (
@@ -1178,7 +1261,8 @@ def _prepare_neutral_helium_continuum_transfer_problem(
             include_electron_scattering=False,
             include_rayleigh_scattering=False,
         )
-    lte_population, _, _ = _neutral_helium_reference_populations(atmosphere)
+    atom = _helium_i_atom(helium_i_atom)
+    lte_population, _, _ = _neutral_helium_reference_populations(atmosphere, atom)
     frequency = _LIGHT_SPEED_ANGSTROM_PER_SECOND / wavelength
     exponent = (
         PLANCK
@@ -1187,19 +1271,41 @@ def _prepare_neutral_helium_continuum_transfer_problem(
     )
     exp_minus = np.exp(-np.minimum(exponent, 745.0))
     coefficient = np.empty(
-        (wavelength.size, atmosphere.n_depth, 14), dtype=np.float64
+        (wavelength.size, atmosphere.n_depth, atom.n_terms), dtype=np.float64
     )
-    for term in range(14):
+    for term in range(atom.n_terms):
         coefficient[:, :, term] = (
-            neutral_helium_term_photoionization_cross_section(term, frequency)[
+            atom.photoionization(term, frequency)[
                 :, np.newaxis
             ]
             * lte_population[np.newaxis, :, term]
             / atmosphere.mass_density[np.newaxis, :]
         )
-    lte_explicit_bound_free = np.sum(
-        coefficient * (1.0 - exp_minus)[:, :, np.newaxis], axis=2
-    )
+    if atom is HELIUM_I_14:
+        lte_explicit_bound_free = np.sum(
+            coefficient * (1.0 - exp_minus)[:, :, np.newaxis], axis=2
+        )
+    else:
+        # A term-resolved atom replaces the EOS representation of the same
+        # shells (its five n <= 2 terms and hydrogenic n = 3..n_max shells)
+        # rather than its own LTE sum: resolved n >= 3 terms are more tightly
+        # bound than the hydrogenic shells, so their explicit LTE opacity can
+        # locally exceed the EOS shell share.  The background is then
+        # non-negative by construction and J = B still recovers LTE.
+        helium = atmosphere.helium_lte_state
+        stimulated = 1.0 - exp_minus
+        lte_explicit_bound_free = np.zeros_like(lte_absorption)
+        for term_index in range(5):
+            lte_explicit_bound_free += (
+                helium.neutral_level_population_density[np.newaxis, :, term_index]
+                * neutral_helium_photoionization_cross_section(frequency, term_index)[:, np.newaxis]
+                * stimulated
+            )
+        lte_explicit_bound_free += helium_i_rydberg_bound_free_linear_absorption_coefficient(
+            atmosphere, wavelength, minimum_principal_quantum_number=3,
+            maximum_principal_quantum_number=int(np.max(atom.principal_quantum_number)),
+        )
+        lte_explicit_bound_free /= atmosphere.mass_density[np.newaxis, :]
     thermal_background = lte_absorption - lte_explicit_bound_free
     tolerance = 3.0e-12 * np.maximum(lte_absorption, 1.0e-40)
     if np.any(thermal_background < -tolerance):
@@ -1255,16 +1361,14 @@ def _neutral_helium_upper_term_index(
 def _neutral_helium_line_components(
     atmosphere: Atmosphere,
     helium_i_stark_table: HeliumStarkTable | str | Path,
+    helium_i_atom: HeliumIAtom | None = None,
 ) -> dict[tuple[int, int], tuple[_LineTransferProblem, ...]]:
+    atom = _helium_i_atom(helium_i_atom)
     grouped: dict[tuple[int, int], list[_LineTransferProblem]] = {}
     for component in HELIUM_I_LINES:
-        lower_index = component.lower_term_index
-        triplet = lower_index in (1, 3)
-        upper_index = _neutral_helium_upper_term_index(
-            component.upper_principal_quantum_number, triplet=triplet
-        )
+        lower_index, upper_index = _helium_i_line_term_indices(component, atom)
         key = (lower_index + 1, upper_index + 1)
-        if key not in HELIUM_I_14_OSCILLATOR_STRENGTH:
+        if key not in atom.oscillator_strength:
             continue
         center = component.wavelength_vacuum_angstrom
         wavelength = np.unique(
@@ -1286,7 +1390,7 @@ def _neutral_helium_line_components(
             _LineTransferProblem(
                 line=line,
                 continuum=_prepare_neutral_helium_continuum_transfer_problem(
-                    atmosphere, wavelength
+                    atmosphere, wavelength, helium_i_atom=helium_i_atom
                 ),
                 lte_line_opacity=helium_i_line_mass_absorption_coefficient(
                     atmosphere,
@@ -1300,10 +1404,7 @@ def _neutral_helium_line_components(
         )
     for component in HELIUM_I_RESONANCE_LINES:
         lower_index = 0
-        principal = component.upper_principal_quantum_number
-        upper_index = 4 if principal == 2 else _neutral_helium_upper_term_index(
-            principal, triplet=False
-        )
+        upper_index = _helium_i_resonance_upper_index(component, atom)
         key = (1, upper_index + 1)
         center = component.wavelength_vacuum_angstrom
         wavelength = np.unique(
@@ -1325,7 +1426,7 @@ def _neutral_helium_line_components(
             _LineTransferProblem(
                 line=line,
                 continuum=_prepare_neutral_helium_continuum_transfer_problem(
-                    atmosphere, wavelength
+                    atmosphere, wavelength, helium_i_atom=helium_i_atom
                 ),
                 lte_line_opacity=(
                     helium_i_resonance_line_mass_absorption_coefficient(
@@ -1495,8 +1596,9 @@ def neutral_helium_nlte_transfer_coefficients(
     ):
         raise ValueError("wavelength must be positive and increasing")
     _validate_state_atmosphere(atmosphere, state)
+    atom = _helium_i_atom(state.helium_i_atom)
     continuum_problem = _prepare_neutral_helium_continuum_transfer_problem(
-        atmosphere, wavelength
+        atmosphere, wavelength, helium_i_atom=state.helium_i_atom
     )
     absorption, emissivity = _nlte_continuum_terms(
         continuum_problem,
@@ -1507,11 +1609,7 @@ def neutral_helium_nlte_transfer_coefficients(
     suppressed_inversions = 0
     if include_helium_i_lines:
         for component in HELIUM_I_LINES:
-            lower_index = component.lower_term_index
-            upper_index = _neutral_helium_upper_term_index(
-                component.upper_principal_quantum_number,
-                triplet=lower_index in (1, 3),
-            )
+            lower_index, upper_index = _helium_i_line_term_indices(component, atom)
             line = HydrogenLine(
                 component.name,
                 1,
@@ -1541,14 +1639,7 @@ def neutral_helium_nlte_transfer_coefficients(
             emissivity += line_opacity * planck * source_factor[np.newaxis, :]
     if include_helium_i_resonance_lines:
         for component in HELIUM_I_RESONANCE_LINES:
-            principal = component.upper_principal_quantum_number
-            upper_index = (
-                4
-                if principal == 2
-                else _neutral_helium_upper_term_index(
-                    principal, triplet=False
-                )
-            )
+            upper_index = _helium_i_resonance_upper_index(component, atom)
             line = HydrogenLine(
                 component.name,
                 1,
@@ -1750,8 +1841,10 @@ def combined_helium_nlte_transfer_coefficients(
             ))
         return shared_lte_continuum[0]
 
-    he_i_problem = _cached_transfer(_cache, ('he-i-continuum',), lambda: _prepare_neutral_helium_continuum_transfer_problem(
-        atmosphere, wavelength, lte_absorption=lte_continuum()
+    atom = _helium_i_atom(neutral_state.helium_i_atom)
+    he_i_problem = _cached_transfer(_cache, ('he-i-continuum', atom.n_terms), lambda: _prepare_neutral_helium_continuum_transfer_problem(
+        atmosphere, wavelength, lte_absorption=lte_continuum(),
+        helium_i_atom=neutral_state.helium_i_atom,
     ))
     absorption, emissivity = _nlte_continuum_terms(
         he_i_problem,
@@ -1785,11 +1878,7 @@ def combined_helium_nlte_transfer_coefficients(
     planck = he_i_problem.planck_lambda
     suppressed_inversions = 0
     for component in HELIUM_I_LINES if include_helium_i_lines else ():
-        lower_index = component.lower_term_index
-        upper_index = _neutral_helium_upper_term_index(
-            component.upper_principal_quantum_number,
-            triplet=lower_index in (1, 3),
-        )
+        lower_index, upper_index = _helium_i_line_term_indices(component, atom)
         line = HydrogenLine(
             component.name,
             1,
@@ -1818,12 +1907,7 @@ def combined_helium_nlte_transfer_coefficients(
     for component in (
         HELIUM_I_RESONANCE_LINES if include_helium_i_resonance_lines else ()
     ):
-        principal = component.upper_principal_quantum_number
-        upper_index = (
-            4
-            if principal == 2
-            else _neutral_helium_upper_term_index(principal, triplet=False)
-        )
+        upper_index = _helium_i_resonance_upper_index(component, atom)
         line = HydrogenLine(
             component.name,
             1,
@@ -1969,7 +2053,8 @@ def _coupled_state_views(
     fingerprint = atmosphere_structure_fingerprint(atmosphere)
     he_ii_ground_departure = state.singly_ionized_departure_coefficient[:, 0]
     neutral_view = NeutralHeliumNLTEState(
-        term_label=HELIUM_I_14_LABEL,
+        term_label=_helium_i_atom(state.helium_i_atom).label,
+        helium_i_atom=state.helium_i_atom,
         population_density=state.neutral_population_density,
         singly_ionized_he_density=np.ascontiguousarray(
             helium.singly_ionized_he_density * he_ii_ground_departure
@@ -2577,7 +2662,7 @@ def remap_coupled_helium_state(
     maximum_helium_ii_level = (
         state.singly_ionized_departure_coefficient.shape[1]
     )
-    neutral_lte, _, _ = _neutral_helium_reference_populations(atmosphere)
+    neutral_lte, _, _ = _neutral_helium_reference_populations(atmosphere, state.helium_i_atom)
     ion_lte, continuum_lte, _ = _reference_populations(
         atmosphere, maximum_helium_ii_level
     )
