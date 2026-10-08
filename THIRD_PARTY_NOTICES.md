@@ -4,6 +4,16 @@ The BSD-3-Clause license in `LICENSE` covers the OpenWD source code. The
 scientific data distributed with the package remain independently authored
 works and retain their original terms and attribution.
 
+## Observed UVES spectrum in the DZ example
+
+`examples/data/pg1225-uves.npz` is a coadd derived from public ESO UVES data.
+The data remain copyright ESO under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+`examples/data/pg1225-uves.json` preserves the original FITS headers,
+source-product identities and processing information. See the
+[data notes](examples/data/README.md) and the
+[ESO data policy](https://archive.eso.org/cms/eso-data-access-policy.html).
+
 The checkout-only cool-model research workflows additionally use external
 HITRAN H2-He CIA and ExoMol RACPPK H2 state data. Those files are not
 redistributed in this checkpoint. Follow the source attribution and data

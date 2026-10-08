@@ -9,8 +9,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-PAGES = sorted(DOCS.rglob("*.md")) + [ROOT / "README.md"]
+PAGES = sorted(DOCS.rglob("*.md")) + [ROOT / "README.md", ROOT / "examples/data/README.md"]
 NOTEBOOK = ROOT / "examples/generate_spectrum.ipynb"
+FIT_NOTEBOOK = ROOT / "examples/fit_dz_spectrum.ipynb"
 
 
 def markdown(path):
@@ -53,7 +54,7 @@ def heading_anchors(path):
 
 def test_local_documentation_links_and_headings_resolve():
     problems = []
-    for source in PAGES + [NOTEBOOK]:
+    for source in PAGES + [NOTEBOOK, FIT_NOTEBOOK]:
         for target, fragment in local_links(source):
             if not target.exists():
                 problems.append(f"{source.relative_to(ROOT)} -> missing {target}")
