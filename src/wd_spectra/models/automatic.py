@@ -164,8 +164,10 @@ def run_model(
 ):
     """Choose physics automatically and write a reproducible model run.
 
-    Cool recipes currently require production resolution and logg=8. Public model runs are cold starts; saved atmospheres and
-    neighboring stellar models are not accepted. Selection uses material diagnostics, not the list of tested Teff
+    Cool recipes require production resolution. Dense DB preserves the requested
+    gravity; other cool recipes retain their logg=8 restriction. Public model
+    runs are cold starts; saved atmospheres and neighboring stellar models are
+    not accepted. Selection uses material diagnostics, not the list of tested Teff
     points. Failed/uncertified outputs are retained and warned about; optional
     require_convergence makes an uncertified completed run raise an error.
     """
