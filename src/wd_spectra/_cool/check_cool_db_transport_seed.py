@@ -37,14 +37,23 @@ from wd_spectra.opacity import optical_depth_from_mass_opacity
 from wd_spectra.spectrum import planck_lambda_angstrom
 
 
-def atmosphere_at(teff, pressure, temperature, tau, table=None, log_h_he=None):
+def atmosphere_at(teff, pressure, temperature, tau, table=None, log_h_he=None, *, logg=8., column_mass=None):
+    if not np.isfinite(logg):
+        raise ValueError('logg must be finite')
+    try:
+        gravity = 10.**float(logg)
+    except OverflowError as exc:
+        raise ValueError('gravity must be finite and positive') from exc
+    if not np.isfinite(gravity) or gravity <= 0:
+        raise ValueError('gravity must be finite and positive')
+    mass = pressure/gravity if column_mass is None else np.asarray(column_mass, dtype=float)
     if log_h_he is not None:
         if table is not None:
             raise ValueError("Mixed diagnostic does not support changing the bulk EOS")
         state = hummer_mihalas_hydrogen_helium_lte(temperature, pressure, log_h_he,
                                                   correlated_microfields=True)
         hydrogen = state.hydrogen_lte_state
-        return Atmosphere(teff, 8., tau, pressure/1e8, temperature, pressure, state.mass_density,
+        return Atmosphere(teff, logg, tau, mass, temperature, pressure, state.mass_density,
             hydrogen.neutral_h_density, hydrogen.proton_density, state.electron_density, {},
             hydrogen_lte_state=hydrogen, helium_lte_state=state.helium_lte_state)
     if table is None:
@@ -53,14 +62,14 @@ def atmosphere_at(teff, pressure, temperature, tau, table=None, log_h_he=None):
         if not np.all(table.evaluate(pressure, temperature)[2]):
             raise ValueError("Experiment left REOS3 domain; no ideal-EOS substitution allowed")
         state = hummer_mihalas_helium_lte_with_reos3(temperature, pressure, table, correlated_microfields=True)
-    return Atmosphere(teff, 8., tau, pressure / 1e8, temperature, pressure,
+    return Atmosphere(teff, logg, tau, mass, temperature, pressure,
                       state.mass_density, np.zeros_like(temperature), np.zeros_like(temperature),
                       state.electron_density, {}, helium_lte_state=state)
 
 
-def transport_seed(teff, n_depth, bottom_tau, table=None, mesh="pressure", *, log_h_he=None):
+def transport_seed(teff, n_depth, bottom_tau, table=None, mesh="pressure", *, log_h_he=None, logg=8.):
     print(f"seed: constructing gray surface boundary for {teff:g} K, {n_depth} layers", flush=True)
-    gray = helium_continuum_atmosphere(teff, 8., n_depth=n_depth, helium_reos3_table=table,
+    gray = helium_continuum_atmosphere(teff, logg, n_depth=n_depth, helium_reos3_table=table,
         **({} if log_h_he is None else {'log_hydrogen_abundance':log_h_he}))
     print(f"seed: gray boundary ready; integrating hydrostatic ML2 transport from "
           f"P={gray.gas_pressure[0]:.6g}, T={gray.temperature[0]:.6g}", flush=True)
@@ -71,7 +80,7 @@ def transport_seed(teff, n_depth, bottom_tau, table=None, mesh="pressure", *, lo
         nonlocal evaluations
         temp = np.array([np.exp(y[0])])
         pressure = np.array([np.exp(logp)])
-        point = atmosphere_at(teff, pressure, temp, np.ones(1), table, log_h_he=log_h_he)
+        point = atmosphere_at(teff, pressure, temp, np.ones(1), table, log_h_he=log_h_he, logg=logg)
         if log_h_he is None:
             opacity = rosseland_mean_helium_continuum_opacity(point, n_frequency=160)
             thermo = hummer_mihalas_helium_thermodynamics(temp, pressure, correlated_microfields=True,
@@ -106,12 +115,13 @@ def transport_seed(teff, n_depth, bottom_tau, table=None, mesh="pressure", *, lo
             logp[j] = brentq(lambda x: integrated.sol(x)[1]-requested[j],
                              initial_logp, integrated.t[-1])
     logt, tau = integrated.sol(logp)
-    return atmosphere_at(teff, np.exp(logp), np.exp(logt), tau, table, log_h_he=log_h_he)
+    return atmosphere_at(teff, np.exp(logp), np.exp(logt), tau, table, log_h_he=log_h_he, logg=logg)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("temperature", type=int)
+    parser.add_argument("--logg", type=float, default=8., help="requested log10 surface acceleration in cgs")
     parser.add_argument("--log-h-he", type=float,
                         help="Explicit atomic DAB continuation/refinement instead of pure He")
     parser.add_argument("--n-depth", type=int, default=80)
@@ -197,6 +207,9 @@ def main():
 
 def run(args):
     from .solver_step_experiments import DIRECT_ENERGY_METHODS, LOCAL_ENERGY_METHODS
+    args.logg = getattr(args, 'logg', 8.)
+    if not np.isfinite(args.logg):
+        raise ValueError('logg must be finite')
     if args.structure_wavelength_count < 2:
         raise ValueError('structure wavelength count must be at least two')
     if (args.stable_transfer and args.step_method not in DIRECT_ENERGY_METHODS
@@ -253,7 +266,7 @@ def run(args):
             raise ValueError("Regenerate the seed when changing the EOS")
     if args.extend_atmosphere is not None:
         from .domain_extension_experiment import extend_domain
-        previous = load_atmosphere_checkpoint(args.extend_atmosphere, args.temperature, 8., composition, **checkpoint_options)
+        previous = load_atmosphere_checkpoint(args.extend_atmosphere, args.temperature, args.logg, composition, **checkpoint_options)
         boundary_wave = np.geomspace(100, 1e7, 600)
         opacity_function = (helium_continuum_mass_absorption_coefficient if args.log_h_he is None
                             else hydrogen_helium_continuum_mass_absorption_coefficient)
@@ -263,7 +276,7 @@ def run(args):
         target = STEFAN_BOLTZMANN*args.temperature**4
         def local_transport(pressure, temperature):
             p, t = np.array([pressure]), np.array([temperature])
-            point = atmosphere_at(args.temperature, p, t, np.ones(1), log_h_he=args.log_h_he)
+            point = atmosphere_at(args.temperature, p, t, np.ones(1), log_h_he=args.log_h_he, logg=args.logg)
             if args.log_h_he is None:
                 rosseland = rosseland_mean_helium_continuum_opacity(point, n_frequency=160)
                 thermo = hummer_mihalas_helium_thermodynamics(t, p, correlated_microfields=True)
@@ -281,40 +294,44 @@ def run(args):
         p, t, tau, extension_metadata = extend_domain(previous.gas_pressure, previous.temperature,
             previous.rosseland_optical_depth, boundary_tau, boundary_wave, previous.gravity,
             target, local_transport, escape_tolerance=args.extension_escape_tolerance)
-        seed = atmosphere_at(args.temperature, p, t, tau, log_h_he=args.log_h_he)
+        seed = atmosphere_at(args.temperature, p, t, tau, log_h_he=args.log_h_he, logg=args.logg)
         args.n_depth = seed.n_depth
         provenance = f"explicit domain extension of {args.extend_atmosphere}; not a cold start"
         print(f"Explicit domain extension: {extension_metadata}", flush=True)
     elif args.resume_atmosphere is not None:
-        seed = load_atmosphere_checkpoint(args.resume_atmosphere, args.temperature, 8., composition, **checkpoint_options)
+        seed = load_atmosphere_checkpoint(args.resume_atmosphere, args.temperature, args.logg, composition, **checkpoint_options)
         args.n_depth = seed.n_depth
         provenance = f"explicit same-grid continuation of {args.resume_atmosphere}; not a cold start"
         print(f"Explicit continuation: {seed.n_depth} layers; {args.resume_atmosphere}", flush=True)
     elif args.refine_atmosphere is not None:
         if args.reuse_fresh_seed is not None or args.reos3:
             raise ValueError("Mesh refinement must not also change the seed source or EOS")
-        previous = load_atmosphere_checkpoint(args.refine_atmosphere, args.temperature, 8., composition, **checkpoint_options)
+        previous = load_atmosphere_checkpoint(args.refine_atmosphere, args.temperature, args.logg, composition, **checkpoint_options)
         old_logp = np.log(previous.gas_pressure)
         logp = np.sort(np.concatenate((old_logp, .5*(old_logp[:-1]+old_logp[1:]))))
         seed = atmosphere_at(args.temperature, np.exp(logp),
                             np.exp(np.interp(logp, old_logp, np.log(previous.temperature))),
                             np.exp(np.interp(logp, old_logp, np.log(previous.rosseland_optical_depth))),
-                            log_h_he=args.log_h_he)
+                            log_h_he=args.log_h_he, logg=args.logg)
         args.n_depth = seed.n_depth
         provenance = f"explicit mesh refinement of {args.refine_atmosphere}; not a cold start"
         print(f"Explicit refinement: {previous.n_depth} -> {seed.n_depth} layers; {args.refine_atmosphere}", flush=True)
     elif args.reuse_fresh_seed is None:
         seed = transport_seed(args.temperature, args.n_depth, args.bottom_tau, table, args.mesh,
+                              logg=args.logg,
                               **({} if args.log_h_he is None else {'log_h_he':args.log_h_he}))
         provenance = "fresh hydrostatic ML2/diffusion ODE; not a saved atmosphere"
     else:
         if args.reuse_fresh_seed.name != "seed.npz" or args.reuse_fresh_seed.parent.name != str(args.temperature):
             raise ValueError("Only this experiment's temperature-matched fresh seed.npz may be reused")
         with np.load(args.reuse_fresh_seed) as saved:
+            saved_logg = float(saved['diagnostic_logg']) if 'diagnostic_logg' in saved else 8.
+            if saved_logg != args.logg:
+                raise ValueError('fresh seed gravity does not match the requested gravity')
             if "diagnostic_seed" not in saved or not str(saved["diagnostic_seed"]).startswith("fresh hydrostatic"):
                 raise ValueError("Seed provenance does not certify a fresh analytic seed")
             seed = atmosphere_at(args.temperature, saved["gas_pressure"], saved["temperature"],
-                                 saved["rosseland_optical_depth"])
+                                 saved["rosseland_optical_depth"], logg=args.logg)
         if seed.n_depth != args.n_depth:
             raise ValueError("Reused seed layer count must match --n-depth")
         provenance = f"fresh hydrostatic ML2/diffusion ODE reused from {args.reuse_fresh_seed}"
@@ -504,7 +521,7 @@ def run(args):
             name = 'experimental-'+name
             fields = {'experimental_'+key: value for key, value in fields.items()}
             metadata['experimental_physics'] = experimental_physics
-        np.savez_compressed(out / name, **fields, **metadata)
+        np.savez_compressed(out / name, **fields, diagnostic_logg=atmosphere.logg, **metadata)
     save_diagnostic_structure('seed.npz', seed, diagnostic_seed=provenance)
     he_i, he_ii = _helium_tables(ModelData.default())
     from .stable_feautrier_experiment import stable_transfer_experiment
@@ -519,8 +536,8 @@ def run(args):
             print(json.dumps(row), flush=True)
         solver = (radiative_equilibrium_helium_atmosphere if args.log_h_he is None
                   else radiative_equilibrium_hydrogen_helium_atmosphere)
-        solver_arguments = ((args.temperature, 8.) if args.log_h_he is None
-                            else (args.temperature, 8., args.log_h_he))
+        solver_arguments = ((args.temperature, args.logg) if args.log_h_he is None
+                            else (args.temperature, args.logg, args.log_h_he))
         mixture_options = ({} if args.log_h_he is None else dict(
             hydrogen_self_broadening_prescription=_da_self_broadening_prescription(args.temperature, None),
             hydrogen_self_broadening_truncation_closure="stark-core"))
@@ -537,6 +554,7 @@ def run(args):
             helium_reos3_table=table)
     relaxed = replace(relaxed, metadata={**relaxed.metadata,
                       "diagnostic_seed": provenance,
+                      "diagnostic_logg": args.logg,
                       "diagnostic_log_hydrogen_to_helium": args.log_h_he,
                       "diagnostic_domain_extension": extension_metadata,
                       "diagnostic_stable_transfer": args.stable_transfer,
@@ -559,8 +577,8 @@ def run(args):
                           "cell-conservation" if args.cell_conservation else "flux")})
     wave = np.geomspace(100, 1e7, 4000)
     compute = compute_db if args.log_h_he is None else compute_dab
-    config = (DBConfig(effective_temperature=args.temperature, quality="production") if args.log_h_he is None
-              else DABConfig(effective_temperature=args.temperature, quality="production", log_hydrogen_to_helium=args.log_h_he))
+    config = (DBConfig(effective_temperature=args.temperature, logg=args.logg, quality="production") if args.log_h_he is None
+              else DABConfig(effective_temperature=args.temperature, logg=args.logg, quality="production", log_hydrogen_to_helium=args.log_h_he))
     if args.smooth_h2:
         relaxed=replace(relaxed,metadata={**relaxed.metadata,
             'experimental_h2_partition':'C4 quintic logQ; analytic energy derivative; not production default'})
@@ -581,6 +599,7 @@ def run(args):
     spectrum_ratio = float(trapezoid(result.spectrum.surface_flux_lambda, wave)
                            / (STEFAN_BOLTZMANN * args.temperature**4))
     summary = dict(elapsed_seconds=time.monotonic() - started,
+                   effective_temperature=args.temperature, logg=args.logg,
                    refined_from=None if args.refine_atmosphere is None else str(args.refine_atmosphere),
                    resumed_from=None if args.resume_atmosphere is None else str(args.resume_atmosphere),
                    extended_from=None if args.extend_atmosphere is None else str(args.extend_atmosphere),

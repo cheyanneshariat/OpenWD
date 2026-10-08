@@ -72,9 +72,11 @@ class ModelRun:
 
 
 def _cool_commands(config, selection, directory):
-    # These constraints are limitations of the preserved successful drivers,
-    # not assertions that the physics ceases to apply elsewhere.
-    if config.logg != 8.0 or config.quality != "production":
+    # Dense DB threads the requested gravity through its seed, solve and audit.
+    # Other preserved cool drivers still have fixed-gravity recipes.
+    if config.quality != "production":
+        raise ValueError('The automatic cool workflow currently requires quality="production"; no different resolution is substituted')
+    if selection.workflow != "dense-db" and config.logg != 8.0:
         raise ValueError(
             'The automatic cool workflow currently requires logg=8 and quality="production"; no different gravity/resolution is substituted'
         )
@@ -102,6 +104,7 @@ def _cool_commands(config, selection, directory):
                 sys.executable,
                 "-m", "wd_spectra._cool.run_cool_db",
                 temperature,
+                "--logg", str(config.logg),
                 "--output-root",
                 str(worker),
                 "--allow-unqualified",

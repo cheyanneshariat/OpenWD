@@ -16,6 +16,22 @@ from wd_spectra.radiative_transfer import radiation_field, emergent_flux
 from wd_spectra._stable_feautrier import cancellation_safe_field, cancellation_safe_scalar_field
 
 
+def saved_parameters(metadata, saved, directory_temperature, *, expected_logg=None):
+    """Read the actual saved request; legacy cool archives were fixed at g=8."""
+    teff = float(metadata.get('effective_temperature', directory_temperature))
+    logg = float(metadata.get('logg', metadata['atmosphere'].get('diagnostic_logg', 8.)))
+    if not np.isfinite(teff) or teff <= 0 or not np.isfinite(logg):
+        raise ValueError('saved temperature and gravity must be finite, with positive temperature')
+    if teff != directory_temperature:
+        raise ValueError('saved temperature does not match the requested case directory')
+    for field, expected in [('experimental_logg', logg), ('experimental_effective_temperature', teff)]:
+        if field in saved and float(saved[field]) != expected:
+            raise ValueError(f'saved structure {field} does not match its metadata')
+    if expected_logg is not None and logg != expected_logg:
+        raise ValueError('saved gravity does not match the requested independent audit')
+    return teff, logg
+
+
 def coupled_linear_source(tau, planck, absorption, scattering, n_angle=4, chunk_size=16):
     """Direct Lambda solve using the public piecewise-linear formal operator.
 
@@ -69,6 +85,8 @@ def main():
     parser.add_argument('--skip-linear', action='store_true')
     parser.add_argument('--angles', type=int, nargs='+', default=[3,4,8])
     parser.add_argument('--maximum-wavelength', type=float, default=1e7)
+    parser.add_argument('--expected-logg', type=float,
+        help='reject an atmosphere whose recorded gravity differs from the request')
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError('refusing to overwrite spectrum audit')
@@ -89,16 +107,18 @@ def main():
     if meta['interaction_table_sha256'] != model.sha256 or meta['physics'] != model.physics:
         raise ValueError('saved state physics do not match diagnostic model')
     with np.load(args.run_directory/'experimental-molecular-dense-structure.npz') as saved:
+        teff, logg = saved_parameters(meta, saved, float(args.run_directory.name), expected_logg=args.expected_logg)
         temperature = saved['experimental_temperature']
         pressure = saved['experimental_pressure']
         tau = saved['experimental_tau']
         density = saved['experimental_density']
-    teff = float(args.run_directory.name)
+        column_mass = saved['experimental_column_mass']
     wave = np.geomspace(100., args.maximum_wavelength, args.wavelength_count)
     from .heminus_join_experiment import heminus_join_scope,METADATA_KEY,HARD_JOIN
     join_policy=meta['atmosphere'].get(METADATA_KEY,HARD_JOIN)
     with heminus_join_scope(join_policy),atomic_dense_experiment(runner, model, opacity_factory=model.opacity_factory):
-        atmosphere = runner.atmosphere_at(teff, pressure, temperature, tau)
+        atmosphere = runner.atmosphere_at(teff, pressure, temperature, tau,
+                                         logg=logg, column_mass=column_mass)
         np.testing.assert_allclose(atmosphere.mass_density, density, rtol=1e-13)
         absorption, scattering = pure_helium_opacities(atmosphere, wave)
     depths = optical_depth_from_mass_opacity(atmosphere.column_mass, absorption+scattering)
@@ -170,6 +190,7 @@ def main():
     source_pass=bool(checks and all(r['radiation_scale_source_equation_error']<1e-10 for r in checks))
     qualification=dict(numerically_qualified_for_declared_experimental_physics=(
         physical_flag and broader and finer_angles and thermal_pass and flux_pass and source_pass),
+        effective_temperature=teff, logg=logg,
         qualification_scope='fixed-depth Feautrier atmosphere: independent wavelength/angular/source checks only',
         mass_conservative_transfer=mass_conservative,
         positive_intensity_reconstruction=reconstruct_intensity,

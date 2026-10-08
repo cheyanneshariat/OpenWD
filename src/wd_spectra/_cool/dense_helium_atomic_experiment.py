@@ -191,7 +191,7 @@ def transport_surface_boundary(runner, model, teff, logg, **options):
 
     def at_pressure(logp):
         p, t = np.array([np.exp(logp)]), np.array([temperature])
-        point = runner.atmosphere_at(teff, p, t, np.array([tau]))
+        point = runner.atmosphere_at(teff, p, t, np.array([tau]), logg=logg)
         opacity = runner.rosseland_mean_helium_continuum_opacity(point, n_frequency=160)[0]
         return np.log(p[0]*opacity/(10**logg*tau)), point
 
@@ -248,12 +248,14 @@ def atomic_dense_experiment(runner, model, *, least_squares_merit=False, opacity
             extra['experimental_molecular_ion_density']=chemistry.molecular_ion
             extra['experimental_atomic_ion_density']=chemistry.atomic_ion
         np.savez_compressed(path/f'experimental-{model.output_stem}-structure.npz',
+            experimental_logg=a.logg, experimental_effective_temperature=a.effective_temperature,
             experimental_temperature=a.temperature, experimental_pressure=a.gas_pressure,
             experimental_density=a.mass_density, experimental_electron_density=a.electron_density,
             experimental_column_mass=a.column_mass, experimental_tau=a.rosseland_optical_depth,**extra)
         np.savetxt(path/'experimental-spectrum.txt', np.column_stack((
             result.spectrum.wavelength_angstrom, result.spectrum.surface_flux_lambda)), header=model.physics)
         (path/'experimental-metadata.json').write_text(json.dumps(dict(
+            effective_temperature=a.effective_temperature, logg=a.logg,
             physics=model.physics, interaction_table_sha256=model.sha256,
             compatible_with_production_checkpoint_loader=False,
             atmosphere=_jsonable(a.metadata)), indent=2)+'\n')

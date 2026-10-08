@@ -131,20 +131,29 @@ def test_dispatch_never_retries_with_other_physics_on_failure(monkeypatch, tmp_p
     assert not record["physics_changed_after_failure"]
 
 
-def test_dispatch_refuses_to_ignore_gravity_or_overwrite(monkeypatch, tmp_path):
+def test_dispatch_preserves_dense_gravity_and_refuses_overwrite(monkeypatch, tmp_path):
     monkeypatch.setattr(
         automatic,
         "select_physics",
         lambda *a, **k: PhysicsSelection("dense-db", "test", {}, False, True),
     )
-    with pytest.raises(ValueError, match="logg=8"):
-        automatic.run_model(
-            DBConfig(effective_temperature=5000.0, logg=7.5, quality="production"),
-            tmp_path / "new",
-        )
+    config = DBConfig(effective_temperature=5000.0, logg=7.5, quality="production")
+    commands, _ = automatic._cool_commands(
+        config, PhysicsSelection("dense-db", "test", {}, False, True), tmp_path / "new"
+    )
+    command = commands[0]
+    assert command[command.index('--logg')+1] == '7.5'
+    assert config.logg == 7.5
     assert not (tmp_path / "new").exists()
     with pytest.raises(FileExistsError):
         automatic.run_model(DBConfig(), tmp_path)
+
+
+def test_other_cool_drivers_keep_explicit_gravity_restriction(tmp_path):
+    with pytest.raises(ValueError, match='logg=8'):
+        automatic._cool_commands(
+            DABConfig(effective_temperature=7500., logg=7.5, quality='production'),
+            PhysicsSelection('molecular-dab', 'test', {}, False, True), tmp_path/'new')
 
 
 def test_cool_worker_environment_cannot_replace_parent_callbacks(monkeypatch, tmp_path):

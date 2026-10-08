@@ -55,6 +55,12 @@ It combines the tabulated bulk EOS with approximate chemical potentials and
 trace-ion chemistry, without inserting that closure into warm ionized helium.
 The command-line example uses the same automatic selection as `run_model`.
 The lower-level `compute_db` preset remains an explicit atomic-physics interface.
+The dense driver propagates the requested `logg` through hydrostatic column mass,
+ML2 initialization, the structure solver and the independent spectrum audit.
+Saved structures record their gravity, and the audit rejects a mismatch with
+the request. The production recipe and its numerical tolerances are unchanged.
+The material-domain checks still apply at every depth; accepting a parameter is
+not a claim that its atmosphere or spectrum has been qualified.
 
 Protected cold starts cover the established prescription at 10000 and 22000 K
 and the dense workflow at 5000 and 8000 K. See [tested points](../tested-temperature-ranges.md),

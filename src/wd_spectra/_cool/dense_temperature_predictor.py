@@ -39,6 +39,7 @@ class TemperaturePredictor:
         if self.metadata['interaction_table_sha256']!=self.sha or not self.summary['converged']:
             raise ValueError('predictor requires a converged atmosphere with the identical interaction table')
         source=self.metadata['atmosphere']
+        self.logg=float(self.metadata.get('logg',source.get('diagnostic_logg',8.)))
         from .heminus_join_experiment import METADATA_KEY,HARD_JOIN
         self.heminus_join_policy=source.get(METADATA_KEY,HARD_JOIN)
         if not (source['maximum_all_depth_total_flux_residual']<.003
@@ -63,7 +64,9 @@ class TemperaturePredictor:
                         if unscaled_temperature else 'scaled T/Teff predictor; ')
             +'NOT a cold start or converged target')
 
-    def seed(self,teff,n_depth,bottom_tau,table=None,mesh='pressure'):
+    def seed(self,teff,n_depth,bottom_tau,table=None,mesh='pressure',*,logg=8.):
+        if logg != self.logg:
+            raise ValueError('retained-pressure predictor requires the same recorded gravity')
         if table is not None:raise ValueError('no alternative EOS in continuation')
         if n_depth>len(self.pressure) and not self.refine_pressure:
             raise ValueError('refining the source pressure grid requires explicit --predictor-refine-pressure')
@@ -79,7 +82,7 @@ class TemperaturePredictor:
         interpolate=lambda values:np.exp(PchipInterpolator(nodes,np.log(values))(indices))
         return runner.atmosphere_at(teff,interpolate(self.pressure),
             interpolate(self.temperature)*(1. if self.unscaled_temperature else teff/self.teff),
-            interpolate(self.tau))
+            interpolate(self.tau),logg=logg)
 
     def __call__(self,seed,options):
         if self.used:return seed,options
