@@ -1,0 +1,102 @@
+{
+  "scope": "archived fixed-atmosphere disk-quadrature diagnostics; not equilibrium qualification",
+  "definition": "(convolved F_nu / 8-A convolved F_nu - 1); no per-variant flux rescaling",
+  "window_vacuum_angstrom": [
+    3820.0,
+    6950.0
+  ],
+  "objects": {
+    "j1018+0111": {
+      "velocity_kms": 96.0,
+      "comparison_pixels": 2595,
+      "runs": {
+        "baseline": {
+          "maximum_relative_difference": 0.07679339760307535,
+          "rms_relative_difference": 0.017671374466013186,
+          "surface_cells": 21,
+          "original_synthesis_seconds": 46.07504162500845,
+          "sha256": {
+            "spectrum": "12155e993f8aaf2ca2473af3307d6433d755661434eaa613c395a59c601202be",
+            "run_record": "7701306556281c5c847555fc3f5052b3bc8fa649d2e40b5c57a886fd77d5df59"
+          }
+        },
+        "drift-32": {
+          "maximum_relative_difference": 0.020296619181627062,
+          "rms_relative_difference": 0.004093488232702346,
+          "surface_cells": 65,
+          "original_synthesis_seconds": 153.5588842079742,
+          "sha256": {
+            "spectrum": "4ffe53a74833361b81e43be15566af84ceab30c35371bcd504d20986a5924649",
+            "run_record": "bc190a237c6d5c8dd8842259ee3963a7d6887732fe217feb775b96e5d21c56f2"
+          }
+        },
+        "drift-16": {
+          "maximum_relative_difference": 0.006317837833615947,
+          "rms_relative_difference": 0.001280097391995953,
+          "surface_cells": 130,
+          "original_synthesis_seconds": 307.69235679198755,
+          "sha256": {
+            "spectrum": "a02b71c8e8714f16ba54aea00430db6c58fd0581ac8e86908aae89326b3851a3",
+            "run_record": "6ee510cc3fa5b4396b10aa0c296087c7c7ce813be6e2846dfd543a47c9e437ca"
+          }
+        },
+        "drift-8": {
+          "maximum_relative_difference": 0.0,
+          "rms_relative_difference": 0.0,
+          "surface_cells": 260,
+          "original_synthesis_seconds": 496.29786129199783,
+          "sha256": {
+            "spectrum": "61cf3b8cb397822fdfba274803cf90321cd21c8f6e2a09c640725c12d6d03e21",
+            "run_record": "2398da83038b28ea6bfd0290e8381b5ba590c495f00cdd496b5392bfa7dff8c1"
+          }
+        }
+      }
+    },
+    "j1351+5419": {
+      "velocity_kms": 0.0,
+      "comparison_pixels": 2593,
+      "runs": {
+        "baseline": {
+          "maximum_relative_difference": 0.051003880180073624,
+          "rms_relative_difference": 0.010612532277560526,
+          "surface_cells": 21,
+          "original_synthesis_seconds": 43.29672270899755,
+          "sha256": {
+            "spectrum": "9f26ee5547def54a71af9c180abd0ac02522647c473d8b9c5775bdb23f700b65",
+            "run_record": "e59d2a32b69d598a06d3b2d17fea662f9dff24d41bf7fbe482b84ebe278dc88c"
+          }
+        },
+        "drift-32": {
+          "maximum_relative_difference": 0.010658716457356165,
+          "rms_relative_difference": 0.0017596067799937043,
+          "surface_cells": 134,
+          "original_synthesis_seconds": 279.20507654198445,
+          "sha256": {
+            "spectrum": "06a68b342ef566ac4ca5ec8fa0536443a3543fec03d80246d5f0c21e13902f6a",
+            "run_record": "bb5ebe2600214a3722275a4834ee785f97c81c295721b99a27159968b1579adb"
+          }
+        },
+        "drift-16": {
+          "maximum_relative_difference": 0.004572183052185319,
+          "rms_relative_difference": 0.0005488436791188208,
+          "surface_cells": 267,
+          "original_synthesis_seconds": 646.0189858330123,
+          "sha256": {
+            "spectrum": "84daaa8746cb35ecb1dd9f597a7d4dd7e91d0a1f3f3540f84a02dc9542e2417d",
+            "run_record": "159b16b404331b8d254b91887e551aba72c45c59120fb1a76ab453c136635035"
+          }
+        },
+        "drift-8": {
+          "maximum_relative_difference": 0.0,
+          "rms_relative_difference": 0.0,
+          "surface_cells": 533,
+          "original_synthesis_seconds": 992.9902798749972,
+          "sha256": {
+            "spectrum": "49c2f48e00f5c59e3161f7b2b27df7e23987e41a194e8e558bef706bf3a8f34a",
+            "run_record": "ff3bddaf00eff413c8530ebcfaff403ec87460c158af30558ac6561bf29a657f"
+          }
+        }
+      }
+    }
+  }
+}

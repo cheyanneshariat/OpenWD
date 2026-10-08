@@ -154,6 +154,11 @@ simultaneous Stark–Zeeman calculation. Magnetic Lyman/Paschen/Brackett data,
 decentered atoms, strong-field molecular chemistry and disk-integrated Q/U/V
 are absent. The earlier mean-field magnetic structure, magnetic EOS, RWA
 continuum, full IQUV transfer and cyclotron opacity remain explicit options.
+The default 21 field bins can under-resolve rapidly moving magnetic line
+components. The opt-in drift-resolved disk reduces this numerical error in
+two fixed-atmosphere examples; it does not repair continuum, line-width or
+atmospheric-structure approximations. See the
+[disk-quadrature benchmark](development/history/dah-disk-quadrature-2026-10-08.md).
 The [DAH guide](models/DAH.md) separates these options from the paper default
 and explains why smooth continuum corrections belong to observational
 comparisons rather than the physical prediction.

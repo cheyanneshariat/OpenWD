@@ -67,6 +67,7 @@ test and is not a convergence guarantee.
 | `dipole_inclination_deg` | Angle between the dipole axis and the line of sight. |
 | `dipole_offset_radius=(ax, ay, az)` | Displacement in stellar radii in the magnetic-axis frame: z along the dipole axis, line of sight in the x–z plane. |
 | `disk_field_bins=21` | Compress the resolved surface quadrature into field bins; `None` retains all cells. |
+| `disk_component_drift_angstrom=None` | Opt-in dipole binning by estimated component drift; takes precedence over `disk_field_bins` (see below). |
 
 The atomic regime is selected from a bound on the **continuous visible
 surface maximum**, not a compressed bin mean or the polar input parameter.
@@ -74,6 +75,30 @@ Bounds are exact for axial offsets and conservative for transverse offsets;
 the result records `visible_field_bounds_exact` and the field interval.
 An offset dipole with a polar field below 100 MG can have local fields above
 100 MG. The 100-MG scale is not a universal accuracy cutoff.
+
+Each compressed bin is synthesized at one mean field. In the tested
+high-field examples, components move rapidly between the default bins,
+leaving discrete copies rather than a resolved field-spread profile.
+`disk_component_drift_angstrom` builds bins from a 192 × 384 (or denser)
+visible-surface grid. The bin edges lie at equal steps of the accumulated
+drift ∫ max|dλ/dB| dB on a 4001-point field grid. The screen uses Balmer
+components inside the output window (±100 Å) with at least 1% of their
+parent line's strongest `energy × dipole-strength` proxy, not their
+temperature-dependent LTE opacity. This is an estimated drift budget
+within each interval, not a bound on adjacent bin means or spectral error.
+Components outside the screen, broad wings, angular compression and finite
+raw-surface resolution still require convergence checks. Requests needing
+more than 4096 drift intervals fail rather than silently coarsen.
+
+With 16 Å, the archived J1018+0111 and J1351+5419 calculations use 130 and
+267 bins. The option is slower than the 21-bin default because every bin
+needs a transfer calculation. See the
+[disk-quadrature benchmark](../development/history/dah-disk-quadrature-2026-10-08.md)
+for measured accuracy and cost. Start with 16 Å for these cases and tighten
+it for your target and instrumental resolution; it is not a universal
+accuracy setting. The option is off by default and does not change the
+frozen paper predictions. `result.metadata["domain_notes"]` records the
+scope of this numerical estimate and the unchanged physics approximations.
 
 ## Default physics
 
