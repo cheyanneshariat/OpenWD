@@ -30,6 +30,9 @@ python -m jupyter lab examples/generate_spectrum.ipynb
 
 Select this environment's kernel. Restart the kernel after updating the package
 so an old import cannot be mistaken for the current code.
+[`examples/fit_dz_spectrum.ipynb`](../examples/fit_dz_spectrum.ipynb) demonstrates
+a DZ abundance fit. Its observed UVES spectrum is included in the repository;
+no archive download or extra data-reading dependency is needed.
 
 ## Run and plot a spectrum
 

@@ -101,6 +101,14 @@ about 30 minutes to several hours. `dense_helium_eos="reos3"` is available in
 the Python configuration as an explicitly experimental bulk-EOS option; the
 validated production default remains the chemical-picture EOS.
 
+The [DZ fitting notebook](../../examples/fit_dz_spectrum.ipynb) fits Ca, Mg and
+Fe in four public VLT/UVES spectra of PG 1225-079, with Teff, log g and the
+remaining composition held fixed. The observed coadd is included in the
+repository. Each trial uses `relax_atmosphere=False` on one certified
+cold-start structure. These are diagnostic fits, not a final abundance
+solution. See the [fitting notes](../examples/fitting-dz.md) for data
+provenance, error assumptions and the structural-feedback check.
+
 Paper-spectrum regression and cold-start convergence are separate checks.
 See [tested points](../tested-temperature-ranges.md) and
 [reference-comparison limitations](../limitations.md#spectrum-accuracy-and-reference-comparisons)
