@@ -84,6 +84,7 @@ def main():
         ModelData.default().helium_reos3), .1/KB_EV, 17000), args.interaction_table)
     meta = json.loads((args.run_directory/'experimental-metadata.json').read_text())
     mass_conservative=bool(meta['atmosphere'].get('experimental_mass_conservative_transfer',False))
+    reconstruct_intensity=bool(meta['atmosphere'].get('experimental_positive_intensity_reconstruction',False))
     feautrier_name='mass-coupled-feautrier' if mass_conservative else 'coupled-feautrier'
     if meta['interaction_table_sha256'] != model.sha256 or meta['physics'] != model.physics:
         raise ValueError('saved state physics do not match diagnostic model')
@@ -138,9 +139,10 @@ def main():
     for angles in args.angles:
         if mass_conservative:
             from .mass_conservative_feautrier import mass_field
-            source,field=mass_field(depths,planck,absorption,scattering,column_mass=atmosphere.column_mass,n_angle=angles)
+            source,field=mass_field(depths,planck,absorption,scattering,column_mass=atmosphere.column_mass,
+                                   n_angle=angles,reconstruct_intensity=reconstruct_intensity)
             _,independent=mass_field(depths,source,absorption+scattering,np.zeros_like(scattering),
-                column_mass=atmosphere.column_mass,n_angle=angles)
+                column_mass=atmosphere.column_mass,n_angle=angles,reconstruct_intensity=reconstruct_intensity)
         else:
             source, field = cancellation_safe_field(depths, planck, absorption, scattering, n_angle=angles)
             independent = cancellation_safe_scalar_field(depths, source, n_angle=angles)
@@ -170,6 +172,7 @@ def main():
         physical_flag and broader and finer_angles and thermal_pass and flux_pass and source_pass),
         qualification_scope='fixed-depth Feautrier atmosphere: independent wavelength/angular/source checks only',
         mass_conservative_transfer=mass_conservative,
+        positive_intensity_reconstruction=reconstruct_intensity,
         independent_depth_resolution_verified=False,
         structure_grid_converged=physical_flag,broader_thermal_interval_checked=broader,
         finer_angular_quadrature_checked=finer_angles,structure_angles=original_angles,
