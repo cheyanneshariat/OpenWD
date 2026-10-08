@@ -250,6 +250,11 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
             or d["maximum_electron_fractional_change"]
             >= policy.molecular_electron_fraction
         )
+        if molecular and config.abundances is not None:
+            raise ValueError(
+                "Molecular H/He chemistry is indicated, but the molecular "
+                "workflow has no trace metals; no atomic substitute is selected"
+            )
         d["selection_policy"] = asdict(policy)
         return PhysicsSelection(
             "molecular-dab" if molecular else "dab",

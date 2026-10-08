@@ -19,6 +19,7 @@ important future work.
 from __future__ import annotations
 
 import csv
+import hashlib
 from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from importlib.resources import files
@@ -573,6 +574,9 @@ ATOMIC_MASS_U = MappingProxyType(
         "Ni": 58.6934,
         "Cu": 63.546,
         "Zn": 65.38,
+        # Stout stops at Zn; Nb ions come from the NIST/Nilsson snapshot
+        # read by read_niobium_atomic_ion.
+        "Nb": 92.90637,
     }
 )
 ATOMIC_NUMBER = MappingProxyType(
@@ -581,7 +585,7 @@ ATOMIC_NUMBER = MappingProxyType(
         "Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Ca": 20,
         "Ar": 18,
         "Sc": 21, "Ti": 22, "V": 23, "Cr": 24, "Mn": 25,
-        "Fe": 26, "Co": 27, "Ni": 28, "Cu": 29, "Zn": 30,
+        "Fe": 26, "Co": 27, "Ni": 28, "Cu": 29, "Zn": 30, "Nb": 41,
     }
 )
 IONIZATION_ENERGY_EV = MappingProxyType(
@@ -651,7 +655,7 @@ IONIZATION_ENERGY_EV = MappingProxyType(
             1761.8049,
             1962.663889,
         ),
-        "Al": (5.985769, 18.82855, 28.447642),
+        "Al": (5.985769, 18.82855, 28.447642, 119.9924, 153.8252),
         "Si": (
             8.15168,
             16.34585,
@@ -746,7 +750,7 @@ IONIZATION_ENERGY_EV = MappingProxyType(
             5469.86358,
         ),
         "Sc": (6.56149, 12.79977, 24.75684),
-        "Ti": (6.828120, 13.5755, 27.49171),
+        "Ti": (6.828120, 13.5755, 27.49171, 43.26717, 99.299),
         "V": (6.746187, 14.634, 29.311),
         "Cr": (6.76651, 16.486305, 30.959),
         "Mn": (7.4340380, 15.6400, 33.668),
@@ -778,13 +782,17 @@ IONIZATION_ENERGY_EV = MappingProxyType(
             8828.1864,
             9277.6886,
         ),
-        "Co": (7.88101, 17.0844, 33.50),
-        "Ni": (7.639878, 18.168838, 35.187),
-        # NIST ASD 5.12 ground-state ionization energies.  The local Stout
-        # cache contains the first three stages of both species, which is
-        # sufficient for their trace optical lines in cool O/Ne remnants.
-        "Cu": (7.726380, 20.29239, 36.841),
-        "Zn": (9.394197, 17.96439, 39.72330),
+        # NIST ASD 5.12 ground-state ionization energies.  Three stages
+        # suffice for trace optical lines in cool O/Ne remnants; the fourth
+        # and fifth (mostly bracketed NIST estimates, as for Al and Ti) let
+        # hot hydrogen-rich models carry these elements through charge 4.
+        "Co": (7.88101, 17.0844, 33.50, 51.27, 79.50),
+        "Ni": (7.639878, 18.168838, 35.187, 54.92, 76.06),
+        "Cu": (7.726380, 20.29239, 36.841, 57.38, 79.8),
+        "Zn": (9.394197, 17.96439, 39.72330, 59.573, 82.6),
+        # Nb I--VI, matching the bundled level lists.  NIST brackets the
+        # Nb II, Nb III and Nb VI values as semi-empirical or theoretical.
+        "Nb": (6.75885, 14.32, 25.04, 37.611, 50.5728, 102.069),
     }
 )
 
@@ -2040,6 +2048,8 @@ def read_stout_atomic_ion(root: str | Path, element: str, charge: int) -> Atomic
             transitions=(),
             source="NIST ASD ionization ladder; synthetic bare-nucleus closure",
         )
+    if symbol == "Nb":
+        return read_niobium_atomic_ion(root, int(charge))
     stage = int(charge) + 1
     directory = _resolve_stout_ion_directory(Path(root), symbol, stage)
     stem = f"{symbol.lower()}_{stage}"
@@ -2106,6 +2116,589 @@ def read_stout_atomic_ion(root: str | Path, element: str, charge: int) -> Atomic
         ionization_energy_ev=(ionization[charge] if charge < len(ionization) else None),
         levels=tuple(levels),
         transitions=tuple(transitions),
+    )
+
+
+# Niobium (Z = 41) lies beyond the Stout database.  Its ions are built from
+# checksum-pinned NIST ASD 5.12 queries retrieved on 2026-10-07: the level
+# lists of Nb I--VI and the Nb IV transition probabilities, which are almost
+# all from Tauheed & Reader (2005, Phys. Scr. 72, 158).  Nb III uses the
+# HFR+CPOL probabilities of Nilsson et al. (2010, A&A 511, A16, Table 7),
+# transcribed by hand; that table lists only lines with log gf > -0.5.
+# NIST has no probabilities for Nb I, II or V, so those stages contribute
+# partition functions and charge but no lines.  Cite Kramida et al., NIST
+# ASD (doi:10.18434/T4W30F) and the original probability sources.
+_NIST_ASD_LEVELS_QUERY = (
+    "https://physics.nist.gov/cgi-bin/ASD/energy1.pl?spectrum=Nb%20{spectrum}&"
+    "units=0&format=3&output=0&page_size=5000&multiplet_ordered=0&conf_out=on&"
+    "term_out=on&level_out=on&unc_out=1&j_out=on&g_out=on&biblio=on"
+)
+NIOBIUM_ATOMIC_DATA_FILES = MappingProxyType(
+    {
+        **{
+            f"nist-asd-nb{charge + 1}-levels.tsv": (
+                _NIST_ASD_LEVELS_QUERY.format(spectrum=spectrum),
+                checksum,
+            )
+            for charge, (spectrum, checksum) in enumerate((
+                ("I", "b818b5e40c14f807554cfce49830fc5cbe802cff495c605110ba826f9f91ae4f"),
+                ("II", "d50ce7642473087c57ef12b27087a4c0fe825415bfb940e636aebcaaefcb6057"),
+                ("III", "432ca4b15b4be6ce695121608ede2924c6576bc7d302a51c9aabd9cac3bcca9d"),
+                ("IV", "c7bfdf32fed5dfc6844c723944b19f72441d4361a726c0986e18eceb6b96d383"),
+                ("V", "0988c933da8c7a499281963a73b91d84570af2e9a9d3e3c96ffb355e705f9ba8"),
+                ("VI", "85839ed66cb0eeec51749c50f248bdda7b0f78ff3f8306ace91fdaefe830f7c8"),
+            ))
+        },
+        "nist-asd-nb4-lines.tsv": (
+            "https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=Nb+IV&"
+            "output_type=0&unit=1&submit=Retrieve+Data&de=0&plot_out=0&"
+            "I_scale_type=1&format=3&line_out=0&en_unit=0&output=0&bibrefs=1&"
+            "page_size=15000&show_obs_wl=1&show_calc_wl=1&unc_out=1&"
+            "order_out=0&show_av=3&A_out=0&f_out=on&loggf_out=on&"
+            "intens_out=on&allowed_out=1&forbid_out=1&conf_out=on&"
+            "term_out=on&enrg_out=on&J_out=on&g_out=on",
+            "3b72274ea6c3f9a6d00ace8eba818c2c9a6e4add0119cd06f2eafa67be6f1c71",
+        ),
+        "nist-asd-nb-ionization.csv": (
+            "https://physics.nist.gov/cgi-bin/ASD/ie.pl?spectra=Nb&units=1&"
+            "format=2&at_num_out=on&el_name_out=on&ion_charge_out=on&"
+            "sp_name_out=on&e_out=0&unc_out=on&biblio=on",
+            "a0e0899b97a055d7497823b72629606597880a352d3f23ed2e9462dc8ef49999",
+        ),
+        "nilsson2010-nb3-table7.csv": (
+            "Nilsson et al. (2010), A&A 511, A16, Table 7; "
+            "doi:10.1051/0004-6361/200913574",
+            "492220554b5a873d7a49e0b3c7cec668c0bc7077aa4f3aed90314cf9136b3918",
+        ),
+    }
+)
+NIOBIUM_MAXIMUM_CHARGE = 5
+# Nilsson's Table 7 wavelengths are Iglesias (1955) laboratory values (air
+# above 2000 A); NIST Ritz positions differ from them by up to 0.054 A.
+_NILSSON_WAVELENGTH_TOLERANCE_ANGSTROM = 0.08
+_NIST_LEVEL_ENERGY_TOLERANCE_WAVENUMBER = 0.011
+
+
+def _nist_field(value: str | None) -> str:
+    """Strip the ``="..."`` spreadsheet quoting of NIST ASD exports."""
+
+    return (value or "").strip().strip('"').lstrip("=").strip('"').strip()
+
+
+def _niobium_data_directory(root: Path) -> Path:
+    for candidate in (root / "niobium", root.parent / "niobium"):
+        if all((candidate / name).is_file() for name in NIOBIUM_ATOMIC_DATA_FILES):
+            return candidate
+    raise FileNotFoundError(f"could not find the bundled Nb atomic data near {root}")
+
+
+def _odd_parity_term(term: str) -> bool:
+    return term.endswith("*")
+
+
+def _niobium_level_records(path: Path) -> list[dict[str, object]]:
+    records = []
+    with path.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            term = _nist_field(row["Term"])
+            energy = _nist_field(row["Level (cm-1)"])
+            weight = _nist_field(row["g"])
+            if term == "Limit" or not energy or not weight:
+                continue
+            configuration = _nist_field(row["Configuration"])
+            j_value = _nist_field(row["J"])
+            # Stout-style label: dotted configuration, parent terms in
+            # parentheses, and a final (term<J>) with "o" marking odd parity.
+            label = (
+                (configuration + "." if configuration else "")
+                + f"({term.replace(' ', '')}<{j_value}>)"
+            ).replace("*", "o")
+            records.append(
+                {
+                    "energy": float(energy),
+                    "weight": float(weight),
+                    "label": label,
+                    "configuration": configuration,
+                    "term": term,
+                    "j": j_value,
+                }
+            )
+    records.sort(key=lambda record: record["energy"])
+    for index, record in enumerate(records, 1):
+        record["index"] = index
+    return records
+
+
+def _niobium_einstein_transition(
+    lower: Mapping[str, object],
+    upper: Mapping[str, object],
+    einstein_a: float,
+) -> AtomicTransition:
+    if (
+        _odd_parity_term(str(lower["term"])) == _odd_parity_term(str(upper["term"]))
+        or float(upper["energy"]) <= float(lower["energy"])
+        or not np.isfinite(einstein_a)
+        or einstein_a <= 0.0
+    ):
+        raise ValueError(f"not an allowed Nb E1 transition: {lower['label']} -> {upper['label']}")
+    lower_j = (float(lower["weight"]) - 1.0) / 2.0
+    upper_j = (float(upper["weight"]) - 1.0) / 2.0
+    if abs(lower_j - upper_j) > 1.0 or lower_j == upper_j == 0.0:
+        raise ValueError(f"Nb E1 transition violates the J selection rule: {lower['label']}")
+    wavelength_cm = 1.0 / (float(upper["energy"]) - float(lower["energy"]))
+    oscillator_strength = (
+        ELECTRON_MASS * LIGHT_SPEED * wavelength_cm**2
+        / (8.0 * PI**2 * ELEMENTARY_CHARGE_ESU**2)
+        * float(upper["weight"]) / float(lower["weight"])
+        * einstein_a
+    )
+    return AtomicTransition(
+        int(lower["index"]),
+        int(upper["index"]),
+        float(einstein_a),
+        "E1",
+        wavelength_cm * 1.0e8,
+        oscillator_strength,
+    )
+
+
+def _niobium_iv_transitions(path: Path, levels: list[dict[str, object]]) -> list[AtomicTransition]:
+    def level(configuration: str, term: str, j_value: str, energy: str) -> dict[str, object]:
+        value = float(energy.strip("[]?+x"))
+        matches = [
+            record for record in levels
+            if record["configuration"] == configuration
+            and record["term"] == term
+            and record["j"] == j_value
+            and abs(float(record["energy"]) - value)
+            < _NIST_LEVEL_ENERGY_TOLERANCE_WAVENUMBER
+        ]
+        if len(matches) != 1:
+            raise ValueError(f"Nb IV line level is not unique: {configuration} {term} {j_value}")
+        return matches[0]
+
+    transitions = []
+    with path.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            if _nist_field(row["Type"]):
+                raise ValueError("the Nb IV snapshot should contain only allowed E1 lines")
+            lower = level(
+                _nist_field(row["conf_i"]), _nist_field(row["term_i"]),
+                _nist_field(row["J_i"]), _nist_field(row["Ei(cm-1)"]),
+            )
+            upper = level(
+                _nist_field(row["conf_k"]), _nist_field(row["term_k"]),
+                _nist_field(row["J_k"]), _nist_field(row["Ek(cm-1)"]),
+            )
+            transitions.append(
+                _niobium_einstein_transition(
+                    lower, upper, float(_nist_field(row["Aki(s^-1)"]))
+                )
+            )
+    return transitions
+
+
+def _niobium_iii_transitions(path: Path, levels: list[dict[str, object]]) -> list[AtomicTransition]:
+    """Attach Nilsson et al. Table 7 gA values to unique NIST level pairs.
+
+    NIST (Gayazov et al. 1998) and Iglesias (1955) give some strongly mixed
+    levels different LS names, so a row is matched by both J values, the
+    parity change and its wavelength.  The term names only break ties.
+    """
+
+    def base_term(term: str) -> str:
+        return re.sub(r"(?<=[SPDFGHIK])\d+", "", term.split()[-1].rstrip("*"))
+
+    transitions = []
+    used: set[tuple[int, int]] = set()
+    with path.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream):
+            wavelength = float(row["wavelength_angstrom"])
+            vacuum = (
+                wavelength if wavelength < 2000.0
+                else _physical_air_to_vacuum_scalar(wavelength)
+            )
+            candidates = [
+                (lower, upper)
+                for lower in levels
+                if lower["j"] == row["lower_j"] and not _odd_parity_term(str(lower["term"]))
+                for upper in levels
+                if upper["j"] == row["upper_j"]
+                and _odd_parity_term(str(upper["term"]))
+                and float(upper["energy"]) > float(lower["energy"])
+                and abs(1.0e8 / (float(upper["energy"]) - float(lower["energy"])) - vacuum)
+                < _NILSSON_WAVELENGTH_TOLERANCE_ANGSTROM
+            ]
+            if len(candidates) > 1:
+                candidates = [
+                    (lower, upper) for lower, upper in candidates
+                    if base_term(str(lower["term"])) == base_term(row["lower"])
+                    and base_term(str(upper["term"])) == base_term(row["upper"])
+                ]
+            if len(candidates) != 1:
+                raise ValueError(f"Nb III Table 7 line {wavelength} A has no unique NIST levels")
+            lower, upper = candidates[0]
+            key = (int(lower["index"]), int(upper["index"]))
+            if key in used:
+                raise ValueError(f"two Nb III Table 7 rows match {lower['label']} -> {upper['label']}")
+            used.add(key)
+            transitions.append(
+                _niobium_einstein_transition(
+                    lower, upper, float(row["gA_s"]) / float(upper["weight"])
+                )
+            )
+    return transitions
+
+
+@lru_cache(maxsize=4)
+def _niobium_atomic_ions(directory: str) -> tuple[AtomicIon, ...]:
+    root = Path(directory)
+    for name, (_, checksum) in NIOBIUM_ATOMIC_DATA_FILES.items():
+        if hashlib.sha256((root / name).read_bytes()).hexdigest() != checksum:
+            raise ValueError(f"Nb atomic data checksum mismatch: {name}")
+    ions = []
+    for charge in range(NIOBIUM_MAXIMUM_CHARGE + 1):
+        levels = _niobium_level_records(root / f"nist-asd-nb{charge + 1}-levels.tsv")
+        if charge == 2:
+            transitions = _niobium_iii_transitions(root / "nilsson2010-nb3-table7.csv", levels)
+            source = (
+                "NIST ASD 5.12 Nb III levels; HFR+CPOL gA of Nilsson et al. "
+                "(2010) Table 7 (log gf > -0.5 only)"
+            )
+        elif charge == 3:
+            transitions = _niobium_iv_transitions(root / "nist-asd-nb4-lines.tsv", levels)
+            source = "NIST ASD 5.12 Nb IV levels and transition probabilities"
+        else:
+            transitions = []
+            source = "NIST ASD 5.12 levels; no bundled transition probabilities"
+        ions.append(
+            AtomicIon(
+                element="Nb",
+                charge=charge,
+                atomic_mass_u=ATOMIC_MASS_U["Nb"],
+                ionization_energy_ev=IONIZATION_ENERGY_EV["Nb"][charge],
+                levels=tuple(
+                    AtomicLevel(
+                        int(record["index"]), float(record["energy"]),
+                        float(record["weight"]), str(record["label"]),
+                    )
+                    for record in levels
+                ),
+                transitions=tuple(transitions),
+                source=source,
+            )
+        )
+    return tuple(ions)
+
+
+def read_niobium_atomic_ion(root: str | Path, charge: int) -> AtomicIon:
+    """Return bundled Nb I--VI (``charge`` 0--5) in the Stout ion format.
+
+    ``root`` is the Stout directory (or its parent ``metal-opacity`` cache);
+    the pinned files live in its sibling ``niobium`` directory.  Wavelengths
+    are vacuum Ritz values from the NIST level energies and oscillator
+    strengths follow from the Einstein coefficients, exactly as for Stout.
+    No Nb photoionization data are bundled: Verner's fits stop at Zn.
+    """
+
+    if not isinstance(charge, (int, np.integer)) or not 0 <= charge <= NIOBIUM_MAXIMUM_CHARGE:
+        raise ValueError(
+            f"bundled Nb data cover charges 0-{NIOBIUM_MAXIMUM_CHARGE} (Nb I-VI)"
+        )
+    directory = _niobium_data_directory(Path(root))
+    return _niobium_atomic_ions(str(directory.resolve()))[int(charge)]
+
+
+# The bundled Stout Zn IV-VI and Cu IV-VI files contain only forbidden (M1/E2)
+# transitions, so these stages add partition functions and charge but no E1
+# absorption.  Rauch et al. computed HFR+CPOL E1 probabilities for Zn IV-V
+# (2014, A&A 564, A41) and Cu IV-VII (2020, A&A 637, A4).  The Zn tables are
+# the unmodified CDS copies, which list both level energies.  The Cu data are
+# distributed only by the GAVO TOSS service.  Its ``toss.data`` level energies
+# do not belong to their transitions (for Zn, 399 of 400 rows disagree with the
+# CDS table), but its vacuum wavelengths, J values, parities, log gf and gA
+# (in the column labelled ``einsteina``) agree with CDS row by row.  Each Cu
+# line is therefore attached to Stout levels by both J values, both parities
+# and its wavenumber.  Lines that reach Rauch's theory-only levels, or match
+# no unique Stout level pair, are left out.  Cu VII is left out because Stout
+# has only its four ground-configuration levels.  Retrieved 2026-10-07.
+_RAUCH_2014_CDS = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/564/A41/"
+_TOSS_CU_QUERY = (
+    "https://dc.g-vo.org/tap/sync?LANG=ADQL&FORMAT=csv&MAXREC=100000&QUERY="
+    "SELECT+vacuum_wavelength%2C+par_init%2C+j_init%2C+par_final%2C+j_final"
+    "%2C+log_gf%2C+einsteina%2C+cf+FROM+toss.data+WHERE+species_name+%3D+"
+    "%27Cu%27+AND+ion_charge+%3D+-{charge}+ORDER+BY+vacuum_wavelength"
+)
+RAUCH_ZN_CU_ATOMIC_DATA_FILES = MappingProxyType(
+    {
+        "rauch2014-ReadMe": (
+            _RAUCH_2014_CDS + "ReadMe",
+            "8f94cb98b0c456de40a814b909f916d7a464732ef1aa956cef850fb0ae65b192",
+        ),
+        "rauch2014-zn4-table1.dat": (
+            _RAUCH_2014_CDS + "table1.dat",
+            "83f58c0a86b8200667030f271fc96dcf2020a406810adc82e551cbce72308e85",
+        ),
+        "rauch2014-zn5-table2.dat": (
+            _RAUCH_2014_CDS + "table2.dat",
+            "75cbfbdb0eb4063c6ca542e93b08610b10acdf12e7da3bdccfeaae85b407580d",
+        ),
+        **{
+            f"toss-cu{charge + 1}.csv": (
+                _TOSS_CU_QUERY.format(charge=charge), checksum,
+            )
+            for charge, checksum in (
+                (3, "bc955d490c35331d20fff7f4f75866db34fbdba47517e7dfe2047b122d342f73"),
+                (4, "aef74c6ab1b482eb17c5f2961babf692867dfb18d03493c17dbb3deba0d5e294"),
+                (5, "26c02104a2441619d0e6eddfcd1378511f709302fc2b34012b0f35758940ae3e"),
+            )
+        },
+    }
+)
+RAUCH_ZN_CU_ION_FILES = MappingProxyType(
+    {
+        ("Zn", 3): "rauch2014-zn4-table1.dat",
+        ("Zn", 4): "rauch2014-zn5-table2.dat",
+        ("Cu", 3): "toss-cu4.csv",
+        ("Cu", 4): "toss-cu5.csv",
+        ("Cu", 5): "toss-cu6.csv",
+    }
+)
+_RAUCH_SOURCE = "Rauch et al. HFR E1 lines on Stout levels"
+# The CDS level energies are rounded to 1 cm^-1; Stout (NIST) agrees within
+# 0.6 cm^-1.  TOSS wavelengths (0.001 A) give wavenumbers within 0.6 cm^-1 of
+# the Stout Ritz values for 99% of matched Cu lines.
+_RAUCH_LEVEL_ENERGY_TOLERANCE_WAVENUMBER = 1.0
+_RAUCH_WAVENUMBER_TOLERANCE = 0.6
+
+
+def _rauch_data_directory(root: Path) -> Path:
+    for candidate in (root / "rauch-zn-cu", root.parent / "rauch-zn-cu"):
+        if all((candidate / name).is_file() for name in RAUCH_ZN_CU_ATOMIC_DATA_FILES):
+            return candidate
+    raise FileNotFoundError(f"could not find the bundled Rauch Zn/Cu data near {root}")
+
+
+@lru_cache(maxsize=4)
+def _rauch_records(directory: str) -> Mapping[tuple[str, int], tuple[dict, ...]]:
+    """Parse the checksum-verified Rauch tables into common records.
+
+    Every record has the vacuum wavelength, both parities and J values, gA,
+    log gf and, for the CDS Zn tables only, both level energies.
+    """
+
+    root = Path(directory)
+    for name, (_, checksum) in RAUCH_ZN_CU_ATOMIC_DATA_FILES.items():
+        if hashlib.sha256((root / name).read_bytes()).hexdigest() != checksum:
+            raise ValueError(f"Rauch Zn/Cu atomic data checksum mismatch: {name}")
+    result = {}
+    for key, name in RAUCH_ZN_CU_ION_FILES.items():
+        records = []
+        if name.endswith(".dat"):
+            # Byte layout from the CDS ReadMe of J/A+A/564/A41.  The tabulated
+            # wavelengths are in air above 2000 A (as in TOSS); the matching
+            # uses the level energies.
+            for line in (root / name).read_text(encoding="ascii").splitlines():
+                wavelength = float(line[3:12])
+                records.append({
+                    "wavelength": (
+                        wavelength if wavelength < 2000.0
+                        else _physical_air_to_vacuum_scalar(wavelength)
+                    ),
+                    "lower_energy": float(line[17:23]),
+                    "lower_parity": line[24],
+                    "lower_j": float(line[27:30]),
+                    "upper_energy": float(line[35:41]),
+                    "upper_parity": line[42],
+                    "upper_j": float(line[45:48]),
+                    "log_gf": float(line[51:56]),
+                    "ga": float(line[59:67]),
+                })
+        else:
+            with (root / name).open(newline="", encoding="ascii") as stream:
+                for row in csv.DictReader(stream):
+                    records.append({
+                        "wavelength": float(row["vacuum_wavelength"]) * 1.0e10,
+                        "lower_energy": None,
+                        "lower_parity": row["par_init"],
+                        "lower_j": float(row["j_init"]),
+                        "upper_energy": None,
+                        "upper_parity": row["par_final"],
+                        "upper_j": float(row["j_final"]),
+                        "log_gf": float(row["log_gf"]),
+                        "ga": float(row["einsteina"]),
+                    })
+        if any(
+            record["lower_parity"] == record["upper_parity"]
+            or record["lower_parity"] not in "eo"
+            or record["upper_parity"] not in "eo"
+            or not record["ga"] > 0.0
+            for record in records
+        ):
+            raise ValueError(f"{name} should contain only E1 lines with positive gA")
+        result[key] = tuple(records)
+    return MappingProxyType(result)
+
+
+def _stout_level_parity(label: str) -> str | None:
+    """Return ``"o"`` or ``"e"`` from a Stout label's final ``(term<J>)``."""
+
+    match = re.search(r"\(([^()<]*)<[^>]+>\)$", label)
+    if match is None or not match.group(1):
+        return None
+    return "o" if match.group(1).endswith("o") else "e"
+
+
+@lru_cache(maxsize=16)
+def _rauch_matched_lines(
+    directory: str, element: str, charge: int, levels: tuple[AtomicLevel, ...]
+) -> tuple[tuple[AtomicTransition, ...], Mapping[str, int]]:
+    """Attach Rauch lines to unique Stout level pairs of one ion."""
+
+    records = _rauch_records(directory)[(element, charge)]
+    groups: dict[tuple[str, float], list[AtomicLevel]] = {}
+    for level in levels:
+        parity = _stout_level_parity(level.label)
+        if parity is not None:
+            groups.setdefault(
+                (parity, 0.5 * (level.statistical_weight - 1.0)), []
+            ).append(level)
+
+    def by_energy(parity: str, j_value: float, energy: float) -> list[AtomicLevel]:
+        return [
+            level for level in groups.get((parity, j_value), ())
+            if abs(level.energy_wavenumber - energy)
+            <= _RAUCH_LEVEL_ENERGY_TOLERANCE_WAVENUMBER
+        ]
+
+    pairs: dict[tuple[int, int], list[tuple[AtomicLevel, AtomicLevel, dict]]] = {}
+    counts = {"published": len(records), "no_stout_pair": 0, "ambiguous": 0}
+    for record in records:
+        if record["lower_energy"] is not None:
+            lowers = by_energy(
+                record["lower_parity"], record["lower_j"], record["lower_energy"]
+            )
+            uppers = by_energy(
+                record["upper_parity"], record["upper_j"], record["upper_energy"]
+            )
+            candidates = [(lower, upper) for lower in lowers for upper in uppers]
+        else:
+            wavenumber = 1.0e8 / record["wavelength"]
+            candidates = [
+                (lower, upper)
+                for lower in groups.get((record["lower_parity"], record["lower_j"]), ())
+                for upper in groups.get((record["upper_parity"], record["upper_j"]), ())
+                if abs(upper.energy_wavenumber - lower.energy_wavenumber - wavenumber)
+                <= _RAUCH_WAVENUMBER_TOLERANCE
+            ]
+        if not candidates:
+            counts["no_stout_pair"] += 1
+        elif len(candidates) > 1:
+            counts["ambiguous"] += 1
+        else:
+            lower, upper = candidates[0]
+            pairs.setdefault((lower.index, upper.index), []).append(
+                (lower, upper, record)
+            )
+    transitions = []
+    counts["shared_stout_pair"] = 0
+    for matches in pairs.values():
+        if len(matches) > 1:
+            counts["shared_stout_pair"] += len(matches)
+            continue
+        lower, upper, record = matches[0]
+        if (
+            upper.energy_wavenumber <= lower.energy_wavenumber
+            or abs(record["lower_j"] - record["upper_j"]) > 1.0
+            or record["lower_j"] == record["upper_j"] == 0.0
+        ):
+            raise ValueError(f"not an allowed {element} E1 transition: {lower.label}")
+        wavelength_cm = 1.0 / (upper.energy_wavenumber - lower.energy_wavenumber)
+        einstein_a = record["ga"] / upper.statistical_weight
+        transitions.append(
+            AtomicTransition(
+                lower.index,
+                upper.index,
+                einstein_a,
+                "E1",
+                wavelength_cm * 1.0e8,
+                ELECTRON_MASS * LIGHT_SPEED * wavelength_cm**2
+                / (8.0 * PI**2 * ELEMENTARY_CHARGE_ESU**2)
+                * upper.statistical_weight / lower.statistical_weight
+                * einstein_a,
+            )
+        )
+    transitions.sort(key=lambda line: line.wavelength_vacuum_angstrom)
+    counts["attached"] = len(transitions)
+    return tuple(transitions), MappingProxyType(counts)
+
+
+def rauch_zn_cu_line_counts(
+    database: AtomicDatabase, root: str | Path
+) -> dict[str, dict[str, int]]:
+    """Report how many Rauch lines attach to each ion's Stout levels."""
+
+    directory = str(_rauch_data_directory(Path(root)).resolve())
+    return {
+        f"{element} {charge}": dict(
+            _rauch_matched_lines(
+                directory, element, charge, database.ions[(element, charge)].levels
+            )[1]
+        )
+        for element, charge in RAUCH_ZN_CU_ION_FILES
+        if (element, charge) in database.ions
+    }
+
+
+def atomic_database_with_rauch_zn_cu_transitions(
+    database: AtomicDatabase, root: str | Path
+) -> AtomicDatabase:
+    """Add the Rauch et al. Zn IV-V and Cu IV-VI E1 lines to Stout ions.
+
+    ``root`` is the Stout directory (or its parent ``metal-opacity`` cache);
+    the pinned files live in its sibling ``rauch-zn-cu`` directory.  Lines are
+    attached to existing Stout levels, so labels, partition functions and the
+    label-based broadening estimates are unchanged; no level is added.  As for
+    Stout and Nb, wavelengths are Ritz values from the Stout level energies
+    and f follows from the published gA.  Stout's forbidden lines are kept.
+    Ions absent from ``database`` are ignored, and repeated calls are
+    idempotent.
+    """
+
+    directory = str(_rauch_data_directory(Path(root)).resolve())
+    ions = dict(database.ions)
+    changed = False
+    for key in RAUCH_ZN_CU_ION_FILES:
+        ion = ions.get(key)
+        if ion is None or _RAUCH_SOURCE in ion.source:
+            continue
+        added, counts = _rauch_matched_lines(directory, key[0], key[1], ion.levels)
+        existing = {
+            (line.lower_index, line.upper_index)
+            for line in ion.transitions if line.transition_type == "E1"
+        }
+        added = tuple(
+            line for line in added
+            if (line.lower_index, line.upper_index) not in existing
+        )
+        reference = "2014" if key[0] == "Zn" else "2020"
+        ions[key] = replace(
+            ion,
+            transitions=ion.transitions + added,
+            source=(
+                f"{ion.source}; {_RAUCH_SOURCE} ({reference}; "
+                f"{len(added)}/{counts['published']} lines)"
+            ),
+        )
+        changed = True
+    if not changed:
+        return database
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=(
+            f"{database.source}; Rauch et al. (2014, 2020) Zn IV-V and Cu IV-VI "
+            "E1 lines (CDS J/A+A/564/A41; GAVO TOSS)"
+        ),
     )
 
 
@@ -2940,6 +3533,100 @@ def read_kurucz_gf100_atomic_database(
         MappingProxyType(merged_ions),
         base_database.source + "; Kurucz GF100 " + operation + ", ".join(sources),
     )
+
+
+# Kurucz's measured-level ("pos") lists of Fe and Ni IV-VII, bundled for the
+# hot DA/DAO trace-metal module.  The species code in each name is Kurucz's
+# element.charge, so gf2803 is Ni IV.  Stout Ni IV-VII contain only forbidden
+# lines.  SHA256SUMS lists the checksums of the decompressed files.  Kurucz
+# levels are matched to Stout within 0.1 cm^-1.  Fe V (gf2604), Fe VI
+# (gf2605z) and Ni VII (gf2806z) are excluded: their energies differ from
+# Stout by 0.5-3 cm^-1 for some levels, which would be appended a second time
+# (for Ni VII the whole 3d4 5D ground term, doubling its partition function).
+KURUCZ_IRON_GROUP_POSITION_FILES = MappingProxyType(
+    {
+        ("Fe", 3): "gf2603.pos",
+        ("Fe", 6): "gf2606z.pos",
+        ("Ni", 3): "gf2803.pos",
+        ("Ni", 4): "gf2804.pos",
+        ("Ni", 5): "gf2805.pos",
+    }
+)
+_KURUCZ_SUPPLEMENT_SOURCE = "Kurucz GF100 missing-transition supplement"
+# An appended Kurucz level this close to a Stout level of the same weight is
+# treated as a duplicate of it rather than a level missing from Stout.
+_KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER = 5.0
+
+
+def atomic_database_with_kurucz_iron_group_positions(
+    database: AtomicDatabase, directory: str | Path | None = None
+) -> AtomicDatabase:
+    """Add Kurucz measured-level Fe IV, VII and Ni IV-VI lines missing from Stout.
+
+    Uses :func:`read_kurucz_gf100_atomic_database` in its
+    missing-transition mode: Stout levels and lines are kept, Kurucz levels
+    are matched to Stout levels by energy (0.1 cm^-1) and weight, and only
+    transitions between level pairs that Stout does not connect are added,
+    with Kurucz's radiative, Stark and van der Waals constants.  Kurucz levels
+    absent from Stout are appended with a ``Kurucz`` label; a ``ValueError``
+    is raised if one lies within 5 cm^-1 of a Stout level of equal weight.
+    ``directory`` defaults to the bundled ``data/hot_daz/kurucz``, whose xz
+    files are verified against ``SHA256SUMS``.  Only ions present in
+    ``database`` are read, and repeated calls are idempotent.
+    """
+
+    import lzma
+    import tempfile
+
+    root = (
+        Path(str(files("wd_spectra"))) / "data" / "hot_daz" / "kurucz"
+        if directory is None else Path(directory)
+    )
+    needed = {
+        key: name for key, name in KURUCZ_IRON_GROUP_POSITION_FILES.items()
+        if key in database.ions
+        and _KURUCZ_SUPPLEMENT_SOURCE not in database.ions[key].source
+    }
+    if not needed:
+        return database
+    checksums = dict(
+        line.split()[::-1]
+        for line in (root / "SHA256SUMS").read_text(encoding="ascii").splitlines()
+        if line.strip()
+    )
+    with tempfile.TemporaryDirectory(prefix="openwd-kurucz-") as scratch:
+        paths = []
+        for name in needed.values():
+            compressed = root / f"{name}.xz"
+            content = (
+                lzma.decompress(compressed.read_bytes())
+                if compressed.is_file() else (root / name).read_bytes()
+            )
+            if hashlib.sha256(content).hexdigest() != checksums.get(name):
+                raise ValueError(f"Kurucz iron-group checksum mismatch: {name}")
+            path = Path(scratch) / name
+            path.write_bytes(content)
+            paths.append(path)
+        merged = read_kurucz_gf100_atomic_database(
+            paths,
+            database,
+            elements=sorted({element for element, _ in needed}),
+            replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    for key in needed:
+        original = database.ions[key].levels
+        for level in merged.ions[key].levels[len(original):]:
+            if any(
+                existing.statistical_weight == level.statistical_weight
+                and abs(existing.energy_wavenumber - level.energy_wavenumber)
+                <= _KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER
+                for existing in original
+            ):
+                raise ValueError(
+                    f"Kurucz {key[0]} {key[1]} level {level.label!r} duplicates a Stout level"
+                )
+    return merged
 
 
 _NIST_ASD_ACCURACY_PERCENT = MappingProxyType(

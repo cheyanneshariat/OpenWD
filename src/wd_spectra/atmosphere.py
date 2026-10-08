@@ -1964,6 +1964,8 @@ def radiative_equilibrium_helium_atmosphere(
     metal_topbase_photoionization_database: (
         TOPbasePhotoionizationDatabase | None
     ) = None,
+    homogeneous_metal_host: bool = False,
+    metal_classical_electron_stark: bool = False,
     resume_supplied_structure_in_formal_flux_phase: bool = True,
     iteration_callback: Callable[
         [int, Atmosphere, Mapping[str, object]], None
@@ -1977,7 +1979,29 @@ def radiative_equilibrium_helium_atmosphere(
     released line-dissolved Beauchamp profiles should normally be supplied as
     ``stark_table``.  The default ML2 mixing length of 1.25 is the standard
     Montreal/ATMO DB calibration; pass ``None`` for a radiative control model.
+
+    With metals, ``log_hydrogen_abundance`` normally adds trace hydrogen to a
+    pure-He EOS (DZA/DBZ).  ``homogeneous_metal_host=True`` instead keeps the
+    homogeneous H/He EOS, hydrogen frequency grid and thermodynamics of the
+    metal-free mixture, so hydrogen may dominate; metals then remain trace
+    species in the shared H/He/metal charge closure and in the opacity.
+    ``metal_classical_electron_stark`` adds the SYNSPEC classical electron
+    width to ordinary metal lines that have no tabulated Stark width.
     """
+    if homogeneous_metal_host and (
+        log_hydrogen_abundance is None
+        or metal_database is None
+        or metal_abundances is None
+    ):
+        raise ValueError(
+            "homogeneous_metal_host requires log_hydrogen_abundance and metals"
+        )
+    if homogeneous_metal_host and (
+        molecular_h_he is not None or helium_reos3_table is not None
+    ):
+        raise ValueError(
+            "homogeneous_metal_host supports only the atomic ideal H/He EOS"
+        )
 
     if max_iterations < 1:
         raise ValueError("max_iterations must be positive")
@@ -2015,8 +2039,8 @@ def radiative_equilibrium_helium_atmosphere(
         or metal_topbase_photoionization_database is not None
     ) and metal_database is None:
         raise ValueError("metal photoionization requires metal_database and abundances")
-    homogeneous_mixture = (
-        log_hydrogen_abundance is not None and metal_database is None
+    homogeneous_mixture = log_hydrogen_abundance is not None and (
+        metal_database is None or homogeneous_metal_host
     )
     if molecular_h_he is not None and (
         not homogeneous_mixture or helium_reos3_table is not None
@@ -2198,8 +2222,10 @@ def radiative_equilibrium_helium_atmosphere(
             include_helium_three_body_cia=include_helium_three_body_cia,
             include_rydberg_bound_free=include_rydberg_bound_free,
             helium_reos3_table=helium_reos3_table,
-            metal_database=metal_database,
-            metal_abundances=metal_abundances,
+            # A homogeneous host starts from the metal-free H/He continuum
+            # seed; its trace metals enter with the first non-gray state.
+            metal_database=None if homogeneous_metal_host else metal_database,
+            metal_abundances=None if homogeneous_metal_host else metal_abundances,
             log_hydrogen_abundance=log_hydrogen_abundance,
             metal_occupation_probability_partitions=metal_occupation_probability_partitions,
             include_dense_helium_metal_ionization=(
@@ -2675,6 +2701,9 @@ def radiative_equilibrium_helium_atmosphere(
                     minimum_oscillator_strength=minimum_metal_oscillator_strength,
                     maximum_lines=maximum_metal_lines,
                     transition_keys=structure_line_transition_keys,
+                    include_classical_electron_stark=(
+                        metal_classical_electron_stark
+                    ),
                 )
         if current.hydrogen_lte_state is not None:
             hydrogen_opacity = (hydrogen_continuum_mass_absorption_coefficient
@@ -2838,14 +2867,18 @@ def radiative_equilibrium_helium_atmosphere(
                 if key not in ("model", "composition", "eos")
             },
             "composition": (
-                "metal-polluted-helium"
+                "metal-polluted-homogeneous-hydrogen-helium"
+                if metal_database is not None and homogeneous_mixture
+                else "metal-polluted-helium"
                 if metal_database is not None
                 else "homogeneous-hydrogen-helium"
                 if homogeneous_mixture
                 else "pure-helium"
             ),
             "eos": (
-                "trace-metal-charge-neutral-q-mhd-helium-occupation-probability"
+                "trace-metal-charge-neutral-hummer-mihalas-hydrogen-helium"
+                if metal_database is not None and homogeneous_mixture
+                else "trace-metal-charge-neutral-q-mhd-helium-occupation-probability"
                 if metal_database is not None
                 else "hummer-mihalas-hydrogen-helium-occupation-probability"
                 if homogeneous_mixture
@@ -2938,8 +2971,13 @@ def radiative_equilibrium_helium_atmosphere(
                 if metal_database is not None else "disabled"
             ),
             "metal_thermodynamic_derivatives": (
-                "trace-metal approximation: Q-MHD helium derivatives"
+                "trace-metal approximation: hydrogen-helium mixture derivatives"
+                if metal_database is not None and homogeneous_mixture
+                else "trace-metal approximation: Q-MHD helium derivatives"
                 if metal_database is not None else "not applicable"
+            ),
+            "metal_classical_electron_stark": bool(
+                metal_database is not None and metal_classical_electron_stark
             ),
             "rosseland_opacity_includes_metal_bound_bound_and_bound_free": (
                 metal_database is not None
