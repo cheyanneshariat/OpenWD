@@ -2,10 +2,16 @@ name: tests
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: fast-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   OMP_NUM_THREADS: "1"
@@ -35,7 +41,23 @@ jobs:
         run: python -c "import pathlib, wd_spectra; assert pathlib.Path(wd_spectra.__file__).resolve().is_relative_to(pathlib.Path('src').resolve())"
       - name: Verify compiled acceleration backend
         run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'hydrogen_stark_lorentz_convolution')"
-      - run: python -m pytest
+      - run: python -m pytest -m 'not canary and not spectral' --durations=10
+
+  fixed-spectra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[test]'
+      - run: python tools/validate.py spectra --output results/spectra
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fixed-atmosphere-spectra
+          path: results/spectra
 
   cool-workflow-components:
     runs-on: ubuntu-latest

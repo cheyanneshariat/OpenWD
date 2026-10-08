@@ -1,9 +1,9 @@
-"""Compatibility imports for existing research runs; one canonical operator.
+"""Compatibility entry point; implementation lives in the installed package."""
+import importlib
+import runpy
+import sys
 
-New solver calls select ``transfer_discretization="column-mass"`` explicitly.
-The historical optical-depth discretization remains the production default.
-"""
-from wd_spectra._mass_feautrier import (
-    MassFactors, mass_energy, mass_energy_response, mass_field, mass_response,
-    mass_width, validate_chunk,
-)
+if __name__ == "__main__":
+    runpy.run_module("wd_spectra._cool.mass_conservative_feautrier", run_name="__main__")
+else:
+    sys.modules[__name__] = importlib.import_module("wd_spectra._cool.mass_conservative_feautrier")

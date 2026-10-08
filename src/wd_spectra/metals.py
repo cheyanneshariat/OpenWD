@@ -19,7 +19,9 @@ important future work.
 from __future__ import annotations
 
 import csv
+import hashlib
 from dataclasses import dataclass, field, replace
+from functools import lru_cache
 from importlib.resources import files
 from pathlib import Path
 import re
@@ -51,6 +53,8 @@ from .eos import (
     HeliumLTEState,
     HydrogenLTEState,
     charged_particle_hydrogen_occupation_probability,
+    hooper_microfield_cumulative_probability,
+    hydrogenic_critical_microfield_beta,
     hydrogen_level_distribution,
     hydrogen_saha_constant,
     molecular_hydrogen_dissociation_constant,
@@ -71,6 +75,8 @@ MG_HE_RED_WING_URL = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/619/A152/fig5.dat"
 MG_HE_RED_WING_SHA256 = "b79879240f935aadb7afbf68a590a26a2a43c572315323c8785fc750bb0f9aa7"
 VERNER_PHOTOIONIZATION_URL = "https://www.pa.uky.edu/~verner/dima/photo/photo.dat"
 VERNER_PHOTOIONIZATION_SHA256 = "a53e73b0af4cc6b801aef67b84bd964e3ed8c9c4992f214e4a69dc7e4443f389"
+VERNER_PHFIT2_URL = "https://www.pa.uky.edu/~verner/dima/photo/phfit2.f"
+VERNER_PHFIT2_SHA256 = "8df982535a4a2b952e33ca2ffb6d81600e156d7373fbf547a0c0170c1cecc296"
 BARKLEM_NEUTRAL_H_BROADENING_URL = (
     "https://raw.githubusercontent.com/barklem/public-data/"
     "master/broadening-neutrals/hlist"
@@ -83,6 +89,16 @@ BARKLEM_NEUTRAL_H_BROADENING_SHA256 = (
 # must sample the same support or trapezoidal frequency integration assigns
 # broad wavelength intervals to unresolved wing values.
 METAL_LINE_MINIMUM_HALF_WINDOW_ANGSTROM = 0.25
+# Maximum profile half-window of the hot NLTE metal lines (light_metal_nlte),
+# as a fraction of a line's central wavelength.  The impact (Lorentz)
+# approximation fails at detunings approaching the line frequency itself.
+# Without this bound the Stark-broadened high-Rydberg Delta-n=1 lines of
+# O IV-O VI (FWHM up to ~1e4 A at 2-6 micron) extend their Lorentz wings across
+# the entire spectrum and act as a spurious UV/optical pseudo-continuum (the
+# PG 1159-035 audit of 2026-09-24).  The LTE metal-line path is not bounded:
+# pressure-broadened wings in cool dense atmospheres (DQ) are genuine opacity.
+# Must match LINE_WINDOW_MAX_FRACTION in csrc/rt_core.c.
+LINE_WINDOW_MAX_FRACTION = 0.1
 KURUCZ_GF100_FILES = MappingProxyType(
     {
         "gf0300.100": (
@@ -171,6 +187,7 @@ _NIST_ASD_LINES_QUERY = (
     "loggf_out=on&intens_out=on&max_str=&allowed_out=1&forbid_out=1&"
     "min_accur=&min_intens=&conf_out=on&term_out=on&enrg_out=on&J_out=on"
 )
+_NIST_ASD_UV_LINES_QUERY = _NIST_ASD_LINES_QUERY.replace("low_w=300&upp_w=900", "low_w=115&upp_w=300")
 NIST_ASD_STRONG_ION_FILES = MappingProxyType(
     {
         "nist-asd-ca1.tsv": (
@@ -208,20 +225,89 @@ NIST_ASD_STRONG_ION_FILES = MappingProxyType(
             "1f13984a0cb4a1d2e727797b923a594f8638e050c532a719212d51f5d1872c88",
             "Si", 1,
         ),
+        # 115--300 nm: UV resonance lines (Si II 1808, Mg I 2852, Fe II, ...).
+        "nist-asd-ca1-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Ca%20I"),
+            "5edbec7445698b37e9d05ecd7a89effbffc8a166125ee9da84645f0fd1ffa451",
+            "Ca", 0,
+        ),
+        "nist-asd-ca2-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Ca%20II"),
+            "dd2c28e06e40fe674f9a5ba63aa5cef7a659eb5035326319c00b3326dd1ece48",
+            "Ca", 1,
+        ),
+        "nist-asd-mg1-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Mg%20I"),
+            "f2cf06e853dd5f13c13bd25c04460dfdbd1629acdb8147a970d4e6db4f3bc82b",
+            "Mg", 0,
+        ),
+        "nist-asd-mg2-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Mg%20II"),
+            "99ed7d2b7c61f2e0d1b04025c9e489b1a2c34c99d22aa3b4cd047651f7cf48ef",
+            "Mg", 1,
+        ),
+        "nist-asd-na1-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Na%20I"),
+            "b6ee800bd7e13f6ceeba42eaf6011779a61544b1b50dafafebf929e945fe2cfe",
+            "Na", 0,
+        ),
+        "nist-asd-o1-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="O%20I"),
+            "e9dcb4164f1ec87eb770e1299af6ec0bc1fafe66fe18ca79b3174ee860217d04",
+            "O", 0,
+        ),
+        "nist-asd-si2-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Si%20II"),
+            "2a871f1f24c835a89637f074fc6203c7e4a082e72082bb49be1ba023a96e7eb2",
+            "Si", 1,
+        ),
+        "nist-asd-si1-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Si%20I"),
+            "2c6a44698c699988c290e3c0eb061f4648b9d6bcffe5249ddfe455f5cd22ae8e",
+            "Si", 0,
+        ),
+        "nist-asd-fe1-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Fe%20I"),
+            "2e816e95c2eec8c7daeefbbbe2546a198db52d1ac2b02785dd2cf6f56105b8f3",
+            "Fe", 0,
+        ),
+        "nist-asd-fe2-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Fe%20II"),
+            "fa91ab12a934ea6a06b327d903fa72580e654f037d4fd850299b37d5fbd3259a",
+            "Fe", 1,
+        ),
+        "nist-asd-c2-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="C%20II"),
+            "09a0f2c4a08b9c13b47b92329db89ef03758526c666e22a3a90960cf8c46829b",
+            "C", 1,
+        ),
+        "nist-asd-al2-uv.tsv": (
+            _NIST_ASD_UV_LINES_QUERY.format(spectrum="Al%20II"),
+            "5c41e58c8d0edd109b2f84de2ab5cabb2eb7df3ddae66a75b8dcc41f1a8f9b59",
+            "Al", 1,
+        ),
     }
 )
 
-# Hammond (1975, ApJ 199, 299), equations 6--7, measured the Lorentz
+# Hammond (1975, ApJ 196, 291), equations 6--7, measured the Lorentz
 # wavenumber HWHM per neutral-He perturber at 5200 K for Ca II K and H.
 # His gamma is the angular-frequency damping constant.  The Voigt convention
-# below therefore needs Gamma/N = 4 pi c (delta_wavenumber/N).  The weak
-# temperature dependence is the mean of the independently fitted exponents
-# (0.229 and 0.228) quoted for the two resonance components.
+# below therefore needs Gamma/N = 4 pi c (delta_wavenumber/N).
+#
+# His two-shot temperature exponent (0.23, from 4400 and 6080 K) is, in his
+# words, "far more uncertain because of poor statistics", and he discourages
+# its use.  The same paper fits Lennard-Jones (12,6) potentials to the
+# measured widths and shifts (eqs. 22--31): a = 4.09 (K) and 1.63 (H) at the
+# mean relative speed 5.5e5 cm/s.  Lindholm--Foley/Hindmarsh impact theory
+# then gives gamma/N proportional to v^(3/5) B(a) with a proportional to
+# v^(6/5), which reproduces the 5200-K measurement exactly and carries the
+# temperature dependence of the fitted He repulsion.
 _CA_II_HE_WAVENUMBER_HWHM_PER_DENSITY_5200 = MappingProxyType(
     {"K": 1.71e-20, "H": 1.28e-20}
 )
 _CA_II_HE_REFERENCE_TEMPERATURE = 5200.0
-_CA_II_HE_TEMPERATURE_EXPONENT = 0.2285
+_CA_II_HE_LENNARD_JONES_A_5200 = MappingProxyType({"K": 4.09, "H": 1.63})
+_CA_II_HE_REDUCED_MASS_U = 40.078 * 4.002602 / (40.078 + 4.002602)
 
 # Aguilera, Aragon & Manrique (2014, MNRAS 444, 1854), Table 2, measured
 # electron-impact FWHM values at ne=1e17 cm^-3 and T=14000 K.  Their reported
@@ -333,7 +419,7 @@ _NA_I_D_NEON_DAMPING_RATE_CM3_S = MappingProxyType(
     }
 )
 
-# Dimitrijevic, Iacob & Sahal-Brechot (2025, Galaxies 13, 116), their
+# Dimitrijevic & Sahal-Brechot (2025, Galaxies 13, 116), their
 # Table 2, give a semiclassical electron-impact FWHM of 0.192 A for the
 # O I 3p 5P--4d 5Do multiplet at ne=1e16 cm^-3 and T=10000 K.  This later,
 # line-by-line calculation supersedes the anomalous 16.7-A value printed in
@@ -488,6 +574,9 @@ ATOMIC_MASS_U = MappingProxyType(
         "Ni": 58.6934,
         "Cu": 63.546,
         "Zn": 65.38,
+        # Stout stops at Zn; Nb ions come from the NIST/Nilsson snapshot
+        # read by read_niobium_atomic_ion.
+        "Nb": 92.90637,
     }
 )
 ATOMIC_NUMBER = MappingProxyType(
@@ -496,7 +585,7 @@ ATOMIC_NUMBER = MappingProxyType(
         "Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Ca": 20,
         "Ar": 18,
         "Sc": 21, "Ti": 22, "V": 23, "Cr": 24, "Mn": 25,
-        "Fe": 26, "Co": 27, "Ni": 28, "Cu": 29, "Zn": 30,
+        "Fe": 26, "Co": 27, "Ni": 28, "Cu": 29, "Zn": 30, "Nb": 41,
     }
 )
 IONIZATION_ENERGY_EV = MappingProxyType(
@@ -566,7 +655,7 @@ IONIZATION_ENERGY_EV = MappingProxyType(
             1761.8049,
             1962.663889,
         ),
-        "Al": (5.985769, 18.82855, 28.447642),
+        "Al": (5.985769, 18.82855, 28.447642, 119.9924, 153.8252),
         "Si": (
             8.15168,
             16.34585,
@@ -661,7 +750,7 @@ IONIZATION_ENERGY_EV = MappingProxyType(
             5469.86358,
         ),
         "Sc": (6.56149, 12.79977, 24.75684),
-        "Ti": (6.828120, 13.5755, 27.49171),
+        "Ti": (6.828120, 13.5755, 27.49171, 43.26717, 99.299),
         "V": (6.746187, 14.634, 29.311),
         "Cr": (6.76651, 16.486305, 30.959),
         "Mn": (7.4340380, 15.6400, 33.668),
@@ -693,13 +782,17 @@ IONIZATION_ENERGY_EV = MappingProxyType(
             8828.1864,
             9277.6886,
         ),
-        "Co": (7.88101, 17.0844, 33.50),
-        "Ni": (7.639878, 18.168838, 35.187),
-        # NIST ASD 5.12 ground-state ionization energies.  The local Stout
-        # cache contains the first three stages of both species, which is
-        # sufficient for their trace optical lines in cool O/Ne remnants.
-        "Cu": (7.726380, 20.29239, 36.841),
-        "Zn": (9.394197, 17.96439, 39.72330),
+        # NIST ASD 5.12 ground-state ionization energies.  Three stages
+        # suffice for trace optical lines in cool O/Ne remnants; the fourth
+        # and fifth (mostly bracketed NIST estimates, as for Al and Ti) let
+        # hot hydrogen-rich models carry these elements through charge 4.
+        "Co": (7.88101, 17.0844, 33.50, 51.27, 79.50),
+        "Ni": (7.639878, 18.168838, 35.187, 54.92, 76.06),
+        "Cu": (7.726380, 20.29239, 36.841, 57.38, 79.8),
+        "Zn": (9.394197, 17.96439, 39.72330, 59.573, 82.6),
+        # Nb I--VI, matching the bundled level lists.  NIST brackets the
+        # Nb II, Nb III and Nb VI values as semi-empirical or theoretical.
+        "Nb": (6.75885, 14.32, 25.04, 37.611, 50.5728, 102.069),
     }
 )
 
@@ -794,6 +887,8 @@ class AtomicIon:
         electron_density: ArrayLike,
         *,
         cutoff_below_ionization_ev: float = 0.1,
+        neutral_perturber_number_density: Mapping[str, ArrayLike] | None = None,
+        neutral_perturber_radius_cm: Mapping[str, float] | None = None,
     ) -> FloatArray:
         """Return a Q-MHD occupation-probability partition function.
 
@@ -801,7 +896,10 @@ class AtomicIon:
         with a density-dependent non-ideal cutoff. Summing the same bound
         levels with their charged-microfield survival probabilities is the
         smooth Hummer--Mihalas analogue and uses the same level dissolution
-        later applied to the line opacity.
+        later applied to the line opacity.  Optional neutral perturbers (for
+        example ground-state He in a DZ atmosphere) multiply in the HM88
+        excluded-volume probability, as in
+        :func:`metal_rydberg_level_occupation_probability`.
         """
 
         temperature_array, electron_density_array = np.broadcast_arrays(
@@ -849,6 +947,28 @@ class AtomicIon:
             * selected_energy[:, np.newaxis]
             / (BOLTZMANN * temperature_array.reshape(1, -1))
         )
+        if neutral_perturber_number_density is not None:
+            if neutral_perturber_radius_cm is None:
+                raise ValueError("neutral perturber radii are required with their densities")
+            selected_levels = [
+                level for level, keep in zip(self.levels, selected) if keep
+            ]
+            radii = np.asarray([
+                hydrogenic_metal_level_mean_radius_cm(self, level)
+                if self.ionization_energy_ev is not None
+                and self.ionization_energy_ev * EV_TO_WAVENUMBER
+                > level.energy_wavenumber
+                else 0.0
+                for level in selected_levels
+            ])
+            survival = survival * metal_neutral_hard_sphere_occupation_probability(
+                radii[:, np.newaxis],
+                {
+                    name: np.asarray(value, dtype=np.float64).reshape(1, -1)
+                    for name, value in neutral_perturber_number_density.items()
+                },
+                neutral_perturber_radius_cm,
+            )
         result = np.sum(
             weight[selected, np.newaxis]
             * np.exp(exponent)
@@ -961,6 +1081,82 @@ class VernerPhotoionizationFit:
 
 
 @dataclass(frozen=True)
+class VernerPhfit2Fit:
+    """Total ground-state photoionization from Verner's ``phfit2`` fits.
+
+    Sums the partial cross sections of every shell, reproducing the shell
+    logic of D. A. Verner's ``phfit2.f`` (version 2, 1996): Verner, Ferland,
+    Korista & Yakovlev (1996) outer-shell fits for Opacity-Project elements,
+    and Verner & Yakovlev (1995) fits for inner shells and for the outer
+    shells of the other elements (P, Cl, K and Sc--Zn except Fe).
+    """
+
+    element: str
+    charge: int
+    atomic_number: int
+    electron_count: int
+    shell_parameters: tuple[tuple[float, ...] | None, ...]
+    outer_parameters: tuple[float, ...] | None
+    outer_shell_count: int
+    inner_shell_count: int
+
+    @property
+    def threshold_energy_ev(self) -> float:
+        """Ground-state ionization threshold (the outermost occupied shell)."""
+        return float(self.shell_parameters[self.outer_shell_count - 1][0])
+
+    def cross_section(self, photon_energy_ev: ArrayLike) -> FloatArray:
+        energy = np.asarray(photon_energy_ev, dtype=np.float64)
+        if np.any(~np.isfinite(energy)) or np.any(energy <= 0.0):
+            raise ValueError("photon_energy_ev must be finite and positive")
+        nz, ne = self.atomic_number, self.electron_count
+        orbital_l = (0, 0, 1, 0, 1, 2, 0)
+        non_op = nz in (15, 17, 19) or (nz > 20 and nz != 26)
+        if non_op:
+            inner_edge = 0.0
+        elif ne < 3:
+            inner_edge = np.inf
+        else:
+            inner_edge = self.shell_parameters[self.inner_shell_count - 1][0]
+        total = np.zeros_like(energy)
+        for shell in range(1, self.outer_shell_count + 1):
+            params = self.shell_parameters[shell - 1]
+            if params is None:
+                continue
+            above = energy >= params[0]
+            if not np.any(above):
+                continue
+            e = energy[above]
+            partial = np.zeros_like(e)
+            use_inner_fit = (shell <= self.inner_shell_count) | (e >= inner_edge)
+            skip = (
+                (shell < self.outer_shell_count)
+                & (shell > self.inner_shell_count)
+                & (e < inner_edge)
+            )
+            fit_one = use_inner_fit & ~skip
+            if np.any(fit_one):
+                _, e0, sigma0, ya, p, yw = params
+                y = e[fit_one] / e0
+                q = 0.5 * p - orbital_l[shell - 1] - 5.5
+                partial[fit_one] = (
+                    sigma0 * ((y - 1.0) ** 2 + yw**2) * y**q
+                    * (np.sqrt(y / ya) + 1.0) ** (-p)
+                )
+            fit_two = ~use_inner_fit & ~skip
+            if np.any(fit_two) and self.outer_parameters is not None:
+                e0, sigma0, ya, p, yw, y0, y1 = self.outer_parameters
+                x = e[fit_two] / e0 - y0
+                z = np.sqrt(x * x + y1**2)
+                partial[fit_two] = (
+                    sigma0 * ((x - 1.0) ** 2 + yw**2) * z ** (0.5 * p - 5.5)
+                    * (1.0 + np.sqrt(z / ya)) ** (-p)
+                )
+            total[above] += partial
+        return total * 1.0e-18
+
+
+@dataclass(frozen=True)
 class VernerPhotoionizationDatabase:
     """Ground-state fits indexed by ``(element, charge)``."""
 
@@ -988,6 +1184,10 @@ class MetalLTEState:
     composition_mode: Literal["trace", "bulk"] = "trace"
     mass_fraction: Mapping[str, float] | None = None
     total_mass_density: FloatArray | None = None
+    # Neutral perturbers used in occupation-probability partitions; line
+    # opacity applies the same level survival so populations stay normalized.
+    neutral_perturber_number_density: Mapping[str, FloatArray] | None = None
+    neutral_perturber_radius_cm: Mapping[str, float] | None = None
 
 
 @dataclass(frozen=True)
@@ -1743,9 +1943,40 @@ def chondritic_metal_abundances(
             raise ValueError(f"unsupported chondritic abundance override: {symbol}")
         if not np.isfinite(abundance):
             raise ValueError(f"abundance override for {symbol} must be finite")
-        if symbol in result:
-            result[symbol] = float(abundance)
+        if symbol not in result:
+            raise ValueError(
+                f"abundance override for {symbol} is not among the requested elements"
+            )
+        result[symbol] = float(abundance)
     return result
+
+
+def _level_term_label(label: str) -> str:
+    """Return a Stout level label with its ``<J>`` value removed."""
+
+    return re.sub(r"<[^>]+>\)", ")", label)
+
+
+def ground_term_levels(ion: AtomicIon) -> tuple[AtomicLevel, ...]:
+    """Return every fine-structure level of an ion's LS ground term.
+
+    Levels are grouped by their Stout label with the ``<J>`` value removed.
+    A ground label without a parseable ``J`` returns only the lowest level.
+    """
+
+    levels = [
+        level for level in ion.levels
+        if np.isfinite(level.energy_wavenumber) and level.statistical_weight > 0.0
+    ]
+    if not levels:
+        return ()
+    ground = min(levels, key=lambda level: level.energy_wavenumber)
+    if re.search(r"<[^>]+>\)", ground.label) is None:
+        return (ground,)
+    term = _level_term_label(ground.label)
+    return tuple(
+        level for level in levels if _level_term_label(level.label) == term
+    )
 
 
 def dense_helium_ionization_potential_shift_ev(
@@ -1756,10 +1987,13 @@ def dense_helium_ionization_potential_shift_ev(
     r"""Return Blouin et al.'s first-ionization ``Delta I`` in eV.
 
     The published fit covers 0--1.5 g cm^-3 and 4000--8000 K and was tested
-    by its authors over 2000--10000 K.  Outside that tested temperature range
-    the correction is disabled instead of silently extrapolating a cool,
-    dense-fluid fit into warm DBZ atmospheres.  Positive shifts are capped at
-    zero exactly as in the paper.
+    by its authors over 2000--10000 K.  Outside that tested domain the fit is
+    held at the nearest tested temperature and at the largest fitted density
+    rather than extrapolated.  Holding the edge value keeps the ionization
+    balance continuous; switching the shift off at 10000 K made ion fractions
+    jump by up to 0.7 dex at fixed density.  ``Delta I`` still vanishes as the
+    density goes to zero.  Positive shifts are capped at zero exactly as in
+    the paper.
     """
 
     symbol = _canonical_element(element)
@@ -1772,12 +2006,13 @@ def dense_helium_ionization_potential_shift_ev(
     if symbol not in _DENSE_HE_IONIZATION_FIT:
         return np.zeros_like(density)
     a_coefficient, b_coefficient, c_coefficient = _DENSE_HE_IONIZATION_FIT[symbol]
-    shift = np.minimum(
+    temp = np.clip(temp, 2000.0, 10_000.0)
+    density = np.minimum(density, 1.5)
+    return np.minimum(
         0.0,
         (a_coefficient + b_coefficient * temp) * density
         + c_coefficient * density**2,
     )
-    return np.where((temp >= 2000.0) & (temp <= 10_000.0), shift, 0.0)
 
 
 def _resolve_stout_ion_directory(root: Path, element: str, stage: int) -> Path:
@@ -1813,6 +2048,8 @@ def read_stout_atomic_ion(root: str | Path, element: str, charge: int) -> Atomic
             transitions=(),
             source="NIST ASD ionization ladder; synthetic bare-nucleus closure",
         )
+    if symbol == "Nb":
+        return read_niobium_atomic_ion(root, int(charge))
     stage = int(charge) + 1
     directory = _resolve_stout_ion_directory(Path(root), symbol, stage)
     stem = f"{symbol.lower()}_{stage}"
@@ -1879,6 +2116,589 @@ def read_stout_atomic_ion(root: str | Path, element: str, charge: int) -> Atomic
         ionization_energy_ev=(ionization[charge] if charge < len(ionization) else None),
         levels=tuple(levels),
         transitions=tuple(transitions),
+    )
+
+
+# Niobium (Z = 41) lies beyond the Stout database.  Its ions are built from
+# checksum-pinned NIST ASD 5.12 queries retrieved on 2026-10-07: the level
+# lists of Nb I--VI and the Nb IV transition probabilities, which are almost
+# all from Tauheed & Reader (2005, Phys. Scr. 72, 158).  Nb III uses the
+# HFR+CPOL probabilities of Nilsson et al. (2010, A&A 511, A16, Table 7),
+# transcribed by hand; that table lists only lines with log gf > -0.5.
+# NIST has no probabilities for Nb I, II or V, so those stages contribute
+# partition functions and charge but no lines.  Cite Kramida et al., NIST
+# ASD (doi:10.18434/T4W30F) and the original probability sources.
+_NIST_ASD_LEVELS_QUERY = (
+    "https://physics.nist.gov/cgi-bin/ASD/energy1.pl?spectrum=Nb%20{spectrum}&"
+    "units=0&format=3&output=0&page_size=5000&multiplet_ordered=0&conf_out=on&"
+    "term_out=on&level_out=on&unc_out=1&j_out=on&g_out=on&biblio=on"
+)
+NIOBIUM_ATOMIC_DATA_FILES = MappingProxyType(
+    {
+        **{
+            f"nist-asd-nb{charge + 1}-levels.tsv": (
+                _NIST_ASD_LEVELS_QUERY.format(spectrum=spectrum),
+                checksum,
+            )
+            for charge, (spectrum, checksum) in enumerate((
+                ("I", "b818b5e40c14f807554cfce49830fc5cbe802cff495c605110ba826f9f91ae4f"),
+                ("II", "d50ce7642473087c57ef12b27087a4c0fe825415bfb940e636aebcaaefcb6057"),
+                ("III", "432ca4b15b4be6ce695121608ede2924c6576bc7d302a51c9aabd9cac3bcca9d"),
+                ("IV", "c7bfdf32fed5dfc6844c723944b19f72441d4361a726c0986e18eceb6b96d383"),
+                ("V", "0988c933da8c7a499281963a73b91d84570af2e9a9d3e3c96ffb355e705f9ba8"),
+                ("VI", "85839ed66cb0eeec51749c50f248bdda7b0f78ff3f8306ace91fdaefe830f7c8"),
+            ))
+        },
+        "nist-asd-nb4-lines.tsv": (
+            "https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=Nb+IV&"
+            "output_type=0&unit=1&submit=Retrieve+Data&de=0&plot_out=0&"
+            "I_scale_type=1&format=3&line_out=0&en_unit=0&output=0&bibrefs=1&"
+            "page_size=15000&show_obs_wl=1&show_calc_wl=1&unc_out=1&"
+            "order_out=0&show_av=3&A_out=0&f_out=on&loggf_out=on&"
+            "intens_out=on&allowed_out=1&forbid_out=1&conf_out=on&"
+            "term_out=on&enrg_out=on&J_out=on&g_out=on",
+            "3b72274ea6c3f9a6d00ace8eba818c2c9a6e4add0119cd06f2eafa67be6f1c71",
+        ),
+        "nist-asd-nb-ionization.csv": (
+            "https://physics.nist.gov/cgi-bin/ASD/ie.pl?spectra=Nb&units=1&"
+            "format=2&at_num_out=on&el_name_out=on&ion_charge_out=on&"
+            "sp_name_out=on&e_out=0&unc_out=on&biblio=on",
+            "a0e0899b97a055d7497823b72629606597880a352d3f23ed2e9462dc8ef49999",
+        ),
+        "nilsson2010-nb3-table7.csv": (
+            "Nilsson et al. (2010), A&A 511, A16, Table 7; "
+            "doi:10.1051/0004-6361/200913574",
+            "492220554b5a873d7a49e0b3c7cec668c0bc7077aa4f3aed90314cf9136b3918",
+        ),
+    }
+)
+NIOBIUM_MAXIMUM_CHARGE = 5
+# Nilsson's Table 7 wavelengths are Iglesias (1955) laboratory values (air
+# above 2000 A); NIST Ritz positions differ from them by up to 0.054 A.
+_NILSSON_WAVELENGTH_TOLERANCE_ANGSTROM = 0.08
+_NIST_LEVEL_ENERGY_TOLERANCE_WAVENUMBER = 0.011
+
+
+def _nist_field(value: str | None) -> str:
+    """Strip the ``="..."`` spreadsheet quoting of NIST ASD exports."""
+
+    return (value or "").strip().strip('"').lstrip("=").strip('"').strip()
+
+
+def _niobium_data_directory(root: Path) -> Path:
+    for candidate in (root / "niobium", root.parent / "niobium"):
+        if all((candidate / name).is_file() for name in NIOBIUM_ATOMIC_DATA_FILES):
+            return candidate
+    raise FileNotFoundError(f"could not find the bundled Nb atomic data near {root}")
+
+
+def _odd_parity_term(term: str) -> bool:
+    return term.endswith("*")
+
+
+def _niobium_level_records(path: Path) -> list[dict[str, object]]:
+    records = []
+    with path.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            term = _nist_field(row["Term"])
+            energy = _nist_field(row["Level (cm-1)"])
+            weight = _nist_field(row["g"])
+            if term == "Limit" or not energy or not weight:
+                continue
+            configuration = _nist_field(row["Configuration"])
+            j_value = _nist_field(row["J"])
+            # Stout-style label: dotted configuration, parent terms in
+            # parentheses, and a final (term<J>) with "o" marking odd parity.
+            label = (
+                (configuration + "." if configuration else "")
+                + f"({term.replace(' ', '')}<{j_value}>)"
+            ).replace("*", "o")
+            records.append(
+                {
+                    "energy": float(energy),
+                    "weight": float(weight),
+                    "label": label,
+                    "configuration": configuration,
+                    "term": term,
+                    "j": j_value,
+                }
+            )
+    records.sort(key=lambda record: record["energy"])
+    for index, record in enumerate(records, 1):
+        record["index"] = index
+    return records
+
+
+def _niobium_einstein_transition(
+    lower: Mapping[str, object],
+    upper: Mapping[str, object],
+    einstein_a: float,
+) -> AtomicTransition:
+    if (
+        _odd_parity_term(str(lower["term"])) == _odd_parity_term(str(upper["term"]))
+        or float(upper["energy"]) <= float(lower["energy"])
+        or not np.isfinite(einstein_a)
+        or einstein_a <= 0.0
+    ):
+        raise ValueError(f"not an allowed Nb E1 transition: {lower['label']} -> {upper['label']}")
+    lower_j = (float(lower["weight"]) - 1.0) / 2.0
+    upper_j = (float(upper["weight"]) - 1.0) / 2.0
+    if abs(lower_j - upper_j) > 1.0 or lower_j == upper_j == 0.0:
+        raise ValueError(f"Nb E1 transition violates the J selection rule: {lower['label']}")
+    wavelength_cm = 1.0 / (float(upper["energy"]) - float(lower["energy"]))
+    oscillator_strength = (
+        ELECTRON_MASS * LIGHT_SPEED * wavelength_cm**2
+        / (8.0 * PI**2 * ELEMENTARY_CHARGE_ESU**2)
+        * float(upper["weight"]) / float(lower["weight"])
+        * einstein_a
+    )
+    return AtomicTransition(
+        int(lower["index"]),
+        int(upper["index"]),
+        float(einstein_a),
+        "E1",
+        wavelength_cm * 1.0e8,
+        oscillator_strength,
+    )
+
+
+def _niobium_iv_transitions(path: Path, levels: list[dict[str, object]]) -> list[AtomicTransition]:
+    def level(configuration: str, term: str, j_value: str, energy: str) -> dict[str, object]:
+        value = float(energy.strip("[]?+x"))
+        matches = [
+            record for record in levels
+            if record["configuration"] == configuration
+            and record["term"] == term
+            and record["j"] == j_value
+            and abs(float(record["energy"]) - value)
+            < _NIST_LEVEL_ENERGY_TOLERANCE_WAVENUMBER
+        ]
+        if len(matches) != 1:
+            raise ValueError(f"Nb IV line level is not unique: {configuration} {term} {j_value}")
+        return matches[0]
+
+    transitions = []
+    with path.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream, delimiter="\t"):
+            if _nist_field(row["Type"]):
+                raise ValueError("the Nb IV snapshot should contain only allowed E1 lines")
+            lower = level(
+                _nist_field(row["conf_i"]), _nist_field(row["term_i"]),
+                _nist_field(row["J_i"]), _nist_field(row["Ei(cm-1)"]),
+            )
+            upper = level(
+                _nist_field(row["conf_k"]), _nist_field(row["term_k"]),
+                _nist_field(row["J_k"]), _nist_field(row["Ek(cm-1)"]),
+            )
+            transitions.append(
+                _niobium_einstein_transition(
+                    lower, upper, float(_nist_field(row["Aki(s^-1)"]))
+                )
+            )
+    return transitions
+
+
+def _niobium_iii_transitions(path: Path, levels: list[dict[str, object]]) -> list[AtomicTransition]:
+    """Attach Nilsson et al. Table 7 gA values to unique NIST level pairs.
+
+    NIST (Gayazov et al. 1998) and Iglesias (1955) give some strongly mixed
+    levels different LS names, so a row is matched by both J values, the
+    parity change and its wavelength.  The term names only break ties.
+    """
+
+    def base_term(term: str) -> str:
+        return re.sub(r"(?<=[SPDFGHIK])\d+", "", term.split()[-1].rstrip("*"))
+
+    transitions = []
+    used: set[tuple[int, int]] = set()
+    with path.open(newline="", encoding="utf-8") as stream:
+        for row in csv.DictReader(stream):
+            wavelength = float(row["wavelength_angstrom"])
+            vacuum = (
+                wavelength if wavelength < 2000.0
+                else _physical_air_to_vacuum_scalar(wavelength)
+            )
+            candidates = [
+                (lower, upper)
+                for lower in levels
+                if lower["j"] == row["lower_j"] and not _odd_parity_term(str(lower["term"]))
+                for upper in levels
+                if upper["j"] == row["upper_j"]
+                and _odd_parity_term(str(upper["term"]))
+                and float(upper["energy"]) > float(lower["energy"])
+                and abs(1.0e8 / (float(upper["energy"]) - float(lower["energy"])) - vacuum)
+                < _NILSSON_WAVELENGTH_TOLERANCE_ANGSTROM
+            ]
+            if len(candidates) > 1:
+                candidates = [
+                    (lower, upper) for lower, upper in candidates
+                    if base_term(str(lower["term"])) == base_term(row["lower"])
+                    and base_term(str(upper["term"])) == base_term(row["upper"])
+                ]
+            if len(candidates) != 1:
+                raise ValueError(f"Nb III Table 7 line {wavelength} A has no unique NIST levels")
+            lower, upper = candidates[0]
+            key = (int(lower["index"]), int(upper["index"]))
+            if key in used:
+                raise ValueError(f"two Nb III Table 7 rows match {lower['label']} -> {upper['label']}")
+            used.add(key)
+            transitions.append(
+                _niobium_einstein_transition(
+                    lower, upper, float(row["gA_s"]) / float(upper["weight"])
+                )
+            )
+    return transitions
+
+
+@lru_cache(maxsize=4)
+def _niobium_atomic_ions(directory: str) -> tuple[AtomicIon, ...]:
+    root = Path(directory)
+    for name, (_, checksum) in NIOBIUM_ATOMIC_DATA_FILES.items():
+        if hashlib.sha256((root / name).read_bytes()).hexdigest() != checksum:
+            raise ValueError(f"Nb atomic data checksum mismatch: {name}")
+    ions = []
+    for charge in range(NIOBIUM_MAXIMUM_CHARGE + 1):
+        levels = _niobium_level_records(root / f"nist-asd-nb{charge + 1}-levels.tsv")
+        if charge == 2:
+            transitions = _niobium_iii_transitions(root / "nilsson2010-nb3-table7.csv", levels)
+            source = (
+                "NIST ASD 5.12 Nb III levels; HFR+CPOL gA of Nilsson et al. "
+                "(2010) Table 7 (log gf > -0.5 only)"
+            )
+        elif charge == 3:
+            transitions = _niobium_iv_transitions(root / "nist-asd-nb4-lines.tsv", levels)
+            source = "NIST ASD 5.12 Nb IV levels and transition probabilities"
+        else:
+            transitions = []
+            source = "NIST ASD 5.12 levels; no bundled transition probabilities"
+        ions.append(
+            AtomicIon(
+                element="Nb",
+                charge=charge,
+                atomic_mass_u=ATOMIC_MASS_U["Nb"],
+                ionization_energy_ev=IONIZATION_ENERGY_EV["Nb"][charge],
+                levels=tuple(
+                    AtomicLevel(
+                        int(record["index"]), float(record["energy"]),
+                        float(record["weight"]), str(record["label"]),
+                    )
+                    for record in levels
+                ),
+                transitions=tuple(transitions),
+                source=source,
+            )
+        )
+    return tuple(ions)
+
+
+def read_niobium_atomic_ion(root: str | Path, charge: int) -> AtomicIon:
+    """Return bundled Nb I--VI (``charge`` 0--5) in the Stout ion format.
+
+    ``root`` is the Stout directory (or its parent ``metal-opacity`` cache);
+    the pinned files live in its sibling ``niobium`` directory.  Wavelengths
+    are vacuum Ritz values from the NIST level energies and oscillator
+    strengths follow from the Einstein coefficients, exactly as for Stout.
+    No Nb photoionization data are bundled: Verner's fits stop at Zn.
+    """
+
+    if not isinstance(charge, (int, np.integer)) or not 0 <= charge <= NIOBIUM_MAXIMUM_CHARGE:
+        raise ValueError(
+            f"bundled Nb data cover charges 0-{NIOBIUM_MAXIMUM_CHARGE} (Nb I-VI)"
+        )
+    directory = _niobium_data_directory(Path(root))
+    return _niobium_atomic_ions(str(directory.resolve()))[int(charge)]
+
+
+# The bundled Stout Zn IV-VI and Cu IV-VI files contain only forbidden (M1/E2)
+# transitions, so these stages add partition functions and charge but no E1
+# absorption.  Rauch et al. computed HFR+CPOL E1 probabilities for Zn IV-V
+# (2014, A&A 564, A41) and Cu IV-VII (2020, A&A 637, A4).  The Zn tables are
+# the unmodified CDS copies, which list both level energies.  The Cu data are
+# distributed only by the GAVO TOSS service.  Its ``toss.data`` level energies
+# do not belong to their transitions (for Zn, 399 of 400 rows disagree with the
+# CDS table), but its vacuum wavelengths, J values, parities, log gf and gA
+# (in the column labelled ``einsteina``) agree with CDS row by row.  Each Cu
+# line is therefore attached to Stout levels by both J values, both parities
+# and its wavenumber.  Lines that reach Rauch's theory-only levels, or match
+# no unique Stout level pair, are left out.  Cu VII is left out because Stout
+# has only its four ground-configuration levels.  Retrieved 2026-10-07.
+_RAUCH_2014_CDS = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/564/A41/"
+_TOSS_CU_QUERY = (
+    "https://dc.g-vo.org/tap/sync?LANG=ADQL&FORMAT=csv&MAXREC=100000&QUERY="
+    "SELECT+vacuum_wavelength%2C+par_init%2C+j_init%2C+par_final%2C+j_final"
+    "%2C+log_gf%2C+einsteina%2C+cf+FROM+toss.data+WHERE+species_name+%3D+"
+    "%27Cu%27+AND+ion_charge+%3D+-{charge}+ORDER+BY+vacuum_wavelength"
+)
+RAUCH_ZN_CU_ATOMIC_DATA_FILES = MappingProxyType(
+    {
+        "rauch2014-ReadMe": (
+            _RAUCH_2014_CDS + "ReadMe",
+            "8f94cb98b0c456de40a814b909f916d7a464732ef1aa956cef850fb0ae65b192",
+        ),
+        "rauch2014-zn4-table1.dat": (
+            _RAUCH_2014_CDS + "table1.dat",
+            "83f58c0a86b8200667030f271fc96dcf2020a406810adc82e551cbce72308e85",
+        ),
+        "rauch2014-zn5-table2.dat": (
+            _RAUCH_2014_CDS + "table2.dat",
+            "75cbfbdb0eb4063c6ca542e93b08610b10acdf12e7da3bdccfeaae85b407580d",
+        ),
+        **{
+            f"toss-cu{charge + 1}.csv": (
+                _TOSS_CU_QUERY.format(charge=charge), checksum,
+            )
+            for charge, checksum in (
+                (3, "bc955d490c35331d20fff7f4f75866db34fbdba47517e7dfe2047b122d342f73"),
+                (4, "aef74c6ab1b482eb17c5f2961babf692867dfb18d03493c17dbb3deba0d5e294"),
+                (5, "26c02104a2441619d0e6eddfcd1378511f709302fc2b34012b0f35758940ae3e"),
+            )
+        },
+    }
+)
+RAUCH_ZN_CU_ION_FILES = MappingProxyType(
+    {
+        ("Zn", 3): "rauch2014-zn4-table1.dat",
+        ("Zn", 4): "rauch2014-zn5-table2.dat",
+        ("Cu", 3): "toss-cu4.csv",
+        ("Cu", 4): "toss-cu5.csv",
+        ("Cu", 5): "toss-cu6.csv",
+    }
+)
+_RAUCH_SOURCE = "Rauch et al. HFR E1 lines on Stout levels"
+# The CDS level energies are rounded to 1 cm^-1; Stout (NIST) agrees within
+# 0.6 cm^-1.  TOSS wavelengths (0.001 A) give wavenumbers within 0.6 cm^-1 of
+# the Stout Ritz values for 99% of matched Cu lines.
+_RAUCH_LEVEL_ENERGY_TOLERANCE_WAVENUMBER = 1.0
+_RAUCH_WAVENUMBER_TOLERANCE = 0.6
+
+
+def _rauch_data_directory(root: Path) -> Path:
+    for candidate in (root / "rauch-zn-cu", root.parent / "rauch-zn-cu"):
+        if all((candidate / name).is_file() for name in RAUCH_ZN_CU_ATOMIC_DATA_FILES):
+            return candidate
+    raise FileNotFoundError(f"could not find the bundled Rauch Zn/Cu data near {root}")
+
+
+@lru_cache(maxsize=4)
+def _rauch_records(directory: str) -> Mapping[tuple[str, int], tuple[dict, ...]]:
+    """Parse the checksum-verified Rauch tables into common records.
+
+    Every record has the vacuum wavelength, both parities and J values, gA,
+    log gf and, for the CDS Zn tables only, both level energies.
+    """
+
+    root = Path(directory)
+    for name, (_, checksum) in RAUCH_ZN_CU_ATOMIC_DATA_FILES.items():
+        if hashlib.sha256((root / name).read_bytes()).hexdigest() != checksum:
+            raise ValueError(f"Rauch Zn/Cu atomic data checksum mismatch: {name}")
+    result = {}
+    for key, name in RAUCH_ZN_CU_ION_FILES.items():
+        records = []
+        if name.endswith(".dat"):
+            # Byte layout from the CDS ReadMe of J/A+A/564/A41.  The tabulated
+            # wavelengths are in air above 2000 A (as in TOSS); the matching
+            # uses the level energies.
+            for line in (root / name).read_text(encoding="ascii").splitlines():
+                wavelength = float(line[3:12])
+                records.append({
+                    "wavelength": (
+                        wavelength if wavelength < 2000.0
+                        else _physical_air_to_vacuum_scalar(wavelength)
+                    ),
+                    "lower_energy": float(line[17:23]),
+                    "lower_parity": line[24],
+                    "lower_j": float(line[27:30]),
+                    "upper_energy": float(line[35:41]),
+                    "upper_parity": line[42],
+                    "upper_j": float(line[45:48]),
+                    "log_gf": float(line[51:56]),
+                    "ga": float(line[59:67]),
+                })
+        else:
+            with (root / name).open(newline="", encoding="ascii") as stream:
+                for row in csv.DictReader(stream):
+                    records.append({
+                        "wavelength": float(row["vacuum_wavelength"]) * 1.0e10,
+                        "lower_energy": None,
+                        "lower_parity": row["par_init"],
+                        "lower_j": float(row["j_init"]),
+                        "upper_energy": None,
+                        "upper_parity": row["par_final"],
+                        "upper_j": float(row["j_final"]),
+                        "log_gf": float(row["log_gf"]),
+                        "ga": float(row["einsteina"]),
+                    })
+        if any(
+            record["lower_parity"] == record["upper_parity"]
+            or record["lower_parity"] not in "eo"
+            or record["upper_parity"] not in "eo"
+            or not record["ga"] > 0.0
+            for record in records
+        ):
+            raise ValueError(f"{name} should contain only E1 lines with positive gA")
+        result[key] = tuple(records)
+    return MappingProxyType(result)
+
+
+def _stout_level_parity(label: str) -> str | None:
+    """Return ``"o"`` or ``"e"`` from a Stout label's final ``(term<J>)``."""
+
+    match = re.search(r"\(([^()<]*)<[^>]+>\)$", label)
+    if match is None or not match.group(1):
+        return None
+    return "o" if match.group(1).endswith("o") else "e"
+
+
+@lru_cache(maxsize=16)
+def _rauch_matched_lines(
+    directory: str, element: str, charge: int, levels: tuple[AtomicLevel, ...]
+) -> tuple[tuple[AtomicTransition, ...], Mapping[str, int]]:
+    """Attach Rauch lines to unique Stout level pairs of one ion."""
+
+    records = _rauch_records(directory)[(element, charge)]
+    groups: dict[tuple[str, float], list[AtomicLevel]] = {}
+    for level in levels:
+        parity = _stout_level_parity(level.label)
+        if parity is not None:
+            groups.setdefault(
+                (parity, 0.5 * (level.statistical_weight - 1.0)), []
+            ).append(level)
+
+    def by_energy(parity: str, j_value: float, energy: float) -> list[AtomicLevel]:
+        return [
+            level for level in groups.get((parity, j_value), ())
+            if abs(level.energy_wavenumber - energy)
+            <= _RAUCH_LEVEL_ENERGY_TOLERANCE_WAVENUMBER
+        ]
+
+    pairs: dict[tuple[int, int], list[tuple[AtomicLevel, AtomicLevel, dict]]] = {}
+    counts = {"published": len(records), "no_stout_pair": 0, "ambiguous": 0}
+    for record in records:
+        if record["lower_energy"] is not None:
+            lowers = by_energy(
+                record["lower_parity"], record["lower_j"], record["lower_energy"]
+            )
+            uppers = by_energy(
+                record["upper_parity"], record["upper_j"], record["upper_energy"]
+            )
+            candidates = [(lower, upper) for lower in lowers for upper in uppers]
+        else:
+            wavenumber = 1.0e8 / record["wavelength"]
+            candidates = [
+                (lower, upper)
+                for lower in groups.get((record["lower_parity"], record["lower_j"]), ())
+                for upper in groups.get((record["upper_parity"], record["upper_j"]), ())
+                if abs(upper.energy_wavenumber - lower.energy_wavenumber - wavenumber)
+                <= _RAUCH_WAVENUMBER_TOLERANCE
+            ]
+        if not candidates:
+            counts["no_stout_pair"] += 1
+        elif len(candidates) > 1:
+            counts["ambiguous"] += 1
+        else:
+            lower, upper = candidates[0]
+            pairs.setdefault((lower.index, upper.index), []).append(
+                (lower, upper, record)
+            )
+    transitions = []
+    counts["shared_stout_pair"] = 0
+    for matches in pairs.values():
+        if len(matches) > 1:
+            counts["shared_stout_pair"] += len(matches)
+            continue
+        lower, upper, record = matches[0]
+        if (
+            upper.energy_wavenumber <= lower.energy_wavenumber
+            or abs(record["lower_j"] - record["upper_j"]) > 1.0
+            or record["lower_j"] == record["upper_j"] == 0.0
+        ):
+            raise ValueError(f"not an allowed {element} E1 transition: {lower.label}")
+        wavelength_cm = 1.0 / (upper.energy_wavenumber - lower.energy_wavenumber)
+        einstein_a = record["ga"] / upper.statistical_weight
+        transitions.append(
+            AtomicTransition(
+                lower.index,
+                upper.index,
+                einstein_a,
+                "E1",
+                wavelength_cm * 1.0e8,
+                ELECTRON_MASS * LIGHT_SPEED * wavelength_cm**2
+                / (8.0 * PI**2 * ELEMENTARY_CHARGE_ESU**2)
+                * upper.statistical_weight / lower.statistical_weight
+                * einstein_a,
+            )
+        )
+    transitions.sort(key=lambda line: line.wavelength_vacuum_angstrom)
+    counts["attached"] = len(transitions)
+    return tuple(transitions), MappingProxyType(counts)
+
+
+def rauch_zn_cu_line_counts(
+    database: AtomicDatabase, root: str | Path
+) -> dict[str, dict[str, int]]:
+    """Report how many Rauch lines attach to each ion's Stout levels."""
+
+    directory = str(_rauch_data_directory(Path(root)).resolve())
+    return {
+        f"{element} {charge}": dict(
+            _rauch_matched_lines(
+                directory, element, charge, database.ions[(element, charge)].levels
+            )[1]
+        )
+        for element, charge in RAUCH_ZN_CU_ION_FILES
+        if (element, charge) in database.ions
+    }
+
+
+def atomic_database_with_rauch_zn_cu_transitions(
+    database: AtomicDatabase, root: str | Path
+) -> AtomicDatabase:
+    """Add the Rauch et al. Zn IV-V and Cu IV-VI E1 lines to Stout ions.
+
+    ``root`` is the Stout directory (or its parent ``metal-opacity`` cache);
+    the pinned files live in its sibling ``rauch-zn-cu`` directory.  Lines are
+    attached to existing Stout levels, so labels, partition functions and the
+    label-based broadening estimates are unchanged; no level is added.  As for
+    Stout and Nb, wavelengths are Ritz values from the Stout level energies
+    and f follows from the published gA.  Stout's forbidden lines are kept.
+    Ions absent from ``database`` are ignored, and repeated calls are
+    idempotent.
+    """
+
+    directory = str(_rauch_data_directory(Path(root)).resolve())
+    ions = dict(database.ions)
+    changed = False
+    for key in RAUCH_ZN_CU_ION_FILES:
+        ion = ions.get(key)
+        if ion is None or _RAUCH_SOURCE in ion.source:
+            continue
+        added, counts = _rauch_matched_lines(directory, key[0], key[1], ion.levels)
+        existing = {
+            (line.lower_index, line.upper_index)
+            for line in ion.transitions if line.transition_type == "E1"
+        }
+        added = tuple(
+            line for line in added
+            if (line.lower_index, line.upper_index) not in existing
+        )
+        reference = "2014" if key[0] == "Zn" else "2020"
+        ions[key] = replace(
+            ion,
+            transitions=ion.transitions + added,
+            source=(
+                f"{ion.source}; {_RAUCH_SOURCE} ({reference}; "
+                f"{len(added)}/{counts['published']} lines)"
+            ),
+        )
+        changed = True
+    if not changed:
+        return database
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=(
+            f"{database.source}; Rauch et al. (2014, 2020) Zn IV-V and Cu IV-VI "
+            "E1 lines (CDS J/A+A/564/A41; GAVO TOSS)"
+        ),
     )
 
 
@@ -2715,6 +3535,100 @@ def read_kurucz_gf100_atomic_database(
     )
 
 
+# Kurucz's measured-level ("pos") lists of Fe and Ni IV-VII, bundled for the
+# hot DA/DAO trace-metal module.  The species code in each name is Kurucz's
+# element.charge, so gf2803 is Ni IV.  Stout Ni IV-VII contain only forbidden
+# lines.  SHA256SUMS lists the checksums of the decompressed files.  Kurucz
+# levels are matched to Stout within 0.1 cm^-1.  Fe V (gf2604), Fe VI
+# (gf2605z) and Ni VII (gf2806z) are excluded: their energies differ from
+# Stout by 0.5-3 cm^-1 for some levels, which would be appended a second time
+# (for Ni VII the whole 3d4 5D ground term, doubling its partition function).
+KURUCZ_IRON_GROUP_POSITION_FILES = MappingProxyType(
+    {
+        ("Fe", 3): "gf2603.pos",
+        ("Fe", 6): "gf2606z.pos",
+        ("Ni", 3): "gf2803.pos",
+        ("Ni", 4): "gf2804.pos",
+        ("Ni", 5): "gf2805.pos",
+    }
+)
+_KURUCZ_SUPPLEMENT_SOURCE = "Kurucz GF100 missing-transition supplement"
+# An appended Kurucz level this close to a Stout level of the same weight is
+# treated as a duplicate of it rather than a level missing from Stout.
+_KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER = 5.0
+
+
+def atomic_database_with_kurucz_iron_group_positions(
+    database: AtomicDatabase, directory: str | Path | None = None
+) -> AtomicDatabase:
+    """Add Kurucz measured-level Fe IV, VII and Ni IV-VI lines missing from Stout.
+
+    Uses :func:`read_kurucz_gf100_atomic_database` in its
+    missing-transition mode: Stout levels and lines are kept, Kurucz levels
+    are matched to Stout levels by energy (0.1 cm^-1) and weight, and only
+    transitions between level pairs that Stout does not connect are added,
+    with Kurucz's radiative, Stark and van der Waals constants.  Kurucz levels
+    absent from Stout are appended with a ``Kurucz`` label; a ``ValueError``
+    is raised if one lies within 5 cm^-1 of a Stout level of equal weight.
+    ``directory`` defaults to the bundled ``data/hot_daz/kurucz``, whose xz
+    files are verified against ``SHA256SUMS``.  Only ions present in
+    ``database`` are read, and repeated calls are idempotent.
+    """
+
+    import lzma
+    import tempfile
+
+    root = (
+        Path(str(files("wd_spectra"))) / "data" / "hot_daz" / "kurucz"
+        if directory is None else Path(directory)
+    )
+    needed = {
+        key: name for key, name in KURUCZ_IRON_GROUP_POSITION_FILES.items()
+        if key in database.ions
+        and _KURUCZ_SUPPLEMENT_SOURCE not in database.ions[key].source
+    }
+    if not needed:
+        return database
+    checksums = dict(
+        line.split()[::-1]
+        for line in (root / "SHA256SUMS").read_text(encoding="ascii").splitlines()
+        if line.strip()
+    )
+    with tempfile.TemporaryDirectory(prefix="openwd-kurucz-") as scratch:
+        paths = []
+        for name in needed.values():
+            compressed = root / f"{name}.xz"
+            content = (
+                lzma.decompress(compressed.read_bytes())
+                if compressed.is_file() else (root / name).read_bytes()
+            )
+            if hashlib.sha256(content).hexdigest() != checksums.get(name):
+                raise ValueError(f"Kurucz iron-group checksum mismatch: {name}")
+            path = Path(scratch) / name
+            path.write_bytes(content)
+            paths.append(path)
+        merged = read_kurucz_gf100_atomic_database(
+            paths,
+            database,
+            elements=sorted({element for element, _ in needed}),
+            replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    for key in needed:
+        original = database.ions[key].levels
+        for level in merged.ions[key].levels[len(original):]:
+            if any(
+                existing.statistical_weight == level.statistical_weight
+                and abs(existing.energy_wavenumber - level.energy_wavenumber)
+                <= _KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER
+                for existing in original
+            ):
+                raise ValueError(
+                    f"Kurucz {key[0]} {key[1]} level {level.label!r} duplicates a Stout level"
+                )
+    return merged
+
+
 _NIST_ASD_ACCURACY_PERCENT = MappingProxyType(
     {
         "AAA": 0.3,
@@ -2807,11 +3721,13 @@ def read_nist_asd_strong_atomic_database(
                     einstein_a = float(
                         row["Aki(s^-1)"].strip().strip('"').strip("=")
                     )
+                    # Brackets mark NIST level energies derived from theory
+                    # or interpolation; they still identify the Stout level.
                     lower_energy = float(
-                        row["Ei(cm-1)"].strip().strip('"').strip("=")
+                        row["Ei(cm-1)"].strip().strip('"').strip("=").strip("[]")
                     )
                     upper_energy = float(
-                        row["Ek(cm-1)"].strip().strip('"').strip("=")
+                        row["Ek(cm-1)"].strip().strip('"').strip("=").strip("[]")
                     )
                     lower_weight = 2.0 * _nist_asd_j_value(row["J_i"]) + 1.0
                     upper_weight = 2.0 * _nist_asd_j_value(row["J_k"]) + 1.0
@@ -2929,6 +3845,91 @@ def read_pg1159_atomic_database(
         elements=selected,
         maximum_charge={element: ATOMIC_NUMBER[element] for element in selected},
     )
+
+
+def read_verner_phfit2_database(
+    path: str | Path,
+    *,
+    elements: Iterable[str],
+    maximum_charge: int | None = None,
+    exclude: Iterable[tuple[str, int]] = (),
+) -> dict[tuple[str, int], VernerPhfit2Fit]:
+    """Parse the fit tables of Verner's public ``phfit2.f``.
+
+    Returns a total ground-state fit for each requested ion, skipping
+    ``exclude`` (ions already covered by ``photo.dat``).  This supplies the
+    iron-group ions (Sc--Zn except Fe), P, Cl and K that ``photo.dat`` omits.
+    """
+
+    text = Path(path).read_text(encoding="ascii", errors="replace")
+    lines = text.splitlines()
+    joined = []
+    for line in lines:
+        if line.lstrip().startswith(("*", "c", "C")) and not line.lstrip().upper().startswith("COMMON"):
+            if len(line) > 5 and line[5:6] not in (" ", "") and line[:5].strip() == "":
+                pass
+            elif line[:1] in ("*", "c", "C"):
+                continue
+        if len(line) > 5 and line[:5].strip() == "" and line[5] not in (" ", "0") and joined:
+            joined[-1] += line[6:]
+        else:
+            joined.append(line)
+    numbers = r"([-+0-9.EeDd,\s]+)"
+    ph1: dict[tuple[int, int, int], tuple[float, ...]] = {}
+    ph2: dict[tuple[int, int], tuple[float, ...]] = {}
+    ninn: list[int] = []
+    ntot: list[int] = []
+    for line in joined:
+        compact = line.strip()
+        m = re.match(r"DATA\s*\(PH1\(I,\s*(\d+),\s*(\d+),\s*(\d+)\),I=1,6\)\s*/(.*)/", compact, re.I)
+        if m:
+            values = tuple(float(v.replace("D", "E")) for v in m.group(4).replace(" ", "").split(","))
+            ph1[(int(m.group(1)), int(m.group(2)), int(m.group(3)))] = values
+            continue
+        m = re.match(r"DATA\s*\(PH2\(I,\s*(\d+),\s*(\d+)\),I=1,7\)\s*/(.*)/", compact, re.I)
+        if m:
+            values = tuple(float(v.replace("D", "E")) for v in m.group(3).replace(" ", "").split(","))
+            ph2[(int(m.group(1)), int(m.group(2)))] = values
+            continue
+        m = re.match(r"DATA\s*\(NINN\(I\),I=1,30\)\s*/(.*)/", compact, re.I)
+        if m:
+            ninn = [int(v) for v in m.group(1).replace(" ", "").split(",")]
+            continue
+        m = re.match(r"DATA\s*\(NTOT\(I\),I=1,30\)\s*/(.*)/", compact, re.I)
+        if m:
+            ntot = [int(v) for v in m.group(1).replace(" ", "").split(",")]
+    if len(ninn) != 30 or len(ntot) != 30 or not ph1:
+        raise ValueError(f"{path} does not look like Verner's phfit2.f")
+    excluded = {(_canonical_element(e), int(c)) for e, c in exclude}
+    number_to_element = {z: e for e, z in ATOMIC_NUMBER.items()}
+    result: dict[tuple[str, int], VernerPhfit2Fit] = {}
+    for element in elements:
+        symbol = _canonical_element(element)
+        nz = ATOMIC_NUMBER[symbol]
+        if nz > 30:
+            continue
+        for ne in range(nz, 0, -1):
+            charge = nz - ne
+            if maximum_charge is not None and charge > maximum_charge:
+                break
+            if (symbol, charge) in excluded:
+                continue
+            nout = ntot[ne - 1]
+            if nz == ne and nz > 18:
+                nout = 7
+            if nz == ne + 1 and nz in (20, 21, 22, 25, 26):
+                nout = 7
+            shells = tuple(ph1.get((nz, ne, shell)) for shell in range(1, 8))
+            if all(params is None or params[0] <= 0.0 for params in shells[:nout]):
+                continue
+            shells = tuple(
+                None if params is None or params[0] <= 0.0 else params
+                for params in shells
+            )
+            result[(symbol, charge)] = VernerPhfit2Fit(
+                symbol, charge, nz, ne, shells, ph2.get((nz, ne)), nout, ninn[ne - 1]
+            )
+    return result
 
 
 def read_verner_photoionization_database(
@@ -3538,9 +4539,9 @@ def metal_lte_state(
     *,
     reference_species: Literal["auto", "H", "He"] = "auto",
     include_dense_helium_ionization: bool = True,
-    dense_helium_ground_state_saha: bool = True,
     log_hydrogen_abundance: float | None = None,
     trace_hydrogen_correlated_microfields: bool = True,
+    occupation_probability_partitions: bool = False,
 ) -> MetalLTEState:
     """Solve trace-metal Saha populations and total electron density.
 
@@ -3555,6 +4556,14 @@ def metal_lte_state(
     charge-neutrality equation. This approximation is intended for warm DZA
     validation stars; it deliberately does not claim a cool mixed H/He/H2
     nonideal EOS.
+
+    ``occupation_probability_partitions`` (helium hosts) replaces the fixed
+    spectroscopic partition cutoff by Hummer--Mihalas occupation
+    probabilities for charged Q-MHD microfields and ground-state neutral He
+    perturbers.  The partitions depend on the electron density, so they are
+    iterated with charge neutrality to self-consistency.  The state is then
+    marked for level dissolution, and line opacity applies the same survival
+    probabilities.
     """
 
     if reference_species == "auto":
@@ -3645,28 +4654,6 @@ def metal_lte_state(
                 effective_ionization = np.maximum(ionization_ev + shift, 0.05)
                 lower_partition = partitions[(symbol, lower.charge)]
                 upper_partition = partitions[(symbol, upper.charge)]
-                nonideal_first_ionization = shift < 0.0
-                if (
-                    reference_species == "He"
-                    and include_dense_helium_ionization
-                    and dense_helium_ground_state_saha
-                    and lower.charge == 0
-                    and np.any(nonideal_first_ionization)
-                ):
-                    # The Blouin et al. Delta-I calculation treats the atom
-                    # and ion in their fundamental states.  Their atmosphere
-                    # code applies the Boltzmann distribution only after the
-                    # thermodynamic ionization balance has been found.
-                    lower_partition = np.where(
-                        nonideal_first_ionization,
-                        lower.levels[0].statistical_weight,
-                        lower_partition,
-                    )
-                    upper_partition = np.where(
-                        nonideal_first_ionization,
-                        upper.levels[0].statistical_weight,
-                        upper_partition,
-                    )
                 ratios.append(
                     np.log(2.0)
                     + translational_log
@@ -3683,9 +4670,32 @@ def metal_lte_state(
                 axis=0,
             )
 
+        helium_fraction = None
+        if reference_species == "He":
+            assert atmosphere.helium_lte_state is not None
+            helium = atmosphere.helium_lte_state
+            first_ratio = (
+                np.log(2.0) + translational_log
+                + np.log(helium.singly_ionized_partition_function)
+                - np.log(helium.neutral_partition_function)
+                - 24.587_389_011 * EV_TO_ERG / (BOLTZMANN * temperature)
+                - np.log(electron_density)
+            )
+            second_ratio = (
+                np.log(2.0) + translational_log
+                - np.log(helium.singly_ionized_partition_function)
+                - 54.417_765_528_2 * EV_TO_ERG / (BOLTZMANN * temperature)
+                - np.log(electron_density)
+            )
+            helium_fraction = _ion_fractions(np.stack((first_ratio, second_ratio)))
+
         trace_hydrogen = None
         hydrogen_charge = np.zeros_like(temperature)
         if log_hydrogen_abundance is not None:
+            # Trace-H levels are not dissolved by neutral He.  The HM88
+            # hard-sphere term with r_n = n^2 a_0 removes almost all n >= 6
+            # population in DBA photospheres (N_He ~ 1e20 cm^-3), erasing the
+            # observed Hdelta of WD J1013+0259; it was reverted on 2026-10-01.
             # At fixed total H nuclei and total electron density, iterate the
             # occupation-probability partition function and atomic Saha ratio.
             # H2 is negligible for the warm Ross 640 use case and is excluded
@@ -3734,22 +4744,6 @@ def metal_lte_state(
         host_charge = None
         host_hydrogen_state = None
         if reference_species == "He":
-            assert atmosphere.helium_lte_state is not None
-            helium = atmosphere.helium_lte_state
-            first_ratio = (
-                np.log(2.0) + translational_log
-                + np.log(helium.singly_ionized_partition_function)
-                - np.log(helium.neutral_partition_function)
-                - 24.587_389_011 * EV_TO_ERG / (BOLTZMANN * temperature)
-                - np.log(electron_density)
-            )
-            second_ratio = (
-                np.log(2.0) + translational_log
-                - np.log(helium.singly_ionized_partition_function)
-                - 54.417_765_528_2 * EV_TO_ERG / (BOLTZMANN * temperature)
-                - np.log(electron_density)
-            )
-            helium_fraction = _ion_fractions(np.stack((first_ratio, second_ratio)))
             host_charge = helium_density[np.newaxis, :] * helium_fraction
             total_charge = (
                 metal_charge + hydrogen_charge
@@ -3801,6 +4795,49 @@ def metal_lte_state(
         upper = np.where(positive, middle, upper)
         lower = np.where(positive, lower, middle)
     electron_density = np.exp(0.5 * (lower + upper))
+    neutral_perturbers = None
+    neutral_radii = None
+    if occupation_probability_partitions:
+        if reference_species != "He":
+            raise ValueError("occupation-probability metal partitions require a helium host")
+        assert atmosphere.helium_lte_state is not None
+        neutral_perturbers = {
+            "He": np.asarray(atmosphere.helium_lte_state.neutral_he_density)
+        }
+        neutral_radii = {
+            "He": float(atmosphere.helium_lte_state.neutral_radius_scale)
+            * BOHR_RADIUS_CM
+        }
+        for _ in range(40):
+            updated = {
+                (symbol, ion.charge): ion.occupation_weighted_partition_function(
+                    temperature,
+                    electron_density,
+                    neutral_perturber_number_density=neutral_perturbers,
+                    neutral_perturber_radius_cm=neutral_radii,
+                )
+                for symbol, stages in ion_stages.items()
+                for ion in stages
+            }
+            change = max(
+                float(np.max(np.abs(np.log(
+                    updated[key] / np.maximum(partitions[key], np.finfo(np.float64).tiny)
+                ))))
+                for key in updated
+            )
+            partitions.update(updated)
+            lower = np.log(electron_density) - 2.0
+            upper = np.log(electron_density) + 2.0
+            for _ in range(44):
+                middle = 0.5 * (lower + upper)
+                trial = np.exp(middle)
+                _, required_charge, _, _, _ = populations_at_electron_density(trial)
+                positive = trial > required_charge
+                upper = np.where(positive, middle, upper)
+                lower = np.where(positive, lower, middle)
+            electron_density = np.exp(0.5 * (lower + upper))
+            if change < 1.0e-10:
+                break
     population_result = populations_at_electron_density(
         electron_density,
     )
@@ -3983,6 +5020,13 @@ def metal_lte_state(
         ),
         log_hydrogen_abundance=log_hydrogen_abundance,
         trace_hydrogen_state=trace_hydrogen_state,
+        metal_level_dissolution=bool(occupation_probability_partitions),
+        neutral_perturber_number_density=(
+            None if neutral_perturbers is None else MappingProxyType(neutral_perturbers)
+        ),
+        neutral_perturber_radius_cm=(
+            None if neutral_radii is None else MappingProxyType(neutral_radii)
+        ),
     )
 
 
@@ -4198,7 +5242,10 @@ def atmosphere_with_metal_electrons(
             singly_ionized_he_density=np.asarray(host[1]),
             doubly_ionized_he_density=np.asarray(host[2]),
             electron_density=np.asarray(metal_state.electron_density),
-            mean_ion_charge=np.asarray((host[1] + 2.0 * host[2]) / helium_state.helium_nuclei_density),
+            mean_ion_charge=np.asarray(
+                (host[1] + 2.0 * host[2])
+                / np.maximum(np.sum(host, axis=0), np.finfo(np.float64).tiny)
+            ),
             neutral_level_population_density=np.asarray(
                 helium_state.neutral_level_population_density * neutral_scale[:, np.newaxis]
             ),
@@ -4278,6 +5325,218 @@ def _pseudo_voigt_profile_per_angstrom(
     return (1.0 - mixing) * gaussian + mixing * lorentz
 
 
+def _humlicek_w4(x: FloatArray, y: FloatArray) -> FloatArray:
+    """Return the real part of the Faddeeva function, ``Re w(x + i y)``.
+
+    Humlicek (1982, JQSRT 27, 437) region algorithm W4, accurate to about
+    1e-4 relative for ``y >= 0``.  The compiled line kernel uses the same
+    four regions and coefficients.
+    """
+
+    x = np.asarray(x, dtype=np.float64)
+    y = np.broadcast_to(np.asarray(y, dtype=np.float64), x.shape)
+    t = y - 1j * x
+    s = np.abs(x) + y
+    w = np.empty(x.shape, dtype=np.complex128)
+    region1 = s >= 15.0
+    region2 = (s >= 5.5) & ~region1
+    region3 = (s < 5.5) & (y >= 0.195 * np.abs(x) - 0.176)
+    region4 = ~(region1 | region2 | region3)
+    if np.any(region1):
+        tt = t[region1]
+        w[region1] = tt * 0.5641896 / (0.5 + tt * tt)
+    if np.any(region2):
+        tt = t[region2]
+        u = tt * tt
+        w[region2] = tt * (1.410474 + u * 0.5641896) / (0.75 + u * (3.0 + u))
+    if np.any(region3):
+        tt = t[region3]
+        w[region3] = (
+            16.4955 + tt * (20.20933 + tt * (11.96482 + tt * (3.778987 + tt * 0.5642236)))
+        ) / (
+            16.4955 + tt * (38.82363 + tt * (39.27121 + tt * (21.69274 + tt * (6.699398 + tt))))
+        )
+    if np.any(region4):
+        tt = t[region4]
+        u = tt * tt
+        w[region4] = np.exp(u) - tt * (
+            36183.31 - u * (3321.9905 - u * (1540.787 - u * (219.0313 - u * (
+                35.76683 - u * (1.320522 - u * 0.56419)))))
+        ) / (
+            32066.6 - u * (24322.84 - u * (9022.228 - u * (2186.181 - u * (
+                364.2191 - u * (61.57037 - u * (1.841439 - u))))))
+        )
+    return w.real
+
+
+def _voigt_profile_per_angstrom(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+) -> FloatArray:
+    """Return an exact Voigt profile evaluated in frequency.
+
+    Impact broadening gives a Lorentzian in frequency, and the thermal
+    Doppler profile is Gaussian in frequency, so the Voigt function is
+    evaluated at ``nu = c/lambda`` with the widths converted at line centre.
+    The result is expressed per Angstrom at line centre, ``phi_nu c /
+    lambda0^2``, so callers multiply by ``1e8 lambda0^2/c`` exactly as for a
+    wavelength profile.  Unlike a symmetric wavelength Lorentzian, this keeps
+    the physical ``(lambda/lambda0)^2`` asymmetry of distant impact wings,
+    and unlike the Thompson--Cox--Hastings pseudo-Voigt it is accurate in
+    the far wings of weakly damped lines.
+    """
+
+    wavelength = np.asarray(wavelength, dtype=np.float64)
+    center_cm = center * 1.0e-8
+    per_angstrom = LIGHT_SPEED / center_cm**2 * 1.0e-8
+    sigma_nu = max(gaussian_sigma, 1.0e-12) * per_angstrom
+    gamma_nu = max(lorentz_hwhm, 0.0) * per_angstrom
+    detuning = LIGHT_SPEED / (wavelength * 1.0e-8) - LIGHT_SPEED / center_cm
+    scale = 1.0 / (sigma_nu * np.sqrt(2.0))
+    profile_nu = _humlicek_w4(detuning * scale, gamma_nu * scale) * scale / np.sqrt(PI)
+    return profile_nu * per_angstrom
+
+
+def _pseudo_voigt_profile_grid(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: FloatArray,
+    lorentz_hwhm: FloatArray,
+) -> FloatArray:
+    """Depth-vectorized :func:`_pseudo_voigt_profile_per_angstrom`."""
+
+    gaussian_fwhm = 2.0 * np.sqrt(2.0 * np.log(2.0)) * np.maximum(gaussian_sigma, 1.0e-12)
+    lorentz_fwhm = 2.0 * np.maximum(lorentz_hwhm, 0.0)
+    width = (
+        gaussian_fwhm**5 + 2.69269 * gaussian_fwhm**4 * lorentz_fwhm
+        + 2.42843 * gaussian_fwhm**3 * lorentz_fwhm**2
+        + 4.47163 * gaussian_fwhm**2 * lorentz_fwhm**3
+        + 0.07842 * gaussian_fwhm * lorentz_fwhm**4 + lorentz_fwhm**5
+    ) ** 0.2
+    ratio = lorentz_fwhm / np.maximum(width, np.finfo(np.float64).tiny)
+    mixing = np.clip(1.36603 * ratio - 0.47719 * ratio**2 + 0.11116 * ratio**3, 0.0, 1.0)
+    offset = (wavelength - center)[:, np.newaxis] / width[np.newaxis, :]
+    gaussian = (
+        2.0 * np.sqrt(np.log(2.0)) / (np.sqrt(np.pi) * width[np.newaxis, :])
+        * np.exp(-4.0 * np.log(2.0) * offset**2)
+    )
+    lorentz = 2.0 / (np.pi * width[np.newaxis, :]) / (1.0 + 4.0 * offset**2)
+    return (1.0 - mixing)[np.newaxis, :] * gaussian + mixing[np.newaxis, :] * lorentz
+
+
+def _quasistatic_line_profile(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+    frequency_scale: float,
+    mixing: float,
+    support_half_width: float | None = None,
+) -> FloatArray:
+    """Impact profile blended with its quasi-static Holtsmark envelope.
+
+    Returns ``(1 - mixing) V + mixing max(V, H)`` (unnormalized) on
+    ``wavelength``.  Points within 25 impact widths of the centre are
+    evaluated exactly; the smooth outer profile is evaluated on log-spaced
+    offset nodes and interpolated, which keeps wide quasi-static windows on
+    dense opacity grids affordable.
+    """
+
+    def exact(points: FloatArray) -> FloatArray:
+        impact = _voigt_profile_per_angstrom(
+            points, center, gaussian_sigma, lorentz_hwhm
+        )
+        if frequency_scale <= 0.0 or mixing <= 0.0:
+            return impact
+        points_cm = points * 1.0e-8
+        beta = np.abs(LIGHT_SPEED / points_cm - LIGHT_SPEED / (center * 1.0e-8)) / frequency_scale
+        static = (
+            _tabulated_holtsmark_distribution(beta) / (2.0 * frequency_scale)
+            * LIGHT_SPEED / points_cm**2 * 1.0e-8
+        )
+        return (1.0 - mixing) * impact + mixing * np.maximum(impact, static)
+
+    offset = wavelength - center
+    core = 25.0 * max(gaussian_sigma, lorentz_hwhm, 1.0e-4)
+    outer = np.abs(offset) > core
+    if support_half_width is None and np.count_nonzero(outer) < 800:
+        return exact(wavelength)
+    result = np.empty_like(wavelength)
+    result[~outer] = exact(wavelength[~outer])
+    extent = max(
+        float(np.max(np.abs(offset))),
+        float(support_half_width) if support_half_width is not None else 0.0,
+    )
+    nodes = np.geomspace(core, extent * (1.0 + 1.0e-12), 400)
+    for sign in (-1.0, 1.0):
+        side = outer & (np.sign(offset) == sign)
+        if np.any(side):
+            node_values = exact(center + sign * nodes)
+            result[side] = np.exp(np.interp(
+                np.log(np.abs(offset[side])), np.log(nodes),
+                np.log(np.maximum(node_values, np.finfo(np.float64).tiny)),
+            ))
+    return result
+
+
+def _quasistatic_line_profile_area(
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+    frequency_scale: float,
+    mixing: float,
+    half_window: float,
+) -> float:
+    """Area of :func:`_quasistatic_line_profile` over its full support.
+
+    Evaluated on an internal grid (linear core, logarithmic wings) spanning
+    ``center +- half_window``, so the normalization does not depend on which
+    wavelengths a caller requests.
+    """
+
+    width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
+    core = min(half_window, 25.0 * width)
+    linear = np.linspace(-core, core, 1_001)
+    if half_window > core:
+        wing = np.geomspace(core, half_window, 1_500)[1:]
+        offsets = np.concatenate((-wing[::-1], linear, wing))
+    else:
+        offsets = linear
+    grid = center + offsets
+    return float(trapezoid(
+        _quasistatic_line_profile(
+            grid, center, gaussian_sigma, lorentz_hwhm, frequency_scale, mixing
+        ),
+        grid,
+    ))
+
+
+_HOLTSMARK_TABLE_BETA = np.linspace(0.0, 8.0, 16_001)
+_HOLTSMARK_TABLE_VALUE: FloatArray | None = None
+
+
+def _tabulated_holtsmark_distribution(beta: ArrayLike) -> FloatArray:
+    """Holtsmark distribution from a fine table (quadrature evaluated once).
+
+    Below beta = 8 the Laguerre-quadrature values are tabulated at a spacing of
+    5e-4 and interpolated linearly; the asymptotic series is used above.
+    """
+
+    global _HOLTSMARK_TABLE_VALUE
+    if _HOLTSMARK_TABLE_VALUE is None:
+        _HOLTSMARK_TABLE_VALUE = _metal_holtsmark_microfield_distribution(
+            _HOLTSMARK_TABLE_BETA
+        )
+    value = np.asarray(beta, dtype=np.float64)
+    result = np.interp(value, _HOLTSMARK_TABLE_BETA, _HOLTSMARK_TABLE_VALUE)
+    wing = value > 8.0
+    if np.any(wing):
+        result[wing] = _metal_holtsmark_microfield_distribution(value[wing])
+    return result
+
+
 def optically_thick_line_minimum_half_window_angstrom(
     atmosphere: Atmosphere,
     center_angstrom: float,
@@ -4346,7 +5605,7 @@ def optically_thick_line_minimum_half_window_angstrom(
     tiny = np.finfo(np.float64).tiny
     while True:
         profile = np.asarray([
-            _pseudo_voigt_profile_per_angstrom(
+            _voigt_profile_per_angstrom(
                 np.asarray([center_angstrom + half_window]),
                 center_angstrom,
                 float(local_sigma[depth]),
@@ -4469,7 +5728,7 @@ def _accumulate_lte_metal_line_profiles(
             ))
             if stop <= start:
                 continue
-            profile_lambda = _pseudo_voigt_profile_per_angstrom(
+            profile_lambda = _voigt_profile_per_angstrom(
                 wavelength[start:stop],
                 float(line_center),
                 float(gaussian_sigma[line_index, depth]),
@@ -4542,18 +5801,35 @@ def selected_metal_lines(
         for element in symbols:
             for ion in atomic_database.ion_stages(element):
                 level_lookup = {level.index: level for level in ion.levels}
+                ground_energy = min(
+                    (level.energy_wavenumber for level in ion.levels), default=0.0
+                )
                 for line in ion.transitions:
                     if (
-                        line.transition_type == "E1"
-                        and line.absorption_oscillator_strength
-                        >= minimum_oscillator_strength
-                        and wavelength_minimum - margin
-                        <= line.wavelength_vacuum_angstrom
-                        <= wavelength_maximum + margin
+                        line.transition_type != "E1"
+                        or line.absorption_oscillator_strength
+                        < minimum_oscillator_strength
                     ):
-                        mutable_candidates.append((
-                            ion, line, level_lookup[line.lower_index]
-                        ))
+                        continue
+                    center = line.wavelength_vacuum_angstrom
+                    lower = level_lookup[line.lower_index]
+                    # Strong ground-term resonance lines (Ca II H/K, Mg II h/k,
+                    # Mg I 2852, Ca I 4227) keep optically thick wings hundreds
+                    # of Angstroms away, so a narrow band must still include
+                    # them.  Half the line wavelength bounds the detuning at
+                    # which any impact or unified wing is meaningful.
+                    line_margin = (
+                        max(margin, 0.5 * center)
+                        if line.absorption_oscillator_strength >= 0.1
+                        and lower.energy_wavenumber - ground_energy <= 500.0
+                        else margin
+                    )
+                    if (
+                        wavelength_minimum - line_margin
+                        <= center
+                        <= wavelength_maximum + line_margin
+                    ):
+                        mutable_candidates.append((ion, line, lower))
         candidates = tuple(mutable_candidates)
         atomic_database._line_selection_cache[cache_key] = candidates
     thermal_energy = BOLTZMANN * selection_temperature
@@ -4594,6 +5870,88 @@ def selected_metal_lines(
     return [(ion, line) for ion, line, _ in ranked]
 
 
+_LJ_B_LOG_A = np.linspace(np.log(1.0e-7), np.log(1.0e3), 401)
+_LJ_B_TABLE: FloatArray | None = None
+
+
+def _lennard_jones_b_integral(a: float, maximum_phase: float = 4000.0) -> float:
+    """Evaluate ``B(a)`` accurately in the phase variable ``u = x^-5``.
+
+    ``B(a) = (1/5) int_0^inf u^(-7/5) [1 - cos(phi(u))] du`` with
+    ``phi = a u^(11/5) - u`` (only ``|phi|`` matters for the cosine).  The
+    integral is sampled uniformly in ``|phi|`` up to ``maximum_phase``, beyond
+    which the cosine averages to zero and the tail is analytic.
+    """
+
+    u_grid = np.geomspace(1.0e-8, 1.0e6, 400_001)
+    phase = a * u_grid ** 2.2 + u_grid  # |phi| grows monotonically for a >= 0
+    end = int(np.searchsorted(phase, maximum_phase))
+    u_end = float(u_grid[min(end, u_grid.size - 1)])
+    targets = np.concatenate((
+        np.geomspace(phase[0], 1.0, 4001)[:-1],
+        np.arange(1.0, np.interp(u_end, u_grid, phase), 0.02),
+    ))
+    u = np.interp(targets, phase, u_grid)
+    true_phase = a * u ** 2.2 - u
+    body = trapezoid(u ** -1.4 * (1.0 - np.cos(true_phase)), u)
+    tail = 2.5 * u[-1] ** -0.4
+    return float((body + tail) / 5.0)
+
+
+def lennard_jones_impact_broadening_integral(a: ArrayLike) -> FloatArray:
+    r"""Return Hindmarsh, Petford & Smith's (1967) Lennard-Jones width integral.
+
+    For the (12,6) phase shift ``eta = a x^-11 - x^-5`` along straight
+    trajectories, ``B(a) = int_0^inf x [1 - cos(eta)] dx``.  ``B(0)`` recovers
+    the classical pure van der Waals width, ``4 pi (3 pi/8)^(2/5) B(0) = 8.08``.
+    (Hammond 1975 quotes the same integral with an extra factor 1/2.)
+    The integral is tabulated once on a logarithmic grid in ``a`` and
+    interpolated.
+    """
+
+    global _LJ_B_TABLE
+    if _LJ_B_TABLE is None:
+        _LJ_B_TABLE = np.asarray([
+            _lennard_jones_b_integral(float(np.exp(log_a))) for log_a in _LJ_B_LOG_A
+        ])
+    value = np.asarray(a, dtype=np.float64)
+    if np.any(~np.isfinite(value)) or np.any(value < 0.0):
+        raise ValueError("Lennard-Jones parameter a must be finite and non-negative")
+    if np.any(value > np.exp(_LJ_B_LOG_A[-1])):
+        raise ValueError("Lennard-Jones parameter a is outside the tabulated range")
+    log_value = np.log(np.maximum(value, np.exp(_LJ_B_LOG_A[0])))
+    return np.interp(log_value, _LJ_B_LOG_A, _LJ_B_TABLE)
+
+
+def mg_ii_helium_impact_rate_coefficient(
+    wavelength_vacuum_angstrom: float,
+    temperature_kelvin: ArrayLike,
+) -> FloatArray:
+    """Return the ab initio Mg II h/k damping rate per neutral-He atom.
+
+    Allard, Guillon, Alekseev & Kielkopf (2016, A&A 593, A13), eqs. 11--12,
+    give the impact half-widths from semi-classical unified theory with
+    ab initio Mg+--He potentials: ``w = 0.055e-9 n_He T^0.4309`` (3p 2P1/2,
+    2803 A) and ``w = 0.09e-9 n_He T^0.4031`` (3p 2P3/2, 2796 A) in rad/s,
+    fitted over 400--12000 K.  These are 1.5--2.1 times the hydrogenic Unsold
+    estimate, as Hammond (1975) measured for Ca II K.  The power law is
+    continued above 12000 K.  The result is the angular-frequency FWHM, 2w,
+    in cm3 s-1.
+    """
+
+    center = float(wavelength_vacuum_angstrom)
+    temperature = np.asarray(temperature_kelvin, dtype=np.float64)
+    if np.any(~np.isfinite(temperature)) or np.any(temperature <= 0.0):
+        raise ValueError("temperature_kelvin must be finite and positive")
+    if 2794.0 < center < 2799.0:
+        coefficient, exponent = 0.09e-9, 0.4031
+    elif 2801.0 < center < 2806.0:
+        coefficient, exponent = 0.055e-9, 0.4309
+    else:
+        raise ValueError("wavelength does not identify Mg II h or k")
+    return 2.0 * coefficient * temperature**exponent
+
+
 def ca_ii_helium_impact_rate_coefficient(
     wavelength_vacuum_angstrom: float,
     temperature_kelvin: ArrayLike,
@@ -4603,9 +5961,12 @@ def ca_ii_helium_impact_rate_coefficient(
     Hammond (1975) measured the Lorentz wavenumber HWHM of both Ca II
     resonance components in helium at 5200 K.  This converts those laboratory
     values to the angular-frequency damping-rate convention used by the Voigt
-    opacity calculation.  The result has units cm3 s-1 and includes the
-    measured :math:`T^{0.2285}` dependence.  ``wavelength_vacuum_angstrom``
-    must identify either the 3934.8-A K line or the 3969.6-A H line.
+    opacity calculation.  The result has units cm3 s-1.  Its temperature
+    dependence follows from impact theory with Hammond's own Lennard-Jones
+    (12,6) fits to the measured widths and shifts, rather than from his
+    two-point exponent, which he states is too uncertain to use.
+    ``wavelength_vacuum_angstrom`` must identify either the 3934.8-A K line
+    or the 3969.6-A H line.
     """
 
     center = float(wavelength_vacuum_angstrom)
@@ -4622,9 +5983,13 @@ def ca_ii_helium_impact_rate_coefficient(
         4.0 * PI * LIGHT_SPEED
         * _CA_II_HE_WAVENUMBER_HWHM_PER_DENSITY_5200[component]
     )
-    return coefficient_5200 * (
-        temperature / _CA_II_HE_REFERENCE_TEMPERATURE
-    ) ** _CA_II_HE_TEMPERATURE_EXPONENT
+    # Mean relative speed scales as sqrt(T) for the fixed Ca+--He pair.
+    speed_ratio = np.sqrt(temperature / _CA_II_HE_REFERENCE_TEMPERATURE)
+    reference_a = _CA_II_HE_LENNARD_JONES_A_5200[component]
+    return coefficient_5200 * speed_ratio**0.6 * (
+        lennard_jones_impact_broadening_integral(reference_a * speed_ratio**1.2)
+        / lennard_jones_impact_broadening_integral(reference_a)
+    )
 
 
 def ca_ii_electron_stark_rate_coefficient(
@@ -4691,6 +6056,57 @@ def mg_ii_4481_electron_stark_rate_coefficient(
     )
 
 
+_MG_II_KURUCZ_WIDTHS: dict[tuple[str, str], float] | None = None
+
+
+def _mg_ii_kurucz_widths() -> dict[tuple[str, str], float]:
+    global _MG_II_KURUCZ_WIDTHS
+    if _MG_II_KURUCZ_WIDTHS is None:
+        table: dict[tuple[str, str], float] = {}
+        resource = files("wd_spectra").joinpath(
+            "data/stark/kurucz_mg_ii_electron_widths.csv"
+        )
+        with resource.open("r", encoding="ascii") as stream:
+            for raw in stream:
+                if raw.startswith("#") or raw.startswith("lower,"):
+                    continue
+                lower, upper, value, _ = raw.strip().split(",")
+                table[(lower, upper)] = float(value)
+        _MG_II_KURUCZ_WIDTHS = table
+    return _MG_II_KURUCZ_WIDTHS
+
+
+def mg_ii_kurucz_electron_stark_rate_coefficient(
+    lower_level: AtomicLevel,
+    upper_level: AtomicLevel,
+    temperature_kelvin: ArrayLike,
+) -> FloatArray | None:
+    """Kurucz's electron damping per electron for a Mg II 2p6-core transition.
+
+    ``gf1201.all`` gives ``log10(Gamma_e/ne)`` (angular-frequency FWHM,
+    10,000 K) for every Mg II multiplet; the bundled table groups it by the
+    outer orbitals of both levels (components agree to 0.04 dex).  Using it for
+    the whole series replaces a capped generic estimate that was up to ~10^3
+    times smaller than Kurucz for the Rydberg members, while one member
+    (4f-8g, 4852 A) already used Kurucz, making the series inconsistent.
+    The quadratic-Stark impact dependence ``T**(1/6)`` (Lindholm--Foley;
+    the convention of Kurucz's SYNTHE, MOOG and SME) is applied.  ``None`` for levels
+    outside the table or not built on the ground 2p6 core.
+    """
+
+    orbitals = []
+    for level in (lower_level, upper_level):
+        parts = level.label.split(".")
+        if len(parts) != 3 or parts[0] != "2p6":
+            return None
+        orbitals.append(parts[1])
+    value = _mg_ii_kurucz_widths().get((orbitals[0], orbitals[1]))
+    if value is None:
+        return None
+    temperature = np.asarray(temperature_kelvin, dtype=np.float64)
+    return 10.0**value * (temperature / 10_000.0) ** (1.0 / 6.0)
+
+
 def mg_ii_4852_electron_stark_rate_coefficient(
     wavelength_vacuum_angstrom: float,
     temperature_kelvin: ArrayLike,
@@ -4700,7 +6116,8 @@ def mg_ii_4852_electron_stark_rate_coefficient(
     Kurucz tabulates ``Gamma_e/ne`` in the angular-frequency convention used
     by the formal solver.  As for line-specific values read by
     :func:`read_kurucz_gf100_atomic_database`, the standard weak
-    ``T**(-1/6)`` dependence is applied away from the 10,000-K reference.
+    ``T**(1/6)`` quadratic-Stark impact dependence is applied away from the
+    10,000-K reference.
     """
 
     center = float(wavelength_vacuum_angstrom)
@@ -4711,7 +6128,7 @@ def mg_ii_4852_electron_stark_rate_coefficient(
         raise ValueError("wavelength does not identify Mg II 4852")
     return _MG_II_4852_ELECTRON_STARK_RATE_COEFFICIENT_10000 * (
         temperature / _MG_II_4852_ELECTRON_STARK_REFERENCE_TEMPERATURE
-    ) ** (-1.0 / 6.0)
+    ) ** (1.0 / 6.0)
 
 
 def mg_i_3835_electron_stark_rate_coefficient(
@@ -4859,6 +6276,679 @@ def classical_electron_stark_rate_coefficient(
     return float(1.0e-8 * effective_n_squared**2.5)
 
 
+_RYDBERG_FREQUENCY_HZ = 3.289_841_960_250e15
+_ORBITAL_LETTERS = "spdfghik"
+_PARENT_TERM_PATTERN = re.compile(r"\(([^()<]+)(?:<[^>]*>)?\)")
+
+
+def _rydberg_orbital(label: str) -> tuple[int, int, str] | None:
+    parts = label.split(".")
+    if len(parts) < 2:
+        return None
+    orbital = re.fullmatch(r"(\d+)([spdfghik])", parts[-2])
+    if orbital is None:
+        return None
+    return (
+        int(orbital.group(1)),
+        _ORBITAL_LETTERS.index(orbital.group(2)),
+        ".".join(parts[:-2]),
+    )
+
+
+def _level_quantum_defect(ion: AtomicIon, level: AtomicLevel, principal: int) -> float | None:
+    binding = ion.ionization_energy_ev - level.energy_wavenumber / EV_TO_WAVENUMBER
+    if binding <= 0.0:
+        return None
+    return principal - (ion.charge + 1.0) * float(np.sqrt(_RYDBERG_ENERGY_EV / binding))
+
+
+_LINEAR_STARK_LEVEL_CACHE: dict[tuple[int, int, int], object] = {}
+
+
+def linear_stark_rydberg_level(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> tuple[int, int, float, float] | None:
+    """Cached :func:`_linear_stark_rydberg_level` (static atomic data only)."""
+
+    key = (id(atomic_database), id(ion), level.index)
+    if key not in _LINEAR_STARK_LEVEL_CACHE:
+        _LINEAR_STARK_LEVEL_CACHE[key] = _linear_stark_rydberg_level(
+            atomic_database, ion, level
+        )
+    return _LINEAR_STARK_LEVEL_CACHE[key]
+
+
+def _linear_stark_rydberg_level(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> tuple[int, int, float, float] | None:
+    """Return ``(n, l, n_eff, defect gap)`` for a genuine Rydberg level.
+
+    Linear (hydrogenic) Stark behaviour requires a nearly degenerate
+    ``n``-manifold: the outer electron must be in an ``l >= 2`` orbital
+    converging on the ground term of the next ion, with a small positive
+    quantum defect.  The returned defect gap is the smallest defect difference
+    to an ``l +/- 1`` neighbour of the same ``n``.  Core-excited levels and
+    series converging on excited parent terms are excluded; their binding energy relative to the ground
+    ionization limit does not measure their Rydberg character.
+    """
+
+    if ion.ionization_energy_ev is None:
+        return None
+    parsed = _rydberg_orbital(level.label)
+    if parsed is None:
+        return None
+    principal, angular, core = parsed
+    if angular < 2:
+        return None
+    parents = _PARENT_TERM_PATTERN.findall(core)
+    next_ion = atomic_database.ions.get((ion.element, ion.charge + 1))
+    if parents and next_ion is not None and next_ion.levels:
+        ground = min(next_ion.levels, key=lambda item: item.energy_wavenumber)
+        ground_terms = _PARENT_TERM_PATTERN.findall(ground.label)
+        if not ground_terms or ground_terms[-1] != parents[-1]:
+            return None
+    binding = ion.ionization_energy_ev - level.energy_wavenumber / EV_TO_WAVENUMBER
+    if binding <= 0.0:
+        return None
+    core_charge = ion.charge + 1.0
+    effective_n = core_charge * float(np.sqrt(_RYDBERG_ENERGY_EV / binding))
+    defect = principal - effective_n
+    # High-l defects are ~0 and tabulated energies can make them marginally
+    # negative; a clearly negative defect instead signals a wrong parent.
+    if not -0.05 < defect < 0.5:
+        return None
+    # The Stark coupling mixes the level with its l +/- 1 neighbours of the
+    # same n and core.  The relevant gap is the smallest defect difference to
+    # a neighbour that exists: a tabulated level, or an allowed but untabulated
+    # l + 1 <= n - 1 level, whose high-l defect is taken as zero.
+    neighbour_defects = [
+        value
+        for other in ion.levels
+        if (parsed_other := _rydberg_orbital(other.label)) is not None
+        and parsed_other[0] == principal
+        and parsed_other[2] == core
+        and abs(parsed_other[1] - angular) == 1
+        and (value := _level_quantum_defect(ion, other, principal)) is not None
+    ]
+    has_upper = any(
+        (parsed_other := _rydberg_orbital(other.label)) is not None
+        and parsed_other[0] == principal and parsed_other[2] == core
+        and parsed_other[1] == angular + 1
+        for other in ion.levels
+    )
+    if angular + 1 <= principal - 1 and not has_upper:
+        neighbour_defects.append(0.0)
+    if not neighbour_defects:
+        return None
+    gap_defect = min(abs(defect - value) for value in neighbour_defects)
+    return principal, angular, effective_n, gap_defect
+
+
+def linear_stark_mixing_fraction(
+    effective_n: float,
+    quantum_defect: float,
+    core_charge: float,
+    ionic_microfield_scale: ArrayLike,
+) -> FloatArray:
+    """Depth-dependent fraction of a Rydberg level in the linear-Stark regime.
+
+    ``S`` is the hydrogenic linear-Stark extent ``(3/2) n (n-1) e a0 F0 / Z``
+    in the Holtsmark normal field of the ionic perturbers and ``D`` the
+    quantum-defect separation ``2 Ry Z^2 delta / n^3`` from the neighbouring
+    ``l`` manifold.  The two-level mixing fraction ``1 - D / sqrt(D^2 + S^2)``
+    is zero for an isolated level and one for a fully mixed manifold.  It
+    contains no adjustable parameter and is smooth in temperature and density.
+    """
+
+    splitting = (
+        effective_n * (effective_n - 1.0)
+        * np.asarray(ionic_microfield_scale, dtype=np.float64)
+        / 1.385 / core_charge
+    )
+    gap = 2.0 * _RYDBERG_FREQUENCY_HZ * core_charge**2 * quantum_defect / effective_n**3
+    if gap <= 0.0:
+        return np.ones_like(splitting)
+    return 1.0 - gap / np.hypot(gap, splitting)
+
+
+# Stark coupling e a0 F / h (Hz) on which manifold eigen-systems are tabulated.
+_STARK_MANIFOLD_FIELD_HZ = np.geomspace(1.0e4, 1.0e16, 12 * 48 + 1)
+_STARK_MANIFOLD_CACHE: dict[tuple[int, int, int], object] = {}
+_TERM_MULTIPLICITY_PATTERN = re.compile(r"\((\d+)[A-Z]")
+# e a0 F0 / h per unit ``ionic_microfield_scale`` (Holtsmark normal field
+# F0 = 2.603 e N^(2/3)); consistent with the 1.385 used by the mixing fraction.
+_STARK_COUPLING_PER_MICROFIELD_SCALE = 1.0 / (1.385 * 1.5)
+# Fields per profile evaluation (every tabulated field; coarser sampling
+# changes saturated J1109 lines by ~1 per cent).
+_STARK_PROFILE_FIELD_STRIDE = 1
+# Uniform-grid sizes of the fine (dense pattern) and coarse (sparse tail)
+# convolutions in :func:`manifold_quasistatic_line_profile`.
+_STARK_FINE_BINS = 16_384
+# Fine bins of a quarter impact width reproduce 1/16-width bins to 3e-4 rms
+# in the J1109 spectrum.
+_STARK_FINE_STEP_PER_WIDTH = 0.25
+_STARK_COARSE_BINS = 4_096
+
+
+@dataclass(frozen=True)
+class RydbergStarkManifold:
+    """Stark eigen-system of one ``n``-manifold, projected on one ``l`` state.
+
+    ``shifts_hz[j, i]`` and ``weights[j, i]`` are the energies (relative to
+    the zero-field absorbing level) and the squared projections of the
+    absorbing ``(n, l)`` state, averaged over ``m``, of eigenstate ``i`` at
+    coupling ``_STARK_MANIFOLD_FIELD_HZ[j]``.  Each row of weights sums to one.
+    """
+
+    principal: int
+    angular: int
+    l_values: tuple[int, ...]
+    shifts_hz: FloatArray
+    weights: FloatArray
+    # Strength-weighted mean square shift at each tabulated field (Hz^2).
+    mean_square_shift_hz2: FloatArray
+    # Largest |shift| of any component with weight > 1e-4 at each field (Hz).
+    maximum_shift_hz: FloatArray
+
+
+def rydberg_stark_manifold(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> RydbergStarkManifold | None:
+    """Cached :func:`_rydberg_stark_manifold` (static atomic data only)."""
+
+    key = (id(atomic_database), id(ion), level.index)
+    if key not in _STARK_MANIFOLD_CACHE:
+        _STARK_MANIFOLD_CACHE[key] = _rydberg_stark_manifold(
+            atomic_database, ion, level
+        )
+    return _STARK_MANIFOLD_CACHE[key]
+
+
+def _rydberg_stark_manifold(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> RydbergStarkManifold | None:
+    """Diagonalize the ionic-field Stark problem in the level's ``n``-manifold.
+
+    The zero-field energies are the tabulated term energies (averaged over
+    ``J``) of every ``l`` of the same ``n``, parent core and spin
+    multiplicity; allowed ``l`` above the highest tabulated one are given the
+    hydrogenic energy.  Untabulated ``l`` below it are omitted: they carry
+    large quantum defects and couple weakly.  The field couples ``l`` and
+    ``l + 1`` with the hydrogenic intra-shell matrix element
+    ``(3/2) n sqrt((n^2 - l'^2)(l'^2 - m^2) / (4 l'^2 - 1)) e a0 F / Z``.
+    A fully degenerate manifold gives the parabolic ``(3/2) n k`` pattern; a
+    manifold split by quantum defects gives the partial, field-dependent
+    mixing directly, with no two-level approximation and no free parameter.
+    Levels that are not near-hydrogenic Rydberg levels return ``None``.
+    """
+
+    if linear_stark_rydberg_level(atomic_database, ion, level) is None:
+        return None
+    parsed = _rydberg_orbital(level.label)
+    assert parsed is not None
+    principal, angular, core = parsed
+    multiplicity = _TERM_MULTIPLICITY_PATTERN.findall(level.label.split(".")[-1])
+    energy_sum: dict[int, float] = {}
+    weight_sum: dict[int, float] = {}
+    for other in ion.levels:
+        parsed_other = _rydberg_orbital(other.label)
+        if parsed_other is None or parsed_other[0] != principal or parsed_other[2] != core:
+            continue
+        if _TERM_MULTIPLICITY_PATTERN.findall(other.label.split(".")[-1]) != multiplicity:
+            continue
+        l_other = parsed_other[1]
+        energy_sum[l_other] = (
+            energy_sum.get(l_other, 0.0) + other.statistical_weight * other.energy_wavenumber
+        )
+        weight_sum[l_other] = weight_sum.get(l_other, 0.0) + other.statistical_weight
+    if angular not in energy_sum:
+        return None
+    core_charge = ion.charge + 1.0
+    hydrogenic = (
+        ion.ionization_energy_ev * EV_TO_WAVENUMBER
+        - _RYDBERG_FREQUENCY_HZ / LIGHT_SPEED * core_charge**2 / principal**2
+    )
+    energies = {l_value: energy_sum[l_value] / weight_sum[l_value] for l_value in energy_sum}
+    for l_value in range(max(energies) + 1, principal):
+        energies[l_value] = hydrogenic
+    l_values = tuple(sorted(energies))
+    reference = energies[angular]
+    field = _STARK_MANIFOLD_FIELD_HZ
+    shifts: list[FloatArray] = []
+    weights: list[FloatArray] = []
+    for m in range(angular + 1):
+        block = [l_value for l_value in l_values if l_value >= m]
+        size = len(block)
+        diagonal = np.array(
+            [(energies[l_value] - reference) * LIGHT_SPEED for l_value in block]
+        )
+        coupling = np.zeros((size, size))
+        for index in range(size - 1):
+            lower_l, upper_l = block[index], block[index + 1]
+            if upper_l != lower_l + 1:
+                continue
+            coupling[index, index + 1] = coupling[index + 1, index] = (
+                1.5 * principal
+                * np.sqrt(
+                    (principal**2 - upper_l**2) * (upper_l**2 - m**2)
+                    / (4.0 * upper_l**2 - 1.0)
+                )
+                / core_charge
+            )
+        hamiltonian = (
+            np.diag(diagonal)[np.newaxis, :, :]
+            + field[:, np.newaxis, np.newaxis] * coupling[np.newaxis, :, :]
+        )
+        values, vectors = np.linalg.eigh(hamiltonian)
+        projection = vectors[:, block.index(angular), :] ** 2
+        multiplicity_m = 1.0 if m == 0 else 2.0
+        shifts.append(values)
+        weights.append(projection * multiplicity_m / (2.0 * angular + 1.0))
+    shift_array = np.concatenate(shifts, axis=1)
+    weight_array = np.concatenate(weights, axis=1)
+    keep = np.max(weight_array, axis=0) > 1.0e-8
+    shift_array = np.ascontiguousarray(shift_array[:, keep])
+    weight_array = np.ascontiguousarray(weight_array[:, keep])
+    return RydbergStarkManifold(
+        principal,
+        angular,
+        l_values,
+        shift_array,
+        weight_array,
+        np.sum(weight_array * shift_array**2, axis=1),
+        np.max(
+            np.where(weight_array > 1.0e-4, np.abs(shift_array), 0.0), axis=1
+        ),
+    )
+
+
+def _deposit_segments(
+    start: FloatArray, stop: FloatArray, weight: FloatArray, size: int
+) -> FloatArray:
+    """Bin masses of uniform boxes ``[start, stop]`` (fractional bin units).
+
+    Each box's cumulative distribution is a ramp; its second derivative is a
+    pair of deltas, deposited with linear weights and integrated twice.  The
+    result is exact at the bin edges, so eigenvalue tracks sampled at
+    discrete fields give a smooth density rather than a comb.
+    """
+
+    low = np.minimum(start, stop)
+    high = np.maximum(start, stop)
+    high = np.maximum(high, low + 1.0e-3)
+    slope = weight / (high - low)
+    # Mass outside the window is dropped; a box crossing an edge keeps the
+    # part inside (same slope, clipped extent).
+    low = np.maximum(low, 0.0)
+    high = np.minimum(high, float(size))
+    inside = high > low
+    low, high, slope = low[inside], high[inside], slope[inside]
+    second = np.zeros(size + 3)
+    for position, sign in ((low, 1.0), (high, -1.0)):
+        clipped = position
+        floor = np.floor(clipped)
+        fraction = clipped - floor
+        index = floor.astype(np.int64)
+        second += np.bincount(index, sign * slope * (1.0 - fraction), minlength=size + 3)[: size + 3]
+        second += np.bincount(index + 1, sign * slope * fraction, minlength=size + 3)[: size + 3]
+    cumulative = np.concatenate(([0.0], np.cumsum(np.cumsum(second))))
+    return np.diff(cumulative[: size + 1])
+
+
+def _stark_impact_profile(wavelength, center, gaussian_sigma, lorentz_hwhm):
+    """Impact core for the manifold path: the exact frequency-space Voigt.
+
+    The native pseudo-Voigt kernel is not used because it drops the
+    ``(lambda/lambda0)^2`` asymmetry of the far impact wings.
+    """
+    return _voigt_profile_per_angstrom(
+        wavelength, center, gaussian_sigma, lorentz_hwhm
+    )
+
+
+def _compiled_manifold_profile(
+    wavelength, center, gaussian_sigma, lorentz_hwhm, coupling_hz,
+    upper, lower, maximum_beta, support_half_width, segment_probability,
+    interval_fraction, missing, bound_probability,
+):
+    """The reference profile algorithm with fused C deposition and assembly.
+
+    No atomic, field, grid, or convolution approximation is changed.  Keep
+    the NumPy path below as the fallback and an independent numerical check.
+    """
+    from scipy.signal import fftconvolve
+
+    to_angstrom = -center**2 / (LIGHT_SPEED * 1.0e8)
+    width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
+    half_extent = (
+        float(support_half_width) if support_half_width is not None
+        else float(np.max(np.abs(wavelength - center)))
+    ) + 1.0e-6
+    dense_field = min(21.0, maximum_beta) * coupling_hz
+    log_field = np.log(max(dense_field, _STARK_MANIFOLD_FIELD_HZ[0]))
+    dense_shift = float(np.interp(
+        log_field, np.log(_STARK_MANIFOLD_FIELD_HZ), upper.maximum_shift_hz
+    ))
+    if lower is not None:
+        dense_shift += float(np.interp(
+            log_field, np.log(_STARK_MANIFOLD_FIELD_HZ), lower.maximum_shift_hz
+        ))
+    fine_half = min(half_extent, abs(to_angstrom) * dense_shift + 64.0 * width)
+    fine_step = max(
+        _STARK_FINE_STEP_PER_WIDTH * width, 2.0 * fine_half / _STARK_FINE_BINS
+    )
+    coarse_step = max(fine_step, 2.0 * half_extent / _STARK_COARSE_BINS)
+    half_bins = int(np.ceil(fine_half / fine_step))
+    fine_grid = fine_step * (np.arange(2 * half_bins + 1) - half_bins)
+    fine_mass = np.empty(fine_grid.size)
+    coarse_size = 0
+    if half_extent > fine_half:
+        half_bins = int(np.ceil(half_extent / coarse_step))
+        coarse_size = 2 * half_bins + 1
+    coarse_mass = np.empty(coarse_size)
+    stride = _STARK_PROFILE_FIELD_STRIDE
+    core_weight, inner_mass = _rt.stark_manifold_bins(
+        np.ascontiguousarray(upper.shifts_hz[::stride]),
+        np.ascontiguousarray(upper.weights[::stride]),
+        None if lower is None else np.ascontiguousarray(lower.shifts_hz[::stride]),
+        None if lower is None else np.ascontiguousarray(lower.weights[::stride]),
+        segment_probability, interval_fraction, to_angstrom, fine_half,
+        fine_step, coarse_step, missing, fine_mass, coarse_mass,
+    )
+    # Other scalar types can retain their own arithmetic precision in the
+    # released Python formula; do not silently cast them through the C ABI.
+    native_precision_types = (float, int, np.float64)
+    native_precision = all(
+        type(value) in native_precision_types
+        for value in (center, gaussian_sigma, lorentz_hwhm)
+    )
+    native_impact = (
+        getattr(_rt, "frequency_voigt_profile", None) if native_precision else None
+    )
+    if native_impact is not None:
+        kernel = np.empty_like(fine_grid)
+        native_impact(
+            center + fine_grid, center, gaussian_sigma, lorentz_hwhm, kernel
+        )
+    else:
+        # An older optional extension may provide deposition alone.
+        kernel = _stark_impact_profile(
+            center + fine_grid, center, gaussian_sigma, lorentz_hwhm
+        )
+    kernel_sum = float(np.sum(kernel))
+    if kernel_sum > 0.0 and np.isfinite(kernel_sum):
+        fine_mass = fftconvolve(fine_mass, kernel / kernel_sum, mode="same")
+    native_finish = (
+        getattr(_rt, "stark_frequency_profile_finish", None) if native_precision else None
+    )
+    if (
+        native_finish is not None
+        and getattr(wavelength, "ndim", None) == 1
+        and getattr(wavelength, "dtype", None) == np.dtype(np.float64)
+    ):
+        result = np.empty(wavelength.shape, dtype=np.float64)
+        native_finish(
+            np.ascontiguousarray(wavelength), np.ascontiguousarray(fine_mass),
+            coarse_mass, center, gaussian_sigma, lorentz_hwhm, fine_step,
+            coarse_step, fine_half, core_weight, inner_mass,
+            max(bound_probability, np.finfo(np.float64).tiny), result,
+        )
+        return result
+    # The old native finish evaluates a pseudo-Voigt.  Keep released Python
+    # assembly when the new finish is absent or the input shape/precision
+    # requires its original offset arithmetic (for example float32 waves).
+    fine_profile = np.maximum(fine_mass, 0.0) / fine_step
+    offset = wavelength - center
+    result = core_weight * _stark_impact_profile(
+        wavelength, center, gaussian_sigma, lorentz_hwhm
+    )
+    inside = np.abs(offset) <= fine_half
+    result[inside] += np.interp(offset[inside], fine_grid, fine_profile)
+    if coarse_size:
+        coarse_grid = coarse_step * (np.arange(coarse_size) - coarse_size // 2)
+        outside = ~inside
+        result[outside] += (
+            np.interp(offset[outside], coarse_grid, coarse_mass / coarse_step)
+            + inner_mass * _stark_impact_profile(
+                wavelength[outside], center, gaussian_sigma, lorentz_hwhm
+            )
+        )
+    return result / max(bound_probability, np.finfo(np.float64).tiny)
+
+
+@lru_cache(maxsize=512)
+def _stark_field_probabilities(
+    coupling_hz: float, maximum_beta: float, correlation: float,
+    radiator_core_charge: float, stride: int,
+) -> tuple[FloatArray, FloatArray, FloatArray, FloatArray]:
+    """Reuse identical depth/upper-level field distributions across lines.
+
+    Keys contain the complete physical state used here, with no rounding or
+    interpolation.  The bounded cache holds at most about 9 MiB on the
+    default field grid; a new atmospheric state cannot reuse stale values.
+    """
+    field = _STARK_MANIFOLD_FIELD_HZ[::stride]
+    beta = field / max(coupling_hz, np.finfo(np.float64).tiny)
+    cumulative = hooper_microfield_cumulative_probability(
+        np.minimum(beta, maximum_beta), correlation, radiator_core_charge
+    )
+    probability = np.diff(cumulative)
+    # The segment crossing the critical field stops at that field.
+    fraction = np.clip(
+        (maximum_beta - beta[:-1]) / (beta[1:] - beta[:-1]), 0.0, 1.0
+    )
+    for value in (beta, cumulative, probability, fraction):
+        value.flags.writeable = False
+    return beta, cumulative, probability, fraction
+
+
+def manifold_quasistatic_line_profile(
+    wavelength: FloatArray,
+    center: float,
+    gaussian_sigma: float,
+    lorentz_hwhm: float,
+    coupling_hz: float,
+    upper: RydbergStarkManifold,
+    lower: RydbergStarkManifold | None,
+    maximum_beta: float = np.inf,
+    correlation: float = 0.0,
+    radiator_core_charge: float = 1.0,
+    support_half_width: float | None = None,
+) -> FloatArray:
+    """Impact profile convolved with the ionic quasi-static manifold pattern.
+
+    ``coupling_hz`` is ``e a0 F0 / h`` for the Holtsmark normal field.  The
+    Stark components of the upper (and, if itself mixed, the lower) manifold
+    are integrated over the Holtsmark field distribution, each eigenvalue
+    track being spread linearly between tabulated fields, and the resulting
+    quasi-static distribution is convolved with the electron-impact Voigt
+    profile.  Only microfields below ``maximum_beta`` (the Hummer--Mihalas
+    critical field of the upper level, in normal-field units) are integrated:
+    stronger fields dissolve the level, and that strength is represented by
+    the Q-MHD occupation probability and pseudo-continuum instead.  Returns
+    the bound-state (conditional) profile per angstrom, normalized to unit
+    area over all wavelengths independently of the sampled ``wavelength``.
+    """
+
+    from scipy.signal import fftconvolve
+
+    stride = _STARK_PROFILE_FIELD_STRIDE
+    field = _STARK_MANIFOLD_FIELD_HZ[::stride]
+    # Field probabilities from the same (Hooper-correlated) distribution as
+    # the Q-MHD occupation probabilities, integrated exactly between the
+    # tabulated fields; fields above the critical one dissolve the level.
+    beta, cumulative, segment_probability, interval_fraction = _stark_field_probabilities(
+        float(coupling_hz), float(maximum_beta), float(correlation),
+        float(radiator_core_charge), stride,
+    )
+    to_angstrom = -center**2 / (LIGHT_SPEED * 1.0e8)
+    width = max(gaussian_sigma, lorentz_hwhm, 1.0e-5)
+
+    def shifted_fraction(manifold: RydbergStarkManifold) -> float:
+        # Holtsmark-weighted strength shifted by more than a quarter width.
+        weights = manifold.weights[::stride]
+        shifted = np.abs(manifold.shifts_hz[::stride] * to_angstrom) > 0.25 * width
+        per_field = np.sum(np.where(shifted, weights, 0.0), axis=1)
+        total = float(np.sum(segment_probability))
+        if total <= 0.0:
+            return 0.0
+        return float(
+            np.sum(segment_probability * 0.5 * (per_field[1:] + per_field[:-1]))
+        ) / total
+
+    # A pattern that leaves < 1e-3 of the strength outside a quarter of the
+    # impact width does not change the profile at that level.
+    if lower is not None and shifted_fraction(lower) < 1.0e-3:
+        lower = None
+    used = segment_probability > 1.0e-12
+    if not np.any(used) or (
+        lower is None and shifted_fraction(upper) < 1.0e-3
+    ):
+        return _voigt_profile_per_angstrom(
+            wavelength, center, gaussian_sigma, lorentz_hwhm
+        )
+    # Only the weak-field probability below the tabulated fields is missing;
+    # it is unshifted.
+    missing = float(cumulative[0])
+    bound_probability = missing + float(np.sum(segment_probability[used]))
+    if getattr(_rt, "stark_manifold_bins", None) is not None:
+        return _compiled_manifold_profile(
+            wavelength, center, gaussian_sigma, lorentz_hwhm, coupling_hz,
+            upper, lower, maximum_beta, support_half_width, segment_probability,
+            interval_fraction, missing, bound_probability,
+        )
+    upper_shift = upper.shifts_hz[::stride]
+    upper_weight = upper.weights[::stride]
+    if lower is None:
+        shift = upper_shift[:, :, np.newaxis]
+        weight = upper_weight[:, :, np.newaxis]
+    else:
+        shift = upper_shift[:, :, np.newaxis] - lower.shifts_hz[::stride, np.newaxis, :]
+        weight = upper_weight[:, :, np.newaxis] * lower.weights[::stride, np.newaxis, :]
+    index = np.flatnonzero(used)
+    start_shift = shift[index].reshape(index.size, -1)
+    stop_shift = start_shift + interval_fraction[index, np.newaxis] * (
+        shift[index + 1].reshape(index.size, -1) - start_shift
+    )
+    segment_weight = (
+        0.5 * (weight[index] + weight[index + 1]).reshape(index.size, -1)
+        * segment_probability[index, np.newaxis]
+    )
+    start_offset = (start_shift * to_angstrom).ravel()
+    stop_offset = (stop_shift * to_angstrom).ravel()
+    segment_weight = segment_weight.ravel()
+    significant = segment_weight > 1.0e-7 * float(np.max(segment_weight))
+    start_offset = start_offset[significant]
+    stop_offset = stop_offset[significant]
+    segment_weight = segment_weight[significant]
+
+    # Two uniform grids: a fine one (a fraction of the impact width) over the
+    # dense part of the pattern, where it is convolved with the impact Voigt
+    # profile, and a coarse one over the sparse tail, whose bins are many
+    # impact widths wide and receive the pattern without convolution.
+    # Internal grids depend on the line's support, never on which
+    # wavelengths are requested, so any request samples the same profile.
+    half_extent = (
+        float(support_half_width)
+        if support_half_width is not None
+        else float(np.max(np.abs(wavelength - center)))
+    ) + 1.0e-6
+    # The fine grid spans the pattern out to the largest shift at the field
+    # below which 99 per cent of Holtsmark fields lie (beta ~ 21) or at the
+    # critical field if smaller; only the sparse tail uses the coarse grid.
+    dense_field = min(21.0, maximum_beta) * coupling_hz
+    dense_shift = float(np.interp(
+        np.log(max(dense_field, field[0])), np.log(_STARK_MANIFOLD_FIELD_HZ),
+        upper.maximum_shift_hz,
+    ))
+    if lower is not None:
+        dense_shift += float(np.interp(
+            np.log(max(dense_field, field[0])), np.log(_STARK_MANIFOLD_FIELD_HZ),
+            lower.maximum_shift_hz,
+        ))
+    fine_half = min(
+        half_extent, abs(to_angstrom) * dense_shift + 64.0 * width
+    )
+    fine_step = max(
+        _STARK_FINE_STEP_PER_WIDTH * width, 2.0 * fine_half / _STARK_FINE_BINS
+    )
+    coarse_step = max(fine_step, 2.0 * half_extent / _STARK_COARSE_BINS)
+    # Components within half a fine bin of the centre keep the exact core.
+    core = 0.5 * fine_step
+    unshifted = (np.abs(start_offset) <= core) & (np.abs(stop_offset) <= core)
+    core_weight = missing + float(np.sum(segment_weight[unshifted]))
+    low = np.minimum(start_offset[~unshifted], stop_offset[~unshifted])
+    high = np.maximum(start_offset[~unshifted], stop_offset[~unshifted])
+    high = np.maximum(high, low + 1.0e-6 * fine_step)
+    mass = segment_weight[~unshifted]
+    # Split each box at the fine-range boundaries (mass proportional to length).
+    inner_low = np.clip(low, -fine_half, fine_half)
+    inner_high = np.clip(high, -fine_half, fine_half)
+    inner_mass = mass * (inner_high - inner_low) / (high - low)
+
+    def convolved(grid_step, grid_half, box_low, box_high, box_mass):
+        # An odd grid centred on the line keeps the kernel exactly centred.
+        half_bins = int(np.ceil(grid_half / grid_step))
+        grid = grid_step * (np.arange(2 * half_bins + 1) - half_bins)
+        origin = grid[0] - 0.5 * grid_step
+        masses = _deposit_segments(
+            (box_low - origin) / grid_step, (box_high - origin) / grid_step,
+            box_mass, grid.size,
+        )
+        kernel = _voigt_profile_per_angstrom(
+            center + grid, center, gaussian_sigma, lorentz_hwhm
+        )
+        kernel_sum = float(np.sum(kernel))
+        if kernel_sum > 0.0 and np.isfinite(kernel_sum):
+            masses = fftconvolve(masses, kernel / kernel_sum, mode="same")
+        return grid, np.maximum(masses, 0.0) / grid_step
+
+    offset = wavelength - center
+    fine_grid, fine_profile = convolved(
+        fine_step, fine_half, inner_low, inner_high, inner_mass
+    )
+    result = core_weight * _voigt_profile_per_angstrom(
+        wavelength, center, gaussian_sigma, lorentz_hwhm
+    )
+    inside = np.abs(offset) <= fine_half
+    result[inside] += np.interp(offset[inside], fine_grid, fine_profile)
+    if half_extent > fine_half:
+        # Outer boxes: the parts below and above the fine range.  On the
+        # coarse grid (bins many impact widths wide) the impact profile only
+        # adds Lorentz wings, so the outer pattern is binned without
+        # convolution and the inner components add their wing, V(x), beyond
+        # the fine range.
+        below_mass = mass * np.clip(np.minimum(high, -fine_half) - low, 0.0, None) / (high - low)
+        above_mass = mass * np.clip(high - np.maximum(low, fine_half), 0.0, None) / (high - low)
+        keep_below = below_mass > 0.0
+        keep_above = above_mass > 0.0
+        half_bins = int(np.ceil(half_extent / coarse_step))
+        coarse_grid = coarse_step * (np.arange(2 * half_bins + 1) - half_bins)
+        origin = coarse_grid[0] - 0.5 * coarse_step
+        masses = _deposit_segments(
+            (np.concatenate((low[keep_below], np.maximum(low, fine_half)[keep_above])) - origin) / coarse_step,
+            (np.concatenate((np.minimum(high, -fine_half)[keep_below], high[keep_above])) - origin) / coarse_step,
+            np.concatenate((below_mass[keep_below], above_mass[keep_above])),
+            coarse_grid.size,
+        )
+        outside = ~inside
+        result[outside] += (
+            np.interp(offset[outside], coarse_grid, masses / coarse_step)
+            + float(np.sum(inner_mass)) * _voigt_profile_per_angstrom(
+                wavelength[outside], center, gaussian_sigma, lorentz_hwhm
+            )
+        )
+    return result / max(bound_probability, np.finfo(np.float64).tiny)
+
+
 def o_i_3p5p_nd5d_electron_stark_rate_coefficient(
     ion: AtomicIon,
     transition: AtomicTransition,
@@ -4869,7 +6959,7 @@ def o_i_3p5p_nd5d_electron_stark_rate_coefficient(
     """Return a literature-anchored Stark rate for the O I 3p--nd series.
 
     The absolute normalization is the 4d multiplet calculation tabulated by
-    Dimitrijevic, Iacob & Sahal-Brechot (2025, Galaxies 13, 116). Higher
+    Dimitrijevic & Sahal-Brechot (2025, Galaxies 13, 116). Higher
     series members use the asymptotic ``n_eff**5`` impact scaling. Unlike the
     generic SYNSPEC fallback, this deliberately does not cap ``n_eff`` at
     five: the function exists specifically to diagnose the merging high-n
@@ -5042,6 +7132,7 @@ def metal_rydberg_transition_survival_probability(
     neutral_perturber_number_density: Mapping[str, ArrayLike] | None = None,
     neutral_perturber_radius_cm: Mapping[str, float] | None = None,
     continuum_cutoff_probability: float | None = None,
+    level_survival_cache: dict | None = None,
 ) -> FloatArray:
     """Return the Q-MHD survival factor for a metal transition.
 
@@ -5055,6 +7146,10 @@ def metal_rydberg_transition_survival_probability(
     energy as complete pressure dissolution.  Their LTE Saha--Boltzmann
     population remains a separate approximation to the resonant-state
     population.
+
+    ``level_survival_cache`` may be a dictionary shared by every transition
+    evaluated on the same atmosphere and perturber state; level occupation
+    probabilities are then computed once per level instead of once per line.
     """
 
     if (
@@ -5076,24 +7171,25 @@ def metal_rydberg_transition_survival_probability(
         return np.ones_like(electron_density)
     if upper_level.energy_wavenumber >= threshold_wavenumber:
         return np.ones_like(electron_density)
-    lower_survival = metal_rydberg_level_occupation_probability(
-        ion,
-        lower_level,
-        electron_density,
-        temperature,
-        correlated_microfields=correlated_microfields,
-        neutral_perturber_number_density=neutral_perturber_number_density,
-        neutral_perturber_radius_cm=neutral_perturber_radius_cm,
-    )
-    upper_survival = metal_rydberg_level_occupation_probability(
-        ion,
-        upper_level,
-        electron_density,
-        temperature,
-        correlated_microfields=correlated_microfields,
-        neutral_perturber_number_density=neutral_perturber_number_density,
-        neutral_perturber_radius_cm=neutral_perturber_radius_cm,
-    )
+    def level_survival(level: AtomicLevel) -> FloatArray:
+        key = (ion.element, ion.charge, level.index)
+        if level_survival_cache is not None and key in level_survival_cache:
+            return level_survival_cache[key]
+        value = metal_rydberg_level_occupation_probability(
+            ion,
+            level,
+            electron_density,
+            temperature,
+            correlated_microfields=correlated_microfields,
+            neutral_perturber_number_density=neutral_perturber_number_density,
+            neutral_perturber_radius_cm=neutral_perturber_radius_cm,
+        )
+        if level_survival_cache is not None:
+            level_survival_cache[key] = value
+        return value
+
+    lower_survival = level_survival(lower_level)
+    upper_survival = level_survival(upper_level)
     survival = np.clip(
         upper_survival
         / np.maximum(lower_survival, np.finfo(np.float64).tiny),
@@ -5438,11 +7534,88 @@ def _outer_orbital_angular_momentum(level: AtomicLevel) -> int | None:
     return "spdfghik".index(matches[-1][1])
 
 
+_CLOSED_SUBSHELL = re.compile(r"^\d+(?:s2|p6|d10|f14)$")
+_ORBITAL_TOKEN = re.compile(r"^(\d+)([spdfghik])(\d*)$")
+
+
+def _normalized_configuration(orbitals: Iterable[str]) -> tuple[str, ...]:
+    """Drop closed subshells so labels of adjacent ions can be compared."""
+
+    return tuple(token for token in orbitals if not _CLOSED_SUBSHELL.match(token))
+
+
+def _parent_limit_excitation_ev(
+    level: AtomicLevel, parent_ion: AtomicIon | None
+) -> float:
+    """Return the excitation of the parent core that a level converges to.
+
+    A level such as Si II ``3s.3p.(3Po).4p`` belongs to the series converging
+    on the excited Si III ``3s3p 3P`` term, not on the Si III ground state.
+    Its binding energy is therefore ``I + E(parent) - E(level)``.  The parent
+    is the next ion's configuration with the outermost electron removed;
+    when the label names an intermediate parent term, that term is used,
+    otherwise the lowest level of the parent configuration.  Zero is returned
+    when the parent cannot be identified, which recovers the ground limit.
+    """
+
+    if parent_ion is None:
+        return 0.0
+    tokens = level.label.split(".")
+    orbitals = [token for token in tokens if _ORBITAL_TOKEN.match(token)]
+    if not orbitals:
+        return 0.0
+    outer = orbitals[-1]
+    outer_index = max(index for index, token in enumerate(tokens) if token == outer)
+    match = _ORBITAL_TOKEN.match(outer)
+    occupancy = int(match.group(3) or 1)
+    parent_orbitals = orbitals[:-1]
+    if occupancy > 1:
+        remaining = occupancy - 1
+        parent_orbitals.append(
+            match.group(1) + match.group(2) + ("" if remaining == 1 else str(remaining))
+        )
+    parent_configuration = _normalized_configuration(parent_orbitals)
+    parent_term = None
+    if outer_index > 0 and tokens[outer_index - 1].startswith("("):
+        parent_term = tokens[outer_index - 1].strip("()").lstrip("abcdefghijklmnopqrstuvwxyz")
+
+    candidates = []
+    for candidate in parent_ion.levels:
+        candidate_tokens = candidate.label.split(".")
+        candidate_orbitals = [
+            token for token in candidate_tokens if _ORBITAL_TOKEN.match(token)
+        ]
+        if _normalized_configuration(candidate_orbitals) != parent_configuration:
+            continue
+        final_term = re.sub(r"<[^>]+>", "", candidate_tokens[-1]).strip("()")
+        final_term = final_term.lstrip("abcdefghijklmnopqrstuvwxyz")
+        candidates.append((candidate, final_term))
+    if parent_term is not None:
+        named = [item for item in candidates if item[1] == parent_term]
+        if named:
+            candidates = named
+    if not candidates:
+        return 0.0
+    lowest = min(candidate.energy_wavenumber for candidate, _ in candidates)
+    return float(max(lowest, 0.0) / EV_TO_WAVENUMBER)
+
+
 def _unsold_hydrogen_temperature_coefficient(
     ion: AtomicIon,
     transition: AtomicTransition,
+    parent_ion: AtomicIon | None = None,
 ) -> float | None:
-    """Return the temperature-independent part of the Unsold H width."""
+    """Return the temperature-independent part of the Unsold H width.
+
+    Hydrogenic mean-square radii use the effective principal quantum number
+    ``n*^2 = Z^2 R/E`` and ``<r^2> = n*^2 [5 n*^2 + 1 - 3 l(l+1)] / (2 Z^2)``
+    in units of ``a0^2``, where ``Z`` is the charge seen by the optical
+    electron.  Binding energies are measured from the first ionization limit,
+    as in the Warner/Kurucz convention.  When either level lies above that
+    limit and ``parent_ion`` (the next ionization stage) is supplied, both
+    levels are measured from their own parent limits (see
+    :func:`_parent_limit_excitation_ev`).
+    """
 
     if ion.ionization_energy_ev is None:
         return None
@@ -5457,6 +7630,13 @@ def _unsold_hydrogen_temperature_coefficient(
         return None
 
     stage_charge = ion.charge + 1.0
+    # A bound level above the first limit must belong to a series converging
+    # on an excited parent term.  Both levels of such a transition are then
+    # measured from their own parent limits so the radii stay comparable.
+    use_parent_limits = parent_ion is not None and any(
+        level.energy_wavenumber / EV_TO_WAVENUMBER >= ion.ionization_energy_ev
+        for level in (lower, upper)
+    )
 
     def mean_square_radius(
         level: AtomicLevel, angular_momentum: int
@@ -5465,6 +7645,8 @@ def _unsold_hydrogen_temperature_coefficient(
             ion.ionization_energy_ev
             - level.energy_wavenumber / EV_TO_WAVENUMBER
         )
+        if use_parent_limits:
+            binding_energy += _parent_limit_excitation_ev(level, parent_ion)
         if binding_energy <= 0.0:
             return None
         effective_n_squared = (
@@ -5474,7 +7656,7 @@ def _unsold_hydrogen_temperature_coefficient(
             5.0 * effective_n_squared
             + 1.0
             - 3.0 * angular_momentum * (angular_momentum + 1.0)
-        )
+        ) / stage_charge**2
         return radius if np.isfinite(radius) and radius > 0.0 else None
 
     lower_radius = mean_square_radius(lower, lower_l)
@@ -5491,6 +7673,8 @@ def unsold_hydrogen_impact_rate_coefficient(
     ion: AtomicIon,
     transition: AtomicTransition,
     temperature_kelvin: ArrayLike,
+    *,
+    parent_ion: AtomicIon | None = None,
 ) -> FloatArray | None:
     """Estimate neutral-H damping per perturber from the line's levels.
 
@@ -5510,7 +7694,9 @@ def unsold_hydrogen_impact_rate_coefficient(
     temperature = np.asarray(temperature_kelvin, dtype=np.float64)
     if np.any(~np.isfinite(temperature)) or np.any(temperature <= 0.0):
         raise ValueError("temperature_kelvin must be finite and positive")
-    coefficient = _unsold_hydrogen_temperature_coefficient(ion, transition)
+    coefficient = _unsold_hydrogen_temperature_coefficient(
+        ion, transition, parent_ion
+    )
     if coefficient is None:
         return None
     return coefficient * temperature**0.3
@@ -5520,21 +7706,25 @@ def unsold_helium_impact_rate_coefficient(
     ion: AtomicIon,
     transition: AtomicTransition,
     temperature_kelvin: ArrayLike,
+    *,
+    parent_ion: AtomicIon | None = None,
 ) -> FloatArray | None:
     """Estimate neutral-He damping per perturber from the line's levels.
 
     The classical neutral-H Unsold/Warner rate is rescaled by the He/H
     polarizability ratio and the radiator--perturber reduced mass.
 
-    Although approximate, this is line-specific and has an external check:
-    for Ca II K it is within ten percent of Hammond's laboratory He width.
+    For Ca II K this reproduces Hammond's (1975) own Unsold estimate,
+    3.3e-9 cm3 s-1 at 5200 K, which is about half of his laboratory width.
+    That factor of about two is the known Unsold underestimate; production
+    Ca II H/K therefore uses the measured width instead.
     """
 
     temperature = np.asarray(temperature_kelvin, dtype=np.float64)
     if np.any(~np.isfinite(temperature)) or np.any(temperature <= 0.0):
         raise ValueError("temperature_kelvin must be finite and positive")
     hydrogen_rate = unsold_hydrogen_impact_rate_coefficient(
-        ion, transition, temperature
+        ion, transition, temperature, parent_ion=parent_ion
     )
     if hydrogen_rate is None:
         return None
@@ -5596,6 +7786,8 @@ def unsold_neutral_metal_impact_rate_coefficient(
     transition: AtomicTransition,
     temperature_kelvin: ArrayLike,
     perturber: str,
+    *,
+    parent_ion: AtomicIon | None = None,
 ) -> FloatArray | None:
     """Estimate Unsold damping by a supported neutral bulk-metal perturber.
 
@@ -5612,7 +7804,7 @@ def unsold_neutral_metal_impact_rate_coefficient(
             "neutral-metal Unsold broadening currently supports C, O, and Ne"
         )
     hydrogen_rate = unsold_hydrogen_impact_rate_coefficient(
-        ion, transition, temperature_kelvin
+        ion, transition, temperature_kelvin, parent_ion=parent_ion
     )
     if hydrogen_rate is None:
         return None
@@ -5760,8 +7952,12 @@ def metal_bound_free_mass_absorption_coefficient(
     """Return LTE ground-state metal bound-free opacity in cm2 g-1.
 
     The Verner fits smooth the Opacity Project resonance structure and cover
-    only ground-state photoionization.  The population multiplier is therefore
-    the Boltzmann ground-level population, not the total ion population.  The
+    only ground-state photoionization.  Like the Opacity Project data, they
+    are cross sections per atom in the LS ground term, so the population
+    multiplier is the Boltzmann population of every fine-structure level of
+    that term (for example all three Si I 3P levels), not only the lowest
+    ``J`` level.  Departure coefficients multiply absorption; stimulated
+    recombination remains at its LTE value, ``n*(b - exp(-h nu/kT))``.  The
     spectroscopic edge remains at the isolated-atom energy even when the
     dense-helium free-energy correction is enabled in the Saha balance.
     ``excluded_ions`` permits level-resolved Opacity Project data to replace
@@ -5802,40 +7998,59 @@ def metal_bound_free_mass_absorption_coefficient(
             fit = photoionization_database.fits.get((element, ion.charge))
             if fit is None or ion.charge >= populations.shape[0]:
                 continue
-            ground = min(ion.levels, key=lambda level: level.energy_wavenumber)
             partition = metal_state.partition_function[(element, ion.charge)]
-            ground_population = (
-                populations[ion.charge]
-                * ground.statistical_weight
-                * np.exp(
-                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                )
-                / partition
-            )
-            level_key = (element, ion.charge, ground.index)
-            if level_departure_coefficient is not None and level_key in level_departure_coefficient:
-                departure = np.asarray(
-                    level_departure_coefficient[level_key], dtype=np.float64
-                )
-                if departure.shape != atmosphere.temperature.shape:
-                    raise ValueError("level departure coefficients must match depth")
-                ground_population = ground_population * departure
-            elif ion_departure_coefficient is not None:
-                departure = np.asarray(
+            ion_departure = None
+            if ion_departure_coefficient is not None:
+                ion_departure = np.asarray(
                     ion_departure_coefficient.get(
                         (element, ion.charge), np.ones(atmosphere.n_depth)
                     ),
                     dtype=np.float64,
                 )
-                if departure.shape != atmosphere.temperature.shape:
+                if ion_departure.shape != atmosphere.temperature.shape:
                     raise ValueError("ion departure coefficients must match depth")
-                ground_population = ground_population * departure
+            # The fits are per atom in the LS ground term, so every J level
+            # of that term contributes.  Non-LTE levels absorb in proportion
+            # to b while stimulated recombination stays at the LTE rate.
+            ground_population = np.zeros(atmosphere.n_depth)
+            departure_weighted = np.zeros(atmosphere.n_depth)
+            for level in ground_term_levels(ion):
+                level_population = (
+                    populations[ion.charge]
+                    * level.statistical_weight
+                    * np.exp(
+                        -level.energy_wavenumber * WAVENUMBER_TO_ERG
+                        / (BOLTZMANN * atmosphere.temperature)
+                    )
+                    / partition
+                )
+                level_key = (element, ion.charge, level.index)
+                if (
+                    level_departure_coefficient is not None
+                    and level_key in level_departure_coefficient
+                ):
+                    departure = np.asarray(
+                        level_departure_coefficient[level_key], dtype=np.float64
+                    )
+                    if departure.shape != atmosphere.temperature.shape:
+                        raise ValueError("level departure coefficients must match depth")
+                elif ion_departure is not None:
+                    departure = ion_departure
+                else:
+                    departure = 1.0
+                ground_population += level_population
+                departure_weighted += level_population * departure
+            departure_factor = np.divide(
+                departure_weighted,
+                ground_population,
+                out=np.ones_like(ground_population),
+                where=ground_population > 0.0,
+            )
             cross_section = fit.cross_section(photon_energy_ev)
             result += (
                 cross_section[:, np.newaxis]
                 * ground_population[np.newaxis, :]
-                * stimulated
+                * (departure_factor[np.newaxis, :] - 1.0 + stimulated)
                 / atmosphere.mass_density[np.newaxis, :]
             )
     return result
@@ -5864,8 +8079,12 @@ def metal_line_mass_absorption_coefficient(
     oxygen_i_series_stark_minimum_effective_n: float | None = None,
     include_oxygen_i_quasistatic_microfields: bool = False,
     oxygen_i_quasistatic_minimum_effective_n: float = 6.5,
+    include_linear_stark_quasistatic: bool = False,
+    linear_stark_profile: str = "two-level",
+    mg_ii_kurucz_series_widths: bool = False,
     include_rydberg_dissolution: bool = False,
     rydberg_dissolution_cutoff_probability: float | None = None,
+    rydberg_dissolution_elements: Iterable[str] | None = None,
     rydberg_correlated_microfields: bool = True,
     rydberg_neutral_perturbers: bool = False,
     excluded_elements: Iterable[str] = (),
@@ -5877,8 +8096,13 @@ def metal_line_mass_absorption_coefficient(
     profile_edge_optical_depth_ions: Iterable[tuple[str, int]] | None = None,
     profile_support_maximum_rosseland_optical_depth: float = 2.0,
     profile_support_maximum_half_window_angstrom: float = 100.0,
+    uv_resonance_support_angstrom: Mapping[tuple[str, int, int, int], float] | None = None,
 ) -> FloatArray:
     """Return LTE metal bound-bound opacity in cm^2 g^-1.
+
+    ``microturbulent_velocity_kms`` is the most-probable microturbulent speed
+    ``xi`` of the usual Doppler width ``sqrt(2kT/m + xi^2)`` (the Kurucz and
+    MOOG convention), so it adds ``xi^2/2`` to the Gaussian variance.
 
     Ordinary lines use thermal (plus optional microturbulent), radiative, and
     line-specific Unsold neutral-H and neutral-He impact broadening.  The
@@ -5898,9 +8122,11 @@ def metal_line_mass_absorption_coefficient(
     ordinary Ca I 4227-A resonance line. A supplied single-condition Ca II table is
     likewise enveloped with the laboratory-width ordinary profiles.
     ``transition_keys`` optionally restricts the result to explicit
-    ``(element, charge, lower_index, upper_index)`` transitions.  This is
-    useful when reusing the identical cool-star profile physics in a
-    level-resolved statistical-equilibrium formal solution.
+    ``(element, charge, lower_index, upper_index)`` transitions.  An explicit
+    declaration is independent of the queried wavelength interval: profiles
+    centered outside that interval are still evaluated so their wings cannot
+    disappear when a spectrum is synthesized in chunks.  This is useful when
+    reusing one immutable line selection for structure and formal synthesis.
     ``profile_edge_optical_depth`` replaces the fixed ordinary-line cutoff
     with an optical-depth-aware support criterion.  It expands saturated
     profiles until the vertical line optical depth at the edge is below the
@@ -5914,9 +8140,29 @@ def metal_line_mass_absorption_coefficient(
     complete ion stages.  It is mutually exclusive with the element filter;
     this supports physically distinct neutral/ionized profile families
     without selecting individual observed lines.
+    ``include_linear_stark_quasistatic`` adds the ionic quasi-static
+    (Holtsmark) linear-Stark envelope to every genuine Rydberg line (see
+    :func:`linear_stark_rydberg_level`), weighted depth by depth by
+    :func:`linear_stark_mixing_fraction`; the oscillator strength is conserved.
+    ``mg_ii_kurucz_series_widths`` gives every Mg II 2p6-core multiplet its
+    Kurucz electron width (D6); otherwise only 4f-8g (4852 A) uses Kurucz.
+    ``rydberg_dissolution_elements`` limits ``include_rydberg_dissolution`` to
+    the named elements; None (the default) dissolves every element's lines.
+    ``uv_resonance_support_angstrom`` supplies already-decided minimum support
+    for eligible strong UV resonances. A caller evaluating depth subsets must
+    derive this mapping from the complete atmosphere, not the subset. Every
+    eligible selected resonance requires an entry. Other callers retain the
+    original optical-depth gate when this argument is None.
     """
 
+    if linear_stark_profile not in ("two-level", "manifold"):
+        raise ValueError("linear_stark_profile must be 'two-level' or 'manifold'")
     wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
+    if uv_resonance_support_angstrom is not None and any(
+        not np.isfinite(value) or value < 0.0
+        for value in uv_resonance_support_angstrom.values()
+    ):
+        raise ValueError('UV resonance support must be finite and nonnegative')
     if (
         wavelength.ndim != 1 or wavelength.size < 2
         or np.any(~np.isfinite(wavelength)) or np.any(wavelength <= 0.0)
@@ -5940,6 +8186,31 @@ def metal_line_mass_absorption_coefficient(
         or profile_edge_optical_depth <= 0.0
     ):
         raise ValueError("profile_edge_optical_depth must be positive")
+    # Line dissolution and its returned pseudo-continuum are two halves of
+    # one occupation-probability treatment.  A caller that returns the
+    # dissolved strength only for some elements must restrict dissolution to
+    # the same elements, or the removed opacity is silently lost.
+    dissolution_elements = (
+        None
+        if rydberg_dissolution_elements is None
+        else frozenset(
+            _canonical_element(element) for element in rydberg_dissolution_elements
+        )
+    )
+
+    # A trace state whose partitions already carry occupation probabilities
+    # must apply the same level survival, or populations would not sum to
+    # the ion density.
+    include_rydberg_dissolution = include_rydberg_dissolution or (
+        metal_state.metal_level_dissolution
+        and metal_state.composition_mode == "trace"
+    )
+
+    def dissolves(ion: AtomicIon) -> bool:
+        return include_rydberg_dissolution and (
+            dissolution_elements is None or ion.element in dissolution_elements
+        )
+
     profile_support_elements = (
         None
         if profile_edge_optical_depth_elements is None
@@ -5999,6 +8270,10 @@ def metal_line_mass_absorption_coefficient(
     replacement_ordinary: dict[str, FloatArray] = {}
     if ca_i_he_profile_table is not None:
         replacement_ordinary["CaI"] = np.zeros_like(result)
+        # Impact profile with its He width evaluated at the least-dense
+        # unified calculation and scaled linearly to the local density.
+        replacement_ordinary["CaI_reference"] = np.zeros_like(result)
+        ca_i_reference_density = float(ca_i_he_profile_table.densities[0])
     if mg_ii_he_profile_table is not None:
         replacement_ordinary["MgII"] = np.zeros_like(result)
     if ca_ii_he_profile_table is not None:
@@ -6013,14 +8288,10 @@ def metal_line_mass_absorption_coefficient(
             )
             for element, charge, lower_index, upper_index in transition_keys
         )
-        # Explicit keys are also used by the D6 structure solver to ensure
-        # that the lines evaluated by the opacity routine are exactly those
-        # whose centers and profile supports were inserted in its wavelength
-        # grid.  Do not first apply a second, potentially different ranking.
+        # Explicit keys are a complete caller-owned declaration.  Do not
+        # apply a second ranking or an endpoint-dependent center filter here:
+        # a distant strong line can contribute a wing inside a narrow query.
         selected = []
-        selection_margin = max(
-            100.0, 0.05 * float(wavelength[-1] - wavelength[0])
-        )
         for element in line_abundances:
             for ion in atomic_database.ion_stages(element):
                 for line in ion.transitions:
@@ -6035,9 +8306,6 @@ def metal_line_mass_absorption_coefficient(
                         and line.transition_type == "E1"
                         and line.absorption_oscillator_strength
                         >= minimum_oscillator_strength
-                        and wavelength[0] - selection_margin
-                        <= line.wavelength_vacuum_angstrom
-                        <= wavelength[-1] + selection_margin
                     ):
                         selected.append((ion, line))
     else:
@@ -6101,6 +8369,9 @@ def metal_line_mass_absorption_coefficient(
             rydberg_neutral_density,
             rydberg_neutral_radius,
         ) = bulk_metal_neutral_perturber_data(atomic_database, metal_state)
+    elif metal_state.neutral_perturber_number_density is not None:
+        rydberg_neutral_density = metal_state.neutral_perturber_number_density
+        rydberg_neutral_radius = metal_state.neutral_perturber_radius_cm
     else:
         rydberg_neutral_density = None
         rydberg_neutral_radius = None
@@ -6109,7 +8380,7 @@ def metal_line_mass_absorption_coefficient(
     )
     atomic_mass_unit = 1.660_539_068_92e-24
 
-    # Total downward rate supplies the natural width for each upper level.
+    # Total downward rate of each level supplies the natural width.
     upper_rates: dict[tuple[str, int, int], float] = {}
     selected_ions = {
         (ion.element, ion.charge): ion for ion, _ in selected
@@ -6124,6 +8395,7 @@ def metal_line_mass_absorption_coefficient(
             upper_rates[key] = upper_rates.get(key, 0.0) + transition.einstein_a
 
     lower_population_cache: dict[tuple[str, int, int], FloatArray] = {}
+    level_survival_cache: dict[tuple[str, int, int], FloatArray] = {}
 
     def empty_profile_batch() -> dict[str, list[FloatArray | float]]:
         return {
@@ -6140,6 +8412,7 @@ def metal_line_mass_absorption_coefficient(
         "CaI": empty_profile_batch(),
         "MgII": empty_profile_batch(),
         "CaII": empty_profile_batch(),
+        "CaI_reference": empty_profile_batch(),
     }
 
     def flush_profile_batch(key: str) -> None:
@@ -6174,7 +8447,19 @@ def metal_line_mass_absorption_coefficient(
                     / (BOLTZMANN * atmosphere.temperature)
                 ) / partition
             )
-            if metal_state.metal_level_dissolution and include_rydberg_dissolution:
+            if (
+                metal_state.metal_level_dissolution
+                and dissolves(ion)
+                and (
+                    ion.ionization_energy_ev is None
+                    or lower.energy_wavenumber
+                    < ion.ionization_energy_ev * EV_TO_WAVENUMBER
+                )
+            ):
+                # Occupation probabilities describe bound levels.  Keep the
+                # LTE resonance-population approximation for autoionizing
+                # lower states, as in the transition-survival calculation;
+                # their negative binding energy must not erase the line.
                 lower_population = lower_population * (
                     metal_rydberg_level_occupation_probability(
                         ion,
@@ -6215,14 +8500,17 @@ def metal_line_mass_absorption_coefficient(
             -PLANCK * LIGHT_SPEED
             / (center_cm * BOLTZMANN * atmosphere.temperature)
         )
+        # The natural width is the sum of both levels' radiative decay rates;
+        # a subordinate line such as Mg II 4481 has a short-lived lower level.
         natural_rate = (
             line.radiative_damping_rate_s
             if line.radiative_damping_rate_s is not None
             else upper_rates[(ion.element, ion.charge, line.upper_index)]
+            + upper_rates.get((ion.element, ion.charge, line.lower_index), 0.0)
         )
         lower_level = levels_by_ion[(ion.element, ion.charge)][line.lower_index]
         upper_level = levels_by_ion[(ion.element, ion.charge)][line.upper_index]
-        if include_rydberg_dissolution:
+        if dissolves(ion):
             line_survival = metal_rydberg_transition_survival_probability(
                 ion,
                 lower_level,
@@ -6235,6 +8523,7 @@ def metal_line_mass_absorption_coefficient(
                 continuum_cutoff_probability=(
                     rydberg_dissolution_cutoff_probability
                 ),
+                level_survival_cache=level_survival_cache,
             )
         else:
             line_survival = np.ones(atmosphere.n_depth, dtype=np.float64)
@@ -6275,7 +8564,12 @@ def metal_line_mass_absorption_coefficient(
                 ion, line, lower_level
             )
         )
-        if resonance_half_window > 0.0:
+        if resonance_half_window > 0.0 and uv_resonance_support_angstrom is not None:
+            support_key = (ion.element, ion.charge, line.lower_index, line.upper_index)
+            if support_key not in uv_resonance_support_angstrom:
+                raise ValueError('Missing declared UV resonance support')
+            resonance_half_window = float(uv_resonance_support_angstrom[support_key])
+        elif resonance_half_window > 0.0:
             # Use the narrow radiative+thermal profile as a conservative
             # upper bound on the line-center optical depth.  This cheaply
             # suppresses extended formal support for absent LTE ion stages;
@@ -6283,7 +8577,7 @@ def metal_line_mass_absorption_coefficient(
             sigma = center * np.sqrt(
                 BOLTZMANN * atmosphere.temperature
                 / (ion.atomic_mass_u * atomic_mass_unit * LIGHT_SPEED**2)
-                + (microturbulent_velocity_kms * 1.0e5 / LIGHT_SPEED) ** 2
+                + 0.5 * (microturbulent_velocity_kms * 1.0e5 / LIGHT_SPEED) ** 2
             )
             natural_hwhm = np.full(
                 atmosphere.n_depth,
@@ -6291,7 +8585,7 @@ def metal_line_mass_absorption_coefficient(
                 / (4.0 * PI * LIGHT_SPEED) * 1.0e8,
             )
             center_profile = np.asarray([
-                _pseudo_voigt_profile_per_angstrom(
+                _voigt_profile_per_angstrom(
                     np.asarray([center]),
                     center,
                     float(local_sigma),
@@ -6316,15 +8610,37 @@ def metal_line_mass_absorption_coefficient(
             )
             if center_optical_depth < 1.0e3:
                 resonance_half_window = 0.0
-        is_mg_resonance = ion.element == "Mg" and ion.charge == 0 and 2845.0 < center < 2860.0
+        # Resonance-line data apply to transitions from the ground level only;
+        # a wavelength window alone would also catch subordinate lines such
+        # as Mg II 3p--3d at 2791/2798 A.
+        from_ground = lower_level.energy_wavenumber < 1.0
+        is_mg_resonance = (
+            ion.element == "Mg" and ion.charge == 0 and 2845.0 < center < 2860.0
+            and from_ground
+        )
         is_mg_ii_resonance = (
             ion.element == "Mg" and ion.charge == 1 and 2790.0 < center < 2810.0
+            and from_ground
         )
         is_mg_ii_4481 = (
             ion.element == "Mg" and ion.charge == 1 and 4478.0 < center < 4487.0
         )
-        is_mg_ii_4852 = (
-            ion.element == "Mg" and ion.charge == 1 and 4848.0 < center < 4857.0
+        # D6 opts into Kurucz widths for the whole Mg II series; other
+        # families keep their validated 4f-8g-only line-specific width.
+        mg_ii_series_rate = (
+            mg_ii_kurucz_electron_stark_rate_coefficient(
+                lower_level, upper_level, atmosphere.temperature
+            )
+            if ion.element == "Mg" and ion.charge == 1
+            and mg_ii_kurucz_series_widths
+            else (
+                mg_ii_4852_electron_stark_rate_coefficient(
+                    center, atmosphere.temperature
+                )
+                if ion.element == "Mg" and ion.charge == 1
+                and 4848.0 < center < 4857.0
+                else None
+            )
         )
         is_mg_i_3835 = (
             ion.element == "Mg" and ion.charge == 0 and 3825.0 < center < 3845.0
@@ -6347,12 +8663,15 @@ def metal_line_mass_absorption_coefficient(
             ion.element == "Na"
             and ion.charge == 0
             and 5888.0 < center < 5901.0
+            and from_ground
         )
         is_ca_i_resonance = (
             ion.element == "Ca" and ion.charge == 0 and 4215.0 < center < 4235.0
+            and from_ground
         )
         is_ca_ii_resonance = (
             ion.element == "Ca" and ion.charge == 1 and 3920.0 < center < 3990.0
+            and from_ground
         )
         is_ca_ii_measured_stark_line = (
             ion.element == "Ca"
@@ -6415,7 +8734,11 @@ def metal_line_mass_absorption_coefficient(
             )
             if unsold_key not in atomic_database._unsold_hydrogen_coefficient_cache:
                 atomic_database._unsold_hydrogen_coefficient_cache[unsold_key] = (
-                    _unsold_hydrogen_temperature_coefficient(ion, line)
+                    _unsold_hydrogen_temperature_coefficient(
+                        ion,
+                        line,
+                        atomic_database.ions.get((ion.element, ion.charge + 1)),
+                    )
                 )
             unsold_coefficient = (
                 atomic_database._unsold_hydrogen_coefficient_cache[unsold_key]
@@ -6467,11 +8790,16 @@ def metal_line_mass_absorption_coefficient(
         gaussian_sigma = center * np.sqrt(
             BOLTZMANN * atmosphere.temperature
             / (ion.atomic_mass_u * atomic_mass_unit * LIGHT_SPEED**2)
-            + (microturbulent_velocity_kms * 1.0e5 / LIGHT_SPEED) ** 2
+            + 0.5 * (microturbulent_velocity_kms * 1.0e5 / LIGHT_SPEED) ** 2
         )
         if is_mg_resonance:
             collision_rate = (
                 0.306e-9 * helium_density * atmosphere.temperature**0.39
+            )
+        elif is_mg_ii_resonance:
+            collision_rate = (
+                mg_ii_helium_impact_rate_coefficient(center, atmosphere.temperature)
+                * helium_density
             )
         elif is_ca_ii_resonance:
             collision_rate = (
@@ -6488,6 +8816,7 @@ def metal_line_mass_absorption_coefficient(
                 helium_impact_rate_coefficient * helium_density
                 * (atmosphere.temperature / 10_000.0) ** 0.3
             )
+        helium_collision_rate = np.array(collision_rate, dtype=np.float64)
         if hydrogen_impact_rate is not None:
             collision_rate += hydrogen_impact_rate * hydrogen_density
         else:
@@ -6511,12 +8840,8 @@ def metal_line_mass_absorption_coefficient(
                     center, atmosphere.temperature
                 ) * metal_state.electron_density
             )
-        elif is_mg_ii_4852:
-            electron_stark_rate = (
-                mg_ii_4852_electron_stark_rate_coefficient(
-                    center, atmosphere.temperature
-                ) * metal_state.electron_density
-            )
+        elif mg_ii_series_rate is not None:
+            electron_stark_rate = mg_ii_series_rate * metal_state.electron_density
         elif is_mg_i_3835:
             electron_stark_rate = (
                 mg_i_3835_electron_stark_rate_coefficient(
@@ -6543,7 +8868,7 @@ def metal_line_mass_absorption_coefficient(
             electron_stark_rate = (
                 line.electron_stark_rate_coefficient_cm3_s
                 * metal_state.electron_density
-                * (atmosphere.temperature / 10_000.0) ** (-1.0 / 6.0)
+                * (atmosphere.temperature / 10_000.0) ** (1.0 / 6.0)
             )
         elif classical_stark_rate > 0.0:
             electron_stark_rate = (
@@ -6593,6 +8918,15 @@ def metal_line_mass_absorption_coefficient(
                     ),
                 ),
             )
+        stark_mixing = None
+        if include_linear_stark_quasistatic:
+            rydberg = linear_stark_rydberg_level(atomic_database, ion, upper_level)
+            if rydberg is not None:
+                candidate = linear_stark_mixing_fraction(
+                    rydberg[2], rydberg[3], ion.charge + 1.0, ionic_microfield_scale
+                )
+                if np.max(candidate) > 1.0e-3:
+                    stark_mixing = candidate
         quasistatic_series_rate = (
             o_i_3p5p_nd5d_electron_stark_rate_coefficient(
                 ion,
@@ -6602,7 +8936,8 @@ def metal_line_mass_absorption_coefficient(
             )
             if include_oxygen_i_quasistatic_microfields else None
         )
-        if quasistatic_series_rate is not None:
+        if quasistatic_series_rate is not None or stark_mixing is not None:
+            core_charge = ion.charge + 1.0
             lower_binding_ev = (
                 ion.ionization_energy_ev
                 - lower_level.energy_wavenumber / EV_TO_WAVENUMBER
@@ -6611,10 +8946,10 @@ def metal_line_mass_absorption_coefficient(
                 ion.ionization_energy_ev
                 - upper_level.energy_wavenumber / EV_TO_WAVENUMBER
             )
-            lower_effective_n = np.sqrt(
+            lower_effective_n = core_charge * np.sqrt(
                 _RYDBERG_ENERGY_EV / lower_binding_ev
             )
-            upper_effective_n = np.sqrt(
+            upper_effective_n = core_charge * np.sqrt(
                 _RYDBERG_ENERGY_EV / upper_binding_ev
             )
             stark_sum = (
@@ -6622,59 +8957,114 @@ def metal_line_mass_absorption_coefficient(
                 + lower_effective_n * (lower_effective_n - 1.0)
             )
             frequency_scale = (
-                stark_sum * ionic_microfield_scale / 1.385
+                stark_sum * ionic_microfield_scale / 1.385 / core_charge
             )
+            static_half_window = (
+                30.0 * frequency_scale * center_cm**2 / LIGHT_SPEED * 1.0e8
+            )
+            upper_manifold = lower_manifold = None
+            if (
+                quasistatic_series_rate is None
+                and linear_stark_profile == "manifold"
+            ):
+                upper_manifold = rydberg_stark_manifold(
+                    atomic_database, ion, upper_level
+                )
+                lower_manifold = rydberg_stark_manifold(
+                    atomic_database, ion, lower_level
+                )
+                microfield_correlation = (
+                    np.clip(
+                        0.09 * np.maximum(ionic_microfield_charge_sum, 0.0) ** (1.0 / 6.0)
+                        / np.sqrt(atmosphere.temperature),
+                        0.0,
+                        0.8,
+                    )
+                    if rydberg_correlated_microfields
+                    else np.zeros(atmosphere.n_depth)
+                )
+                upper_critical_beta = hydrogenic_critical_microfield_beta(
+                    np.maximum(ionic_microfield_charge_sum, np.finfo(np.float64).tiny),
+                    max(1.0, float(upper_effective_n)),
+                    core_charge,
+                )
+                if upper_manifold is not None:
+                    # No bound-state component lies beyond the largest shift at
+                    # the critical field; 30 impact widths cover the Voigt
+                    # wings of the outermost components.
+                    critical_coupling = np.log(np.maximum(
+                        upper_critical_beta * ionic_microfield_scale
+                        * _STARK_COUPLING_PER_MICROFIELD_SCALE,
+                        _STARK_MANIFOLD_FIELD_HZ[0],
+                    ))
+                    log_field = np.log(_STARK_MANIFOLD_FIELD_HZ)
+                    maximum_shift = np.interp(
+                        critical_coupling, log_field, upper_manifold.maximum_shift_hz
+                    )
+                    if lower_manifold is not None:
+                        maximum_shift = maximum_shift + np.interp(
+                            critical_coupling, log_field, lower_manifold.maximum_shift_hz
+                        )
+                    static_half_window = (
+                        1.02 * maximum_shift * center_cm**2 / LIGHT_SPEED * 1.0e8
+                        + 30.0 * np.maximum(gaussian_sigma, lorentz_hwhm)
+                    )
             for depth in range(atmosphere.n_depth):
-                local_scale = frequency_scale[depth]
-                static_half_window = (
-                    30.0 * local_scale * center_cm**2
-                    / LIGHT_SPEED * 1.0e8
+                local_scale = float(frequency_scale[depth])
+                sigma = float(gaussian_sigma[depth])
+                hwhm = float(lorentz_hwhm[depth])
+                mixing = (
+                    1.0 if stark_mixing is None or quasistatic_series_rate is not None
+                    else float(stark_mixing[depth])
                 )
                 half_window = max(
                     METAL_LINE_MINIMUM_HALF_WINDOW_ANGSTROM,
-                    10.0 * gaussian_sigma[depth],
-                    100.0 * lorentz_hwhm[depth],
-                    static_half_window,
+                    10.0 * sigma,
+                    100.0 * hwhm,
+                    float(static_half_window[depth]),
+                    float(resonance_half_window),
                 )
                 start = int(np.searchsorted(wavelength, center - half_window))
                 stop = int(np.searchsorted(
                     wavelength, center + half_window, side="right"
                 ))
-                if stop <= start:
+                if stop - start < 2:
                     continue
                 selected_wavelength = wavelength[start:stop]
-                impact_profile = _pseudo_voigt_profile_per_angstrom(
-                    selected_wavelength,
-                    center,
-                    float(gaussian_sigma[depth]),
-                    float(lorentz_hwhm[depth]),
-                )
-                combined_profile = impact_profile
-                if local_scale > 0.0:
-                    selected_cm = selected_wavelength * 1.0e-8
-                    frequency = LIGHT_SPEED / selected_cm
-                    beta = np.abs(frequency - LIGHT_SPEED / center_cm) / local_scale
-                    static_profile = (
-                        _metal_holtsmark_microfield_distribution(beta)
-                        / (2.0 * local_scale)
-                        * LIGHT_SPEED / selected_cm**2 * 1.0e-8
+
+                if upper_manifold is not None:
+                    combined_profile = manifold_quasistatic_line_profile(
+                        selected_wavelength, center, sigma, hwhm,
+                        float(ionic_microfield_scale[depth])
+                        * _STARK_COUPLING_PER_MICROFIELD_SCALE,
+                        upper_manifold, lower_manifold,
+                        float(upper_critical_beta[depth]),
+                        float(microfield_correlation[depth]),
+                        core_charge,
+                        half_window,
                     )
-                    combined_profile = np.maximum(
-                        impact_profile, static_profile
+                    # Normalized analytically to unit bound strength.
+                    area = 1.0
+                else:
+                    combined_profile = _quasistatic_line_profile(
+                        selected_wavelength, center, sigma, hwhm, local_scale, mixing,
+                        half_window,
                     )
-                area = trapezoid(combined_profile, selected_wavelength)
+                    # The normalization is a property of the line, not of the
+                    # requested wavelengths: integrate over its full support.
+                    area = _quasistatic_line_profile_area(
+                        center, sigma, hwhm, local_scale, mixing, half_window
+                    )
                 if not np.isfinite(area) or area <= 0.0:
                     continue
-                combined_profile = combined_profile / area
                 selected_cm = selected_wavelength * 1.0e-8
-                cross_section = (
+                result[start:stop, depth] += (
                     integrated_cross_section
                     * line.absorption_oscillator_strength
+                    / area
                     * combined_profile
                     * 1.0e8 * selected_cm**2 / LIGHT_SPEED
-                )
-                result[start:stop, depth] += (
-                    cross_section * population_factor[depth]
+                    * population_factor[depth]
                 )
         elif is_mg_resonance and mg_he_red_wing_table is not None:
             # The unified red wing must be enveloped depth by depth, so retain
@@ -6692,7 +9082,7 @@ def metal_line_mass_absorption_coefficient(
                 ))
                 ordinary_cross_section = np.empty(0, dtype=np.float64)
                 if stop > start:
-                    profile_lambda = _pseudo_voigt_profile_per_angstrom(
+                    profile_lambda = _voigt_profile_per_angstrom(
                         wavelength[start:stop],
                         center,
                         float(gaussian_sigma[depth]),
@@ -6741,6 +9131,32 @@ def metal_line_mass_absorption_coefficient(
             batch["population_scale"].append(population_factor)
             if len(batch["center"]) >= 2_048:
                 flush_profile_batch(batch_key)
+            if replacement_key == "CaI":
+                reference_scale = np.minimum(
+                    helium_density / ca_i_reference_density, 1.0
+                )
+                helium_hwhm_per_density = np.divide(
+                    center_cm**2 * helium_collision_rate
+                    / (4.0 * PI * LIGHT_SPEED) * 1.0e8,
+                    helium_density,
+                    out=np.zeros(atmosphere.n_depth),
+                    where=helium_density > 0.0,
+                )
+                reference_batch = ordinary_profile_batches["CaI_reference"]
+                reference_batch["center"].append(center)
+                reference_batch["integrated_strength"].append(
+                    integrated_cross_section * line.absorption_oscillator_strength
+                )
+                reference_batch["gaussian_sigma"].append(gaussian_sigma)
+                reference_batch["lorentz_hwhm"].append(
+                    lorentz_hwhm
+                    + helium_hwhm_per_density
+                    * np.maximum(ca_i_reference_density - helium_density, 0.0)
+                )
+                reference_batch["minimum_half_window"].append(resonance_half_window)
+                reference_batch["population_scale"].append(
+                    np.where(reference_scale < 1.0, population_factor * reference_scale, 0.0)
+                )
     for batch_key in ordinary_profile_batches:
         flush_profile_batch(batch_key)
     if mg_ii_he_profile_table is not None and "Mg" in line_abundances:
@@ -6816,7 +9232,26 @@ def metal_line_mass_absorption_coefficient(
                 / atmosphere.mass_density[np.newaxis, :]
             )
             ordinary_opacity = replacement_ordinary["CaI"]
-            unified_with_core = np.maximum(unified_opacity, ordinary_opacity)
+            # Inside the published density range the unified profile is the
+            # complete line, core included, so it replaces the impact profile.
+            # Below the least-dense calculation the table is scaled linearly
+            # (binary collisions).  That scaling is right for the wings but
+            # not for the impact core, whose width shrinks with density.  The
+            # line is then the local impact profile plus the part of the
+            # unified profile beyond impact theory: unified(n_min) minus the
+            # impact profile at n_min, both scaled by n/n_min.  This is
+            # continuous at n_min and recovers impact theory as n -> 0.
+            below_table = helium_density < ca_i_reference_density
+            unified_with_core = np.where(
+                below_table[np.newaxis, :],
+                np.maximum(
+                    unified_opacity
+                    + ordinary_opacity
+                    - replacement_ordinary["CaI_reference"],
+                    0.0,
+                ),
+                unified_opacity,
+            )
             if ca_i_he_profile_table.temperatures.size:
                 valid_temperature = (
                     (atmosphere.temperature >= ca_i_he_profile_table.temperatures[0])

@@ -23,11 +23,18 @@ from .stellar import (
     compute_dz,
 )
 from .selection import PhysicsSelection, PhysicsSelectionPolicy, select_physics
+from .daz import DAZConfig, compute_daz
+from .dq import DQConfig, compute_dq
 from .automatic import ModelRun, run_model
 
+from .hot import DOConfig, DAOConfig, compute_do, compute_dao
+
 __all__ = [
+    "DOConfig", "DAOConfig", "compute_do", "compute_dao",
     "AtmosphereConvergenceWarning",
     "DAConfig",
+    "DAZConfig",
+    "DQConfig",
     "DABConfig",
     "DBConfig",
     "DZConfig",
@@ -42,6 +49,8 @@ __all__ = [
     "Quality",
     "atmosphere_convergence_status",
     "compute_da",
+    "compute_daz",
+    "compute_dq",
     "compute_dab",
     "compute_db",
     "compute_dz",
@@ -50,3 +59,12 @@ __all__ = [
     "numerical_resolution",
     "save_model_result",
 ]
+
+from .pg1159 import PG1159Config, compute_pg1159
+__all__ += ["PG1159Config", "compute_pg1159"]
+
+from .d6 import D6Config, compute_d6
+__all__ += ["D6Config", "compute_d6"]
+
+from .dah import DAHConfig, compute_dah
+__all__ += ["DAHConfig", "compute_dah"]

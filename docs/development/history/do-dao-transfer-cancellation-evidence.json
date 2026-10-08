@@ -1,0 +1,1121 @@
+{
+  "scope": "NLTE-scoped transfer arithmetic correction after initial 0.1.4 publication; original LTE arithmetic retained. Universal preliminary candidate failed molecular7500 and was not published. Two additional fresh public cold runs, unchanged stellar parameters/physics/budgets/tolerances. Fixed-state seven-model comparisons are explicitly not cold starts.",
+  "parent_commit": "3da7f04f88d1332937d477ce451f3d03dc1b1555",
+  "corrected_source_sha256": {
+    "_stable_feautrier.py": "15ee2e3f4fd81cdd73adab93206834208b17bfc43840ed2605b976cd958e23cc",
+    "_mass_feautrier.py": "222bf6f7513a62b4a27d797308decb4e2506c27d20e846548c58f714fdc457da",
+    "_hot_response.py": "d6f0a343c1767aebc352d2473f274b6b80b993628698ec72b11ce17b948350d7",
+    "hot_nlte.py": "ddc02728eef27e929b8dc4e9c556345c91b0a833905079fb5b09abca7afe5bb8"
+  },
+  "full_suite": {
+    "status": "passed",
+    "inputs_unchanged_during_run": true,
+    "identity": "9bf9e89fb35f4898b363437802e3d1b6d6f62f063460bd5abb21e65b602e3d6a",
+    "report_sha256": "2e1ff3ea9f106864a68db0acbfc92de6bc8a0cb596735e81427f920fc91340c4",
+    "tasks": {
+      "fast/components": {
+        "status": "passed",
+        "elapsed_seconds": 244.878021708,
+        "returncode": 0
+      },
+      "fast/cool-components": {
+        "status": "passed",
+        "elapsed_seconds": 7.858758624999999,
+        "returncode": 0
+      },
+      "spectra/da-3000": {
+        "status": "passed",
+        "elapsed_seconds": 11.242316416999984,
+        "returncode": 0
+      },
+      "spectra/da-4000": {
+        "status": "passed",
+        "elapsed_seconds": 21.03629779099998,
+        "returncode": 0
+      },
+      "spectra/da-5000": {
+        "status": "passed",
+        "elapsed_seconds": 20.199380167000015,
+        "returncode": 0
+      },
+      "spectra/da-20000": {
+        "status": "passed",
+        "elapsed_seconds": 8.140582208000012,
+        "returncode": 0
+      },
+      "spectra/db-10000": {
+        "status": "passed",
+        "elapsed_seconds": 2.69984791600001,
+        "returncode": 0
+      },
+      "spectra/db-22000": {
+        "status": "passed",
+        "elapsed_seconds": 2.0895403339999916,
+        "returncode": 0
+      },
+      "spectra/dab-9000": {
+        "status": "passed",
+        "elapsed_seconds": 17.72097879200004,
+        "returncode": 0
+      },
+      "spectra/dab-20000": {
+        "status": "passed",
+        "elapsed_seconds": 15.618083249999984,
+        "returncode": 0
+      },
+      "spectra/dz-pg1225": {
+        "status": "passed",
+        "elapsed_seconds": 11.9030305,
+        "returncode": 0
+      },
+      "spectra/dz-j0738": {
+        "status": "passed",
+        "elapsed_seconds": 11.864866415999984,
+        "returncode": 0
+      },
+      "spectra/daz-g149-28": {
+        "status": "passed",
+        "elapsed_seconds": 6.872453291999989,
+        "returncode": 0
+      },
+      "spectra/daz-galex1931": {
+        "status": "passed",
+        "elapsed_seconds": 12.286582625000051,
+        "returncode": 0
+      },
+      "spectra/dq-j1235": {
+        "status": "passed",
+        "elapsed_seconds": 3.5343517919999954,
+        "returncode": 0
+      },
+      "cold/db-10000": {
+        "status": "passed",
+        "elapsed_seconds": 427.994146166,
+        "returncode": 0
+      },
+      "cold/db-22000": {
+        "status": "passed",
+        "elapsed_seconds": 265.322466208,
+        "returncode": 0
+      },
+      "cold/db-22000-standard": {
+        "status": "passed",
+        "elapsed_seconds": 332.75946975,
+        "returncode": 0
+      },
+      "cold/da-5000": {
+        "status": "passed",
+        "elapsed_seconds": 278.267687917,
+        "returncode": 0
+      },
+      "cold/da-20000": {
+        "status": "passed",
+        "elapsed_seconds": 241.891735542,
+        "returncode": 0
+      },
+      "cold/da-3000": {
+        "status": "passed",
+        "elapsed_seconds": 385.9598421669998,
+        "returncode": 0
+      },
+      "cold/da-4000": {
+        "status": "passed",
+        "elapsed_seconds": 367.75573375,
+        "returncode": 0
+      },
+      "cold/dq-j1235": {
+        "status": "passed",
+        "elapsed_seconds": 1233.874132417,
+        "returncode": 0
+      },
+      "cold/dab-20000": {
+        "status": "passed",
+        "elapsed_seconds": 811.815927458,
+        "returncode": 0
+      },
+      "cold/dense-db-5000": {
+        "status": "passed",
+        "elapsed_seconds": 640.7853742499997,
+        "returncode": 0
+      },
+      "cold/dense-db-8000": {
+        "status": "passed",
+        "elapsed_seconds": 1245.0081313750002,
+        "returncode": 0
+      },
+      "cold/molecular-dab-7500": {
+        "status": "passed",
+        "elapsed_seconds": 1879.8421453330002,
+        "returncode": 0
+      },
+      "cold/molecular-dab-9000": {
+        "status": "passed",
+        "elapsed_seconds": 1797.8279673750003,
+        "returncode": 0
+      },
+      "cold/molecular-dab-10000": {
+        "status": "passed",
+        "elapsed_seconds": 1005.9812517500004,
+        "returncode": 0
+      },
+      "cold/daz-g29-38": {
+        "status": "passed",
+        "elapsed_seconds": 409.57086479200007,
+        "returncode": 0
+      },
+      "cold/daz-g149-28": {
+        "status": "passed",
+        "elapsed_seconds": 261.90959637500055,
+        "returncode": 0
+      },
+      "cold/daz-galex1931": {
+        "status": "passed",
+        "elapsed_seconds": 1001.6741482079997,
+        "returncode": 0
+      }
+    }
+  },
+  "unit_components_python312": {
+    "passed": 1070,
+    "skipped": 6,
+    "deselected": 29,
+    "elapsed_seconds": 175.42
+  },
+  "installed_wheel": {
+    "filename": "openwd-0.1.4-cp39-cp39-macosx_11_0_arm64.whl",
+    "sha256": "af9f4dc5558c26261a54adcc553fe7aa3f4edcc36adc995a8ad1868c114bd10c",
+    "passed": 140,
+    "elapsed_seconds": 96.69,
+    "native_accelerator_verified": true
+  },
+  "fixed_state_spectra": {
+    "scope": "Fixed-state regression only: these are not new cold-start passes.",
+    "cases": [
+      {
+        "name": "do-50000-standard-fresh-release",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 0.0,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.100497869406139e-15,
+        "after_source_closure": 1.100497869406139e-15,
+        "transfer_seconds": [
+          1.0560807089999997,
+          1.1293043750000002
+        ]
+      },
+      {
+        "name": "do-60000-standard-baseline",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 0.0,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.1304111365512766e-15,
+        "after_source_closure": 1.1304111365512766e-15,
+        "transfer_seconds": [
+          1.0516187079999995,
+          1.1275162919999993
+        ]
+      },
+      {
+        "name": "do-70000-standard-baseline",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 0.0,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.1502426826938709e-15,
+        "after_source_closure": 1.1502426826938709e-15,
+        "transfer_seconds": [
+          1.095910374999999,
+          1.1697517499999996
+        ]
+      },
+      {
+        "name": "dao-60000-standard-baseline",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 0.0,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.3141758507903374e-15,
+        "after_source_closure": 1.3141758507903374e-15,
+        "transfer_seconds": [
+          1.1796427500000064,
+          1.2329773749999973
+        ]
+      },
+      {
+        "name": "gd153-standard-baseline",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 4.440892098500626e-16,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.190259403606253e-15,
+        "after_source_closure": 1.190259403606253e-15,
+        "transfer_seconds": [
+          1.1877690419999993,
+          1.3510014159999955
+        ]
+      },
+      {
+        "name": "gd153-production-h8-baseline",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 0.0,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.431469713160895e-15,
+        "after_source_closure": 1.431469713160895e-15,
+        "transfer_seconds": [
+          3.5114579159999977,
+          3.5559558329999987
+        ]
+      },
+      {
+        "name": "gd153-production-h20-baseline",
+        "wavelength_count": 18901,
+        "maximum_relative_surface_flux_change": 0.0,
+        "maximum_relative_optical_flux_change": 0.0,
+        "before_source_closure": 1.5290198493368308e-15,
+        "after_source_closure": 1.5290198493368308e-15,
+        "transfer_seconds": [
+          3.5730406250000044,
+          3.589252000000002
+        ]
+      }
+    ]
+  },
+  "cold_cases": [
+    {
+      "name": "do-50000-scoped-release",
+      "config": {
+        "effective_temperature": 50000.0,
+        "logg": 8.0,
+        "quality": "standard",
+        "maximum_helium_ii_level": 32,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "elapsed_seconds": 5224.454957459,
+      "cold_start": true,
+      "checkpoint_inputs": [],
+      "source_sha256": {
+        "eos.py": "92a67176b4964b717318a1871aa5726b182230e20d22641a95198077e978a488",
+        "_material_response.py": "32cef3f3304f4537a3fcef3ce919f783f4b322a8d8080e0cb5a3070fe490ef87",
+        "_stable_feautrier.py": "15ee2e3f4fd81cdd73adab93206834208b17bfc43840ed2605b976cd958e23cc",
+        "hot_nlte.py": "ddc02728eef27e929b8dc4e9c556345c91b0a833905079fb5b09abca7afe5bb8",
+        "nlte.py": "435255bbff91088f47d94aeab92954f6d83128cf15f03adae7a5392f53b4e9be",
+        "nonlinear.py": "bf5b74f7f8c8e843a1e9598c9b1ac6c25062064bb604b210453c619c44f09b70",
+        "mixture.py": "7a6717f766caf82d69d95c34c06d5327897e34190a388aba8de3a03d5175d580",
+        "_mixed_molecules.py": "65aee9641e88b9a0454a6cb87b30c64cb353cd17dc1b43c84fcc367ed732a4d9",
+        "_ml2_auxiliary.py": "ee8feae497fd8fdf64dbec16c45f17c8b5b3076e0717ba67843dbd8345ac4b22",
+        "helium_stark.py": "be62a92e248e538eb52286562b4f72df420cd7f23c125d11bc0be76c9f8f7d53",
+        "cool_da.py": "737c76766369d5762ee1796a7b237adb49feccf37d80628d56862b8027d31330",
+        "_convergence.py": "fb49244e9828fcd8cabc32386bf718073e9ae8cbfc6e539f90a39898e1656c42",
+        "hydrogen_self.py": "da6d718eee8b147f431b6297ba80c97a8d616c95683a67d680dff7a69d0214e1",
+        "c2_overlap.py": "0088bd515f1d2a85d86d72dd9d74456cc7c843453f0358d0795ec1b949e82a2b",
+        "helium_neutral.py": "4bf2c6b005b15c174f70bd891313b5ff366cc87e58ad5e1cd967c1e7a94ad2a0",
+        "_thermal_conditioning.py": "e1ab00a4cf768f4697442da7d816deb2348ca1a97ceded065be00c4b8a6ec207",
+        "_energy_balance.py": "1b1a27d3deea8587e39d27f2f68021d365b1e68019185db9604ad6c12b0e5575",
+        "c2_profiles.py": "91f9e8b56bc6d544ccc7d2eb9df2bd4324c3006ff287cf64dab77a57968abe34",
+        "constants.py": "2cef8b5a7cc2294b1fdfeb1f688162f0418d42fe6ef41446f2f4923e281947cf",
+        "helium_ii_stark.py": "5ad40303370008ee4f9c6fefc8e8947e23c343e6055a3b5707a0bed1cd7c6353",
+        "dense_eos.py": "e40aa3f426408e8243c2b8735cf179265db94caec39db747c913ce82513111d8",
+        "_spectrum_source.py": "b0f3cf15a5f8e6711782462bf4b1629f1ef7c977b437714366d9b81ea9aad34c",
+        "helium.py": "cc1eb66d19dfbf828935dc14813548d67c42c8b78c9007f5bd7554f4d3857f63",
+        "_nlte_radiative_integrals.py": "e1f974df4c583421819b402ab1ed23aa0d4daf64ccdc7633c846ebe7804b60f0",
+        "conduction.py": "bc44c9cad575bbc3862f3e43d9db5fa495fbbd78e36f3db8ee481050a251250c",
+        "__init__.py": "29f8b1dde67f03b89fe37352f62b7706029a4e80b05a0e7f2c92214d1b636d27",
+        "cool_metal_nlte.py": "b7250a2cfb986eeb27f4c48969edc5f64754cc2b94ab0abdc22c3aa716fd4903",
+        "helium_collisions.py": "92fe00945731ed0d83dcec7721d02a98ae79692ef5a71c054fd73abe15fc62a6",
+        "metals.py": "9948a69bfb7c7db676194781205b4bc4c88dbcb8c9ef8c2e2f8cfc423a71cff6",
+        "gaunt.py": "81aecb56fdf676440ec363697fbb5235cee3d96f770cae1a64cf260de868f907",
+        "radiative_transfer.py": "4673ebcf2011fbfa682a3c8c375586210c0837be96672a7d18e0bb9d87554510",
+        "stark.py": "d2821a76e7af79d64fd27d20b542a34c6137138fd1b0919409fb5059ef3eddbd",
+        "chianti.py": "0901be4909cb378361a82a5ddc50325f3ae074d261bea7d322b6035b3df80f84",
+        "_monotone_formal.py": "37629dc8d10745014487111f0e795e4e8380a6794d219345d853cdf6358afec8",
+        "spectrum.py": "5a0dbc073151fe45c843dac04c100bd2d47995f59b4ecd19e5835e7daac8a702",
+        "_hot_response.py": "d6f0a343c1767aebc352d2473f274b6b80b993628698ec72b11ce17b948350d7",
+        "_mass_feautrier.py": "222bf6f7513a62b4a27d797308decb4e2506c27d20e846548c58f714fdc457da",
+        "opacity.py": "206dd7a267634a4ca667ee141651a848f1547a67056fb9f6191ce380bd827795",
+        "_hot_rates.py": "41018adcd1136b3748774a2797ab61c9e994ce041243b98b6f9b17043adedb1c",
+        "helium_nlte.py": "d00b83e2ca4e0467f405956e00342afd5a343977c390889373973e8c36a5d219",
+        "_mixed_cia.py": "2bed1c691ed16b5e446087548034d7a82a6f5e9ebbee95a96371faf32e5617a1",
+        "molecules.py": "54b82cedd72740640cba63a08f8b5560a7f119cbc73ca4189f7a4a84e2e805ff",
+        "dense_helium_continuum.py": "8e7fd2b76aa66210e740f8d4b3ab9d7e7770b7b5bcaf3380d38c383a25ce4e9e",
+        "quasimolecular.py": "816317eae60f536bb5d4ac3e19145cd84db70bd151942267d7470fcde3882b7e",
+        "_linear_scattering.py": "b938d32bdb55383c1e7a4dd251622b907394fe59490fe03d8aeb06035880a119",
+        "_domain.py": "727b2b17f53cee009c637820b72a21999fa08f875cae26bab4e67768ddcb3b2a",
+        "_compat.py": "f7b61243c0e2e72a6c9a8f03c718679278f5fe6dc08cafb10228c9a04cb38b66",
+        "convection.py": "d99718d95607b2acfc3d8f2505bae3376a592971921cf602fa629136501313d9",
+        "nlte_core.py": "3a1ca23b90932d6f3fe328c62155e45befbf684621cfc73b0497d0bd58ffefbe",
+        "_hot_recovery_fresh.py": "900bd510f0db514903ecefcbba4212957527c4908fb71b049ca4f24c894ced70",
+        "atmosphere.py": "fc61cf2e616cb3e2f222c79b65dbd1dff9598f53ff4842febe44f54fe223e257",
+        "helium_molecular.py": "7589f8ae88ea63987d4f0df92f7a7f5f9c1372903aad23b8be97a90f0218abe0",
+        "carbon_molecular.py": "8f13a04e5c940b87e4c53ab4fa28c4b370fd55643dc7a677702e8e6b76a677e1",
+        "_hot_recovery.py": "add58f4bd3470471d273c7c350a54d3ab7906fcb0a77fbd79855daea9f717057",
+        "multilevel_nlte.py": "a7c4d012de695f7ba6581cfe91954ffb63ef18358bda60a475500f61f5694f30",
+        "_rosseland.py": "63cce2717885c7d21b169efbb9cb91c13eaf92f3bf16c88175d84224a7cb2d4b",
+        "_hot_structure.py": "18e3b95f1e8058ec46ee865f48625a2569369f5b115037f989f029878667a934",
+        "adaptive_structure.py": "9ad9dbccc2ab5fdfe5ccd9bda2da1768a4d6e8fd617ca3e543142bb3f98fb222",
+        "_dq/dq_augmented_probe_reuse.py": "e13e9326612b1162f84ba4f2203f31e34e6cfaf95f19f2cae53be43851a28220",
+        "_dq/c2_ca.py": "3e20f74502d71e97f4ffba76ffe46070b48bc4e440055e6db47a8d7396854450",
+        "_dq/worker.py": "9b96af39ae94b3bc9534c31e93180684f1e98136f02c4f35b55a09be75c98f80",
+        "_dq/dq_refined_convection_cold.py": "3cc60d76f3a43368ea54ee6838308e9a9baca9e6adc2f3523b7ff87ca40fc2b7",
+        "_dq/dq_thermal_manifold.py": "114efd821630eec2ec3adb919d224e252a95f3e6d267eb25eba981ad83cf4e8d",
+        "_dq/dqsolution_sampling_cold.py": "9f6ef498c9ed83bb5ab5314cacd275be41254fbde5c43350df7822fdf15987a4",
+        "_dq/scaled_ml2_compatibility.py": "f87a93ee2012ae598d083ac500a36a9af534c07b70eee1f203e8e7f5c2a4c479",
+        "_dq/planck_remainder.py": "ab15f69b270e4565f2d6696b9c5ca9ab0da2ce45e0ea9f00058ace4abdec1647",
+        "_dq/dq_augmented_current_norm.py": "439605aedcef370291b6560d9762678d2363b6dfc3e80fdc6e45c4bda767a042",
+        "_dq/dq_hornkohl_gated_energy.py": "37dff9c10393b33467331e9e3e405dcf3952fe315b504e1ced78b2ec9afc1c2f",
+        "_dq/dq_refractive_finite_volume.py": "e152f921236d9ca5e36381dfbd3fabdf8452bbcca7a5b0220139c5f1e0bad23e",
+        "_dq/dq_bounded_helium_lines.py": "276740ccf09bda884579e181cc1bc589e8609db1fabd5efbe0f1195d7ebc745e",
+        "_dq/dq_bounded_carbon_lines.py": "8bb03c0b309665c0bab786a6b2f4bbdff9419619409912902c71a348e1579841",
+        "_dq/dq_eos_knot_tangent.py": "61c0c90391955b7e1c10616b193ff2d0784ebf13066fca859a9bbc043afdb453",
+        "_dq/dq_eos_corner_subspace.py": "59974dac786ce55d7a9064776d409c69e458fe0b4d731cb1206be9fd883a5e1d",
+        "_dq/dq_pair_virial_quadrature.py": "3c085308bc85c49cf19d283f5cfcf155d6625fedda5811cbd8ccc5728ff8b7bc",
+        "_dq/inexact_thermal.py": "ab3822ed9490745213579e2bd2bf78bb07a57723b4e59910bc9b81624bc02bf8",
+        "_dq/measured_proposal_guard.py": "92675c2ba1de77148cd822823fb98e0844e3b2e024dc710b8c86a478222d617a",
+        "_dq/thermal_balance.py": "813622806aa1a2dc2cc0628352831ce3f0f23f1dc39e362683303137d36c0155",
+        "_dq/__init__.py": "6349a31af621111fbbeed9d7e13a42f011ff8079260e5353cf6bc688dad52959",
+        "_dq/swan_strength_cache.py": "7f5ca10d5e343564baa336c57d38c3b3fce662e7421b1aa730a37c79aa52e608",
+        "_dq/dqsolution_sampling.py": "5502c98f45a97d6a8dce6d66992c51e9889c65df84947ff9f4a3bd19defc1103",
+        "_dq/runtime.py": "e14612d61e722264d89272b0d85d8f87dbb6fe7e061ce5e437fae8063806c707",
+        "_dq/dq_exact_opacity_cache.py": "a4c5f0ede6877eac18b7bb1cfb88100270695701c2ba691eb856a6f342391d0c",
+        "_dq/dq_hornkohl_bounded_energy.py": "bbbfc15e7e16284012e9249da2e0bff17dbd392776877961e6d81f4184f41b48",
+        "_dq/dq_thermal_corner_experiment.py": "c54a0b77f9c0188ac1b064825c3e810328ac525dab38502c2f0ade74199d3ab9",
+        "_dq/dq_augmented_convection.py": "7c36d4cf66a5694b0a6569b7deaea7fdb4f9fb1d4e953c2edea4c16a8392c53f",
+        "_dq/dq_current_energy_experiment.py": "e5bdd62572a2ad0ac70ef5d85e491430e0abb232cdd9c5d3d8a5389e86016728",
+        "_dq/dq_reos_secant_response.py": "4ee717d9c9f120d5a0a9bd8e6683ff26110bf235ddf7d7d62529ceb6be51c3d8",
+        "_dq/dq_swan_depth_integral.py": "a653ed7fd43ba3ef06b919658795642094955262623d4192131c4d5fb478111c",
+        "_dq/dq_dense_continuum_inputs.py": "0f176371748b92560f138109194208a7360c6e640e8109023c6d05e446074475",
+        "_dq/dq_augmented_material_scaling.py": "4fe8ce911ca2c96abaddf7eecc2ce7b2c39273cad3d6e3f9a451ba119390d257",
+        "_dq/dq_internal_domain_proposal.py": "af1394f57ea8ad73312ea0509c5e20cca2a49ce74e1ecdf33beb858bece5f620",
+        "_dq/dq_uv_sampling_experiment.py": "ddf708690c440ad855c13f9f20f7723492e70237236c20be4d76a8cdd4b54c68",
+        "_dq/dq_refractive_material.py": "e785894dfd730889bcd027c045724b3a6f15ae9378204a85dcec40877e4473ec",
+        "_dq/convective_consistency_experiment.py": "a6dbe9331762670184ca2ae265e03909ed7da300a310570717c0fe00556896e5",
+        "_dq/dq_thermal_corner_trial.py": "b4fa3c6dea7aa5ce92a9703ab6bb1cecac4e458c5d5e25d741623fb8bf6d7095",
+        "_dq/dq_hornkohl_consistent.py": "fb8e0df1fd33e76027725d86257f9396ab0c1f7485f90a45998ce47fbdd805fc",
+        "_dq/superadiabatic.py": "8339ca42b6688bd2642ca177c1a6039d3631f657459c74ca103c3a4c6c76869b",
+        "_dq/nonlinear_material_model.py": "fb0b49f4958d4dccd09e9ea5f78f0d9711f1ebe0de0a188cd01f6384ffa080c8",
+        "_dq/automatic_conditioning.py": "7f9fb13ed77d88cc9ff37f52967dc3c548ea7219ec88dd0a53b0eb131f1df594",
+        "_dq/dq_finite_material_coordinates.py": "411955491b9d5411a99f1182f04bd607bcc60359870f4d884b6afb7dc7ac8ae8",
+        "_dq/provenance.py": "f8d4e8c4103a857fbb5d4a4fa59f182e71fbc82bd30ddc416c224e59cc04b43a",
+        "_dq/phase_energy_scale.py": "31adda30ece190c90257cf194a1492537637ae0f59993a0d7b05748529d387a2",
+        "_dq/dq_eos_knot_search.py": "ffd374050ca7ca8d579a839995f4bd10b2bdefa9003bc40a4a6e596baf4674d6",
+        "_dq/dq_eos_knot_model.py": "e634ff8826e239326b4865b7cbead730123341340f3388edf2d8c2f4efae70e0",
+        "_dq/dq_augmented_conditioned_cold.py": "cfc0fa68695fc5a8104b387e0cf6b055d87d16cef0fc015b20169bba308769cd",
+        "_dq/dq_refractive_material_coordinates.py": "876032a2f619b414ec32524b86ddc82ee87b4f4b5f8101c283a376226f4e5282",
+        "_dq/continuum_batches.py": "6a5f7c16c0c37340d56fc89f4ffba1ca3a2a3250b2c1a39b07499e106d1ae4ba",
+        "_dq/dq_refractive_ray_bundles.py": "9fb1494a9e74edbf2ebd1dae4b7f933f74e97b8973c1adfad257a8dc444aec28",
+        "_dq/dq_hornkohl_cell.py": "5ffad0b967d01bedf16644de1b9e8f9b9ff34003979c813fd4c63acf97687ff7",
+        "_dq/dq_reos_secant_thermodynamics.py": "86566314dabad54e36371d868d759f142f2d2cbe88833fd21ce650ae7d6d73c6",
+        "_dq/dq_hornkohl_cell_energy.py": "adbc4c4dd49509ec1cf5f6bbcc7d5faeb18f7383e86cf48061c473ee454bf5b4",
+        "_dq/base.py": "6b81a4c4f3585986930a40b4b29da1d5098167e060ea3652ae26b792099a1c9e",
+        "_dq/dq_refined_convection.py": "a9df1d310b43afddcc00af81e9de4750d53dc4ac271eec04e9670d616596467e",
+        "_dq/data.py": "9f75b603386490c1660687be6e899b2ee367ee4aec173e3869685689dc715d0b",
+        "_dq/dq_explicit_gradient.py": "8231088272f227da52c81a43a658193ea8e1e5f3313723d0b1477333e87aca69",
+        "_dq/validation.py": "b49241657229d31009f9445236b0ce4138e78aea2b9b488ad988e034d6fbb2f8",
+        "_dq/dq_refractive_fv_response.py": "cac39d967320fdecf4c05e62a61d6c12f60702e1fab1ec57d252057812893ea1",
+        "models/automatic.py": "9e712f4caedfcbb3355e60297f44720c9800d54e0a3ad472ad92d71c597f206b",
+        "models/__init__.py": "d9463a0ee4d3738f761a31ee7970e748fbd0943e77e6bd3cfb59ff61d01ad8e9",
+        "models/dq.py": "dea5aebcd9aec847064d1bc3244268bd52de0a68475a69aca45b2fd270d0d681",
+        "models/daz.py": "feb894f48e1d687a29378eb1cacfa7cd825bc68e33ec51072e3e8d5f314b71bf",
+        "models/cli.py": "cb7334ad76bc1ae0476bbddf14eec3442901a5211cc93765fda0564ae460a677",
+        "models/common.py": "9d8bed49921ab4ba585d95162273f013faf1e3f2c0b94985ad39c7c5427bf6a2",
+        "models/selection.py": "3feea504ac8be503bcc3b09a431ecc386986766bb6ae0659d05da944d98969d0",
+        "models/hot.py": "491c8b979a6e16c76217d2734f3d73cad55bb654bd79cc1b5b1a12a9b3960e6d",
+        "models/stellar.py": "9da2298473c1c3848460903a5c195a850c9b67f5e33ba9ac5e3db68aa0f3ceee",
+        "validation/koester.py": "e23700e6c953a4ba08aa2327b11f7dba31175cefabf47714df8ae15a98dd913a",
+        "validation/observed.py": "6b8a82368e15d7eed804adc5234526bdf7304c94f12bd3f1f338ac475a6147c5",
+        "validation/__init__.py": "351462fbd1bc8122f094188307b4d48f80d731546bb86fc69474cf66c94a4948"
+      },
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.4195311592857252e-12,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "local_energy": {
+            "value": 1.8744814150755806e-07,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.00015532589188221315,
+            "tolerance": 0.0003,
+            "passed": true,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 2.1756412297715476e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.7677948353818246e-14,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "failures": [],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "population_defect": 1.0128085837341508e-09,
+      "observed": {
+        "j034227": {
+          "name": "SDSS J034227.62-072213.2",
+          "legacy_comparison": {
+            "criterion": "sum of native-pixel profile chi-square over the same retained line windows",
+            "candidate_to_legacy_ratio": 0.9820253808539237,
+            "identical_retained_pixel_count": true,
+            "no_worse_than_legacy": true,
+            "newly_converged_atmosphere": true
+          },
+          "scores": {
+            "TMAP 2020": {
+              "chi_square": 725.8029495126345,
+              "retained_pixels": 828,
+              "mean_chi_square": 0.8765736105225055
+            },
+            "Legacy DO": {
+              "chi_square": 727.4529232686068,
+              "retained_pixels": 828,
+              "mean_chi_square": 0.8785663324500083
+            },
+            "Candidate": {
+              "chi_square": 714.3772340261537,
+              "retained_pixels": 828,
+              "mean_chi_square": 0.8627744372296542
+            }
+          },
+          "metrics": {
+            "TMAP 2020": {
+              "He II 4200": {
+                "normalized_rms": 0.03058863380801711,
+                "observed_noise_estimate": 0.024342805556238755,
+                "noise_corrected_rms": 0.018522751844478155,
+                "mean_residual": -0.0066831833438517705,
+                "observed_minimum": 0.939428090564227,
+                "model_minimum": 0.9334026154297195,
+                "observed_equivalent_width": -0.9938014701851948,
+                "model_equivalent_width": -0.20591316952550665,
+                "reported_noise_rms": 0.039710921968918414,
+                "inverse_variance_weighted_rms": 0.030193119533906132,
+                "mean_chi_square": 0.5802998843876456,
+                "retained_pixels": 124
+              },
+              "He I 4471": {
+                "normalized_rms": 0.03787044192329573,
+                "observed_noise_estimate": 0.02831871953817722,
+                "noise_corrected_rms": 0.025143995211258183,
+                "mean_residual": -0.011022380069796167,
+                "observed_minimum": 0.8297301533865281,
+                "model_minimum": 0.8401075645154803,
+                "observed_equivalent_width": 1.76550195821946,
+                "model_equivalent_width": 2.834531834238673,
+                "reported_noise_rms": 0.03886395349027609,
+                "inverse_variance_weighted_rms": 0.037603150429194376,
+                "mean_chi_square": 0.9394000771644384,
+                "retained_pixels": 96
+              },
+              "He II 4542": {
+                "normalized_rms": 0.037692952316017526,
+                "observed_noise_estimate": 0.03503442329703917,
+                "noise_corrected_rms": 0.013904957336915845,
+                "mean_residual": -0.01148114515762959,
+                "observed_minimum": 0.9307597128875797,
+                "model_minimum": 0.9671624089259522,
+                "observed_equivalent_width": 0.03383726001656021,
+                "model_equivalent_width": 1.0457263107107904,
+                "reported_noise_rms": 0.03818793364639856,
+                "inverse_variance_weighted_rms": 0.03681281504732778,
+                "mean_chi_square": 0.9351999791083999,
+                "retained_pixels": 86
+              },
+              "He II 4686": {
+                "normalized_rms": 0.033514062539661944,
+                "observed_noise_estimate": 0.025163984716090913,
+                "noise_corrected_rms": 0.022135181524458186,
+                "mean_residual": -0.011997878380705745,
+                "observed_minimum": 0.808434444782024,
+                "model_minimum": 0.7676403298716095,
+                "observed_equivalent_width": 4.1497607958403275,
+                "model_equivalent_width": 5.981089927435963,
+                "reported_noise_rms": 0.037594157537611125,
+                "inverse_variance_weighted_rms": 0.033472601564308334,
+                "mean_chi_square": 0.7953156308882972,
+                "retained_pixels": 143
+              },
+              "He II 5412": {
+                "normalized_rms": 0.043407929724252586,
+                "observed_noise_estimate": 0.034086449013091616,
+                "noise_corrected_rms": 0.02687679959786055,
+                "mean_residual": -0.01199754215328863,
+                "observed_minimum": 0.8699174441202476,
+                "model_minimum": 0.8846205932108337,
+                "observed_equivalent_width": 2.462513607243712,
+                "model_equivalent_width": 4.474852363862713,
+                "reported_noise_rms": 0.043184860147893946,
+                "inverse_variance_weighted_rms": 0.04360530865021734,
+                "mean_chi_square": 1.0343669982532964,
+                "retained_pixels": 136
+              },
+              "He I 5876": {
+                "normalized_rms": 0.04649571401126151,
+                "observed_noise_estimate": 0.04143595873494502,
+                "noise_corrected_rms": 0.021092954869646716,
+                "mean_residual": 0.012213575134732636,
+                "observed_minimum": 0.7746378303168713,
+                "model_minimum": 0.8256730727245546,
+                "observed_equivalent_width": 5.1659875899310395,
+                "model_equivalent_width": 3.369535440147496,
+                "reported_noise_rms": 0.05533725041207878,
+                "inverse_variance_weighted_rms": 0.04371409976204735,
+                "mean_chi_square": 0.6699417319120043,
+                "retained_pixels": 111
+              },
+              "He II 6560": {
+                "normalized_rms": 0.049887247541509666,
+                "observed_noise_estimate": 0.048003585302579636,
+                "noise_corrected_rms": 0.013579148182629968,
+                "mean_residual": -0.009920893169798755,
+                "observed_minimum": 0.8283067320242822,
+                "model_minimum": 0.8716169263070006,
+                "observed_equivalent_width": 3.6052225522818464,
+                "model_equivalent_width": 5.570446026416649,
+                "reported_noise_rms": 0.04605196550608012,
+                "inverse_variance_weighted_rms": 0.04931642391755584,
+                "mean_chi_square": 1.1702165076950817,
+                "retained_pixels": 132
+              }
+            },
+            "Legacy DO": {
+              "He II 4200": {
+                "normalized_rms": 0.028411736245113714,
+                "observed_noise_estimate": 0.024342805556238755,
+                "noise_corrected_rms": 0.014651094638731259,
+                "mean_residual": -0.006718878625746084,
+                "observed_minimum": 0.939428090564227,
+                "model_minimum": 0.998188622196319,
+                "observed_equivalent_width": -0.9938014701851948,
+                "model_equivalent_width": -0.20269109328718507,
+                "reported_noise_rms": 0.039710921968918414,
+                "inverse_variance_weighted_rms": 0.028229816877463176,
+                "mean_chi_square": 0.5072857153589325,
+                "retained_pixels": 124
+              },
+              "He I 4471": {
+                "normalized_rms": 0.04040418300411728,
+                "observed_noise_estimate": 0.02831871953817722,
+                "noise_corrected_rms": 0.028819231911143283,
+                "mean_residual": -0.014627090856041922,
+                "observed_minimum": 0.8297301533865281,
+                "model_minimum": 0.816544655913716,
+                "observed_equivalent_width": 1.76550195821946,
+                "model_equivalent_width": 3.192006823913665,
+                "reported_noise_rms": 0.03886395349027609,
+                "inverse_variance_weighted_rms": 0.0402657281771408,
+                "mean_chi_square": 1.0771426992333437,
+                "retained_pixels": 96
+              },
+              "He II 4542": {
+                "normalized_rms": 0.03625024698939958,
+                "observed_noise_estimate": 0.03503442329703917,
+                "noise_corrected_rms": 0.009309650425034883,
+                "mean_residual": -0.008934609195873534,
+                "observed_minimum": 0.9307597128875797,
+                "model_minimum": 0.9739199489912139,
+                "observed_equivalent_width": 0.03383726001656021,
+                "model_equivalent_width": 0.8139116881258157,
+                "reported_noise_rms": 0.03818793364639856,
+                "inverse_variance_weighted_rms": 0.03541496168177989,
+                "mean_chi_square": 0.8655257304722391,
+                "retained_pixels": 86
+              },
+              "He II 4686": {
+                "normalized_rms": 0.034766705098624305,
+                "observed_noise_estimate": 0.025163984716090913,
+                "noise_corrected_rms": 0.02398953223018432,
+                "mean_residual": -0.01508693259993207,
+                "observed_minimum": 0.808434444782024,
+                "model_minimum": 0.7690683493199773,
+                "observed_equivalent_width": 4.1497607958403275,
+                "model_equivalent_width": 6.459453661738888,
+                "reported_noise_rms": 0.037594157537611125,
+                "inverse_variance_weighted_rms": 0.03473385647869226,
+                "mean_chi_square": 0.8563801513179864,
+                "retained_pixels": 143
+              },
+              "He II 5412": {
+                "normalized_rms": 0.04312689218835681,
+                "observed_noise_estimate": 0.034086449013091616,
+                "noise_corrected_rms": 0.026420500061582055,
+                "mean_residual": -0.01123499610177275,
+                "observed_minimum": 0.8699174441202476,
+                "model_minimum": 0.8903978909528422,
+                "observed_equivalent_width": 2.462513607243712,
+                "model_equivalent_width": 4.3458594414126015,
+                "reported_noise_rms": 0.043184860147893946,
+                "inverse_variance_weighted_rms": 0.04333224695027461,
+                "mean_chi_square": 1.021452898381655,
+                "retained_pixels": 136
+              },
+              "He I 5876": {
+                "normalized_rms": 0.04530298840640406,
+                "observed_noise_estimate": 0.04143595873494502,
+                "noise_corrected_rms": 0.018314531996933843,
+                "mean_residual": 0.006615333698001297,
+                "observed_minimum": 0.7746378303168713,
+                "model_minimum": 0.7804683568246347,
+                "observed_equivalent_width": 5.1659875899310395,
+                "model_equivalent_width": 4.209689370984764,
+                "reported_noise_rms": 0.05533725041207878,
+                "inverse_variance_weighted_rms": 0.04251204925128302,
+                "mean_chi_square": 0.6336041803398881,
+                "retained_pixels": 111
+              },
+              "He II 6560": {
+                "normalized_rms": 0.05004387227395662,
+                "observed_noise_estimate": 0.048003585302579636,
+                "noise_corrected_rms": 0.014143724766483701,
+                "mean_residual": -0.012209646894622343,
+                "observed_minimum": 0.8283067320242822,
+                "model_minimum": 0.8747438438113038,
+                "observed_equivalent_width": 3.6052225522818464,
+                "model_equivalent_width": 6.0298147419347945,
+                "reported_noise_rms": 0.04605196550608012,
+                "inverse_variance_weighted_rms": 0.049400954129339286,
+                "mean_chi_square": 1.1742315362195517,
+                "retained_pixels": 132
+              }
+            },
+            "Candidate": {
+              "He II 4200": {
+                "normalized_rms": 0.028562695049075736,
+                "observed_noise_estimate": 0.024342805556238755,
+                "noise_corrected_rms": 0.014941732366685164,
+                "mean_residual": -0.007115029920259642,
+                "observed_minimum": 0.939428090564227,
+                "model_minimum": 0.9984232363147758,
+                "observed_equivalent_width": -0.9938014701851948,
+                "model_equivalent_width": -0.15521005832325968,
+                "reported_noise_rms": 0.039710921968918414,
+                "inverse_variance_weighted_rms": 0.028370148964957452,
+                "mean_chi_square": 0.5123417456357681,
+                "retained_pixels": 124
+              },
+              "He I 4471": {
+                "normalized_rms": 0.038351491271455,
+                "observed_noise_estimate": 0.02831871953817722,
+                "noise_corrected_rms": 0.02586284992924308,
+                "mean_residual": -0.012647709427675619,
+                "observed_minimum": 0.8297301533865281,
+                "model_minimum": 0.8378226914598949,
+                "observed_equivalent_width": 1.76550195821946,
+                "model_equivalent_width": 2.9963308531606745,
+                "reported_noise_rms": 0.03886395349027609,
+                "inverse_variance_weighted_rms": 0.03809193258120892,
+                "mean_chi_square": 0.9639802615357219,
+                "retained_pixels": 96
+              },
+              "He II 4542": {
+                "normalized_rms": 0.03605863757026183,
+                "observed_noise_estimate": 0.03503442329703917,
+                "noise_corrected_rms": 0.008533142895052012,
+                "mean_residual": -0.00818952494994429,
+                "observed_minimum": 0.9307597128875797,
+                "model_minimum": 0.9734669830258507,
+                "observed_equivalent_width": 0.03383726001656021,
+                "model_equivalent_width": 0.7472894163391036,
+                "reported_noise_rms": 0.03818793364639856,
+                "inverse_variance_weighted_rms": 0.03524637697950724,
+                "mean_chi_square": 0.8573050748587346,
+                "retained_pixels": 86
+              },
+              "He II 4686": {
+                "normalized_rms": 0.03521075152725809,
+                "observed_noise_estimate": 0.025163984716090913,
+                "noise_corrected_rms": 0.024628660059423674,
+                "mean_residual": -0.015296426944556116,
+                "observed_minimum": 0.808434444782024,
+                "model_minimum": 0.7795125772934185,
+                "observed_equivalent_width": 4.1497607958403275,
+                "model_equivalent_width": 6.491366615889485,
+                "reported_noise_rms": 0.037594157537611125,
+                "inverse_variance_weighted_rms": 0.03509980312811583,
+                "mean_chi_square": 0.8745203967596162,
+                "retained_pixels": 143
+              },
+              "He II 5412": {
+                "normalized_rms": 0.042573424262597026,
+                "observed_noise_estimate": 0.034086449013091616,
+                "noise_corrected_rms": 0.025507066611450854,
+                "mean_residual": -0.01082701640506849,
+                "observed_minimum": 0.8699174441202476,
+                "model_minimum": 0.892077502170258,
+                "observed_equivalent_width": 2.462513607243712,
+                "model_equivalent_width": 4.277231089519621,
+                "reported_noise_rms": 0.043184860147893946,
+                "inverse_variance_weighted_rms": 0.04276591000472555,
+                "mean_chi_square": 0.9949273314342899,
+                "retained_pixels": 136
+              },
+              "He I 5876": {
+                "normalized_rms": 0.045170057018526194,
+                "observed_noise_estimate": 0.04143595873494502,
+                "noise_corrected_rms": 0.01798319701201209,
+                "mean_residual": 0.0074593739763374415,
+                "observed_minimum": 0.7746378303168713,
+                "model_minimum": 0.8047705126297969,
+                "observed_equivalent_width": 5.1659875899310395,
+                "model_equivalent_width": 4.082770310097747,
+                "reported_noise_rms": 0.05533725041207878,
+                "inverse_variance_weighted_rms": 0.04231098442701196,
+                "mean_chi_square": 0.6276249697042314,
+                "retained_pixels": 111
+              },
+              "He II 6560": {
+                "normalized_rms": 0.04998049208691692,
+                "observed_noise_estimate": 0.048003585302579636,
+                "noise_corrected_rms": 0.01391780828105938,
+                "mean_residual": -0.012289439873901813,
+                "observed_minimum": 0.8283067320242822,
+                "model_minimum": 0.8803206371049955,
+                "observed_equivalent_width": 3.6052225522818464,
+                "model_equivalent_width": 6.046343106534419,
+                "reported_noise_rms": 0.04605196550608012,
+                "inverse_variance_weighted_rms": 0.04932839994168194,
+                "mean_chi_square": 1.1707849285846947,
+                "retained_pixels": 132
+              }
+            }
+          }
+        }
+      },
+      "artifacts_sha256": {
+        "metadata.json": "fa4851b92f5da325963aa7bcb820e545c5f892bee1922d3532805b41f52afd0e",
+        "cold-start-provenance.json": "19b86e7f9e84eaa88ce731d4f9f2a86d079c071b9547ad44607f735796ab9546",
+        "model-run.json": "bb0c1a06c46e4475e18951df6cf6b79584fb8ebb0afb65233ffe78e509127e12",
+        "spectrum.txt": "eddfcf3dfa6d318ec4ce3b103dc33fde3b158b46d1c15b9f53e582bd4a13d919"
+      },
+      "comparison_sha256": "1e3997a6a7d9620b33263ac3ecdf99723acbbbe846bc20de2845311c56597869"
+    },
+    {
+      "name": "gd153-h8-scoped-release",
+      "config": {
+        "effective_temperature": 40204.0,
+        "logg": 7.82,
+        "log_hydrogen_to_helium": 6.0,
+        "quality": "production",
+        "maximum_helium_ii_level": 8,
+        "maximum_hydrogen_level": 8,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "elapsed_seconds": 7852.9361260000005,
+      "cold_start": true,
+      "checkpoint_inputs": [],
+      "source_sha256": {
+        "eos.py": "92a67176b4964b717318a1871aa5726b182230e20d22641a95198077e978a488",
+        "_material_response.py": "32cef3f3304f4537a3fcef3ce919f783f4b322a8d8080e0cb5a3070fe490ef87",
+        "_stable_feautrier.py": "15ee2e3f4fd81cdd73adab93206834208b17bfc43840ed2605b976cd958e23cc",
+        "hot_nlte.py": "ddc02728eef27e929b8dc4e9c556345c91b0a833905079fb5b09abca7afe5bb8",
+        "nlte.py": "435255bbff91088f47d94aeab92954f6d83128cf15f03adae7a5392f53b4e9be",
+        "nonlinear.py": "bf5b74f7f8c8e843a1e9598c9b1ac6c25062064bb604b210453c619c44f09b70",
+        "mixture.py": "7a6717f766caf82d69d95c34c06d5327897e34190a388aba8de3a03d5175d580",
+        "_mixed_molecules.py": "65aee9641e88b9a0454a6cb87b30c64cb353cd17dc1b43c84fcc367ed732a4d9",
+        "_ml2_auxiliary.py": "ee8feae497fd8fdf64dbec16c45f17c8b5b3076e0717ba67843dbd8345ac4b22",
+        "helium_stark.py": "be62a92e248e538eb52286562b4f72df420cd7f23c125d11bc0be76c9f8f7d53",
+        "cool_da.py": "737c76766369d5762ee1796a7b237adb49feccf37d80628d56862b8027d31330",
+        "_convergence.py": "fb49244e9828fcd8cabc32386bf718073e9ae8cbfc6e539f90a39898e1656c42",
+        "hydrogen_self.py": "da6d718eee8b147f431b6297ba80c97a8d616c95683a67d680dff7a69d0214e1",
+        "c2_overlap.py": "0088bd515f1d2a85d86d72dd9d74456cc7c843453f0358d0795ec1b949e82a2b",
+        "helium_neutral.py": "4bf2c6b005b15c174f70bd891313b5ff366cc87e58ad5e1cd967c1e7a94ad2a0",
+        "_thermal_conditioning.py": "e1ab00a4cf768f4697442da7d816deb2348ca1a97ceded065be00c4b8a6ec207",
+        "_energy_balance.py": "1b1a27d3deea8587e39d27f2f68021d365b1e68019185db9604ad6c12b0e5575",
+        "c2_profiles.py": "91f9e8b56bc6d544ccc7d2eb9df2bd4324c3006ff287cf64dab77a57968abe34",
+        "constants.py": "2cef8b5a7cc2294b1fdfeb1f688162f0418d42fe6ef41446f2f4923e281947cf",
+        "helium_ii_stark.py": "5ad40303370008ee4f9c6fefc8e8947e23c343e6055a3b5707a0bed1cd7c6353",
+        "dense_eos.py": "e40aa3f426408e8243c2b8735cf179265db94caec39db747c913ce82513111d8",
+        "_spectrum_source.py": "b0f3cf15a5f8e6711782462bf4b1629f1ef7c977b437714366d9b81ea9aad34c",
+        "helium.py": "cc1eb66d19dfbf828935dc14813548d67c42c8b78c9007f5bd7554f4d3857f63",
+        "_nlte_radiative_integrals.py": "e1f974df4c583421819b402ab1ed23aa0d4daf64ccdc7633c846ebe7804b60f0",
+        "conduction.py": "bc44c9cad575bbc3862f3e43d9db5fa495fbbd78e36f3db8ee481050a251250c",
+        "__init__.py": "29f8b1dde67f03b89fe37352f62b7706029a4e80b05a0e7f2c92214d1b636d27",
+        "cool_metal_nlte.py": "b7250a2cfb986eeb27f4c48969edc5f64754cc2b94ab0abdc22c3aa716fd4903",
+        "helium_collisions.py": "92fe00945731ed0d83dcec7721d02a98ae79692ef5a71c054fd73abe15fc62a6",
+        "metals.py": "9948a69bfb7c7db676194781205b4bc4c88dbcb8c9ef8c2e2f8cfc423a71cff6",
+        "gaunt.py": "81aecb56fdf676440ec363697fbb5235cee3d96f770cae1a64cf260de868f907",
+        "radiative_transfer.py": "4673ebcf2011fbfa682a3c8c375586210c0837be96672a7d18e0bb9d87554510",
+        "stark.py": "d2821a76e7af79d64fd27d20b542a34c6137138fd1b0919409fb5059ef3eddbd",
+        "chianti.py": "0901be4909cb378361a82a5ddc50325f3ae074d261bea7d322b6035b3df80f84",
+        "_monotone_formal.py": "37629dc8d10745014487111f0e795e4e8380a6794d219345d853cdf6358afec8",
+        "spectrum.py": "5a0dbc073151fe45c843dac04c100bd2d47995f59b4ecd19e5835e7daac8a702",
+        "_hot_response.py": "d6f0a343c1767aebc352d2473f274b6b80b993628698ec72b11ce17b948350d7",
+        "_mass_feautrier.py": "222bf6f7513a62b4a27d797308decb4e2506c27d20e846548c58f714fdc457da",
+        "opacity.py": "206dd7a267634a4ca667ee141651a848f1547a67056fb9f6191ce380bd827795",
+        "_hot_rates.py": "41018adcd1136b3748774a2797ab61c9e994ce041243b98b6f9b17043adedb1c",
+        "helium_nlte.py": "d00b83e2ca4e0467f405956e00342afd5a343977c390889373973e8c36a5d219",
+        "_mixed_cia.py": "2bed1c691ed16b5e446087548034d7a82a6f5e9ebbee95a96371faf32e5617a1",
+        "molecules.py": "54b82cedd72740640cba63a08f8b5560a7f119cbc73ca4189f7a4a84e2e805ff",
+        "dense_helium_continuum.py": "8e7fd2b76aa66210e740f8d4b3ab9d7e7770b7b5bcaf3380d38c383a25ce4e9e",
+        "quasimolecular.py": "816317eae60f536bb5d4ac3e19145cd84db70bd151942267d7470fcde3882b7e",
+        "_linear_scattering.py": "b938d32bdb55383c1e7a4dd251622b907394fe59490fe03d8aeb06035880a119",
+        "_domain.py": "727b2b17f53cee009c637820b72a21999fa08f875cae26bab4e67768ddcb3b2a",
+        "_compat.py": "f7b61243c0e2e72a6c9a8f03c718679278f5fe6dc08cafb10228c9a04cb38b66",
+        "convection.py": "d99718d95607b2acfc3d8f2505bae3376a592971921cf602fa629136501313d9",
+        "nlte_core.py": "3a1ca23b90932d6f3fe328c62155e45befbf684621cfc73b0497d0bd58ffefbe",
+        "_hot_recovery_fresh.py": "900bd510f0db514903ecefcbba4212957527c4908fb71b049ca4f24c894ced70",
+        "atmosphere.py": "fc61cf2e616cb3e2f222c79b65dbd1dff9598f53ff4842febe44f54fe223e257",
+        "helium_molecular.py": "7589f8ae88ea63987d4f0df92f7a7f5f9c1372903aad23b8be97a90f0218abe0",
+        "carbon_molecular.py": "8f13a04e5c940b87e4c53ab4fa28c4b370fd55643dc7a677702e8e6b76a677e1",
+        "_hot_recovery.py": "add58f4bd3470471d273c7c350a54d3ab7906fcb0a77fbd79855daea9f717057",
+        "multilevel_nlte.py": "a7c4d012de695f7ba6581cfe91954ffb63ef18358bda60a475500f61f5694f30",
+        "_rosseland.py": "63cce2717885c7d21b169efbb9cb91c13eaf92f3bf16c88175d84224a7cb2d4b",
+        "_hot_structure.py": "18e3b95f1e8058ec46ee865f48625a2569369f5b115037f989f029878667a934",
+        "adaptive_structure.py": "9ad9dbccc2ab5fdfe5ccd9bda2da1768a4d6e8fd617ca3e543142bb3f98fb222",
+        "_dq/dq_augmented_probe_reuse.py": "e13e9326612b1162f84ba4f2203f31e34e6cfaf95f19f2cae53be43851a28220",
+        "_dq/c2_ca.py": "3e20f74502d71e97f4ffba76ffe46070b48bc4e440055e6db47a8d7396854450",
+        "_dq/worker.py": "9b96af39ae94b3bc9534c31e93180684f1e98136f02c4f35b55a09be75c98f80",
+        "_dq/dq_refined_convection_cold.py": "3cc60d76f3a43368ea54ee6838308e9a9baca9e6adc2f3523b7ff87ca40fc2b7",
+        "_dq/dq_thermal_manifold.py": "114efd821630eec2ec3adb919d224e252a95f3e6d267eb25eba981ad83cf4e8d",
+        "_dq/dqsolution_sampling_cold.py": "9f6ef498c9ed83bb5ab5314cacd275be41254fbde5c43350df7822fdf15987a4",
+        "_dq/scaled_ml2_compatibility.py": "f87a93ee2012ae598d083ac500a36a9af534c07b70eee1f203e8e7f5c2a4c479",
+        "_dq/planck_remainder.py": "ab15f69b270e4565f2d6696b9c5ca9ab0da2ce45e0ea9f00058ace4abdec1647",
+        "_dq/dq_augmented_current_norm.py": "439605aedcef370291b6560d9762678d2363b6dfc3e80fdc6e45c4bda767a042",
+        "_dq/dq_hornkohl_gated_energy.py": "37dff9c10393b33467331e9e3e405dcf3952fe315b504e1ced78b2ec9afc1c2f",
+        "_dq/dq_refractive_finite_volume.py": "e152f921236d9ca5e36381dfbd3fabdf8452bbcca7a5b0220139c5f1e0bad23e",
+        "_dq/dq_bounded_helium_lines.py": "276740ccf09bda884579e181cc1bc589e8609db1fabd5efbe0f1195d7ebc745e",
+        "_dq/dq_bounded_carbon_lines.py": "8bb03c0b309665c0bab786a6b2f4bbdff9419619409912902c71a348e1579841",
+        "_dq/dq_eos_knot_tangent.py": "61c0c90391955b7e1c10616b193ff2d0784ebf13066fca859a9bbc043afdb453",
+        "_dq/dq_eos_corner_subspace.py": "59974dac786ce55d7a9064776d409c69e458fe0b4d731cb1206be9fd883a5e1d",
+        "_dq/dq_pair_virial_quadrature.py": "3c085308bc85c49cf19d283f5cfcf155d6625fedda5811cbd8ccc5728ff8b7bc",
+        "_dq/inexact_thermal.py": "ab3822ed9490745213579e2bd2bf78bb07a57723b4e59910bc9b81624bc02bf8",
+        "_dq/measured_proposal_guard.py": "92675c2ba1de77148cd822823fb98e0844e3b2e024dc710b8c86a478222d617a",
+        "_dq/thermal_balance.py": "813622806aa1a2dc2cc0628352831ce3f0f23f1dc39e362683303137d36c0155",
+        "_dq/__init__.py": "6349a31af621111fbbeed9d7e13a42f011ff8079260e5353cf6bc688dad52959",
+        "_dq/swan_strength_cache.py": "7f5ca10d5e343564baa336c57d38c3b3fce662e7421b1aa730a37c79aa52e608",
+        "_dq/dqsolution_sampling.py": "5502c98f45a97d6a8dce6d66992c51e9889c65df84947ff9f4a3bd19defc1103",
+        "_dq/runtime.py": "e14612d61e722264d89272b0d85d8f87dbb6fe7e061ce5e437fae8063806c707",
+        "_dq/dq_exact_opacity_cache.py": "a4c5f0ede6877eac18b7bb1cfb88100270695701c2ba691eb856a6f342391d0c",
+        "_dq/dq_hornkohl_bounded_energy.py": "bbbfc15e7e16284012e9249da2e0bff17dbd392776877961e6d81f4184f41b48",
+        "_dq/dq_thermal_corner_experiment.py": "c54a0b77f9c0188ac1b064825c3e810328ac525dab38502c2f0ade74199d3ab9",
+        "_dq/dq_augmented_convection.py": "7c36d4cf66a5694b0a6569b7deaea7fdb4f9fb1d4e953c2edea4c16a8392c53f",
+        "_dq/dq_current_energy_experiment.py": "e5bdd62572a2ad0ac70ef5d85e491430e0abb232cdd9c5d3d8a5389e86016728",
+        "_dq/dq_reos_secant_response.py": "4ee717d9c9f120d5a0a9bd8e6683ff26110bf235ddf7d7d62529ceb6be51c3d8",
+        "_dq/dq_swan_depth_integral.py": "a653ed7fd43ba3ef06b919658795642094955262623d4192131c4d5fb478111c",
+        "_dq/dq_dense_continuum_inputs.py": "0f176371748b92560f138109194208a7360c6e640e8109023c6d05e446074475",
+        "_dq/dq_augmented_material_scaling.py": "4fe8ce911ca2c96abaddf7eecc2ce7b2c39273cad3d6e3f9a451ba119390d257",
+        "_dq/dq_internal_domain_proposal.py": "af1394f57ea8ad73312ea0509c5e20cca2a49ce74e1ecdf33beb858bece5f620",
+        "_dq/dq_uv_sampling_experiment.py": "ddf708690c440ad855c13f9f20f7723492e70237236c20be4d76a8cdd4b54c68",
+        "_dq/dq_refractive_material.py": "e785894dfd730889bcd027c045724b3a6f15ae9378204a85dcec40877e4473ec",
+        "_dq/convective_consistency_experiment.py": "a6dbe9331762670184ca2ae265e03909ed7da300a310570717c0fe00556896e5",
+        "_dq/dq_thermal_corner_trial.py": "b4fa3c6dea7aa5ce92a9703ab6bb1cecac4e458c5d5e25d741623fb8bf6d7095",
+        "_dq/dq_hornkohl_consistent.py": "fb8e0df1fd33e76027725d86257f9396ab0c1f7485f90a45998ce47fbdd805fc",
+        "_dq/superadiabatic.py": "8339ca42b6688bd2642ca177c1a6039d3631f657459c74ca103c3a4c6c76869b",
+        "_dq/nonlinear_material_model.py": "fb0b49f4958d4dccd09e9ea5f78f0d9711f1ebe0de0a188cd01f6384ffa080c8",
+        "_dq/automatic_conditioning.py": "7f9fb13ed77d88cc9ff37f52967dc3c548ea7219ec88dd0a53b0eb131f1df594",
+        "_dq/dq_finite_material_coordinates.py": "411955491b9d5411a99f1182f04bd607bcc60359870f4d884b6afb7dc7ac8ae8",
+        "_dq/provenance.py": "f8d4e8c4103a857fbb5d4a4fa59f182e71fbc82bd30ddc416c224e59cc04b43a",
+        "_dq/phase_energy_scale.py": "31adda30ece190c90257cf194a1492537637ae0f59993a0d7b05748529d387a2",
+        "_dq/dq_eos_knot_search.py": "ffd374050ca7ca8d579a839995f4bd10b2bdefa9003bc40a4a6e596baf4674d6",
+        "_dq/dq_eos_knot_model.py": "e634ff8826e239326b4865b7cbead730123341340f3388edf2d8c2f4efae70e0",
+        "_dq/dq_augmented_conditioned_cold.py": "cfc0fa68695fc5a8104b387e0cf6b055d87d16cef0fc015b20169bba308769cd",
+        "_dq/dq_refractive_material_coordinates.py": "876032a2f619b414ec32524b86ddc82ee87b4f4b5f8101c283a376226f4e5282",
+        "_dq/continuum_batches.py": "6a5f7c16c0c37340d56fc89f4ffba1ca3a2a3250b2c1a39b07499e106d1ae4ba",
+        "_dq/dq_refractive_ray_bundles.py": "9fb1494a9e74edbf2ebd1dae4b7f933f74e97b8973c1adfad257a8dc444aec28",
+        "_dq/dq_hornkohl_cell.py": "5ffad0b967d01bedf16644de1b9e8f9b9ff34003979c813fd4c63acf97687ff7",
+        "_dq/dq_reos_secant_thermodynamics.py": "86566314dabad54e36371d868d759f142f2d2cbe88833fd21ce650ae7d6d73c6",
+        "_dq/dq_hornkohl_cell_energy.py": "adbc4c4dd49509ec1cf5f6bbcc7d5faeb18f7383e86cf48061c473ee454bf5b4",
+        "_dq/base.py": "6b81a4c4f3585986930a40b4b29da1d5098167e060ea3652ae26b792099a1c9e",
+        "_dq/dq_refined_convection.py": "a9df1d310b43afddcc00af81e9de4750d53dc4ac271eec04e9670d616596467e",
+        "_dq/data.py": "9f75b603386490c1660687be6e899b2ee367ee4aec173e3869685689dc715d0b",
+        "_dq/dq_explicit_gradient.py": "8231088272f227da52c81a43a658193ea8e1e5f3313723d0b1477333e87aca69",
+        "_dq/validation.py": "b49241657229d31009f9445236b0ce4138e78aea2b9b488ad988e034d6fbb2f8",
+        "_dq/dq_refractive_fv_response.py": "cac39d967320fdecf4c05e62a61d6c12f60702e1fab1ec57d252057812893ea1",
+        "models/automatic.py": "9e712f4caedfcbb3355e60297f44720c9800d54e0a3ad472ad92d71c597f206b",
+        "models/__init__.py": "d9463a0ee4d3738f761a31ee7970e748fbd0943e77e6bd3cfb59ff61d01ad8e9",
+        "models/dq.py": "dea5aebcd9aec847064d1bc3244268bd52de0a68475a69aca45b2fd270d0d681",
+        "models/daz.py": "feb894f48e1d687a29378eb1cacfa7cd825bc68e33ec51072e3e8d5f314b71bf",
+        "models/cli.py": "cb7334ad76bc1ae0476bbddf14eec3442901a5211cc93765fda0564ae460a677",
+        "models/common.py": "9d8bed49921ab4ba585d95162273f013faf1e3f2c0b94985ad39c7c5427bf6a2",
+        "models/selection.py": "3feea504ac8be503bcc3b09a431ecc386986766bb6ae0659d05da944d98969d0",
+        "models/hot.py": "491c8b979a6e16c76217d2734f3d73cad55bb654bd79cc1b5b1a12a9b3960e6d",
+        "models/stellar.py": "9da2298473c1c3848460903a5c195a850c9b67f5e33ba9ac5e3db68aa0f3ceee",
+        "validation/koester.py": "e23700e6c953a4ba08aa2327b11f7dba31175cefabf47714df8ae15a98dd913a",
+        "validation/observed.py": "6b8a82368e15d7eed804adc5234526bdf7304c94f12bd3f1f338ac475a6147c5",
+        "validation/__init__.py": "351462fbd1bc8122f094188307b4d48f80d731546bb86fc69474cf66c94a4948"
+      },
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.969917423101265e-09,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "local_energy": {
+            "value": 1.2658280808405196e-08,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 7.650309246608181e-08,
+            "tolerance": 0.0003,
+            "passed": true,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.992824298643476e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.1590039246542253e-06,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "failures": [],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "population_defect": 1.1594574652190973e-05,
+      "observed": {
+        "gd153": {
+          "metrics": {
+            "TMAP pure-H NLTE": {
+              "H delta": {
+                "normalized_rms": 0.004136631082297829,
+                "observed_noise_estimate": 0.004260501340034055,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.0017674959705432246,
+                "observed_minimum": 0.8077648149666127,
+                "model_minimum": 0.7976134182576121,
+                "observed_equivalent_width": 8.34488505649069,
+                "model_equivalent_width": 8.70190428734384,
+                "reported_noise_rms": 0.0013021164369478126,
+                "inverse_variance_weighted_rms": 0.00431642490253427,
+                "mean_chi_square": 11.028116973178673
+              },
+              "H gamma": {
+                "normalized_rms": 0.002430726220899566,
+                "observed_noise_estimate": 0.004039321307397606,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.00027803519245140306,
+                "observed_minimum": 0.759178968952043,
+                "model_minimum": 0.7523141929709526,
+                "observed_equivalent_width": 11.733248963782735,
+                "model_equivalent_width": 11.806203069599547,
+                "reported_noise_rms": 0.0013268239417124862,
+                "inverse_variance_weighted_rms": 0.00249864795853306,
+                "mean_chi_square": 3.5664498968869225
+              },
+              "H beta": {
+                "normalized_rms": 0.002845201557142443,
+                "observed_noise_estimate": 0.003817295804148193,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.0002220769079708909,
+                "observed_minimum": 0.7592975641288795,
+                "model_minimum": 0.7573769982737817,
+                "observed_equivalent_width": 12.84815659686736,
+                "model_equivalent_width": 12.854363847454563,
+                "reported_noise_rms": 0.00155975003439937,
+                "inverse_variance_weighted_rms": 0.0028298939106657845,
+                "mean_chi_square": 3.315820707288405
+              },
+              "H alpha": {
+                "normalized_rms": 0.0026443590218572996,
+                "observed_noise_estimate": 0.002921224146966125,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.00046526613400629883,
+                "observed_minimum": 0.8365418240364824,
+                "model_minimum": 0.8292312405664511,
+                "observed_equivalent_width": 9.316364732041293,
+                "model_equivalent_width": 9.464484745714264,
+                "reported_noise_rms": 0.0008024260220822292,
+                "inverse_variance_weighted_rms": 0.0026879195490219056,
+                "mean_chi_square": 11.284163249172753
+              }
+            },
+            "OpenWD (converged)": {
+              "H delta": {
+                "normalized_rms": 0.003827832724297142,
+                "observed_noise_estimate": 0.004260501340034055,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.0009228541130466114,
+                "observed_minimum": 0.8077648149666127,
+                "model_minimum": 0.798075942467854,
+                "observed_equivalent_width": 8.34488505649069,
+                "model_equivalent_width": 8.534828925329666,
+                "reported_noise_rms": 0.0013021164369478126,
+                "inverse_variance_weighted_rms": 0.003980758212287475,
+                "mean_chi_square": 9.37960575721996
+              },
+              "H gamma": {
+                "normalized_rms": 0.0029919210907916193,
+                "observed_noise_estimate": 0.004039321307397606,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.0005610272013831643,
+                "observed_minimum": 0.759178968952043,
+                "model_minimum": 0.7488177690537766,
+                "observed_equivalent_width": 11.733248963782735,
+                "model_equivalent_width": 11.873218581509276,
+                "reported_noise_rms": 0.0013268239417124862,
+                "inverse_variance_weighted_rms": 0.0031467641579897435,
+                "mean_chi_square": 5.656585735375454
+              },
+              "H beta": {
+                "normalized_rms": 0.0036047909277897683,
+                "observed_noise_estimate": 0.003817295804148193,
+                "noise_corrected_rms": 0.0,
+                "mean_residual": -0.0012109886409970231,
+                "observed_minimum": 0.7592975641288795,
+                "model_minimum": 0.7491012952052838,
+                "observed_equivalent_width": 12.84815659686736,
+                "model_equivalent_width": 13.113037030467977,
+                "reported_noise_rms": 0.00155975003439937,
+                "inverse_variance_weighted_rms": 0.0037259628386268904,
+                "mean_chi_square": 5.748145706237826
+              },
+              "H alpha": {
+                "normalized_rms": 0.004937329033474686,
+                "observed_noise_estimate": 0.002921224146966125,
+                "noise_corrected_rms": 0.003980410464760401,
+                "mean_residual": -0.0018158516941431874,
+                "observed_minimum": 0.8365418240364824,
+                "model_minimum": 0.8137204431172345,
+                "observed_equivalent_width": 9.316364732041293,
+                "model_equivalent_width": 9.925821416522904,
+                "reported_noise_rms": 0.0008024260220822292,
+                "inverse_variance_weighted_rms": 0.005210042562507789,
+                "mean_chi_square": 42.3954618860514
+              }
+            }
+          }
+        }
+      },
+      "artifacts_sha256": {
+        "metadata.json": "ac6b5de4a944a12fb0ea25cad34af971a6d588f7e77a1140d1933db6f34ea302",
+        "cold-start-provenance.json": "1df459425c55ef4827d591fbb5e831451f4162e1acdb3fbad3294cffc76daaf5",
+        "model-run.json": "c1a32b8da7db1c3fd58a5ab86423cab347839213da06251b73bc36b95ab16911",
+        "spectrum.txt": "056f43f8d77a977bc9abeb00c6804eb625bc04edee0fe987c28ee1e23ff15d91"
+      },
+      "comparison_sha256": "09f2dc94f46ed0afe98214f763ded375aaea74ac97b688a3c697df10ec9679a0"
+    }
+  ]
+}

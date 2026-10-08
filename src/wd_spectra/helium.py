@@ -769,8 +769,14 @@ def helium_continuum_mass_absorption_coefficient(
     include_helium_dimer_ion: bool = True,
     include_helium_three_body_cia: bool = True,
     include_rydberg_bound_free: bool = True,
+    helium_minus_correction: ArrayLike | None = None,
 ) -> FloatArray:
-    """Return the implemented LTE pure-He continuum in cm^2 g^-1."""
+    """Return the implemented LTE pure-He continuum in cm^2 g^-1.
+
+    An explicit dense-fluid ``helium_minus_correction`` multiplies only
+    John He-minus free-free absorption. Its shape must be (wavelength,
+    depth); omitted corrections retain the existing arithmetic exactly.
+    """
 
     state = _require_helium_state(atmosphere)
     wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
@@ -823,6 +829,12 @@ def helium_continuum_mass_absorption_coefficient(
         helium_minus_free_free_coefficient(wavelength[:, np.newaxis] * 1.0e-4, temperature)
         * neutral * electron_pressure
     )
+    if helium_minus_correction is not None:
+        correction = np.asarray(helium_minus_correction, dtype=float)
+        if (correction.shape != helium_minus.shape or np.any(~np.isfinite(correction))
+                or np.any(correction <= 0)):
+            raise ValueError("helium_minus_correction must be positive finite wavelength-by-depth factors")
+        helium_minus *= correction
     helium_dimer_ion = np.zeros_like(free_free)
     if include_helium_dimer_ion:
         helium_dimer_ion = (

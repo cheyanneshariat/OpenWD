@@ -31,10 +31,24 @@ from ..spectrum import Spectrum
 FloatArray = NDArray[np.float64]
 Quality = Literal["quick", "standard", "production"]
 AtmosphereComposition = Literal["hydrogen", "helium", "mixed"]
-ConvergenceStatus = Literal["converged", "unconverged", "unknown"]
+ConvergenceStatus = Literal[
+    "converged", "spectrum-qualified", "unconverged", "unknown"
+]
 
-_MODEL_REQUEST_FINGERPRINT_SCHEMA = 1
-_MODEL_PHYSICS_REVISION = "openwd-0.1.3-cold-local-energy-and-domain-v3"
+_MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
+_MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving"
+_MODEL_FAMILY_PHYSICS_REVISIONS = {
+    "DA": "hydrogen-stark-density-floor-2026-10-05",
+    "DAB": "hydrogen-stark-density-floor-2026-10-05",
+    "DAO": "hydrogen-stark-density-floor-2026-10-05",
+    "DAH": "dah-kurucz-griem-v4:hydrogen-stark-density-floor-2026-10-05",
+    # Shared metal physics revised by the 2026-09-30 DZ audit: ground-term
+    # bound-free populations, 1/Z^2 Unsold radii, frequency Voigt profiles,
+    # structure line identity and continuous dense-He ionization.
+    "DZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05",
+    "DAZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05",
+    "D6": "metal-audit-2026-09-30",
+}
 
 
 class AtmosphereConvergenceWarning(RuntimeWarning):
@@ -69,10 +83,10 @@ def numerical_resolution(quality: Quality) -> NumericalResolution:
 
 @dataclass(frozen=True)
 class ModelData:
-    """Locations of the external atomic/profile data used by model presets.
+    """Locations of the atomic/profile data used by model presets.
 
     ``root`` is the repository or installed data workspace.  Set the
-    ``WD_SPECTRA_DATA`` environment variable when calling the package away
+    ``OPENWD_DATA`` environment variable when calling the package away
     from the source checkout.
     """
 
@@ -110,12 +124,32 @@ class ModelData:
         return self.cache / "helium-stark/he2prf.dat"
 
     @property
+    def ccc_hydrogen_collisions(self) -> Path:
+        return self.cache / "ccc/e-H_XSEC_LS.zip"
+
+    @property
+    def tlusty_source(self) -> Path:
+        return self.cache / "tlusty-source/tlusty200.f"
+
+    @property
+    def tlusty_helium_atom(self) -> Path:
+        return self.cache / "tlusty-atoms/he1_14lev.dat"
+
+    @property
     def stout(self) -> Path:
         return self.cache / "metal-opacity/atomic-line-list"
 
     @property
     def verner_photoionization(self) -> Path:
         return self.cache / "metal-opacity/verner-photoionization.dat"
+
+    @property
+    def verner_phfit2(self) -> Path:
+        return self.cache / "metal-opacity/verner-phfit2.f"
+
+    @property
+    def norad(self) -> Path:
+        return self.cache / "norad"
 
     @property
     def barklem_neutral_h_broadening(self) -> Path:
@@ -167,6 +201,24 @@ class ModelData:
         return self.cache / "nist-asd-strong"
 
     @property
+    def sirocco_atomic(self) -> Path:
+        """Checksum-pinned SIROCCO/TOPbase level and photoionization files."""
+
+        return self.cache / "sirocco-atomic"
+
+    @property
+    def tlusty_atoms(self) -> Path:
+        """Checksum-pinned public TLUSTY/Opacity Project model atoms."""
+
+        return self.cache / "tlusty-atoms"
+
+    @property
+    def h2db_balmer_subset(self) -> Path:
+        """Schimeczek--Wunner H2db Balmer transitions and state energies."""
+
+        return self.cache / "h2db/h2db_balmer_subset.npz"
+
+    @property
     def h2_h2_cia(self) -> Path:
         return (
             self.cache
@@ -205,18 +257,23 @@ def model_request_fingerprint(
 ) -> dict[str, object]:
     """Return a stable identity for one solver-relevant public request.
 
-    The data root is deliberately part of the identity.  Moving a checkpoint
-    to another data installation therefore degrades it to a warm start rather
-    than claiming an exact same-physics resume.  The physics revision must be
-    changed whenever solver equations or bundled physical data change.
+    Code and table contents are part of the identity. Older path-only
+    fingerprints degrade to a warm start and cannot certify fixed synthesis.
     """
+
+    from .._provenance import model_data_identity, numerical_code_identity
 
     request = {
         "schema": _MODEL_REQUEST_FINGERPRINT_SCHEMA,
-        "physics_revision": _MODEL_PHYSICS_REVISION,
+        "physics_revision": _MODEL_PHYSICS_REVISION + (
+            ":" + _MODEL_FAMILY_PHYSICS_REVISIONS[str(spectral_type)]
+            if str(spectral_type) in _MODEL_FAMILY_PHYSICS_REVISIONS else ""
+        ),
         "spectral_type": str(spectral_type),
         "config": _jsonable(config),
         "data_root": str(data.root.resolve()),
+        "data_sha256": model_data_identity(data),
+        "code_sha256": numerical_code_identity(),
     }
     if physical_data_identity is not None:
         request["physical_data_identity"] = _jsonable(physical_data_identity)
@@ -310,13 +367,21 @@ def warn_if_atmosphere_not_converged(
     status = atmosphere_convergence_status(atmosphere)
     if status == "converged":
         return status
-    if status == "unconverged":
+    if status == "spectrum-qualified":
+        detail = (
+            "passes the declared spectrum-qualification checks but does not "
+            "record full equilibrium convergence"
+        )
+    elif status == "unconverged":
         detail = "records that radiative/convective equilibrium did not converge"
     else:
         detail = "does not record a verified atmosphere-convergence status"
     if atmosphere.metadata.get("fixed_synthesis_request_verified") is False:
         detail = "does not verify equilibrium for the requested parameters and physics (checkpoint request mismatch)"
-    elif atmosphere.metadata.get("radiative_equilibrium_solver_converged") is True:
+    elif (
+        status != "spectrum-qualified"
+        and atmosphere.metadata.get("radiative_equilibrium_solver_converged") is True
+    ):
         detail = "passes the solver flux checks but does not pass all equilibrium certification checks"
     metrics = []
     certificate = atmosphere.metadata.get("equilibrium_certificate", {})
@@ -674,6 +739,32 @@ def save_model_result(result: ModelResult, output: str | Path) -> Path:
             )
         ),
     )
+    if result.population_state is not None:
+        # Keep nested atom states without pickle; this is diagnostic output,
+        # not an implicit restart input to the public cold-start API.
+        arrays = {}
+        def collect_population(value, prefix=""):
+            if is_dataclass(value):
+                return {item.name: collect_population(getattr(value, item.name), prefix + item.name + ".")
+                        for item in fields(value)}
+            if isinstance(value, Mapping):
+                return {str(key): collect_population(item, prefix + str(key) + ".")
+                        for key, item in value.items()}
+            if isinstance(value, (tuple, list)):
+                return [collect_population(item, prefix + str(index) + ".")
+                        for index, item in enumerate(value)]
+            if isinstance(value, np.ndarray):
+                arrays[prefix[:-1]] = value
+                return {"array": prefix[:-1], "shape": list(value.shape)}
+            if isinstance(value, (float, np.floating)) and not np.isfinite(value):
+                # An unmeasured population defect is absent, not zero. Keep
+                # fixed-state diagnostic outputs valid strict JSON as well.
+                return None
+            return _jsonable(value)
+        population_metadata = collect_population(result.population_state)
+        arrays["metadata_json"] = np.asarray(json.dumps(
+            population_metadata, sort_keys=True, allow_nan=False))
+        np.savez_compressed(directory / "populations.npz", **arrays)
     record = {
         "schema": 1,
         "spectral_type": result.spectral_type,

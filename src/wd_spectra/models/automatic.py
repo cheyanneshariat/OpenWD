@@ -1,9 +1,10 @@
 """Automatic, auditable workflow dispatch with isolated cool-model workers.
 
 Existing compute_da/db/dab/dz remain explicit presets. run_model is the
-automatic file-oriented entry point. Experimental callbacks run in a child
-process, never in the caller's interpreter. No failed solver selects another
-EOS, no saved atmosphere is discovered automatically, and no flux is scaled.
+automatic file-oriented entry point. Packaged cool callbacks run in a
+child process; DQ's package-local adapters also run in an isolated worker.
+No failed solver selects another EOS, no saved atmosphere is discovered
+automatically, and no flux is scaled.
 """
 
 from __future__ import annotations
@@ -13,6 +14,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 import warnings
 import numpy as np
 
@@ -21,6 +23,7 @@ from .common import (
     AtmosphereConvergenceWarning,
     _jsonable,
     save_model_result,
+    validate_wavelength,
 )
 from .stellar import (
     DAConfig,
@@ -33,6 +36,12 @@ from .stellar import (
     compute_dz,
 )
 from .selection import select_physics, PhysicsSelectionPolicy, PhysicsSelection
+from .daz import DAZConfig, compute_daz
+from .dq import DQConfig, compute_dq
+from .hot import DOConfig, DAOConfig, compute_do, compute_dao
+from .pg1159 import PG1159Config, compute_pg1159
+from .d6 import D6Config, compute_d6
+from .dah import DAHConfig, compute_dah
 from ..spectrum import Spectrum
 
 
@@ -62,7 +71,7 @@ class ModelRun:
         )
 
 
-def _cool_commands(config, selection, directory, research):
+def _cool_commands(config, selection, directory):
     # These constraints are limitations of the preserved successful drivers,
     # not assertions that the physics ceases to apply elsewhere.
     if config.logg != 8.0 or config.quality != "production":
@@ -91,7 +100,7 @@ def _cool_commands(config, selection, directory, research):
         return [
             [
                 sys.executable,
-                str(research / "run_cool_db.py"),
+                "-m", "wd_spectra._cool.run_cool_db",
                 temperature,
                 "--output-root",
                 str(worker),
@@ -114,7 +123,7 @@ def _cool_commands(config, selection, directory, research):
             )
     command = [
         sys.executable,
-        str(research / "run_molecular_dab_mass_experiment.py"),
+        "-m", "wd_spectra._cool.run_molecular_dab_mass_experiment",
         "--physical-detuning-lyman",
         "--consistent-stark-edge",
         temperature,
@@ -145,24 +154,21 @@ def run_model(
     *,
     data=None,
     research_data=None,
-    initial_checkpoint=None,
     require_convergence=False,
     policy=PhysicsSelectionPolicy(),
+    wavelength=None,
+    iteration_callback=None,
 ):
     """Choose physics automatically and write a reproducible model run.
 
-    Cool recipes currently require a source checkout, production resolution
-    and logg=8. Public model runs are cold starts; saved atmospheres and
+    Cool recipes currently require production resolution and logg=8. Public model runs are cold starts; saved atmospheres and
     neighboring stellar models are not accepted. Selection uses material diagnostics, not the list of tested Teff
     points. Failed/uncertified outputs are retained and warned about; optional
     require_convergence makes an uncertified completed run raise an error.
     """
     if not isinstance(require_convergence, bool):
         raise TypeError("require_convergence must be a bool")
-    if initial_checkpoint is not None:
-        raise ValueError(
-            "run_model requires a cold start; a previous model cannot be supplied"
-        )
+    wave = None if wavelength is None else validate_wavelength(wavelength)
     data = ModelData.default() if data is None else data
     directory = Path(output_directory).expanduser().resolve()
     if directory.exists():
@@ -180,19 +186,14 @@ def run_model(
     )
     print(json.dumps(_jsonable(asdict(selection)), sort_keys=True), flush=True)
     commands = []
-    research = Path(__file__).resolve().parents[3] / "research/cool_models"
     environment = os.environ.copy()
-    if selection.experimental:
-        if not (research / "run_cool_db.py").is_file():
-            raise FileNotFoundError(
-                'Automatic cool workflows need a source checkout with research/cool_models; install with pip install -e .'
-            )
-        commands, spectrum_path = _cool_commands(
-            config, selection, directory, research
-        )
-        environment["PYTHONPATH"] = os.pathsep.join(
-            (str(research.parents[1] / "src"), str(research))
-        )
+    # Every worker imports this installed package and runs in its own process.
+    isolated_worker = selection.workflow in ("dense-db", "molecular-dab")
+    if isolated_worker:
+        if wave is not None or iteration_callback is not None:
+            raise ValueError("Cool workers currently use their qualified output grid and stdout progress")
+        commands, spectrum_path = _cool_commands(config, selection, directory)
+        environment["PYTHONPATH"] = str(Path(__file__).resolve().parents[2])
         environment["OPENWD_DATA"] = str(data.root)
         if research_data is not None:
             environment["OPENWD_RESEARCH_DATA"] = str(
@@ -207,7 +208,7 @@ def run_model(
         if selection.workflow == "molecular-dab":
             # Validation only; no download or alternate data lookup.
             subprocess.run(
-                [sys.executable, str(research / "check_data.py")],
+                [sys.executable, "-m", "wd_spectra._cool.check_data"],
                 env=environment,
                 check=True,
             )
@@ -228,26 +229,37 @@ def run_model(
     )
 
     def record():
-        (directory / "model-run.json").write_text(
-            json.dumps(manifest, indent=2) + "\n"
-        )
+        (directory / "model-run.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
     record()
     try:
-        if not selection.experimental:
-            atmosphere = None
+        if not isolated_worker:
             compute = {
+                DOConfig: compute_do,
+                DAOConfig: compute_dao,
+                PG1159Config: compute_pg1159,
+                D6Config: compute_d6,
+                DAHConfig: compute_dah,
                 DAConfig: compute_da,
+                DAZConfig: compute_daz,
+                DQConfig: compute_dq,
                 DBConfig: compute_db,
                 DABConfig: compute_dab,
                 DZConfig: compute_dz,
             }[type(config)]
+
+            started = time.monotonic()
 
             def progress(iteration, atmosphere, diagnostic):
                 print(
                     json.dumps(
                         dict(
                             iteration=iteration,
+                            elapsed_seconds=time.monotonic() - started,
+                            phase=diagnostic.get("solver_phase"),
+                            local_energy=diagnostic.get(
+                                "maximum_relative_cell_energy_balance_residual"
+                            ),
                             flux=diagnostic.get(
                                 "maximum_all_depth_total_flux_residual"
                             ),
@@ -259,17 +271,27 @@ def run_model(
                     flush=True,
                 )
 
-            result = compute(
-                config,
-                data=data,
-                initial_atmosphere=atmosphere,
-                iteration_callback=progress,
-            )
+            if isinstance(config, DQConfig):
+                if iteration_callback is not None:
+                    raise ValueError("DQ worker reports progress to stdout; callbacks are not supported")
+                options = {} if wave is None else {"wavelength": wave}
+                result = compute(config, data=data, output_directory=directory / 'worker', **options)
+            else:
+                options = dict(
+                    data=data,
+                    iteration_callback=progress if iteration_callback is None else iteration_callback,
+                )
+                if not isinstance(config, PG1159Config):
+                    options["initial_atmosphere"] = None
+                if wave is not None:
+                    options["wavelength"] = wave
+                result = compute(
+                    config,
+                    **options,
+                )
             save_model_result(result, directory)
             spectrum_path = directory / "spectrum.txt"
-            qualified = (
-                result.metadata["atmosphere_convergence_status"] == "converged"
-            )
+            qualified = result.metadata["atmosphere_convergence_status"] == "converged"
         else:
             for command in commands:
                 subprocess.run(command, env=environment, check=True)
@@ -283,16 +305,14 @@ def run_model(
                             / temperature
                             / "qualification.json"
                         ).read_text()
-                    )[
-                        "numerically_qualified_for_declared_experimental_physics"
-                    ]
+                    )["numerically_qualified_for_declared_experimental_physics"]
                     is True
                 )
             else:
                 check = subprocess.run(
                     [
                         sys.executable,
-                        str(research / "check_molecular_dab_result.py"),
+                        "-m", "wd_spectra._cool.check_molecular_dab_result",
                         str(directory / "worker" / temperature),
                     ],
                     env=environment,
@@ -317,9 +337,7 @@ def run_model(
                     )
                 qualified = report["structure_grid_convergence_verified"]
                 if (check.returncode == 0) != qualified:
-                    raise RuntimeError(
-                        "Inconsistent molecular qualification report"
-                    )
+                    raise RuntimeError("Inconsistent molecular qualification report")
         spectrum_values = np.loadtxt(spectrum_path)
         if (
             spectrum_values.ndim != 2

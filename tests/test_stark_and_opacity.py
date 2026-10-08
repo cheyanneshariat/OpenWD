@@ -68,7 +68,6 @@ from wd_spectra.eos import (
     ideal_hydrogen_lte,
     ideal_hydrogen_thermodynamics,
 )
-from wd_spectra.validation import read_svo_koester_ascii
 
 
 def test_expanded_metal_opacity_grid_bounds_weak_line_sampling():
@@ -565,6 +564,48 @@ def test_compiled_hydrogen_convolution_matches_python_reference(
     ),
     reason="optional compiled hydrogen convolution is not built",
 )
+def test_compiled_hydrogen_nonuniform_endpoint_uses_last_profile_node():
+    """An exact nonuniform-grid endpoint must not form an OOB bracket."""
+    log_alpha = np.array(
+        [-2.0, -1.5, -0.7, -0.2, 0.3, 0.9, 1.4, 2.0],
+        dtype=np.float64,
+    )
+    log_profile = np.linspace(0.0, -3.0, log_alpha.size, dtype=np.float64)
+    # Keep a canary immediately after each view: the endpoint path must read
+    # the final node, not the one-past-the-end element.
+    log_alpha_buffer = np.empty(log_alpha.size + 1, dtype=np.float64)
+    log_profile_buffer = np.empty(log_profile.size + 1, dtype=np.float64)
+    log_alpha_buffer[:-1] = log_alpha
+    log_profile_buffer[:-1] = log_profile
+    log_alpha_buffer[-1] = np.nan
+    log_profile_buffer[-1] = np.nan
+    field_strength = 1.0
+    detuning = np.array([10.0 ** log_alpha[-1]], dtype=np.float64)
+    calculated = opacity_module._rt.hydrogen_stark_lorentz_convolution(
+        detuning,
+        log_alpha_buffer[:-1],
+        log_profile_buffer[:-1],
+        np.array([0.0], dtype=np.float64),
+        np.array([0.0], dtype=np.float64),
+        field_strength,
+        0.5,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+    )
+    expected = np.array([10.0 ** log_profile[-1] / field_strength])
+    np.testing.assert_allclose(calculated, expected, rtol=0.0, atol=0.0)
+
+
+@pytest.mark.skipif(
+    opacity_module._rt is None
+    or not hasattr(
+        opacity_module._rt, "hydrogen_stark_lorentz_convolution"
+    ),
+    reason="optional compiled hydrogen convolution is not built",
+)
 def test_parallel_hydrogen_profiles_match_serial_result(monkeypatch):
     atmosphere = gray_hydrogen_atmosphere(10_000.0, 8.0, n_depth=6)
     line = BALMER_LINES[0]
@@ -624,18 +665,50 @@ def test_balmer_structure_support_omits_only_optically_thin_wings():
     assert np.max(omitted_optical_depth) < 1.1 * threshold
 
 
+# Wavelength sampling (vacuum A, as returned by read_svo_koester_ascii) of the
+# SVO Koester DA model Teff = 8000 K, log g = 8.00 within 400 A of H-alpha: 243
+# irregular points, steps 0.002-72 A.  Only the grid is kept, never Koester fluxes.
+_KOESTER_8000_HALPHA_SAMPLING = np.array([
+    6165.0003, 6169.9996, 6175.0000, 6180.0003, 6184.9997, 6190.0000, 6195.0003, 6199.9997,
+    6205.0000, 6210.0004, 6214.9997, 6220.0001, 6225.0004, 6229.9998, 6235.0001, 6240.0005,
+    6244.9998, 6246.1111, 6250.0002, 6253.8892, 6255.5537, 6257.7773, 6259.9999, 6263.8919,
+    6264.4461, 6265.0002, 6266.1075, 6266.6477, 6268.3241, 6269.9996, 6271.7040, 6273.3525,
+    6274.9999, 6276.5923, 6278.2958, 6280.0003, 6281.8157, 6283.4082, 6284.9996, 6286.3680,
+    6288.1845, 6290.0000, 6292.2636, 6293.6319, 6295.0003, 6295.4724, 6297.7360, 6299.9996,
+    6304.0557, 6304.5279, 6305.0000, 6305.6642, 6305.9442, 6307.8318, 6310.0003, 6313.6723,
+    6314.3355, 6314.9997, 6316.3280, 6317.9685, 6318.9838, 6319.0638, 6320.0000, 6322.0316,
+    6325.0004, 6329.9997, 6335.0001, 6340.0004, 6344.9998, 6350.0001, 6355.0005, 6359.9998,
+    6365.0002, 6369.9995, 6374.9999, 6380.0002, 6384.9996, 6389.9999, 6395.0003, 6399.9996,
+    6405.0000, 6410.0003, 6414.9997, 6420.0000, 6425.0004, 6429.9997, 6435.0001, 6440.0004,
+    6444.9998, 6450.0001, 6455.0005, 6459.9998, 6465.0001, 6470.0005, 6474.9998, 6480.0002,
+    6484.9995, 6489.9999, 6495.0002, 6499.9996, 6504.9999, 6510.0003, 6514.9996, 6520.0000,
+    6525.0003, 6525.5245, 6529.9997, 6534.4759, 6538.9021, 6538.9521, 6539.0021, 6539.1021,
+    6539.3022, 6539.4042, 6539.7023, 6540.0004, 6540.5956, 6541.7879, 6543.3443, 6544.1715,
+    6544.9997, 6546.6562, 6548.3116, 6549.8721, 6549.9361, 6549.9681, 6550.0001, 6550.0611,
+    6550.1281, 6550.3842, 6550.8963, 6551.7306, 6551.8756, 6553.4010, 6554.9264, 6555.6876,
+    6556.4508, 6557.2130, 6557.8322, 6557.9682, 6557.9762, 6558.1203, 6558.4084, 6558.6854,
+    6558.9835, 6559.7177, 6559.9998, 6560.5159, 6561.3151, 6562.1134, 6562.5135, 6562.9116,
+    6563.3107, 6563.6608, 6563.7108, 6563.7608, 6563.8608, 6564.0119, 6564.0609, 6564.1059,
+    6564.1099, 6564.2079, 6564.2099, 6564.3100, 6564.4100, 6564.5090, 6564.6090, 6564.7081,
+    6564.8081, 6564.9081, 6565.0081, 6565.1072, 6565.3052, 6565.4573, 6565.4993, 6565.5033,
+    6565.5073, 6565.5573, 6565.6573, 6565.8574, 6566.1104, 6566.2085, 6566.2575, 6566.3065,
+    6566.5015, 6566.8936, 6567.4528, 6567.6779, 6567.9029, 6568.3530, 6568.5061, 6568.9022,
+    6569.2533, 6570.0005, 6571.0978, 6572.1961, 6572.2961, 6573.2944, 6574.2916, 6575.0889,
+    6575.2899, 6576.2882, 6577.4865, 6578.6858, 6579.7701, 6579.8852, 6580.0002, 6580.2303,
+    6580.6904, 6581.6096, 6581.8997, 6583.4501, 6584.9995, 6586.1999, 6586.5500, 6588.1004,
+    6589.7338, 6589.9999, 6590.2660, 6590.7981, 6591.8624, 6592.8467, 6593.9900, 6594.8382,
+    6595.1333, 6597.4189, 6599.9996, 6605.1620, 6610.3244, 6615.4858, 6620.6482, 6630.9720,
+    6641.2957, 6651.6195, 6661.9443, 6672.2681, 6672.4992, 6681.6676, 6692.9157, 6713.3332,
+    6754.1672, 6826.6658, 6899.1654,
+])
+
+
 def test_8000k_halpha_flux_has_no_irregular_grid_spikes():
-    reference = read_svo_koester_ascii(
-        Path(".cache/koester/koester_t08000_g8.00.txt")
-    ) if Path(".cache/koester/koester_t08000_g8.00.txt").exists() else None
-    if reference is None:
-        pytest.skip("cached Koester validation spectrum is unavailable")
+    sampling = _KOESTER_8000_HALPHA_SAMPLING
     center = BALMER_LINES[0].wavelength_vacuum_angstrom
-    selected = np.abs(reference.wavelength_angstrom - center) <= 400.0
+    assert sampling.size == 243 and np.all(np.abs(sampling - center) <= 400.0)
     atmosphere = hydrogen_continuum_atmosphere(8_000.0, 8.0, n_depth=30)
-    spectrum = synthesize_hydrogen_spectrum(
-        atmosphere, reference.wavelength_angstrom[selected]
-    )
+    spectrum = synthesize_hydrogen_spectrum(atmosphere, sampling)
     wavelength = spectrum.wavelength_angstrom
     flux = spectrum.surface_flux_lambda
     edge = np.abs(wavelength - center) >= 300.0
@@ -1222,7 +1295,10 @@ def test_short_radiative_equilibrium_relaxation_preserves_hydrostatic_balance():
         atmosphere.gravity * atmosphere.column_mass,
         rtol=2e-14,
     )
-    assert atmosphere.metadata["radiative_equilibrium_iterations"] == 2
+    segments = atmosphere.metadata["nonlinear_solver_segments"]
+    assert segments
+    assert all(len(segment["iteration_history"]) <= 2 for segment in segments)
+    assert atmosphere.metadata["radiative_equilibrium_converged"] == atmosphere.metadata["equilibrium_certificate"]["verified"]
 
 
 def test_adaptive_newton_converges_cool_convective_flux_control():
@@ -1358,7 +1434,8 @@ def test_hydrogen_relaxation_callback_receives_updated_atmospheres():
         iteration_callback=callback,
     )
 
-    assert [record[0] for record in records] == [1, 2]
+    assert [record[0] for record in records] == list(range(1, len(records) + 1))
+    assert len(records) >= 2
     for _, atmosphere, status in records:
         assert atmosphere.effective_temperature == 12_000.0
         assert atmosphere.logg == 8.0
@@ -1380,7 +1457,7 @@ def test_hydrogen_relaxation_callback_receives_updated_atmospheres():
 def test_hydrogen_relaxation_uses_coupled_total_flux_ml2_solver(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    from wd_spectra import convection
+    from wd_spectra import adaptive_structure as convection
 
     original = (
         convection.ml2_temperature_gradient_for_total_flux_from_thermodynamics
@@ -1411,10 +1488,8 @@ def test_hydrogen_relaxation_uses_coupled_total_flux_ml2_solver(
         n_angle=1,
     )
 
-    assert calls == 1
-    assert atmosphere.metadata["convective_transport_solver"] == (
-        "coupled-radiative-plus-ML2-total-flux"
-    )
+    assert calls > 0
+    assert atmosphere.metadata["structure_solver"] == "adaptive-trust-region-newton"
     assert np.isfinite(atmosphere.metadata["maximum_total_flux_residual"])
 
 

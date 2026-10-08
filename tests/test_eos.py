@@ -303,17 +303,33 @@ def test_qmhd_correlations_increase_high_level_survival():
     np.testing.assert_allclose(correlated[0], holtsmark[0], rtol=2.0e-8)
 
 
-def test_qmhd_hydrogenic_charge_scaling_matches_tlusty_wn():
-    hydrogen = charged_particle_hydrogen_occupation_probability(
-        1.0e17, 10.0, 60_000.0
+@pytest.mark.parametrize("ionic_charge", [1.0, 2.0, 6.0])
+@pytest.mark.parametrize("temperature", [None, 10_000.0, 60_000.0])
+def test_qmhd_hydrogenic_charge_scaling_matches_tlusty_wn(
+    ionic_charge, temperature
+):
+    # TLUSTY reference manual II (2017), eqs. 107--108, with BERGFC=1.
+    # Use its independently tabulated prefactor, not the implementation's
+    # physical-constant expression. TLUSTY 200 hardcoded the now-obsolete
+    # factor of two; it is NOT the undoubled reference convention.
+    density = np.geomspace(1e12, 1e20, 9)[:, None]
+    level = np.array([1., 3., 8., 10., 11., 20.])[None, :]
+    correction = np.where(level <= 3, 1., 16 * level / (3 * (level + 1)**2))
+    beta = 8.59e14 * ionic_charge**3 * density**(-2/3) * correction / level**4
+    a = 0. if temperature is None else np.minimum(
+        0.09 * density**(1/6) / np.sqrt(temperature), 0.8
     )
-    helium_ii = charged_particle_hydrogen_occupation_probability(
-        1.0e17, 11.0, 60_000.0, ionic_charge=2.0
+    x = (1 + a)**3.15
+    f = 0.1402 * (x + 4 * (ionic_charge - 1) * a**3) * beta**3 / (
+        1 + 0.1285 * x * beta**1.5
     )
-    # Direct evaluations of TLUSTY 200's WN routine, including its original
-    # (not Bergeron's additional factor-of-two) critical-field normalization.
-    assert hydrogen == pytest.approx(0.011499734035170371, rel=2.0e-13)
-    assert helium_ii == pytest.approx(0.5023875932820907, rel=2.0e-13)
+    expected = f / (1 + f)
+    actual = charged_particle_hydrogen_occupation_probability(
+        density, level, temperature, ionic_charge=ionic_charge
+    )
+    # Our modern constants give 8.580024e14 rather than the rounded 8.59e14;
+    # the largest propagated relative difference is 0.35% in the beta**3 limit.
+    np.testing.assert_allclose(actual, expected, rtol=0.004, atol=0.)
 
 
 def test_hummer_mihalas_thermodynamics_is_physical():

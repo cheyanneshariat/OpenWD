@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "sha256": {
+    "c2-ca-2024.npz": "5594b764c7cb3bc43d0ff37c560fc0329025dd0b24553d902c6b3205fc998fd3",
+    "swan-completed.npz": "89f65fedf0b936a20dea3f4cc6ef9de87edc9467f1aa882e96463012e0cee943",
+    "c2-ca-historical.npz": "451ab7f01f791e41d210906656f995a66be467c8839f94406f796dc4c08f473e",
+    "c2-8states-r15000.npz": "672f52e821de4040599b9150be317785f4c8dfacea8e77ec53c9283e42b239ab",
+    "hornkohl_calibrated.npz": "d7a8df19e3fe81e394d2e91e389853c7d8a84111efd78f5eede2ad2062256c90",
+    "correction.npz": "83f850be158c2d15f44a67c3785745b3a2cca19a5187aa5047ff792971c7d7f7",
+    "report.json": "b009f34a02afa6a7df66a8a28cfdc7ea89f2ffa57eb406d32fa2ef145b33bb21"
+  },
+  "role": "Constitutive opacity/EOS data only; no atmosphere or model spectrum",
+  "base_data_source_run": "J1235 true cold 2026-09-17; original four data files unchanged",
+  "c2_ca": "Default: Lino da Silva 2024 Einstein coefficients, matched 63-band historical envelope and unchanged ExoMol populations; provenance_json inside c2-ca-2024.npz. Historical table retained for reproduction only.",
+  "swan": {
+    "default": "swan-completed.npz",
+    "retained_hornkohl_lines": 29004,
+    "added_exomol_lines": 1232442,
+    "selection": "Only outside the supplied Hornkohl per-band v_upper/v_lower/J_upper/J_lower envelope; no filling holes within that envelope or fitted strength blending",
+    "exomol_input_sha256": "f1f156a35f87c1b6d97505655613816aebe149d1934b0a510c759e456f642e3f",
+    "source": "ExoMol 12C2 8states; original Hornkohl/Parigger input and calibration documented in report.json"
+  }
+}

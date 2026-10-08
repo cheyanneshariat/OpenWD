@@ -1,0 +1,23 @@
+{
+ "source_run": "results/dq-continuum-followup/j1311-combined-warm",
+ "source_atmosphere_sha256": "ecdcd41d1ae95c17528da0ff5022ebdff339af8502be2cb7621278634458e198",
+ "source_spectrum_sha256": "a7e33e91ec7e60939968d48a79005feaf272de1a3b94aae4c83ff1a98bcb736e",
+ "fixture_sha256": "31728c4be865901a0a52bb48ee2da35687805f9e27f5847c45bc71a30312687a",
+ "points": 30000,
+ "n_angle": 4,
+ "parameters": {
+  "effective_temperature": 5529.0,
+  "logg": 8.178,
+  "log_carbon_to_helium": -5.27
+ },
+ "scope": "Archive the independently tested, pre-promotion J1311 spectrum unchanged.\n\nThis is a fixed-state regression artifact, never a cold-start solver input.\n",
+ "builder_sha256": "8e9da1741f16a21e5f90292258d52e94cba22aa3b766439b1689d550175ee370",
+ "reapprovals": [
+  {
+   "date": "2026-10-01",
+   "previous_fixture_sha256": "8fd193ce762c34023b56174c959cd27d97c003e475c461231b0f167f4b48daab",
+   "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
+   "reason": "Shared metal-line physics of the 2026-09-30 DZ audit: carbon impact profiles are now exact Voigt in frequency (compiled kernel), C I Verner photoionization covers the whole ground term. Structure arrays unchanged."
+  }
+ ]
+}

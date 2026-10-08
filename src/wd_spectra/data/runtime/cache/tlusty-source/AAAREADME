@@ -1,0 +1,160 @@
+contains three sets of files:
+
+1) The source program - together with its "include" files
+2) Two IDL interface programs
+
+There is also a subdirectory ./benchtest, which contains:
+1) Files for several test runs
+2) Atomic data files for H I, He I, and He II (in the "new" format of input).
+3) Script files (Unix) for running the benchmark tests.
+
+
+1) Files of the source program:
+   ============================
+
+   tlusty200.f   - contains the whole stellar atmospheres program
+
+  + following 8 files, INCLUDE files to the program:
+
+   ALIPAR.FOR
+   ARRAY1.FOR
+   ATOMIC.FOR
+   BASICS.FOR
+   IMPLIC.FOR
+   ITERAT.FOR
+   MODELP.FOR
+   ODFPAR.FOR
+
+The include file have to reside in the same directory as the source
+program tlusty200.f; under Unix their names have to be in capital
+letter, ie eg. ARRAY1.FOR (not array1.for).
+
+The compilation is done as follows:
+
+Unix - Digital:  f77 -o tlusty200 tlusty200.f
+Unix - Sun:      f77 -Nl100 -fast -o tlusty200 tlusty200.f
+Linux:           pgf77 -fastsse -Wl,-Bstatic -o tlusty200 tlusty200.f
+Linux:           g77 -O3 -static -fno-automatic -o tlusty200 tlusty200.f
+
+VMS:             for tlusty200.f
+Unix - Ultrix:   f77 -static -o tlusty200  tlusty200.f
+Unicos:          cf77 -Wf"-a static" tlusty200.f
+
+*** g77/gcc is NOT supported in earlier versions***
+
+
+2) Two IDL useful interface programs:
+   ==================================
+   
+   - PCONV  - plots relative changes (convergence log) - Unit 9 output
+              from TLUSTY;
+   - PMODEL - plots various quantities of the computed model(s) -
+              temperature, electron density, populations. The program
+              either plots one or several models in an absolute scale,
+              or relatively with respect to a chosen model (i.e. it
+              allows an easy graphical comparison of several models).
+   Both programs are explained at the beginning in the Comment lines.
+
+
+3) Test runs:
+   ==========
+
+The following files represent all the input and output files involved
+in calculating two model atmospheres from the scratch. The selected
+benchmark tests are:
+
+A) a moderately sophisticated model with H and He I for Teff=25000, log g = 4.0.
+
+B) analogous models as above, but with including also He II.
+
+
+The atomic data are not necessarily the best available ones.
+So, take the input files as an illustration rather than
+the best and recommended set of data.
+
+There are script files Tl (one run of Tlusty - one partial model), and Testrun,
+which produces the whole set of benchmarks. Obviously, not all test
+cases have to be actually computed.
+
+The models are as follows:
+
+MODEL A:
+
+1. LTE models - started from scratch        - called n25lt.*
+2. NLTE/lines - started from LTE            - called n25nl.*
+
+MODEL B:
+
+1. LTE models - started from scratch        - called o25lt.*
+2. NLTE/lines - started from LTE            - called o25nl.*
+
+
+
+Input files: (see also the User's Guide)
+
+unit 5 - called *.5    - basic data set
+unit 8 - called *.8    - starting model (note that the LTE model
+         does not need any starting model, since an LTE-gray starting
+         model is calculated automatically.)
+
+Output files:
+unit 6 - called *.6    - diagnostic output  (NOT SAVED in directory benchtest)
+unit 7 - called *.7    - the most important output - contains a condensed
+         model atmosphere, to be used for instance as an input to another
+         run of TLUSTY (to get a more sophisticated model) or to other
+         programs to produce synthetic spectra, etc.
+unit 9 - called *.9    - relative changes of physical quantities. This is
+         the crucial file to decide whether the model is already converged.
+         Changes should generally decrease iteration by iteration, and
+         finally should be smaller than, say, 10**-3, at least the
+         relative changes of temperature (the maximum, which usually is
+         the relative change of the intensity in the first - highest -
+         frequency point, may be relatively large due to a great
+         sensitivity of the short-wavelength radiation to temperature, but
+         that usually does not matter too much).
+
+There is another output file, unit 13, which contains only the table of
+emergent fluxes. This table may also be found in unit 6 output; the output
+on unit 13 was enabled to be able to easily extract (and plot, if needed)
+the information about emergent flux.
+
+The directory also contains another output files, unit 69. They contain
+a timing information (for every iteration the time needed for the formal
+solution; and for the true linearization). (The actual files are from
+the runs on a DEC Alpha XP1000 workstation).
+However, it is a Unix-specific feature. To use the program under other
+operating systems, then
+i) under VMS the corresponding routine - TIMING - has to be commented out.
+ii) under Unicos, only FUNCTION second() has to be commented out (it is
+    a part of the standard library.)
+
+There are other output files, which are of interest only in special
+cases. A brief description is given in corresponding routines.
+
+The user is recommended to consult the attached User's Guide for
+details.
+
+
+2) Selected atomic data files
+   ==========================
+   
+- h1.dat  -  data for H I
+- he1.dat -  data for He I
+- he2.dat -  data for He II
+
+
+
+
+References
+===========
+
+Hubeny, I., 1988, Computer Phys. Commun. 52, 103.
+Hubeny, I., and Lanz, T., 1992, A&A 262, 501.
+Hubeny, I., Hummer, D.G., and Lanz, T., 1994, A&A 282, 151.
+Hubeny, I., Lanz, T. 1995, ApJ 439, 875
+
+~
+~
+~
+~
+

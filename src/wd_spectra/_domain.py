@@ -12,7 +12,9 @@ import numpy as np
 _LOGGER = logging.getLogger(__name__)
 
 
-def append_lower_domain(atmosphere, pressure_factor=2.0):
+def append_lower_domain(
+    atmosphere, pressure_factor=2.0, *, maximum_new_cells=None
+):
     """Preserve existing nodes and append one bounded hydrostatic interval.
 
     Extrapolation is only an initial guess for the new cells. The next full
@@ -44,7 +46,18 @@ def append_lower_domain(atmosphere, pressure_factor=2.0):
     lp = np.log(p)
     spacing = float(np.median(np.diff(lp)))
     intervals = max(1, int(np.ceil(np.log(pressure_factor) / spacing)))
+    if (
+        maximum_new_cells is not None
+        and (
+            isinstance(maximum_new_cells, bool)
+            or not isinstance(maximum_new_cells, int)
+            or maximum_new_cells < 1
+        )
+    ):
+        raise ValueError("maximum new cells must be a positive integer or None")
     offsets = np.linspace(0.0, np.log(pressure_factor), intervals + 1)[1:]
+    if maximum_new_cells is not None:
+        offsets = offsets[:maximum_new_cells]
     gradient = float((np.log(t[-1]) - np.log(t[-2])) / (lp[-1] - lp[-2]))
     # A negative lower slope is not a justified diffusion extrapolation.
     if gradient < 0:
@@ -69,7 +82,11 @@ def append_lower_domain(atmosphere, pressure_factor=2.0):
 
 
 def solve_with_screened_boundary(
-    solver, *args, maximum_domain_expansions=4, **options
+    solver,
+    *args,
+    maximum_domain_expansions=4,
+    lower_domain_extension=None,
+    **options,
 ):
     """Complete a cold/requested solve with bounded same-run domain adaptation.
 
@@ -86,6 +103,10 @@ def solve_with_screened_boundary(
         raise ValueError(
             "maximum domain expansions must be a nonnegative integer"
         )
+    if lower_domain_extension is None:
+        lower_domain_extension = append_lower_domain
+    if not callable(lower_domain_extension):
+        raise ValueError("lower domain extension must be callable")
     callback = options.pop("iteration_callback", None)
     originally_cold = options.get("initial_temperature") is None
     segments = []
@@ -129,7 +150,7 @@ def solve_with_screened_boundary(
             meta["lower_boundary_absorption_escape_bound"],
             meta["lower_boundary_screening_tolerance"],
         )
-        options.update(append_lower_domain(result))
+        options.update(lower_domain_extension(result))
     return replace(
         result,
         metadata={

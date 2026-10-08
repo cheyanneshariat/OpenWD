@@ -9,7 +9,7 @@ from wd_spectra import adaptive_structure as adaptive
 from wd_spectra.atmosphere import Atmosphere
 
 
-def solve(mode, *, scattering=0.9, local_energy=True):
+def solve(mode, *, scattering=0.9, local_energy=True, backend=None):
     n = 12
     mass = np.geomspace(1e-8, 100., n)
     seed = Atmosphere(8000., 8., mass, mass, np.full(n, 7000.), 1e8*mass,
@@ -25,7 +25,8 @@ def solve(mode, *, scattering=0.9, local_energy=True):
         flux_tolerance=3e-3, n_angle=2, initial_temperature_was_supplied=False,
         use_initial_bolometric_rescaling=False, maximum_formal_flux_continuations=0,
         compute_local_energy_response=local_energy,
-        **({} if mode is None else dict(transfer_discretization=mode)))
+        **({} if mode is None else dict(transfer_discretization=mode)),
+        **({} if backend is None else dict(column_mass_radiation_backend=backend)))
 
 
 @pytest.mark.parametrize("scattering", [0., 0.9])
@@ -64,3 +65,46 @@ def test_concurrent_calls_do_not_share_transfer_state():
 def test_invalid_transfer_mode_fails_before_material_evaluation():
     with pytest.raises(ValueError, match="transfer discretization"):
         solve("automatic-temperature-switch")
+
+
+def test_explicit_column_mass_backend_owns_every_transfer_operation():
+    from wd_spectra import _mass_feautrier as mass
+
+    class Backend:
+        def __init__(self):
+            self.calls = []
+
+        def field(self, *args, **kwargs):
+            self.calls.append("field")
+            return mass.mass_field(*args, **kwargs)
+
+        def response(self, *args, **kwargs):
+            self.calls.append("response")
+            return mass.mass_response(*args, **kwargs)
+
+        def energy(self, *args, **kwargs):
+            self.calls.append("energy")
+            return mass.mass_energy(*args, **kwargs)
+
+        def energy_response(self, *args, **kwargs):
+            self.calls.append("energy_response")
+            return mass.mass_energy_response(*args, **kwargs)
+
+        def boundary(self, *args, **kwargs):
+            self.calls.append("boundary")
+            return adaptive._thermal_boundary_absorption_escape_bound(
+                *args, **kwargs
+            )
+
+        def record_temperature_response_probes(self, probes):
+            self.calls.append("temperature_response_probes")
+            assert len(probes) == 3
+
+    expected = solve("column-mass")
+    backend = Backend()
+    actual = solve("column-mass", backend=backend)
+    np.testing.assert_array_equal(actual.temperature, expected.temperature)
+    assert {"field", "energy", "energy_response", "boundary",
+            "temperature_response_probes"}.issubset(backend.calls)
+    with pytest.raises(ValueError, match="requires column-mass"):
+        solve("optical-depth", backend=Backend())

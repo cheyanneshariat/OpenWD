@@ -1,0 +1,1183 @@
+.
+. ============================================
+. O    VI  MODEL ION   (FORMAL SOLUTION ONLY!) 
+. ============================================
+.
+. BY D. JAHN & T. RAUCH
+.
+.     INSTITUTE FOR ASTRONOMY AND ASTROPHYSICS
+.     KEPLER CENTER FOR ASTRO AND PARTICLE PHYSICS
+.     EBERHARD KARLS UNIVERSITY
+.     SAND 1
+.     D-72076 TUEBINGEN
+.     GERMANY
+.
+.     E-mail: astro-tmad@listserv.uni-tuebingen.de
+.
+.
+. CREATED      : 27-JUL-1997 11:14:34
+. LAST MODIFIED: 16-DEC-2015 09:05:55
+.
+.
+. Sources of atomic data: see columns 81+
+.
+.      Bashkin & Stoner: 1975, Atomic Energy Levels And Grotrian Diagrams, North-Holland, American Elsevier
+.               CHIANTI: http://www.chiantidatabase.org/
+.                  NIST: http://www.nist.gov/pml/data/asd.cfm
+.          Iron Project: http://cdsweb.u-strasbg.fr/tipbase
+.
+. Some wavelengths were shifted to avoid doubly defined frequency points. 
+. Real wavelengths are shown in brackets ().
+.
+.
+. SUITABLE FOR THE CALCULATION OF A SYNTHETIC SPECTRUM ONLY!
+.
+.
+.                         NON-LTE LEVELS                                                         
+.---------------------------------------                                                         
+L
+O602S 12S O701S201S  3.339722885290E+16     2.00000                             NIST
+O602P 12POO701S201S  3.050797477915E+16     2.00000                             NIST
+O602P 32POO701S201S  3.049201080723E+16     4.00000                             NIST
+O603S 12S O701S201S  1.420929007716E+16     2.00000                             NIST
+O603P 12POO701S201S  1.342762805727E+16     2.00000                             NIST
+O603P 32POO701S201S  1.342293330046E+16     4.00000                             NIST
+O603D 32D O701S201S  1.317242935115E+16     4.00000                             NIST
+O603D 52D O701S201S  1.317089740943E+16     6.00000                             NIST
+O604S 12S O701S201S  7.834008187060E+15     2.00000                             NIST
+O604P 12POO701S201S  7.515094495898E+15     2.00000                             NIST
+O604P 32POO701S201S  7.513178819267E+15     4.00000                             NIST
+O604D 32D O701S201S  7.408778939771E+15     4.00000                             NIST
+O604D 52D O701S201S  7.408137382965E+15     6.00000                             NIST
+O604F 52FOO701S201S  7.402855032067E+15     6.00000                             NIST
+O604F 72FOO701S201S  7.402576224670E+15     8.00000                             NIST
+O605S 12S O701S201S  4.956176222800E+15     2.00000                             NIST
+O605P 12POO701S201S  4.794687849700E+15     2.00000                             NIST
+O605P 32POO701S201S  4.794487849700E+15     4.00000                             NIST
+O605D 32D O701S201S  4.741494527110E+15     4.00000                             NIST
+O605D 52D O701S201S  4.741224713500E+15     6.00000                             NIST
+O605F 52FOO701S201S  4.737628198700E+15     6.00000                             NIST    
+O605F 72FOO701S201S  4.737626198700E+15     8.00000                             NIST 
+O605G 72G O701S201S  4.737327485800E+15     8.00000                             NIST
+O605G 92G O701S201S  4.737327385800E+15    10.00000                             NIST
+O606S 12S O701S201S  3.415539934673E+15     2.00000                             CHIANTI
+O606P 12POO701S201S  3.324215094873E+15     2.00000                             CHIANTI
+O606P 32POO701S201S  3.324015094873E+15     4.00000                             CHIANTI
+O606D 32D O701S201S  3.298618782946E+15     4.00000                             CHIANTI
+O606D 52D O701S201S  3.298388493677E+15     6.00000                             CHIANTI
+O606G 72G O701S201S  3.296973859596E+15     8.00000                             CHIANTI
+O606G 92G O701S201S  3.296908062662E+15    10.00000                             CHIANTI
+O606H 92HOO701S201S  3.296743570327E+15    10.00000                             CHIANTI
+O606H112HOO701S201S  3.296710671860E+15    12.00000                             CHIANTI
+O606F 52FOO701S201S  3.296085600986E+15     6.00000                             CHIANTI
+O606F 72FOO701S201S  3.295954007118E+15     8.00000                             CHIANTI
+O607S 12S O701S201S  2.495176306700E+15     2.00000                             NIST
+O607P 12POO701S201S  2.439744599490E+15     2.00000                             NIST
+O607P 32POO701S201S  2.439654661620E+15     4.00000                             NIST
+O607D 32D O701S201S  2.419328703000E+15     4.00000                             NIST
+O607D 52D O701S201S  2.418609200040E+15     6.00000                             NIST
+O607F 52FOO701S201S  2.417170394120E+15     6.00000                             NIST
+O607F 72FOO701S201S  2.417170043112E+15     8.00000                             NIST
+O607G 72G O701S201S  2.417080266250E+15     8.00000                             NIST
+O607G 92G O701S201S  2.417080222533E+15    10.00000                             NIST
+O607H 92HOO701S201S  2.416956970135E+15    10.00000                             Bashkin/Stoner  
+O607H112HOO701S201S  2.416956955000E+15    12.00000                             Bashkin/Stoner  
+O607I112I O701S201S  2.4169569412E+15      12.00000                             Bashkin/Stoner  
+O607I132I O701S201S  2.4169569313E+15      14.00000                             Bashkin/Stoner  
+O608S 12S O701S201S  1.902695598430E+15     2.00000                             NIST
+O608P 12POO701S201S  1.867490056940E+15     2.00000                             NIST
+O608P 32POO701S201S  1.867090056940E+15     4.00000                             NIST
+O608F 52FOO701S201S  1.850743488860E+15     6.00000                             NIST
+O608F 72FOO701S201S  1.850740488860E+15     8.00000                             NIST
+O608G 72G O701S201S  1.850591692410E+15     8.00000                             NIST
+O608G 92G O701S201S  1.850591492410E+15    10.00000                             NIST
+O608H 92HOO701S201S  1.850469290000E+15    10.00000                             Bashkin/Stoner
+O608I112I O701S201S  1.850469180000E+15    12.00000                             Bashkin/Stoner
+O608K132KOO701S201S  1.850469173000E+15    14.00000                             Bashkin/Stoner
+O608K152KOO701S201S  1.850469171000E+15    16.00000                             Bashkin/Stoner
+O608I132I O701S201S  1.850469170000E+15    14.00000                             Bashkin/Stoner
+O608H112HOO701S201S  1.850469090000E+15    12.00000                             Bashkin/Stoner
+O608D 32D O701S201S  1.850381737380E+15     4.00000                             NIST
+O608D 52D O701S201S  1.849992006610E+15     6.00000                             NIST
+O609S 12S O701S201S  1.506737980710E+15     2.00000                             CHIANTI
+O609P 12POO701S201S  1.479004573027E+15     2.00000                             CHIANTI
+O609P 32POO701S201S  1.478774283758E+15     4.00000                             CHIANTI
+O609D 32D O701S201S  1.469760103799E+15     4.00000                             CHIANTI
+O609D 52D O701S201S  1.469694306865E+15     6.00000                             CHIANTI
+O609F 52FOO701S201S  1.469200829860E+15     6.00000                             CHIANTI
+O609G 72G O701S201S  1.469168931393E+15     8.00000                             CHIANTI
+O609F 72FOO701S201S  1.469167931393E+15     8.00000                             CHIANTI
+O609G 92G O701S201S  1.469166931393E+15    10.00000                             CHIANTI
+O609I112I O701S201S  1.469102234459E+15    12.00000                             CHIANTI
+O609I132I O701S201S  1.469102034459E+15    14.00000                             CHIANTI
+O609L152L O701S201S  1.469069245992E+15    16.00000                             CHIANTI
+O609L172L O701S201S  1.469069225992E+15    18.00000                             CHIANTI
+O609K132KOO701S201S  1.469003439058E+15    14.00000                             CHIANTI
+O609K152KOO701S201S  1.469003437058E+15    16.00000                             CHIANTI
+O609H 92HOO701S201S  1.468806048356E+15    10.00000                             CHIANTI
+O609H112HOO701S201S  1.468806048156E+15    12.00000                             CHIANTI
+O610S 12S O701S201S  1.218679003635E+15     2.00000                             CHIANTI
+O610P 12POO701S201S  1.198512243362E+15     2.00000                             CHIANTI
+O610P 32POO701S201S  1.198347751027E+15     4.00000                             CHIANTI
+O610D 32D O701S201S  1.191800956094E+15     4.00000                             CHIANTI
+O610D 52D O701S201S  1.191735159160E+15     6.00000                             CHIANTI
+O610G 72G O701S201S  1.191373276023E+15     8.00000                             CHIANTI
+O610F 52FOO701S201S  1.191340377556E+15     6.00000                             CHIANTI
+O610G 92G O701S201S  1.191340377554E+15    10.00000                             CHIANTI
+O610F 72FOO701S201S  1.191307479089E+15     8.00000                             CHIANTI
+O610I112I O701S201S  1.191307489089E+15    12.00000                             CHIANTI
+O610I132I O701S201S  1.191307469088E+15    14.00000                             CHIANTI
+O610L152L O701S201S  1.191274580722E+15    16.00000                             CHIANTI
+O610L172L O701S201S  1.191274580521E+15    18.00000                             CHIANTI
+O610K132KOO701S201S  1.191241682165E+15    14.00000                             CHIANTI
+O610K152KOO701S201S  1.191241682155E+15    16.00000                             CHIANTI
+O610M172MOO701S201S  1.191241682149E+15    18.00000                             CHIANTI
+O610M192MOO701S201S  1.191241682140E+15    20.00000                             EXTRAPOLATED
+O610H 92HOO701S201S  1.191110088288E+15    10.00000                             CHIANTI
+O610H112HOO701S201S  1.191110088286E+15    12.00000                             CHIANTI
+0                                                                               
+.                             LTE LEVELS                              
+.---------------------------------------                              
+LTE                                                                             
+O611      O701S201S    9.7606428000E+14   242.00000                             Bashkin/Stoner
+O612      O701S201S    8.2225000000E+14   288.00000                             Bashkin/Stoner
+O613      O701S201S    7.0061000000E+14   338.00000                             Bashkin/Stoner
+O614      O701S201S    6.0410000000E+14   392.00000                             Bashkin/Stoner
+O615      O701S201S    5.2624000000E+14   450.00000                             Bashkin/Stoner
+O616      O701S201S    4.6252000000E+14   512.00000                             Bashkin/Stoner
+O617      O701S201S    4.0970000000E+14   578.00000                             Bashkin/Stoner
+O618      O701S201S    3.6544000000E+14   648.00000                             Bashkin/Stoner
+0                                                                               
+.                       LINE TRANSITIONS                       
+.---------------------------------------                       
+.data calculated by FORMEL4 (Version 16-Dec-2004 14:22:30) by T. Rauch
+RBB
+O602S 12S O602P 12PO 3 3   6.6403E-02   2.0660E+09      0.31  6  2  2           WAVELENGTH:          1037.61349 A    Iron Project
+O602S 12S O602P 32PO 3 3   1.3281E-01   2.0889E+09      0.31  6  2  2           WAVELENGTH:          1031.91187 A    Iron Project
+O602S 12S O603P 12PO 4 6   8.8607E-02   9.8697E+10      1.59  6  2  3           WAVELENGTH:           150.12463 A    Iron Project
+O602S 12S O603P 32PO 4 6   1.7721E-01   9.8744E+10      1.59  6  2  3           WAVELENGTH:           150.08935 A    Iron Project
+O602S 12S O604P 12PO 4 6   2.4618E-02   1.6579E+11      5.07  6  2  4           WAVELENGTH:           115.83005 A    Iron Project
+O602S 12S O604P 32PO 4 6   4.9236E-02   1.6582E+11      5.07  6  2  4           WAVELENGTH:           115.82148 A    Iron Project
+O602S 12S O605P 12PO 4 6   1.0503E-02   2.0248E+11     12.45  6  2  5           WAVELENGTH:           104.81338 A    Iron Project
+O602S 12S O605P 32PO 4 6   2.1006E-02   2.0248E+11     12.45  6  2  5           WAVELENGTH:           104.81265 A    Iron Project
+O602S 12S O606P 12PO 4 6   5.5453E-03   2.2383E+11     25.90  6  2  6           WAVELENGTH:            99.68835 A    Iron Project
+O602S 12S O606P 32PO 4 6   1.1091E-02   2.2383E+11     25.91  6  2  6           WAVELENGTH:            99.68768 A    Iron Project
+O602S 12S O607P 12PO 4 6   3.3145E-03   2.3719E+11     48.09  6  2  7           WAVELENGTH:            96.84020 A    Iron Project
+O602S 12S O607P 32PO 4 6   6.6290E-03   2.3719E+11     48.09  6  2  7           WAVELENGTH:            96.83992 A    Iron Project
+O602S 12S O608P 12PO 4 6   2.1474E-03   2.4604E+11     82.08  6  2  8           WAVELENGTH:            95.08258 A    Iron Project
+O602S 12S O608P 32PO 4 6   4.2949E-03   2.4605E+11     82.11  6  2  8           WAVELENGTH:            95.08138 A    Iron Project
+O602S 12S O609P 12PO 4 6   1.4740E-03   2.5214E+11    130.86  6  2  9           WAVELENGTH:            93.92531 A    Iron Project
+O602S 12S O609P 32PO 4 6   2.9480E-03   2.5215E+11    130.90  6  2  9           WAVELENGTH:            93.92463 A    Iron Project
+O602S 12S O610P 12PO 4 6   1.0570E-03   2.5659E+11    199.27  6  2 10           WAVELENGTH:            93.10710 A    Iron Project
+O602S 12S O610P 32PO 4 6   2.1140E-03   2.5660E+11    199.33  6  2 10           WAVELENGTH:            93.10662 A    Iron Project
+.                       
+O602P 12POO603S 12S  4 6   2.8960E-02   6.5746E+10      1.42  6  2  3           WAVELENGTH:           183.93687 A    Iron Project
+O602P 32POO603S 12S  4 6   2.8960E-02   6.5618E+10      1.42  6  2  3           WAVELENGTH:           184.11720 A    Iron Project
+O602P 12POO604S 12S  4 6   5.7549E-03   1.2724E+11      4.66  6  2  4           WAVELENGTH:           132.21899 A    Iron Project
+O602P 32POO604S 12S  4 6   5.7549E-03   1.2706E+11      4.66  6  2  4           WAVELENGTH:           132.31215 A    Iron Project
+O602P 12POO605S 12S  4 6   2.2050E-03   1.6159E+11     11.65  6  2  5           WAVELENGTH:           117.32751 A    Iron Project
+O602P 32POO605S 12S  4 6   2.2050E-03   1.6139E+11     11.65  6  2  5           WAVELENGTH:           117.40086 A    Iron Project
+O602P 12POO606S 12S  4 6   1.1095E-03   1.8166E+11     24.54  6  2  6           WAVELENGTH:           110.65558 A    Iron Project
+O602P 32POO606S 12S  4 6   1.1095E-03   1.8145E+11     24.54  6  2  6           WAVELENGTH:           110.72082 A    Iron Project
+O602P 12POO607S 12S  4 6   6.4315E-04   1.9421E+11     45.98  6  2  7           WAVELENGTH:           107.01998 A    Iron Project
+O602P 32POO607S 12S  4 6   6.4315E-04   1.9399E+11     45.98  6  2  7           WAVELENGTH:           107.08100 A    Iron Project
+O602P 12POO608S 12S  4 6   4.0860E-04   2.0252E+11     79.07  6  2  8           WAVELENGTH:           104.80335 A    Iron Project
+O602P 32POO608S 12S  4 6   4.0860E-04   2.0229E+11     79.07  6  2  8           WAVELENGTH:           104.86187 A    Iron Project
+O602P 12POO609S 12S  4 6   2.7646E-04   2.0816E+11    126.08  6  2  9           WAVELENGTH:           103.37245 A    Iron Project
+O602P 32POO609S 12S  4 6   2.7646E-04   2.0793E+11    126.08  6  2  9           WAVELENGTH:           103.42939 A    Iron Project
+O602P 12POO610S 12S  4 6   1.9624E-04   2.1232E+11    192.73  6  2 10           WAVELENGTH:           102.35579 A    Iron Project
+O602P 32POO610S 12S  4 6   1.9624E-04   2.1209E+11    192.73  6  2 10           WAVELENGTH:           102.41161 A    Iron Project
+.                       
+O602P 12POO603D 32D  4 6   6.5525E-01   7.4378E+10      1.65  6  2  3           WAVELENGTH:           172.93537 A    Iron Project
+O602P 32POO603D 32D  4 6   6.5407E-02   7.4241E+10      1.65  6  2  3           WAVELENGTH:           173.09477 A    Iron Project
+O602P 32POO603D 52D  4 6   5.8926E-01   7.4254E+10      1.65  6  2  3           WAVELENGTH:           173.07946 A    Iron Project
+O602P 12POO604D 32D  4 6   1.2216E-01   1.3206E+11      5.21  6  2  4           WAVELENGTH:           129.78499 A    Iron Project
+O602P 32POO604D 32D  4 6   1.2194E-02   1.3187E+11      5.21  6  2  4           WAVELENGTH:           129.87475 A    Iron Project
+O602P 32POO604D 52D  4 6   1.0986E-01   1.3188E+11      5.22  6  2  4           WAVELENGTH:           129.87114 A    Iron Project
+O602P 12POO605D 32D  4 6   4.5502E-02   1.6432E+11     12.73  6  2  5           WAVELENGTH:           116.34996 A    Iron Project
+O602P 32POO605D 32D  4 6   4.5420E-03   1.6411E+11     12.73  6  2  5           WAVELENGTH:           116.42209 A    Iron Project
+O602P 32POO605D 52D  4 6   4.0919E-02   1.6411E+11     12.73  6  2  5           WAVELENGTH:           116.42087 A    Iron Project
+O602P 12POO606D 32D  4 6   2.2413E-02   1.8323E+11     26.31  6  2  6           WAVELENGTH:           110.18008 A    Iron Project
+O602P 32POO606D 32D  4 6   2.2373E-03   1.8302E+11     26.31  6  2  6           WAVELENGTH:           110.24476 A    Iron Project
+O602P 32POO606D 52D  4 6   2.0156E-02   1.8302E+11     26.31  6  2  6           WAVELENGTH:           110.24383 A    Iron Project
+O602P 12POO607D 32D  4 6   1.2867E-02   1.9527E+11     48.90  6  2  7           WAVELENGTH:           106.73099 A    Iron Project
+O602P 32POO607D 32D  4 6   1.2844E-03   1.9505E+11     48.90  6  2  7           WAVELENGTH:           106.79168 A    Iron Project
+O602P 32POO607D 52D  4 6   1.1571E-02   1.9506E+11     48.93  6  2  7           WAVELENGTH:           106.78895 A    Iron Project
+O602P 12POO608D 32D  4 6   8.1269E-03   2.0326E+11     83.60  6  2  8           WAVELENGTH:           104.61203 A    Iron Project
+O602P 32POO608D 32D  4 6   8.1123E-04   2.0303E+11     83.60  6  2  8           WAVELENGTH:           104.67034 A    Iron Project
+O602P 32POO608D 52D  4 6   7.3083E-03   2.0304E+11     83.64  6  2  8           WAVELENGTH:           104.66891 A    Iron Project
+O602P 12POO609D 32D  4 6   5.4824E-03   2.0869E+11    132.51  6  2  9           WAVELENGTH:           103.24082 A    Iron Project
+O602P 32POO609D 32D  4 6   5.4725E-04   2.0846E+11    132.51  6  2  9           WAVELENGTH:           103.29761 A    Iron Project
+O602P 32POO609D 52D  4 6   4.9302E-03   2.0846E+11    132.52  6  2  9           WAVELENGTH:           103.29737 A    Iron Project
+O602P 12POO610D 32D  4 6   3.8836E-03   2.1271E+11    201.52  6  2 10           WAVELENGTH:           102.26195 A    Iron Project
+O602P 32POO610D 32D  4 6   3.8766E-04   2.1248E+11    201.52  6  2 10           WAVELENGTH:           102.31766 A    Iron Project
+O602P 32POO610D 52D  4 6   3.4925E-03   2.1248E+11    201.54  6  2 10           WAVELENGTH:           102.31743 A    Iron Project
+.                       
+O603S 12S O603P 12PO 3 3   1.1006E-01   1.5122E+08      1.59  6  3  3           WAVELENGTH:          3835.32642 A    Iron Project
+O603S 12S O603P 32PO 3 3   2.2012E-01   1.5304E+08      1.59  6  3  3           WAVELENGTH:          3812.42852 A    Iron Project
+O603S 12S O604P 12PO 4 6   9.2327E-02   1.1091E+10      5.07  6  3  4           WAVELENGTH:           447.84007 A    Iron Project
+O603S 12S O604P 32PO 4 6   1.8465E-01   1.1097E+10      5.07  6  3  4           WAVELENGTH:           447.71195 A    Iron Project
+O603S 12S O605P 12PO 4 6   2.7584E-02   2.1937E+10     12.45  6  3  5           WAVELENGTH:           318.43395 A    Iron Project
+O603S 12S O605P 32PO 4 6   5.5167E-02   2.1938E+10     12.45  6  3  5           WAVELENGTH:           318.42719 A    Iron Project
+O603S 12S O606P 12PO 4 6   1.2270E-02   2.9324E+10     25.90  6  3  6           WAVELENGTH:           275.41648 A    Iron Project
+O603S 12S O606P 32PO 4 6   2.4541E-02   2.9326E+10     25.91  6  3  6           WAVELENGTH:           275.41142 A    Iron Project
+O603S 12S O607P 12PO 4 6   6.6973E-03   3.4284E+10     48.09  6  3  7           WAVELENGTH:           254.71918 A    Iron Project
+O603S 12S O607P 32PO 4 6   1.3395E-02   3.4284E+10     48.09  6  3  7           WAVELENGTH:           254.71724 A    Iron Project
+O603S 12S O608P 12PO 4 6   4.1157E-03   3.7699E+10     82.08  6  3  8           WAVELENGTH:           242.90857 A    Iron Project
+O603S 12S O608P 32PO 4 6   8.2313E-03   3.7701E+10     82.11  6  3  8           WAVELENGTH:           242.90070 A    Iron Project
+O603S 12S O609P 12PO 4 6   2.7291E-03   4.0109E+10    130.86  6  3  9           WAVELENGTH:           235.49582 A    Iron Project
+O603S 12S O609P 32PO 4 6   5.4582E-03   4.0111E+10    130.90  6  3  9           WAVELENGTH:           235.49156 A    Iron Project
+O603S 12S O610P 12PO 4 6   1.9115E-03   4.1896E+10    199.27  6  3 10           WAVELENGTH:           230.41889 A    Iron Project
+O603S 12S O610P 32PO 4 6   3.8230E-03   4.1897E+10    199.33  6  3 10           WAVELENGTH:           230.41598 A    Iron Project
+.                       
+O603P 12POO604S 12S  4 6   6.4123E-02   7.7438E+09      4.66  6  3  4           WAVELENGTH:           535.95508 A    Iron Project
+O603P 32POO604S 12S  4 6   6.4123E-02   7.7308E+09      4.66  6  3  4           WAVELENGTH:           536.40529 A    Iron Project
+O603P 12POO605S 12S  4 6   1.3205E-02   1.7762E+10     11.65  6  3  5           WAVELENGTH:           353.88609 A    Iron Project
+O603P 32POO605S 12S  4 6   1.3205E-02   1.7742E+10     11.65  6  3  5           WAVELENGTH:           354.08232 A    Iron Project
+O603P 12POO606S 12S  4 6   5.0840E-03   2.4809E+10     24.54  6  3  6           WAVELENGTH:           299.43091 A    Iron Project
+O603P 32POO606S 12S  4 6   5.0840E-03   2.4786E+10     24.54  6  3  6           WAVELENGTH:           299.57138 A    Iron Project
+O603P 12POO607S 12S  4 6   2.5738E-03   2.9580E+10     45.98  6  3  7           WAVELENGTH:           274.22293 A    Iron Project
+O603P 32POO607S 12S  4 6   2.5738E-03   2.9555E+10     45.98  6  3  7           WAVELENGTH:           274.34075 A    Iron Project
+O603P 12POO608S 12S  4 6   1.5144E-03   3.2873E+10     79.07  6  3  8           WAVELENGTH:           260.12552 A    Iron Project
+O603P 32POO608S 12S  4 6   1.5144E-03   3.2847E+10     79.07  6  3  8           WAVELENGTH:           260.23152 A    Iron Project
+O603P 12POO609S 12S  4 6   9.7557E-04   3.5171E+10    126.08  6  3  9           WAVELENGTH:           251.48533 A    Iron Project
+O603P 32POO609S 12S  4 6   9.7557E-04   3.5143E+10    126.08  6  3  9           WAVELENGTH:           251.58441 A    Iron Project
+O603P 12POO610S 12S  4 6   6.7013E-04   3.6891E+10    192.73  6  3 10           WAVELENGTH:           245.55177 A    Iron Project
+O603P 32POO610S 12S  4 6   6.7013E-04   3.6863E+10    192.73  6  3 10           WAVELENGTH:           245.64623 A    Iron Project
+.                       
+O603P 12POO603D 32D  4 6   4.4706E-02   1.6118E+07      1.65  6  3  3           WAVELENGTH:         11747.43025 A    Iron Project
+O603P 32POO603D 32D  4 6   4.4625E-03   1.5531E+07      1.65  6  3  3           WAVELENGTH:         11967.59176 A    Iron Project
+O603P 32POO603D 52D  4 6   4.0203E-02   1.5721E+07      1.65  6  3  3           WAVELENGTH:         11894.84953 A    Iron Project
+O603P 12POO604D 32D  4 6   5.5765E-01   8.9659E+09      5.21  6  3  4           WAVELENGTH:           498.09007 A    Iron Project
+O603P 32POO604D 32D  4 6   5.5665E-02   8.9519E+09      5.21  6  3  4           WAVELENGTH:           498.47889 A    Iron Project
+O603P 32POO604D 52D  4 6   5.0149E-01   8.9538E+09      5.22  6  3  4           WAVELENGTH:           498.42572 A    Iron Project
+O603P 12POO605D 32D  4 6   1.3532E-01   1.8673E+10     12.73  6  3  5           WAVELENGTH:           345.13964 A    Iron Project
+O603P 32POO605D 32D  4 6   1.3508E-02   1.8653E+10     12.73  6  3  5           WAVELENGTH:           345.32628 A    Iron Project
+O603P 32POO605D 52D  4 6   1.2169E-01   1.8654E+10     12.73  6  3  5           WAVELENGTH:           345.31555 A    Iron Project
+O603P 12POO606D 32D  4 6   5.5187E-02   2.5392E+10     26.31  6  3  6           WAVELENGTH:           295.97452 A    Iron Project
+O603P 32POO606D 32D  4 6   5.5088E-03   2.5369E+10     26.31  6  3  6           WAVELENGTH:           296.11177 A    Iron Project
+O603P 32POO606D 52D  4 6   4.9629E-02   2.5370E+10     26.31  6  3  6           WAVELENGTH:           296.10503 A    Iron Project
+O603P 12POO607D 32D  4 6   2.8745E-02   2.9992E+10     48.90  6  3  7           WAVELENGTH:           272.33353 A    Iron Project
+O603P 32POO607D 32D  4 6   2.8694E-03   2.9967E+10     48.90  6  3  7           WAVELENGTH:           272.44972 A    Iron Project
+O603P 32POO607D 52D  4 6   2.5850E-02   2.9970E+10     48.93  6  3  7           WAVELENGTH:           272.43191 A    Iron Project
+O603P 12POO608D 32D  4 6   1.7157E-02   3.3172E+10     83.60  6  3  8           WAVELENGTH:           258.95009 A    Iron Project
+O603P 32POO608D 32D  4 6   1.7126E-03   3.3146E+10     83.60  6  3  8           WAVELENGTH:           259.05514 A    Iron Project
+O603P 32POO608D 52D  4 6   1.5429E-02   3.3148E+10     83.64  6  3  8           WAVELENGTH:           259.04642 A    Iron Project
+O603P 12POO609D 32D  4 6   1.1167E-02   3.5390E+10    132.51  6  3  9           WAVELENGTH:           250.70765 A    Iron Project
+O603P 32POO609D 32D  4 6   1.1147E-03   3.5362E+10    132.51  6  3  9           WAVELENGTH:           250.80612 A    Iron Project
+O603P 32POO609D 52D  4 6   1.0042E-02   3.5362E+10    132.52  6  3  9           WAVELENGTH:           250.80474 A    Iron Project
+O603P 12POO610D 32D  4 6   7.7193E-03   3.7054E+10    201.52  6  3 10           WAVELENGTH:           245.01237 A    Iron Project
+O603P 32POO610D 32D  4 6   7.7054E-04   3.7025E+10    201.52  6  3 10           WAVELENGTH:           245.10641 A    Iron Project
+O603P 32POO610D 52D  4 6   6.9418E-03   3.7026E+10    201.54  6  3 10           WAVELENGTH:           245.10510 A    Iron Project
+.                       
+O603D 32D O604P 12PO 4 6   1.2785E-02   7.9212E+09      5.07  6  3  4           WAVELENGTH:           529.91896 A    Iron Project
+O603D 32D O604P 32PO 4 6   2.5524E-03   7.9266E+09      5.07  6  3  4           WAVELENGTH:           529.73958 A    Iron Project
+O603D 52D O604P 32PO 4 6   1.5330E-02   7.9223E+09      5.07  6  3  4           WAVELENGTH:           529.88302 A    Iron Project
+O603D 32D O605P 12PO 4 6   2.5351E-03   1.7371E+10     12.45  6  3  5           WAVELENGTH:           357.84453 A    Iron Project
+O603D 32D O605P 32PO 4 6   5.0611E-04   1.7372E+10     12.45  6  3  5           WAVELENGTH:           357.83599 A    Iron Project
+O603D 52D O605P 32PO 4 6   3.0397E-03   1.7365E+10     12.45  6  3  5           WAVELENGTH:           357.90143 A    Iron Project
+O603D 32D O606P 12PO 4 6   9.3840E-04   2.4004E+10     25.90  6  3  6           WAVELENGTH:           304.41347 A    Iron Project
+O603D 32D O606P 32PO 4 6   1.8734E-04   2.4005E+10     25.91  6  3  6           WAVELENGTH:           304.40729 A    Iron Project
+O603D 52D O606P 32PO 4 6   1.1252E-03   2.3997E+10     25.91  6  3  6           WAVELENGTH:           304.45468 A    Iron Project
+O603D 32D O607P 12PO 4 6   4.6349E-04   2.8509E+10     48.09  6  3  7           WAVELENGTH:           279.32703 A    Iron Project
+O603D 32D O607P 32PO 4 6   9.2532E-05   2.8510E+10     48.09  6  3  7           WAVELENGTH:           279.32469 A    Iron Project
+O603D 52D O607P 32PO 4 6   5.5575E-04   2.8501E+10     48.09  6  3  7           WAVELENGTH:           279.36457 A    Iron Project
+O603D 32D O608P 12PO 4 6   2.6820E-04   3.1630E+10     82.08  6  3  8           WAVELENGTH:           265.18754 A    Iron Project
+O603D 32D O608P 32PO 4 6   5.3544E-05   3.1633E+10     82.11  6  3  8           WAVELENGTH:           265.17815 A    Iron Project
+O603D 52D O608P 32PO 4 6   3.2159E-04   3.1624E+10     82.11  6  3  8           WAVELENGTH:           265.21409 A    Iron Project
+O603D 32D O609P 12PO 4 6   1.7099E-04   3.3842E+10    130.86  6  3  9           WAVELENGTH:           256.37733 A    Iron Project
+O603D 32D O609P 32PO 4 6   3.4136E-05   3.3843E+10    130.90  6  3  9           WAVELENGTH:           256.37228 A    Iron Project
+O603D 52D O609P 32PO 4 6   2.0502E-04   3.3834E+10    130.90  6  3  9           WAVELENGTH:           256.40587 A    Iron Project
+O603D 32D O610P 12PO 4 6   1.1657E-04   3.5485E+10    199.27  6  3 10           WAVELENGTH:           250.37162 A    Iron Project
+O603D 32D O610P 32PO 4 6   2.3272E-05   3.5486E+10    199.33  6  3 10           WAVELENGTH:           250.36818 A    Iron Project
+O603D 52D O610P 32PO 4 6   1.3977E-04   3.5476E+10    199.33  6  3 10           WAVELENGTH:           250.40021 A    Iron Project
+.                       
+O603D 32D O604F 52FO 4 6   1.0199E+00   8.2386E+09      5.22  6  3  4           WAVELENGTH:           519.61008 A    Iron Project
+O603D 52D O604F 52FO 4 6   4.8567E-02   8.2343E+09      5.22  6  3  4           WAVELENGTH:           519.74809 A    Iron Project
+O603D 52D O604F 72FO 4 6   9.7133E-01   8.2350E+09      5.22  6  3  4           WAVELENGTH:           519.72297 A    Iron Project
+O603D 32D O605F 52FO 4 6   1.5827E-01   1.7608E+10     12.75  6  3  5           WAVELENGTH:           355.42379 A    Iron Project
+O603D 52D O605F 52FO 4 6   7.5367E-03   1.7602E+10     12.75  6  3  5           WAVELENGTH:           355.48836 A    Iron Project
+O603D 52D O605F 72FO 4 6   1.5073E-01   1.7602E+10     12.75  6  3  5           WAVELENGTH:           355.48827 A    Iron Project
+O603D 32D O606F 52FO 4 6   5.4060E-02   2.4141E+10     26.35  6  3  6           WAVELENGTH:           303.54645 A    Iron Project
+O603D 52D O606F 52FO 4 6   2.5743E-03   2.4134E+10     26.35  6  3  6           WAVELENGTH:           303.59357 A    Iron Project
+O603D 52D O606F 72FO 4 6   5.1486E-02   2.4134E+10     26.35  6  3  6           WAVELENGTH:           303.58953 A    Iron Project
+O603D 32D O607F 52FO 4 6   2.5669E-02   2.8629E+10     48.99  6  3  7           WAVELENGTH:           278.74075 A    Iron Project
+O603D 52D O607F 52FO 4 6   1.2223E-03   2.8621E+10     48.99  6  3  7           WAVELENGTH:           278.78046 A    Iron Project
+O603D 52D O607F 72FO 4 6   2.4447E-02   2.8621E+10     48.99  6  3  7           WAVELENGTH:           278.78045 A    Iron Project
+O603D 32D O608F 52FO 4 6   1.4453E-02   3.1724E+10     83.57  6  3  8           WAVELENGTH:           264.79528 A    Iron Project
+O603D 52D O608F 52FO 4 6   6.8824E-04   3.1716E+10     83.57  6  3  8           WAVELENGTH:           264.83112 A    Iron Project
+O603D 52D O608F 72FO 4 6   1.3765E-02   3.1716E+10     83.57  6  3  8           WAVELENGTH:           264.83105 A    Iron Project
+O603D 32D O609F 52FO 4 6   9.0459E-03   3.3898E+10    132.61  6  3  9           WAVELENGTH:           256.16256 A    Iron Project
+O603D 52D O609F 52FO 4 6   4.3076E-04   3.3889E+10    132.61  6  3  9           WAVELENGTH:           256.19610 A    Iron Project
+O603D 52D O609F 72FO 4 6   8.6151E-03   3.3890E+10    132.61  6  3  9           WAVELENGTH:           256.19538 A    Iron Project
+O603D 32D O610F 52FO 4 6   6.0865E-03   3.5527E+10    201.68  6  3 10           WAVELENGTH:           250.22175 A    Iron Project
+O603D 52D O610F 52FO 4 6   2.8983E-04   3.5518E+10    201.68  6  3 10           WAVELENGTH:           250.25374 A    Iron Project
+O603D 52D O610F 72FO 4 6   5.7967E-03   3.5518E+10    201.69  6  3 10           WAVELENGTH:           250.25306 A    Iron Project
+.                       
+O604S 12S O604P 12PO 4 6   1.5317E-01   2.5172E+07      5.07  6  4  4           WAVELENGTH:          9400.43994 A    Iron Project
+O604S 12S O604P 32PO 4 6   3.0633E-01   2.5475E+07      5.07  6  4  4           WAVELENGTH:          9344.30978 A    Iron Project
+O604S 12S O605P 12PO 4 6   9.9833E-02   2.2862E+09     12.45  6  4  5           WAVELENGTH:           986.38138 A    Iron Project
+O604S 12S O605P 32PO 4 6   1.9967E-01   2.2865E+09     12.45  6  4  5           WAVELENGTH:           986.31648 A    Iron Project
+O604S 12S O606P 12PO 4 6   3.0167E-02   5.0336E+09     25.90  6  4  6           WAVELENGTH:           664.75979 A    Iron Project
+O604S 12S O606P 32PO 4 6   6.0333E-02   5.0341E+09     25.91  6  4  6           WAVELENGTH:           664.73031 A    Iron Project
+O604S 12S O607P 12PO 4 6   1.3867E-02   7.2016E+09     48.09  6  4  7           WAVELENGTH:           555.76242 A    Iron Project
+O604S 12S O607P 32PO 4 6   2.7733E-02   7.2019E+09     48.09  6  4  7           WAVELENGTH:           555.75316 A    Iron Project
+O604S 12S O608P 12PO 4 6   7.7500E-03   8.8107E+09     82.08  6  4  8           WAVELENGTH:           502.45871 A    Iron Project
+O604S 12S O608P 32PO 4 6   1.5500E-02   8.8119E+09     82.11  6  4  8           WAVELENGTH:           502.42503 A    Iron Project
+O604S 12S O609P 12PO 4 6   4.8500E-03   9.9954E+09    130.86  6  4  9           WAVELENGTH:           471.74308 A    Iron Project
+O604S 12S O609P 32PO 4 6   9.7000E-03   9.9961E+09    130.90  6  4  9           WAVELENGTH:           471.72599 A    Iron Project
+O604S 12S O610P 12PO 4 6   3.2453E-03   1.0897E+10    199.27  6  4 10           WAVELENGTH:           451.80180 A    Iron Project
+O604S 12S O610P 32PO 4 6   6.4906E-03   1.0898E+10    199.33  6  4 10           WAVELENGTH:           451.79060 A    Iron Project
+.                       
+O604P 12POO605S 12S  4 6   1.0209E-01   1.6206E+09     11.65  6  4  5           WAVELENGTH:          1171.12000 A    Iron Project (shifted by -0.44 to match observation, see Traulsen)
+O604P 32POO605S 12S  4 6   1.0209E-01   1.6182E+09     11.65  6  4  5           WAVELENGTH:          1172.00000 A    Iron Project (shifted by -0.44 to match observation, see Traulsen)
+O604P 12POO606S 12S  4 6   2.0819E-02   4.1595E+09     24.54  6  4  6           WAVELENGTH:           731.28181 A    Iron Project
+O604P 32POO606S 12S  4 6   2.0819E-02   4.1556E+09     24.54  6  4  6           WAVELENGTH:           731.62351 A    Iron Project
+O604P 12POO607S 12S  4 6   8.2482E-03   6.2368E+09     45.98  6  4  7           WAVELENGTH:           597.20674 A    Iron Project
+O604P 32POO607S 12S  4 6   8.2482E-03   6.2320E+09     45.98  6  4  7           WAVELENGTH:           597.43473 A    Iron Project
+O604P 12POO608S 12S  4 6   4.2734E-03   7.7959E+09     79.07  6  4  8           WAVELENGTH:           534.16178 A    Iron Project
+O604P 32POO608S 12S  4 6   4.2734E-03   7.7905E+09     79.07  6  4  8           WAVELENGTH:           534.34417 A    Iron Project
+O604P 12POO609S 12S  4 6   2.5467E-03   8.9347E+09    126.08  6  4  9           WAVELENGTH:           498.95991 A    Iron Project
+O604P 32POO609S 12S  4 6   2.5467E-03   8.9290E+09    126.08  6  4  9           WAVELENGTH:           499.11904 A    Iron Project
+O604P 12POO610S 12S  4 6   1.6609E-03   9.8119E+09    192.73  6  4 10           WAVELENGTH:           476.13265 A    Iron Project
+O604P 32POO610S 12S  4 6   1.6609E-03   9.8059E+09    192.73  6  4 10           WAVELENGTH:           476.27756 A    Iron Project
+.                       
+O604P 12POO604D 32D  4 6   8.3231E-02   2.7974E+06      5.21  6  4  4           WAVELENGTH:         28198.40397 A    Iron Project
+O604P 32POO604D 32D  4 6   8.3081E-03   2.6975E+06      5.21  6  4  4           WAVELENGTH:         28715.82816 A    Iron Project
+O604P 32POO604D 52D  4 6   7.4848E-02   2.7308E+06      5.22  6  4  4           WAVELENGTH:         28540.44181 A    Iron Project
+O604P 12POO605D 32D  4 6   5.3543E-01   1.9039E+09     12.73  6  4  5           WAVELENGTH:          1080.60000 A    Iron Project (shifted by -0.28 to match observation, see Reiff)
+O604P 32POO605D 32D  4 6   5.3447E-02   1.9013E+09     12.73  6  4  5           WAVELENGTH:          1081.34000 A    Iron Project (shifted by -0.28 to match observation, see Reiff)
+O604P 32POO605D 52D  4 6   4.8150E-01   1.9017E+09     12.73  6  4  5           WAVELENGTH:          1081.24000 A    Iron Project (shifted by -0.28 to match observation, see Reiff)
+O604P 12POO606D 32D  4 6   1.3881E-01   4.4001E+09     26.31  6  4  6           WAVELENGTH:           711.00366 A    Iron Project
+O604P 32POO606D 32D  4 6   1.3856E-02   4.3961E+09     26.31  6  4  6           WAVELENGTH:           711.32667 A    Iron Project
+O604P 32POO606D 52D  4 6   1.2483E-01   4.3966E+09     26.31  6  4  6           WAVELENGTH:           711.28780 A    Iron Project
+O604P 12POO607D 32D  4 6   5.9935E-02   6.4267E+09     48.90  6  4  7           WAVELENGTH:           588.31766 A    Iron Project
+O604P 32POO607D 32D  4 6   5.9827E-03   6.4218E+09     48.90  6  4  7           WAVELENGTH:           588.53891 A    Iron Project
+O604P 32POO607D 52D  4 6   5.3898E-02   6.4237E+09     48.93  6  4  7           WAVELENGTH:           588.45579 A    Iron Project
+O604P 12POO608D 32D  4 6   3.2323E-02   7.9419E+09     83.60  6  4  8           WAVELENGTH:           529.22878 A    Iron Project
+O604P 32POO608D 32D  4 6   3.2265E-03   7.9365E+09     83.60  6  4  8           WAVELENGTH:           529.40781 A    Iron Project
+O604P 32POO608D 52D  4 6   2.9068E-02   7.9376E+09     83.64  6  4  8           WAVELENGTH:           529.37138 A    Iron Project
+O604P 12POO609D 32D  4 6   1.9764E-02   9.0450E+09    132.51  6  4  9           WAVELENGTH:           495.90789 A    Iron Project
+O604P 32POO609D 32D  4 6   1.9728E-03   9.0393E+09    132.51  6  4  9           WAVELENGTH:           496.06508 A    Iron Project
+O604P 32POO609D 52D  4 6   1.7773E-02   9.0395E+09    132.52  6  4  9           WAVELENGTH:           496.05968 A    Iron Project
+O604P 12POO610D 32D  4 6   1.3110E-02   9.8959E+09    201.52  6  4 10           WAVELENGTH:           474.10878 A    Iron Project
+O604P 32POO610D 32D  4 6   1.3086E-03   9.8899E+09    201.52  6  4 10           WAVELENGTH:           474.25246 A    Iron Project
+O604P 32POO610D 52D  4 6   1.1789E-02   9.8901E+09    201.54  6  4 10           WAVELENGTH:           474.24752 A    Iron Project
+.                       
+O604D 32D O605P 12PO 4 6   3.1442E-02   1.6913E+09     12.45  6  4  5           WAVELENGTH:          1146.83418 A    Iron Project
+O604D 32D O605P 32PO 4 6   6.2771E-03   1.6915E+09     12.45  6  4  5           WAVELENGTH:          1146.74644 A    Iron Project
+O604D 52D O605P 32PO 4 6   3.7700E-02   1.6907E+09     12.45  6  4  5           WAVELENGTH:          1147.02792 A    Iron Project
+O604D 32D O606P 12PO 4 6   6.3566E-03   4.1291E+09     25.90  6  4  6           WAVELENGTH:           733.96552 A    Iron Project
+O604D 32D O606P 32PO 4 6   1.2690E-03   4.1295E+09     25.91  6  4  6           WAVELENGTH:           733.92959 A    Iron Project
+O604D 52D O606P 32PO 4 6   7.6219E-03   4.1282E+09     25.91  6  4  6           WAVELENGTH:           734.04487 A    Iron Project
+O604D 32D O607P 12PO 4 6   2.4524E-03   6.1110E+09     48.09  6  4  7           WAVELENGTH:           603.32225 A    Iron Project
+O604D 32D O607P 32PO 4 6   4.8960E-04   6.1112E+09     48.09  6  4  7           WAVELENGTH:           603.31133 A    Iron Project
+O604D 52D O607P 32PO 4 6   2.9405E-03   6.1096E+09     48.09  6  4  7           WAVELENGTH:           603.38924 A    Iron Project
+O604D 32D O608P 12PO 4 6   1.2432E-03   7.5996E+09     82.08  6  4  8           WAVELENGTH:           541.01655 A    Iron Project
+O604D 32D O608P 32PO 4 6   2.4820E-04   7.6007E+09     82.11  6  4  8           WAVELENGTH:           540.97750 A    Iron Project
+O604D 52D O608P 32PO 4 6   1.4907E-03   7.5989E+09     82.11  6  4  8           WAVELENGTH:           541.04014 A    Iron Project
+O604D 32D O609P 12PO 4 6   7.3022E-04   8.7025E+09    130.86  6  4  9           WAVELENGTH:           505.57219 A    Iron Project
+O604D 32D O609P 32PO 4 6   1.4578E-04   8.7032E+09    130.90  6  4  9           WAVELENGTH:           505.55255 A    Iron Project
+O604D 52D O609P 32PO 4 6   8.7556E-04   8.7013E+09    130.90  6  4  9           WAVELENGTH:           505.60725 A    Iron Project
+O604D 32D O610P 12PO 4 6   4.7115E-04   9.5453E+09    199.27  6  4 10           WAVELENGTH:           482.73756 A    Iron Project
+O604D 32D O610P 32PO 4 6   9.4060E-05   9.5458E+09    199.33  6  4 10           WAVELENGTH:           482.72478 A    Iron Project
+O604D 52D O610P 32PO 4 6   5.6493E-04   9.5438E+09    199.33  6  4 10           WAVELENGTH:           482.77465 A    Iron Project
+.                       
+O604D 32D O605F 52FO 4 6   8.9078E-01   1.7659E+09     12.75  6  4  5           WAVELENGTH:          1122.33614 A    Iron Project
+O604D 52D O605F 52FO 4 6   4.2418E-02   1.7650E+09     12.75  6  4  5           WAVELENGTH:          1122.60576 A    Iron Project
+O604D 52D O605F 72FO 4 6   8.4836E-01   1.7650E+09     12.75  6  4  5           WAVELENGTH:          1122.60492 A    Iron Project
+O604D 32D O606F 52FO 4 6   1.8675E-01   4.1862E+09     26.35  6  4  6           WAVELENGTH:           728.94544 A    Iron Project
+O604D 52D O606F 52FO 4 6   8.8929E-03   4.1849E+09     26.35  6  4  6           WAVELENGTH:           729.05916 A    Iron Project
+O604D 52D O606F 72FO 4 6   1.7786E-01   4.1852E+09     26.35  6  4  6           WAVELENGTH:           729.03583 A    Iron Project
+O604D 32D O607F 52FO 4 6   7.2658E-02   6.1666E+09     48.99  6  4  7           WAVELENGTH:           600.59377 A    Iron Project
+O604D 52D O607F 52FO 4 6   3.4599E-03   6.1651E+09     48.99  6  4  7           WAVELENGTH:           600.67097 A    Iron Project
+O604D 52D O607F 72FO 4 6   6.9198E-02   6.1651E+09     48.99  6  4  7           WAVELENGTH:           600.67093 A    Iron Project
+O604D 32D O608F 52FO 4 6   3.6747E-02   7.6456E+09     83.57  6  4  8           WAVELENGTH:           539.38645 A    Iron Project
+O604D 52D O608F 52FO 4 6   1.7499E-03   7.6438E+09     83.57  6  4  8           WAVELENGTH:           539.44872 A    Iron Project
+O604D 52D O608F 72FO 4 6   3.4997E-02   7.6438E+09     83.57  6  4  8           WAVELENGTH:           539.44842 A    Iron Project
+O604D 32D O609F 52FO 4 6   2.1537E-02   8.7313E+09    132.61  6  4  9           WAVELENGTH:           504.73770 A    Iron Project
+O604D 52D O609F 52FO 4 6   1.0256E-03   8.7294E+09    132.61  6  4  9           WAVELENGTH:           504.79223 A    Iron Project
+O604D 52D O609F 72FO 4 6   2.0511E-02   8.7295E+09    132.61  6  4  9           WAVELENGTH:           504.78943 A    Iron Project
+O604D 32D O610F 52FO 4 6   1.3871E-02   9.5673E+09    201.68  6  4 10           WAVELENGTH:           482.18072 A    Iron Project
+O604D 52D O610F 52FO 4 6   6.6052E-04   9.5653E+09    201.68  6  4 10           WAVELENGTH:           482.23048 A    Iron Project
+O604D 52D O610F 72FO 4 6   1.3210E-02   9.5654E+09    201.69  6  4 10           WAVELENGTH:           482.22793 A    Iron Project
+.                       
+O604F 52FOO605D 32D  4 6   8.4904E-03   1.7530E+09     12.73  6  4  5           WAVELENGTH:          1126.28000 A    Iron Project (shifted by -0.18 to match observation, see Reiff)
+O604F 52FOO605D 52D  4 6   6.0646E-04   1.7533E+09     12.73  6  4  5           WAVELENGTH:          1126.17000 A    Iron Project (shifted by -0.18 to match observation, see Reiff)
+O604F 72FOO605D 52D  4 6   9.0969E-03   1.7530E+09     12.73  6  4  5           WAVELENGTH:          1126.28100 A    Iron Project (shifted by -0.18 to match observation, see Reiff)
+O604F 52FOO606D 32D  4 6   1.4994E-03   4.1690E+09     26.31  6  4  6           WAVELENGTH:           730.44768 A    Iron Project
+O604F 52FOO606D 52D  4 6   1.0710E-04   4.1695E+09     26.31  6  4  6           WAVELENGTH:           730.40670 A    Iron Project
+O604F 72FOO606D 52D  4 6   1.6065E-03   4.1689E+09     26.31  6  4  6           WAVELENGTH:           730.45705 A    Iron Project
+O604F 52FOO607D 32D  4 6   5.3335E-04   6.1467E+09     48.90  6  4  7           WAVELENGTH:           601.56781 A    Iron Project
+O604F 52FOO607D 52D  4 6   3.8097E-05   6.1485E+09     48.93  6  4  7           WAVELENGTH:           601.48097 A    Iron Project
+O604F 72FOO607D 52D  4 6   5.7145E-04   6.1478E+09     48.93  6  4  7           WAVELENGTH:           601.51461 A    Iron Project
+O604F 52FOO608D 32D  4 6   2.5670E-04   7.6303E+09     83.60  6  4  8           WAVELENGTH:           539.92678 A    Iron Project
+O604F 52FOO608D 52D  4 6   1.8336E-05   7.6313E+09     83.64  6  4  8           WAVELENGTH:           539.88888 A    Iron Project
+O604F 72FOO608D 52D  4 6   2.7504E-04   7.6306E+09     83.64  6  4  8           WAVELENGTH:           539.91599 A    Iron Project
+O604F 52FOO609D 32D  4 6   1.4589E-04   8.7122E+09    132.51  6  4  9           WAVELENGTH:           505.28924 A    Iron Project
+O604F 52FOO609D 52D  4 6   1.0421E-05   8.7124E+09    132.52  6  4  9           WAVELENGTH:           505.28363 A    Iron Project
+O604F 72FOO609D 52D  4 6   1.5631E-04   8.7116E+09    132.52  6  4  9           WAVELENGTH:           505.30738 A    Iron Project
+O604F 52FOO610D 32D  4 6   9.2009E-05   9.5477E+09    201.52  6  4 10           WAVELENGTH:           482.67636 A    Iron Project
+O604F 52FOO610D 52D  4 6   6.5721E-06   9.5479E+09    201.54  6  4 10           WAVELENGTH:           482.67125 A    Iron Project
+O604F 72FOO610D 52D  4 6   9.8581E-05   9.5470E+09    201.54  6  4 10           WAVELENGTH:           482.69292 A    Iron Project
+.                       
+O604F 52FOO605G 72G  4 6   1.3447E+00   1.7585E+09     12.75  6  4  5           WAVELENGTH:          1124.70381 A    Iron Project
+O604F 72FOO605G 72G  4 6   3.7933E-02   1.7581E+09     12.75  6  4  5           WAVELENGTH:          1124.82147 A    Iron Project
+O604F 72FOO605G 92G  4 6   1.3080E+00   1.7581E+09     12.75  6  4  5           WAVELENGTH:          1124.82143 A    Iron Project
+O604F 52FOO606G 72G  4 6   1.8177E-01   4.1723E+09     26.33  6  4  6           WAVELENGTH:           730.15504 A    Iron Project
+O604F 72FOO606G 72G  4 6   5.1277E-03   4.1718E+09     26.33  6  4  6           WAVELENGTH:           730.20536 A    Iron Project
+O604F 72FOO606G 92G  4 6   1.7682E-01   4.1719E+09     26.33  6  4  6           WAVELENGTH:           730.19366 A    Iron Project
+O604F 52FOO607G 72G  4 6   5.8248E-02   6.1522E+09     48.99  6  4  7           WAVELENGTH:           601.29652 A    Iron Project
+O604F 72FOO607G 72G  4 6   1.6432E-03   6.1515E+09     48.99  6  4  7           WAVELENGTH:           601.33013 A    Iron Project (shifted     601.33014 A)
+O604F 72FOO607G 92G  4 6   5.6661E-02   6.1515E+09     48.99  6  4  7           WAVELENGTH:           601.33014 A    Iron Project
+O604F 52FOO608G 72G  4 6   2.6525E-02   7.6297E+09     83.58  6  4  8           WAVELENGTH:           539.94719 A    Iron Project
+O604F 72FOO608G 72G  4 6   7.4828E-04   7.6289E+09     83.58  6  4  8           WAVELENGTH:           539.97431 A    Iron Project
+O604F 72FOO608G 92G  4 6   2.5803E-02   7.6289E+09     83.58  6  4  8           WAVELENGTH:           539.97429 A    Iron Project
+O604F 52FOO609G 72G  4 6   1.4563E-02   8.7140E+09    132.61  6  4  9           WAVELENGTH:           505.23889 A    Iron Project
+O604F 72FOO609G 72G  4 6   4.1082E-04   8.7132E+09    132.61  6  4  9           WAVELENGTH:           505.26263 A    Iron Project
+O604F 72FOO609G 92G  4 6   1.4166E-02   8.7132E+09    132.61  6  4  9           WAVELENGTH:           505.26246 A    Iron Project
+O604F 52FOO610G 72G  4 6   8.9737E-03   9.5490E+09    201.67  6  4 10           WAVELENGTH:           482.64313 A    Iron Project
+O604F 72FOO610G 72G  4 6   2.5315E-04   9.5481E+09    201.67  6  4 10           WAVELENGTH:           482.66480 A    Iron Project
+O604F 72FOO610G 92G  4 6   8.7293E-03   9.5482E+09    201.68  6  4 10           WAVELENGTH:           482.66224 A    Iron Project
+.                       
+O605S 12S O605P 12PO 4 6   2.0568E-01   6.4543E+06     12.45  6  5  5           WAVELENGTH:         18564.36437 A    Iron Project
+O605S 12S O605P 32PO 4 6   4.1137E-01   6.4703E+06     12.45  6  5  5           WAVELENGTH:         18541.40123 A    Iron Project
+O605S 12S O606P 12PO 4 6   1.0714E-01   6.5915E+08     25.90  6  5  6           WAVELENGTH:          1837.01127 A    Iron Project
+O605S 12S O606P 32PO 4 6   2.1428E-01   6.5931E+08     25.91  6  5  6           WAVELENGTH:          1836.78617 A    Iron Project
+O605S 12S O607P 12PO 4 6   3.2607E-02   1.5672E+09     48.09  6  5  7           WAVELENGTH:          1190.84133 A    Iron Project (shifted by -0.50 to match observation)
+O605S 12S O607P 32PO 4 6   6.5213E-02   1.5674E+09     48.09  6  5  7           WAVELENGTH:          1190.79875 A    Iron Project (shifted by -0.50 to match observation)
+O605S 12S O608P 12PO 4 6   1.5179E-02   2.3611E+09     82.08  6  5  8           WAVELENGTH:           970.61626 A    Iron Project 
+O605S 12S O608P 32PO 4 6   3.0358E-02   2.3617E+09     82.11  6  5  8           WAVELENGTH:           970.49057 A    Iron Project
+O605S 12S O609P 12PO 4 6   8.5603E-03   2.9924E+09    130.86  6  5  9           WAVELENGTH:           862.17458 A    Iron Project
+O605S 12S O609P 32PO 4 6   1.7121E-02   2.9928E+09    130.90  6  5  9           WAVELENGTH:           862.11748 A    Iron Project
+O605S 12S O610P 12PO 4 6   5.4023E-03   3.4946E+09    199.27  6  5 10           WAVELENGTH:           797.81721 A    Iron Project
+O605S 12S O610P 32PO 4 6   1.0805E-02   3.4950E+09    199.33  6  5 10           WAVELENGTH:           797.78229 A    Iron Project
+.                       
+O605P 12POO606S 12S  4 6   1.4128E-01   4.7079E+08     24.54  6  5  6           WAVELENGTH:          2173.66653 A    Iron Project
+O605P 32POO606S 12S  4 6   1.4128E-01   4.7065E+08     24.54  6  5  6           WAVELENGTH:          2173.98178 A    Iron Project
+O605P 12POO607S 12S  4 6   2.8929E-02   1.3087E+09     45.98  6  5  7           WAVELENGTH:          1303.72427 A    Iron Project
+O605P 32POO607S 12S  4 6   2.8929E-02   1.3085E+09     45.98  6  5  7           WAVELENGTH:          1303.83767 A    Iron Project
+O605P 12POO608S 12S  4 6   1.1590E-02   2.0700E+09     79.07  6  5  8           WAVELENGTH:          1036.63106 A    Iron Project
+O605P 32POO608S 12S  4 6   1.1590E-02   2.0697E+09     79.07  6  5  8           WAVELENGTH:          1036.70276 A    Iron Project
+O605P 12POO609S 12S  4 6   6.0140E-03   2.6756E+09    126.08  6  5  9           WAVELENGTH:           911.79279 A    Iron Project
+O605P 32POO609S 12S  4 6   6.0140E-03   2.6753E+09    126.08  6  5  9           WAVELENGTH:           911.84826 A    Iron Project
+O605P 12POO610S 12S  4 6   3.6047E-03   3.1649E+09    192.73  6  5 10           WAVELENGTH:           838.34496 A    Iron Project
+O605P 32POO610S 12S  4 6   3.6047E-03   3.1646E+09    192.73  6  5 10           WAVELENGTH:           838.39185 A    Iron Project
+.                       
+O605P 12POO605D 32D  4 6   1.5067E-01   7.0030E+05     12.73  6  5  5           WAVELENGTH:         56359.12280 A    Iron Project
+O605P 32POO605D 32D  4 6   1.5040E-02   6.9504E+05     12.73  6  5  5           WAVELENGTH:         56571.82553 A    Iron Project
+O605P 32POO605D 52D  4 6   1.3549E-01   7.0214E+05     12.73  6  5  5           WAVELENGTH:         56285.25119 A    Iron Project
+O605P 12POO606D 32D  4 6   5.4217E-01   5.5399E+08     26.31  6  5  6           WAVELENGTH:          2003.79596 A    Iron Project
+O605P 32POO606D 32D  4 6   5.4119E-02   5.5384E+08     26.31  6  5  6           WAVELENGTH:          2004.06386 A    Iron Project
+O605P 32POO606D 52D  4 6   4.8756E-01   5.5401E+08     26.31  6  5  6           WAVELENGTH:          2003.75539 A    Iron Project
+O605P 12POO607D 32D  4 6   1.4495E-01   1.3965E+09     48.90  6  5  7           WAVELENGTH:          1261.69504 A    Iron Project (shifted by -0.40 to match observation) 
+O605P 32POO607D 32D  4 6   1.4469E-02   1.3962E+09     48.90  6  5  7           WAVELENGTH:          1261.80132 A    Iron Project (shifted by -0.40 to match observation) 
+O605P 32POO607D 52D  4 6   1.3035E-01   1.3971E+09     48.93  6  5  7           WAVELENGTH:          1261.41907 A    Iron Project (shifted by -0.40 to match observation)
+O605P 12POO608D 32D  4 6   6.3871E-02   2.1455E+09     83.60  6  5  8           WAVELENGTH:          1018.81240 A    Iron Project (shifted by +0.60 to match observation)
+O605P 32POO608D 32D  4 6   6.3756E-03   2.1452E+09     83.60  6  5  8           WAVELENGTH:          1018.88157 A    Iron Project (shifted by +0.60 to match observation)
+O605P 32POO608D 52D  4 6   5.7438E-02   2.1458E+09     83.64  6  5  8           WAVELENGTH:          1018.74679 A    Iron Project (shifted by +0.60 to match observation)
+O605P 12POO609D 32D  4 6   3.4992E-02   2.7361E+09    132.51  6  5  9           WAVELENGTH:           901.65238 A    Iron Project
+O605P 32POO609D 32D  4 6   3.4929E-03   2.7358E+09    132.51  6  5  9           WAVELENGTH:           901.70661 A    Iron Project
+O605P 32POO609D 52D  4 6   3.1468E-02   2.7359E+09    132.52  6  5  9           WAVELENGTH:           901.68877 A    Iron Project
+O605P 12POO610D 32D  4 6   2.1678E-02   3.2127E+09    201.52  6  5 10           WAVELENGTH:           832.09079 A    Iron Project
+O605P 32POO610D 32D  4 6   2.1639E-03   3.2123E+09    201.52  6  5 10           WAVELENGTH:           832.13698 A    Iron Project
+O605P 32POO610D 52D  4 6   1.9495E-02   3.2124E+09    201.54  6  5 10           WAVELENGTH:           832.12179 A    Iron Project
+.                       
+O605D 32D O606P 12PO 4 6   5.2658E-02   5.0141E+08     25.90  6  5  6           WAVELENGTH:          2106.24735 A    Iron Project
+O605D 32D O606P 32PO 4 6   1.0513E-02   5.0155E+08     25.91  6  5  6           WAVELENGTH:          2105.95144 A    Iron Project
+O605D 52D O606P 32PO 4 6   6.3139E-02   5.0125E+08     25.91  6  5  6           WAVELENGTH:          2106.58432 A    Iron Project
+O605D 32D O607P 12PO 4 6   1.0942E-02   1.3112E+09     48.09  6  5  7           WAVELENGTH:          1302.45643 A    Iron Project
+O605D 32D O607P 32PO 4 6   2.1844E-03   1.3113E+09     48.09  6  5  7           WAVELENGTH:          1302.40554 A    Iron Project
+O605D 52D O607P 32PO 4 6   1.3119E-02   1.3110E+09     48.09  6  5  7           WAVELENGTH:          1302.55822 A    Iron Project
+O605D 32D O608P 12PO 4 6   4.2938E-03   2.0443E+09     82.08  6  5  8           WAVELENGTH:          1043.11912 A    Iron Project
+O605D 32D O608P 32PO 4 6   8.5722E-04   2.0449E+09     82.11  6  5  8           WAVELENGTH:          1042.97396 A    Iron Project
+O605D 52D O608P 32PO 4 6   5.1485E-03   2.0445E+09     82.11  6  5  8           WAVELENGTH:          1043.07187 A    Iron Project
+O605D 32D O609P 12PO 4 6   2.1913E-03   2.6343E+09    130.86  6  5  9           WAVELENGTH:           918.90827 A    Iron Project
+O605D 32D O609P 32PO 4 6   4.3747E-04   2.6347E+09    130.90  6  5  9           WAVELENGTH:           918.84341 A    Iron Project
+O605D 52D O609P 32PO 4 6   2.6275E-03   2.6342E+09    130.90  6  5  9           WAVELENGTH:           918.91940 A    Iron Project
+O605D 32D O610P 12PO 4 6   1.2960E-03   3.1067E+09    199.27  6  5 10           WAVELENGTH:           846.15975 A    Iron Project
+O605D 32D O610P 32PO 4 6   2.5874E-04   3.1070E+09    199.33  6  5 10           WAVELENGTH:           846.12047 A    Iron Project
+O605D 52D O610P 32PO 4 6   1.5540E-03   3.1066E+09    199.33  6  5 10           WAVELENGTH:           846.18490 A    Iron Project
+.                       
+O605D 32D O606F 52FO 4 6   8.3919E-01   5.2148E+08     26.45  6  5  6           WAVELENGTH:          2065.30776 A    Iron Project
+O605D 52D O606F 52FO 4 6   3.9961E-02   5.2129E+08     26.45  6  5  6           WAVELENGTH:          2065.69172 A    Iron Project
+O605D 52D O606F 72FO 4 6   7.9923E-01   5.2129E+08     26.45  6  5  6           WAVELENGTH:          2065.68609 A    Iron Project
+O605D 32D O607F 52FO 4 6   1.9683E-01   1.3371E+09     48.99  6  5  7           WAVELENGTH:          1290.06000 A    Iron Project (shifted by +0.24 to match observation, see Traulsen)
+O605D 52D O607F 52FO 4 6   9.3729E-03   1.3368E+09     48.99  6  5  7           WAVELENGTH:          1290.21000 A    Iron Project (shifted by +0.24 to match observation, see Traulsen)
+O605D 52D O607F 72FO 4 6   1.8746E-01   1.3368E+09     48.99  6  5  7           WAVELENGTH:          1290.18000 A    Iron Project (shifted by +0.24 to match observation, see Traulsen)
+O605D 32D O608F 52FO 4 6   8.0829E-02   2.0682E+09     83.57  6  5  8           WAVELENGTH:          1037.07616 A    Iron Project
+O605D 52D O608F 52FO 4 6   3.8490E-03   2.0678E+09     83.57  6  5  8           WAVELENGTH:          1037.17297 A    Iron Project
+O605D 52D O608F 72FO 4 6   7.6980E-02   2.0678E+09     83.57  6  5  8           WAVELENGTH:          1037.17189 A    Iron Project
+O605D 32D O609F 52FO 4 6   4.2352E-02   2.6502E+09    132.61  6  5  9           WAVELENGTH:           916.15523 A    Iron Project
+O605D 52D O609F 52FO 4 6   2.0168E-03   2.6497E+09    132.61  6  5  9           WAVELENGTH:           916.23078 A    Iron Project
+O605D 52D O609F 72FO 4 6   4.0335E-02   2.6498E+09    132.61  6  5  9           WAVELENGTH:           916.22157 A    Iron Project
+O605D 32D O610F 52FO 4 6   2.5464E-02   3.1193E+09    201.68  6  5 10           WAVELENGTH:           844.45037 A    Iron Project
+O605D 52D O610F 52FO 4 6   1.2126E-03   3.1189E+09    201.68  6  5 10           WAVELENGTH:           844.51456 A    Iron Project
+O605D 52D O610F 72FO 4 6   2.4251E-02   3.1189E+09    201.69  6  5 10           WAVELENGTH:           844.50673 A    Iron Project
+.                       
+O605F 52FOO606D 32D  4 6   2.2282E-02   5.1739E+08     26.31  6  5  6           WAVELENGTH:          2073.46488 A    Iron Project
+O605F 52FOO606D 52D  4 6   1.5916E-03   5.1755E+08     26.31  6  5  6           WAVELENGTH:          2073.13468 A    Iron Project
+O605F 72FOO606D 52D  4 6   2.3874E-02   5.1741E+08     26.31  6  5  6           WAVELENGTH:          2073.41770 A    Iron Project
+O605F 52FOO607D 32D  4 6   4.2450E-03   1.3302E+09     48.90  6  5  7           WAVELENGTH:          1293.04000 A    Iron Project (shifted by -0.11 to match observation, see Traulsen)
+O605F 52FOO607D 52D  4 6   3.0321E-04   1.3310E+09     48.93  6  5  7           WAVELENGTH:          1292.64000 A    Iron Project (shifted by -0.11 to match observation, see Traulsen)
+O605F 72FOO607D 52D  4 6   4.5482E-03   1.3310E+09     48.93  6  5  7           WAVELENGTH:          1292.67000 A    Iron Project (shifted by -0.11 to match observation, see Traulsen)
+O605F 52FOO608D 32D  4 6   1.5584E-03   2.0632E+09     83.60  6  5  8           WAVELENGTH:          1038.33498 A    Iron Project
+O605F 52FOO608D 52D  4 6   1.1131E-04   2.0637E+09     83.64  6  5  8           WAVELENGTH:          1038.19484 A    Iron Project
+O605F 72FOO608D 52D  4 6   1.6697E-03   2.0637E+09     83.64  6  5  8           WAVELENGTH:          1038.19556 A    Iron Project
+O605F 52FOO609D 32D  4 6   7.6141E-04   2.6430E+09    132.51  6  5  9           WAVELENGTH:           917.39596 A    Iron Project
+O605F 52FOO609D 52D  4 6   5.4387E-05   2.6431E+09    132.52  6  5  9           WAVELENGTH:           917.37749 A    Iron Project
+O605F 72FOO609D 52D  4 6   8.1580E-04   2.6431E+09    132.52  6  5  9           WAVELENGTH:           917.37805 A    Iron Project
+O605F 52FOO610D 32D  4 6   4.3646E-04   3.1117E+09    201.52  6  5 10           WAVELENGTH:           845.48084 A    Iron Project
+O605F 52FOO610D 52D  4 6   3.1176E-05   3.1118E+09    201.54  6  5 10           WAVELENGTH:           845.46515 A    Iron Project
+O605F 72FOO610D 52D  4 6   4.6764E-04   3.1118E+09    201.54  6  5 10           WAVELENGTH:           845.46563 A    Iron Project
+.                       
+O605F 52FOO606G 72G  4 6   1.1797E+00   5.1857E+08     26.33  6  5  6           WAVELENGTH:          2071.10862 A    Iron Project
+O605F 72FOO606G 72G  4 6   3.3281E-02   5.1842E+08     26.33  6  5  6           WAVELENGTH:          2071.39109 A    Iron Project
+O605F 72FOO606G 92G  4 6   1.1476E+00   5.1847E+08     26.33  6  5  6           WAVELENGTH:          2071.29692 A    Iron Project
+O605F 52FOO607G 72G  4 6   2.2723E-01   1.3328E+09     48.99  6  5  7           WAVELENGTH:          1291.81065 A    Iron Project (shifted by -0.08 to match observation, see Traulsen)
+O605F 72FOO607G 72G  4 6   6.4103E-03   1.3327E+09     48.99  6  5  7           WAVELENGTH:          1291.84234 A    Iron Project (shifted by -0.08 to match observation, see Traulsen)
+O605F 72FOO607G 92G  4 6   2.2104E-01   1.3327E+09     48.99  6  5  7           WAVELENGTH:          1291.84231 A    Iron Project (shifted by -0.08 to match observation, see Traulsen)
+O605F 52FOO608G 72G  4 6   8.3865E-02   2.0629E+09     83.58  6  5  8           WAVELENGTH:          1038.41049 A    Iron Project
+O605F 72FOO608G 72G  4 6   2.3659E-03   2.0629E+09     83.58  6  5  8           WAVELENGTH:          1038.41121 A    Iron Project
+O605F 72FOO608G 92G  4 6   8.1581E-02   2.0629E+09     83.58  6  5  8           WAVELENGTH:          1038.41114 A    Iron Project
+O605F 52FOO609G 72G  4 6   4.1127E-02   2.6440E+09    132.61  6  5  9           WAVELENGTH:           917.23004 A    Iron Project (shifted    917.23003 A)
+O605F 72FOO609G 72G  4 6   1.1602E-03   2.6439E+09    132.61  6  5  9           WAVELENGTH:           917.23059 A    Iron Project
+O605F 72FOO609G 92G  4 6   4.0007E-02   2.6440E+09    132.61  6  5  9           WAVELENGTH:           917.23003 A    Iron Project
+O605F 52FOO610G 72G  4 6   2.3646E-02   3.1125E+09    201.67  6  5 10           WAVELENGTH:           845.37888 A    Iron Project
+O605F 72FOO610G 72G  4 6   6.6705E-04   3.1125E+09    201.67  6  5 10           WAVELENGTH:           845.37935 A    Iron Project
+O605F 72FOO610G 92G  4 6   2.3002E-02   3.1125E+09    201.68  6  5 10           WAVELENGTH:           845.37151 A    Iron Project
+.                       
+O605G 72G O606F 52FO 4 6   7.0172E-03   5.1913E+08     26.35  6  5  6           WAVELENGTH:          2069.97951 A    Iron Project
+O605G 72G O606F 72FO 4 6   2.6394E-04   5.1923E+08     26.35  6  5  6           WAVELENGTH:          2069.79145 A    Iron Project
+O605G 92G O606F 72FO 4 6   7.2811E-03   5.1915E+08     26.35  6  5  6           WAVELENGTH:          2069.93392 A    Iron Project
+O605G 72G O607F 52FO 4 6   1.1204E-03   1.3323E+09     48.99  6  5  7           WAVELENGTH:          1292.02000 A    Iron Project (shifted by -0.10 to match observation, see Traulsen)
+O605G 72G O607F 72FO 4 6   4.2141E-05   1.3323E+09     48.99  6  5  7           WAVELENGTH:          1291.99000 A    Iron Project (shifted by -0.10 to match observation, see Traulsen)
+O605G 92G O607F 72FO 4 6   1.1625E-03   1.3323E+09     48.99  6  5  7           WAVELENGTH:          1292.02001 A    Iron Project (shifted by -0.10 to match observation, see Traulsen)
+O605G 72G O608F 52FO 4 6   3.7295E-04   2.0622E+09     83.57  6  5  8           WAVELENGTH:          1038.57328 A    Iron Project
+O605G 72G O608F 72FO 4 6   1.4028E-05   2.0622E+09     83.57  6  5  8           WAVELENGTH:          1038.57220 A    Iron Project
+O605G 92G O608F 72FO 4 6   3.8698E-04   2.0622E+09     83.57  6  5  8           WAVELENGTH:          1038.57223 A    Iron Project
+O605G 72G O609F 52FO 4 6   1.7176E-04   2.6434E+09    132.61  6  5  9           WAVELENGTH:           917.32338 A    Iron Project
+O605G 72G O609F 72FO 4 6   6.4605E-06   2.6435E+09    132.61  6  5  9           WAVELENGTH:           917.31415 A    Iron Project
+O605G 92G O609F 72FO 4 6   1.7822E-04   2.6435E+09    132.61  6  5  9           WAVELENGTH:           917.31418 A    Iron Project
+O605G 72G O610F 52FO 4 6   9.4769E-05   3.1120E+09    201.68  6  5 10           WAVELENGTH:           845.44272 A    Iron Project
+O605G 72G O610F 72FO 4 6   3.5646E-06   3.1121E+09    201.69  6  5 10           WAVELENGTH:           845.43488 A    Iron Project
+O605G 92G O610F 72FO 4 6   9.8334E-05   3.1121E+09    201.69  6  5 10           WAVELENGTH:           845.43490 A    Iron Project
+.                       
+O605G 72G O606H 92HO 4 6   1.6618E+00   5.1866E+08     26.34  6  5  6           WAVELENGTH:          2070.92035 A    Iron Project
+O605G 92G O606H 92HO 4 6   3.0993E-02   5.1859E+08     26.34  6  5  6           WAVELENGTH:          2071.06298 A    Iron Project
+O605G 92G O606H112HO 4 6   1.6312E+00   5.1861E+08     26.34  6  5  6           WAVELENGTH:          2071.01591 A    Iron Project
+O605G 72G O607H 92HO 4 6   2.0008E-01   1.3325E+09     49.00  6  5  7           WAVELENGTH:          1291.89000 A    Iron Project (shifted by -0.10 to match observation, see Traulsen)
+O605G 92G O607H 92HO 4 6   3.7316E-03   1.3325E+09     49.00  6  5  7           WAVELENGTH:          1291.92000 A    Iron Project (shifted by -0.10 to match observation, see Traulsen)
+O605G 92G O607H112HO 4 6   1.9640E-01   1.3325E+09     49.00  6  5  7           WAVELENGTH:          1291.92001 A    Iron Project (shifted by -0.10 to match observation, see Traulsen)
+O605G 72G O608H 92HO 4 6   5.9634E-02   2.0626E+09     83.59  6  5  8           WAVELENGTH:          1038.47463 A    Iron Project
+O605G 92G O608H 92HO 4 6   1.1122E-03   2.0626E+09     83.59  6  5  8           WAVELENGTH:          1038.47467 A    Iron Project
+O605G 92G O608H112HO 4 6   5.8536E-02   2.0626E+09     83.59  6  5  8           WAVELENGTH:          1038.47460 A    Iron Project
+O605G 72G O609H 92HO 4 6   2.5865E-02   2.6441E+09    132.68  6  5  9           WAVELENGTH:           917.21259 A    Iron Project
+O605G 92G O609H 92HO 4 6   4.8240E-04   2.6441E+09    132.68  6  5  9           WAVELENGTH:           917.21260 A    Iron Project (shifted    917.21261 A)
+O605G 92G O609H112HO 4 6   2.5389E-02   2.6441E+09    132.68  6  5  9           WAVELENGTH:           917.21261 A    Iron Project
+O605G 72G O610H 92HO 4 6   1.3728E-02   3.1124E+09    201.76  6  5 10           WAVELENGTH:           845.38782 A    Iron Project
+O605G 92G O610H 92HO 4 6   2.5603E-04   3.1124E+09    201.76  6  5 10           WAVELENGTH:           845.38785 A    Iron Project
+O605G 92G O610H112HO 4 6   1.3475E-02   3.1124E+09    201.76  6  5 10           WAVELENGTH:           845.38784 A    Iron Project (shifted    845.38785 A)
+.                       
+O606S 12S O606P 12PO 4 6   2.6179E-01   2.0642E+06     25.90  6  6  6           WAVELENGTH:         32827.09290 A    Iron Project
+O606S 12S O606P 32PO 4 6   5.2359E-01   2.0732E+06     25.91  6  6  6           WAVELENGTH:         32755.35916 A    Iron Project
+O606S 12S O607P 12PO 4 6   1.1623E-01   2.3565E+08     48.09  6  6  7           WAVELENGTH:          3072.38132 A    Iron Project
+O606S 12S O607P 32PO 4 6   2.3247E-01   2.3574E+08     48.10  6  6  7           WAVELENGTH:          3071.75171 A    Iron Project
+O606S 12S O608P 12PO 4 6   3.5567E-02   5.9001E+08     81.72  6  6  8           WAVELENGTH:          1941.67536 A    Iron Project
+O606S 12S O608P 32PO 4 6   7.1133E-02   5.9026E+08     81.75  6  6  8           WAVELENGTH:          1941.26173 A    Iron Project
+O606S 12S O609P 12PO 4 6   1.6549E-02   9.2815E+08    130.86  6  6  9           WAVELENGTH:          1548.08895 A    Iron Project
+O606S 12S O609P 32PO 4 6   3.3098E-02   9.2837E+08    130.90  6  6  9           WAVELENGTH:          1547.90488 A    Iron Project
+O606S 12S O610P 12PO 4 6   9.3800E-03   1.2165E+09    199.27  6  6 10           WAVELENGTH:          1352.22894 A    Iron Project
+O606S 12S O610P 32PO 4 6   1.8760E-02   1.2167E+09    199.33  6  6 10           WAVELENGTH:          1352.12862 A    Iron Project
+.                       
+O606P 12POO607S 12S  4 6   1.8071E-01   1.7011E+08     45.98  6  6  7           WAVELENGTH:          3616.13352 A    Iron Project
+O606P 32POO607S 12S  4 6   1.8071E-01   1.7002E+08     45.98  6  6  7           WAVELENGTH:          3617.00609 A    Iron Project
+O606P 12POO608S 12S  4 6   3.7587E-02   4.9416E+08     78.37  6  6  8           WAVELENGTH:          2121.64150 A    Iron Project
+O606P 32POO608S 12S  4 6   3.7587E-02   4.9402E+08     78.37  6  6  8           WAVELENGTH:          2121.94184 A    Iron Project
+O606P 12POO609S 12S  4 6   1.4970E-02   8.1753E+08    126.08  6  6  9           WAVELENGTH:          1649.50028 A    Iron Project
+O606P 32POO609S 12S  4 6   1.4970E-02   8.1735E+08    126.08  6  6  9           WAVELENGTH:          1649.68181 A    Iron Project
+O606P 12POO610S 12S  4 6   7.7913E-03   1.0972E+09    192.73  6  6 10           WAVELENGTH:          1423.83168 A    Iron Project
+O606P 32POO610S 12S  4 6   7.7913E-03   1.0970E+09    192.73  6  6 10           WAVELENGTH:          1423.96694 A    Iron Project
+.                       
+O606P 12POO606D 32D  4 6   2.1933E-01   1.6215E+05     26.31  6  6  6           WAVELENGTH:        117123.47500 A    Iron Project
+O606P 32POO606D 32D  4 6   2.1894E-02   1.5963E+05     26.31  6  6  6           WAVELENGTH:        118045.84101 A    Iron Project
+O606P 32POO606D 52D  4 6   1.9724E-01   1.6254E+05     26.31  6  6  6           WAVELENGTH:        116985.04133 A    Iron Project
+O606P 12POO607D 32D  4 6   5.6057E-01   2.0002E+08     48.67  6  6  7           WAVELENGTH:          3334.79382 A    Iron Project
+O606P 32POO607D 32D  4 6   5.5956E-02   1.9993E+08     48.67  6  6  7           WAVELENGTH:          3335.53589 A    Iron Project
+O606P 32POO607D 52D  4 6   5.0411E-01   2.0000E+08     48.67  6  6  7           WAVELENGTH:          3334.92554 A    Iron Project
+O606P 12POO608D 32D  4 6   1.5128E-01   5.3178E+08     82.88  6  6  8           WAVELENGTH:          2045.21562 A    Iron Project
+O606P 32POO608D 32D  4 6   1.5101E-02   5.3163E+08     82.88  6  6  8           WAVELENGTH:          2045.49471 A    Iron Project
+O606P 32POO608D 52D  4 6   1.3604E-01   5.3171E+08     82.89  6  6  8           WAVELENGTH:          2045.35697 A    Iron Project
+O606P 12POO609D 32D  4 6   6.7309E-02   8.5114E+08    132.51  6  6  9           WAVELENGTH:          1616.60920 A    Iron Project
+O606P 32POO609D 32D  4 6   6.7188E-03   8.5095E+08    132.51  6  6  9           WAVELENGTH:          1616.78357 A    Iron Project
+O606P 32POO609D 52D  4 6   6.0530E-02   8.5101E+08    132.52  6  6  9           WAVELENGTH:          1616.72620 A    Iron Project
+O606P 12POO610D 32D  4 6   3.7213E-02   1.1254E+09    201.52  6  6 10           WAVELENGTH:          1402.38498 A    Iron Project (shifted by -3.50 to match observation)
+O606P 32POO610D 32D  4 6   3.7146E-03   1.1252E+09    201.52  6  6 10           WAVELENGTH:          1402.51685 A    Iron Project (shifted by -3.50 to match observation)
+O606P 32POO610D 52D  4 6   3.3465E-02   1.1253E+09    201.54  6  6 10           WAVELENGTH:          1402.47346 A    Iron Project (shifted by -3.50 to match observation)
+.                       
+O606D 32D O607P 12PO 4 6   7.5906E-02   1.8256E+08     48.09  6  6  7           WAVELENGTH:          3490.64761 A    Iron Project
+O606D 32D O607P 32PO 4 6   1.5154E-02   1.8264E+08     48.10  6  6  7           WAVELENGTH:          3489.83493 A    Iron Project
+O606D 52D O607P 32PO 4 6   9.1014E-02   1.8254E+08     48.10  6  6  7           WAVELENGTH:          3490.77072 A    Iron Project
+O606D 32D O608P 12PO 4 6   1.6148E-02   5.0403E+08     81.72  6  6  8           WAVELENGTH:          2100.75864 A    Iron Project
+O606D 32D O608P 32PO 4 6   3.2238E-03   5.0426E+08     81.75  6  6  8           WAVELENGTH:          2100.27446 A    Iron Project
+O606D 52D O608P 32PO 4 6   1.9362E-02   5.0410E+08     81.75  6  6  8           WAVELENGTH:          2100.61336 A    Iron Project
+O606D 32D O609P 12PO 4 6   6.3673E-03   8.1946E+08    130.86  6  6  9           WAVELENGTH:          1647.56298 A    Iron Project
+O606D 32D O609P 32PO 4 6   1.2712E-03   8.1966E+08    130.90  6  6  9           WAVELENGTH:          1647.35449 A    Iron Project
+O606D 52D O609P 32PO 4 6   7.6347E-03   8.1946E+08    130.90  6  6  9           WAVELENGTH:          1647.56297 A    Iron Project
+O606D 32D O610P 12PO 4 6   3.2726E-03   1.0916E+09    199.27  6  6 10           WAVELENGTH:          1427.51282 A    Iron Project
+O606D 32D O610P 32PO 4 6   6.5335E-04   1.0917E+09    199.33  6  6 10           WAVELENGTH:          1427.40101 A    Iron Project
+O606D 52D O610P 32PO 4 6   3.9240E-03   1.0915E+09    199.33  6  6 10           WAVELENGTH:          1427.55754 A    Iron Project
+.                       
+O606D 32D O607F 52FO 4 6   8.2637E-01   1.8935E+08     48.72  6  6  7           WAVELENGTH:          3427.49118 A    Iron Project
+O606D 52D O607F 52FO 4 6   3.9351E-02   1.8925E+08     48.72  6  6  7           WAVELENGTH:          3428.39383 A    Iron Project
+O606D 52D O607F 72FO 4 6   7.8702E-01   1.8928E+08     48.72  6  6  7           WAVELENGTH:          3428.13589 A    Iron Project
+O606D 32D O608F 52FO 4 6   2.0307E-01   5.1393E+08     82.95  6  6  8           WAVELENGTH:          2080.42345 A    Iron Project
+O606D 52D O608F 52FO 4 6   9.6700E-03   5.1377E+08     82.95  6  6  8           WAVELENGTH:          2080.75598 A    Iron Project
+O606D 52D O608F 72FO 4 6   1.9340E-01   5.1379E+08     82.95  6  6  8           WAVELENGTH:          2080.70847 A    Iron Project
+O606D 32D O609F 52FO 4 6   8.6010E-02   8.2831E+08    132.61  6  6  9           WAVELENGTH:          1638.73378 A    Iron Project
+O606D 52D O609F 52FO 4 6   4.0957E-03   8.2810E+08    132.61  6  6  9           WAVELENGTH:          1638.94009 A    Iron Project
+O606D 52D O609F 72FO 4 6   8.1914E-02   8.2813E+08    132.61  6  6  9           WAVELENGTH:          1638.91062 A    Iron Project
+O606D 32D O610F 52FO 4 6   4.6101E-02   1.0990E+09    201.68  6  6 10           WAVELENGTH:          1422.65445 A    Iron Project
+O606D 52D O610F 52FO 4 6   2.1953E-03   1.0988E+09    201.68  6  6 10           WAVELENGTH:          1422.80994 A    Iron Project
+O606D 52D O610F 72FO 4 6   4.3906E-02   1.0988E+09    201.69  6  6 10           WAVELENGTH:          1422.78772 A    Iron Project
+.                       
+O606F 52FOO607D 32D  4 6   3.9632E-02   1.8770E+08     48.67  6  6  7           WAVELENGTH:          3442.51098 A    Iron Project
+O606F 52FOO607D 52D  4 6   2.8309E-03   1.8777E+08     48.67  6  6  7           WAVELENGTH:          3441.86086 A    Iron Project
+O606F 72FOO607D 52D  4 6   4.2463E-02   1.8771E+08     48.67  6  6  7           WAVELENGTH:          3442.38094 A    Iron Project
+O606F 52FOO608D 32D  4 6   7.8312E-03   5.1157E+08     82.88  6  6  8           WAVELENGTH:          2085.23164 A    Iron Project
+O606F 52FOO608D 52D  4 6   5.5937E-04   5.1164E+08     82.89  6  6  8           WAVELENGTH:          2085.08851 A    Iron Project
+O606F 72FOO608D 52D  4 6   8.3906E-03   5.1154E+08     82.89  6  6  8           WAVELENGTH:          2085.27936 A    Iron Project
+O606F 52FOO609D 32D  4 6   2.9323E-03   8.2551E+08    132.51  6  6  9           WAVELENGTH:          1641.50859 A    Iron Project
+O606F 52FOO609D 52D  4 6   2.0945E-04   8.2557E+08    132.52  6  6  9           WAVELENGTH:          1641.44946 A    Iron Project
+O606F 72FOO609D 52D  4 6   3.1417E-03   8.2545E+08    132.52  6  6  9           WAVELENGTH:          1641.56774 A    Iron Project
+O606F 52FOO610D 32D  4 6   1.4508E-03   1.0959E+09    201.52  6  6 10           WAVELENGTH:          1424.67846 A    Iron Project
+O606F 52FOO610D 52D  4 6   1.0363E-04   1.0960E+09    201.54  6  6 10           WAVELENGTH:          1424.63391 A    Iron Project
+O606F 72FOO610D 52D  4 6   1.5544E-03   1.0958E+09    201.54  6  6 10           WAVELENGTH:          1424.72300 A    Iron Project
+.                       
+O606F 52FOO607G 72G  4 6   1.1049E+00   1.8821E+08     48.71  6  6  7           WAVELENGTH:          3437.83559 A    Iron Project
+O606F 72FOO607G 72G  4 6   3.1169E-02   1.8815E+08     48.71  6  6  7           WAVELENGTH:          3438.35445 A    Iron Project
+O606F 72FOO607G 92G  4 6   1.0748E+00   1.8817E+08     48.71  6  6  7           WAVELENGTH:          3438.22473 A    Iron Project
+O606F 52FOO608G 72G  4 6   2.4331E-01   5.1216E+08     82.96  6  6  8           WAVELENGTH:          2084.02494 A    Iron Project
+O606F 72FOO608G 72G  4 6   6.8639E-03   5.1206E+08     82.96  6  6  8           WAVELENGTH:          2084.21560 A    Iron Project
+O606F 72FOO608G 92G  4 6   2.3669E-01   5.1208E+08     82.96  6  6  8           WAVELENGTH:          2084.18242 A    Iron Project
+O606F 52FOO609G 72G  4 6   9.6338E-02   8.2605E+08    132.61  6  6  9           WAVELENGTH:          1640.97742 A    Iron Project
+O606F 72FOO609G 72G  4 6   2.7177E-03   8.2593E+08    132.61  6  6  9           WAVELENGTH:          1641.09563 A    Iron Project
+O606F 72FOO609G 92G  4 6   9.3714E-02   8.2593E+08    132.61  6  6  9           WAVELENGTH:          1641.09383 A    Iron Project
+O606F 52FOO610G 72G  4 6   4.9332E-02   1.0964E+09    201.67  6  6 10           WAVELENGTH:          1424.38896 A    Iron Project
+O606F 72FOO610G 72G  4 6   1.3916E-03   1.0962E+09    201.67  6  6 10           WAVELENGTH:          1424.47802 A    Iron Project
+O606F 72FOO610G 92G  4 6   4.7988E-02   1.0963E+09    201.68  6  6 10           WAVELENGTH:          1424.45576 A    Iron Project
+.                       
+O606G 72G O607F 52FO 4 6   1.8837E-02   1.8863E+08     48.72  6  6  7           WAVELENGTH:          3433.94913 A    Iron Project
+O606G 72G O607F 72FO 4 6   7.0854E-04   1.8866E+08     48.72  6  6  7           WAVELENGTH:          3433.69035 A    Iron Project
+O606G 92G O607F 72FO 4 6   1.9546E-02   1.8863E+08     48.72  6  6  7           WAVELENGTH:          3433.94914 A    Iron Project
+O606G 72G O608F 52FO 4 6   3.2879E-03   5.1276E+08     82.95  6  6  8           WAVELENGTH:          2082.80097 A    Iron Project
+O606G 72G O608F 72FO 4 6   1.2367E-04   5.1278E+08     82.95  6  6  8           WAVELENGTH:          2082.75337 A    Iron Project
+O606G 92G O608F 72FO 4 6   3.4116E-03   5.1274E+08     82.95  6  6  8           WAVELENGTH:          2082.84858 A    Iron Project
+O606G 72G O609F 52FO 4 6   1.1467E-03   8.2682E+08    132.61  6  6  9           WAVELENGTH:          1640.20858 A    Iron Project
+O606G 72G O609F 72FO 4 6   4.3130E-05   8.2685E+08    132.61  6  6  9           WAVELENGTH:          1640.17905 A    Iron Project
+O606G 92G O609F 72FO 4 6   1.1898E-03   8.2679E+08    132.61  6  6  9           WAVELENGTH:          1640.23810 A    Iron Project
+O606G 72G O610F 52FO 4 6   5.4311E-04   1.0973E+09    201.68  6  6 10           WAVELENGTH:          1423.76583 A    Iron Project
+O606G 72G O610F 72FO 4 6   2.0428E-05   1.0974E+09    201.69  6  6 10           WAVELENGTH:          1423.74358 A    Iron Project
+O606G 92G O610F 72FO 4 6   5.6354E-04   1.0973E+09    201.69  6  6 10           WAVELENGTH:          1423.78807 A    Iron Project
+.                       
+O606G 72G O607H 92HO 4 6   1.4791E+00   1.8886E+08     48.74  6  6  7           WAVELENGTH:          3431.87994 A    Iron Project
+O606G 92G O607H 92HO 4 6   2.7586E-02   1.8883E+08     48.74  6  6  7           WAVELENGTH:          3432.13845 A    Iron Project
+O606G 92G O607H112HO 4 6   1.4519E+00   1.8885E+08     48.74  6  6  7           WAVELENGTH:          3432.00919 A    Iron Project
+O606G 72G O608H 92HO 4 6   2.6472E-01   5.1318E+08     83.00  6  6  8           WAVELENGTH:          2081.94444 A    Iron Project
+O606G 92G O608H 92HO 4 6   4.9372E-03   5.1314E+08     83.00  6  6  8           WAVELENGTH:          2082.03958 A    Iron Project
+O606G 92G O608H112HO 4 6   2.5985E-01   5.1314E+08     83.00  6  6  8           WAVELENGTH:          2082.03957 A    Iron Project
+O606G 72G O609H 92HO 4 6   9.2953E-02   8.2718E+08    132.68  6  6  9           WAVELENGTH:          1639.85438 A    Iron Project
+O606G 92G O609H 92HO 4 6   1.7336E-03   8.2712E+08    132.68  6  6  9           WAVELENGTH:          1639.91342 A    Iron Project
+O606G 92G O609H112HO 4 6   9.1243E-02   8.2712E+08    132.68  6  6  9           WAVELENGTH:          1639.91341 A    Iron Project
+O606G 72G O610H 92HO 4 6   4.4015E-02   1.0976E+09    201.76  6  6 10           WAVELENGTH:          1423.61013 A    Iron Project
+O606G 92G O610H 92HO 4 6   8.2089E-04   1.0975E+09    201.76  6  6 10           WAVELENGTH:          1423.65462 A    Iron Project
+O606G 92G O610H112HO 4 6   4.3205E-02   1.0975E+09    201.76  6  6 10           WAVELENGTH:          1423.65461 A    Iron Project
+.                       
+O606H 92HOO607G 72G  4 6   6.1246E-03   1.8849E+08     48.71  6  6  7           WAVELENGTH:          3435.24365 A    Iron Project
+O606H 92HOO607G 92G  4 6   1.4278E-04   1.8851E+08     48.71  6  6  7           WAVELENGTH:          3435.11415 A    Iron Project
+O606H112HOO607G 92G  4 6   6.2624E-03   1.8849E+08     48.71  6  6  7           WAVELENGTH:          3435.24364 A    Iron Project
+O606H 92HOO608G 72G  4 6   8.7923E-04   5.1263E+08     82.96  6  6  8           WAVELENGTH:          2083.07217 A    Iron Project
+O606H 92HOO608G 92G  4 6   2.0497E-05   5.1264E+08     82.96  6  6  8           WAVELENGTH:          2083.03902 A    Iron Project
+O606H112HOO608G 92G  4 6   8.9901E-04   5.1262E+08     82.96  6  6  8           WAVELENGTH:          2083.08664 A    Iron Project
+O606H 92HOO609G 72G  4 6   2.7216E-04   8.2664E+08    132.61  6  6  9           WAVELENGTH:          1640.38663 A    Iron Project
+O606H 92HOO609G 92G  4 6   6.3448E-06   8.2664E+08    132.61  6  6  9           WAVELENGTH:          1640.38483 A    Iron Project
+O606H112HOO609G 92G  4 6   2.7828E-04   8.2661E+08    132.61  6  6  9           WAVELENGTH:          1640.41436 A    Iron Project
+O606H 92HOO610G 72G  4 6   1.1898E-04   1.0970E+09    201.67  6  6 10           WAVELENGTH:          1423.94382 A    Iron Project
+O606H 92HOO610G 92G  4 6   2.7738E-06   1.0971E+09    201.68  6  6 10           WAVELENGTH:          1423.92156 A    Iron Project
+O606H112HOO610G 92G  4 6   1.2166E-04   1.0970E+09    201.68  6  6 10           WAVELENGTH:          1423.94381 A    Iron Project
+.                       
+O606H 92HOO607I112I  4 6   1.9200E+00   1.9157E+08     49.00  6  6  7           WAVELENGTH:          3407.56372 A    Iron Project
+O606H112HOO607I112I  4 6   2.4644E-02   1.9155E+08     49.00  6  6  7           WAVELENGTH:          3407.69115 A    Iron Project
+O606H112HOO607I132I  4 6   1.8957E+00   1.9155E+08     49.00  6  6  7           WAVELENGTH:          3407.69111 A    Iron Project
+O606H 92HOO608I112I  4 6   2.0723E-01   5.1769E+08     83.59  6  6  8           WAVELENGTH:          2072.86323 A    Iron Project
+O606H112HOO608I112I  4 6   2.6599E-03   5.1767E+08     83.59  6  6  8           WAVELENGTH:          2072.91038 A    Iron Project
+O606H112HOO608I132I  4 6   2.0461E-01   5.1767E+08     83.59  6  6  8           WAVELENGTH:          2072.91037 A    Iron Project
+O606H 92HOO609I112I  4 6   5.7113E-02   8.2670E+08    132.63  6  6  9           WAVELENGTH:          1640.32676 A    Iron Project
+O606H112HOO609I112I  4 6   7.3308E-04   8.2667E+08    132.63  6  6  9           WAVELENGTH:          1640.35629 A    Iron Project
+O606H112HOO609I132I  4 6   5.6391E-02   8.2667E+08    132.63  6  6  9           WAVELENGTH:          1640.35611 A    Iron Project
+O606H 92HOO610I112I  4 6   2.3439E-02   1.0971E+09    201.69  6  6 10           WAVELENGTH:          1423.89932 A    Iron Project
+O606H112HOO610I112I  4 6   3.0086E-04   1.0971E+09    201.69  6  6 10           WAVELENGTH:          1423.92157 A    Iron Project
+O606H112HOO610I132I  4 6   2.3143E-02   1.0971E+09    201.69  6  6 10           WAVELENGTH:          1423.92155 A    Iron Project
+.                       
+O607S 12S O607P 12PO 4 6   3.2924E-01   7.6047E+05     48.09  6  7  7           WAVELENGTH:         54083.28826 A    Iron Project
+O607S 12S O607P 32PO 4 6   6.5848E-01   7.6294E+05     48.09  6  7  7           WAVELENGTH:         53995.68035 A    Iron Project
+O607S 12S O608P 12PO 4 6   1.2837E-01   9.7511E+07     82.08  6  7  8           WAVELENGTH:          4776.15847 A    Iron Project
+O607S 12S O608P 32PO 4 6   2.5673E-01   9.7635E+07     82.11  6  7  8           WAVELENGTH:          4773.11675 A    Iron Project
+O607S 12S O609P 12PO 4 6   3.8630E-02   2.5557E+08    130.86  6  7  9           WAVELENGTH:          2950.21885 A    Iron Project
+O607S 12S O609P 32PO 4 6   7.7260E-02   2.5568E+08    130.90  6  7  9           WAVELENGTH:          2949.55041 A    Iron Project
+O607S 12S O610P 12PO 4 6   1.7965E-02   4.1612E+08    199.27  6  7 10           WAVELENGTH:          2312.03215 A    Iron Project
+O607S 12S O610P 32PO 4 6   3.5930E-02   4.1623E+08    199.33  6  7 10           WAVELENGTH:          2311.73889 A    Iron Project
+.                       
+O607P 12POO608S 12S  4 6   2.2694E-01   7.1383E+07     79.07  6  7  8           WAVELENGTH:          5582.22619 A    Iron Project
+O607P 32POO608S 12S  4 6   2.2694E-01   7.1359E+07     79.07  6  7  8           WAVELENGTH:          5583.16119 A    Iron Project
+O607P 12POO609S 12S  4 6   4.6068E-02   2.1545E+08    126.08  6  7  9           WAVELENGTH:          3213.19157 A    Iron Project
+O607P 32POO609S 12S  4 6   4.6068E-02   2.1540E+08    126.08  6  7  9           WAVELENGTH:          3213.50134 A    Iron Project
+O607P 12POO610S 12S  4 6   1.8352E-02   3.6902E+08    192.73  6  7 10           WAVELENGTH:          2455.17441 A    Iron Project
+O607P 32POO610S 12S  4 6   1.8352E-02   3.6896E+08    192.73  6  7 10           WAVELENGTH:          2455.35526 A    Iron Project
+.                       
+O607P 12POO608D 32D  4 6   5.8670E-01   8.5967E+07     83.60  6  7  8           WAVELENGTH:          5086.72872 A    Iron Project
+O607P 32POO608D 32D  4 6   5.8565E-02   8.5941E+07     83.60  6  7  8           WAVELENGTH:          5087.50509 A    Iron Project
+O607P 32POO608D 52D  4 6   5.2761E-01   8.6055E+07     83.64  6  7  8           WAVELENGTH:          5084.14256 A    Iron Project
+O607P 12POO609D 32D  4 6   1.5866E-01   2.3286E+08    132.51  6  7  9           WAVELENGTH:          3090.69785 A    Iron Project
+O607P 32POO609D 32D  4 6   1.5837E-02   2.3282E+08    132.51  6  7  9           WAVELENGTH:          3090.98445 A    Iron Project
+O607P 32POO609D 52D  4 6   1.4268E-01   2.3285E+08    132.52  6  7  9           WAVELENGTH:          3090.77478 A    Iron Project
+O607P 12POO610D 32D  4 6   7.0905E-02   3.8544E+08    201.52  6  7 10           WAVELENGTH:          2402.29518 A    Iron Project
+O607P 32POO610D 32D  4 6   7.0777E-03   3.8538E+08    201.52  6  7 10           WAVELENGTH:          2402.46832 A    Iron Project
+O607P 32POO610D 52D  4 6   6.3763E-02   3.8543E+08    201.54  6  7 10           WAVELENGTH:          2402.34165 A    Iron Project
+.                       
+O607D 32D O608P 12PO 4 6   1.0169E-01   7.5369E+07     82.08  6  7  8           WAVELENGTH:          5432.61879 A    Iron Project
+O607D 32D O608P 32PO 4 6   2.0302E-02   7.5478E+07     82.11  6  7  8           WAVELENGTH:          5428.68382 A    Iron Project
+O607D 52D O608P 32PO 4 6   1.2194E-01   7.5282E+07     82.11  6  7  8           WAVELENGTH:          5435.76599 A    Iron Project
+O607D 32D O609P 12PO 4 6   2.1625E-02   2.1884E+08    130.86  6  7  9           WAVELENGTH:          3188.18682 A    Iron Project
+O607D 32D O609P 32PO 4 6   4.3171E-03   2.1895E+08    130.90  6  7  9           WAVELENGTH:          3187.40621 A    Iron Project
+O607D 52D O609P 32PO 4 6   2.5929E-02   2.1861E+08    130.90  6  7  9           WAVELENGTH:          3189.84637 A    Iron Project
+O607D 32D O610P 12PO 4 6   1.0294E-02   3.6887E+08    199.27  6  7 10           WAVELENGTH:          2455.67544 A    Iron Project
+O607D 32D O610P 32PO 4 6   4.9019E-04   3.6896E+08    199.33  6  7 10           WAVELENGTH:          2455.34461 A    Iron Project
+O607D 52D O610P 32PO 4 6   9.8038E-03   3.6853E+08    199.33  6  7 10           WAVELENGTH:          2456.79236 A    Iron Project
+.                       
+O607D 32D O608F 52FO 4 6   8.3292E-01   8.0013E+07     83.57  6  7  8           WAVELENGTH:          5272.61161 A    Iron Project
+O607D 52D O608F 52FO 4 6   3.9663E-02   7.9810E+07     83.57  6  7  8           WAVELENGTH:          5279.29217 A    Iron Project
+O607D 52D O608F 72FO 4 6   7.9326E-01   7.9811E+07     83.57  6  7  8           WAVELENGTH:          5279.26428 A    Iron Project
+O607D 32D O609F 52FO 4 6   2.0948E-01   2.2342E+08    132.61  6  7  9           WAVELENGTH:          3155.29002 A    Iron Project
+O607D 52D O609F 52FO 4 6   9.9752E-03   2.2309E+08    132.61  6  7  9           WAVELENGTH:          3157.68124 A    Iron Project
+O607D 52D O609F 72FO 4 6   1.9950E-01   2.2310E+08    132.61  6  7  9           WAVELENGTH:          3157.57183 A    Iron Project
+O607D 32D O610F 52FO 4 6   9.0258E-02   3.7321E+08    201.68  6  7 10           WAVELENGTH:          2441.33347 A    Iron Project
+O607D 52D O610F 52FO 4 6   4.2980E-03   3.7277E+08    201.68  6  7 10           WAVELENGTH:          2442.76474 A    Iron Project
+O607D 52D O610F 72FO 4 6   8.5960E-02   3.7279E+08    201.69  6  7 10           WAVELENGTH:          2442.69926 A    Iron Project
+.                       
+O607F 52FOO608D 32D  4 6   5.8964E-02   7.9508E+07     83.60  6  7  8           WAVELENGTH:          5289.32427 A    Iron Project
+O607F 52FOO608D 52D  4 6   4.2117E-03   7.9617E+07     83.64  6  7  8           WAVELENGTH:          5285.68977 A    Iron Project
+O607F 72FOO608D 52D  4 6   6.3176E-02   7.9617E+07     83.64  6  7  8           WAVELENGTH:          5285.69304 A    Iron Project
+O607F 52FOO609D 32D  4 6   1.2005E-02   2.2215E+08    132.51  6  7  9           WAVELENGTH:          3164.34076 A    Iron Project
+O607F 52FOO609D 52D  4 6   8.5753E-04   2.2218E+08    132.52  6  7  9           WAVELENGTH:          3164.12102 A    Iron Project
+O607F 72FOO609D 52D  4 6   1.2863E-02   2.2218E+08    132.52  6  7  9           WAVELENGTH:          3164.12219 A    Iron Project
+O607F 52FOO610D 32D  4 6   4.5731E-03   3.7162E+08    201.52  6  7 10           WAVELENGTH:          2446.55114 A    Iron Project
+O607F 52FOO610D 52D  4 6   3.2665E-04   3.7166E+08    201.54  6  7 10           WAVELENGTH:          2446.41978 A    Iron Project
+O607F 72FOO610D 52D  4 6   4.8997E-03   3.7166E+08    201.54  6  7 10           WAVELENGTH:          2446.42048 A    Iron Project
+.                       
+O607F 52FOO608G 72G  4 6   1.0697E+00   7.9449E+07     83.58  6  7  8           WAVELENGTH:          5291.28432 A    Iron Project
+O607F 72FOO608G 72G  4 6   3.0177E-02   7.9449E+07     83.58  6  7  8           WAVELENGTH:          5291.28760 A    Iron Project
+O607F 72FOO608G 92G  4 6   1.0406E+00   7.9449E+07     83.58  6  7  8           WAVELENGTH:          5291.28573 A    Iron Project
+O607F 52FOO609G 72G  4 6   2.5225E-01   2.2243E+08    132.61  6  7  9           WAVELENGTH:          3162.36748 A    Iron Project
+O607F 72FOO609G 72G  4 6   7.1160E-03   2.2243E+08    132.61  6  7  9           WAVELENGTH:          3162.36865 A    Iron Project
+O607F 72FOO609G 92G  4 6   2.4538E-01   2.2243E+08    132.61  6  7  9           WAVELENGTH:          3162.36198 A    Iron Project
+O607F 52FOO610G 72G  4 6   1.0408E-01   3.7188E+08    201.67  6  7 10           WAVELENGTH:          2445.69754 A    Iron Project
+O607F 72FOO610G 72G  4 6   2.9362E-03   3.7188E+08    201.67  6  7 10           WAVELENGTH:          2445.69824 A    Iron Project
+O607F 72FOO610G 92G  4 6   1.0125E-01   3.7190E+08    201.68  6  7 10           WAVELENGTH:          2445.63261 A    Iron Project
+.                       
+O607G 72G O608F 52FO 4 6   3.4414E-02   7.9381E+07     83.57  6  7  8           WAVELENGTH:          5293.54462 A    Iron Project
+O607G 72G O608F 72FO 4 6   1.2944E-03   7.9382E+07     83.57  6  7  8           WAVELENGTH:          5293.51658 A    Iron Project
+O607G 92G O608F 72FO 4 6   3.5708E-02   7.9382E+07     83.57  6  7  8           WAVELENGTH:          5293.51699 A    Iron Project
+O607G 72G O609F 52FO 4 6   6.3227E-03   2.2237E+08    132.61  6  7  9           WAVELENGTH:          3162.77459 A    Iron Project
+O607G 72G O609F 72FO 4 6   2.3782E-04   2.2238E+08    132.61  6  7  9           WAVELENGTH:          3162.66483 A    Iron Project
+O607G 92G O609F 72FO 4 6   6.5605E-03   2.2238E+08    132.61  6  7  9           WAVELENGTH:          3162.66497 A    Iron Project
+O607G 72G O610F 52FO 4 6   2.2557E-03   3.7185E+08    201.68  6  7 10           WAVELENGTH:          2445.81173 A    Iron Project
+O607G 72G O610F 72FO 4 6   8.4843E-05   3.7187E+08    201.69  6  7 10           WAVELENGTH:          2445.74609 A    Iron Project
+O607G 92G O610F 72FO 4 6   2.3405E-03   3.7187E+08    201.69  6  7 10           WAVELENGTH:          2445.74618 A    Iron Project
+.                       
+O607G 72G O608H 92HO 4 6   1.3767E+00   7.9458E+07     83.59  6  7  8           WAVELENGTH:          5290.98292 A    Iron Project
+O607G 92G O608H 92HO 4 6   2.5676E-02   7.9458E+07     83.59  6  7  8           WAVELENGTH:          5290.98333 A    Iron Project
+O607G 92G O608H112HO 4 6   1.3514E+00   7.9458E+07     83.59  6  7  8           WAVELENGTH:          5290.98146 A    Iron Project
+O607G 72G O609H 92HO 4 6   2.8889E-01   2.2255E+08    132.68  6  7  9           WAVELENGTH:          3161.45788 A    Iron Project
+O607G 92G O609H 92HO 4 6   5.3879E-03   2.2255E+08    132.68  6  7  9           WAVELENGTH:          3161.45803 A    Iron Project
+O607G 92G O609H112HO 4 6   2.8357E-01   2.2255E+08    132.68  6  7  9           WAVELENGTH:          3161.45804 A    Iron Project (shifted   3161.45803 A) 
+O607G 72G O610H 92HO 4 6   1.1038E-01   3.7199E+08    201.76  6  7 10           WAVELENGTH:          2445.35230 A    Iron Project
+O607G 92G O610H 92HO 4 6   2.0587E-03   3.7199E+08    201.76  6  7 10           WAVELENGTH:          2445.35238 A    Iron Project (shifted   2445.35239 A)
+O607G 92G O610H112HO 4 6   1.0835E-01   3.7199E+08    201.76  6  7 10           WAVELENGTH:          2445.35239 A    Iron Project
+.                       
+O607H 92HOO608G 72G  4 6   1.6967E-02   7.9389E+07     83.58  6  7  8           WAVELENGTH:          5293.27824 A    Iron Project
+O607H 92HOO608G 92G  4 6   3.9555E-04   7.9389E+07     83.58  6  7  8           WAVELENGTH:          5293.27637 A    Iron Project
+O607H112HOO608G 92G  4 6   1.7349E-02   7.9389E+07     83.58  6  7  8           WAVELENGTH:          5293.27651 A    Iron Project
+O607H 92HOO609G 72G  4 6   2.7153E-03   2.2233E+08    132.61  6  7  9           WAVELENGTH:          3163.07959 A    Iron Project
+O607H 92HOO609G 92G  4 6   6.3302E-05   2.2233E+08    132.61  6  7  9           WAVELENGTH:          3163.07291 A    Iron Project
+O607H112HOO609G 92G  4 6   2.7764E-03   2.2233E+08    132.61  6  7  9           WAVELENGTH:          3163.07296 A    Iron Project
+O607H 92HOO610G 72G  4 6   8.9071E-04   3.7175E+08    201.67  6  7 10           WAVELENGTH:          2446.12344 A    Iron Project
+O607H 92HOO610G 92G  4 6   2.0765E-05   3.7177E+08    201.68  6  7 10           WAVELENGTH:          2446.05778 A    Iron Project
+O607H112HOO610G 92G  4 6   9.1075E-04   3.7177E+08    201.68  6  7 10           WAVELENGTH:          2446.05781 A    Iron Project
+.                       
+O607H 92HOO608I112I  4 6   1.7290E+00   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13348 A    Iron Project
+O607H112HOO608I112I  4 6   2.2193E-02   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13362 A    Iron Project
+O607H112HOO608I132I  4 6   1.7072E+00   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13353 A    Iron Project
+O607H 92HOO609I112I  4 6   2.8395E-01   2.2236E+08    132.63  6  7  9           WAVELENGTH:          3162.85702 A    Iron Project
+O607H112HOO609I112I  4 6   3.6447E-03   2.2236E+08    132.63  6  7  9           WAVELENGTH:          3162.85707 A    Iron Project
+O607H112HOO609I132I  4 6   2.8036E-01   2.2236E+08    132.63  6  7  9           WAVELENGTH:          3162.85640 A    Iron Project
+O607H 92HOO610I112I  4 6   9.3867E-02   3.7179E+08    201.69  6  7 10           WAVELENGTH:          2445.99214 A    Iron Project
+O607H112HOO610I112I  4 6   1.2048E-03   3.7179E+08    201.69  6  7 10           WAVELENGTH:          2445.99217 A    Iron Project
+O607H112HOO610I132I  4 6   9.2681E-02   3.7179E+08    201.69  6  7 10           WAVELENGTH:          2445.99213 A    Iron Project
+.                       
+O607I112I O608H 92HO 4 6   5.0368E-03   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13478 A    Iron Project
+O607I112I O608H112HO 4 6   7.7580E-05   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13291 A    Iron Project
+O607I132I O608H112HO 4 6   5.1152E-03   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13300 A    Iron Project
+O607I112I O609H 92HO 4 6   6.4755E-04   2.2250E+08    132.68  6  7  9           WAVELENGTH:          3161.86909 A    Iron Project
+O607I112I O609H112HO 4 6   9.9741E-06   2.2250E+08    132.68  6  7  9           WAVELENGTH:          3161.86910 A    Iron Project (shifted   3161.86909 A)
+O607I132I O609H112HO 4 6   6.5763E-04   2.2250E+08    132.68  6  7  9           WAVELENGTH:          3161.86912 A    Iron Project
+O607I112I O610H 92HO 4 6   1.8509E-04   3.7191E+08    201.76  6  7 10           WAVELENGTH:          2445.59832 A    Iron Project
+O607I112I O610H112HO 4 6   2.8509E-06   3.7191E+08    201.76  6  7 10           WAVELENGTH:          2445.59833 A    Iron Project (shifted   2445.59832 A)
+O607I132I O610H112HO 4 6   1.8797E-04   3.7191E+08    201.76  6  7 10           WAVELENGTH:          2445.59834 A    Iron Project
+.                       
+O607I112I O608K132KO 4 6   1.7485E+00   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13368 A    Iron Project
+O607I132I O608K132KO 4 6   1.6626E-02   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13378 A    Iron Project
+O607I132I O608K152KO 4 6   1.7318E+00   7.9423E+07     83.59  6  7  8           WAVELENGTH:          5292.13376 A    Iron Project
+O607I112I O609K132KO 4 6   1.7133E-01   2.2240E+08    132.64  6  7  9           WAVELENGTH:          3162.52748 A    Iron Project
+O607I132I O609K132KO 4 6   1.6291E-03   2.2240E+08    132.64  6  7  9           WAVELENGTH:          3162.52750 A    Iron Project (shifted   3162.52751 A)
+O607I132I O609K152KO 4 6   1.6970E-01   2.2240E+08    132.64  6  7  9           WAVELENGTH:          3162.52751 A    Iron Project
+O607I112I O610K132KO 4 6   4.4020E-02   3.7183E+08    201.71  6  7 10           WAVELENGTH:          2445.86088 A    Iron Project
+O607I132I O610K132KO 4 6   4.1856E-04   3.7183E+08    201.71  6  7 10           WAVELENGTH:          2445.86089 A    Iron Project (shifted   2445.86090 A)
+O607I132I O610K152KO 4 6   4.3600E-02   3.7183E+08    201.71  6  7 10           WAVELENGTH:          2445.86090 A    Iron Project
+.                       
+O607I112I O611       4 6   4.4160E-02   5.1384E+08    300.45  6  7 11           WAVELENGTH:          2080.60536 A    EXTRAPOLATED
+O607I132I O611       4 6   4.4160E-02   5.1384E+08    300.45  6  7 11           WAVELENGTH:          2080.60538 A    EXTRAPOLATED
+O607I112I O612       4 6   2.5250E-02   6.2940E+08    423.37  6  7 12           WAVELENGTH:          1879.92472 A    EXTRAPOLATED
+O607I132I O612       4 6   2.5250E-02   6.2940E+08    423.37  6  7 12           WAVELENGTH:          1879.92473 A    EXTRAPOLATED
+O607I112I O613       4 6   1.6050E-02   7.2908E+08    583.15  6  7 13           WAVELENGTH:          1746.69173 A    EXTRAPOLATED
+O607I132I O613       4 6   1.6050E-02   7.2908E+08    583.15  6  7 13           WAVELENGTH:          1746.69174 A    EXTRAPOLATED
+O607I112I O614       4 6   1.0970E-02   8.1338E+08    784.36  6  7 14           WAVELENGTH:          1653.70412 A    EXTRAPOLATED
+O607I132I O614       4 6   1.0970E-02   8.1338E+08    784.36  6  7 14           WAVELENGTH:          1653.70413 A    EXTRAPOLATED
+O607I112I O615       4 6   7.8900E-03   8.8475E+08   1033.63  6  7 15           WAVELENGTH:          1585.60435 A    EXTRAPOLATED
+O607I132I O615       4 6   7.8900E-03   8.8475E+08   1033.63  6  7 15           WAVELENGTH:          1585.60434 A    EXTRAPOLATED (shifted   1585.60435 A)
+O607I112I O616       4 6   5.9100E-03   9.4539E+08   1338.04  6  7 16           WAVELENGTH:          1533.90930 A    EXTRAPOLATED
+O607I132I O616       4 6   5.9100E-03   9.4539E+08   1338.04  6  7 16           WAVELENGTH:          1533.90931 A    EXTRAPOLATED
+O607I112I O617       4 6   4.5600E-03   9.9718E+08   1705.29  6  7 17           WAVELENGTH:          1493.54521 A    EXTRAPOLATED (shifted   1493.54522 A)
+O607I132I O617       4 6   4.5600E-03   9.9718E+08   1705.29  6  7 17           WAVELENGTH:          1493.54522 A    EXTRAPOLATED
+.                       
+O608S 12S O609P 12PO 4 6   1.3450E-01   4.4429E+07    130.86  6  8  9           WAVELENGTH:          7075.74346 A    Iron Project
+O608S 12S O609P 32PO 4 6   2.6900E-01   4.4477E+07    130.90  6  8  9           WAVELENGTH:          7071.89966 A    Iron Project
+O608S 12S O610P 12PO 4 6   4.0790E-02   1.2273E+08    199.27  6  8 10           WAVELENGTH:          4257.31307 A    Iron Project
+O608S 12S O610P 32PO 4 6   8.1580E-02   1.2278E+08    199.33  6  8 10           WAVELENGTH:          4256.31882 A    Iron Project
+.                       
+O608P 12POO609S 12S  4 6   2.6317E-01   3.2210E+07    126.08  6  8  9           WAVELENGTH:          8310.21967 A    Iron Project
+O608P 32POO609S 12S  4 6   2.6317E-01   3.2138E+07    126.08  6  8  9           WAVELENGTH:          8319.44423 A    Iron Project
+O608P 12POO610S 12S  4 6   5.3862E-02   1.0418E+08    192.73  6  8 10           WAVELENGTH:          4620.65032 A    Iron Project
+O608P 32POO610S 12S  4 6   5.3862E-02   1.0406E+08    192.73  6  8 10           WAVELENGTH:          4623.50076 A    Iron Project
+.                       
+O608P 12POO609D 32D  4 6   6.0367E-01   3.9151E+07    132.51  6  8  9           WAVELENGTH:          7537.59926 A    Iron Project
+O608P 32POO609D 32D  4 6   6.0259E-02   3.9072E+07    132.51  6  8  9           WAVELENGTH:          7545.18751 A    Iron Project
+O608P 32POO609D 52D  4 6   5.4287E-01   3.9085E+07    132.52  6  8  9           WAVELENGTH:          7543.93825 A    Iron Project
+O608P 12POO610D 32D  4 6   1.6441E-01   1.1300E+08    201.52  6  8 10           WAVELENGTH:          4436.84676 A    Iron Project
+O608P 32POO610D 32D  4 6   1.6411E-02   1.1286E+08    201.52  6  8 10           WAVELENGTH:          4439.47488 A    Iron Project
+O608P 32POO610D 52D  4 6   1.4785E-01   1.1288E+08    201.54  6  8 10           WAVELENGTH:          4439.04236 A    Iron Project
+.                       
+O608D 32D O609P 12PO 4 6   1.2743E-01   3.4135E+07    130.86  6  8  9           WAVELENGTH:          8072.46457 A    Iron Project
+O608D 32D O609P 32PO 4 6   2.5441E-02   3.4177E+07    130.90  6  8  9           WAVELENGTH:          8067.46197 A    Iron Project
+O608D 52D O609P 32PO 4 6   1.5280E-01   3.4106E+07    130.90  6  8  9           WAVELENGTH:          8075.93177 A    Iron Project
+O608D 32D O610P 12PO 4 6   2.7316E-02   1.0517E+08    199.27  6  8 10           WAVELENGTH:          4598.97116 A    Iron Project
+O608D 32D O610P 32PO 4 6   5.4534E-03   1.0522E+08    199.33  6  8 10           WAVELENGTH:          4597.81095 A    Iron Project
+O608D 52D O610P 32PO 4 6   3.2753E-02   1.0510E+08    199.33  6  8 10           WAVELENGTH:          4600.56077 A    Iron Project
+.                       
+O608D 32D O609F 52FO 4 6   8.4886E-01   3.5961E+07    132.61  6  8  9           WAVELENGTH:          7864.84564 A    Iron Project
+O608D 52D O609F 52FO 4 6   4.0422E-02   3.5887E+07    132.61  6  8  9           WAVELENGTH:          7872.89513 A    Iron Project
+O608D 52D O609F 72FO 4 6   8.0844E-01   3.5894E+07    132.61  6  8  9           WAVELENGTH:          7872.21501 A    Iron Project
+O608D 32D O610F 52FO 4 6   2.1604E-01   1.0750E+08    201.68  6  8 10           WAVELENGTH:          4548.92391 A    Iron Project
+O608D 52D O610F 52FO 4 6   1.0288E-02   1.0737E+08    201.68  6  8 10           WAVELENGTH:          4551.61555 A    Iron Project
+O608D 52D O610F 72FO 4 6   2.0575E-01   1.0738E+08    201.69  6  8 10           WAVELENGTH:          4551.38822 A    Iron Project
+.                       
+O608F 52FOO609D 32D  4 6   8.0123E-02   3.5924E+07    132.51  6  8  9           WAVELENGTH:          7868.92321 A    Iron Project
+O608F 52FOO609D 52D  4 6   5.7231E-03   3.5936E+07    132.52  6  8  9           WAVELENGTH:          7867.56446 A    Iron Project
+O608F 72FOO609D 52D  4 6   8.5846E-02   3.5935E+07    132.52  6  8  9           WAVELENGTH:          7867.62640 A    Iron Project
+O608F 52FOO610D 32D  4 6   1.6677E-02   1.0746E+08    201.52  6  8 10           WAVELENGTH:          4549.60615 A    Iron Project
+O608F 52FOO610D 52D  4 6   1.1912E-03   1.0749E+08    201.54  6  8 10           WAVELENGTH:          4549.15191 A    Iron Project
+O608F 72FOO610D 52D  4 6   1.7868E-02   1.0748E+08    201.54  6  8 10           WAVELENGTH:          4549.17262 A    Iron Project
+.                       
+O608F 52FOO609G 72G  4 6   1.0574E+00   3.6035E+07    132.61  6  8  9           WAVELENGTH:          7856.73191 A    Iron Project
+O608F 72FOO609G 72G  4 6   2.9830E-02   3.6035E+07    132.61  6  8  9           WAVELENGTH:          7856.79368 A    Iron Project
+O608F 72FOO609G 92G  4 6   1.0286E+00   3.6035E+07    132.61  6  8  9           WAVELENGTH:          7856.75250 A    Iron Project
+O608F 52FOO610G 72G  4 6   2.5862E-01   1.0760E+08    201.67  6  8 10           WAVELENGTH:          4546.65519 A    Iron Project
+O608F 72FOO610G 72G  4 6   7.2956E-03   1.0760E+08    201.67  6  8 10           WAVELENGTH:          4546.67588 A    Iron Project
+O608F 72FOO610G 92G  4 6   2.5157E-01   1.0761E+08    201.68  6  8 10           WAVELENGTH:          4546.44904 A    Iron Project
+.                       
+O608G 72G O609F 52FO 4 6   5.2423E-02   3.6000E+07    132.61  6  8  9           WAVELENGTH:          7860.51606 A    Iron Project
+O608G 72G O609F 72FO 4 6   1.9718E-03   3.6007E+07    132.61  6  8  9           WAVELENGTH:          7859.83808 A    Iron Project
+O608G 92G O609F 72FO 4 6   5.4395E-02   3.6007E+07    132.61  6  8  9           WAVELENGTH:          7859.84220 A    Iron Project
+O608G 72G O610F 52FO 4 6   9.9912E-03   1.0756E+08    201.68  6  8 10           WAVELENGTH:          4547.47519 A    Iron Project
+O608G 72G O610F 72FO 4 6   3.7580E-04   1.0758E+08    201.69  6  8 10           WAVELENGTH:          4547.24827 A    Iron Project
+O608G 92G O610F 72FO 4 6   1.0367E-02   1.0758E+08    201.69  6  8 10           WAVELENGTH:          4547.24965 A    Iron Project
+.                       
+O608G 72G O609H 92HO 4 6   1.3208E+00   3.6075E+07    132.68  6  8  9           WAVELENGTH:          7852.38797 A    Iron Project
+O608G 92G O609H 92HO 4 6   2.4634E-02   3.6075E+07    132.68  6  8  9           WAVELENGTH:          7852.39209 A    Iron Project
+O608G 92G O609H112HO 4 6   1.2965E+00   3.6075E+07    132.68  6  8  9           WAVELENGTH:          7852.39208 A    Iron Project
+O608G 72G O610H 92HO 4 6   3.0061E-01   1.0764E+08    201.76  6  8 10           WAVELENGTH:          4545.88723 A    Iron Project
+O608G 92G O610H 92HO 4 6   5.6065E-03   1.0764E+08    201.76  6  8 10           WAVELENGTH:          4545.88861 A    Iron Project (shifted   4545.88860 A)
+O608G 92G O610H112HO 4 6   2.9508E-01   1.0764E+08    201.76  6  8 10           WAVELENGTH:          4545.88860 A    Iron Project
+.                       
+O608H 92HOO609G 72G  4 6   3.1153E-02   3.5983E+07    132.61  6  8  9           WAVELENGTH:          7862.38180 A    Iron Project
+O608H 92HOO609G 92G  4 6   7.2626E-04   3.5984E+07    132.61  6  8  9           WAVELENGTH:          7862.34056 A    Iron Project
+O608H112HOO609G 92G  4 6   3.1853E-02   3.5984E+07    132.61  6  8  9           WAVELENGTH:          7862.34468 A    Iron Project
+O608H 92HOO610G 72G  4 6   5.3155E-03   1.0751E+08    201.67  6  8 10           WAVELENGTH:          4548.54670 A    Iron Project
+O608H 92HOO610G 92G  4 6   1.2392E-04   1.0752E+08    201.68  6  8 10           WAVELENGTH:          4548.31967 A    Iron Project
+O608H112HOO610G 92G  4 6   5.4350E-03   1.0752E+08    201.68  6  8 10           WAVELENGTH:          4548.32105 A    Iron Project
+.                       
+O608H 92HOO609I112I  4 6   1.6150E+00   3.5996E+07    132.63  6  8  9           WAVELENGTH:          7861.00676 A    Iron Project
+O608H112HOO609I112I  4 6   2.0730E-02   3.5996E+07    132.63  6  8  9           WAVELENGTH:          7861.01088 A    Iron Project
+O608H112HOO609I132I  4 6   1.5946E+00   3.5996E+07    132.63  6  8  9           WAVELENGTH:          7861.00677 A    Iron Project (shifted   7861.00676 A)
+O608H 92HOO610I112I  4 6   3.1773E-01   1.0754E+08    201.69  6  8 10           WAVELENGTH:          4548.09274 A    Iron Project
+O608H112HOO610I112I  4 6   4.0782E-03   1.0754E+08    201.69  6  8 10           WAVELENGTH:          4548.09412 A    Iron Project
+O608H112HOO610I132I  4 6   3.1371E-01   1.0754E+08    201.69  6  8 10           WAVELENGTH:          4548.09398 A    Iron Project
+.                       
+O608I112I O609H 92HO 4 6   1.4044E-02   3.6052E+07    132.68  6  8  9           WAVELENGTH:          7854.90856 A    Iron Project
+O608I112I O609H112HO 4 6   2.1632E-04   3.6052E+07    132.68  6  8  9           WAVELENGTH:          7854.90857 A    Iron Project (shifted   7854.90856 A)
+O608I132I O609H112HO 4 6   1.4263E-02   3.6052E+07    132.68  6  8  9           WAVELENGTH:          7854.90876 A    Iron Project
+O608I112I O610H 92HO 4 6   2.0576E-03   1.0760E+08    201.76  6  8 10           WAVELENGTH:          4546.73188 A    Iron Project
+O608I112I O610H112HO 4 6   3.1693E-05   1.0760E+08    201.76  6  8 10           WAVELENGTH:          4546.73189 A    Iron Project (shifted   4546.73188 A)
+O608I132I O610H112HO 4 6   2.0897E-03   1.0760E+08    201.76  6  8 10           WAVELENGTH:          4546.73194 A    Iron Project
+.                       
+O608I112I O609K132KO 4 6   1.5861E+00   3.6015E+07    132.64  6  8  9           WAVELENGTH:          7858.97311 A    Iron Project
+O608I132I O609K132KO 4 6   1.5082E-02   3.6015E+07    132.64  6  8  9           WAVELENGTH:          7858.97331 A    Iron Project
+O608I132I O609K152KO 4 6   1.5710E+00   3.6015E+07    132.64  6  8  9           WAVELENGTH:          7858.97327 A    Iron Project
+O608I112I O610K132KO 4 6   2.4324E-01   1.0756E+08    201.71  6  8 10           WAVELENGTH:          4547.63949 A    Iron Project
+O608I132I O610K132KO 4 6   2.3129E-03   1.0756E+08    201.71  6  8 10           WAVELENGTH:          4547.63955 A    Iron Project (shifted   4547.63956 A)
+O608I132I O610K152KO 4 6   2.4092E-01   1.0756E+08    201.71  6  8 10           WAVELENGTH:          4547.63956 A    Iron Project
+.                       
+O608K132KOO609I112I  4 6   3.6759E-03   3.5996E+07    132.63  6  8  9           WAVELENGTH:          7861.00917 A    Iron Project
+O608K132KOO609I132I  4 6   4.0778E-05   3.5996E+07    132.63  6  8  9           WAVELENGTH:          7861.00504 A    Iron Project
+O608K152KOO609I132I  4 6   3.7167E-03   3.5996E+07    132.63  6  8  9           WAVELENGTH:          7861.00509 A    Iron Project
+O608K132KOO610I112I  4 6   4.3865E-04   1.0754E+08    201.69  6  8 10           WAVELENGTH:          4548.09355 A    Iron Project
+O608K132KOO610I132I  4 6   4.8660E-06   1.0754E+08    201.69  6  8 10           WAVELENGTH:          4548.09341 A    Iron Project
+O608K152KOO610I132I  4 6   4.4352E-04   1.0754E+08    201.69  6  8 10           WAVELENGTH:          4548.09342 A    Iron Project
+.                       
+O608K132KOO609L152L  4 6   1.6365E+00   3.6002E+07    132.63  6  8  9           WAVELENGTH:          7860.32924 A    Iron Project
+O608K152KOO609L152L  4 6   1.2021E-02   3.6002E+07    132.63  6  8  9           WAVELENGTH:          7860.32929 A    Iron Project
+O608K152KOO609L172L  4 6   1.6245E+00   3.6002E+07    132.63  6  8  9           WAVELENGTH:          7860.32887 A    Iron Project
+O608K132KOO610L152L  4 6   1.4594E-01   1.0755E+08    201.70  6  8 10           WAVELENGTH:          4547.86650 A    Iron Project
+O608K152KOO610L152L  4 6   1.0720E-03   1.0755E+08    201.70  6  8 10           WAVELENGTH:          4547.86651 A    Iron Project
+O608K152KOO610L172L  4 6   1.4487E-01   1.0755E+08    201.70  6  8 10           WAVELENGTH:          4547.86652 A    Iron Project (shifted   4547.86651 A)
+.                       
+O608K132KOO611       4 6   1.0000E-01   1.8923E+08    300.45  6  8 11           WAVELENGTH:          3428.53641 A    EXTRAPOLATED (shifted   3428.53640 A)
+O608K152KOO611       4 6   1.0000E-01   1.8923E+08    300.45  6  8 11           WAVELENGTH:          3428.53640 A    EXTRAPOLATED
+O608K132KOO612       4 6   4.7870E-02   2.6166E+08    423.37  6  8 12           WAVELENGTH:          2915.65172 A    EXTRAPOLATED
+O608K152KOO612       4 6   4.7870E-02   2.6166E+08    423.37  6  8 12           WAVELENGTH:          2915.65173 A    EXTRAPOLATED
+O608K132KOO613       4 6   2.7240E-02   3.2723E+08    583.15  6  8 13           WAVELENGTH:          2607.21406 A    EXTRAPOLATED
+O608K152KOO613       4 6   2.7240E-02   3.2723E+08    583.15  6  8 13           WAVELENGTH:          2607.21405 A    EXTRAPOLATED (shifted   2607.21406 A) 
+O608K132KOO614       4 6   1.7260E-02   3.8447E+08    784.36  6  8 14           WAVELENGTH:          2405.32987 A    EXTRAPOLATED
+O608K152KOO614       4 6   1.7260E-02   3.8447E+08    784.36  6  8 14           WAVELENGTH:          2405.32986 A    EXTRAPOLATED (shifted   2405.32987 A)
+O608K132KOO615       4 6   1.1770E-02   4.3400E+08   1033.63  6  8 15           WAVELENGTH:          2263.90497 A    EXTRAPOLATED
+O608K152KOO615       4 6   1.1770E-02   4.3400E+08   1033.63  6  8 15           WAVELENGTH:          2263.90496 A    EXTRAPOLATED (shifted   2263.90497 A)
+O608K132KOO616       4 6   8.4600E-03   4.7678E+08   1338.04  6  8 16           WAVELENGTH:          2159.97031 A    EXTRAPOLATED
+O608K152KOO616       4 6   8.4600E-03   4.7678E+08   1338.04  6  8 16           WAVELENGTH:          2159.97030 A    EXTRAPOLATED (shifted   2159.97031 A)
+O608K132KOO617       4 6   6.3200E-03   5.1375E+08   1705.29  6  8 17           WAVELENGTH:          2080.78369 A    EXTRAPOLATED
+O608K152KOO617       4 6   6.3200E-03   5.1375E+08   1705.29  6  8 17           WAVELENGTH:          2080.78370 A    EXTRAPOLATED
+.                       
+O609S 12S O610P 12PO 4 6   1.4452E-01   2.3513E+07    199.27  6  9 10           WAVELENGTH:          9726.40710 A    Iron Project
+O609S 12S O610P 32PO 4 6   2.8903E-01   2.3538E+07    199.33  6  9 10           WAVELENGTH:          9721.21913 A    Iron Project
+.                       
+O609P 12POO610S 12S  4 6   3.0372E-01   1.6773E+07    192.73  6  9 10           WAVELENGTH:         11516.07584 A    Iron Project
+O609P 32POO610S 12S  4 6   3.0372E-01   1.6743E+07    192.73  6  9 10           WAVELENGTH:         11526.27221 A    Iron Project
+O609P 12POO610D 32D  4 6   6.3297E-01   2.0415E+07    201.52  6  9 10           WAVELENGTH:         10438.33999 A    Iron Project
+O609P 32POO610D 32D  4 6   6.3183E-02   2.0382E+07    201.52  6  9 10           WAVELENGTH:         10446.71651 A    Iron Project
+O609P 32POO610D 52D  4 6   5.6922E-01   2.0392E+07    201.54  6  9 10           WAVELENGTH:         10444.32185 A    Iron Project
+.                       
+O609D 32D O610P 12PO 4 6   1.5380E-01   1.8210E+07    199.27  6  9 10           WAVELENGTH:         11052.35999 A    Iron Project
+O609D 32D O610P 32PO 4 6   3.0705E-02   1.8232E+07    199.33  6  9 10           WAVELENGTH:         11045.66159 A    Iron Project
+O609D 52D O610P 32PO 4 6   1.8441E-01   1.8223E+07    199.33  6  9 10           WAVELENGTH:         11048.33998 A    Iron Project
+O609D 32D O610F 52FO 4 6   8.7057E-01   1.9185E+07    201.68  6  9 10           WAVELENGTH:         10767.66018 A    Iron Project
+O609D 52D O610F 52FO 4 6   4.1456E-02   1.9176E+07    201.68  6  9 10           WAVELENGTH:         10770.20543 A    Iron Project
+O609D 52D O610F 72FO 4 6   8.2911E-01   1.9181E+07    201.69  6  9 10           WAVELENGTH:         10768.93265 A    Iron Project
+.                       
+O609F 52FOO610D 32D  4 6   1.0275E-01   1.9045E+07    201.52  6  9 10           WAVELENGTH:         10807.24717 A    Iron Project
+O609F 52FOO610D 52D  4 6   7.3393E-03   1.9054E+07    201.54  6  9 10           WAVELENGTH:         10804.68439 A    Iron Project
+O609F 72FOO610D 52D  4 6   1.1009E-01   1.9049E+07    201.54  6  9 10           WAVELENGTH:         10805.96563 A    Iron Project
+O609F 52FOO610G 72G  4 6   1.0599E+00   1.9104E+07    201.67  6  9 10           WAVELENGTH:         10790.61079 A    Iron Project
+O609F 72FOO610G 72G  4 6   2.9900E-02   1.9099E+07    201.67  6  9 10           WAVELENGTH:         10791.88869 A    Iron Project
+O609F 72FOO610G 92G  4 6   1.0310E+00   1.9104E+07    201.68  6  9 10           WAVELENGTH:         10790.61080 A    Iron Project (shifted  10790.61079 A)
+.                       
+O609G 72G O610F 52FO 4 6   7.2241E-02   1.9104E+07    201.68  6  9 10           WAVELENGTH:         10790.57195 A    Iron Project
+O609G 72G O610F 72FO 4 6   2.7172E-03   1.9108E+07    201.69  6  9 10           WAVELENGTH:         10789.29436 A    Iron Project
+O609G 92G O610F 72FO 4 6   7.4958E-02   1.9108E+07    201.69  6  9 10           WAVELENGTH:         10789.37202 A    Iron Project
+O609G 72G O610H 92HO 4 6   1.2920E+00   1.9136E+07    201.76  6  9 10           WAVELENGTH:         10781.63516 A    Iron Project
+O609G 92G O610H 92HO 4 6   2.4097E-02   1.9135E+07    201.76  6  9 10           WAVELENGTH:         10781.71272 A    Iron Project (shifted  10781.71271 A)
+O609G 92G O610H112HO 4 6   1.2682E+00   1.9135E+07    201.76  6  9 10           WAVELENGTH:         10781.71271 A    Iron Project
+.                       
+O609H 92HOO610G 72G  4 6   4.7830E-02   1.9049E+07    201.67  6  9 10           WAVELENGTH:         10805.96562 A    Iron Project
+O609H 92HOO610G 92G  4 6   1.1151E-03   1.9054E+07    201.68  6  9 10           WAVELENGTH:         10804.68438 A    Iron Project
+O609H112HOO610G 92G  4 6   4.8906E-02   1.9054E+07    201.68  6  9 10           WAVELENGTH:         10804.68440 A    Iron Project (shifted  10804.68439 A)
+O609H 92HOO610I112I  4 6   1.5449E+00   1.9058E+07    201.69  6  9 10           WAVELENGTH:         10803.40385 A    Iron Project (shifted  10803.40384 A)
+O609H112HOO610I112I  4 6   1.9830E-02   1.9058E+07    201.69  6  9 10           WAVELENGTH:         10803.40384 A    Iron Project
+O609H112HOO610I132I  4 6   1.5254E+00   1.9059E+07    201.69  6  9 10           WAVELENGTH:         10803.40307 A    Iron Project
+.                       
+O609I112I O610H 92HO 4 6   2.6166E-02   1.9126E+07    201.76  6  9 10           WAVELENGTH:         10784.22193 A    Iron Project
+O609I112I O610H112HO 4 6   4.0302E-04   1.9126E+07    201.76  6  9 10           WAVELENGTH:         10784.22192 A    Iron Project (shifted  10784.22193 A)
+O609I132I O610H112HO 4 6   2.6573E-02   1.9126E+07    201.76  6  9 10           WAVELENGTH:         10784.22969 A    Iron Project
+O609I112I O610K132KO 4 6   1.4831E+00   1.9108E+07    201.71  6  9 10           WAVELENGTH:         10789.32931 A    Iron Project
+O609I132I O610K132KO 4 6   1.4102E-02   1.9108E+07    201.71  6  9 10           WAVELENGTH:         10789.33707 A    Iron Project
+O609I132I O610K152KO 4 6   1.4690E+00   1.9108E+07    201.71  6  9 10           WAVELENGTH:         10789.33706 A    Iron Project (shifted  10789.33707 A)
+.                       
+O609K132KOO610I112I  4 6   1.0239E-02   1.9086E+07    201.69  6  9 10           WAVELENGTH:         10795.72461 A    Iron Project
+O609K132KOO610I132I  4 6   1.1359E-04   1.9086E+07    201.69  6  9 10           WAVELENGTH:         10795.72383 A    Iron Project
+O609K152KOO610I132I  4 6   1.0353E-02   1.9086E+07    201.69  6  9 10           WAVELENGTH:         10795.72391 A    Iron Project
+O609K132KOO610L152L  4 6   1.4971E+00   1.9090E+07    201.70  6  9 10           WAVELENGTH:         10794.44541 A    Iron Project
+O609K152KOO610L152L  4 6   1.0997E-02   1.9090E+07    201.70  6  9 10           WAVELENGTH:         10794.44549 A    Iron Project
+O609K152KOO610L172L  4 6   1.4861E+00   1.9090E+07    201.70  6  9 10           WAVELENGTH:         10794.44548 A    Iron Project
+.                       
+O609L152L O610K132KO 4 6   2.7283E-03   1.9104E+07    201.71  6  9 10           WAVELENGTH:         10790.61040 A    Iron Project
+O609L152L O610K152KO 4 6   2.2904E-05   1.9104E+07    201.71  6  9 10           WAVELENGTH:         10790.61041 A    Iron Project (shifted(10790.61040 A)
+O609L172L O610K152KO 4 6   2.7512E-03   1.9104E+07    201.71  6  9 10           WAVELENGTH:         10790.61118 A    Iron Project
+.                       
+O611      O612       4 6   2.3810E+00   5.8555E+06    423.37  6 11 12           WAVELENGTH:         19490.57656 A    EXTRAPOLATED
+O611      O613       4 6   3.6730E-01   1.8779E+07    583.15  6 11 13           WAVELENGTH:         10883.58112 A    EXTRAPOLATED
+O611      O614       4 6   1.2480E-01   3.4243E+07    784.36  6 11 14           WAVELENGTH:          8059.72283 A    EXTRAPOLATED
+O611      O615       4 6   5.8720E-02   5.0079E+07   1033.63  6 11 15           WAVELENGTH:          6664.66692 A    EXTRAPOLATED
+O611      O616       4 6   3.2980E-02   6.5271E+07   1338.04  6 11 16           WAVELENGTH:          5837.72250 A    EXTRAPOLATED
+O611      O617       4 6   2.0700E-02   7.9389E+07   1705.29  6 11 17           WAVELENGTH:          5293.28756 A    EXTRAPOLATED
+.                       											 
+O612      O613       4 6   2.5720E+00   3.6620E+06    583.15  6 12 13           WAVELENGTH:         24645.91417 A    EXTRAPOLATED
+O612      O614       4 6   3.9380E-01   1.1778E+07    784.36  6 12 14           WAVELENGTH:         13742.51203 A    EXTRAPOLATED
+O612      O615       4 6   1.3300E-01   2.1686E+07   1033.63  6 12 15           WAVELENGTH:         10127.79636 A    EXTRAPOLATED
+O612      O616       4 6   6.2280E-02   3.2027E+07   1338.04  6 12 16           WAVELENGTH:          8333.83093 A    EXTRAPOLATED
+O612      O617       4 6   3.4860E-02   4.2123E+07   1705.29  6 12 17           WAVELENGTH:          7266.82584 A    EXTRAPOLATED
+.                       
+O613      O614       4 6   2.7630E+00   2.3052E+06    784.36  6 13 14           WAVELENGTH:         31063.40276 A    EXTRAPOLATED
+O613      O615       4 6   4.2020E-01   7.5251E+06   1033.63  6 13 15           WAVELENGTH:         17192.91736 A    EXTRAPOLATED
+O613      O616       4 6   1.4120E-01   1.4030E+07   1338.04  6 13 16           WAVELENGTH:         12591.57881 A    EXTRAPOLATED
+O613      O617       4 6   6.5840E-02   2.0945E+07   1705.29  6 13 17           WAVELENGTH:         10305.34873 A    EXTRAPOLATED
+.                       
+O614      O615       4 6   2.9540E+00   1.5004E+06   1033.63  6 14 15           WAVELENGTH:         38504.09710 A    EXTRAPOLATED
+O614      O616       4 6   4.4670E-01   4.9610E+06   1338.04  6 14 16           WAVELENGTH:         21174.80576 A    EXTRAPOLATED
+O614      O617       4 6   1.4940E-01   9.3532E+06   1705.29  6 14 17           WAVELENGTH:         15421.44547 A    EXTRAPOLATED
+.                       
+O615      O616       4 6   3.1450E+00   1.0049E+06   1338.04  6 15 16           WAVELENGTH:         47048.47772 A    EXTRAPOLATED
+O615      O617       4 6   4.7310E-01   3.3614E+06   1705.29  6 15 17           WAVELENGTH:         25724.46370 A    EXTRAPOLATED
+.                       
+O616      O617       4 6   3.3360E+00   6.9050E+05   1705.29  6 16 17           WAVELENGTH:         56757.45930 A    EXTRAPOLATED
+0                                                                               
+.                        PHOTOIONISATION              
+.---------------------------------------              
+RBF                                                                             
+O602S 12S O701S201S  4 0
+O602P 12POO701S201S  4 0
+O602P 32POO701S201S  4 0
+O603S 12S O701S201S  4 0
+O603P 12POO701S201S  4 0
+O603P 32POO701S201S  4 0
+O603D 32D O701S201S  4 0
+O603D 52D O701S201S  4 0
+O604S 12S O701S201S  4 0
+O604P 12POO701S201S  4 0
+O604P 32POO701S201S  4 0
+O604D 32D O701S201S  4 0
+O604D 52D O701S201S  4 0
+O604F 52FOO701S201S  4 0
+O604F 72FOO701S201S  4 0
+O605S 12S O701S201S  4 0
+O605P 12POO701S201S  4 0
+O605P 32POO701S201S  4 0
+O605D 32D O701S201S  4 0
+O605D 52D O701S201S  4 0
+O605F 52FOO701S201S  4 0
+O605F 72FOO701S201S  4 0
+O605G 72G O701S201S  4 0
+O605G 92G O701S201S  4 0
+O606S 12S O701S201S  4 0
+O606P 12POO701S201S  4 0
+O606P 32POO701S201S  4 0
+O606D 32D O701S201S  4 0
+O606D 52D O701S201S  4 0
+O606F 52FOO701S201S  4 0  
+O606F 72FOO701S201S  4 0  
+O606G 72G O701S201S  4 0  
+O606G 92G O701S201S  4 0  
+O606H 92HOO701S201S  4 0  
+O606H112HOO701S201S  4 0  
+O607S 12S O701S201S  4 0  
+O607P 12POO701S201S  4 0  
+O607P 32POO701S201S  4 0  
+O607D 32D O701S201S  4 0  
+O607D 52D O701S201S  4 0  
+O607F 52FOO701S201S  4 0  
+O607F 72FOO701S201S  4 0  
+O607G 72G O701S201S  4 0  
+O607G 92G O701S201S  4 0  
+O607H 92HOO701S201S  4 0    
+O607H112HOO701S201S  4 0    
+O607I112I O701S201S  4 0    
+O607I132I O701S201S  4 0    
+O608S 12S O701S201S  4 0  
+O608P 12POO701S201S  4 0  
+O608P 32POO701S201S  4 0  
+O608F 52FOO701S201S  4 0  
+O608F 72FOO701S201S  4 0  
+O608G 72G O701S201S  4 0  
+O608G 92G O701S201S  4 0  
+O608H 92HOO701S201S  4 0  
+O608H112HOO701S201S  4 0  
+O608I112I O701S201S  4 0  
+O608I132I O701S201S  4 0  
+O608K132KOO701S201S  4 0  
+O608K152KOO701S201S  4 0  
+O608D 32D O701S201S  4 0  
+O608D 52D O701S201S  4 0  
+O609S 12S O701S201S  4 0  
+O609P 12POO701S201S  4 0  
+O609P 32POO701S201S  4 0  
+O609D 32D O701S201S  4 0  
+O609D 52D O701S201S  4 0  
+O609F 52FOO701S201S  4 0  
+O609F 72FOO701S201S  4 0  
+O609G 72G O701S201S  4 0  
+O609G 92G O701S201S  4 0  
+O609I112I O701S201S  4 0  
+O609I132I O701S201S  4 0  
+O609L152L O701S201S  4 0  
+O609L172L O701S201S  4 0  
+O609K132KOO701S201S  4 0  
+O609K152KOO701S201S  4 0  
+O609H 92HOO701S201S  4 0  
+O609H112HOO701S201S  4 0  
+O610S 12S O701S201S  4 0  
+O610P 12POO701S201S  4 0  
+O610P 32POO701S201S  4 0  
+O610D 32D O701S201S  4 0  
+O610D 52D O701S201S  4 0  
+O610F 52FOO701S201S  4 0  
+O610G 72G O701S201S  4 0  
+O610G 92G O701S201S  4 0  
+O610F 72FOO701S201S  4 0  
+O610I112I O701S201S  4 0  
+O610I132I O701S201S  4 0  
+O610L152L O701S201S  4 0  
+O610L172L O701S201S  4 0  
+O610K132KOO701S201S  4 0  
+O610K152KOO701S201S  4 0  
+O610M172MOO701S201S  4 0  
+O610M192MOO701S201S  4 0  
+O610H 92HOO701S201S  4 0  
+O610H112HOO701S201S  4 0  
+0 
+.             DIELECTRONIC RECOMBINATION
+.---------------------------------------
+RDI
+0                                     
+.                 COLLISIONAL EXCITATION                                                          
+.---------------------------------------                                                          
+CBB
+0
+.   COLLISIONAL EXCITATION TO LTE LEVELS            
+.---------------------------------------            
+CBX
+0
+.                 COLLISIONAL IONISATION                        
+.---------------------------------------                        
+CBF
+0                                                                              
+.                      FREE-FREE OPACITY                
+.---------------------------------------                
+RFF                                                                             
+O6        3 0                                                                   

@@ -87,17 +87,17 @@ summary = dict(
     ),
 )
 # References are opened only AFTER the fresh calculation has finished.
+# DZ remains a separate paper-comparison diagnostic; its historical reference
+# has not been promoted to a cold-canary baseline. Preserve that explicit check.
+reference_directory = (
+    "tests/data/spectral_regressions" if kind == "dz"
+    else "tests/data/approved_regressions/cold"
+)
 with np.load(
-    Path("tests/data/spectral_regressions") / (args.case + ".npz")
+    Path(reference_directory) / (args.case + ".npz")
 ) as saved:
     w, i, j = np.intersect1d(wave, saved["wavelength"], return_indices=True)
-    old = saved[
-        (
-            "checked_surface_flux"
-            if "checked_surface_flux" in saved
-            else "original_surface_flux"
-        )
-    ][j]
+    old = saved["checked_surface_flux" if kind == "dz" else "surface_flux"][j]
     new = result.spectrum.surface_flux_lambda[i]
     peak = np.max(w * old)
     significant = w * old > 0.01 * peak

@@ -8,8 +8,21 @@ time of writing and may discuss settings that are not public defaults.
 Use [getting started](../../getting-started.md) for current commands and
 [tested points](../../tested-temperature-ranges.md) for current qualification.
 
+## Magnetic hydrogen models
+
+- [DAH paper prescription and release integration](dah-release-2026-09-29.md)
+
+## Hot H/He models
+
+- [DO/DAO release integration and cold-start evidence](do-dao-release-2026-09-20.md)
+
+## PG1159 models
+
+- [PG1159 shared-solver release and qualification](pg1159-release-2026-09-22.md)
+
 ## Numerical baseline and reliability
 
+- [Microphysics normalization and buffer audit](microphysics-audit-2026-09-10.md)
 - [Recovered solver baseline](recovered-solver-baseline.md)
 - [Checkpoint validation and CI portability](checkpoint-validation-2026-09-07.md)
 - [Cold-start numerical repair](cold-start-numerics-2026-09-07.md)
@@ -17,6 +30,9 @@ Use [getting started](../../getting-started.md) for current commands and
 
 ## Cool helium physics
 
+- [DQ stride-four structure sampling default](dq-stride4-default-2026-09-18.md)
+- [DQ 2024 C–A and completed-Swan default](dq-completed-default-2026-09-17.md)
+- [Refractive DQ release extraction and validation](dq-release-2026-09-17.md)
 - [Initial cool-helium investigation](cool-helium-2026-09-04.md)
 - [Dense-helium EOS and ionization](dense-helium-investigation-2026-09-05.md)
 - [Helium-dimer experiment](helium-dimer-experiment-2026-09-05.md)

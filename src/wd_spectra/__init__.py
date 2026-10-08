@@ -3,6 +3,8 @@
 from .models import (
     AtmosphereConvergenceWarning,
     DAConfig,
+    DAZConfig,
+    DQConfig,
     DABConfig,
     DBConfig,
     DZConfig,
@@ -15,6 +17,8 @@ from .models import (
     run_model,
     atmosphere_convergence_status,
     compute_da,
+    compute_daz,
+    compute_dq,
     compute_dab,
     compute_db,
     compute_dz,
@@ -90,13 +94,18 @@ from .stark import (
     default_paschen_stark_table,
 )
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
+
+from .models.hot import DOConfig, DAOConfig, compute_do, compute_dao
 
 __all__ = [
+    "DOConfig", "DAOConfig", "compute_do", "compute_dao",
     "Atmosphere",
     "AtmosphereConvergenceWarning",
     "BarklemSelfBroadeningTable",
     "DAConfig",
+    "DAZConfig",
+    "DQConfig",
     "DABConfig",
     "DBConfig",
     "DZConfig",
@@ -114,6 +123,8 @@ __all__ = [
     "atmosphere_convergence_status",
     "compiled_backend_available",
     "compute_da",
+    "compute_daz",
+    "compute_dq",
     "compute_dab",
     "compute_db",
     "compute_dz",
@@ -147,3 +158,17 @@ __all__ = [
     "synthesize_hydrogen_spectrum",
     "tremblay_2013_mean_3d_temperature_difference",
 ]
+
+from .models.pg1159 import PG1159Config, compute_pg1159
+__all__ += ["PG1159Config", "compute_pg1159"]
+from .models.d6 import D6Config, compute_d6
+__all__ += ["D6Config", "compute_d6"]
+
+from .light_metal_nlte import (ChiantiScaledCollisionComponent, ChiantiTermCollisionStrength, TmadEffectiveDielectronicCoupling, TmadLTEBoundBoundCoupling, TmadStructureModelAtom, atomic_database_with_chianti_radiative_transitions, barklem_oi_electron_collision_data, fine_structure_collision_data_from_tmad, atomic_database_with_tmad_formal_ions, atomic_database_with_tmad_profile_parameters, light_metal_free_free_charge_kernel, light_metal_free_free_mass_absorption_coefficient, reduced_light_metal_wavelength, read_barklem_mgi_electron_collision_data, read_tmad_structure_model_atom, read_chianti_term_collision_strengths, read_norad_oxygen_vi_photoionization_data, read_sirocco_topbase_photoionization_data, read_tlusty_forbidden_collision_strengths, read_tlusty_photoionization_threshold_data, rydberg_angular_momentum_mixing_collision_data, rydberg_quadrupole_angular_momentum_mixing_collision_data, btm_quadrupole_l_mixing_rate_coefficient, psm20_debye_l_mixing_rate_coefficient, psm20_l_mixing_rate_coefficient, solve_reduced_light_metal_levels_nlte, solve_light_metal_ionization_nlte)
+__all__ += ['ChiantiScaledCollisionComponent', 'ChiantiTermCollisionStrength', 'TmadEffectiveDielectronicCoupling', 'TmadLTEBoundBoundCoupling', 'TmadStructureModelAtom', 'atomic_database_with_chianti_radiative_transitions', 'barklem_oi_electron_collision_data', 'fine_structure_collision_data_from_tmad', 'atomic_database_with_tmad_formal_ions', 'atomic_database_with_tmad_profile_parameters', 'light_metal_free_free_charge_kernel', 'light_metal_free_free_mass_absorption_coefficient', 'reduced_light_metal_wavelength', 'read_barklem_mgi_electron_collision_data', 'read_tmad_structure_model_atom', 'read_chianti_term_collision_strengths', 'read_norad_oxygen_vi_photoionization_data', 'read_sirocco_topbase_photoionization_data', 'read_tlusty_forbidden_collision_strengths', 'read_tlusty_photoionization_threshold_data', 'rydberg_angular_momentum_mixing_collision_data', 'rydberg_quadrupole_angular_momentum_mixing_collision_data', 'btm_quadrupole_l_mixing_rate_coefficient', 'psm20_debye_l_mixing_rate_coefficient', 'psm20_l_mixing_rate_coefficient', 'solve_reduced_light_metal_levels_nlte', 'solve_light_metal_ionization_nlte']
+
+from .pg1159_presets import (PG1424_BEST_LINE_ATOM_COUNTS, PG1424_COMPOSITION_LADDER_ATOM_COUNTS, PG1424_ION_STAGE_NLTE_TRACE_ELEMENTS, PG1424_PUBLISHED_MASS_FRACTIONS, PG1424_RELAXED_STRUCTURE_ATOM_COUNTS, WERNER2015_LINE_ATOM_COUNTS, mutable_atom_counts)
+__all__ += ['PG1424_BEST_LINE_ATOM_COUNTS', 'PG1424_COMPOSITION_LADDER_ATOM_COUNTS', 'PG1424_ION_STAGE_NLTE_TRACE_ELEMENTS', 'PG1424_PUBLISHED_MASS_FRACTIONS', 'PG1424_RELAXED_STRUCTURE_ATOM_COUNTS', 'WERNER2015_LINE_ATOM_COUNTS', 'mutable_atom_counts']
+
+from .models.dah import DAHConfig, compute_dah
+__all__ += ["DAHConfig", "compute_dah"]

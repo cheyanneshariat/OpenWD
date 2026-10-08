@@ -111,6 +111,61 @@ def test_only_an_exact_fingerprint_authorizes_direct_resume(tmp_path):
     )
 
 
+def test_replacing_table_in_place_invalidates_checkpoint_even_with_same_mtime(tmp_path):
+    import os
+
+    data = ModelData(tmp_path)
+    table = data.helium_i_stark
+    table.parent.mkdir(parents=True)
+    table.write_bytes(b"version A")
+    config = DBConfig(effective_temperature=10000.)
+    original = model_request_fingerprint("DB", config, data)
+    checkpoint = atmosphere_with_model_request_fingerprint(
+        _atmosphere(_certified_metadata()), original
+    )
+    timestamps = table.stat()
+    table.write_bytes(b"version B")
+    os.utime(table, ns=(timestamps.st_atime_ns, timestamps.st_mtime_ns))
+    changed = model_request_fingerprint("DB", config, data)
+    assert not atmosphere_matches_model_request(checkpoint, changed)
+    fixed = stellar.fixed_synthesis_atmosphere(checkpoint, changed)
+    assert atmosphere_convergence_status(fixed) == "unconverged"
+
+
+def test_added_and_removed_tables_change_data_identity(tmp_path):
+    from wd_spectra._provenance import model_data_identity
+
+    data = ModelData(tmp_path)
+    data.cache.mkdir()
+    original = model_data_identity(data)
+    table = data.cache / "new-table.dat"
+    table.write_bytes(b"new")
+    assert model_data_identity(data) != original
+    table.unlink()
+    assert model_data_identity(data) == original
+
+
+def test_undoubled_microfields_invalidate_doubled_physics_checkpoints(
+    monkeypatch, tmp_path
+):
+    from wd_spectra.models import common
+
+    data = ModelData(tmp_path)
+    config = DBConfig(effective_temperature=10000.)
+    with monkeypatch.context() as historical:
+        historical.setattr(
+            common, "_MODEL_PHYSICS_REVISION",
+            "openwd-0.1.3-cold-local-energy-and-domain-v3",
+        )
+        old = model_request_fingerprint("DB", config, data)
+    requested = model_request_fingerprint("DB", config, data)
+    checkpoint = atmosphere_with_model_request_fingerprint(
+        _atmosphere({"checkpoint_composition_verified": True}), old
+    )
+    assert requested["physics_revision"] != old["physics_revision"]
+    assert not atmosphere_matches_model_request(checkpoint, requested)
+
+
 def test_unconverged_and_unknown_atmospheres_warn_without_blocking():
     unconverged = _atmosphere(
         {

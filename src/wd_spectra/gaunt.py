@@ -16,6 +16,12 @@ from .constants import (
 )
 
 
+try:
+    from . import _rt
+except ImportError:
+    _rt = None
+
+
 FloatArray = NDArray[np.float64]
 _TABLE_PATH = Path(__file__).with_name("data") / "gaunt" / "gauntff.dat"
 
@@ -173,6 +179,13 @@ def hydrogen_free_free_gaunt_factor(
         * LIGHT_SPEED
         / (wavelength * 1.0e-8 * BOLTZMANN * temperature_array)
     )
+    compiled = None if _rt is None else getattr(_rt, "cubic_table_interpolate", None)
+    if compiled is not None:
+        result = np.empty(wavelength.shape, dtype=np.float64)
+        compiled(table, np.ascontiguousarray(np.log10(gamma_squared)).ravel(),
+            np.ascontiguousarray(np.log10(u)).ravel(),
+            log_gamma_min, log_u_min, step, result.ravel())
+        return np.maximum(result, 0.0)
     gamma_nodes, gamma_weights = _cubic_grid_indices_and_weights(
         np.log10(gamma_squared), log_gamma_min, step, table.shape[1]
     )

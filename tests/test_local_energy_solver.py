@@ -10,9 +10,11 @@ from wd_spectra.constants import STEFAN_BOLTZMANN
 
 @pytest.mark.parametrize("mode", ["optical-depth", "column-mass"])
 @pytest.mark.parametrize("fraction", [0.0, 0.98])
-@pytest.mark.parametrize("convective", [False, True])
+@pytest.mark.parametrize(
+    "convective,use_preconditioner", [(False, False), (False, True), (True, False)]
+)
 def test_full_local_energy_evaluator_and_tangent(
-    monkeypatch, mode, fraction, convective
+    monkeypatch, mode, fraction, convective, use_preconditioner
 ):
     seed = gray_helium_atmosphere(6000.0, 8.0, n_depth=8)
     wave = np.geomspace(500.0, 1e5, 19)
@@ -81,7 +83,9 @@ def test_full_local_energy_evaluator_and_tangent(
         n_angle=3,
         initial_temperature_was_supplied=False,
         use_initial_bolometric_rescaling=False,
-        use_convective_gradient_preconditioner=False,
+        # The default conditioner must not suppress local energy equations
+        # when convection is disabled. Flux alone barely constrains thin cells.
+        use_convective_gradient_preconditioner=use_preconditioner,
         maximum_formal_flux_continuations=0,
         enforce_local_energy_balance=True,
         transfer_discretization=mode,
@@ -99,7 +103,7 @@ def test_public_run_rejects_continuation_before_any_physics_work(
         raise AssertionError("must reject before screening")
 
     monkeypatch.setattr(automatic, "select_physics", forbidden)
-    with pytest.raises(ValueError, match="requires a cold start"):
+    with pytest.raises(TypeError, match="initial_checkpoint"):
         automatic.run_model(
             DBConfig(), tmp_path / "run", initial_checkpoint="previous.npz"
         )

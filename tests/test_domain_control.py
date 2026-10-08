@@ -82,6 +82,37 @@ def test_domain_does_not_retry_numerically_unconverged_atmosphere():
     ]
 
 
+def test_domain_extension_policy_is_explicit_and_local_to_one_solve():
+    a = gray_helium_atmosphere(10000.0, 8.0, n_depth=20)
+    extensions = []
+    requests = []
+
+    def one_cell(atmosphere):
+        extensions.append(atmosphere.n_depth)
+        return append_lower_domain(atmosphere, maximum_new_cells=1)
+
+    def solve(**options):
+        requests.append(options)
+        failed = len(requests) == 1
+        return replace(a, metadata={
+            "radiative_equilibrium_iterations": 1,
+            "lower_boundary_absorption_escape_bound": 0.01 if failed else 0.0,
+            "lower_boundary_screening_tolerance": 0.002,
+            "equilibrium_certificate": {
+                "failures": ["boundary_screening"] if failed else []
+            },
+        })
+
+    solve_with_screened_boundary(solve, lower_domain_extension=one_cell)
+    assert extensions == [20]
+    assert requests[1]["n_depth"] == 21
+    # A following default solve must still use the shared pressure-doubling
+    # policy; no process-global extension hook was installed.
+    requests.clear()
+    solve_with_screened_boundary(solve)
+    assert requests[1]["n_depth"] == append_lower_domain(a)["n_depth"]
+
+
 @pytest.mark.parametrize("budget", [-1, True, 1.5])
 def test_invalid_domain_budget_is_rejected_before_solving(budget):
     def forbidden(**kwargs):

@@ -27,6 +27,26 @@ def solve_spectrum_source(
     """Return source, coupled field and independently measured diagnostics."""
     solver = cancellation_safe_field
     options = dict(n_angle=n_angle)
+    if discretization == "formal-pchip":
+        if column_mass is not None:
+            raise ValueError("formal-pchip uses optical-depth coordinates")
+        from ._monotone_formal import solve_cubic_source
+
+        source, field, _, record = solve_cubic_source(
+            optical_depth, planck, absorption, scattering,
+            wavelength=wavelength, n_angle=n_angle,
+        )
+        return source, field, {
+            "transfer_discretization": "formal-pchip",
+            "scattering_source_solver": "monotone cubic defect correction / Newton",
+            "source_iterations": record["iterations"],
+            "source_converged": True,
+            "maximum_relative_source_change": None,
+            "independent_radiation_scaled_source_error": record[
+                "independent_radiation_scaled_source_error"
+            ],
+            "source_closure_tolerance": 1e-10,
+        }
     if column_mass is not None:
         from ._mass_feautrier import mass_field
 

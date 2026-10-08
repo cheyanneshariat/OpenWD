@@ -1,9 +1,9 @@
-from wd_spectra.nonlinear import RecoverableEvaluationError
+"""Compatibility entry point; implementation lives in the installed package."""
+import importlib
+import runpy
+import sys
 
-
-class DenseHeliumDomainError(RecoverableEvaluationError):
-    """Reject an out-of-domain trial; never substitute another physical model.
-
-    The nonlinear driver still propagates this error on its initial state.
-    Only candidate steps can be rejected and shortened within the SAME EOS.
-    """
+if __name__ == "__main__":
+    runpy.run_module("wd_spectra._cool.dense_helium_limits", run_name="__main__")
+else:
+    sys.modules[__name__] = importlib.import_module("wd_spectra._cool.dense_helium_limits")

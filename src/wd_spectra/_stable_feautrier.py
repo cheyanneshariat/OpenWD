@@ -54,8 +54,12 @@ class _DifferenceFactors:
             )
             self.p[:, i] = self.g[:, i] + self.c[:, i, :, None] * eye
 
-    def solve(self, rhs):
-        """Return symmetric intensities and stable forward depth increments."""
+    def solve(self, rhs, *, reconstruct_intensity=False):
+        """Return symmetric intensities and stable forward depth increments.
+
+        Emissivity-form NLTE callers request sum-form reconstruction of faint
+        intensities; the established LTE arithmetic remains the default.
+        """
         rhs = np.asarray(rhs)
         vector = rhs.ndim == 3
         reduced = rhs[..., None].copy() if vector else rhs.copy()
@@ -72,6 +76,26 @@ class _DifferenceFactors:
                 self.p[:, i], self.g[:, i] @ u[:, i + 1] - reduced[:, i]
             )
             u[:, i] = u[:, i + 1] - jump[:, i]
+            if reconstruct_intensity:
+                # The increment form preserves small fluxes when adjacent
+                # intensities are nearly equal. In the opposite limit it can
+                # lose a small intensity by subtracting two large values (and
+                # even turn positive emission into a negative intensity).
+                # Re-solve the same eliminated row in its sum form where the
+                # subtraction cancels more than half the operand magnitudes.
+                cancellation = np.abs(u[:, i]) < .5 * (
+                    np.abs(u[:, i + 1]) + np.abs(jump[:, i])
+                )
+                affected = np.any(cancellation, axis=(1, 2))
+                if np.any(affected):
+                    direct = np.linalg.solve(
+                        self.p[affected, i],
+                        reduced[affected, i]
+                        + self.c[affected, i, :, None] * u[affected, i + 1],
+                    )
+                    u[affected, i] = np.where(
+                        cancellation[affected], direct, u[affected, i]
+                    )
         return (u[..., 0], jump[..., 0]) if vector else (u, jump)
 
 

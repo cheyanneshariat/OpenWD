@@ -1,0 +1,1218 @@
+.
+. ============================================
+. C    IV  MODEL ION   (FORMAL SOLUTION ONLY!) 
+. ============================================
+.
+. BY D. JAHN & T. RAUCH
+.
+.     INSTITUTE FOR ASTRONOMY AND ASTROPHYSICS
+.     KEPLER CENTER FOR ASTRO AND PARTICLE PHYSICS
+.     EBERHARD KARLS UNIVERSITY
+.     SAND 1
+.     D-72076 TUEBINGEN
+.     GERMANY
+.
+.     E-mail: astro-tmad@listserv.uni-tuebingen.de
+.
+.
+. CREATED      : 10-DEC-1991 10:34:21
+. LAST MODIFIED:  9-JUN-2016 14:05:13
+.
+.
+. Sources of atomic data: see columns 81+
+.
+.      Bashkin & Stoner: 1975, Atomic Energy Levels And Grotrian Diagrams, North-Holland, American Elsevier
+.               CHIANTI: http://www.chiantidatabase.org/
+.                  NIST: http://www.nist.gov/pml/data/asd.cfm
+.          Iron Project: http://cdsweb.u-strasbg.fr/tipbase/home.html
+.                Quinet: Pascal Quinet (priv. comm.)
+.
+. Some wavelengths were shifted to avoid doubly defined frequency points. 
+. Real wavelengths are shown in brackets ().
+.
+.
+. SUITABLE FOR THE CALCULATION OF A SYNTHETIC SPECTRUM ONLY!
+.
+.
+.                         NON-LTE LEVELS                                                         
+.---------------------------------------                                                         
+L 
+C402S 12S C501S201S  1.559457910534E+16     2.00000                             NIST
+C402P 12POC501S201S  1.366139456898E+16     2.00000                             NIST
+C402P 32POC501S201S  1.365816579944E+16     4.00000                             NIST
+C403S 12S C501S201S  6.515381108126E+15     2.00000                             NIST 
+C403P 12POC501S201S  5.999704342907E+15     2.00000                             NIST
+C403P 32POC501S201S  5.998756997343E+15     4.00000                             NIST
+C403D 32D C501S201S  5.854913365994E+15     4.00000                             NIST
+C403D 52D C501S201S  5.854598583449E+15     6.00000                             NIST
+C404S 12S C501S201S  3.562448024487E+15     2.00000                             NIST
+C404P 12POC501S201S  3.353702228217E+15     2.00000                             NIST
+C404P 32POC501S201S  3.353309499518E+15     4.00000                             NIST
+C404D 32D C501S201S  3.292994165967E+15     4.00000                             NIST
+C404D 52D C501S201S  3.292874248807E+15     6.00000                             NIST
+C404F 52FOC501S201S  3.290053277618E+15     6.00000                             NIST
+C404F 72FOC501S201S  3.290053137618E+15     8.00000                             NIST
+C405S 12S C501S201S  2.242747686971E+15     2.00000                             NIST
+C405P 12POC501S201S  2.138200908954E+15     2.00000                             NIST
+C405P 32POC501S201S  2.137988055995E+15     4.00000                             NIST
+C405D 32D C501S201S  2.107250289958E+15     4.00000                             NIST
+C405D 52D C501S201S  2.107199325165E+15     6.00000                             NIST
+C405F 52FOC501S201S  2.105703366594E+15     6.00000                             NIST
+C405F 72FOC501S201S  2.105703352594E+15     8.00000                             NIST
+C405G 72G C501S201S  2.105445536750E+15     8.00000                             NIST
+C405G 92G C501S201S  2.105445536660E+15    10.00000                             NIST
+C406S 12S C501S201S  1.540767621976E+15     2.00000                             NIST
+C406P 12POC501S201S  1.481078855586E+15     2.00000                             NIST
+C406P 32POC501S201S  1.480961936355E+15     4.00000                             NIST
+C406D 32D C501S201S  1.463232184249E+15     4.00000                             NIST
+C406D 52D C501S201S  1.463196209101E+15     6.00000                             NIST
+C406F 52FOC501S201S  1.462245866008E+15     6.00000                             NIST
+C406F 72FOC501S201S  1.462245865308E+15     8.00000                             NIST
+C406G 72G C501S201S  1.462157126910E+15     8.00000                             NIST
+C406G 92G C501S201S  1.462157126870E+15    10.00000                             NIST
+C406H 92HOC501S201S  1.462137940176E+15    10.00000                             NIST
+C406H112HOC501S201S  1.462137940154E+15    12.00000                             NIST
+C407S 12S C501S201S  1.123395946596E+15     2.00000                             NIST
+C407P 12POC501S201S  1.086149676700E+15     2.00000                             NIST
+C407P 32POC501S201S  1.086077726404E+15     4.00000                             NIST
+C407D 32D C501S201S  1.074997384962E+15     4.00000                             NIST
+C407D 52D C501S201S  1.074987384962E+15     6.00000                             NIST
+C407F 52FOC501S201S  1.074308859223E+15     6.00000                             NIST              (1.074308859221E+15)
+C407F 72FOC501S201S  1.074301859220E+15     8.00000                             NIST              (1.074308859221E+15)
+C407G 72G C501S201S  1.074247348984E+15     8.00000                             NIST
+C407G 92G C501S201S  1.074247298984E+15    10.00000                             NIST
+C407H 92HOC501S201S  1.074234713682E+15    10.00000                             NIST
+C407H112HOC501S201S  1.074234702682E+15    12.00000                             NIST
+C407I112I C501S201S  1.0742302E+15         12.00000                             Bashkin/Stoner 
+C407I132I C501S201S  1.0742271E+15         14.00000                             Bashkin/Stoner 
+C408S 12S C501S201S  8.552371934040E+14     2.00000                             NIST
+C408P 12POC501S201S  8.304473185030E+14     2.00000                             NIST
+C408P 32POC501S201S  8.303993516390E+14     4.00000                             NIST
+C408D 32D C501S201S  8.229285725710E+14     4.00000                             NIST
+C408D 52D C501S201S  8.229284725710E+14     6.00000                             NIST
+C408F 52FOC501S201S  8.225178002980E+14     6.00000                             NIST
+C408F 72FOC501S201S  8.225177932980E+14     8.00000                             NIST
+C408G 72G C501S201S  8.224791235139E+14     8.00000                             NIST
+C408G 92G C501S201S  8.224791226139E+14    10.00000                             NIST
+C408H 92HOC501S201S  8.224704296198E+14    10.00000                             NIST
+C408H112HOC501S201S  8.224704285198E+14    12.00000                             NIST
+C408I112I C501S201S  8.224680307466E+14    12.00000                             NIST
+C408I132I C501S201S  8.224680306166E+14    14.00000                             NIST
+C408K132KOC501S201S  8.2246283E+14         14.00000                             Bashkin/Stoner 
+C408K152KOC501S201S  8.2246267E+14         16.00000                             Bashkin/Stoner
+C409S 12S C501S201S  6.727862323930E+14     2.00000                             NIST
+C409P 12POC501S201S  6.554612007020E+14     2.00000                             NIST
+C409P 32POC501S201S  6.554282234830E+14     4.00000                             NIST
+C409D 32D C501S201S  6.501848516620E+14     4.00000                             NIST
+C409D 52D C501S201S  6.501848416620E+14     6.00000                             NIST
+C409F 52FOC501S201S  6.498940495490E+14     6.00000                             NIST
+C409F 72FOC501S201S  6.498940435490E+14     8.00000                             NIST
+C409G 72G C501S201S  6.498679646667E+14     8.00000                             NIST
+C409G 92G C501S201S  6.498679644867E+14    10.00000                             NIST
+C409H 92HOC501S201S  6.4986121E+14         10.00000                             Bashkin/Stoner
+C409H112HOC501S201S  6.4986100E+14         12.00000                             Bashkin/Stoner
+C409I112I C501S201S  6.498598701654E+14    12.00000                             NIST
+C409I132I C501S201S  6.498598701524E+14    14.00000                             NIST
+C409K132KOC501S201S  6.4985846E+14         14.00000                             Bashkin/Stoner
+C409K152KOC501S201S  6.4985835E+14         16.00000                             Bashkin/Stoner
+C409L152L C501S201S  6.4985785E+14         16.00000                             Bashkin/Stoner
+C409L172L C501S201S  6.4985776E+14         18.00000                             Bashkin/Stoner
+C410S 12S C501S201S  5.4305613E+14          2.00000                             Bashkin/Stoner
+C410P 12POC501S201S  5.326280578560E+14     2.00000                             NIST
+C410P 32POC501S201S  5.326220578560E+14     4.00000                             NIST
+C410D 32D C501S201S  5.270482099160E+14     4.00000                             NIST
+C410D 52D C501S201S  5.270477099160E+14     6.00000                             NIST
+C410F 52FOC501S201S  5.2641785E+14          6.00000                             Bashkin/Stoner
+C410F 72FOC501S201S  5.2641748E+14          8.00000                             Bashkin/Stoner
+C410G 72G C501S201S  5.2640277E+14          8.00000                             Bashkin/Stoner
+C410G 92G C501S201S  5.2640255E+14         10.00000                             Bashkin/Stoner
+C410H 92HOC501S201S  5.2639674E+14         10.00000                             Bashkin/Stoner
+C410H112HOC501S201S  5.2639659E+14         12.00000                             Bashkin/Stoner
+C410I112I C501S201S  5.2639372E+14         12.00000                             Bashkin/Stoner
+C410I132I C501S201S  5.2639361E+14         14.00000                             Bashkin/Stoner
+C410K132KOC501S201S  5.2639220E+14         14.00000                             Bashkin/Stoner
+C410K152KOC501S201S  5.2639212E+14         16.00000                             Bashkin/Stoner
+C410L152L C501S201S  5.2639159E+14         16.00000                             Bashkin/Stoner
+C410L172L C501S201S  5.2639153E+14         18.00000                             Bashkin/Stoner
+C410M172MOC501S201S  5.2639129E+14         18.00000                             Bashkin/Stoner
+C410M192MOC501S201S  5.2639124E+14         20.00000                             Bashkin/Stoner
+0                                                                               
+.                             LTE LEVELS                              
+.---------------------------------------                              
+LTE                                                                             
+C411      C501S201S  4.3417143E+14        242.00000                             Bashkin/Stoner
+C412      C501S201S  3.6455962E+14        288.00000                             Bashkin/Stoner 
+C413      C501S201S  3.1050704E+14        338.00000                             Bashkin/Stoner
+C414      C501S201S  2.6554678E+14        392.00000                             Bashkin/Stoner 
+0                                                                               
+.                       LINE TRANSITIONS                       
+.---------------------------------------                       
+. data calculated by FORMEL4 (Version 25-Nov-2004 15:59:30) by T. Rauch
+RBB
+C402S 12S C402P 12PO 3 3   9.5670E-02   9.2494E+08      1.28    4  2  2         WAVELENGTH:          1550.77228 A    Iron Project
+C402S 12S C402P 32PO 3 3   1.9134E-01   9.2803E+08      1.28    4  2  2         WAVELENGTH:          1548.20253 A    Iron Project
+C402S 12S C403P 12PO 4 6   6.7803E-02   2.2785E+10      3.08    4  2  3         WAVELENGTH:           312.45108 A    Iron Project
+C402S 12S C403P 32PO 4 6   1.3561E-01   2.2789E+10      3.08    4  2  3         WAVELENGTH:           312.42024 A    Iron Project
+C402S 12S C404P 12PO 4 6   2.0574E-02   3.7084E+10      9.85    4  2  4         WAVELENGTH:           244.91129 A    Iron Project
+C402S 12S C404P 32PO 4 6   4.1148E-02   3.7087E+10      9.86    4  2  4         WAVELENGTH:           244.90344 A    Iron Project
+C402S 12S C405P 12PO 4 6   9.0037E-03   4.4815E+10     24.24    4  2  5         WAVELENGTH:           222.78870 A    Iron Project
+C402S 12S C405P 32PO 4 6   1.8007E-02   4.4816E+10     24.24    4  2  5         WAVELENGTH:           222.78518 A    Iron Project
+C402S 12S C406P 12PO 4 6   4.8083E-03   4.9299E+10     50.52    4  2  6         WAVELENGTH:           212.41570 A    Iron Project
+C402S 12S C406P 32PO 4 6   9.6167E-03   4.9300E+10     50.53    4  2  6         WAVELENGTH:           212.41394 A    Iron Project
+C402S 12S C407P 12PO 4 6   2.8876E-03   5.2096E+10     93.94    4  2  7         WAVELENGTH:           206.63360 A    Iron Project
+C402S 12S C407P 32PO 4 6   5.7751E-03   5.2097E+10     93.95    4  2  7         WAVELENGTH:           206.63258 A    Iron Project
+C402S 12S C408P 12PO 4 6   1.8764E-03   5.3949E+10    160.69    4  2  8         WAVELENGTH:           203.05488 A    Iron Project
+C402S 12S C408P 32PO 4 6   3.7527E-03   5.3949E+10    160.71    4  2  8         WAVELENGTH:           203.05422 A    Iron Project
+C402S 12S C409P 12PO 4 6   1.2905E-03   5.5235E+10    257.94    4  2  9         WAVELENGTH:           200.67644 A    Iron Project
+C402S 12S C409P 32PO 4 6   2.5810E-03   5.5236E+10    257.97    4  2  9         WAVELENGTH:           200.67600 A    Iron Project
+C402S 12S C410P 12PO 4 6   9.2737E-04   5.6147E+10    390.64    4  2 10         WAVELENGTH:           199.03981 A    Iron Project
+C402S 12S C410P 32PO 4 6   1.8547E-03   5.6147E+10    390.63    4  2 10         WAVELENGTH:           199.03988 A    Iron Project
+.							      
+C402P 12POC403S 12S  4 6   3.7558E-02   1.2638E+10      2.61    4  2  3         WAVELENGTH:           419.52468 A    Iron Project
+C402P 32POC403S 12S  4 6   3.7558E-02   1.2627E+10      2.61    4  2  3         WAVELENGTH:           419.71432 A    Iron Project
+C402P 12POC403D 32D  4 6   6.4406E-01   1.5083E+10      3.23    4  2  3         WAVELENGTH:           384.03077 A    Iron Project
+C402P 32POC403D 32D  4 6   6.4329E-02   1.5070E+10      3.23    4  2  3         WAVELENGTH:           384.18967 A    Iron Project
+C402P 32POC403D 52D  4 6   5.7954E-01   1.5071E+10      3.23    4  2  3         WAVELENGTH:           384.17418 A    Iron Project
+C402P 12POC404S 12S  4 6   7.0215E-03   2.5242E+10      8.73    4  2  4         WAVELENGTH:           296.85562 A    Iron Project
+C402P 32POC404S 12S  4 6   7.0215E-03   2.5226E+10      8.73    4  2  4         WAVELENGTH:           296.95056 A    Iron Project
+C402P 12POC404D 32D  4 6   1.2215E-01   2.6607E+10     10.22    4  2  4         WAVELENGTH:           289.14094 A    Iron Project
+C402P 32POC404D 32D  4 6   1.2193E-02   2.6590E+10     10.22    4  2  4         WAVELENGTH:           289.23100 A    Iron Project
+C402P 32POC404D 52D  4 6   1.0985E-01   2.6591E+10     10.22    4  2  4         WAVELENGTH:           289.22766 A    Iron Project
+C402P 12POC405S 12S  4 6   2.6354E-03   3.2270E+10     22.03    4  2  5         WAVELENGTH:           262.54678 A    Iron Project
+C402P 32POC405S 12S  4 6   2.6354E-03   3.2252E+10     22.03    4  2  5         WAVELENGTH:           262.62104 A    Iron Project
+C402P 12POC405D 32D  4 6   4.5694E-02   3.3040E+10     24.96    4  2  5         WAVELENGTH:           259.46785 A    Iron Project
+C402P 32POC405D 32D  4 6   4.5612E-03   3.3022E+10     24.96    4  2  5         WAVELENGTH:           259.54038 A    Iron Project
+C402P 32POC405D 52D  4 6   4.1092E-02   3.3022E+10     24.96    4  2  5         WAVELENGTH:           259.53923 A    Iron Project
+C402P 12POC406S 12S  4 6   1.3156E-03   3.6359E+10     46.68    4  2  6         WAVELENGTH:           247.34108 A    Iron Project
+C402P 32POC406S 12S  4 6   1.3156E-03   3.6340E+10     46.68    4  2  6         WAVELENGTH:           247.40699 A    Iron Project
+C402P 12POC406D 32D  4 6   2.2588E-02   3.6826E+10     51.76    4  2  6         WAVELENGTH:           245.76890 A    Iron Project
+C402P 32POC406D 32D  4 6   2.2547E-03   3.6807E+10     51.76    4  2  6         WAVELENGTH:           245.83397 A    Iron Project
+C402P 32POC406D 52D  4 6   2.0313E-02   3.6807E+10     51.76    4  2  6         WAVELENGTH:           245.83325 A    Iron Project
+C402P 12POC407S 12S  4 6   7.6008E-04   3.8907E+10     87.81    4  2  7         WAVELENGTH:           239.10746 A    Iron Project
+C402P 32POC407S 12S  4 6   7.6008E-04   3.8887E+10     87.81    4  2  7         WAVELENGTH:           239.16905 A    Iron Project
+C402P 12POC407D 32D  4 6   1.2978E-02   3.9208E+10     95.90    4  2  7         WAVELENGTH:           238.18783 A    Iron Project
+C402P 32POC407D 32D  4 6   1.2954E-03   3.9188E+10     95.90    4  2  7         WAVELENGTH:           238.24895 A    Iron Project
+C402P 32POC407D 52D  4 6   1.1671E-02   3.9187E+10     95.90    4  2  7         WAVELENGTH:           238.24914 A    Iron Project
+C402P 12POC408S 12S  4 6   4.8171E-04   4.0589E+10    151.51    4  2  8         WAVELENGTH:           234.10059 A    Iron Project
+C402P 32POC408S 12S  4 6   4.8171E-04   4.0568E+10    151.51    4  2  8         WAVELENGTH:           234.15963 A    Iron Project
+C402P 12POC408D 32D  4 6   8.2056E-03   4.0794E+10    163.64    4  2  8         WAVELENGTH:           233.51146 A    Iron Project
+C402P 32POC408D 32D  4 6   8.1909E-04   4.0773E+10    163.64    4  2  8         WAVELENGTH:           233.57020 A    Iron Project
+C402P 32POC408D 52D  4 6   7.3792E-03   4.0773E+10    163.64    4  2  8         WAVELENGTH:           233.57021 A    Iron Project
+C402P 12POC409S 12S  4 6   3.2559E-04   4.1753E+10    244.83    4  2  9         WAVELENGTH:           230.81218 A    Iron Project
+C402P 32POC409S 12S  4 6   3.2559E-04   4.1733E+10    244.83    4  2  9         WAVELENGTH:           230.86957 A    Iron Project
+C402P 12POC409D 32D  4 6   5.5414E-03   4.1899E+10    262.14    4  2  9         WAVELENGTH:           230.41124 A    Iron Project
+C402P 32POC409D 32D  4 6   5.5315E-04   4.1878E+10    262.14    4  2  9         WAVELENGTH:           230.46844 A    Iron Project (  230.46843 A) 
+C402P 32POC409D 52D  4 6   4.9833E-03   4.1878E+10    262.14    4  2  9         WAVELENGTH:           230.46843 A    Iron Project
+C402P 12POC410S 12S  4 6   2.3100E-04   4.2592E+10    375.77    4  2 10         WAVELENGTH:           228.52963 A    Iron Project
+C402P 32POC410S 12S  4 6   2.3100E-04   4.2571E+10    375.77    4  2 10         WAVELENGTH:           228.58589 A    Iron Project
+C402P 12POC410D 32D  4 6   3.9286E-03   4.2696E+10    398.94    4  2 10         WAVELENGTH:           228.25109 A    Iron Project
+C402P 32POC410D 32D  4 6   3.9215E-04   4.2675E+10    398.94    4  2 10         WAVELENGTH:           228.30721 A    Iron Project
+C402P 32POC410D 52D  4 6   3.5329E-03   4.2675E+10    398.94    4  2 10         WAVELENGTH:           228.30722 A    Iron Project
+.							      
+C403S 12S C403P 12PO 4 6   1.5947E-01   6.5815E+07      3.08    4  3  3         WAVELENGTH:          5813.58169 A    Iron Project
+C403S 12S C403P 32PO 4 6   3.1893E-01   6.6057E+07      3.08    4  3  3         WAVELENGTH:          5802.92119 A    Iron Project
+C403S 12S C404P 12PO 4 6   6.8330E-02   2.4740E+09      9.85    4  3  4         WAVELENGTH:           948.20793 A    Iron Project
+C403S 12S C404P 32PO 4 6   1.3666E-01   2.4746E+09      9.86    4  3  4         WAVELENGTH:           948.09017 A    Iron Project
+C403S 12S C405P 12PO 4 6   2.2201E-02   4.7419E+09     24.24    4  3  5         WAVELENGTH:           684.89961 A    Iron Project
+C403S 12S C405P 32PO 4 6   4.4401E-02   4.7424E+09     24.24    4  3  5         WAVELENGTH:           684.86630 A    Iron Project
+C403S 12S C406P 12PO 4 6   1.0207E-02   6.2726E+09     50.52    4  3  6         WAVELENGTH:           595.50040 A    Iron Project
+C403S 12S C406P 32PO 4 6   2.0415E-02   6.2729E+09     50.53    4  3  6         WAVELENGTH:           595.48657 A    Iron Project
+C403S 12S C407P 12PO 4 6   5.6453E-03   7.2953E+09     93.94    4  3  7         WAVELENGTH:           552.18294 A    Iron Project
+C403S 12S C407P 32PO 4 6   1.1291E-02   7.2955E+09     93.95    4  3  7         WAVELENGTH:           552.17563 A    Iron Project
+C403S 12S C408P 12PO 4 6   3.4913E-03   7.9987E+09    160.69    4  3  8         WAVELENGTH:           527.34634 A    Iron Project
+C403S 12S C408P 32PO 4 6   6.9827E-03   7.9988E+09    160.71    4  3  8         WAVELENGTH:           527.34189 A    Iron Project
+C403S 12S C409P 12PO 4 6   2.3251E-03   8.4987E+09    257.94    4  3  9         WAVELENGTH:           511.59897 A    Iron Project
+C403S 12S C409P 32PO 4 6   4.6502E-03   8.4988E+09    257.97    4  3  9         WAVELENGTH:           511.59609 A    Iron Project
+C403S 12S C410P 12PO 4 6   1.6351E-03   8.8587E+09    390.64    4  3 10         WAVELENGTH:           501.09472 A    Iron Project
+C403S 12S C410P 32PO 4 6   3.2702E-03   8.8587E+09    390.63    4  3 10         WAVELENGTH:           501.09523 A    Iron Project
+.							      
+C403P 12POC403D 32D  4 6   5.5100E-02   5.1886E+06      3.23    4  3  3         WAVELENGTH:         20705.21979 A    Iron Project
+C403P 32POC403D 32D  4 6   5.5001E-03   5.1209E+06      3.23    4  3  3         WAVELENGTH:         20841.58313 A    Iron Project
+C403P 32POC403D 52D  4 6   4.9550E-02   5.1434E+06      3.23    4  3  3         WAVELENGTH:         20796.07370 A    Iron Project
+C403P 12POC404S 12S  4 6   8.1679E-02   1.4702E+09      8.73    4  3  4         WAVELENGTH:          1230.04256 A    Iron Project
+C403P 32POC404S 12S  4 6   8.1679E-02   1.4690E+09      8.73    4  3  4         WAVELENGTH:          1230.52085 A    Iron Project
+C403P 12POC404D 32D  4 6   5.4263E-01   1.8132E+09     10.22    4  3  4         WAVELENGTH:          1107.57    A    Iron Project ( 1107.59143 A, shifted to match observation)
+C403P 32POC404D 32D  4 6   5.4165E-02   1.8120E+09     10.22    4  3  4         WAVELENGTH:          1107.97    A    Iron Project ( 1107.97922 A, shifted to match observation)
+C403P 32POC404D 52D  4 6   4.8797E-01   1.8121E+09     10.22    4  3  4         WAVELENGTH:          1107.92    A    Iron Project ( 1107.93012 A, shifted to match observation)
+C403P 12POC405S 12S  4 6   1.5901E-02   3.4933E+09     22.03    4  3  5         WAVELENGTH:           797.96742 A    Iron Project
+C403P 32POC405S 12S  4 6   1.5901E-02   3.4916E+09     22.03    4  3  5         WAVELENGTH:           798.16868 A    Iron Project
+C403P 12POC405D 32D  4 6   1.3399E-01   3.7499E+09     24.96    4  3  5         WAVELENGTH:           770.18995 A    Iron Project
+C403P 32POC405D 32D  4 6   1.3375E-02   3.7480E+09     24.96    4  3  5         WAVELENGTH:           770.37745 A    Iron Project
+C403P 32POC405D 52D  4 6   1.2049E-01   3.7481E+09     24.96    4  3  5         WAVELENGTH:           770.36736 A    Iron Project
+C403P 12POC406S 12S  4 6   6.0599E-03   4.9207E+09     46.68    4  3  6         WAVELENGTH:           672.34168 A    Iron Project
+C403P 32POC406S 12S  4 6   6.0599E-03   4.9186E+09     46.68    4  3  6         WAVELENGTH:           672.48455 A    Iron Project
+C403P 12POC406D 32D  4 6   5.5178E-02   5.0934E+09     51.76    4  3  6         WAVELENGTH:           660.85030 A    Iron Project
+C403P 32POC406D 32D  4 6   5.5079E-03   5.0912E+09     51.76    4  3  6         WAVELENGTH:           660.98834 A    Iron Project
+C403P 32POC406D 52D  4 6   4.9621E-02   5.0913E+09     51.76    4  3  6         WAVELENGTH:           660.98309 A    Iron Project
+C403P 12POC407S 12S  4 6   3.0498E-03   5.8850E+09     87.81    4  3  7         WAVELENGTH:           614.79479 A    Iron Project
+C403P 32POC407S 12S  4 6   3.0498E-03   5.8828E+09     87.81    4  3  7         WAVELENGTH:           614.91425 A    Iron Project
+C403P 12POC407D 32D  4 6   2.8804E-02   6.0025E+09     95.90    4  3  7         WAVELENGTH:           608.75153 A    Iron Project
+C403P 32POC407D 32D  4 6   2.8752E-03   6.0002E+09     95.90    4  3  7         WAVELENGTH:           608.86866 A    Iron Project
+C403P 32POC407D 52D  4 6   2.5903E-02   6.0001E+09     95.90    4  3  7         WAVELENGTH:           608.86990 A    Iron Project
+C403P 12POC408S 12S  4 6   1.7833E-03   6.5501E+09    151.51    4  3  8         WAVELENGTH:           582.74821 A    Iron Project
+C403P 32POC408S 12S  4 6   1.7833E-03   6.5477E+09    151.51    4  3  8         WAVELENGTH:           582.85554 A    Iron Project
+C403P 12POC408D 32D  4 6   1.7225E-02   6.6326E+09    163.64    4  3  8         WAVELENGTH:           579.11122 A    Iron Project
+C403P 32POC408D 32D  4 6   1.7194E-03   6.6302E+09    163.64    4  3  8         WAVELENGTH:           579.21722 A    Iron Project
+C403P 32POC408D 52D  4 6   1.5490E-02   6.6302E+09    163.64    4  3  8         WAVELENGTH:           579.21723 A    Iron Project
+C403P 12POC409S 12S  4 6   1.1456E-03   7.0229E+09    244.83    4  3  9         WAVELENGTH:           562.78864 A    Iron Project
+C403P 32POC409S 12S  4 6   1.1456E-03   7.0204E+09    244.83    4  3  9         WAVELENGTH:           562.88875 A    Iron Project
+C403P 12POC409D 32D  4 6   1.1213E-02   7.0827E+09    262.14    4  3  9         WAVELENGTH:           560.41089 A    Iron Project
+C403P 32POC409D 32D  4 6   1.1193E-03   7.0802E+09    262.14    4  3  9         WAVELENGTH:           560.51014 A    Iron Project (  560.51015 A)
+C403P 32POC409D 52D  4 6   1.0083E-02   7.0802E+09    262.14    4  3  9         WAVELENGTH:           560.51015 A    Iron Project
+C403P 12POC410S 12S  4 6   7.8599E-04   7.3692E+09    375.77    4  3 10         WAVELENGTH:           549.40852 A    Iron Project
+C403P 32POC410S 12S  4 6   7.8599E-04   7.3666E+09    375.77    4  3 10         WAVELENGTH:           549.50392 A    Iron Project
+C403P 12POC410D 32D  4 6   7.7553E-03   7.4125E+09    398.94    4  3 10         WAVELENGTH:           547.80141 A    Iron Project
+C403P 32POC410D 32D  4 6   7.7414E-04   7.4099E+09    398.94    4  3 10         WAVELENGTH:           547.89631 A    Iron Project (  547.89630 A)
+C403P 32POC410D 52D  4 6   6.9742E-03   7.4099E+09    398.94    4  3 10         WAVELENGTH:           547.89630 A    Iron Project
+.							      
+C403D 32D C404P 12PO 4 6   1.3891E-02   1.5483E+09      9.85    4  3  4         WAVELENGTH:          1198.59094 A    Iron Project
+C403D 32D C404P 32PO 4 6   2.7732E-03   1.5488E+09      9.86    4  3  4         WAVELENGTH:          1198.40277 A    Iron Project
+C403D 52D C404P 32PO 4 6   1.6656E-02   1.5484E+09      9.86    4  3  4         WAVELENGTH:          1198.55359 A    Iron Project
+C403D 32D C404F 52FO 4 6   1.0170E+00   1.6282E+09     10.24    4  3  4         WAVELENGTH:          1168.890   A    CHIANTI      ( 1168.849   A, shifted to match observation)
+C403D 52D C404F 52FO 4 6   4.8781E-02   1.6278E+09     10.24    4  3  4         WAVELENGTH:          1168.987   A    Iron Project ( 1168.99301 A, shifted by +0.301 to match CHIANTI doublet)
+C403D 52D C404F 72FO 4 6   9.9690E-01   1.6278E+09     10.24    4  3  4         WAVELENGTH:          1168.986   A    CHIANTI      ( 1168.993   A, shifted to match observation)
+C403D 32D C405P 12PO 4 6   2.7443E-03   3.4189E+09     24.24    4  3  5         WAVELENGTH:           806.60773 A    Iron Project
+C403D 32D C405P 32PO 4 6   5.4788E-04   3.4193E+09     24.24    4  3  5         WAVELENGTH:           806.56154 A    Iron Project
+C403D 52D C405P 32PO 4 6   3.2905E-03   3.4187E+09     24.24    4  3  5         WAVELENGTH:           806.62985 A    Iron Project
+C403D 32D C405F 52FO 4 6   1.5930E-01   3.4789E+09     24.99    4  3  5         WAVELENGTH:           799.61618 A    Iron Project
+C403D 52D C405F 52FO 4 6   7.5857E-03   3.4784E+09     24.99    4  3  5         WAVELENGTH:           799.68332 A    Iron Project
+C403D 52D C405F 72FO 4 6   1.5171E-01   3.4784E+09     24.99    4  3  5         WAVELENGTH:           799.68333 A    Iron Project
+C403D 32D C406P 12PO 4 6   1.0212E-03   4.7347E+09     50.52    4  3  6         WAVELENGTH:           685.42351 A    Iron Project
+C403D 32D C406P 32PO 4 6   2.0387E-04   4.7349E+09     50.53    4  3  6         WAVELENGTH:           685.40519 A    Iron Project
+C403D 52D C406P 32PO 4 6   1.2245E-03   4.7343E+09     50.53    4  3  6         WAVELENGTH:           685.45452 A    Iron Project
+C403D 32D C406F 52FO 4 6   5.4439E-02   4.7756E+09     51.83    4  3  6         WAVELENGTH:           682.48485 A    Iron Project
+C403D 52D C406F 52FO 4 6   2.5923E-03   4.7749E+09     51.83    4  3  6         WAVELENGTH:           682.53375 A    Iron Project (  682.53376 A)
+C403D 52D C406F 72FO 4 6   5.1847E-02   4.7749E+09     51.83    4  3  6         WAVELENGTH:           682.53376 A    Iron Project
+C403D 32D C407P 12PO 4 6   5.0397E-04   5.6283E+09     93.94    4  3  7         WAVELENGTH:           628.65958 A    Iron Project
+C403D 32D C407P 32PO 4 6   1.0061E-04   5.6285E+09     93.95    4  3  7         WAVELENGTH:           628.65010 A    Iron Project
+C403D 52D C407P 32PO 4 6   6.0428E-04   5.6277E+09     93.95    4  3  7         WAVELENGTH:           628.69160 A    Iron Project
+C403D 32D C407F 52FO 4 6   2.5776E-02   5.6563E+09     96.02    4  3  7         WAVELENGTH:           627.10157 A    Iron Project
+C403D 52D C407F 52FO 4 6   1.2274E-03   5.6556E+09     96.02    4  3  7         WAVELENGTH:           627.14287 A    Iron Project
+C403D 52D C407F 72FO 4 6   2.4549E-02   5.6556E+09     96.02    4  3  7         WAVELENGTH:           627.14379 A    Iron Project
+C403D 32D C408P 12PO 4 6   2.9077E-04   6.2481E+09    160.69    4  3  8         WAVELENGTH:           596.66619 A    Iron Project
+C403D 32D C408P 32PO 4 6   5.8049E-05   6.2482E+09    160.71    4  3  8         WAVELENGTH:           596.66049 A    Iron Project
+C403D 52D C408P 32PO 4 6   3.4864E-04   6.2474E+09    160.71    4  3  8         WAVELENGTH:           596.69787 A    Iron Project
+C403D 32D C408F 52FO 4 6   1.4543E-02   6.2678E+09    163.80    4  3  8         WAVELENGTH:           595.72602 A    Iron Project
+C403D 52D C408F 52FO 4 6   6.9252E-04   6.2670E+09    163.80    4  3  8         WAVELENGTH:           595.76328 A    Iron Project (  595.76329 A)
+C403D 52D C408F 72FO 4 6   1.3850E-02   6.2670E+09    163.80    4  3  8         WAVELENGTH:           595.76329 A    Iron Project
+C403D 32D C409P 12PO 4 6   1.8502E-04   6.6909E+09    257.94    4  3  9         WAVELENGTH:           576.58555 A    Iron Project
+C403D 32D C409P 32PO 4 6   3.6937E-05   6.6910E+09    257.97    4  3  9         WAVELENGTH:           576.58190 A    Iron Project
+C403D 52D C409P 32PO 4 6   2.2185E-04   6.6901E+09    257.97    4  3  9         WAVELENGTH:           576.61680 A    Iron Project
+C403D 32D C409F 52FO 4 6   9.1110E-03   6.7052E+09    262.38    4  3  9         WAVELENGTH:           575.96885 A    Iron Project
+C403D 52D C409F 52FO 4 6   4.3386E-04   6.7044E+09    262.38    4  3  9         WAVELENGTH:           576.00368 A    Iron Project (  576.00369 A)
+C403D 52D C409F 72FO 4 6   8.6771E-03   6.7044E+09    262.38    4  3  9         WAVELENGTH:           576.00369 A    Iron Project
+C403D 32D C410P 12PO 4 6   1.2612E-04   7.0108E+09    390.64    4  3 10         WAVELENGTH:           563.27789 A    Iron Project
+C403D 32D C410P 32PO 4 6   2.5178E-05   7.0107E+09    390.63    4  3 10         WAVELENGTH:           563.27852 A    Iron Project
+C403D 52D C410P 32PO 4 6   1.5122E-04   7.0099E+09    390.63    4  3 10         WAVELENGTH:           563.31184 A    Iron Project
+C403D 32D C410F 52FO 4 6   6.1354E-03   7.0271E+09    399.90    4  3 10         WAVELENGTH:           562.62204 A    Iron Project
+C403D 52D C410F 52FO 4 6   2.9216E-04   7.0263E+09    399.90    4  3 10         WAVELENGTH:           562.65528 A    Iron Project
+C403D 52D C410F 72FO 4 6   5.8432E-03   7.0263E+09    399.90    4  3 10         WAVELENGTH:           562.65524 A    Iron Project
+.		   					      
+C404S 12S C404P 12PO 4 6   2.1968E-01   1.0785E+07      9.85    4  4  4         WAVELENGTH:         14361.62574 A    Iron Project
+C404S 12S C404P 32PO 4 6   4.3937E-01   1.0825E+07      9.86    4  4  4         WAVELENGTH:         14334.65690 A    Iron Project
+C404S 12S C405P 12PO 4 6   7.1397E-02   5.0204E+08     24.24    4  4  5         WAVELENGTH:          2104.92194 A    Iron Project
+C404S 12S C405P 32PO 4 6   1.4279E-01   5.0219E+08     24.24    4  4  5         WAVELENGTH:          2104.60741 A    Iron Project
+C404S 12S C406P 12PO 4 6   2.3444E-02   1.0722E+09     50.52    4  4  6         WAVELENGTH:          1440.36389 A    Iron Project
+C404S 12S C406P 32PO 4 6   4.6888E-02   1.0723E+09     50.53    4  4  6         WAVELENGTH:          1440.28299 A    Iron Project
+C404S 12S C407P 12PO 4 6   1.1112E-02   1.5177E+09     93.94    4  4  7         WAVELENGTH:          1210.64936 A    Iron Project
+C404S 12S C407P 32PO 4 6   2.2223E-02   1.5177E+09     93.95    4  4  7         WAVELENGTH:          1210.61418 A    Iron Project
+C404S 12S C408P 12PO 4 6   6.3040E-03   1.8473E+09    160.69    4  4  8         WAVELENGTH:          1097.33830 A    Iron Project
+C404S 12S C408P 32PO 4 6   1.2608E-02   1.8473E+09    160.71    4  4  8         WAVELENGTH:          1097.31903 A    Iron Project
+C404S 12S C409P 12PO 4 6   3.9773E-03   2.0915E+09    257.94    4  4  9         WAVELENGTH:          1031.28400 A    Iron Project
+C404S 12S C409P 32PO 4 6   7.9547E-03   2.0915E+09    257.97    4  4  9         WAVELENGTH:          1031.27230 A    Iron Project
+C404S 12S C410P 12PO 4 6   2.7010E-03   2.2720E+09    390.64    4  4 10         WAVELENGTH:           989.47234 A    Iron Project
+C404S 12S C410P 32PO 4 6   5.4019E-03   2.2720E+09    390.63    4  4 10         WAVELENGTH:           989.47430 A    Iron Project
+.		 					      
+C404P 12POC404D 32D  4 6   1.0122E-01   9.1214E+05     10.22    4  4  4         WAVELENGTH:         49382.71605 A    Iron Project
+C404P 32POC404D 32D  4 6   1.0104E-02   9.0037E+05     10.22    4  4  4         WAVELENGTH:         49704.25966 A    Iron Project
+C404P 32POC404D 52D  4 6   9.1026E-02   9.0396E+05     10.22    4  4  4         WAVELENGTH:         49605.63520 A    Iron Project
+C404P 12POC405S 12S  4 6   1.2753E-01   3.0546E+08     22.03    4  4  5         WAVELENGTH:          2698.51636 A    Iron Project
+C404P 32POC405S 12S  4 6   1.2753E-01   3.0525E+08     22.03    4  4  5         WAVELENGTH:          2699.47063 A    Iron Project
+C404P 12POC405D 32D  4 6   5.1281E-01   3.8452E+08     24.96    4  4  5         WAVELENGTH:          2405.17015 A    Iron Project
+C404P 32POC405D 32D  4 6   5.1189E-02   3.8428E+08     24.96    4  4  5         WAVELENGTH:          2405.92821 A    Iron Project
+C404P 32POC405D 52D  4 6   4.6116E-01   3.8431E+08     24.96    4  4  5         WAVELENGTH:          2405.82981 A    Iron Project
+C404P 12POC406S 12S  4 6   2.4527E-02   8.1345E+08     46.68    4  4  6         WAVELENGTH:          1653.63328 A    Iron Project
+C404P 32POC406S 12S  4 6   2.4527E-02   8.1310E+08     46.68    4  4  6         WAVELENGTH:          1653.99158 A    Iron Project
+C404P 12POC406D 32D  4 6   1.3559E-01   8.8452E+08     51.76    4  4  6         WAVELENGTH:          1585.81143 A    Iron Project
+C404P 32POC406D 32D  4 6   1.3535E-02   8.8415E+08     51.76    4  4  6         WAVELENGTH:          1586.14093 A    Iron Project
+C404P 32POC406D 52D  4 6   1.2193E-01   8.8418E+08     51.76    4  4  6         WAVELENGTH:          1586.11075 A    Iron Project
+C404P 12POC407S 12S  4 6   9.5521E-03   1.2311E+09     87.81    4  4  7         WAVELENGTH:          1344.17816 A    Iron Project
+C404P 32POC407S 12S  4 6   9.5521E-03   1.2307E+09     87.81    4  4  7         WAVELENGTH:          1344.41490 A    Iron Project
+C404P 12POC407D 32D  4 6   5.8871E-02   1.2851E+09     95.90    4  4  7         WAVELENGTH:          1315.62271 A    Iron Project
+C404P 32POC407D 32D  4 6   5.8765E-03   1.2847E+09     95.90    4  4  7         WAVELENGTH:          1315.84949 A    Iron Project
+C404P 32POC407D 52D  4 6   5.2942E-02   1.2847E+09     95.90    4  4  7         WAVELENGTH:          1315.85527 A    Iron Project
+C404P 12POC408S 12S  4 6   4.8925E-03   1.5449E+09    151.51    4  4  8         WAVELENGTH:          1199.90833 A    Iron Project
+C404P 32POC408S 12S  4 6   4.8925E-03   1.5445E+09    151.51    4  4  8         WAVELENGTH:          1200.09697 A    Iron Project
+C404P 12POC408D 32D  4 6   3.1935E-02   1.5852E+09    163.64    4  4  8         WAVELENGTH:          1184.58989 A    Iron Project
+C404P 32POC408D 32D  4 6   3.1878E-03   1.5847E+09    163.64    4  4  8         WAVELENGTH:          1184.77374 A    Iron Project
+C404P 32POC408D 52D  4 6   2.8719E-02   1.5847E+09    163.64    4  4  8         WAVELENGTH:          1184.77379 A    Iron Project
+C404P 12POC409S 12S  4 6   2.9020E-03   1.7788E+09    244.83    4  4  9         WAVELENGTH:          1118.24802 A    Iron Project
+C404P 32POC409S 12S  4 6   2.9020E-03   1.7783E+09    244.83    4  4  9         WAVELENGTH:          1118.41186 A    Iron Project
+C404P 12POC409D 32D  4 6   1.9560E-02   1.8089E+09    262.14    4  4  9         WAVELENGTH:          1108.89947 A    Iron Project
+C404P 32POC409D 32D  4 6   1.9525E-03   1.8084E+09    262.14    4  4  9         WAVELENGTH:          1109.06057 A    Iron Project ( 1109.06058 A)
+C404P 32POC409D 52D  4 6   1.7590E-02   1.8084E+09    262.14    4  4  9         WAVELENGTH:          1109.06058 A    Iron Project
+C404P 12POC410S 12S  4 6   1.8926E-03   1.9551E+09    375.77    4  4 10         WAVELENGTH:          1066.63340 A    Iron Project
+C404P 32POC410S 12S  4 6   1.8926E-03   1.9546E+09    375.77    4  4 10         WAVELENGTH:          1066.78246 A    Iron Project
+C404P 12POC410D 32D  4 6   1.2986E-02   1.9775E+09    398.94    4  4 10         WAVELENGTH:          1060.59265 A    Iron Project
+C404P 32POC410D 32D  4 6   1.2962E-03   1.9769E+09    398.94    4  4 10         WAVELENGTH:          1060.74002 A    Iron Project
+C404P 32POC410D 52D  4 6   1.1678E-02   1.9769E+09    398.94    4  4 10         WAVELENGTH:          1060.74021 A    Iron Project
+.		   					      
+C404D 32D C404F 52FO 4 6   3.6482E-03   2.1407E+03     10.24    4  4  4         WAVELENGTH:       1019347.19569 A    Iron Project
+C404D 52D C404F 52FO 4 6   1.7372E-04   1.9697E+03     10.24    4  4  4         WAVELENGTH:       1062676.65439 A    Iron Project
+C404D 52D C404F 72FO 4 6   3.4745E-03   1.9695E+03     10.24    4  4  4         WAVELENGTH:       1062729.39323 A    Iron Project
+C404D 32D C405P 12PO 4 6   3.3834E-02   3.3005E+08     24.24    4  4  5         WAVELENGTH:          2596.07422 A    Iron Project
+C404D 32D C405P 32PO 4 6   6.7547E-03   3.3017E+08     24.24    4  4  5         WAVELENGTH:          2595.59579 A    Iron Project
+C404D 52D C405P 32PO 4 6   4.0569E-02   3.3010E+08     24.24    4  4  5         WAVELENGTH:          2595.86531 A    Iron Project
+C404D 32D C405F 52FO 4 6   8.8631E-01   3.4888E+08     24.99    4  4  5         WAVELENGTH:          2525.01659 A    Iron Project
+C404D 52D C405F 52FO 4 6   4.2205E-02   3.4881E+08     24.99    4  4  5         WAVELENGTH:          2525.27164 A    Iron Project
+C404D 52D C405F 72FO 4 6   8.4410E-01   3.4881E+08     24.99    4  4  5         WAVELENGTH:          2525.27167 A    Iron Project
+C404D 32D C406P 12PO 4 6   6.7653E-03   8.1254E+08     50.52    4  4  6         WAVELENGTH:          1654.56353 A    Iron Project
+C404D 32D C406P 32PO 4 6   1.3506E-03   8.1264E+08     50.53    4  4  6         WAVELENGTH:          1654.45678 A    Iron Project
+C404D 52D C406P 32PO 4 6   8.1119E-03   8.1253E+08     50.53    4  4  6         WAVELENGTH:          1654.56627 A    Iron Project
+C404D 32D C406F 52FO 4 6   1.8585E-01   8.2952E+08     51.83    4  4  6         WAVELENGTH:          1637.54296 A    Iron Project
+C404D 52D C406F 52FO 4 6   8.8500E-03   8.2941E+08     51.83    4  4  6         WAVELENGTH:          1637.65022 A    Iron Project ( 1637.65023 A)
+C404D 52D C406F 72FO 4 6   1.7700E-01   8.2941E+08     51.83    4  4  6         WAVELENGTH:          1637.65023 A    Iron Project
+C404D 32D C407P 12PO 4 6   2.5996E-03   1.2053E+09     93.94    4  4  7         WAVELENGTH:          1358.46863 A    Iron Project
+C404D 32D C407P 32PO 4 6   5.1898E-04   1.2054E+09     93.95    4  4  7         WAVELENGTH:          1358.42434 A    Iron Project
+C404D 52D C407P 32PO 4 6   3.1170E-03   1.2053E+09     93.95    4  4  7         WAVELENGTH:          1358.49815 A    Iron Project
+C404D 32D C407F 52FO 4 6   7.2210E-02   1.2183E+09     96.02    4  4  7         WAVELENGTH:          1351.21440 A    Iron Project
+C404D 52D C407F 52FO 4 6   3.4386E-03   1.2182E+09     96.02    4  4  7         WAVELENGTH:          1351.28744 A    Iron Project
+C404D 52D C407F 72FO 4 6   6.8771E-02   1.2182E+09     96.02    4  4  7         WAVELENGTH:          1351.29170 A    Iron Project
+C404D 32D C408P 12PO 4 6   1.3129E-03   1.5008E+09    160.69    4  4  8         WAVELENGTH:          1217.40994 A    Iron Project
+C404D 32D C408P 32PO 4 6   2.6210E-04   1.5009E+09    160.71    4  4  8         WAVELENGTH:          1217.38622 A    Iron Project
+C404D 52D C408P 32PO 4 6   1.5742E-03   1.5008E+09    160.71    4  4  8         WAVELENGTH:          1217.44551 A    Iron Project
+C404D 32D C408F 52FO 4 6   3.6714E-02   1.5105E+09    163.80    4  4  8         WAVELENGTH:          1213.50240 A    Iron Project
+C404D 52D C408F 52FO 4 6   1.7483E-03   1.5104E+09    163.80    4  4  8         WAVELENGTH:          1213.56130 A    Iron Project
+C404D 52D C408F 72FO 4 6   3.4966E-02   1.5104E+09    163.80    4  4  8         WAVELENGTH:          1213.56131 A    Iron Project
+C404D 32D C409P 12PO 4 6   7.7021E-04   1.7217E+09    257.94    4  4  9         WAVELENGTH:          1136.64134 A    Iron Project
+C404D 32D C409P 32PO 4 6   1.5377E-04   1.7218E+09    257.97    4  4  9         WAVELENGTH:          1136.62713 A    Iron Project
+C404D 52D C409P 32PO 4 6   9.2352E-04   1.7216E+09    257.97    4  4  9         WAVELENGTH:          1136.67881 A    Iron Project
+C404D 32D C409F 52FO 4 6   2.1569E-02   1.7290E+09    262.38    4  4  9         WAVELENGTH:          1134.24723 A    Iron Project
+C404D 52D C409F 52FO 4 6   1.0271E-03   1.7288E+09    262.38    4  4  9         WAVELENGTH:          1134.29869 A    Iron Project ( 1134.29870 A)
+C404D 52D C409F 72FO 4 6   2.0542E-02   1.7288E+09    262.38    4  4  9         WAVELENGTH:          1134.29870 A    Iron Project
+C404D 32D C410P 12PO 4 6   4.9807E-04   1.8858E+09    390.64    4  4 10         WAVELENGTH:          1086.05973 A    Iron Project
+C404D 32D C410P 32PO 4 6   9.9436E-05   1.8858E+09    390.63    4  4 10         WAVELENGTH:          1086.06210 A    Iron Project
+C404D 52D C410P 32PO 4 6   5.9721E-04   1.8857E+09    390.63    4  4 10         WAVELENGTH:          1086.10928 A    Iron Project
+C404D 32D C410F 52FO 4 6   1.3915E-02   1.8943E+09    399.90    4  4 10         WAVELENGTH:          1083.62418 A    Iron Project
+C404D 52D C410F 52FO 4 6   6.6262E-04   1.8942E+09    399.90    4  4 10         WAVELENGTH:          1083.67115 A    Iron Project
+C404D 52D C410F 72FO 4 6   1.3252E-02   1.8942E+09    399.90    4  4 10         WAVELENGTH:          1083.67101 A    Iron Project
+.		 					      
+C404F 52FOC405D 32D  4 6   8.4746E-03   3.4625E+08     24.96    4  4  5         WAVELENGTH:          2534.59738 A    Iron Project
+C404F 52FOC405D 52D  4 6   6.0533E-04   3.4628E+08     24.96    4  4  5         WAVELENGTH:          2534.48817 A    Iron Project
+C404F 72FOC405D 52D  4 6   9.0799E-03   3.4628E+08     24.96    4  4  5         WAVELENGTH:          2534.48787 A    Iron Project
+C404F 52FOC405G 72G  4 6   1.3383E+00   3.4731E+08     25.00    4  4  5         WAVELENGTH:          2530.73591 A    Iron Project
+C404F 72FOC405G 72G  4 6   3.7752E-02   3.4731E+08     25.00    4  4  5         WAVELENGTH:          2530.73563 A    Iron Project ( 2530.73562 A)
+C404F 72FOC405G 92G  4 6   1.3018E+00   3.4731E+08     25.00    4  4  5         WAVELENGTH:          2530.73562 A    Iron Project
+C404F 52FOC406D 32D  4 6   1.5089E-03   8.2596E+08     51.76    4  4  6         WAVELENGTH:          1641.06340 A    Iron Project
+C404F 52FOC406D 52D  4 6   1.0778E-04   8.2599E+08     51.76    4  4  6         WAVELENGTH:          1641.03108 A    Iron Project
+C404F 72FOC406D 52D  4 6   1.6167E-03   8.2599E+08     51.76    4  4  6         WAVELENGTH:          1641.03096 A    Iron Project
+C404F 52FOC406G 72G  4 6   1.8138E-01   8.2693E+08     51.84    4  4  6         WAVELENGTH:          1640.09822 A    Iron Project
+C404F 72FOC406G 72G  4 6   5.1167E-03   8.2693E+08     51.84    4  4  6         WAVELENGTH:          1640.09811 A    Iron Project ( 1640.09810 A)
+C404F 72FOC406G 92G  4 6   1.7644E-01   8.2693E+08     51.84    4  4  6         WAVELENGTH:          1640.09810 A    Iron Project
+C404F 52FOC407D 32D  4 6   5.3680E-04   1.2143E+09     95.90    4  4  7         WAVELENGTH:          1353.42664 A    Iron Project
+C404F 52FOC407D 52D  4 6   3.8343E-05   1.2143E+09     95.90    4  4  7         WAVELENGTH:          1353.43275 A    Iron Project
+C404F 72FOC407D 52D  4 6   5.7514E-04   1.2143E+09     95.90    4  4  7         WAVELENGTH:          1353.43267 A    Iron Project
+C404F 52FOC407G 72G  4 6   5.8067E-02   1.2152E+09     96.03    4  4  7         WAVELENGTH:          1352.97462 A    Iron Project
+C404F 72FOC407G 72G  4 6   1.6381E-03   1.2152E+09     96.03    4  4  7         WAVELENGTH:          1352.97454 A    Iron Project
+C404F 72FOC407G 92G  4 6   5.6485E-02   1.2152E+09     96.03    4  4  7         WAVELENGTH:          1352.97451 A    Iron Project
+C404F 52FOC408D 32D  4 6   2.5868E-04   1.5064E+09    163.64    4  4  8         WAVELENGTH:          1215.15100 A    Iron Project
+C404F 52FOC408D 52D  4 6   1.8477E-05   1.5064E+09    163.64    4  4  8         WAVELENGTH:          1215.15105 A    Iron Project
+C404F 72FOC408D 52D  4 6   2.7716E-04   1.5064E+09    163.64    4  4  8         WAVELENGTH:          1215.15098 A    Iron Project
+C404F 52FOC408G 72G  4 6   2.6495E-02   1.5070E+09    163.82    4  4  8         WAVELENGTH:          1214.92972 A    Iron Project
+C404F 72FOC408G 72G  4 6   7.4743E-04   1.5070E+09    163.82    4  4  8         WAVELENGTH:          1214.92966 A    Iron Project ( 1214.92965 A)
+C404F 72FOC408G 92G  4 6   2.5774E-02   1.5070E+09    163.82    4  4  8         WAVELENGTH:          1214.92965 A    Iron Project
+C404F 52FOC409D 32D  4 6   1.4665E-04   1.7248E+09    262.14    4  4  9         WAVELENGTH:          1135.63582 A    Iron Project
+C404F 52FOC409D 52D  4 6   1.0475E-05   1.7248E+09    262.14    4  4  9         WAVELENGTH:          1135.63583 A    Iron Project
+C404F 72FOC409D 52D  4 6   1.5712E-04   1.7248E+09    262.14    4  4  9         WAVELENGTH:          1135.63577 A    Iron Project
+C404F 52FOC409G 72G  4 6   1.4540E-02   1.7252E+09    262.40    4  4  9         WAVELENGTH:          1135.49952 A    Iron Project
+C404F 72FOC409G 72G  4 6   4.1017E-04   1.7252E+09    262.40    4  4  9         WAVELENGTH:          1135.49947 A    Iron Project ( 1135.49946 A)
+C404F 72FOC409G 92G  4 6   1.4144E-02   1.7252E+09    262.40    4  4  9         WAVELENGTH:          1135.49946 A    Iron Project
+C404F 52FOC410D 32D  4 6   9.2325E-05   1.8894E+09    398.94    4  4 10         WAVELENGTH:          1085.02465 A    Iron Project
+C404F 52FOC410D 52D  4 6   6.5947E-06   1.8894E+09    398.94    4  4 10         WAVELENGTH:          1085.02485 A    Iron Project
+C404F 72FOC410D 52D  4 6   9.8920E-05   1.8894E+09    398.94    4  4 10         WAVELENGTH:          1085.02479 A    Iron Project
+C404F 52FOC410G 72G  4 6   8.9586E-03   1.8903E+09    399.92    4  4 10         WAVELENGTH:          1084.77144 A    Iron Project
+C404F 72FOC410G 72G  4 6   2.5272E-04   1.8903E+09    399.92    4  4 10         WAVELENGTH:          1084.77139 A    Iron Project
+C404F 72FOC410G 92G  4 6   8.7146E-03   1.8903E+09    399.92    4  4 10         WAVELENGTH:          1084.77130 A    Iron Project
+.							      
+C405S 12S C405P 12PO 4 6   2.8075E-01   2.7051E+06     24.24    4  5  5         WAVELENGTH:         28675.47960 A    Iron Project
+C405S 12S C405P 32PO 4 6   5.6150E-01   2.7162E+06     24.24    4  5  5         WAVELENGTH:         28617.21612 A    Iron Project
+C405S 12S C406P 12PO 4 6   7.6240E-02   1.4358E+08     50.52    4  5  6         WAVELENGTH:          3936.00063 A    Iron Project
+C405S 12S C406P 32PO 4 6   1.5248E-01   1.4363E+08     50.53    4  5  6         WAVELENGTH:          3935.39653 A    Iron Project
+C405S 12S C407P 12PO 4 6   2.5205E-02   3.3108E+08     93.94    4  5  7         WAVELENGTH:          2592.02331 A    Iron Project
+C405S 12S C407P 32PO 4 6   5.0410E-02   3.3112E+08     93.95    4  5  7         WAVELENGTH:          2591.86207 A    Iron Project
+C405S 12S C408P 12PO 4 6   1.2065E-02   4.9365E+08    160.69    4  5  8         WAVELENGTH:          2122.72762 A    Iron Project
+C405S 12S C408P 32PO 4 6   2.4129E-02   4.9369E+08    160.71    4  5  8         WAVELENGTH:          2122.65553 A    Iron Project
+C405S 12S C409P 12PO 4 6   6.9173E-03   6.2356E+08    257.94    4  5  9         WAVELENGTH:          1888.71324 A    Iron Project
+C405S 12S C409P 32PO 4 6   1.3835E-02   6.2359E+08    257.97    4  5  9         WAVELENGTH:          1888.67400 A    Iron Project
+C405S 12S C410P 12PO 4 6   4.4293E-03   7.2381E+08    390.64    4  5 10         WAVELENGTH:          1753.04606 A    Iron Project
+C405S 12S C410P 32PO 4 6   8.8587E-03   7.2380E+08    390.63    4  5 10         WAVELENGTH:          1753.05221 A    Iron Project
+.		  					      
+C405P 12POC405D 32D  4 6   1.4440E-01   2.3709E+05     24.96    4  5  5         WAVELENGTH:         96861.68152 A    Iron Project
+C405P 32POC405D 32D  4 6   1.4414E-02   2.3384E+05     24.96    4  5  5         WAVELENGTH:         97532.42953 A    Iron Project
+C405P 32POC405D 52D  4 6   1.2985E-01   2.3461E+05     24.96    4  5  5         WAVELENGTH:         97370.98345 A    Iron Project
+C405P 12POC406S 12S  4 6   1.7485E-01   8.8338E+07     46.68    4  5  6         WAVELENGTH:          5018.01467 A    Iron Project
+C405P 32POC406S 12S  4 6   1.7485E-01   8.8275E+07     46.68    4  5  6         WAVELENGTH:          5019.80312 A    Iron Project
+C405P 12POC406D 32D  4 6   5.1380E-01   1.1275E+08     51.76    4  5  6         WAVELENGTH:          4441.58209 A    Iron Project
+C405P 32POC406D 32D  4 6   5.1287E-02   1.1268E+08     51.76    4  5  6         WAVELENGTH:          4442.98320 A    Iron Project
+C405P 32POC406D 52D  4 6   4.6205E-01   1.1270E+08     51.76    4  5  6         WAVELENGTH:          4442.74633 A    Iron Project
+C405P 12POC407S 12S  4 6   3.3731E-02   2.5488E+08     87.81    4  5  7         WAVELENGTH:          2954.19229 A    Iron Project
+C405P 32POC407S 12S  4 6   3.3731E-02   2.5477E+08     87.81    4  5  7         WAVELENGTH:          2954.81206 A    Iron Project
+C405P 12POC407D 32D  4 6   1.4014E-01   2.7977E+08     95.90    4  5  7         WAVELENGTH:          2819.68667 A    Iron Project
+C405P 32POC407D 32D  4 6   1.3989E-02   2.7966E+08     95.90    4  5  7         WAVELENGTH:          2820.25128 A    Iron Project
+C405P 32POC407D 52D  4 6   1.2603E-01   2.7966E+08     95.90    4  5  7         WAVELENGTH:          2820.27781 A    Iron Project
+C405P 12POC408S 12S  4 6   1.3202E-02   4.0738E+08    151.51    4  5  8         WAVELENGTH:          2336.72158 A    Iron Project
+C405P 32POC408S 12S  4 6   1.3202E-02   4.0724E+08    151.51    4  5  8         WAVELENGTH:          2337.10932 A    Iron Project
+C405P 12POC408D 32D  4 6   6.2568E-02   4.2815E+08    163.64    4  5  8         WAVELENGTH:          2279.32170 A    Iron Project
+C405P 32POC408D 32D  4 6   6.2455E-03   4.2801E+08    163.64    4  5  8         WAVELENGTH:          2279.69062 A    Iron Project
+C405P 32POC408D 52D  4 6   5.6266E-02   4.2801E+08    163.64    4  5  8         WAVELENGTH:          2279.69080 A    Iron Project
+C405P 12POC409S 12S  4 6   6.8010E-03   5.3148E+08    244.83    4  5  9         WAVELENGTH:          2045.78885 A    Iron Project
+C405P 32POC409S 12S  4 6   6.8010E-03   5.3133E+08    244.83    4  5  9         WAVELENGTH:          2046.08604 A    Iron Project
+C405P 12POC409D 32D  4 6   3.4403E-02   5.4800E+08    262.14    4  5  9         WAVELENGTH:          2014.71548 A    Iron Project
+C405P 32POC409D 32D  4 6   3.4341E-03   5.4785E+08    262.14    4  5  9         WAVELENGTH:          2015.00371 A    Iron Project
+C405P 32POC409D 52D  4 6   3.0938E-02   5.4785E+08    262.14    4  5  9         WAVELENGTH:          2015.00373 A    Iron Project
+C405P 12POC410S 12S  4 6   4.0806E-03   6.2975E+08    375.77    4  5 10         WAVELENGTH:          1879.40872 A    Iron Project
+C405P 32POC410S 12S  4 6   4.0806E-03   6.2958E+08    375.77    4  5 10         WAVELENGTH:          1879.65953 A    Iron Project
+C405P 12POC410D 32D  4 6   2.1364E-02   6.4245E+08    398.94    4  5 10         WAVELENGTH:          1860.73491 A    Iron Project
+C405P 32POC410D 32D  4 6   2.1325E-03   6.4228E+08    398.94    4  5 10         WAVELENGTH:          1860.98077 A    Iron Project
+C405P 32POC410D 52D  4 6   1.9212E-02   6.4228E+08    398.94    4  5 10         WAVELENGTH:          1860.98134 A    Iron Project
+.		 					      
+C405D 32D C405F 52FO 4 6   3.6767E-03   5.9226E+02     24.99    4  5  5         WAVELENGTH:       1937976.97940 A    Iron Project
+C405D 52D C405F 52FO 4 6   1.7508E-04   5.5388E+02     24.99    4  5  5         WAVELENGTH:       2003999.97842 A    Iron Project
+C405D 52D C405F 72FO 4 6   3.5016E-03   5.5387E+02     24.99    4  5  5         WAVELENGTH:       2004018.73295 A    Iron Project
+C405D 32D C406P 12PO 4 6   5.6947E-02   9.7041E+07     50.52    4  5  6         WAVELENGTH:          4787.71281 A    Iron Project
+C405D 32D C406P 32PO 4 6   1.1369E-02   9.7077E+07     50.53    4  5  6         WAVELENGTH:          4786.81902 A    Iron Project
+C405D 52D C406P 32PO 4 6   6.8281E-02   9.7061E+07     50.53    4  5  6         WAVELENGTH:          4787.20858 A    Iron Project
+C405D 32D C406F 52FO 4 6   8.3805E-01   1.0297E+08     51.83    4  5  6         WAVELENGTH:          4647.92005 A    Iron Project
+C405D 52D C406F 52FO 4 6   3.9907E-02   1.0295E+08     51.83    4  5  6         WAVELENGTH:          4648.28733 A    Iron Project ( 4648.28734 A)
+C405D 52D C406F 72FO 4 6   7.9814E-01   1.0295E+08     51.83    4  5  6         WAVELENGTH:          4648.28734 A    Iron Project
+C405D 32D C407P 12PO 4 6   1.1654E-02   2.5805E+08     93.94    4  5  7         WAVELENGTH:          2935.97806 A    Iron Project
+C405D 32D C407P 32PO 4 6   2.3265E-03   2.5809E+08     93.95    4  5  7         WAVELENGTH:          2935.77120 A    Iron Project
+C405D 52D C407P 32PO 4 6   1.3973E-02   2.5806E+08     93.95    4  5  7         WAVELENGTH:          2935.91772 A    Iron Project
+C405D 32D C407F 52FO 4 6   1.9609E-01   2.6407E+08     96.02    4  5  7         WAVELENGTH:          2902.30268 A    Iron Project
+C405D 52D C407F 52FO 4 6   9.3376E-03   2.6405E+08     96.02    4  5  7         WAVELENGTH:          2902.44589 A    Iron Project
+C405D 52D C407F 72FO 4 6   1.8675E-01   2.6404E+08     96.02    4  5  7         WAVELENGTH:          2902.46556 A    Iron Project
+C405D 32D C408P 12PO 4 6   4.5388E-03   4.0347E+08    160.69    4  5  8         WAVELENGTH:          2347.99657 A    Iron Project
+C405D 32D C408P 32PO 4 6   9.0613E-04   4.0350E+08    160.71    4  5  8         WAVELENGTH:          2347.90837 A    Iron Project
+C405D 52D C408P 32PO 4 6   5.4422E-03   4.0347E+08    160.71    4  5  8         WAVELENGTH:          2348.00209 A    Iron Project
+C405D 32D C408F 52FO 4 6   8.1192E-02   4.0850E+08    163.80    4  5  8         WAVELENGTH:          2333.50445 A    Iron Project
+C405D 52D C408F 52FO 4 6   3.8663E-03   4.0847E+08    163.80    4  5  8         WAVELENGTH:          2333.59702 A    Iron Project
+C405D 52D C408F 72FO 4 6   7.7326E-02   4.0847E+08    163.80    4  5  8         WAVELENGTH:          2333.59704 A    Iron Project
+C405D 32D C409P 12PO 4 6   2.3147E-03   5.2164E+08    257.94    4  5  9         WAVELENGTH:          2064.98934 A    Iron Project
+C405D 32D C409P 32PO 4 6   4.6211E-04   5.2167E+08    257.97    4  5  9         WAVELENGTH:          2064.94244 A    Iron Project
+C405D 52D C409P 32PO 4 6   2.7754E-03   5.2163E+08    257.97    4  5  9         WAVELENGTH:          2065.01493 A    Iron Project
+C405D 32D C409F 52FO 4 6   4.2608E-02   5.2565E+08    262.38    4  5  9         WAVELENGTH:          2057.10101 A    Iron Project
+C405D 52D C409F 52FO 4 6   2.0290E-03   5.2562E+08    262.38    4  5  9         WAVELENGTH:          2057.17294 A    Iron Project ( 2057.17295 A)
+C405D 52D C409F 72FO 4 6   4.0579E-02   5.2562E+08    262.38    4  5  9         WAVELENGTH:          2057.17295 A    Iron Project
+C405D 32D C410P 12PO 4 6   1.3756E-03   6.1365E+08    390.64    4  5 10         WAVELENGTH:          1903.89639 A    Iron Project
+C405D 32D C410P 32PO 4 6   2.7462E-04   6.1365E+08    390.63    4  5 10         WAVELENGTH:          1903.90364 A    Iron Project
+C405D 52D C410P 32PO 4 6   1.6494E-03   6.1361E+08    390.63    4  5 10         WAVELENGTH:          1903.96526 A    Iron Project
+C405D 32D C410F 52FO 4 6   2.5654E-02   6.1850E+08    399.90    4  5 10         WAVELENGTH:          1896.42427 A    Iron Project
+C405D 52D C410F 52FO 4 6   1.2216E-03   6.1846E+08    399.90    4  5 10         WAVELENGTH:          1896.48541 A    Iron Project
+C405D 52D C410F 72FO 4 6   2.4432E-02   6.1846E+08    399.90    4  5 10         WAVELENGTH:          1896.48496 A    Iron Project
+.							      
+C405F 52FOC405G 72G  4 6   7.4870E-05   1.6451E+01     25.00    4  5  5         WAVELENGTH:      11628175.78218 A    Iron Project
+C405F 72FOC405G 72G  4 6   2.1121E-06   1.6453E+01     25.00    4  5  5         WAVELENGTH:      11627544.37970 A    Iron Project
+C405F 72FOC405G 92G  4 6   7.2831E-05   1.6453E+01     25.00    4  5  5         WAVELENGTH:      11627548.43850 A    Iron Project
+C405F 52FOC406D 32D  4 6   2.2184E-02   1.0216E+08     51.76    4  5  6         WAVELENGTH:          4666.24675 A    Iron Project
+C405F 52FOC406D 52D  4 6   1.5846E-03   1.0217E+08     51.76    4  5  6         WAVELENGTH:          4665.98548 A    Iron Project
+C405F 72FOC406D 52D  4 6   2.3769E-02   1.0217E+08     51.76    4  5  6         WAVELENGTH:          4665.98537 A    Iron Project
+C405F 52FOC406G 72G  4 6   1.1782E+00   1.0250E+08     51.84    4  5  6         WAVELENGTH: 4658.77790 A shifted by +0.41, see Koepe, diploma thesis)
+C405F 72FOC406G 72G  4 6   3.3238E-02   1.0250E+08     51.84    4  5  6         WAVELENGTH: 4658.99434 A shifted by +0.41, see Koepe, diploma thesis)
+C405F 72FOC406G 92G  4 6   1.1462E+00   1.0250E+08     51.84    4  5  6         WAVELENGTH: 4658.91037 A shifted by +0.41, see Koepe, diploma thesis)
+C405F 52FOC407D 32D  4 6   4.2149E-03   2.6293E+08     95.90    4  5  7         WAVELENGTH:          2908.58889 A    Iron Project ( 2908.58888 A)
+C405F 52FOC407D 52D  4 6   3.0107E-04   2.6293E+08     95.90    4  5  7         WAVELENGTH:          2908.58888 A    Iron Project
+C405F 72FOC407D 52D  4 6   4.5160E-03   2.6293E+08     95.90    4  5  7         WAVELENGTH:          2908.61706 A    Iron Project
+C405F 52FOC407G 72G  4 6   2.2741E-01   2.6331E+08     96.03    4  5  7         WAVELENGTH:          2906.50206 A    Iron Project
+C405F 72FOC407G 72G  4 6   6.4154E-03   2.6331E+08     96.03    4  5  7         WAVELENGTH:          2906.50202 A    Iron Project
+C405F 72FOC407G 92G  4 6   2.2122E-01   2.6331E+08     96.03    4  5  7         WAVELENGTH:          2906.50188 A    Iron Project
+C405F 52FOC408D 32D  4 6   1.5581E-03   4.0726E+08    163.64    4  5  8         WAVELENGTH:          2337.06558 A    Iron Project ( 2337.06557 A)
+C405F 52FOC408D 52D  4 6   1.1129E-04   4.0726E+08    163.64    4  5  8         WAVELENGTH:          2337.06557 A    Iron Project
+C405F 72FOC408D 52D  4 6   1.6694E-03   4.0726E+08    163.64    4  5  8         WAVELENGTH:          2337.06572 A    Iron Project
+C405F 52FOC408G 72G  4 6   8.4565E-02   4.0754E+08    163.82    4  5  8         WAVELENGTH:          2336.24719 A    Iron Project
+C405F 72FOC408G 72G  4 6   2.3856E-03   4.0754E+08    163.82    4  5  8         WAVELENGTH:          2336.24716 A    Iron Project
+C405F 72FOC408G 92G  4 6   8.2262E-02   4.0754E+08    163.82    4  5  8         WAVELENGTH:          2336.24717 A    Iron Project
+C405F 52FOC409D 32D  4 6   7.6237E-04   5.2433E+08    262.14    4  5  9         WAVELENGTH:          2059.69831 A    Iron Project ( 2059.69830 A)
+C405F 52FOC409D 52D  4 6   5.4455E-05   5.2433E+08    262.14    4  5  9         WAVELENGTH:          2059.69830 A    Iron Project
+C405F 72FOC409D 52D  4 6   8.1682E-04   5.2433E+08    262.14    4  5  9         WAVELENGTH:          2059.69829 A    Iron Project
+C405F 52FOC409G 72G  4 6   4.1481E-02   5.2456E+08    262.40    4  5  9         WAVELENGTH:          2059.24998 A    Iron Project
+C405F 72FOC409G 72G  4 6   1.1702E-03   5.2456E+08    262.40    4  5  9         WAVELENGTH:          2059.24997 A    Iron Project ( 2059.24996 A)
+C405F 72FOC409G 92G  4 6   4.0351E-02   5.2456E+08    262.40    4  5  9         WAVELENGTH:          2059.24996 A    Iron Project
+C405F 52FOC410D 32D  4 6   4.3790E-04   6.1680E+08    398.94    4  5 10         WAVELENGTH:          1899.03924 A    Iron Project ( 1899.03923 A)
+C405F 52FOC410D 52D  4 6   3.1279E-05   6.1680E+08    398.94    4  5 10         WAVELENGTH:          1899.03923 A    Iron Project
+C405F 72FOC410D 52D  4 6   4.6918E-04   6.1680E+08    398.94    4  5 10         WAVELENGTH:          1899.03982 A    Iron Project
+C405F 52FOC410G 72G  4 6   2.3858E-02   6.1730E+08    399.92    4  5 10         WAVELENGTH:          1898.26372 A    Iron Project
+C405F 72FOC410G 72G  4 6   6.7303E-04   6.1730E+08    399.92    4  5 10         WAVELENGTH:          1898.26370 A    Iron Project
+C405F 72FOC410G 92G  4 6   2.3208E-02   6.1730E+08    399.92    4  5 10         WAVELENGTH:          1898.26344 A    Iron Project
+.		 					      
+C405G 72G C406F 52FO 4 6   7.0921E-03   1.0239E+08     51.83    4  5  6         WAVELENGTH:          4660.96166 A    Iron Project ( 4660.96165 A)
+C405G 72G C406F 72FO 4 6   2.6676E-04   1.0239E+08     51.83    4  5  6         WAVELENGTH:          4660.96165 A    Iron Project
+C405G 92G C406F 72FO 4 6   7.3589E-03   1.0239E+08     51.83    4  5  6         WAVELENGTH:          4660.96164 A    Iron Project ( 4660.96165 A)
+C405G 72G C406H 92HO 4 6   1.6623E+00   1.0242E+08     51.84    4  5  6         WAVELENGTH: 4659.45128 A shifted by -0.69, see Koeper, diploma thesis)
+C405G 92G C406H 92HO 4 6   3.1002E-02   1.0242E+08     51.84    4  5  6         WAVELENGTH: 4659.58167 A shifted by -0.69, see Koepe, diploma thesis)
+C405G 92G C406H112HO 4 6   1.6317E+00   1.0242E+08     51.84    4  5  6         WAVELENGTH: 4659.53169 A shifted by -0.69, see Koepe, diploma thesis)
+C405G 72G C407F 52FO 4 6   1.1283E-03   2.6315E+08     96.02    4  5  7         WAVELENGTH:          2907.38242 A    Iron Project
+C405G 72G C407F 72FO 4 6   4.2438E-05   2.6315E+08     96.02    4  5  7         WAVELENGTH:          2907.40215 A    Iron Project ( 2907.40216 A)
+C405G 92G C407F 72FO 4 6   1.1707E-03   2.6315E+08     96.02    4  5  7         WAVELENGTH:          2907.40216 A    Iron Project
+C405G 72G C407H 92HO 4 6   2.0010E-01   2.6319E+08     96.03    4  5  7         WAVELENGTH:          2907.19307 A    Iron Project ( 2907.19308 A)
+C405G 92G C407H 92HO 4 6   3.7320E-03   2.6319E+08     96.03    4  5  7         WAVELENGTH:          2907.19308 A    Iron Project
+C405G 92G C407H112HO 4 6   1.9642E-01   2.6319E+08     96.03    4  5  7         WAVELENGTH:          2907.19311 A    Iron Project
+C405G 72G C408F 52FO 4 6   3.7666E-04   4.0735E+08    163.80    4  5  8         WAVELENGTH:          2336.78710 A    Iron Project
+C405G 72G C408F 72FO 4 6   1.4168E-05   4.0735E+08    163.80    4  5  8         WAVELENGTH:          2336.78711 A    Iron Project
+C405G 92G C408F 72FO 4 6   3.9083E-04   4.0735E+08    163.80    4  5  8         WAVELENGTH:          2336.78712 A    Iron Project ( 2336.78711 A)
+C405G 72G C408H 92HO 4 6   5.9795E-02   4.0738E+08    163.82    4  5  8         WAVELENGTH:          2336.70082 A    Iron Project ( 2336.70083 A)
+C405G 92G C408H 92HO 4 6   1.1152E-03   4.0738E+08    163.82    4  5  8         WAVELENGTH:          2336.70083 A    Iron Project
+C405G 92G C408H112HO 4 6   5.8694E-02   4.0738E+08    163.82    4  5  8         WAVELENGTH:          2336.70084 A    Iron Project ( 2336.70083 A)
+C405G 72G C409F 52FO 4 6   1.7267E-04   5.2435E+08    262.38    4  5  9         WAVELENGTH:          2059.65162 A    Iron Project ( 2059.65163 A)
+C405G 72G C409F 72FO 4 6   6.4946E-06   5.2435E+08    262.38    4  5  9         WAVELENGTH:          2059.65163 A    Iron Project
+C405G 92G C409F 72FO 4 6   1.7916E-04   5.2435E+08    262.38    4  5  9         WAVELENGTH:          2059.65164 A    Iron Project ( 2059.65163 A)
+C405G 72G C409H 92HO 4 6   2.5848E-02   5.2437E+08    262.40    4  5  9         WAVELENGTH:          2059.60518 A    Iron Project ( 2059.60517 A)
+C405G 92G C409H 92HO 4 6   4.8208E-04   5.2437E+08    262.40    4  5  9         WAVELENGTH:          2059.60517 A    Iron Project
+C405G 92G C409H112HO 4 6   2.5373E-02   5.2438E+08    262.40    4  5  9         WAVELENGTH:          2059.60487 A    Iron Project
+C405G 72G C410F 52FO 4 6   9.4863E-05   6.1709E+08    399.90    4  5 10         WAVELENGTH:          1898.59179 A    Iron Project
+C405G 72G C410F 72FO 4 6   3.5681E-06   6.1709E+08    399.90    4  5 10         WAVELENGTH:          1898.59135 A    Iron Project ( 1898.59134 A)
+C405G 92G C410F 72FO 4 6   9.8431E-05   6.1709E+08    399.90    4  5 10         WAVELENGTH:          1898.59134 A    Iron Project
+C405G 72G C410H 92HO 4 6   1.3700E-02   6.1710E+08    399.93    4  5 10         WAVELENGTH:          1898.56642 A    Iron Project ( 1898.56641 A)
+C405G 92G C410H 92HO 4 6   2.5551E-04   6.1710E+08    399.93    4  5 10         WAVELENGTH:          1898.56641 A    Iron Project
+C405G 92G C410H112HO 4 6   1.3448E-02   6.1710E+08    399.93    4  5 10         WAVELENGTH:          1898.56623 A    Iron Project
+.		 					      
+C406S 12S C406P 12PO 4 6   3.4077E-01   8.8176E+05     50.52    4  6  6         WAVELENGTH:         50226.01708 A    Iron Project
+C406S 12S C406P 32PO 4 6   6.8153E-01   8.8522E+05     50.53    4  6  6         WAVELENGTH:         50127.82596 A    Iron Project
+C406S 12S C407P 12PO 4 6   8.1840E-02   5.1152E+07     93.94    4  6  7         WAVELENGTH:          6594.39213 A    Iron Project
+C406S 12S C407P 32PO 4 6   1.6368E-01   5.1168E+07     93.95    4  6  7         WAVELENGTH:          6593.34863 A    Iron Project
+C406S 12S C408P 12PO 4 6   2.7090E-02   1.2488E+08    160.69    4  6  8         WAVELENGTH:          4220.53120 A    Iron Project
+C406S 12S C408P 32PO 4 6   5.4181E-02   1.2489E+08    160.71    4  6  8         WAVELENGTH:          4220.24621 A    Iron Project
+C406S 12S C409P 12PO 4 6   1.3019E-02   1.9398E+08    257.94    4  6  9         WAVELENGTH:          3386.31792 A    Iron Project
+C406S 12S C409P 32PO 4 6   2.6039E-02   1.9399E+08    257.97    4  6  9         WAVELENGTH:          3386.19179 A    Iron Project
+C406S 12S C410P 12PO 4 6   7.5653E-03   2.5154E+08    390.64    4  6 10         WAVELENGTH:          2973.70648 A    Iron Project
+C406S 12S C410P 32PO 4 6   1.5131E-02   2.5154E+08    390.63    4  6 10         WAVELENGTH:          2973.72418 A    Iron Project
+.		 					      
+C406P 12POC406D 32D  4 6   1.8247E-01   7.8828E+04     51.76    4  6  6         WAVELENGTH:        167982.52982 A    Iron Project
+C406P 32POC406D 32D  4 6   1.8214E-02   7.7799E+04     51.76    4  6  6         WAVELENGTH:        169090.29422 A    Iron Project
+C406P 32POC406D 52D  4 6   1.6409E-01   7.8115E+04     51.76    4  6  6         WAVELENGTH:        168747.89065 A    Iron Project
+C406P 12POC407S 12S  4 6   2.2298E-01   3.1664E+07     87.81    4  6  7         WAVELENGTH:          8381.52711 A    Iron Project
+C406P 32POC407S 12S  4 6   2.2298E-01   3.1643E+07     87.81    4  6  7         WAVELENGTH:          8384.26776 A    Iron Project
+C406P 12POC407D 32D  4 6   5.2811E-01   4.0815E+07     95.90    4  6  7         WAVELENGTH:          7382.39834 A    Iron Project
+C406P 32POC407D 32D  4 6   5.2716E-02   4.0791E+07     95.90    4  6  7         WAVELENGTH:          7384.52445 A    Iron Project
+C406P 32POC407D 52D  4 6   4.7492E-01   4.0789E+07     95.90    4  6  7         WAVELENGTH:          7384.70635 A    Iron Project
+C406P 12POC408S 12S  4 6   4.3061E-02   9.6938E+07    151.51    4  6  8         WAVELENGTH:          4790.23558 A    Iron Project
+C406P 32POC408S 12S  4 6   4.3061E-02   9.6902E+07    151.51    4  6  8         WAVELENGTH:          4791.13066 A    Iron Project
+C406P 12POC408D 32D  4 6   1.4748E-01   1.0721E+08    163.64    4  6  8         WAVELENGTH:          4555.08206 A    Iron Project
+C406P 32POC408D 32D  4 6   1.4721E-02   1.0717E+08    163.64    4  6  8         WAVELENGTH:          4555.89140 A    Iron Project
+C406P 32POC408D 52D  4 6   1.3262E-01   1.0717E+08    163.64    4  6  8         WAVELENGTH:          4555.89209 A    Iron Project
+C406P 12POC409S 12S  4 6   1.6893E-02   1.6170E+08    244.83    4  6  9         WAVELENGTH:          3708.96494 A    Iron Project
+C406P 32POC409S 12S  4 6   1.6893E-02   1.6165E+08    244.83    4  6  9         WAVELENGTH:          3709.50152 A    Iron Project
+C406P 12POC409D 32D  4 6   6.5990E-02   1.7087E+08    262.14    4  6  9         WAVELENGTH:          3608.07630 A    Iron Project
+C406P 32POC409D 32D  4 6   6.5871E-03   1.7082E+08    262.14    4  6  9         WAVELENGTH:          3608.58408 A    Iron Project
+C406P 32POC409D 52D  4 6   5.9343E-02   1.7082E+08    262.14    4  6  9         WAVELENGTH:          3608.58413 A    Iron Project
+C406P 12POC410S 12S  4 6   8.8076E-03   2.1777E+08    375.77    4  6 10         WAVELENGTH:          3196.00892 A    Iron Project
+C406P 32POC410S 12S  4 6   8.8076E-03   2.1771E+08    375.77    4  6 10         WAVELENGTH:          3196.40734 A    Iron Project
+C406P 12POC410D 32D  4 6   3.6616E-02   2.2526E+08    398.94    4  6 10         WAVELENGTH:          3142.38064 A    Iron Project
+C406P 32POC410D 32D  4 6   3.6550E-03   2.2521E+08    398.94    4  6 10         WAVELENGTH:          3142.76579 A    Iron Project
+C406P 32POC410D 52D  4 6   3.2928E-02   2.2521E+08    398.94    4  6 10         WAVELENGTH:          3142.76744 A    Iron Project
+.							      
+C406D 32D C406F 52FO 4 6   6.2109E-03   2.4077E+02     51.83    4  6  6         WAVELENGTH:       3039512.75331 A    Iron Project
+C406D 52D C406F 52FO 4 6   2.9576E-04   2.2353E+02     51.83    4  6  6         WAVELENGTH:       3154573.13667 A    Iron Project
+C406D 52D C406F 72FO 4 6   5.9151E-03   2.2353E+02     51.83    4  6  6         WAVELENGTH:       3154575.46025 A    Iron Project
+C406D 32D C407P 12PO 4 6   8.2120E-02   3.5192E+07     93.94    4  6  7         WAVELENGTH:          7950.32636 A    Iron Project
+C406D 32D C407P 32PO 4 6   1.6394E-02   3.5205E+07     93.95    4  6  7         WAVELENGTH:          7948.80967 A    Iron Project
+C406D 52D C407P 32PO 4 6   9.8465E-02   3.5198E+07     93.95    4  6  7         WAVELENGTH:          7949.56794 A    Iron Project
+C406D 32D C407F 52FO 4 6   8.2582E-01   3.7438E+07     96.02    4  6  7         WAVELENGTH:          7708.13898 A    Iron Project
+C406D 52D C407F 52FO 4 6   3.9325E-02   3.7431E+07     96.02    4  6  7         WAVELENGTH:          7708.85203 A    Iron Project
+C406D 52D C407F 72FO 4 6   7.8650E-01   3.7430E+07     96.02    4  6  7         WAVELENGTH:          7708.99079 A    Iron Project
+C406D 32D C408P 12PO 4 6   1.7078E-02   9.9101E+07    160.69    4  6  8         WAVELENGTH:          4737.67494 A    Iron Project
+C406D 32D C408P 32PO 4 6   3.4094E-03   9.9116E+07    160.71    4  6  8         WAVELENGTH:          4737.31584 A    Iron Project
+C406D 52D C408P 32PO 4 6   2.0477E-02   9.9105E+07    160.71    4  6  8         WAVELENGTH:          4737.58516 A    Iron Project
+C406D 32D C408F 52FO 4 6   2.0552E-01   1.0160E+08    163.80    4  6  8         WAVELENGTH:          4679.04115 A    Iron Project
+C406D 52D C408F 52FO 4 6   9.7867E-03   1.0159E+08    163.80    4  6  8         WAVELENGTH:          4679.30388 A    Iron Project
+C406D 52D C408F 72FO 4 6   1.9573E-01   1.0159E+08    163.80    4  6  8         WAVELENGTH:          4679.30394 A    Iron Project
+C406D 32D C409P 12PO 4 6   6.7151E-03   1.6149E+08    257.94    4  6  9         WAVELENGTH:          3711.36010 A    Iron Project
+C406D 32D C409P 32PO 4 6   1.3406E-03   1.6150E+08    257.97    4  6  9         WAVELENGTH:          3711.20859 A    Iron Project
+C406D 52D C409P 32PO 4 6   8.0517E-03   1.6149E+08    257.97    4  6  9         WAVELENGTH:          3711.37388 A    Iron Project
+C406D 32D C409F 52FO 4 6   8.6903E-02   1.6372E+08    262.38    4  6  9         WAVELENGTH:          3685.95649 A    Iron Project
+C406D 52D C409F 52FO 4 6   4.1382E-03   1.6371E+08    262.38    4  6  9         WAVELENGTH:          3686.11953 A    Iron Project
+C406D 52D C409F 72FO 4 6   8.2765E-02   1.6371E+08    262.38    4  6  9         WAVELENGTH:          3686.11956 A    Iron Project
+C406D 32D C410P 12PO 4 6   3.4769E-03   2.1434E+08    390.64    4  6 10         WAVELENGTH:          3221.46613 A    Iron Project
+C406D 32D C410P 32PO 4 6   6.9413E-04   2.1434E+08    390.63    4  6 10         WAVELENGTH:          3221.48690 A    Iron Project
+C406D 52D C410P 32PO 4 6   4.1690E-03   2.1432E+08    390.63    4  6 10         WAVELENGTH:          3221.61144 A    Iron Project
+C406D 32D C410F 52FO 4 6   3.4769E-03   2.1721E+08    399.90    4  6 10         WAVELENGTH:          3200.13144 A    Iron Project
+C406D 52D C410F 52FO 4 6   6.9413E-04   2.1719E+08    399.90    4  6 10         WAVELENGTH:          3200.25433 A    Iron Project
+C406D 52D C410F 72FO 4 6   4.1690E-03   2.1719E+08    399.90    4  6 10         WAVELENGTH:          3200.25307 A    Iron Project
+.		 					      
+C406F 52FOC406G 72G  4 6   2.9819E-04   1.9489E+00     51.84    4  6  6         WAVELENGTH:      33783882.92118 A    Iron Project
+C406F 72FOC406G 72G  4 6   8.4121E-06   1.9489E+00     51.84    4  6  6         WAVELENGTH:      33783616.42413 A    Iron Project
+C406F 72FOC406G 92G  4 6   2.9007E-04   1.9489E+00     51.84    4  6  6         WAVELENGTH:      33783631.65242 A    Iron Project
+C406F 52FOC407D 32D  4 6   3.9476E-02   3.7117E+07     95.90    4  6  7         WAVELENGTH:          7741.41601 A    Iron Project
+C406F 52FOC407D 52D  4 6   2.8197E-03   3.7115E+07     95.90    4  6  7         WAVELENGTH:          7741.61592 A    Iron Project
+C406F 72FOC407D 52D  4 6   4.2296E-02   3.7115E+07     95.90    4  6  7         WAVELENGTH:          7741.61590 A    Iron Project
+C406F 52FOC407G 72G  4 6   1.1034E+00   3.7259E+07     96.03    4  6  7         WAVELENGTH:          7726.65068 A    Iron Project
+C406F 72FOC407G 72G  4 6   3.1127E-02   3.7259E+07     96.03    4  6  7         WAVELENGTH:          7726.65067 A    Iron Project
+C406F 72FOC407G 92G  4 6   1.0733E+00   3.7259E+07     96.03    4  6  7         WAVELENGTH:          7726.64967 A    Iron Project
+C406F 52FOC408D 32D  4 6   7.9134E-03   1.0116E+08    163.64    4  6  8         WAVELENGTH:          4689.26551 A    Iron Project
+C406F 52FOC408D 52D  4 6   5.6524E-04   1.0116E+08    163.64    4  6  8         WAVELENGTH:          4689.26624 A    Iron Project
+C406F 72FOC408D 52D  4 6   8.4786E-03   1.0116E+08    163.64    4  6  8         WAVELENGTH:          4689.26625 A    Iron Project ( 4689.26624 A)
+C406F 52FOC408G 72G  4 6   2.4708E-01   1.0130E+08    163.82    4  6  8         WAVELENGTH:          4685.97192 A    Iron Project ( 4685.97193 A)
+C406F 72FOC408G 72G  4 6   6.9702E-03   1.0130E+08    163.82    4  6  8         WAVELENGTH:          4685.97193 A    Iron Project
+C406F 72FOC408G 92G  4 6   2.4035E-01   1.0130E+08    163.82    4  6  8         WAVELENGTH:          4685.97194 A    Iron Project ( 4685.97193 A)
+C406F 52FOC409D 32D  4 6   2.9630E-03   1.6321E+08    262.14    4  6  9         WAVELENGTH:          3691.75334 A    Iron Project
+C406F 52FOC409D 52D  4 6   2.1164E-04   1.6321E+08    262.14    4  6  9         WAVELENGTH:          3691.75338 A    Iron Project ( 3691.75339 A)
+C406F 72FOC409D 52D  4 6   3.1746E-03   1.6321E+08    262.14    4  6  9         WAVELENGTH:          3691.75339 A    Iron Project
+C406F 52FOC409G 72G  4 6   9.7778E-02   1.6334E+08    262.40    4  6  9         WAVELENGTH:          3690.31332 A    Iron Project ( 3690.31333 A)
+C406F 72FOC409G 72G  4 6   2.7583E-03   1.6334E+08    262.40    4  6  9         WAVELENGTH:          3690.31333 A    Iron Project
+C406F 72FOC409G 92G  4 6   9.5114E-02   1.6334E+08    262.40    4  6  9         WAVELENGTH:          3690.31334 A    Iron Project ( 3690.31333 A)
+C406F 52FOC410D 32D  4 6   1.4685E-03   2.1646E+08    398.94    4  6 10         WAVELENGTH:          3205.66180 A    Iron Project
+C406F 52FOC410D 52D  4 6   1.0489E-04   2.1646E+08    398.94    4  6 10         WAVELENGTH:          3205.66351 A    Iron Project
+C406F 72FOC410D 52D  4 6   1.5734E-03   2.1646E+08    398.94    4  6 10         WAVELENGTH:          3205.66352 A    Iron Project ( 3205.66351 A)
+C406F 52FOC410G 72G  4 6   5.0069E-02   2.1676E+08    399.92    4  6 10         WAVELENGTH:          3203.45260 A    Iron Project
+C406F 72FOC410G 72G  4 6   1.4125E-03   2.1676E+08    399.92    4  6 10         WAVELENGTH:          3203.45259 A    Iron Project ( 3205.66351 A)
+C406F 72FOC410G 92G  4 6   4.8705E-02   2.1676E+08    399.92    4  6 10         WAVELENGTH:          3203.45185 A    Iron Project
+.		 					      
+C406G 72G C406H 92HO 4 6   2.6846E-04   9.1111E-02     51.84    4  6  6         WAVELENGTH:     156250241.05219 A    Iron Project
+C406G 92G C406H 92HO 4 6   5.0069E-06   9.1111E-02     51.84    4  6  6         WAVELENGTH:     156249915.30616 A    Iron Project
+C406G 92G C406H112HO 4 6   2.6352E-04   9.1111E-02     51.84    4  6  6         WAVELENGTH:     156250094.46631 A    Iron Project
+C406G 72G C407F 52FO 4 6   1.9039E-02   3.7231E+07     96.02    4  6  7         WAVELENGTH:          7729.50441 A    Iron Project
+C406G 72G C407F 72FO 4 6   7.1612E-04   3.7230E+07     96.02    4  6  7         WAVELENGTH:          7729.64390 A    Iron Project ( 7729.64391 A)
+C406G 92G C407F 72FO 4 6   1.9755E-02   3.7230E+07     96.02    4  6  7         WAVELENGTH:          7729.64391 A    Iron Project
+C406G 72G C407H 92HO 4 6   1.4795E+00   3.7244E+07     96.03    4  6  7         WAVELENGTH:          7728.16629 A    Iron Project
+C406G 92G C407H 92HO 4 6   2.7593E-02   3.7244E+07     96.03    4  6  7         WAVELENGTH:          7728.16628 A    Iron Project
+C406G 92G C407H112HO 4 6   1.4523E+00   3.7244E+07     96.03    4  6  7         WAVELENGTH:          7728.16650 A    Iron Project
+C406G 72G C408F 52FO 4 6   3.3450E-03   1.0126E+08    163.80    4  6  8         WAVELENGTH:          4686.90533 A    Iron Project
+C406G 72G C408F 72FO 4 6   1.2582E-04   1.0126E+08    163.80    4  6  8         WAVELENGTH:          4686.90537 A    Iron Project ( 4686.90538 A)
+C406G 92G C408F 72FO 4 6   3.4708E-03   1.0126E+08    163.80    4  6  8         WAVELENGTH:          4686.90538 A    Iron Project
+C406G 72G C408H 92HO 4 6   2.6687E-01   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.55828 A    Iron Project ( 4686.55829 A)
+C406G 92G C408H 92HO 4 6   4.9773E-03   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.55829 A    Iron Project
+C406G 92G C408H112HO 4 6   2.6196E-01   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.55830 A    Iron Project
+C406G 72G C409F 52FO 4 6   1.1544E-03   1.6329E+08    262.38    4  6  9         WAVELENGTH:          3690.83498 A    Iron Project
+C406G 72G C409F 72FO 4 6   4.3420E-05   1.6329E+08    262.38    4  6  9         WAVELENGTH:          3690.83500 A    Iron Project ( 3690.83501 A)
+C406G 92G C409F 72FO 4 6   1.1978E-03   1.6329E+08    262.38    4  6  9         WAVELENGTH:          3690.83501 A    Iron Project
+C406G 72G C409H 92HO 4 6   9.3189E-02   1.6330E+08    262.40    4  6  9         WAVELENGTH:          3690.68579 A    Iron Project
+C406G 92G C409H 92HO 4 6   1.7380E-03   1.6330E+08    262.40    4  6  9         WAVELENGTH:          3690.68578 A    Iron Project ( 3690.68579 A)
+C406G 92G C409H112HO 4 6   9.1474E-02   1.6330E+08    262.40    4  6  9         WAVELENGTH:          3690.68484 A    Iron Project
+C406G 72G C410F 52FO 4 6   5.4196E-04   2.1671E+08    399.90    4  6 10         WAVELENGTH:          3203.80802 A    Iron Project
+C406G 72G C410F 72FO 4 6   2.0385E-05   2.1671E+08    399.90    4  6 10         WAVELENGTH:          3203.80676 A    Iron Project ( 3203.80675 A)
+C406G 92G C410F 72FO 4 6   5.6234E-04   2.1671E+08    399.90    4  6 10         WAVELENGTH:          3203.80675 A    Iron Project
+C406G 72G C410H 92HO 4 6   4.4017E-02   2.1672E+08    399.93    4  6 10         WAVELENGTH:          3203.73574 A    Iron Project
+C406G 92G C410H 92HO 4 6   8.2093E-04   2.1672E+08    399.93    4  6 10         WAVELENGTH:          3203.73573 A    Iron Project ( 3203.73574 A)
+C406G 92G C410H112HO 4 6   4.3207E-02   2.1672E+08    399.93    4  6 10         WAVELENGTH:          3203.73523 A    Iron Project
+.		  					      
+C406H 92HOC407G 72G  4 6   6.1096E-03   3.7238E+07     96.03    4  6  7         WAVELENGTH:          7728.80051 A    Iron Project
+C406H 92HOC407G 92G  4 6   1.4243E-04   3.7238E+07     96.03    4  6  7         WAVELENGTH:          7728.79953 A    Iron Project ( 7728.79952 A)
+C406H112HOC407G 92G  4 6   6.2470E-03   3.7238E+07     96.03    4  6  7         WAVELENGTH:          7728.79952 A    Iron Project
+C406H 92HOC407I112I  4 6   1.9179E+00   3.7241E+07     96.03    4  6  7         WAVELENGTH:          7728.45883 A    Iron Project
+C406H112HOC407I112I  4 6   2.8405E-02   3.7241E+07     96.03    4  6  7         WAVELENGTH:          7728.45882 A    Iron Project ( 7728.45883 A)
+C406H112HOC407I132I  4 6   1.8937E+00   3.7242E+07     96.03    4  6  7         WAVELENGTH:          7728.39707 A    Iron Project
+C406H 92HOC408G 72G  4 6   8.8566E-04   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.76256 A    Iron Project
+C406H 92HOC408G 92G  4 6   2.0647E-05   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.76257 A    Iron Project
+C406H112HOC408G 92G  4 6   9.0558E-04   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.76258 A    Iron Project ( 4686.76257 A)
+C406H 92HOC408I112I  4 6   2.0972E-01   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.68128 A    Iron Project ( 4686.68129 A)
+C406H112HOC408I112I  4 6   3.1061E-03   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.68129 A    Iron Project
+C406H112HOC408I132I  4 6   2.0707E-01   1.0127E+08    163.82    4  6  8         WAVELENGTH:          4686.68130 A    Iron Project
+C406H 92HOC409G 72G  4 6   2.7260E-04   1.6329E+08    262.40    4  6  9         WAVELENGTH:          3690.80365 A    Iron Project ( 3690.80366 A)
+C406H 92HOC409G 92G  4 6   6.3550E-06   1.6329E+08    262.40    4  6  9         WAVELENGTH:          3690.80366 A    Iron Project
+C406H112HOC409G 92G  4 6   2.7873E-04   1.6329E+08    262.40    4  6  9         WAVELENGTH:          3690.80367 A    Iron Project ( 3690.80366 A)
+C406H 92HOC409I112I  4 6   5.7673E-02   1.6330E+08    262.41    4  6  9         WAVELENGTH:          3690.76687 A    Iron Project ( 3690.76688 A)
+C406H112HOC409I112I  4 6   8.5416E-04   1.6330E+08    262.41    4  6  9         WAVELENGTH:          3690.76688 A    Iron Project
+C406H112HOC409I132I  4 6   5.6944E-02   1.6330E+08    262.41    4  6  9         WAVELENGTH:          3690.76689 A    Iron Project ( 3690.76688 A)
+C406H 92HOC410G 72G  4 6   1.1868E-04   2.1671E+08    399.92    4  6 10         WAVELENGTH:          3203.82207 A    Iron Project ( 3203.82208 A)
+C406H 92HOC410G 92G  4 6   2.7667E-06   2.1671E+08    399.92    4  6 10         WAVELENGTH:          3203.82208 A    Iron Project
+C406H112HOC410G 92G  4 6   1.2135E-04   2.1671E+08    399.92    4  6 10         WAVELENGTH:          3203.82133 A    Iron Project
+C406H 92HOC410I112I  4 6   2.3638E-02   2.1671E+08    399.94    4  6 10         WAVELENGTH:          3203.79109 A    Iron Project ( 3203.79110 A)
+C406H112HOC410I112I  4 6   3.5009E-04   2.1671E+08    399.94    4  6 10         WAVELENGTH:          3203.79110 A    Iron Project
+C406H112HOC410I132I  4 6   2.3339E-02   2.1671E+08    399.94    4  6 10         WAVELENGTH:          3203.79072 A    Iron Project
+.							      
+C407S 12S C407P 12PO 4 6   4.0040E-01   3.4335E+05     93.94    4  7  7         WAVELENGTH:         80489.37540 A    Iron Project
+C407S 12S C407P 32PO 4 6   8.0080E-01   3.4467E+05     93.95    4  7  7         WAVELENGTH:         80334.19023 A    Iron Project
+C407S 12S C408P 12PO 4 6   8.7853E-02   2.1240E+07    160.69    4  7  8         WAVELENGTH:         10233.63386 A    Iron Project
+C407S 12S C408P 32PO 4 6   1.7571E-01   2.1247E+07    160.71    4  7  8         WAVELENGTH:         10231.95850 A    Iron Project
+C407S 12S C409P 12PO 4 6   2.9003E-02   5.4192E+07    257.94    4  7  9         WAVELENGTH:          6406.72450 A    Iron Project
+C407S 12S C409P 32PO 4 6   5.8006E-02   5.4200E+07    257.97    4  7  9         WAVELENGTH:          6406.27302 A    Iron Project
+C407S 12S C410P 12PO 4 6   1.4151E-02   8.6379E+07    390.64    4  7 10         WAVELENGTH:          5074.57939 A    Iron Project
+C407S 12S C410P 32PO 4 6   2.8303E-02   8.6378E+07    390.63    4  7 10         WAVELENGTH:          5074.63093 A    Iron Project
+.		 					      
+C407P 12POC407D 32D  4 6   2.2202E-01   3.0837E+04     95.90    4  7  7         WAVELENGTH:        268576.47787 A    Iron Project
+C407P 32POC407D 32D  4 6   2.2162E-02   3.0441E+04     95.90    4  7  7         WAVELENGTH:        270318.90909 A    Iron Project
+C407P 32POC407D 52D  4 6   1.9966E-01   3.0386E+04     95.90    4  7  7         WAVELENGTH:        270562.87170 A    Iron Project
+C407P 12POC408S 12S  4 6   2.7142E-01   1.3197E+07    151.51    4  7  8         WAVELENGTH:         12982.96635 A    Iron Project
+C407P 32POC408S 12S  4 6   2.7142E-01   1.3188E+07    151.51    4  7  8         WAVELENGTH:         12987.01299 A    Iron Project
+C407P 12POC408D 32D  4 6   5.6550E-01   1.7148E+07    163.64    4  7  8         WAVELENGTH:         11389.39019 A    Iron Project
+C407P 32POC408D 32D  4 6   5.6448E-02   1.7138E+07    163.64    4  7  8         WAVELENGTH:         11392.50428 A    Iron Project
+C407P 32POC408D 52D  4 6   5.0854E-01   1.7138E+07    163.64    4  7  8         WAVELENGTH:         11392.50861 A    Iron Project
+C407P 12POC409S 12S  4 6   5.2413E-02   4.2289E+07    244.83    4  7  9         WAVELENGTH:          7252.52569 A    Iron Project
+C407P 32POC409S 12S  4 6   5.2413E-02   4.2275E+07    244.83    4  7  9         WAVELENGTH:          7253.78829 A    Iron Project
+C407P 12POC409D 32D  4 6   1.5480E-01   4.7040E+07    262.14    4  7  9         WAVELENGTH:          6876.53856 A    Iron Project
+C407P 32POC409D 32D  4 6   1.5452E-02   4.7025E+07    262.14    4  7  9         WAVELENGTH:          6877.67363 A    Iron Project
+C407P 32POC409D 52D  4 6   1.3921E-01   4.7025E+07    262.14    4  7  9         WAVELENGTH:          6877.67379 A    Iron Project
+C407P 12POC410S 12S  4 6   2.0881E-02   7.2999E+07    375.77    4  7 10         WAVELENGTH:          5520.09689 A    Iron Project
+C407P 32POC410S 12S  4 6   2.0881E-02   7.2980E+07    375.77    4  7 10         WAVELENGTH:          5520.82831 A    Iron Project
+C407P 12POC410D 32D  4 6   6.9520E-02   7.7366E+07    398.94    4  7 10         WAVELENGTH:          5362.04338 A    Iron Project
+C407P 32POC410D 32D  4 6   6.9395E-03   7.7346E+07    398.94    4  7 10         WAVELENGTH:          5362.73351 A    Iron Project
+C407P 32POC410D 52D  4 6   6.2518E-02   7.7346E+07    398.94    4  7 10         WAVELENGTH:          5362.73830 A    Iron Project
+.		 					      
+C407D 32D C407F 52FO 4 6   7.2792E-03   1.1631E+02     96.02    4  7  7         WAVELENGTH:       4373182.24641 A    Iron Project
+C407D 52D C407F 52FO 4 6   3.4663E-04   1.1973E+02     96.02    4  7  7         WAVELENGTH:       4310306.32409 A    Iron Project
+C407D 52D C407F 72FO 4 6   6.9326E-03   1.1733E+02     96.02    4  7  7         WAVELENGTH:       4354127.69847 A    Iron Project
+C407D 32D C408P 12PO 4 6   1.0849E-01   1.4800E+07    160.69    4  7  8         WAVELENGTH:         12259.45933 A    Iron Project
+C407D 32D C408P 32PO 4 6   2.1659E-02   1.4806E+07    160.71    4  7  8         WAVELENGTH:         12257.05509 A    Iron Project
+C407D 52D C408P 32PO 4 6   1.3008E-01   1.4807E+07    160.71    4  7  8         WAVELENGTH:         12256.55398 A    Iron Project
+C407D 32D C408F 52FO 4 6   8.5795E-01   1.5776E+07    163.80    4  7  8         WAVELENGTH:         11874.41616 A    Iron Project
+C407D 52D C408F 52FO 4 6   4.0855E-02   1.5777E+07    163.80    4  7  8         WAVELENGTH:         11873.94585 A    Iron Project
+C407D 52D C408F 72FO 4 6   8.1710E-01   1.5777E+07    163.80    4  7  8         WAVELENGTH:         11873.94618 A    Iron Project
+C407D 32D C409P 12PO 4 6   2.2808E-02   4.3560E+07    257.94    4  7  9         WAVELENGTH:          7145.98781 A    Iron Project
+C407D 32D C409P 32PO 4 6   4.5534E-03   4.3567E+07    257.97    4  7  9         WAVELENGTH:          7145.42614 A    Iron Project
+C407D 52D C409P 32PO 4 6   2.7348E-02   4.3569E+07    257.97    4  7  9         WAVELENGTH:          7145.25584 A    Iron Project
+C407D 32D C409F 52FO 4 6   2.1318E-01   4.4724E+07    262.38    4  7  9         WAVELENGTH:          7052.40169 A    Iron Project
+C407D 52D C409F 52FO 4 6   1.0151E-02   4.4726E+07    262.38    4  7  9         WAVELENGTH:          7052.23579 A    Iron Project
+C407D 52D C409F 72FO 4 6   2.0303E-01   4.4726E+07    262.38    4  7  9         WAVELENGTH:          7052.23589 A    Iron Project
+C407D 32D C410P 12PO 4 6   9.1580E-03   7.2803E+07    390.64    4  7 10         WAVELENGTH:          5527.50858 A    Iron Project
+C407D 32D C410P 32PO 4 6   1.8283E-03   7.2802E+07    390.63    4  7 10         WAVELENGTH:          5527.56973 A    Iron Project
+C407D 52D C410P 32PO 4 6   1.0981E-02   7.2804E+07    390.63    4  7 10         WAVELENGTH:          5527.46782 A    Iron Project
+C407D 32D C410F 52FO 4 6   9.1536E-02   7.4478E+07    399.90    4  7 10         WAVELENGTH:          5464.99360 A    Iron Project
+C407D 52D C410F 52FO 4 6   4.3589E-03   7.4481E+07    399.90    4  7 10         WAVELENGTH:          5464.89398 A    Iron Project
+C407D 52D C410F 72FO 4 6   8.7177E-02   7.4481E+07    399.90    4  7 10         WAVELENGTH:          5464.89030 A    Iron Project
+.							      
+C407F 52FOC407G 72G  4 6   5.2617E-04   7.3540E-01     96.03    4  7  7         WAVELENGTH:      54997541.10407 A    Iron Project
+C407F 72FOC407G 72G  4 6   1.4843E-05   9.3640E-01     96.03    4  7  7         WAVELENGTH:      48738700.19392 A    Iron Project
+C407F 72FOC407G 92G  4 6   5.1184E-04   9.3792E-01     96.03    4  7  7         WAVELENGTH:      48699114.00763 A    Iron Project
+C407F 52FOC408D 32D  4 6   6.1046E-02   1.5639E+07    163.64    4  7  8         WAVELENGTH:         11926.19887 A    Iron Project
+C407F 52FOC408D 52D  4 6   4.3604E-03   1.5639E+07    163.64    4  7  8         WAVELENGTH:         11926.20362 A    Iron Project
+C407F 72FOC408D 52D  4 6   6.5406E-02   1.5640E+07    163.64    4  7  8         WAVELENGTH:         11925.87152 A    Iron Project
+C407F 52FOC408G 72G  4 6   1.1038E+00   1.5695E+07    163.82    4  7  8         WAVELENGTH:         11904.91788 A    Iron Project
+C407F 72FOC408G 72G  4 6   3.1138E-02   1.5696E+07    163.82    4  7  8         WAVELENGTH:         11904.58697 A    Iron Project
+C407F 72FOC408G 92G  4 6   1.0737E+00   1.5696E+07    163.82    4  7  8         WAVELENGTH:         11904.58701 A    Iron Project
+C407F 52FOC409D 32D  4 6   1.2274E-02   4.4518E+07    262.14    4  7  9         WAVELENGTH:          7068.63643 A    Iron Project
+C407F 52FOC409D 52D  4 6   8.7673E-04   4.4518E+07    262.14    4  7  9         WAVELENGTH:          7068.63659 A    Iron Project
+C407F 72FOC409D 52D  4 6   1.3151E-02   4.4520E+07    262.14    4  7  9         WAVELENGTH:          7068.51993 A    Iron Project
+C407F 52FOC409G 72G  4 6   2.5728E-01   4.4585E+07    262.40    4  7  9         WAVELENGTH:          7063.35907 A    Iron Project
+C407F 72FOC409G 72G  4 6   7.2578E-03   4.4586E+07    262.40    4  7  9         WAVELENGTH:          7063.24258 A    Iron Project 
+C407F 72FOC409G 92G  4 6   2.5027E-01   4.4586E+07    262.40    4  7  9         WAVELENGTH:          7063.24259 A    Iron Project (7063.24258)
+C407F 52FOC410D 32D  4 6   4.6590E-03   7.4122E+07    398.94    4  7 10         WAVELENGTH:          5478.12932 A    Iron Project
+C407F 52FOC410D 52D  4 6   3.3279E-04   7.4122E+07    398.94    4  7 10         WAVELENGTH:          5478.13432 A    Iron Project
+C407F 72FOC410D 52D  4 6   4.9918E-03   7.4123E+07    398.94    4  7 10         WAVELENGTH:          5478.06425 A    Iron Project
+C407F 52FOC410G 72G  4 6   1.0578E-01   7.4297E+07    399.92    4  7 10         WAVELENGTH:          5471.68093 A    Iron Project
+C407F 72FOC410G 72G  4 6   2.9841E-03   7.4298E+07    399.92    4  7 10         WAVELENGTH:          5471.61103 A    Iron Project
+C407F 72FOC410G 92G  4 6   1.0290E-01   7.4298E+07    399.92    4  7 10         WAVELENGTH:          5471.60883 A    Iron Project
+.		  					      
+C407G 72G C407H 92HO 4 6   4.0968E-04   3.9582E-02     96.03    4  7  7         WAVELENGTH:     237059734.93279 A    Iron Project
+C407G 92G C407H 92HO 4 6   7.6407E-06   3.9269E-02     96.03    4  7  7         WAVELENGTH:     238000724.33957 A    Iron Project
+C407G 92G C407H112HO 4 6   4.0214E-04   3.9201E-02     96.03    4  7  7         WAVELENGTH:     238208745.40794 A    Iron Project
+C407G 72G C408F 52FO 4 6   3.5604E-02   1.5683E+07    163.80    4  7  8         WAVELENGTH:         11909.32464 A    Iron Project
+C407G 72G C408F 72FO 4 6   1.3392E-03   1.5683E+07    163.80    4  7  8         WAVELENGTH:         11909.32497 A    Iron Project
+C407G 92G C408F 72FO 4 6   3.6943E-02   1.5683E+07    163.80    4  7  8         WAVELENGTH:         11909.32734 A    Iron Project
+C407G 72G C408H 92HO 4 6   1.4257E+00   1.5689E+07    163.82    4  7  8         WAVELENGTH:         11907.08423 A    Iron Project
+C407G 92G C408H 92HO 4 6   2.6590E-02   1.5689E+07    163.82    4  7  8         WAVELENGTH:         11907.08660 A    Iron Project
+C407G 92G C408H112HO 4 6   1.3995E+00   1.5689E+07    163.82    4  7  8         WAVELENGTH:         11907.08665 A    Iron Project
+C407G 72G C409F 52FO 4 6   6.4433E-03   4.4568E+07    262.38    4  7  9         WAVELENGTH:          7064.70048 A    Iron Project
+C407G 72G C409F 72FO 4 6   2.4236E-04   4.4568E+07    262.38    4  7  9         WAVELENGTH:          7064.70058 A    Iron Project
+C407G 92G C409F 72FO 4 6   6.6857E-03   4.4568E+07    262.38    4  7  9         WAVELENGTH:          7064.70141 A    Iron Project
+C407G 72G C409H 92HO 4 6   2.9405E-01   4.4575E+07    262.40    4  7  9         WAVELENGTH:          7064.15390 A    Iron Project
+C407G 92G C409H 92HO 4 6   5.4841E-03   4.4575E+07    262.40    4  7  9         WAVELENGTH:          7064.15474 A    Iron Project
+C407G 92G C409H112HO 4 6   2.8864E-01   4.4575E+07    262.40    4  7  9         WAVELENGTH:          7064.15124 A    Iron Project
+C407G 72G C410F 52FO 4 6   2.2866E-03   7.4278E+07    399.90    4  7 10         WAVELENGTH:          5472.37600 A    Iron Project
+C407G 72G C410F 72FO 4 6   8.6007E-05   7.4278E+07    399.90    4  7 10         WAVELENGTH:          5472.37230 A    Iron Project
+C407G 92G C410F 72FO 4 6   2.3726E-03   7.4278E+07    399.90    4  7 10         WAVELENGTH:          5472.37280 A    Iron Project
+C407G 72G C410H 92HO 4 6   1.1169E-01   7.4283E+07    399.93    4  7 10         WAVELENGTH:          5472.16513 A    Iron Project
+C407G 92G C410H 92HO 4 6   2.0831E-03   7.4283E+07    399.93    4  7 10         WAVELENGTH:          5472.16563 A    Iron Project
+C407G 92G C410H112HO 4 6   1.0964E-01   7.4283E+07    399.93    4  7 10         WAVELENGTH:          5472.16413 A    Iron Project
+.		  					      
+C407H 92HOC408G 72G  4 6   1.7209E-02   1.5686E+07    163.82    4  7  8         WAVELENGTH:         11908.09355 A    Iron Project
+C407H 92HOC408G 92G  4 6   4.0120E-04   1.5686E+07    163.82    4  7  8         WAVELENGTH:         11908.09360 A    Iron Project
+C407H112HOC408G 92G  4 6   1.7597E-02   1.5686E+07    163.82    4  7  8         WAVELENGTH:         11908.09308 A    Iron Project
+C407H 92HOC408I112I  4 6   1.7810E+00   1.5688E+07    163.82    4  7  8         WAVELENGTH:         11907.56892 A    Iron Project
+C407H112HOC408I112I  4 6   2.6377E-02   1.5688E+07    163.82    4  7  8         WAVELENGTH:         11907.56840 A    Iron Project
+C407H112HOC408I132I  4 6   1.7585E+00   1.5688E+07    163.82    4  7  8         WAVELENGTH:         11907.56841 A    Iron Project
+C407H 92HOC409G 72G  4 6   2.6988E-03   4.4571E+07    262.40    4  7  9         WAVELENGTH:          7064.47685 A    Iron Project
+C407H 92HOC409G 92G  4 6   6.2917E-05   4.4571E+07    262.40    4  7  9         WAVELENGTH:          7064.47686 A    Iron Project
+C407H112HOC409G 92G  4 6   2.7595E-03   4.4571E+07    262.40    4  7  9         WAVELENGTH:          7064.47667 A    Iron Project
+C407H 92HOC409I112I  4 6   2.8981E-01   4.4572E+07    262.41    4  7  9         WAVELENGTH:          7064.34211 A    Iron Project
+C407H112HOC409I112I  4 6   4.2922E-03   4.4572E+07    262.41    4  7  9         WAVELENGTH:          7064.34192 A    Iron Project (7064.34193 A)
+C407H112HOC409I132I  4 6   2.8614E-01   4.4572E+07    262.41    4  7  9         WAVELENGTH:          7064.34193 A    Iron Project
+C407H 92HOC410G 72G  4 6   8.7532E-04   7.4278E+07    399.92    4  7 10         WAVELENGTH:          5472.35169 A    Iron Project
+C407H 92HOC410G 92G  4 6   2.0406E-05   7.4278E+07    399.92    4  7 10         WAVELENGTH:          5472.34949 A    Iron Project
+C407H112HOC410G 92G  4 6   8.9501E-04   7.4278E+07    399.92    4  7 10         WAVELENGTH:          5472.34938 A    Iron Project
+C407H 92HOC410I112I  4 6   9.5611E-02   7.4281E+07    399.94    4  7 10         WAVELENGTH:          5472.26129 A    Iron Project
+C407H112HOC410I112I  4 6   1.4160E-03   7.4281E+07    399.94    4  7 10         WAVELENGTH:          5472.26118 A    Iron Project
+C407H112HOC410I132I  4 6   9.4402E-02   7.4281E+07    399.94    4  7 10         WAVELENGTH:          5472.26008 A    Iron Project
+.							      
+C407I112I C408H 92HO 4 6   5.3275E-03   1.5687E+07    163.82    4  7  8         WAVELENGTH:         11907.89530 A    Iron Project
+C407I112I C408H112HO 4 6   9.4684E-05   1.5687E+07    163.82    4  7  8         WAVELENGTH:         11907.89535 A    Iron Project
+C407I132I C408H112HO 4 6   5.4105E-03   1.5687E+07    163.82    4  7  8         WAVELENGTH:         11908.04198 A    Iron Project
+C407I112I C408K132KO 4 6   1.8057E+00   1.5688E+07    163.82    4  7  8         WAVELENGTH:         11907.53591 A    Iron Project
+C407I132I C408K132KO 4 6   1.7170E-02   1.5688E+07    163.82    4  7  8         WAVELENGTH:         11907.68253 A    Iron Project
+C407I132I C408K152KO 4 6   1.7885E+00   1.5688E+07    163.82    4  7  8         WAVELENGTH:         11907.67496 A    Iron Project
+C407I112I C409H 92HO 4 6   6.8286E-04   4.4571E+07    262.40    4  7  9         WAVELENGTH:          7064.43937 A    Iron Project
+C407I112I C409H112HO 4 6   1.2136E-05   4.4571E+07    262.40    4  7  9         WAVELENGTH:          7064.43587 A    Iron Project
+C407I132I C409H112HO 4 6   6.9350E-04   4.4571E+07    262.40    4  7  9         WAVELENGTH:          7064.48748 A    Iron Project
+C407I112I C409K132KO 4 6   1.7431E-01   4.4572E+07    262.41    4  7  9         WAVELENGTH:          7064.39359 A    Iron Project
+C407I132I C409K132KO 4 6   1.6574E-03   4.4571E+07    262.41    4  7  9         WAVELENGTH:          7064.44520 A    Iron Project
+C407I132I C409K152KO 4 6   1.7265E-01   4.4571E+07    262.41    4  7  9         WAVELENGTH:          7064.44336 A    Iron Project
+C407I112I C410H 92HO 4 6   1.9565E-04   7.4279E+07    399.93    4  7 10         WAVELENGTH:          5472.33643 A    Iron Project
+C407I112I C410H112HO 4 6   3.4773E-06   7.4279E+07    399.93    4  7 10         WAVELENGTH:          5472.33493 A    Iron Project
+C407I132I C410H112HO 4 6   1.9870E-04   7.4278E+07    399.93    4  7 10         WAVELENGTH:          5472.36590 A    Iron Project
+C407I112I C410K132KO 4 6   4.4552E-02   7.4280E+07    399.94    4  7 10         WAVELENGTH:          5472.29108 A    Iron Project
+C407I132I C410K132KO 4 6   4.2362E-04   7.4279E+07    399.94    4  7 10         WAVELENGTH:          5472.32204 A    Iron Project
+C407I132I C410K152KO 4 6   4.4127E-02   7.4279E+07    399.94    4  7 10         WAVELENGTH:          5472.32125 A    Iron Project
+.							      
+C408S 12S C408P 12PO 4 6   4.5943E-01   1.5210E+05    160.69    4  8  8         WAVELENGTH:        120933.60745 A    Iron Project
+C408S 12S C408P 32PO 4 6   9.1887E-01   1.5268E+05    160.71    4  8  8         WAVELENGTH:        120700.06035 A    Iron Project
+C408S 12S C409P 12PO 4 6   9.4093E-02   9.8777E+06    257.94    4  8  9         WAVELENGTH:         15006.45277 A    Iron Project
+C408S 12S C409P 32PO 4 6   1.8819E-01   9.8809E+06    257.97    4  8  9         WAVELENGTH:         15003.97605 A    Iron Project
+C408S 12S C410P 12PO 4 6   3.1730E-02   2.5759E+07    390.64    4  8 10         WAVELENGTH:          9292.58633 A    Iron Project
+C408S 12S C410P 32PO 4 6   6.3460E-02   2.5758E+07    390.63    4  8 10         WAVELENGTH:          9292.75916 A    Iron Project
+.							      
+C408P 12POC408D 32D  4 6   1.1920E+00   1.3992E+04    163.64    4  8  8         WAVELENGTH:        398721.96174 A    Iron Project
+C408P 32POC408D 32D  4 6   1.1899E-01   1.3814E+04    163.64    4  8  8         WAVELENGTH:        401281.96063 A    Iron Project
+C408P 32POC408D 52D  4 6   1.0720E+00   1.3813E+04    163.64    4  8  8         WAVELENGTH:        401287.33198 A    Iron Project
+C408P 12POC409S 12S  4 6   3.2021E-01   6.1520E+06    244.83    4  8  9         WAVELENGTH:         19015.02187 A    Iron Project
+C408P 32POC409S 12S  4 6   3.2021E-01   6.1483E+06    244.83    4  8  9         WAVELENGTH:         19020.80876 A    Iron Project
+C408P 12POC409D 32D  4 6   5.9901E-01   8.0423E+06    262.14    4  8  9         WAVELENGTH:         16630.90984 A    Iron Project
+C408P 32POC409D 32D  4 6   5.9793E-02   8.0380E+06    262.14    4  8  9         WAVELENGTH:         16635.33641 A    Iron Project
+C408P 32POC409D 52D  4 6   5.3868E-01   8.0380E+06    262.14    4  8  9         WAVELENGTH:         16635.33734 A    Iron Project
+C408P 12POC410S 12S  4 6   6.3522E-02   2.0442E+07    375.77    4  8 10         WAVELENGTH:         10431.52720 A    Iron Project
+C408P 32POC410S 12S  4 6   6.3522E-02   2.0435E+07    375.77    4  8 10         WAVELENGTH:         10433.26856 A    Iron Project
+C408P 12POC410D 32D  4 6   1.6303E-01   2.2782E+07    398.94    4  8 10         WAVELENGTH:          9881.12349 A    Iron Project
+C408P 32POC410D 32D  4 6   1.6273E-02   2.2775E+07    398.94    4  8 10         WAVELENGTH:          9882.68593 A    Iron Project
+C408P 32POC410D 52D  4 6   1.4661E-01   2.2775E+07    398.94    4  8 10         WAVELENGTH:          9882.70221 A    Iron Project
+.							      
+C408D 32D C408F 52FO 4 6   1.2246E-02   4.1742E+01    163.80    4  8  8         WAVELENGTH:       7299927.69808 A    Iron Project
+C408D 52D C408F 52FO 4 6   5.8314E-04   4.1762E+01    163.80    4  8  8         WAVELENGTH:       7298150.60557 A    Iron Project
+C408D 52D C408F 72FO 4 6   1.1663E-02   4.1761E+01    163.80    4  8  8         WAVELENGTH:       7298274.97388 A    Iron Project
+C408D 32D C409P 12PO 4 6   1.2956E-01   6.9411E+06    257.94    4  8  9         WAVELENGTH:         17901.58140 A    Iron Project
+C408D 32D C409P 32PO 4 6   2.5866E-02   6.9438E+06    257.97    4  8  9         WAVELENGTH:         17898.05697 A    Iron Project
+C408D 52D C409P 32PO 4 6   1.5535E-01   6.9438E+06    257.97    4  8  9         WAVELENGTH:         17898.04628 A    Iron Project
+C408D 32D C409F 52FO 4 6   8.4691E-01   7.4102E+06    262.38    4  8  9         WAVELENGTH:         17325.62136 A    Iron Project
+C408D 52D C409F 52FO 4 6   4.0329E-02   7.4102E+06    262.38    4  8  9         WAVELENGTH:         17325.61135 A    Iron Project
+C408D 52D C409F 72FO 4 6   8.0658E-01   7.4102E+06    262.38    4  8  9         WAVELENGTH:         17325.61195 A    Iron Project
+C408D 32D C410P 12PO 4 6   2.8758E-02   2.0858E+07    390.64    4  8 10         WAVELENGTH:         10326.77491 A    Iron Project
+C408D 32D C410P 32PO 4 6   5.7413E-03   2.0858E+07    390.63    4  8 10         WAVELENGTH:         10326.98835 A    Iron Project
+C408D 52D C410P 32PO 4 6   3.4482E-02   2.0858E+07    390.63    4  8 10         WAVELENGTH:         10326.98479 A    Iron Project
+C408D 32D C410F 52FO 4 6   2.1584E-01   2.1759E+07    399.90    4  8 10         WAVELENGTH:         10110.69679 A    Iron Project
+C408D 52D C410F 52FO 4 6   1.0278E-02   2.1759E+07    399.90    4  8 10         WAVELENGTH:         10110.69338 A    Iron Project
+C408D 52D C410F 72FO 4 6   2.0556E-01   2.1760E+07    399.90    4  8 10         WAVELENGTH:         10110.68076 A    Iron Project
+.		 					      
+C408F 52FOC408G 72G  4 6   7.0860E-04   3.7011E-01    163.82    4  8  8         WAVELENGTH:      77524591.81347 A    Iron Project
+C408F 72FOC408G 72G  4 6   1.9990E-05   3.7024E-01    163.82    4  8  8         WAVELENGTH:      77510561.18688 A    Iron Project
+C408F 72FOC408G 92G  4 6   6.8930E-04   3.7023E-01    163.82    4  8  8         WAVELENGTH:      77512364.84007 A    Iron Project
+C408F 52FOC409D 32D  4 6   8.0458E-02   7.3503E+06    262.14    4  8  9         WAVELENGTH:         17396.14491 A    Iron Project
+C408F 52FOC409D 52D  4 6   5.7470E-03   7.3503E+06    262.14    4  8  9         WAVELENGTH:         17396.14592 A    Iron Project
+C408F 72FOC409D 52D  4 6   8.6205E-02   7.3503E+06    262.14    4  8  9         WAVELENGTH:         17396.14522 A    Iron Project
+C408F 52FOC409G 72G  4 6   1.0567E+00   7.3773E+06    262.40    4  8  9         WAVELENGTH:         17364.21646 A    Iron Project
+C408F 72FOC409G 72G  4 6   2.9810E-02   7.3773E+06    262.40    4  8  9         WAVELENGTH:         17364.21576 A    Iron Project
+C408F 72FOC409G 92G  4 6   1.0279E+00   7.3773E+06    262.40    4  8  9         WAVELENGTH:         17364.21578 A    Iron Project
+C408F 52FOC410D 32D  4 6   1.6734E-02   2.1607E+07    398.94    4  8 10         WAVELENGTH:         10146.30302 A    Iron Project
+C408F 52FOC410D 52D  4 6   1.1953E-03   2.1607E+07    398.94    4  8 10         WAVELENGTH:         10146.32019 A    Iron Project
+C408F 72FOC410D 52D  4 6   1.7929E-02   2.1607E+07    398.94    4  8 10         WAVELENGTH:         10146.31995 A    Iron Project
+C408F 52FOC410G 72G  4 6   2.5861E-01   2.1701E+07    399.92    4  8 10         WAVELENGTH:         10124.20433 A    Iron Project
+C408F 72FOC410G 72G  4 6   7.2953E-03   2.1701E+07    399.92    4  8 10         WAVELENGTH:         10124.20409 A    Iron Project
+C408F 72FOC410G 92G  4 6   2.5156E-01   2.1701E+07    399.92    4  8 10         WAVELENGTH:         10124.19657 A    Iron Project
+.		   					      
+C408G 72G C408H 92HO 4 6   1.9997E-04   1.8708E-02    163.82    4  8  8         WAVELENGTH:     344823619.97899 A    Iron Project
+C408G 92G C408H 92HO 4 6   3.7296E-06   1.8711E-02    163.82    4  8  8         WAVELENGTH:     344787928.03321 A    Iron Project
+C408G 92G C408H112HO 4 6   1.9629E-04   1.8707E-02    163.82    4  8  8         WAVELENGTH:     344831552.52604 A    Iron Project
+C408G 72G C409F 52FO 4 6   5.2494E-02   7.3718E+06    262.38    4  8  9         WAVELENGTH:         17370.73110 A    Iron Project
+C408G 72G C409F 72FO 4 6   1.9745E-03   7.3718E+06    262.38    4  8  9         WAVELENGTH:         17370.73170 A    Iron Project
+C408G 92G C409F 72FO 4 6   5.4469E-02   7.3718E+06    262.38    4  8  9         WAVELENGTH:         17370.73161 A    Iron Project
+C408G 72G C409H 92HO 4 6   1.3255E+00   7.3746E+06    262.40    4  8  9         WAVELENGTH:         17367.42702 A    Iron Project
+C408G 92G C409H 92HO 4 6   2.4721E-02   7.3746E+06    262.40    4  8  9         WAVELENGTH:         17367.42693 A    Iron Project
+C408G 92G C409H112HO 4 6   1.3011E+00   7.3746E+06    262.40    4  8  9         WAVELENGTH:         17367.40580 A    Iron Project
+C408G 72G C410F 52FO 4 6   1.0010E-02   2.1694E+07    399.90    4  8 10         WAVELENGTH:         10126.04240 A    Iron Project
+C408G 72G C410F 72FO 4 6   3.7653E-04   2.1694E+07    399.90    4  8 10         WAVELENGTH:         10126.02975 A    Iron Project
+C408G 92G C410F 72FO 4 6   1.0387E-02   2.1694E+07    399.90    4  8 10         WAVELENGTH:         10126.02972 A    Iron Project
+C408G 72G C410H 92HO 4 6   3.0065E-01   2.1697E+07    399.93    4  8 10         WAVELENGTH:         10125.32044 A    Iron Project
+C408G 92G C410H 92HO 4 6   5.6072E-03   2.1697E+07    399.93    4  8 10         WAVELENGTH:         10125.32041 A    Iron Project
+C408G 92G C410H112HO 4 6   2.9512E-01   2.1697E+07    399.93    4  8 10         WAVELENGTH:         10125.31528 A    Iron Project
+.		  					      
+C408H 92HOC408I112I  4 6   9.9882E-06   1.4231E-03    163.82    4  8  8         WAVELENGTH:    1250229367.05702 A    Iron Project
+C408H112HOC408I112I  4 6   1.4793E-07   1.4244E-03    163.82    4  8  8         WAVELENGTH:    1249656107.16985 A    Iron Project
+C408H112HOC408I132I  4 6   9.8619E-06   1.4242E-03    163.82    4  8  8         WAVELENGTH:    1249723828.67089 A    Iron Project
+C408H 92HOC409G 72G  4 6   3.0586E-02   7.3733E+06    262.40    4  8  9         WAVELENGTH:         17368.98147 A    Iron Project
+C408H 92HOC409G 92G  4 6   7.1304E-04   7.3733E+06    262.40    4  8  9         WAVELENGTH:         17368.98149 A    Iron Project
+C408H112HOC409G 92G  4 6   3.1274E-02   7.3733E+06    262.40    4  8  9         WAVELENGTH:         17368.98138 A    Iron Project
+C408H 92HOC409I112I  4 6   1.6094E+00   7.3740E+06    262.41    4  8  9         WAVELENGTH:         17368.16698 A    Iron Project
+C408H112HOC409I112I  4 6   2.3836E-02   7.3740E+06    262.41    4  8  9         WAVELENGTH:         17368.16688 A    Iron Project (17368.16687 A)
+C408H112HOC409I132I  4 6   1.5891E+00   7.3740E+06    262.41    4  8  9         WAVELENGTH:         17368.16687 A    Iron Project
+C408H 92HOC410G 72G  4 6   5.2050E-03   2.1694E+07    399.92    4  8 10         WAVELENGTH:         10125.82399 A    Iron Project
+C408H 92HOC410G 92G  4 6   1.2134E-04   2.1695E+07    399.92    4  8 10         WAVELENGTH:         10125.81647 A    Iron Project
+C408H112HOC410G 92G  4 6   5.3221E-03   2.1695E+07    399.92    4  8 10         WAVELENGTH:         10125.81643 A    Iron Project
+C408H 92HOC410I112I  4 6   3.1783E-01   2.1696E+07    399.94    4  8 10         WAVELENGTH:         10125.51448 A    Iron Project
+C408H112HOC410I112I  4 6   4.7072E-03   2.1696E+07    399.94    4  8 10         WAVELENGTH:         10125.51444 A    Iron Project
+C408H112HOC410I132I  4 6   3.1382E-01   2.1696E+07    399.94    4  8 10         WAVELENGTH:         10125.51068 A    Iron Project
+.		   					      
+C408I112I C408K132KO 4 6   1.0000E-05   6.6939E-03    163.82    4  8  8         WAVELENGTH:     576456453.25979 A    Iron Project
+C408I132I C408K132KO 4 6   9.5086E-08   6.6942E-03    163.82    4  8  8         WAVELENGTH:     576442043.91731 A    Iron Project
+C408I132I C408K152KO 4 6   9.9048E-06   7.1124E-03    163.82    4  8  8         WAVELENGTH:     559237215.20432 A    Iron Project
+C408I112I C409H 92HO 4 6   1.4246E-02   7.3737E+06    262.40    4  8  9         WAVELENGTH:         17368.54308 A    Iron Project
+C408I112I C409H112HO 4 6   2.5318E-04   7.3737E+06    262.40    4  8  9         WAVELENGTH:         17368.52195 A    Iron Project
+C408I132I C409H112HO 4 6   1.4468E-02   7.3737E+06    262.40    4  8  9         WAVELENGTH:         17368.52194 A    Iron Project
+C408I112I C409K132KO 4 6   1.5868E+00   7.3739E+06    262.41    4  8  9         WAVELENGTH:         17368.26637 A    Iron Project
+C408I132I C409K132KO 4 6   1.5088E-02   7.3739E+06    262.41    4  8  9         WAVELENGTH:         17368.26635 A    Iron Project
+C408I132I C409K152KO 4 6   1.5717E+00   7.3739E+06    262.41    4  8  9         WAVELENGTH:         17368.25529 A    Iron Project
+C408I112I C410H 92HO 4 6   2.0858E-03   2.1695E+07    399.93    4  8 10         WAVELENGTH:         10125.69977 A    Iron Project
+C408I112I C410H112HO 4 6   3.7070E-05   2.1695E+07    399.93    4  8 10         WAVELENGTH:         10125.69464 A    Iron Project
+C408I132I C410H112HO 4 6   2.1183E-03   2.1695E+07    399.93    4  8 10         WAVELENGTH:         10125.69465 A    Iron Project (10125.69464 A)
+C408I112I C410K132KO 4 6   2.4307E-01   2.1696E+07    399.94    4  8 10         WAVELENGTH:         10125.54451 A    Iron Project
+C408I132I C410K132KO 4 6   2.3112E-03   2.1696E+07    399.94    4  8 10         WAVELENGTH:         10125.54450 A    Iron Project
+C408I132I C410K152KO 4 6   2.4076E-01   2.1696E+07    399.94    4  8 10         WAVELENGTH:         10125.54177 A    Iron Project
+.		  					      
+C408K132KOC409I112I  4 6   3.6525E-03   7.3733E+06    262.41    4  8  9         WAVELENGTH:         17368.93158 A    Iron Project
+C408K132KOC409I132I  4 6   4.0517E-05   7.3733E+06    262.41    4  8  9         WAVELENGTH:         17368.93159 A    Iron Project (17368.93158 A)
+C408K152KOC409I132I  4 6   3.6930E-03   7.3733E+06    262.41    4  8  9         WAVELENGTH:         17368.94768 A    Iron Project
+C408K132KOC409L152L  4 6   2.6741E+00   7.3735E+06    262.41    4  8  9         WAVELENGTH:         17368.72830 A    Iron Project
+C408K152KOC409L152L  4 6   1.9643E-02   7.3735E+06    262.41    4  8  9         WAVELENGTH:         17368.74440 A    Iron Project
+C408K152KOC409L172L  4 6   2.6544E+00   7.3735E+06    262.41    4  8  9         WAVELENGTH:         17368.73534 A    Iron Project
+C408K132KOC410I112I  4 6   4.3360E-04   2.1695E+07    399.94    4  8 10         WAVELENGTH:         10125.77435 A    Iron Project
+C408K132KOC410I132I  4 6   4.8100E-06   2.1695E+07    399.94    4  8 10         WAVELENGTH:         10125.77059 A    Iron Project
+C408K152KOC410I132I  4 6   4.3841E-04   2.1695E+07    399.94    4  8 10         WAVELENGTH:         10125.77606 A    Iron Project
+C408K132KOC410L152L  4 6   2.3880E-01   2.1695E+07    399.94    4  8 10         WAVELENGTH:         10125.70150 A    Iron Project
+C408K152KOC410L152L  4 6   1.7541E-03   2.1695E+07    399.94    4  8 10         WAVELENGTH:         10125.70698 A    Iron Project
+C408K152KOC410L172L  4 6   2.3704E-01   2.1695E+07    399.94    4  8 10         WAVELENGTH:         10125.70492 A    Iron Project
+.		  					      
+C409S 12S C409P 12PO 4 6   5.1820E-01   7.4287E+04    257.94    4  9  9         WAVELENGTH:        173040.31839 A    Iron Project
+C409S 12S C409P 32PO 4 6   1.0364E+00   7.4570E+04    257.97    4  9  9         WAVELENGTH:        172711.57168 A    Iron Project
+C409S 12S C410P 12PO 4 6   1.0631E-01   4.8623E+06    390.64    4  9 10         WAVELENGTH:         21388.69658 A    Iron Project
+C409S 12S C410P 32PO 4 6   2.1263E-01   4.8619E+06    390.63    4  9 10         WAVELENGTH:         21389.61220 A    Iron Project
+.		 					      
+C409P 12POC409D 32D  4 6   5.2396E+00   6.8903E+03    262.14    4  9  9         WAVELENGTH:        568181.38744 A    Iron Project
+C409P 32POC409D 32D  4 6   5.2302E-01   6.8044E+03    262.14    4  9  9         WAVELENGTH:        571754.85256 A    Iron Project
+C409P 32POC409D 52D  4 6   4.7119E+00   6.8044E+03    262.14    4  9  9         WAVELENGTH:        571755.94300 A    Iron Project
+C409P 12POC410S 12S  4 6   3.9689E-01   3.1271E+06    375.77    4  9 10         WAVELENGTH:         26670.76299 A    Iron Project
+C409P 32POC410S 12S  4 6   3.9689E-01   3.1252E+06    375.77    4  9 10         WAVELENGTH:         26678.58992 A    Iron Project
+C409P 12POC410D 32D  4 6   6.3879E-01   4.0812E+06    398.94    4  9 10         WAVELENGTH:         23345.90378 A    Iron Project
+C409P 32POC410D 32D  4 6   6.3764E-02   4.0791E+06    398.94    4  9 10         WAVELENGTH:         23351.90066 A    Iron Project
+C409P 32POC410D 52D  4 6   5.7445E-01   4.0791E+06    398.94    4  9 10         WAVELENGTH:         23351.99161 A    Iron Project
+.		   					      
+C409D 32D C409F 52FO 4 6   1.3651E-02   2.0929E+01    262.38    4  9  9         WAVELENGTH:      10309313.80218 A    Iron Project
+C409D 52D C409F 52FO 4 6   6.5005E-04   2.0931E+01    262.38    4  9  9         WAVELENGTH:      10308959.29647 A    Iron Project
+C409D 52D C409F 72FO 4 6   1.3001E-02   2.0930E+01    262.38    4  9  9         WAVELENGTH:      10309171.99697 A    Iron Project
+C409D 32D C410P 12PO 4 6   1.6356E-01   3.4206E+06    390.64    4  9 10         WAVELENGTH:         25500.66359 A    Iron Project
+C409D 32D C410P 32PO 4 6   3.2654E-02   3.4203E+06    390.63    4  9 10         WAVELENGTH:         25501.96512 A    Iron Project
+C409D 52D C410P 32PO 4 6   1.9612E-01   3.4203E+06    390.63    4  9 10         WAVELENGTH:         25501.96295 A    Iron Project
+C409D 32D C410F 52FO 4 6   8.6923E-01   3.7912E+06    399.90    4  9 10         WAVELENGTH:         24222.36300 A    Iron Project
+C409D 52D C410F 52FO 4 6   4.1392E-02   3.7912E+06    399.90    4  9 10         WAVELENGTH:         24222.36105 A    Iron Project
+C409D 52D C410F 72FO 4 6   8.2784E-01   3.7912E+06    399.90    4  9 10         WAVELENGTH:         24222.28864 A    Iron Project
+.		  					      
+C409F 52FOC409G 72G  4 6   6.6605E-04   1.6833E-01    262.40    4  9  9         WAVELENGTH:     114955398.53057 A    Iron Project
+C409F 72FOC409G 72G  4 6   1.8789E-05   1.6840E-01    262.40    4  9  9         WAVELENGTH:     114928956.86893 A    Iron Project
+C409F 72FOC409G 92G  4 6   6.4791E-04   1.6840E-01    262.40    4  9  9         WAVELENGTH:     114929749.94179 A    Iron Project
+C409F 52FOC410D 32D  4 6   1.0311E-01   3.7350E+06    398.94    4  9 10         WAVELENGTH:         24403.89478 A    Iron Project
+C409F 52FOC410D 52D  4 6   7.3653E-03   3.7350E+06    398.94    4  9 10         WAVELENGTH:         24403.99411 A    Iron Project
+C409F 72FOC410D 52D  4 6   1.1048E-01   3.7350E+06    398.94    4  9 10         WAVELENGTH:         24403.99291 A    Iron Project
+C409F 52FOC410G 72G  4 6   1.0587E+00   3.7743E+06    399.92    4  9 10         WAVELENGTH:         24276.44411 A    Iron Project
+C409F 72FOC410G 72G  4 6   2.9866E-02   3.7743E+06    399.92    4  9 10         WAVELENGTH:         24276.44293 A    Iron Project
+C409F 72FOC410G 92G  4 6   1.0299E+00   3.7743E+06    399.92    4  9 10         WAVELENGTH:         24276.39968 A    Iron Project
+.		   					      
+C409G 72G C409H 92HO 4 6   1.9997E-04   1.1292E-02    262.40    4  9  9         WAVELENGTH:     443842609.09123 A    Iron Project
+C409G 92G C409H 92HO 4 6   3.7296E-06   1.1292E-02    262.40    4  9  9         WAVELENGTH:     443830781.46550 A    Iron Project
+C409G 92G C409H112HO 4 6   1.9629E-04   1.2005E-02    262.40    4  9  9         WAVELENGTH:     430448308.45961 A    Iron Project
+C409G 72G C410F 52FO 4 6   7.2482E-02   3.7718E+06    399.90    4  9 10         WAVELENGTH:         24284.53803 A    Iron Project
+C409G 72G C410F 72FO 4 6   2.7263E-03   3.7718E+06    399.90    4  9 10         WAVELENGTH:         24284.46525 A    Iron Project
+C409G 92G C410F 72FO 4 6   7.5208E-02   3.7718E+06    399.90    4  9 10         WAVELENGTH:         24284.46521 A    Iron Project
+C409G 72G C410H 92HO 4 6   1.2972E+00   3.7731E+06    399.93    4  9 10         WAVELENGTH:         24280.38608 A    Iron Project
+C409G 92G C410H 92HO 4 6   2.4194E-02   3.7731E+06    399.93    4  9 10         WAVELENGTH:         24280.38604 A    Iron Project
+C409G 92G C410H112HO 4 6   1.2733E+00   3.7731E+06    399.93    4  9 10         WAVELENGTH:         24280.35654 A    Iron Project
+.		 					      
+C409H 92HOC409I112I  4 6   9.9882E-05   4.4430E-04    262.41    4  9  9         WAVELENGTH:    2237514923.33904 A    Iron Project
+C409H112HOC409I112I  4 6   1.4793E-06   3.1594E-04    262.41    4  9  9         WAVELENGTH:    2653392369.02393 A    Iron Project
+C409H112HOC409I132I  4 6   9.8619E-05   3.1593E-04    262.41    4  9  9         WAVELENGTH:    2653422899.24561 A    Iron Project
+C409H 92HOC410G 72G  4 6   4.7123E-02   3.7723E+06    399.92    4  9 10         WAVELENGTH:         24282.90038 A    Iron Project
+C409H 92HOC410G 92G  4 6   1.0986E-03   3.7723E+06    399.92    4  9 10         WAVELENGTH:         24282.85711 A    Iron Project
+C409H112HOC410G 92G  4 6   4.8183E-02   3.7723E+06    399.92    4  9 10         WAVELENGTH:         24282.89842 A    Iron Project
+C409H 92HOC410I112I  4 6   1.5391E+00   3.7729E+06    399.94    4  9 10         WAVELENGTH:         24281.12048 A    Iron Project
+C409H112HOC410I112I  4 6   2.2794E-02   3.7729E+06    399.94    4  9 10         WAVELENGTH:         24281.16178 A    Iron Project
+C409H112HOC410I132I  4 6   1.5196E+00   3.7729E+06    399.94    4  9 10         WAVELENGTH:         24281.14015 A    Iron Project
+.							      
+C409I112I C409K132KO 4 6   1.0000E-05   4.9215E-04    262.41    4  9  9         WAVELENGTH:    2125960995.42149 A    Iron Project
+C409I132I C409K132KO 4 6   9.5086E-08   4.9216E-04    262.41    4  9  9         WAVELENGTH:    2125941396.66170 A    Iron Project
+C409I132I C409K152KO 4 6   9.9048E-06   5.7194E-04    262.41    4  9  9         WAVELENGTH:    1972107114.13377 A    Iron Project
+C409I112I C410H 92HO 4 6   2.6425E-02   3.7726E+06    399.93    4  9 10         WAVELENGTH:         24281.97792 A    Iron Project
+C409I112I C410H112HO 4 6   4.6963E-04   3.7726E+06    399.93    4  9 10         WAVELENGTH:         24281.94842 A    Iron Project
+C409I132I C410H112HO 4 6   2.6836E-02   3.7726E+06    399.93    4  9 10         WAVELENGTH:         24281.94841 A    Iron Project
+C409I112I C410K132KO 4 6   1.4840E+00   3.7729E+06    399.94    4  9 10         WAVELENGTH:         24281.08506 A    Iron Project (24281.08505 A)
+C409I132I C410K132KO 4 6   1.4111E-02   3.7729E+06    399.94    4  9 10         WAVELENGTH:         24281.08505 A    Iron Project
+C409I132I C410K152KO 4 6   1.4699E+00   3.7729E+06    399.94    4  9 10         WAVELENGTH:         24281.06932 A    Iron Project
+.		   					      
+C409K132KOC409L152L  4 6   1.0000E-05   9.2093E-05    262.41    4  9  9         WAVELENGTH:    4914637704.91803 A    Iron Project
+C409K152KOC409L152L  4 6   7.3455E-08   6.1874E-05    262.41    4  9  9         WAVELENGTH:    5995858000.00000 A    Iron Project
+C409K152KOC409L172L  4 6   9.9264E-06   8.6153E-05    262.41    4  9  9         WAVELENGTH:    5081235593.22034 A    Iron Project
+C409K132KOC410I112I  4 6   1.0185E-02   3.7727E+06    399.94    4  9 10         WAVELENGTH:         24281.66131 A    Iron Project
+C409K132KOC410I132I  4 6   1.1298E-04   3.7727E+06    399.94    4  9 10         WAVELENGTH:         24281.63967 A    Iron Project
+C409K152KOC410I132I  4 6   1.0298E-02   3.7727E+06    399.94    4  9 10         WAVELENGTH:         24281.66132 A    Iron Project (24281.66131 A)
+C409K132KOC410L152L  4 6   2.4457E+00   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.24241 A    Iron Project
+C409K152KOC410L152L  4 6   1.7965E-02   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.26404 A    Iron Project
+C409K152KOC410L172L  4 6   2.4277E+00   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.25224 A    Iron Project
+.							      
+C409L152L C410K132KO 4 6   4.3634E-03   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.48234 A    Iron Project
+C409L152L C410K152KO 4 6   3.6630E-05   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.46661 A    Iron Project
+C409L172L C410K152KO 4 6   4.4000E-03   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.48431 A    Iron Project
+C409L152L C410M172MO 4 6   3.0077E+00   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.30337 A    Iron Project
+C409L172L C410M172MO 4 6   1.7642E-02   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.32107 A    Iron Project
+C409L172L C410M192MO 4 6   2.9902E+00   3.7728E+06    399.94    4  9 10         WAVELENGTH:         24281.31124 A    Iron Project
+.		  					      
+C410S 12S C410P 12PO 4 6   5.6873E-01   2.6945E+04    390.64    4 10 10         WAVELENGTH:        287321.09177 A    Iron Project
+C410S 12S C410P 32PO 4 6   1.1375E+00   2.6914E+04    390.63    4 10 10         WAVELENGTH:        287486.40771 A    Iron Project
+.							      
+C410P 12POC410D 32D  4 6   3.4189E-01   7.6905E+03    398.94    4 10 10         WAVELENGTH:        537808.01490 A    Iron Project
+C410P 32POC410D 32D  4 6   3.4128E-02   7.7071E+03    398.94    4 10 10         WAVELENGTH:        537229.76277 A    Iron Project
+C410P 32POC410D 52D  4 6   3.0746E-01   7.7057E+03    398.94    4 10 10         WAVELENGTH:        537277.90295 A    Iron Project
+.							      
+C410D 32D C410F 52FO 4 6   1.7128E-02   9.8187E+01    399.90    4 10 10         WAVELENGTH:       4759675.80067 A    Iron Project
+C410D 52D C410F 52FO 4 6   8.1562E-04   9.8343E+01    399.90    4 10 10         WAVELENGTH:       4755900.43704 A    Iron Project
+C410D 52D C410F 72FO 4 6   1.6312E-02   9.8459E+01    399.90    4 10 10         WAVELENGTH:       4753110.52156 A    Iron Project
+.							      
+C410F 52FOC410G 72G  4 6   4.0671E-04   5.6282E-02    399.92    4 10 10         WAVELENGTH:     198801657.82493 A    Iron Project
+C410F 72FOC410G 72G  4 6   1.1473E-05   5.3554E-02    399.92    4 10 10         WAVELENGTH:     203802107.40993 A    Iron Project
+C410F 72FOC410G 92G  4 6   3.9564E-04   5.5168E-02    399.92    4 10 10         WAVELENGTH:     200798995.31145 A    Iron Project
+.							      
+C410G 72G C410H 92HO 4 6   3.9995E-04   8.9992E-03    399.93    4 10 10         WAVELENGTH:     497168988.39138 A    Iron Project
+C410G 92G C410H 92HO 4 6   7.4591E-06   8.3545E-03    399.93    4 10 10         WAVELENGTH:     515994664.37177 A    Iron Project
+C410G 92G C410H112HO 4 6   3.9258E-04   8.7914E-03    399.93    4 10 10         WAVELENGTH:     503008221.47651 A    Iron Project
+.		      					      
+C410H 92HOC410I112I  4 6   9.9882E-05   2.2573E-03    399.94    4 10 10         WAVELENGTH:     992691721.85430 A    Iron Project
+C410H112HOC410I112I  4 6   1.4793E-06   2.0386E-03    399.94    4 10 10         WAVELENGTH:    1044574564.45993 A    Iron Project
+C410H112HOC410I132I  4 6   9.8619E-05   2.1979E-03    399.94    4 10 10         WAVELENGTH:    1006016442.95302 A    Iron Project
+.		      					      
+C410I112I C410K132KO 4 6   1.0000E-05   5.7181E-04    399.94    4 10 10         WAVELENGTH:    1972321710.52632 A    Iron Project
+C410I132I C410K132KO 4 6   9.5086E-08   4.9205E-04    399.94    4 10 10         WAVELENGTH:    2126190780.14184 A    Iron Project
+C410I132I C410K152KO 4 6   9.9048E-06   5.4946E-04    399.94    4 10 10         WAVELENGTH:    2012032885.90604 A    Iron Project
+.		      					      
+C410K132KOC410L152L  4 6   9.9049E-06   9.2093E-05    399.94    4 10 10         WAVELENGTH:    4914637704.91803 A    Iron Project
+C410K152KOC410L152L  4 6   7.2756E-08   6.9521E-05    399.94    4 10 10         WAVELENGTH:    5656469811.32076 A    Iron Project
+C410K152KOC410L172L  4 6   9.8319E-06   8.6153E-05    399.94    4 10 10         WAVELENGTH:    5081235593.22034 A    Iron Project
+.		      					      
+C410L152L C410M172MO 4 6   9.9998E-06   2.2275E-05    399.94    4 10 10         WAVELENGTH:    9993096666.66667 A    Iron Project
+C410L172L C410M172MO 4 6   5.8655E-08   1.4256E-05    399.94    4 10 10         WAVELENGTH:   12491370833.33333 A    Iron Project
+C410L172L C410M192MO 4 6   9.9415E-06   2.0814E-05    399.94    4 10 10         WAVELENGTH:   10337686206.89655 A    Iron Project
+.
+.
+. forbidden lines
+.
+. data calculated by FORMEL4 (Version 12-AUG-2015 13:12:02) by T. Rauch
+C403P 12POC404F 52FO 4 6   1.1994E-05   1.8172E+09     10.2378  4  3  4         WAVELENGTH:          1106.38769 A    Quinet
+C403P 32POC404F 52FO 4 6   1.7296E-06   1.8159E+09     10.2378  4  3  4         WAVELENGTH:          1106.77464 A    Quinet
+C403P 32POC404F 72FO 4 6   1.0422E-05   1.8159E+09     10.2378  4  3  4         WAVELENGTH:          1106.77458 A    Quinet
+.
+C403D 32D C404D 32D  4 6   6.8856E-07   1.6244E+09     10.2195  4  3  4         WAVELENGTH:          1170.18701 A    Quinet
+C403D 32D C404D 52D  4 6   2.9372E-07   1.6246E+09     10.2202  4  3  4         WAVELENGTH:          1170.13224 A    Quinet
+C403D 52D C404D 32D  4 6   1.9582E-07   1.6240E+09     10.2195  4  3  4         WAVELENGTH:          1170.33081 A    Quinet
+C403D 52D C404D 52D  4 6   7.9772E-07   1.6242E+09     10.2202  4  3  4         WAVELENGTH:          1170.27603 A    Quinet
+0
+.                        PHOTOIONISATION              
+.---------------------------------------              
+RBF                                                                             
+C402S 12S C501S201S       4 0
+C402P 12POC501S201S       4 0
+C402P 32POC501S201S       4 0
+C403S 12S C501S201S       4 0
+C403P 12POC501S201S       4 0
+C403P 32POC501S201S       4 0
+C403D 32D C501S201S       4 0
+C403D 52D C501S201S       4 0
+C404S 12S C501S201S       4 0
+C404P 12POC501S201S       4 0
+C404P 32POC501S201S       4 0
+C404D 32D C501S201S       4 0
+C404D 52D C501S201S       4 0
+C404F 52FOC501S201S       4 0
+C404F 72FOC501S201S       4 0
+C405S 12S C501S201S       4 0
+C405P 12POC501S201S       4 0
+C405P 32POC501S201S       4 0
+C405D 32D C501S201S       4 0
+C405D 52D C501S201S       4 0
+C405F 52FOC501S201S       4 0
+C405F 72FOC501S201S       4 0
+C405G 72G C501S201S       4 0
+C405G 92G C501S201S       4 0
+C406S 12S C501S201S       4 0
+C406P 12POC501S201S       4 0
+C406P 32POC501S201S       4 0
+C406D 32D C501S201S       4 0
+C406D 52D C501S201S       4 0
+C406F 52FOC501S201S       4 0
+C406F 72FOC501S201S       4 0
+C406G 72G C501S201S       4 0
+C406G 92G C501S201S       4 0
+C406H 92HOC501S201S       4 0
+C406H112HOC501S201S       4 0
+C407S 12S C501S201S       4 0
+C407P 12POC501S201S       4 0
+C407P 32POC501S201S       4 0
+C407D 32D C501S201S       4 0
+C407D 52D C501S201S       4 0
+C407F 52FOC501S201S       4 0
+C407F 72FOC501S201S       4 0
+C407G 72G C501S201S       4 0
+C407G 92G C501S201S       4 0
+C407H 92HOC501S201S       4 0
+C407H112HOC501S201S       4 0
+C407I112I C501S201S       4 0
+C407I132I C501S201S       4 0
+C408S 12S C501S201S       4 0
+C408P 12POC501S201S       4 0
+C408P 32POC501S201S       4 0
+C408D 32D C501S201S       4 0
+C408D 52D C501S201S       4 0
+C408F 52FOC501S201S       4 0
+C408F 72FOC501S201S       4 0
+C408G 72G C501S201S       4 0
+C408G 92G C501S201S       4 0
+C408H 92HOC501S201S       4 0
+C408H112HOC501S201S       4 0
+C408I112I C501S201S       4 0
+C408I132I C501S201S       4 0
+C408K132KOC501S201S       4 0
+C408K152KOC501S201S       4 0
+C409S 12S C501S201S       4 0
+C409P 12POC501S201S       4 0
+C409P 32POC501S201S       4 0
+C409D 32D C501S201S       4 0
+C409D 52D C501S201S       4 0
+C409F 52FOC501S201S       4 0
+C409F 72FOC501S201S       4 0
+C409G 72G C501S201S       4 0
+C409G 92G C501S201S       4 0
+C409H 92HOC501S201S       4 0
+C409H112HOC501S201S       4 0
+C409I112I C501S201S       4 0
+C409I132I C501S201S       4 0
+C409K132KOC501S201S       4 0
+C409K152KOC501S201S       4 0
+C409L152L C501S201S       4 0
+C409L172L C501S201S       4 0
+C410S 12S C501S201S       4 0
+C410P 12POC501S201S       4 0
+C410P 32POC501S201S       4 0
+C410D 32D C501S201S       4 0
+C410D 52D C501S201S       4 0
+C410F 52FOC501S201S       4 0
+C410F 72FOC501S201S       4 0
+C410G 72G C501S201S       4 0
+C410G 92G C501S201S       4 0
+C410H 92HOC501S201S       4 0
+C410H112HOC501S201S       4 0
+C410I112I C501S201S       4 0
+C410I132I C501S201S       4 0
+C410K132KOC501S201S       4 0
+C410K152KOC501S201S       4 0
+C410L152L C501S201S       4 0
+C410L172L C501S201S       4 0
+C410M172MOC501S201S       4 0
+C410M192MOC501S201S       4 0
+C411      C501S201S       4 0
+C412      C501S201S       4 0
+C413      C501S201S       4 0
+0                            
+.                 COLLISIONAL EXCITATION                                                          
+.---------------------------------------                                                          
+CBB                                                                             
+0                                                                               
+.                 COLLISIONAL IONISATION                        
+.---------------------------------------                        
+CBF                                                                             
+0                                                                               
+.   COLLISIONAL EXCITATION TO LTE LEVELS            
+.---------------------------------------            
+CBX                                                                             
+0                                                                               
+.                      FREE-FREE OPACITY                
+.---------------------------------------                
+RFF                                                                             
+C4        3 0                                                                   

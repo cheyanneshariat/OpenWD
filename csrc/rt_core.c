@@ -1,6 +1,18 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <math.h>
+#include "humlicek_w4.h"
+
+PyObject *openwd_pseudo_voigt_profile(PyObject *, PyObject *);
+PyObject *openwd_stark_manifold_bins(PyObject *, PyObject *);
+PyObject *openwd_stark_profile_finish(PyObject *, PyObject *);
+PyObject *openwd_frequency_voigt_profile(PyObject *, PyObject *);
+PyObject *openwd_stark_frequency_profile_finish(PyObject *, PyObject *);
+
+/* Maximum hot NLTE metal-line profile half-window as a fraction of the line's
+   central wavelength (matches wd_spectra.metals.LINE_WINDOW_MAX_FRACTION).
+   The LTE metal-line kernel is not bounded. */
+#define LINE_WINDOW_MAX_FRACTION 0.1
 
 /*
  * Formal solution for outward rays in a plane-parallel, pure-absorption
@@ -334,36 +346,157 @@ upper_bound_double(const double *values, Py_ssize_t size, double target)
     return left;
 }
 
+/* The universal quadrature is independent of line, depth, and population.
+ * Tabulate U(beta)/beta^2 and its analytic derivative once per accumulation.
+ * Cubic Hermite interpolation on 8192 intervals agrees with direct quadrature
+ * to 3e-13 relative on the central branch. Small-field and far-wing formulas
+ * are unchanged. The table is call-local, so concurrent callers cannot race.
+ */
+#define HOLTSMARK_INTERVALS 8192
+struct HoltsmarkTable {
+    double value[HOLTSMARK_INTERVALS + 1];
+    double slope[HOLTSMARK_INTERVALS + 1];
+};
+
+static void
+prepare_holtsmark_table(struct HoltsmarkTable *table, const double *argument,
+                       const double *weight, Py_ssize_t size)
+{
+    const double factor = 4.0 / (3.0 * 3.1415926535897932384626433832795);
+    int point;
+    for (point = 0; point <= HOLTSMARK_INTERVALS; ++point) {
+        const double beta = 8.0 * point / HOLTSMARK_INTERVALS;
+        double value = 0.0, slope = 0.0;
+        Py_ssize_t index;
+        for (index = 0; index < size; ++index) {
+            const double q = argument[index];
+            const double z = beta * q;
+            if (z == 0.0) {
+                value += weight[index] * q;
+            } else {
+                const double sine = sin(z);
+                value += weight[index] * q * sine / z;
+                slope += weight[index] * q * q * (z*cos(z)-sine)/(z*z);
+            }
+        }
+        table->value[point] = factor * value;
+        table->slope[point] = factor * slope;
+    }
+}
+
 static double
-holtsmark_distribution(
-    double beta,
-    const double *quadrature_argument,
-    const double *quadrature_weight,
-    Py_ssize_t quadrature_size)
+holtsmark_distribution(double beta, const struct HoltsmarkTable *table)
 {
     const double pi = 3.1415926535897932384626433832795;
     double result;
     if (beta < 1.0e-3) {
         result = 4.0 / (3.0 * pi) * beta * beta;
     } else if (beta <= 8.0) {
-        Py_ssize_t index;
-        double integral = 0.0;
-        for (index = 0; index < quadrature_size; ++index) {
-            integral += quadrature_weight[index] *
-                        sin(beta * quadrature_argument[index]);
-        }
-        result = 4.0 * beta / (3.0 * pi) * integral;
+        const double h = 8.0 / HOLTSMARK_INTERVALS;
+        const double position = beta / h;
+        int left = (int)position;
+        double t, t2, t3;
+        if (left >= HOLTSMARK_INTERVALS) left = HOLTSMARK_INTERVALS - 1;
+        t = position-left; t2=t*t; t3=t2*t;
+        result = beta*beta*((2*t3-3*t2+1)*table->value[left]
+            +(t3-2*t2+t)*h*table->slope[left]
+            +(-2*t3+3*t2)*table->value[left+1]
+            +(t3-t2)*h*table->slope[left+1]);
     } else {
         const double inverse = 1.0 / beta;
+        /* Reuse exact integer/half-integer powers in the same wing
+         * expansion; avoid six general pow calls for every profile sample. */
+        const double inverse2 = inverse * inverse;
+        const double inverse3 = inverse2 * inverse;
+        const double inverse4 = inverse2 * inverse2;
+        const double inverse2p5 = inverse2 * sqrt(inverse);
+        const double inverse5p5 = inverse2p5 * inverse3;
+        const double inverse8p5 = inverse5p5 * inverse3;
+        const double inverse10 = inverse4 * inverse3 * inverse3;
+        const double inverse11p5 = inverse8p5 * inverse3;
         result =
-            1.496033551505373 * pow(inverse, 2.5) +
-            7.639437268410976 * pow(inverse, 4.0) +
-            21.598984399858832 * pow(inverse, 5.5) -
-            447.50395803457565 * pow(inverse, 8.5) -
-            3208.56365273261 * pow(inverse, 10.0) -
-            12222.451853819328 * pow(inverse, 11.5);
+            1.496033551505373 * inverse2p5 +
+            7.639437268410976 * inverse4 +
+            21.598984399858832 * inverse5p5 -
+            447.50395803457565 * inverse8p5 -
+            3208.56365273261 * inverse10 -
+            12222.451853819328 * inverse11p5;
     }
     return result > 0.0 ? result : 0.0;
+}
+
+/*
+ * Real part of the Faddeeva function w(x + i y) for y >= 0: Humlicek (1982,
+ * JQSRT 27, 437) region algorithm W4, about 1e-4 relative accuracy.  Complex
+ * arithmetic is written out explicitly so the kernel stays C89/MSVC
+ * portable.  Mirrors wd_spectra.metals._humlicek_w4.
+ */
+typedef struct { double re, im; } openwd_complex;
+
+static openwd_complex cx(double re, double im) { openwd_complex z; z.re = re; z.im = im; return z; }
+static openwd_complex cx_add(openwd_complex a, openwd_complex b) { return cx(a.re + b.re, a.im + b.im); }
+static openwd_complex cx_mul(openwd_complex a, openwd_complex b) {
+    return cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+}
+static openwd_complex cx_scale(openwd_complex a, double s) { return cx(a.re * s, a.im * s); }
+static openwd_complex cx_div(openwd_complex a, openwd_complex b) {
+    const double d = b.re * b.re + b.im * b.im;
+    return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d);
+}
+/* c0 + t (c1 + t (c2 + ...)) evaluated from the highest coefficient. */
+static openwd_complex cx_poly(const double *c, int n, openwd_complex t) {
+    openwd_complex r = cx(c[n - 1], 0.0);
+    int k;
+    for (k = n - 2; k >= 0; --k) {
+        r = cx_add(cx_mul(r, t), cx(c[k], 0.0));
+    }
+    return r;
+}
+
+static double
+humlicek_w4_real(double x, double y)
+{
+    const openwd_complex t = cx(y, -x);
+    const double s = fabs(x) + y;
+    if (s >= 15.0) {
+        return cx_div(cx_scale(t, 0.5641896),
+                      cx_add(cx(0.5, 0.0), cx_mul(t, t))).re;
+    }
+    if (s >= 5.5) {
+        const openwd_complex u = cx_mul(t, t);
+        return cx_div(cx_mul(t, cx_add(cx(1.410474, 0.0), cx_scale(u, 0.5641896))),
+                      cx_add(cx(0.75, 0.0), cx_mul(u, cx_add(cx(3.0, 0.0), u)))).re;
+    }
+    if (y >= 0.195 * fabs(x) - 0.176) {
+        static const double numerator[5] = {
+            16.4955, 20.20933, 11.96482, 3.778987, 0.5642236};
+        static const double denominator[6] = {
+            16.4955, 38.82363, 39.27121, 21.69274, 6.699398, 1.0};
+        return cx_div(cx_poly(numerator, 5, t), cx_poly(denominator, 6, t)).re;
+    }
+    {
+        /* Polynomials in u = t^2 with the published alternating signs. */
+        static const double numerator[7] = {
+            36183.31, -3321.9905, 1540.787, -219.0313, 35.76683,
+            -1.320522, 0.56419};
+        static const double denominator[8] = {
+            32066.6, -24322.84, 9022.228, -2186.181, 364.2191,
+            -61.57037, 1.841439, -1.0};
+        const openwd_complex u = cx_mul(t, t);
+        const double magnitude = exp(u.re);
+        const openwd_complex exponential = cx(magnitude * cos(u.im), magnitude * sin(u.im));
+        const openwd_complex rational = cx_div(
+            cx_mul(t, cx_poly(numerator, 7, u)), cx_poly(denominator, 8, u));
+        return exponential.re - rational.re;
+    }
+}
+
+/* Reuse W4 from the manifold translation unit without changing the static
+ * ordinary LTE evaluator or its opportunities for inlining. */
+double
+openwd_humlicek_w4_real(double x, double y)
+{
+    return humlicek_w4_real(x, y);
 }
 
 /*
@@ -380,7 +513,6 @@ accumulate_lte_metal_line_profiles(PyObject *self, PyObject *args)
     int index;
     const double pi = 3.1415926535897932384626433832795;
     const double light_speed = 2.99792458e10;
-    const double log_two = 0.69314718055994530941723212145818;
 
     (void)self;
     if (!PyArg_ParseTuple(
@@ -451,8 +583,8 @@ accumulate_lte_metal_line_profiles(PyObject *self, PyObject *args)
                 const double sigma = gaussian_sigma[line_depth];
                 const double gamma = lorentz_hwhm[line_depth];
                 double half_window = 0.25;
-                double gaussian_fwhm, lorentz_fwhm, width, ratio, mixing;
-                double profile_scale;
+                double per_angstrom, sigma_nu, gamma_nu, scale;
+                double center_frequency, profile_scale;
                 Py_ssize_t start, stop;
 
                 if (minimum_half_window[line] > half_window) {
@@ -472,41 +604,25 @@ accumulate_lte_metal_line_profiles(PyObject *self, PyObject *args)
                     continue;
                 }
 
-                gaussian_fwhm =
-                    2.0 * sqrt(2.0 * log_two) * fmax(sigma, 1.0e-12);
-                lorentz_fwhm = 2.0 * fmax(gamma, 0.0);
-                width = pow(
-                    pow(gaussian_fwhm, 5.0) +
-                    2.69269 * pow(gaussian_fwhm, 4.0) * lorentz_fwhm +
-                    2.42843 * pow(gaussian_fwhm, 3.0) *
-                        lorentz_fwhm * lorentz_fwhm +
-                    4.47163 * gaussian_fwhm * gaussian_fwhm *
-                        pow(lorentz_fwhm, 3.0) +
-                    0.07842 * gaussian_fwhm * pow(lorentz_fwhm, 4.0) +
-                    pow(lorentz_fwhm, 5.0),
-                    0.2);
-                ratio = lorentz_fwhm / width;
-                mixing = 1.36603 * ratio - 0.47719 * ratio * ratio +
-                         0.11116 * ratio * ratio * ratio;
-                if (mixing < 0.0) {
-                    mixing = 0.0;
-                } else if (mixing > 1.0) {
-                    mixing = 1.0;
-                }
+                /* Exact Voigt in frequency (impact Lorentzian and thermal
+                 * Gaussian are both frequency profiles), returned per
+                 * Angstrom at line centre: phi_nu c / lambda0^2.  Mirrors
+                 * wd_spectra.metals._voigt_profile_per_angstrom. */
+                per_angstrom = light_speed / (center_cm * center_cm) * 1.0e-8;
+                sigma_nu = fmax(sigma, 1.0e-12) * per_angstrom;
+                gamma_nu = fmax(gamma, 0.0) * per_angstrom;
+                scale = 1.0 / (sigma_nu * sqrt(2.0));
+                center_frequency = light_speed / center_cm;
                 profile_scale = strength[line] * frequency_conversion *
-                    population_scale[line_depth];
+                    population_scale[line_depth] * scale / sqrt(pi) *
+                    per_angstrom;
 
                 for (wave = start; wave < stop; ++wave) {
-                    const double offset = wavelength[wave] - line_center;
-                    const double normalized_offset = offset / width;
-                    const double gaussian =
-                        2.0 * sqrt(log_two) / (sqrt(pi) * width) *
-                        exp(-4.0 * log_two * normalized_offset * normalized_offset);
-                    const double lorentz =
-                        2.0 / (pi * width) /
-                        (1.0 + 4.0 * normalized_offset * normalized_offset);
-                    const double profile =
-                        mixing * lorentz + (1.0 - mixing) * gaussian;
+                    const double detuning =
+                        light_speed / (wavelength[wave] * 1.0e-8) -
+                        center_frequency;
+                    const double profile = humlicek_w4_real(
+                        detuning * scale, gamma_nu * scale);
                     absorption[wave * n_depth + depth] +=
                         profile * profile_scale;
                 }
@@ -535,31 +651,187 @@ cleanup_lte_metal:
  * kernel performs only the element-independent profile arithmetic.  Keeping
  * the output arrays caller-owned avoids constructing enormous Python lists.
  */
+/* Blocked copy between a (wave, depth) C-ordered array and its (depth, wave)
+ * transpose.  direction 0: wave_depth -> depth_wave; 1: the reverse. */
+static void
+transpose_wave_depth(double *wave_depth, double *depth_wave,
+                     Py_ssize_t n_wave, Py_ssize_t n_depth, int direction)
+{
+    const Py_ssize_t block = 64;
+    Py_ssize_t w0, w, d;
+    for (w0 = 0; w0 < n_wave; w0 += block) {
+        const Py_ssize_t w1 = w0 + block < n_wave ? w0 + block : n_wave;
+        for (d = 0; d < n_depth; ++d) {
+            for (w = w0; w < w1; ++w) {
+                if (direction == 0) {
+                    depth_wave[d * n_wave + w] = wave_depth[w * n_depth + d];
+                } else {
+                    wave_depth[w * n_depth + d] = depth_wave[d * n_wave + w];
+                }
+            }
+        }
+    }
+}
+
+/* Pseudo-Voigt (Thompson et al. 1987) profile shared by the line-mean
+ * kernels; the expressions match metal_line_mean_intensity bit for bit
+ * (pow(x, 2.0) == x*x exactly, and exp() below -746 is exactly +0). */
+struct PseudoVoigt {
+    double center, width, mixing, lorentz_peak, gaussian_peak;
+};
+
+static void
+pseudo_voigt_setup(struct PseudoVoigt *voigt, double center, double sigma,
+                   double gamma)
+{
+    const double pi = 3.1415926535897932384626433832795;
+    const double log_two = 0.69314718055994530941723212145818;
+    const double gaussian_fwhm = 2.0 * sqrt(2.0 * log_two) * fmax(sigma, 1.0e-12);
+    const double lorentz_fwhm = 2.0 * fmax(gamma, 0.0);
+    double ratio;
+    voigt->center = center;
+    voigt->width = pow(
+        pow(gaussian_fwhm, 5.0) +
+        2.69269 * pow(gaussian_fwhm, 4.0) * lorentz_fwhm +
+        2.42843 * pow(gaussian_fwhm, 3.0) * lorentz_fwhm * lorentz_fwhm +
+        4.47163 * gaussian_fwhm * gaussian_fwhm * pow(lorentz_fwhm, 3.0) +
+        0.07842 * gaussian_fwhm * pow(lorentz_fwhm, 4.0) +
+        pow(lorentz_fwhm, 5.0),
+        0.2);
+    ratio = lorentz_fwhm / voigt->width;
+    voigt->mixing = 1.36603 * ratio - 0.47719 * ratio * ratio +
+                    0.11116 * ratio * ratio * ratio;
+    if (voigt->mixing < 0.0) {
+        voigt->mixing = 0.0;
+    } else if (voigt->mixing > 1.0) {
+        voigt->mixing = 1.0;
+    }
+    voigt->lorentz_peak = 2.0 / (pi * voigt->width);
+    voigt->gaussian_peak = 2.0 * sqrt(log_two) / (sqrt(pi) * voigt->width);
+}
+
+static double
+pseudo_voigt_value(const struct PseudoVoigt *voigt, double wavelength)
+{
+    const double log_two = 0.69314718055994530941723212145818;
+    const double offset = (wavelength - voigt->center) / voigt->width;
+    const double argument = -4.0 * log_two * (offset * offset);
+    return voigt->mixing * (voigt->lorentz_peak / (1.0 + 4.0 * (offset * offset))) +
+           (1.0 - voigt->mixing) *
+               (argument < -746.0 ? 0.0 : voigt->gaussian_peak * exp(argument));
+}
+
+static double
+pseudo_voigt_derivative(const struct PseudoVoigt *voigt, double wavelength)
+{
+    const double log_two = 0.69314718055994530941723212145818;
+    const double offset = (wavelength - voigt->center) / voigt->width;
+    const double square = offset * offset;
+    const double argument = -4.0 * log_two * square;
+    const double denominator = 1.0 + 4.0 * square;
+    const double lorentz = -8.0 * offset * voigt->lorentz_peak /
+                           (denominator * denominator);
+    const double gaussian = argument < -746.0 ? 0.0 :
+        -8.0 * log_two * offset * voigt->gaussian_peak * exp(argument);
+    return (voigt->mixing * lorentz + (1.0 - voigt->mixing) * gaussian) /
+           voigt->width;
+}
+
+/* Aligned block sizes (grid points) of the optional block deposit in
+ * accumulate_metal_line_profiles; must match light_metal_nlte.py. */
+#define METAL_BLOCK_LEVELS 5
+static const Py_ssize_t metal_block_size[METAL_BLOCK_LEVELS] = {16, 64, 256, 1024, 4096};
+
+static Py_ssize_t
+metal_block_layout(Py_ssize_t n_wave, Py_ssize_t *count, Py_ssize_t *offset)
+{
+    Py_ssize_t level, total = 0;
+    for (level = 0; level < METAL_BLOCK_LEVELS; ++level) {
+        count[level] = n_wave / metal_block_size[level];
+        offset[level] = total;
+        total += count[level];
+    }
+    return total;
+}
+
+/* Composite hydrogenic Stark profile C(beta) tabulated on a uniform
+ * log10(beta) grid: geometric interpolation between positive samples,
+ * linear otherwise, and the small-field beta^2 law below the grid.  This
+ * matches wd_spectra._hydrogenic_stark.composite_static_profile_value. */
+static double
+composite_stark_profile(double beta, const double *table, Py_ssize_t points,
+                        double log_beta_min, double log_beta_step)
+{
+    double position, fraction, lo, hi;
+    Py_ssize_t left;
+    if (!(beta > 0.0)) {
+        return 0.0;
+    }
+    position = (log10(beta) - log_beta_min) / log_beta_step;
+    if (position < 0.0) {
+        const double ratio = beta / pow(10.0, log_beta_min);
+        return table[0] * ratio * ratio;
+    }
+    if (position > (double)(points - 1)) {
+        return 0.0;
+    }
+    left = (Py_ssize_t)position;
+    if (left > points - 2) left = points - 2;
+    fraction = position - (double)left;
+    lo = table[left];
+    hi = table[left + 1];
+    if (lo > 0.0 && hi > 0.0) {
+        return exp((1.0 - fraction) * log(lo) + fraction * log(hi));
+    }
+    return (1.0 - fraction) * lo + fraction * hi;
+}
+
 static PyObject *
 accumulate_metal_line_profiles(PyObject *self, PyObject *args)
 {
-    PyObject *objects[17] = {NULL};
-    Py_buffer views[17] = {{0}};
+    enum { METAL_PROFILE_BUFFER_COUNT = 17 };
+    PyObject *objects[METAL_PROFILE_BUFFER_COUNT] = {NULL};
+    Py_buffer views[METAL_PROFILE_BUFFER_COUNT] = {{0}};
     Py_ssize_t n_wave, n_depth, n_line, line, depth, wave;
     int retain_inverted_emissivity;
+    int depth_major = 0;
     int index;
     const double pi = 3.1415926535897932384626433832795;
     const double light_speed = 2.99792458e10;
     const double log_two = 0.69314718055994530941723212145818;
+    /* Optional hydrogenic Stark-component profiles: a per-line index into
+     * rows of a table of the composite static profile C(beta) on a uniform
+     * log10(beta) grid.  A negative index keeps the formula-4 Holtsmark U. */
+    PyObject *pattern_index_object = NULL, *pattern_table_object = NULL;
+    Py_buffer pattern_index_view = {0}, pattern_table_view = {0};
+    double pattern_log_beta_min = 0.0, pattern_log_beta_step = 1.0;
+    const double *pattern_index = NULL, *pattern_table = NULL;
+    Py_ssize_t pattern_points = 0, pattern_rows = 0;
+    /* Optional block deposit (see expand_metal_line_blocks). */
+    PyObject *block_absorption_object = NULL, *block_emissivity_object = NULL;
+    Py_buffer block_absorption_view = {0}, block_emissivity_view = {0};
+    double block_tolerance = 0.0;
+    double *block_absorption = NULL, *block_emissivity = NULL;
+    Py_ssize_t block_count[METAL_BLOCK_LEVELS], block_offset[METAL_BLOCK_LEVELS];
+    Py_ssize_t total_blocks = 0;
 
     (void)self;
     if (!PyArg_ParseTuple(
             args,
-            "OOOOOOOOOOOOOOOOOp:accumulate_metal_line_profiles",
+            "OOOOOOOOOOOOOOOOOp|pOOddOOd:accumulate_metal_line_profiles",
             &objects[0], &objects[1], &objects[2], &objects[3],
             &objects[4], &objects[5], &objects[6], &objects[7],
             &objects[8], &objects[9], &objects[10], &objects[11],
             &objects[12], &objects[13], &objects[14], &objects[15],
             &objects[16],
-            &retain_inverted_emissivity)) {
+            &retain_inverted_emissivity, &depth_major,
+            &pattern_index_object, &pattern_table_object,
+            &pattern_log_beta_min, &pattern_log_beta_step,
+            &block_absorption_object, &block_emissivity_object,
+            &block_tolerance)) {
         return NULL;
     }
-    for (index = 0; index < 17; ++index) {
+    for (index = 0; index < METAL_PROFILE_BUFFER_COUNT; ++index) {
         const int flags = PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES |
                           (index >= 15 ? PyBUF_WRITABLE : 0);
         if (PyObject_GetBuffer(objects[index], &views[index], flags) < 0) {
@@ -587,18 +859,55 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
         goto cleanup_metal;
     }
     n_wave = views[0].shape[0];
-    n_depth = views[1].shape[1];
+    n_depth = views[1].shape[depth_major ? 0 : 1];
     n_line = views[2].shape[0];
     if (n_wave < 1 || n_depth < 1 || n_line < 1 ||
-        views[1].shape[0] != n_wave || views[3].shape[0] != n_line ||
+        views[1].shape[depth_major ? 1 : 0] != n_wave ||
+        views[3].shape[0] != n_line ||
         views[6].shape[0] != n_line ||
         views[13].shape[0] != views[14].shape[0] ||
         views[13].shape[0] < 1 ||
-        views[15].shape[0] != n_wave || views[15].shape[1] != n_depth ||
-        views[16].shape[0] != n_wave || views[16].shape[1] != n_depth) {
+        views[15].shape[depth_major ? 1 : 0] != n_wave ||
+        views[15].shape[depth_major ? 0 : 1] != n_depth ||
+        views[16].shape[depth_major ? 1 : 0] != n_wave ||
+        views[16].shape[depth_major ? 0 : 1] != n_depth) {
         PyErr_SetString(PyExc_ValueError,
                         "metal-profile array shapes are inconsistent");
         goto cleanup_metal;
+    }
+    if (pattern_index_object != NULL && pattern_index_object != Py_None) {
+        if (pattern_table_object == NULL ||
+            PyObject_GetBuffer(pattern_index_object, &pattern_index_view,
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES) < 0 ||
+            PyObject_GetBuffer(pattern_table_object, &pattern_table_view,
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES) < 0) {
+            if (!PyErr_Occurred()) {
+                PyErr_SetString(PyExc_ValueError,
+                                "a Stark pattern index requires a pattern table");
+            }
+            goto cleanup_metal;
+        }
+        if (!is_double_buffer(&pattern_index_view) ||
+            !is_double_buffer(&pattern_table_view) ||
+            !PyBuffer_IsContiguous(&pattern_index_view, 'C') ||
+            !PyBuffer_IsContiguous(&pattern_table_view, 'C') ||
+            pattern_index_view.ndim != 1 || pattern_table_view.ndim != 2 ||
+            pattern_index_view.shape[0] != n_line ||
+            pattern_table_view.shape[1] < 2 || !(pattern_log_beta_step > 0.0)) {
+            PyErr_SetString(PyExc_ValueError,
+                            "Stark pattern arrays must be C-contiguous float64 (line,) and (pattern, point)");
+            goto cleanup_metal;
+        }
+        pattern_index = (const double *)pattern_index_view.buf;
+        pattern_table = (const double *)pattern_table_view.buf;
+        pattern_rows = pattern_table_view.shape[0];
+        pattern_points = pattern_table_view.shape[1];
+        for (line = 0; line < n_line; ++line) {
+            if (pattern_index[line] >= (double)pattern_rows) {
+                PyErr_SetString(PyExc_ValueError, "Stark pattern index out of range");
+                goto cleanup_metal;
+            }
+        }
     }
     for (index = 4; index <= 12; ++index) {
         if (index == 6) {
@@ -611,6 +920,35 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
                             "per-line metal-profile arrays must have shape (line, depth)");
             goto cleanup_metal;
         }
+    }
+    if (block_absorption_object != NULL && block_absorption_object != Py_None) {
+        if (!(block_tolerance > 0.0) || !(block_tolerance < 1.0) || !depth_major ||
+            block_emissivity_object == NULL || block_emissivity_object == Py_None) {
+            PyErr_SetString(PyExc_ValueError,
+                            "block deposit needs depth-major outputs, both block arrays and 0 < tolerance < 1");
+            goto cleanup_metal;
+        }
+        total_blocks = metal_block_layout(n_wave, block_count, block_offset);
+        if (PyObject_GetBuffer(block_absorption_object, &block_absorption_view,
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES | PyBUF_WRITABLE) < 0 ||
+            PyObject_GetBuffer(block_emissivity_object, &block_emissivity_view,
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES | PyBUF_WRITABLE) < 0) {
+            goto cleanup_metal;
+        }
+        if (!is_double_buffer(&block_absorption_view) || !is_double_buffer(&block_emissivity_view) ||
+            !PyBuffer_IsContiguous(&block_absorption_view, 'C') ||
+            !PyBuffer_IsContiguous(&block_emissivity_view, 'C') ||
+            block_absorption_view.ndim != 3 || block_emissivity_view.ndim != 3 ||
+            block_absorption_view.shape[0] != n_depth || block_emissivity_view.shape[0] != n_depth ||
+            block_absorption_view.shape[1] != total_blocks ||
+            block_emissivity_view.shape[1] != total_blocks ||
+            block_absorption_view.shape[2] != 2 || block_emissivity_view.shape[2] != 2) {
+            PyErr_SetString(PyExc_ValueError,
+                            "block arrays must be C-contiguous float64 (depth, blocks, 2)");
+            goto cleanup_metal;
+        }
+        block_absorption = (double *)block_absorption_view.buf;
+        block_emissivity = (double *)block_emissivity_view.buf;
     }
 
     {
@@ -632,14 +970,72 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
         double *absorption = (double *)views[15].buf;
         double *emissivity = (double *)views[16].buf;
         const Py_ssize_t quadrature_size = views[13].shape[0];
+        struct HoltsmarkTable holtsmark;
+        /* Access the shared cache only while holding the GIL, then copy to
+         * call-local storage before releasing it. Different quadratures and
+         * concurrent profile calculations therefore cannot change this call.
+         */
+        static struct HoltsmarkTable cached_holtsmark;
+        static double cached_argument[128], cached_weight[128];
+        static Py_ssize_t cached_size = -1;
+        if (quadrature_size <= 128) {
+            const size_t bytes = (size_t)quadrature_size * sizeof(double);
+            if (cached_size != quadrature_size ||
+                memcmp(cached_argument, quadrature_argument, bytes) != 0 ||
+                memcmp(cached_weight, quadrature_weight, bytes) != 0) {
+                prepare_holtsmark_table(&cached_holtsmark, quadrature_argument,
+                                       quadrature_weight, quadrature_size);
+                memcpy(cached_argument, quadrature_argument, bytes);
+                memcpy(cached_weight, quadrature_weight, bytes);
+                cached_size = quadrature_size;
+            }
+            memcpy(&holtsmark, &cached_holtsmark, sizeof(holtsmark));
+        } else {
+            prepare_holtsmark_table(&holtsmark, quadrature_argument,
+                                   quadrature_weight, quadrature_size);
+        }
 
+        {
+        /* The loop below runs line -> depth -> wavelength.  Accumulating in
+         * depth-major copies makes its innermost reads/writes contiguous; the
+         * (wavelength, depth) outputs are transposed back once afterwards.
+         * Each element receives exactly the same additions in the same
+         * order, so results are bit-identical to direct accumulation. */
+        double *transposed = NULL;
+        double *absorption_t, *emissivity_t;
+        const double *planck_t;
+        if (depth_major) {
+            absorption_t = absorption;
+            emissivity_t = emissivity;
+            planck_t = planck;
+        } else {
+            transposed = (double *)PyMem_RawMalloc(
+                (size_t)n_wave * (size_t)n_depth * 3 * sizeof(double));
+            if (transposed == NULL) {
+                PyErr_NoMemory();
+                goto cleanup_metal;
+            }
+            absorption_t = transposed;
+            emissivity_t = transposed + n_wave * n_depth;
+            planck_t = transposed + 2 * n_wave * n_depth;
+        }
         Py_BEGIN_ALLOW_THREADS
+        if (!depth_major) {
+            transpose_wave_depth(absorption, absorption_t, n_wave, n_depth, 0);
+            transpose_wave_depth(emissivity, emissivity_t, n_wave, n_depth, 0);
+            transpose_wave_depth((double *)planck, (double *)planck_t,
+                                 n_wave, n_depth, 0);
+        }
         for (line = 0; line < n_line; ++line) {
             const double line_center = center[line];
             const double center_cm = line_center * 1.0e-8;
             const double frequency_conversion =
                 1.0e8 * center_cm * center_cm / light_speed;
             const double center_frequency = light_speed / center_cm;
+            const double *line_pattern =
+                (pattern_index != NULL && pattern_index[line] >= 0.0)
+                    ? pattern_table + (Py_ssize_t)pattern_index[line] * pattern_points
+                    : NULL;
             for (depth = 0; depth < n_depth; ++depth) {
                 const Py_ssize_t line_depth = line * n_depth + depth;
                 const double sigma = gaussian_sigma[line_depth];
@@ -663,8 +1059,16 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
                 if (100.0 * gamma > half_window) {
                     half_window = 100.0 * gamma;
                 }
+                /* Impact (Lorentz) wings are not valid at detunings comparable
+                   to the line frequency; see LINE_WINDOW_MAX_FRACTION. */
+                if (half_window > LINE_WINDOW_MAX_FRACTION * line_center) {
+                    half_window = LINE_WINDOW_MAX_FRACTION * line_center;
+                }
                 if (static_half_window > half_window) {
                     half_window = static_half_window;
+                }
+                if (half_window > LINE_WINDOW_MAX_FRACTION * line_center) {
+                    half_window = LINE_WINDOW_MAX_FRACTION * line_center;
                 }
                 start = lower_bound_double(
                     wavelength, n_wave, line_center - half_window);
@@ -707,12 +1111,71 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
                     continue;
                 }
 
+                {
+                const int use_blocks = block_absorption != NULL && field_scale == 0.0;
+                struct PseudoVoigt voigt;
+                if (use_blocks) {
+                    pseudo_voigt_setup(&voigt, line_center, sigma, gamma);
+                }
                 for (wave = start; wave < stop; ++wave) {
+                    if (use_blocks) {
+                        /* Deposit an aligned block whose profile is linear to
+                         * block_tolerance (checked at both end points); its
+                         * value/slope at the midpoint are expanded onto the
+                         * grid by expand_metal_line_blocks. */
+                        int level, accepted = 0;
+                        for (level = METAL_BLOCK_LEVELS - 1; level >= 0; --level) {
+                            const Py_ssize_t size = metal_block_size[level];
+                            double first, last, middle, value, slope;
+                            Py_ssize_t slot;
+                            if (wave % size != 0 || wave + size > stop ||
+                                wave / size >= block_count[level]) {
+                                continue;
+                            }
+                            first = wavelength[wave];
+                            last = wavelength[wave + size - 1];
+                            middle = 0.5 * (first + last);
+                            value = pseudo_voigt_value(&voigt, middle);
+                            slope = pseudo_voigt_derivative(&voigt, middle);
+                            if (fabs(pseudo_voigt_value(&voigt, first) -
+                                     (value + slope * (first - middle))) >
+                                    block_tolerance * value ||
+                                fabs(pseudo_voigt_value(&voigt, last) -
+                                     (value + slope * (last - middle))) >
+                                    block_tolerance * value) {
+                                continue;
+                            }
+                            slot = (depth * total_blocks + block_offset[level] +
+                                    wave / size) * 2;
+                            value *= strength[line] * frequency_conversion;
+                            slope *= strength[line] * frequency_conversion;
+                            if (net_departure > 0.0) {
+                                block_absorption[slot] += value * line_absorption_scale;
+                                block_absorption[slot + 1] += slope * line_absorption_scale;
+                            }
+                            block_emissivity[slot] += value * line_emissivity_scale;
+                            block_emissivity[slot + 1] += slope * line_emissivity_scale;
+                            wave += size - 1;
+                            accepted = 1;
+                            break;
+                        }
+                        if (accepted) {
+                            continue;
+                        }
+                    }
+                    {
                     const double offset = wavelength[wave] - line_center;
                     const double normalized_offset = offset / width;
-                    const double gaussian =
+                    /* exp() of an argument below -746 is exactly +0 in IEEE
+                     * double (the smallest subnormal is exp(-744.44)); skip
+                     * the call there.  Half of the far-wing samples of
+                     * Lorentz-dominated lines take this branch; results are
+                     * bit-identical. */
+                    const double gaussian_argument =
+                        -4.0 * log_two * normalized_offset * normalized_offset;
+                    const double gaussian = gaussian_argument < -746.0 ? 0.0 :
                         2.0 * sqrt(log_two) / (sqrt(pi) * width) *
-                        exp(-4.0 * log_two * normalized_offset * normalized_offset);
+                        exp(gaussian_argument);
                     const double lorentz =
                         2.0 / (pi * width) /
                         (1.0 + 4.0 * normalized_offset * normalized_offset);
@@ -720,7 +1183,7 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
                         mixing * lorentz + (1.0 - mixing) * gaussian;
                     double cross_section =
                         strength[line] * profile * frequency_conversion;
-                    const Py_ssize_t wave_depth = wave * n_depth + depth;
+                    const Py_ssize_t wave_depth = depth * n_wave + wave;
 
                     if (field_scale > 0.0) {
                         const double frequency =
@@ -730,39 +1193,189 @@ accumulate_metal_line_profiles(PyObject *self, PyObject *args)
                         if (beta <= 30.0) {
                             const double static_cross_section =
                                 0.5 * static_amplitude[line_depth] *
-                                holtsmark_distribution(
-                                    beta,
-                                    quadrature_argument,
-                                    quadrature_weight,
-                                    quadrature_size);
+                                (line_pattern != NULL
+                                    ? composite_stark_profile(
+                                          beta, line_pattern, pattern_points,
+                                          pattern_log_beta_min,
+                                          pattern_log_beta_step)
+                                    : holtsmark_distribution(
+                                          beta, &holtsmark));
                             if (static_cross_section > cross_section) {
                                 cross_section = static_cross_section;
                             }
                         }
                     }
                     if (net_departure > 0.0) {
-                        absorption[wave_depth] +=
+                        absorption_t[wave_depth] +=
                             cross_section * line_absorption_scale;
                     }
-                    emissivity[wave_depth] +=
+                    emissivity_t[wave_depth] +=
                         cross_section * line_emissivity_scale *
-                        planck[wave_depth];
+                        planck_t[wave_depth];
+                    }
+                }
+                }
+            }
+        }
+        if (!depth_major) {
+            transpose_wave_depth(absorption, absorption_t, n_wave, n_depth, 1);
+            transpose_wave_depth(emissivity, emissivity_t, n_wave, n_depth, 1);
+        }
+        Py_END_ALLOW_THREADS
+        PyMem_RawFree(transposed);
+        }
+    }
+
+    for (index = 0; index < METAL_PROFILE_BUFFER_COUNT; ++index) {
+        PyBuffer_Release(&views[index]);
+    }
+    if (pattern_index_view.obj != NULL) PyBuffer_Release(&pattern_index_view);
+    if (pattern_table_view.obj != NULL) PyBuffer_Release(&pattern_table_view);
+    if (block_absorption_view.obj != NULL) PyBuffer_Release(&block_absorption_view);
+    if (block_emissivity_view.obj != NULL) PyBuffer_Release(&block_emissivity_view);
+    Py_RETURN_NONE;
+
+cleanup_metal:
+    for (index = 0; index < METAL_PROFILE_BUFFER_COUNT; ++index) {
+        if (views[index].obj != NULL) {
+            PyBuffer_Release(&views[index]);
+        }
+    }
+    if (pattern_index_view.obj != NULL) PyBuffer_Release(&pattern_index_view);
+    if (pattern_table_view.obj != NULL) PyBuffer_Release(&pattern_table_view);
+    if (block_absorption_view.obj != NULL) PyBuffer_Release(&block_absorption_view);
+    if (block_emissivity_view.obj != NULL) PyBuffer_Release(&block_emissivity_view);
+    return NULL;
+}
+
+/* expand_metal_line_blocks(wavelength, planck, block_absorption,
+ * block_emissivity, absorption, emissivity): add the linear block deposits of
+ * accumulate_metal_line_profiles to the depth-major (depth, wavelength)
+ * outputs.  Coarse blocks are first pushed exactly onto their four children
+ * (value at the child midpoint, same slope); the finest blocks are then
+ * evaluated at every grid point, emissivity times the local Planck function.
+ * The block arrays are consumed (left modified). */
+static PyObject *
+expand_metal_line_blocks(PyObject *self, PyObject *args)
+{
+    PyObject *objects[6] = {NULL};
+    Py_buffer views[6] = {{0}};
+    Py_ssize_t n_wave, n_depth, total_blocks, depth;
+    Py_ssize_t count[METAL_BLOCK_LEVELS], offset[METAL_BLOCK_LEVELS];
+    double *midpoint = NULL;
+    int index;
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OOOOOO:expand_metal_line_blocks",
+                          &objects[0], &objects[1], &objects[2],
+                          &objects[3], &objects[4], &objects[5])) {
+        return NULL;
+    }
+    for (index = 0; index < 6; ++index) {
+        const int flags = PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES |
+                          (index >= 2 ? PyBUF_WRITABLE : 0);
+        if (PyObject_GetBuffer(objects[index], &views[index], flags) < 0) {
+            goto cleanup_expand;
+        }
+        if (!is_double_buffer(&views[index]) ||
+            !PyBuffer_IsContiguous(&views[index], 'C')) {
+            PyErr_SetString(PyExc_TypeError, "block expansion arrays must be C-contiguous float64");
+            goto cleanup_expand;
+        }
+    }
+    if (views[0].ndim != 1 || views[1].ndim != 2 || views[2].ndim != 3 ||
+        views[3].ndim != 3 || views[4].ndim != 2 || views[5].ndim != 2) {
+        PyErr_SetString(PyExc_ValueError, "block expansion arrays have invalid ranks");
+        goto cleanup_expand;
+    }
+    n_wave = views[0].shape[0];
+    n_depth = views[1].shape[0];
+    total_blocks = metal_block_layout(n_wave, count, offset);
+    for (index = 1; index < 6; ++index) {
+        if (views[index].shape[0] != n_depth) {
+            PyErr_SetString(PyExc_ValueError, "block expansion depth mismatch");
+            goto cleanup_expand;
+        }
+    }
+    if (views[1].shape[1] != n_wave || views[4].shape[1] != n_wave ||
+        views[5].shape[1] != n_wave ||
+        views[2].shape[1] != total_blocks || views[3].shape[1] != total_blocks ||
+        views[2].shape[2] != 2 || views[3].shape[2] != 2) {
+        PyErr_SetString(PyExc_ValueError, "block expansion shapes are inconsistent");
+        goto cleanup_expand;
+    }
+    midpoint = (double *)PyMem_RawMalloc((size_t)(total_blocks > 0 ? total_blocks : 1) * sizeof(double));
+    if (midpoint == NULL) {
+        PyErr_NoMemory();
+        goto cleanup_expand;
+    }
+    {
+        const double *wavelength = (const double *)views[0].buf;
+        const double *planck = (const double *)views[1].buf;
+        double *blocks[2];
+        double *outputs[2];
+        int level;
+        Py_ssize_t block;
+        blocks[0] = (double *)views[2].buf;
+        blocks[1] = (double *)views[3].buf;
+        outputs[0] = (double *)views[4].buf;
+        outputs[1] = (double *)views[5].buf;
+        Py_BEGIN_ALLOW_THREADS
+        for (level = 0; level < METAL_BLOCK_LEVELS; ++level) {
+            const Py_ssize_t size = metal_block_size[level];
+            for (block = 0; block < count[level]; ++block) {
+                midpoint[offset[level] + block] = 0.5 * (
+                    wavelength[block * size] + wavelength[block * size + size - 1]);
+            }
+        }
+        for (depth = 0; depth < n_depth; ++depth) {
+            int kind;
+            for (kind = 0; kind < 2; ++kind) {
+                double *coefficients = blocks[kind] + depth * total_blocks * 2;
+                double *output = outputs[kind] + depth * n_wave;
+                const double *planck_row = planck + depth * n_wave;
+                for (level = METAL_BLOCK_LEVELS - 1; level > 0; --level) {
+                    const Py_ssize_t ratio = metal_block_size[level] / metal_block_size[level - 1];
+                    for (block = 0; block < count[level]; ++block) {
+                        const Py_ssize_t parent = offset[level] + block;
+                        const double value = coefficients[parent * 2];
+                        const double slope = coefficients[parent * 2 + 1];
+                        Py_ssize_t child;
+                        if (value == 0.0 && slope == 0.0) {
+                            continue;
+                        }
+                        for (child = block * ratio; child < (block + 1) * ratio; ++child) {
+                            const Py_ssize_t slot = offset[level - 1] + child;
+                            coefficients[slot * 2] += value + slope * (midpoint[slot] - midpoint[parent]);
+                            coefficients[slot * 2 + 1] += slope;
+                        }
+                    }
+                }
+                for (block = 0; block < count[0]; ++block) {
+                    const double value = coefficients[block * 2];
+                    const double slope = coefficients[block * 2 + 1];
+                    const double middle = midpoint[block];
+                    Py_ssize_t wave;
+                    if (value == 0.0 && slope == 0.0) {
+                        continue;
+                    }
+                    for (wave = block * metal_block_size[0];
+                         wave < (block + 1) * metal_block_size[0]; ++wave) {
+                        const double linear = value + slope * (wavelength[wave] - middle);
+                        output[wave] += kind == 0 ? linear : linear * planck_row[wave];
+                    }
                 }
             }
         }
         Py_END_ALLOW_THREADS
     }
-
-    for (index = 0; index < 16; ++index) {
-        PyBuffer_Release(&views[index]);
-    }
+    PyMem_RawFree(midpoint);
+    for (index = 0; index < 6; ++index) PyBuffer_Release(&views[index]);
     Py_RETURN_NONE;
 
-cleanup_metal:
-    for (index = 0; index < 16; ++index) {
-        if (views[index].obj != NULL) {
-            PyBuffer_Release(&views[index]);
-        }
+cleanup_expand:
+    PyMem_RawFree(midpoint);
+    for (index = 0; index < 6; ++index) {
+        if (views[index].obj != NULL) PyBuffer_Release(&views[index]);
     }
     return NULL;
 }
@@ -777,6 +1390,12 @@ linear_interpolate(
     double target)
 {
     Py_ssize_t right;
+    /* A NaN target satisfies neither endpoint comparison.  Without this
+     * guard upper_bound_double returns zero and the interpolation bracket
+     * would read wavelength[-1]/values[-n_depth]. */
+    if (isnan(target)) {
+        return NAN;
+    }
     if (target <= wavelength[0]) {
         return values[depth];
     }
@@ -854,6 +1473,30 @@ metal_line_mean_intensity(PyObject *self, PyObject *args)
 
     {
         const double *wavelength = (const double *)views[0].buf;
+        const double *center = (const double *)views[3].buf;
+        for (index = 0; index < n_wave; ++index) {
+            if (!isfinite(wavelength[index]) || wavelength[index] <= 0.0 ||
+                (index > 0 && wavelength[index] <= wavelength[index - 1])) {
+                PyErr_SetString(
+                    PyExc_ValueError,
+                    "line-mean wavelength grid must be finite, positive, and strictly increasing"
+                );
+                goto cleanup_line_mean;
+            }
+        }
+        for (line = 0; line < n_line; ++line) {
+            if (!isfinite(center[line]) || center[line] <= 0.0) {
+                PyErr_SetString(
+                    PyExc_ValueError,
+                    "line centers must be finite and positive"
+                );
+                goto cleanup_line_mean;
+            }
+        }
+    }
+
+    {
+        const double *wavelength = (const double *)views[0].buf;
         const double *intensity = (const double *)views[1].buf;
         const double *lambda_diagonal = (const double *)views[2].buf;
         const double *center = (const double *)views[3].buf;
@@ -868,7 +1511,9 @@ metal_line_mean_intensity(PyObject *self, PyObject *args)
                 const Py_ssize_t line_depth = line * n_depth + depth;
                 const double sigma = gaussian_sigma[line_depth];
                 const double gamma = lorentz_hwhm[line_depth];
-                const double half_width = fmax(7.0 * sigma, 100.0 * gamma);
+                const double half_width = fmin(
+                    fmax(7.0 * sigma, 100.0 * gamma),
+                    LINE_WINDOW_MAX_FRACTION * center[line]);
                 const Py_ssize_t start = lower_bound_double(
                     wavelength, n_wave, center[line] - half_width);
                 const Py_ssize_t stop = upper_bound_double(
@@ -955,6 +1600,332 @@ cleanup_line_mean:
     return NULL;
 }
 
+/* Several profile-weighted fields in one pass over each line profile.
+ *
+ * metal_line_profile_means(wavelength, fields, center, sigma, gamma, means
+ *                          [, block_tolerance])
+ * with fields a tuple of (wavelength, depth) arrays and means a tuple of the
+ * same length of (line, depth) outputs.  With block_tolerance == 0 (the
+ * default) every mean equals metal_line_mean_intensity bit for bit; the
+ * profile is merely evaluated once for all fields, on contiguous copies of
+ * each depth's field columns.
+ *
+ * With block_tolerance > 0 the trapezoid sum over the window is evaluated
+ * hierarchically.  Aligned blocks of 16, 256 and 4096 grid intervals carry
+ * the exact trapezoid moments int F dlambda and int F (lambda - m) dlambda
+ * about their midpoint m.  A block replaces its intervals whenever the
+ * linear profile phi(m) + phi'(m) (lambda - m) reproduces phi at both block
+ * ends to block_tolerance * phi(m); the block then contributes
+ * phi(m) M0 + phi'(m) M1.  Narrow line cores therefore keep the fine grid,
+ * while broad Stark-damped profiles and far wings (smooth over many grid
+ * intervals) are summed by blocks.  The normalization uses the identical
+ * quadrature (F = 1), so a constant field is returned exactly, and every
+ * field shares one linear operator, preserving exact detailed balance
+ * between the upward and downward rate integrands. */
+#define PROFILE_MEAN_MAX_FIELDS 8
+#define PROFILE_MEAN_LEVELS 6
+static PyObject *
+metal_line_profile_means(PyObject *self, PyObject *args)
+{
+    PyObject *objects[4] = {NULL};
+    PyObject *field_tuple = NULL, *mean_tuple = NULL;
+    Py_buffer views[4] = {{0}};
+    Py_buffer field_views[PROFILE_MEAN_MAX_FIELDS] = {{0}};
+    Py_buffer mean_views[PROFILE_MEAN_MAX_FIELDS] = {{0}};
+    Py_ssize_t n_wave, n_depth, n_line, n_field = 0, line, depth, field;
+    Py_ssize_t level_size[PROFILE_MEAN_LEVELS] = {4, 16, 64, 256, 1024, 4096};
+    Py_ssize_t level_count[PROFILE_MEAN_LEVELS] = {0};
+    Py_ssize_t level_offset[PROFILE_MEAN_LEVELS] = {0};
+    Py_ssize_t total_blocks = 0;
+    double block_tolerance = 0.0;
+    int index, level;
+    double *columns = NULL, *moments = NULL, *midpoints = NULL;
+
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OO!OOOO!|d:metal_line_profile_means",
+                          &objects[0], &PyTuple_Type, &field_tuple,
+                          &objects[1], &objects[2], &objects[3],
+                          &PyTuple_Type, &mean_tuple, &block_tolerance)) {
+        return NULL;
+    }
+    if (!(block_tolerance >= 0.0) || !(block_tolerance < 1.0)) {
+        PyErr_SetString(PyExc_ValueError, "block_tolerance must be in [0, 1)");
+        return NULL;
+    }
+    n_field = PyTuple_GET_SIZE(field_tuple);
+    if (n_field < 1 || n_field > PROFILE_MEAN_MAX_FIELDS ||
+        PyTuple_GET_SIZE(mean_tuple) != n_field) {
+        PyErr_SetString(PyExc_ValueError,
+                        "fields and means must be tuples of equal length 1..8");
+        return NULL;
+    }
+    for (index = 0; index < 4; ++index) {
+        if (PyObject_GetBuffer(objects[index], &views[index],
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES) < 0) {
+            goto cleanup_profile_means;
+        }
+        if (!is_double_buffer(&views[index]) ||
+            !PyBuffer_IsContiguous(&views[index], 'C')) {
+            PyErr_SetString(PyExc_TypeError,
+                            "line-mean arrays must be C-contiguous float64");
+            goto cleanup_profile_means;
+        }
+    }
+    for (field = 0; field < n_field; ++field) {
+        if (PyObject_GetBuffer(PyTuple_GET_ITEM(field_tuple, field),
+                               &field_views[field],
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES) < 0 ||
+            PyObject_GetBuffer(PyTuple_GET_ITEM(mean_tuple, field),
+                               &mean_views[field],
+                               PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES |
+                               PyBUF_WRITABLE) < 0) {
+            goto cleanup_profile_means;
+        }
+        if (!is_double_buffer(&field_views[field]) ||
+            !is_double_buffer(&mean_views[field]) ||
+            !PyBuffer_IsContiguous(&field_views[field], 'C') ||
+            !PyBuffer_IsContiguous(&mean_views[field], 'C') ||
+            field_views[field].ndim != 2 || mean_views[field].ndim != 2) {
+            PyErr_SetString(PyExc_TypeError,
+                            "fields and means must be C-contiguous 2-D float64");
+            goto cleanup_profile_means;
+        }
+    }
+    if (views[0].ndim != 1 || views[1].ndim != 1 ||
+        views[2].ndim != 2 || views[3].ndim != 2) {
+        PyErr_SetString(PyExc_ValueError, "line-mean arrays have invalid ranks");
+        goto cleanup_profile_means;
+    }
+    n_wave = views[0].shape[0];
+    n_line = views[1].shape[0];
+    n_depth = field_views[0].shape[1];
+    if (n_wave < 1 || n_depth < 1 ||
+        views[2].shape[0] != n_line || views[2].shape[1] != n_depth ||
+        views[3].shape[0] != n_line || views[3].shape[1] != n_depth) {
+        PyErr_SetString(PyExc_ValueError, "line-mean array shapes are inconsistent");
+        goto cleanup_profile_means;
+    }
+    for (field = 0; field < n_field; ++field) {
+        if (field_views[field].shape[0] != n_wave ||
+            field_views[field].shape[1] != n_depth ||
+            mean_views[field].shape[0] != n_line ||
+            mean_views[field].shape[1] != n_depth) {
+            PyErr_SetString(PyExc_ValueError,
+                            "line-mean field/output shapes are inconsistent");
+            goto cleanup_profile_means;
+        }
+    }
+    if (block_tolerance > 0.0) {
+        for (level = 0; level < PROFILE_MEAN_LEVELS; ++level) {
+            level_count[level] = (n_wave - 1) / level_size[level];
+            level_offset[level] = total_blocks;
+            total_blocks += level_count[level];
+        }
+    }
+    columns = (double *)PyMem_RawMalloc(
+        (size_t)n_field * (size_t)n_wave * sizeof(double));
+    if (total_blocks > 0) {
+        moments = (double *)PyMem_RawMalloc(
+            (size_t)total_blocks * (size_t)n_field * 2 * sizeof(double));
+        midpoints = (double *)PyMem_RawMalloc(
+            (size_t)total_blocks * sizeof(double));
+    }
+    if (columns == NULL || (total_blocks > 0 && (moments == NULL || midpoints == NULL))) {
+        PyErr_NoMemory();
+        goto cleanup_profile_means;
+    }
+
+    {
+        const double *wavelength = (const double *)views[0].buf;
+        const double *center = (const double *)views[1].buf;
+        const double *gaussian_sigma = (const double *)views[2].buf;
+        const double *lorentz_hwhm = (const double *)views[3].buf;
+        const double *fields[PROFILE_MEAN_MAX_FIELDS];
+        double *means[PROFILE_MEAN_MAX_FIELDS];
+        for (field = 0; field < n_field; ++field) {
+            fields[field] = (const double *)field_views[field].buf;
+            means[field] = (double *)mean_views[field].buf;
+        }
+
+        Py_BEGIN_ALLOW_THREADS
+        for (level = 0; level < PROFILE_MEAN_LEVELS; ++level) {
+            Py_ssize_t block;
+            for (block = 0; block < level_count[level]; ++block) {
+                midpoints[level_offset[level] + block] = 0.5 * (
+                    wavelength[block * level_size[level]] +
+                    wavelength[(block + 1) * level_size[level]]);
+            }
+        }
+        for (depth = 0; depth < n_depth; ++depth) {
+            Py_ssize_t wave;
+            for (field = 0; field < n_field; ++field) {
+                double *column = columns + field * n_wave;
+                const double *source = fields[field];
+                for (wave = 0; wave < n_wave; ++wave) {
+                    column[wave] = source[wave * n_depth + depth];
+                }
+            }
+            /* Trapezoid moments of every field over each block, built
+             * from the finest level upward (exact moment translation). */
+            if (total_blocks > 0) {
+                Py_ssize_t block, child;
+                for (field = 0; field < n_field; ++field) {
+                    const double *column = columns + field * n_wave;
+                    for (block = 0; block < level_count[0]; ++block) {
+                        const Py_ssize_t first = block * level_size[0];
+                        const double middle = midpoints[block];
+                        double zeroth = 0.0, first_moment = 0.0;
+                        for (wave = first; wave < first + level_size[0]; ++wave) {
+                            const double half = 0.5 * (wavelength[wave + 1] - wavelength[wave]);
+                            zeroth += half * (column[wave] + column[wave + 1]);
+                            first_moment += half * (
+                                column[wave] * (wavelength[wave] - middle) +
+                                column[wave + 1] * (wavelength[wave + 1] - middle));
+                        }
+                        moments[(block * n_field + field) * 2] = zeroth;
+                        moments[(block * n_field + field) * 2 + 1] = first_moment;
+                    }
+                    for (level = 1; level < PROFILE_MEAN_LEVELS; ++level) {
+                        const Py_ssize_t ratio = level_size[level] / level_size[level - 1];
+                        for (block = 0; block < level_count[level]; ++block) {
+                            const Py_ssize_t parent = level_offset[level] + block;
+                            const double middle = midpoints[parent];
+                            double zeroth = 0.0, first_moment = 0.0;
+                            for (child = block * ratio; child < (block + 1) * ratio; ++child) {
+                                const Py_ssize_t source = level_offset[level - 1] + child;
+                                const double child_zeroth = moments[(source * n_field + field) * 2];
+                                zeroth += child_zeroth;
+                                first_moment += moments[(source * n_field + field) * 2 + 1] +
+                                    (midpoints[source] - middle) * child_zeroth;
+                            }
+                            moments[(parent * n_field + field) * 2] = zeroth;
+                            moments[(parent * n_field + field) * 2 + 1] = first_moment;
+                        }
+                    }
+                }
+            }
+            for (line = 0; line < n_line; ++line) {
+                const Py_ssize_t line_depth = line * n_depth + depth;
+                const double line_center = center[line];
+                const double sigma = gaussian_sigma[line_depth];
+                const double gamma = lorentz_hwhm[line_depth];
+                const double half_width = fmin(
+                    fmax(7.0 * sigma, 100.0 * gamma),
+                    LINE_WINDOW_MAX_FRACTION * line_center);
+                const Py_ssize_t start = lower_bound_double(
+                    wavelength, n_wave, line_center - half_width);
+                const Py_ssize_t stop = upper_bound_double(
+                    wavelength, n_wave, line_center + half_width);
+                if (stop - start >= 3) {
+                    struct PseudoVoigt voigt;
+                    double previous_profile, normalization = 0.0;
+                    double integral[PROFILE_MEAN_MAX_FIELDS] = {0.0};
+                    Py_ssize_t segment = start;
+                    int previous_valid = 0;
+                    pseudo_voigt_setup(&voigt, line_center, sigma, gamma);
+                    previous_profile = 0.0;
+                    while (segment < stop - 1) {
+                        int used_block = 0;
+                        if (total_blocks > 0) {
+                            for (level = PROFILE_MEAN_LEVELS - 1; level >= 0; --level) {
+                                const Py_ssize_t size = level_size[level];
+                                Py_ssize_t block, slot;
+                                double middle, half, value, slope, low, high;
+                                if (segment % size != 0 || segment + size > stop - 1) {
+                                    continue;
+                                }
+                                block = segment / size;
+                                if (block >= level_count[level]) {
+                                    continue;
+                                }
+                                slot = level_offset[level] + block;
+                                middle = midpoints[slot];
+                                value = pseudo_voigt_value(&voigt, middle);
+                                slope = pseudo_voigt_derivative(&voigt, middle);
+                                low = pseudo_voigt_value(&voigt, wavelength[segment]);
+                                high = pseudo_voigt_value(&voigt, wavelength[segment + size]);
+                                half = middle - wavelength[segment];
+                                if (fabs(low - (value - slope * half)) >
+                                        block_tolerance * value ||
+                                    fabs(high - (value + slope * (wavelength[segment + size] - middle))) >
+                                        block_tolerance * value) {
+                                    continue;
+                                }
+                                normalization += value *
+                                    (wavelength[segment + size] - wavelength[segment]);
+                                for (field = 0; field < n_field; ++field) {
+                                    integral[field] +=
+                                        value * moments[(slot * n_field + field) * 2] +
+                                        slope * moments[(slot * n_field + field) * 2 + 1];
+                                }
+                                segment += size;
+                                previous_profile = high;
+                                previous_valid = 1;
+                                used_block = 1;
+                                break;
+                            }
+                        }
+                        if (!used_block) {
+                            const double spacing =
+                                wavelength[segment + 1] - wavelength[segment];
+                            double profile;
+                            if (!previous_valid) {
+                                previous_profile =
+                                    pseudo_voigt_value(&voigt, wavelength[segment]);
+                            }
+                            profile = pseudo_voigt_value(&voigt, wavelength[segment + 1]);
+                            normalization += 0.5 * spacing *
+                                (previous_profile + profile);
+                            for (field = 0; field < n_field; ++field) {
+                                const double *column = columns + field * n_wave;
+                                integral[field] += 0.5 * spacing *
+                                    (column[segment] * previous_profile +
+                                     column[segment + 1] * profile);
+                            }
+                            previous_profile = profile;
+                            previous_valid = 1;
+                            segment += 1;
+                        }
+                    }
+                    for (field = 0; field < n_field; ++field) {
+                        means[field][line_depth] = integral[field] / normalization;
+                    }
+                } else {
+                    for (field = 0; field < n_field; ++field) {
+                        means[field][line_depth] = linear_interpolate(
+                            wavelength, fields[field], n_wave, n_depth, depth,
+                            line_center);
+                    }
+                }
+            }
+        }
+        Py_END_ALLOW_THREADS
+    }
+
+    PyMem_RawFree(columns);
+    PyMem_RawFree(moments);
+    PyMem_RawFree(midpoints);
+    for (index = 0; index < 4; ++index) PyBuffer_Release(&views[index]);
+    for (field = 0; field < n_field; ++field) {
+        PyBuffer_Release(&field_views[field]);
+        PyBuffer_Release(&mean_views[field]);
+    }
+    Py_RETURN_NONE;
+
+cleanup_profile_means:
+    PyMem_RawFree(columns);
+    PyMem_RawFree(moments);
+    PyMem_RawFree(midpoints);
+    for (index = 0; index < 4; ++index) {
+        if (views[index].obj != NULL) PyBuffer_Release(&views[index]);
+    }
+    for (field = 0; field < n_field; ++field) {
+        if (field_views[field].obj != NULL) PyBuffer_Release(&field_views[field]);
+        if (mean_views[field].obj != NULL) PyBuffer_Release(&mean_views[field]);
+    }
+    return NULL;
+}
+
 /* Bound-free radiative rates for one or more level cross sections. */
 static PyObject *
 photoionization_rates(PyObject *self, PyObject *args)
@@ -1013,26 +1984,43 @@ photoionization_rates(PyObject *self, PyObject *args)
         const double *intensity = (const double *)views[1].buf;
         const double *cross_section = (const double *)views[2].buf;
         double *rate = (double *)views[3].buf;
+        double *previous = PyMem_Malloc((size_t)n_depth * sizeof(double));
+        if (previous == NULL) {
+            PyErr_NoMemory();
+            goto cleanup_photoionization;
+        }
         Py_BEGIN_ALLOW_THREADS
+        /* Depth is contiguous in the radiation array. Keep each depth's
+         * wavelength accumulation in the original order, but traverse whole
+         * rows so the inner loop can vectorize without strided rereads. */
         for (level = 0; level < n_level; ++level) {
+            double *local_rate = rate + level * n_depth;
             for (depth = 0; depth < n_depth; ++depth) {
-                double integral = 0.0;
-                double previous =
-                    intensity[depth] * cross_section[level * n_wave] *
-                    wavelength[0] * rate_prefactor;
-                for (wave = 1; wave < n_wave; ++wave) {
-                    const double current =
-                        intensity[wave * n_depth + depth] *
-                        cross_section[level * n_wave + wave] *
-                        wavelength[wave] * rate_prefactor;
-                    integral += 0.5 * (previous + current) *
-                                (wavelength[wave] - wavelength[wave - 1]);
-                    previous = current;
+                local_rate[depth] = 0.0;
+                previous[depth] = intensity[depth] * cross_section[level * n_wave] *
+                                  wavelength[0] * rate_prefactor;
+            }
+            for (wave = 1; wave < n_wave; ++wave) {
+                const double sigma = cross_section[level * n_wave + wave];
+                const double lambda = wavelength[wave];
+                /* An interval with zero cross section at both ends adds a
+                 * signed zero to a zero-initialized, nonnegatively
+                 * accumulated rate: skipping it is bitwise exact. */
+                if (sigma == 0.0 &&
+                    cross_section[level * n_wave + wave - 1] == 0.0) {
+                    continue;
                 }
-                rate[level * n_depth + depth] = integral;
+                const double interval = lambda - wavelength[wave - 1];
+                const double *local_intensity = intensity + wave * n_depth;
+                for (depth = 0; depth < n_depth; ++depth) {
+                    const double current = local_intensity[depth] * sigma * lambda * rate_prefactor;
+                    local_rate[depth] += 0.5 * (previous[depth] + current) * interval;
+                    previous[depth] = current;
+                }
             }
         }
         Py_END_ALLOW_THREADS
+        PyMem_Free(previous);
     }
 
     for (index = 0; index < 4; ++index) {
@@ -1444,7 +2432,7 @@ stark_profile_at_detuning(
         const double query = log10(scaled_alpha);
         if (query <= log_alpha[0]) {
             local_log_profile = log_profile[0];
-        } else if (query > log_alpha[n_alpha - 1]) {
+        } else if (query >= log_alpha[n_alpha - 1]) {
             const double slope =
                 (log_profile[n_alpha - 1] - log_profile[n_alpha - 2]) /
                 (log_alpha[n_alpha - 1] - log_alpha[n_alpha - 2]);
@@ -1465,6 +2453,12 @@ stark_profile_at_detuning(
                 upper = lower + 1;
             } else {
                 upper = upper_bound_double(log_alpha, n_alpha, query);
+                /* The endpoint is handled above.  Keep the interpolation
+                 * bracket valid if a future search change nevertheless
+                 * returns the one-past-the-end index. */
+                if (upper >= n_alpha) {
+                    upper = n_alpha - 1;
+                }
                 lower = upper - 1;
             }
             const double fraction =
@@ -1713,7 +2707,310 @@ cleanup_hydrogen_stark_lorentz:
     return result;
 }
 
+/* Fuse one level's bound-free contribution without wavelength/depth temporaries. */
+static PyObject *
+accumulate_bound_free_nlte(PyObject *self, PyObject *args)
+{
+    PyObject *objects[9] = {NULL};
+    Py_buffer views[9] = {{0}};
+    PyObject *result = NULL;
+    int index;
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OOOOOOOOO:accumulate_bound_free_nlte",
+            &objects[0], &objects[1], &objects[2], &objects[3], &objects[4],
+            &objects[5], &objects[6], &objects[7], &objects[8])) return NULL;
+    for (index = 0; index < 9; ++index) {
+        int flags = PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES |
+                    (index >= 7 ? PyBUF_WRITABLE : 0);
+        if (PyObject_GetBuffer(objects[index], &views[index], flags) < 0) goto cleanup;
+        if (!is_double_buffer(&views[index])) {
+            PyErr_SetString(PyExc_TypeError, "bound-free arrays must have native float64 dtype");
+            goto cleanup;
+        }
+        if (!PyBuffer_IsContiguous(&views[index], 'C')) {
+            PyErr_SetString(PyExc_ValueError, "bound-free arrays must be C-contiguous");
+            goto cleanup;
+        }
+        if (views[index].ndim != (index < 5 ? 1 : 2)) {
+            PyErr_SetString(PyExc_ValueError, "bound-free arrays have invalid dimensions");
+            goto cleanup;
+        }
+    }
+    {
+        const Py_ssize_t nw = views[0].shape[0], nd = views[1].shape[0];
+        for (index = 2; index < 5; ++index) {
+            if (views[index].shape[0] != nd) {
+                PyErr_SetString(PyExc_ValueError, "bound-free depth arrays must match");
+                goto cleanup;
+            }
+        }
+        for (index = 5; index < 9; ++index) {
+            if (views[index].shape[0] != nw || views[index].shape[1] != nd) {
+                PyErr_SetString(PyExc_ValueError, "bound-free wavelength/depth arrays must match");
+                goto cleanup;
+            }
+        }
+        const double *sigma = views[0].buf, *population = views[1].buf;
+        const double *density = views[2].buf, *lower = views[3].buf, *upper = views[4].buf;
+        const double *exponential = views[5].buf, *planck = views[6].buf;
+        double *absorption = views[7].buf, *emissivity = views[8].buf;
+        Py_BEGIN_ALLOW_THREADS
+        for (Py_ssize_t w = 0; w < nw; ++w) {
+            /* Longward of an edge sigma is exactly zero and every term below
+             * is a signed zero, which leaves the zero-initialized,
+             * nonnegatively accumulated outputs bitwise unchanged.  Skipping
+             * those rows avoids streaming the full grid for every level. */
+            if (sigma[w] == 0.0) {
+                continue;
+            }
+            for (Py_ssize_t d = 0; d < nd; ++d) {
+                const Py_ssize_t k = w * nd + d;
+                const double base = sigma[w] * population[d] / density[d];
+                const double local = base * (lower[d] - upper[d] * exponential[k]);
+                /* Preserve the existing per-level nonnegative-opacity policy. */
+                absorption[k] += local < 0.0 ? 0.0 : local;
+                emissivity[k] += base * (1.0 - exponential[k]) * planck[k] * upper[d];
+            }
+        }
+        Py_END_ALLOW_THREADS
+    }
+    Py_INCREF(Py_None);
+    result = Py_None;
+cleanup:
+    for (index = 0; index < 9; ++index) {
+        if (views[index].obj != NULL) PyBuffer_Release(&views[index]);
+    }
+    return result;
+}
+
+/* Subtraction-free GTH stationary populations; matrix[i,j] is rate j -> i. */
+static PyObject *
+positive_rate_equilibrium(PyObject *self, PyObject *args)
+{
+    PyObject *objects[3] = {NULL};
+    Py_buffer views[3] = {{0}};
+    PyObject *result = NULL;
+    double total, *rates = NULL, *exits = NULL, *probabilities = NULL;
+    int index, failure = 0;
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OOdO:positive_rate_equilibrium",
+                         &objects[0], &objects[1], &total, &objects[2])) return NULL;
+    for (index = 0; index < 3; ++index) {
+        const int flags = PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES |
+                          (index == 2 ? PyBUF_WRITABLE : 0);
+        if (PyObject_GetBuffer(objects[index], &views[index], flags) < 0) goto cleanup;
+        if (!is_double_buffer(&views[index])) {
+            PyErr_SetString(PyExc_TypeError, "rate-system arrays must have native float64 dtype");
+            goto cleanup;
+        }
+        if (!PyBuffer_IsContiguous(&views[index], 'C')) {
+            PyErr_SetString(PyExc_ValueError, "rate-system arrays must be C-contiguous");
+            goto cleanup;
+        }
+        if (views[index].ndim != (index == 0 ? 2 : 1)) {
+            PyErr_SetString(PyExc_ValueError, "rate-system arrays have invalid ranks");
+            goto cleanup;
+        }
+    }
+    {
+        const Py_ssize_t count = views[0].shape[0];
+        if (count < 1 || views[0].shape[1] != count ||
+            views[1].shape[0] != count || views[2].shape[0] != count) {
+            PyErr_SetString(PyExc_ValueError, "rate-system array shapes are inconsistent");
+            goto cleanup;
+        }
+        rates = PyMem_Malloc((size_t)views[0].len);
+        exits = PyMem_Malloc((size_t)count * sizeof(double));
+        probabilities = PyMem_Malloc((size_t)count * sizeof(double));
+        if (rates == NULL || exits == NULL || probabilities == NULL) {
+            PyErr_NoMemory();
+            goto cleanup;
+        }
+        const double *input = views[0].buf, *weights = views[1].buf;
+        double *population = views[2].buf;
+        Py_BEGIN_ALLOW_THREADS
+        for (Py_ssize_t i = 0; i < count; ++i) {
+            for (Py_ssize_t j = 0; j < count; ++j) {
+                const double value = i == j ? 0.0 : input[i * count + j];
+                rates[i * count + j] = value;
+                if (!isfinite(value) || value < 0.0) failure = 1;
+            }
+        }
+        for (Py_ssize_t k = count - 1; k > 0 && !failure; --k) {
+            double exit_rate = 0.0;
+            for (Py_ssize_t i = 0; i < k; ++i) exit_rate += rates[i * count + k];
+            exits[k] = exit_rate;
+            if (!isfinite(exit_rate) || exit_rate <= 0.0) { failure = 2; break; }
+            for (Py_ssize_t i = 0; i < k; ++i) probabilities[i] = rates[i * count + k] / exit_rate;
+            for (Py_ssize_t i = 0; i < k; ++i) {
+                double *row = rates + i * count;
+                const double probability = probabilities[i];
+                const double *indirect = rates + k * count;
+                for (Py_ssize_t j = 0; j < k; ++j) row[j] += probability * indirect[j];
+                row[i] = 0.0;
+            }
+        }
+        if (!failure) {
+            population[0] = 1.0;
+            for (Py_ssize_t k = 1; k < count; ++k) {
+                double incoming = 0.0, largest = 0.0;
+                for (Py_ssize_t j = 0; j < k; ++j) incoming += rates[k * count + j] * population[j];
+                population[k] = incoming / exits[k];
+                for (Py_ssize_t j = 0; j <= k; ++j) largest = fmax(largest, population[j]);
+                if (largest > 1e100) {
+                    for (Py_ssize_t j = 0; j <= k; ++j) population[j] /= largest;
+                }
+            }
+            double normalization = 0.0;
+            for (Py_ssize_t j = 0; j < count; ++j) normalization += weights[j] * population[j];
+            const double scale = total / normalization;
+            for (Py_ssize_t j = 0; j < count; ++j) {
+                population[j] *= scale;
+                if (!isfinite(population[j]) || population[j] < 0.0) failure = 3;
+            }
+        }
+        Py_END_ALLOW_THREADS
+    }
+    if (failure) {
+        const char *message = failure == 1 ? "statistical-equilibrium transition rates must be finite and nonnegative" :
+            failure == 2 ? "disconnected statistical-equilibrium rate system" : "nonphysical statistical-equilibrium populations";
+        PyErr_SetString(PyExc_RuntimeError, message);
+        goto cleanup;
+    }
+    Py_INCREF(Py_None);
+    result = Py_None;
+cleanup:
+    PyMem_Free(rates);
+    PyMem_Free(exits);
+    PyMem_Free(probabilities);
+    for (index = 0; index < 3; ++index) {
+        if (views[index].obj != NULL) PyBuffer_Release(&views[index]);
+    }
+    return result;
+}
+
+/* Tensor-product four-point Lagrange interpolation without array temporaries. */
+static Py_ssize_t
+cubic_table_weights(double coordinate, double minimum, double step,
+                    Py_ssize_t size, double weights[4])
+{
+    const double maximum = minimum + (size - 1) * step;
+    const double clipped = fmin(fmax(coordinate, minimum), maximum);
+    Py_ssize_t base = (Py_ssize_t)floor((clipped - minimum) / step) - 1;
+    if (base < 0) base = 0;
+    if (base > size - 4) base = size - 4;
+    for (int i = 0; i < 4; ++i) {
+        const double node = minimum + (base + i) * step;
+        weights[i] = 1.0;
+        for (int j = 0; j < 4; ++j) {
+            if (i != j) {
+                const double other = minimum + (base + j) * step;
+                weights[i] *= (clipped - other) / (node - other);
+            }
+        }
+    }
+    return base;
+}
+
+static PyObject *
+cubic_table_interpolate(PyObject *self, PyObject *args)
+{
+    PyObject *objects[4] = {NULL};
+    Py_buffer views[4] = {{0}};
+    PyObject *result = NULL;
+    double x_minimum, y_minimum, step;
+    int index;
+    (void)self;
+    if (!PyArg_ParseTuple(args, "OOOdddO:cubic_table_interpolate",
+            &objects[0], &objects[1], &objects[2],
+            &x_minimum, &y_minimum, &step, &objects[3])) return NULL;
+    if (!isfinite(x_minimum) || !isfinite(y_minimum) || !isfinite(step) || step <= 0.0) {
+        PyErr_SetString(PyExc_ValueError, "table coordinates require finite minima and a positive step");
+        return NULL;
+    }
+    for (index = 0; index < 4; ++index) {
+        const int flags = PyBUF_FORMAT | PyBUF_ND | PyBUF_STRIDES |
+                          (index == 3 ? PyBUF_WRITABLE : 0);
+        if (PyObject_GetBuffer(objects[index], &views[index], flags) < 0) goto cleanup;
+        if (!is_double_buffer(&views[index])) {
+            PyErr_SetString(PyExc_TypeError, "interpolation arrays must have native float64 dtype");
+            goto cleanup;
+        }
+        if (!PyBuffer_IsContiguous(&views[index], 'C')) {
+            PyErr_SetString(PyExc_ValueError, "interpolation arrays must be C-contiguous");
+            goto cleanup;
+        }
+        if (views[index].ndim != (index == 0 ? 2 : 1)) {
+            PyErr_SetString(PyExc_ValueError, "interpolation needs a two-dimensional table and flat coordinates/output");
+            goto cleanup;
+        }
+    }
+    {
+        const Py_ssize_t ny = views[0].shape[0], nx = views[0].shape[1];
+        const Py_ssize_t count = views[1].shape[0];
+        if (ny < 4 || nx < 4 || views[2].shape[0] != count || views[3].shape[0] != count) {
+            PyErr_SetString(PyExc_ValueError, "interpolation table needs four nodes per axis and matching coordinate/output lengths");
+            goto cleanup;
+        }
+        const double maxima[2] = {x_minimum + (nx - 1) * step,
+                                  y_minimum + (ny - 1) * step};
+        const double minima[2] = {x_minimum, y_minimum};
+        for (int axis = 0; axis < 2; ++axis) {
+            if (!isfinite(maxima[axis]) || !isfinite(maxima[axis] - minima[axis]) ||
+                minima[axis] + step <= minima[axis] ||
+                maxima[axis] - step >= maxima[axis]) {
+                PyErr_SetString(PyExc_ValueError, "interpolation grid must have finite, distinct nodes");
+                goto cleanup;
+            }
+        }
+        const double *table = views[0].buf, *x = views[1].buf, *y = views[2].buf;
+        double *output = views[3].buf;
+        int invalid = 0;
+        Py_BEGIN_ALLOW_THREADS
+        for (Py_ssize_t k = 0; k < count; ++k) {
+            double x_weight[4], y_weight[4], value = 0.0;
+            if (isnan(x[k]) || isnan(y[k])) { invalid = 1; break; }
+            const Py_ssize_t ix = cubic_table_weights(x[k], x_minimum, step, nx, x_weight);
+            const Py_ssize_t iy = cubic_table_weights(y[k], y_minimum, step, ny, y_weight);
+            for (int j = 0; j < 4; ++j) {
+                for (int i = 0; i < 4; ++i) {
+                    value += y_weight[j] * x_weight[i] * table[(iy + j) * nx + ix + i];
+                }
+            }
+            output[k] = value;
+        }
+        Py_END_ALLOW_THREADS
+        if (invalid) {
+            PyErr_SetString(PyExc_ValueError, "interpolation coordinates must not contain NaN");
+            goto cleanup;
+        }
+    }
+    Py_INCREF(Py_None);
+    result = Py_None;
+cleanup:
+    for (index = 0; index < 4; ++index) {
+        if (views[index].obj != NULL) PyBuffer_Release(&views[index]);
+    }
+    return result;
+}
+
 static PyMethodDef module_methods[] = {
+    {"pseudo_voigt_profile", openwd_pseudo_voigt_profile, METH_VARARGS,
+     PyDoc_STR("pseudo_voigt_profile(wavelength, center, sigma, gamma, output) -> None")},
+    {"stark_manifold_bins", openwd_stark_manifold_bins, METH_VARARGS,
+     PyDoc_STR("Deposit the existing Stark field-segment pattern on fine and coarse grids.")},
+    {"stark_profile_finish", openwd_stark_profile_finish, METH_VARARGS,
+     PyDoc_STR("Interpolate uniform Stark grids and add the impact profile.")},
+    {"frequency_voigt_profile", openwd_frequency_voigt_profile, METH_VARARGS,
+     PyDoc_STR("frequency_voigt_profile(wavelength, center, sigma, gamma, output) -> None")},
+    {"stark_frequency_profile_finish", openwd_stark_frequency_profile_finish, METH_VARARGS,
+     PyDoc_STR("Interpolate uniform Stark grids and add the frequency-space Voigt impact profile.")},
+    {"positive_rate_equilibrium", positive_rate_equilibrium, METH_VARARGS,
+     PyDoc_STR("positive_rate_equilibrium(matrix, conservation_weights, total_population, output) -> None")},
+    {"cubic_table_interpolate", cubic_table_interpolate, METH_VARARGS,
+     PyDoc_STR("cubic_table_interpolate(table, x, y, x_min, y_min, step, output) -> None")},
+    {"accumulate_bound_free_nlte", accumulate_bound_free_nlte, METH_VARARGS,
+     PyDoc_STR("accumulate_bound_free_nlte(sigma, population, density, lower, upper, exp, planck, absorption, emissivity) -> None")},
     {"emergent_flux", emergent_flux, METH_VARARGS,
      PyDoc_STR("emergent_flux(tau, source, mu, weight) -> list")},
     {"piecewise_linear_lorentz_convolution",
@@ -1728,6 +3025,14 @@ static PyMethodDef module_methods[] = {
      accumulate_metal_line_profiles,
      METH_VARARGS,
      PyDoc_STR("accumulate_metal_line_profiles(..., absorption, emissivity, retain_inverted) -> None")},
+    {"expand_metal_line_blocks",
+     expand_metal_line_blocks,
+     METH_VARARGS,
+     PyDoc_STR("expand_metal_line_blocks(wavelength, planck, block_absorption, block_emissivity, absorption, emissivity) -> None")},
+    {"metal_line_profile_means",
+     metal_line_profile_means,
+     METH_VARARGS,
+     PyDoc_STR("metal_line_profile_means(wavelength, fields, center, sigma, gamma, means[, block_tolerance]) -> None")},
     {"metal_line_mean_intensity",
      metal_line_mean_intensity,
      METH_VARARGS,
@@ -1762,5 +3067,14 @@ static struct PyModuleDef module_definition = {
 PyMODINIT_FUNC
 PyInit__rt(void)
 {
-    return PyModule_Create(&module_definition);
+    PyObject *module = PyModule_Create(&module_definition);
+    if (module == NULL) {
+        return NULL;
+    }
+    /* Capability flag: accumulate_metal_line_profiles accepts depth_major. */
+    if (PyModule_AddIntConstant(module, "METAL_PROFILE_DEPTH_MAJOR", 1) < 0) {
+        Py_DECREF(module);
+        return NULL;
+    }
+    return module;
 }

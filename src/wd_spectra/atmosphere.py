@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Callable, Literal, Mapping, TYPE_CHECKING
 
 import numpy as np
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from ._compat import trapezoid
 from .eos import (
@@ -44,6 +44,8 @@ def _metal_line_opacity_sampling_grid(
     line_centers_angstrom: FloatArray,
     *,
     maximum_wing_sampled_lines: int = 1_000,
+    opacity_sampling_resolution: float | None = None,
+    effective_temperature: float | None = None,
 ) -> tuple[FloatArray, int]:
     """Return a bounded transfer grid for a ranked structural line list.
 
@@ -55,6 +57,17 @@ def _metal_line_opacity_sampling_grid(
     an arbitrary trapezoidal wavelength weight set by the next unrelated
     transition.  This bounds the grid growth without changing the selected
     opacity contributors or assigning weak lines artificially broad bins.
+
+    With ``opacity_sampling_resolution`` every selected line is instead
+    sampled by a uniform logarithmic grid of that resolving power, as in
+    classical opacity sampling, and no line-centered stencils are added.
+    Line-centered samples carry trapezoidal weights that overstate the
+    blocking of any core narrower than the stencil (4% of the bolometric
+    flux at 15,600 K with a 20,000-line list), and their number grows with
+    the line budget.  A uniform grid is an unbiased sample of the line
+    opacity at a cost independent of the number of lines.  It spans the
+    line centers inside the band holding all but 1e-4 of the Planck flux at
+    ``effective_temperature`` on either side.
     """
 
     centers = np.asarray(line_centers_angstrom, dtype=np.float64)
@@ -64,12 +77,39 @@ def _metal_line_opacity_sampling_grid(
         raise ValueError("maximum_wing_sampled_lines must be non-negative")
     if centers.size == 0:
         return centers.copy(), 0
-    n_wing = min(int(maximum_wing_sampled_lines), int(centers.size))
+    n_wing = (
+        0 if opacity_sampling_resolution is not None
+        else min(int(maximum_wing_sampled_lines), int(centers.size))
+    )
     samples: list[FloatArray] = []
     if n_wing:
         offsets = np.asarray((-2.0, -0.5, 0.0, 0.5, 2.0))
         samples.append((centers[:n_wing, np.newaxis] + offsets).ravel())
-    if n_wing < centers.size:
+    if n_wing < centers.size and opacity_sampling_resolution is not None:
+        if not np.isfinite(opacity_sampling_resolution) or opacity_sampling_resolution <= 0.0:
+            raise ValueError("opacity_sampling_resolution must be positive")
+        if effective_temperature is None:
+            raise ValueError("opacity sampling requires effective_temperature")
+        # Planck cumulative flux fraction, in x = hc/(lambda k T).
+        x = np.geomspace(1.0e-3, 60.0, 4000)
+        cumulative = np.concatenate(([0.0], np.cumsum(
+            0.5 * np.diff(x) * (x[1:] ** 3 / np.expm1(x[1:]) + x[:-1] ** 3 / np.expm1(x[:-1]))
+        )))
+        cumulative /= cumulative[-1]
+        hc_over_k_angstrom = 1.438776877e8
+        lam_short = hc_over_k_angstrom / (
+            effective_temperature * np.interp(1.0 - 1.0e-4, cumulative, x)
+        )
+        lam_long = hc_over_k_angstrom / (
+            effective_temperature * np.interp(1.0e-4, cumulative, x)
+        )
+        lower = max(float(np.min(centers)), lam_short)
+        upper = min(float(np.max(centers)), lam_long)
+        if upper > lower:
+            samples.append(np.exp(np.arange(
+                np.log(lower), np.log(upper), 1.0 / opacity_sampling_resolution
+            )))
+    elif n_wing < centers.size:
         core_offsets = np.asarray((-0.05, 0.0, 0.05))
         samples.append(
             (centers[n_wing:, np.newaxis] + core_offsets).ravel()
@@ -127,25 +167,6 @@ def _solve_bracketed_log_root(
                 f_lower *= 0.5
             replaced_side = 1
     return 0.5 * (lower + upper)
-
-
-def _smooth_radiative_temperature_correction(
-    correction: FloatArray,
-    convective_weight: FloatArray,
-) -> FloatArray:
-    """Smooth a radiative correction without leaking into convection."""
-
-    radiative = correction * (1.0 - convective_weight)
-    smoothed = radiative.copy()
-    smoothed[1:-1] = (
-        0.25 * radiative[:-2]
-        + 0.5 * radiative[1:-1]
-        + 0.25 * radiative[2:]
-    )
-    # The stencil crosses the radiative/convective boundary, so the mask has
-    # to be applied both before and after smoothing.
-    smoothed *= 1.0 - convective_weight
-    return smoothed
 
 
 def _node_values_on_upper_interfaces(
@@ -254,6 +275,7 @@ def gray_hydrogen_atmosphere(
     include_molecules: bool = False,
     include_negative_hydrogen: bool = False,
     trihydrogen_ion_partition_model: str | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     r"""Construct an LTE, hydrostatic Eddington-gray pure-H atmosphere.
 
@@ -279,7 +301,9 @@ def gray_hydrogen_atmosphere(
     if not np.isfinite(hopf_constant) or hopf_constant <= 0.0:
         raise ValueError("hopf_constant must be finite and positive")
 
-    tau = np.geomspace(tau_min, tau_max, n_depth, dtype=np.float64)
+    tau = photosphere_concentrated_optical_depths(
+        tau_min, tau_max, n_depth, depth_concentration
+    )
     temperature = effective_temperature * (
         0.75 * (tau + hopf_constant)
     ) ** 0.25
@@ -334,6 +358,7 @@ def hydrogen_continuum_atmosphere(
     include_negative_hydrogen: bool = False,
     trihydrogen_ion_partition_model: str | None = None,
     h2_h2_cia_table: H2H2CollisionInducedAbsorptionTable | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     r"""Construct a gray-temperature atmosphere with a physical pressure scale.
 
@@ -356,6 +381,7 @@ def hydrogen_continuum_atmosphere(
         include_molecules=include_molecules,
         include_negative_hydrogen=include_negative_hydrogen,
         trihydrogen_ion_partition_model=trihydrogen_ion_partition_model,
+        depth_concentration=depth_concentration,
     )
     from .opacity import rosseland_mean_hydrogen_continuum_opacity
 
@@ -472,6 +498,52 @@ def hydrogen_continuum_atmosphere(
     )
 
 
+def photosphere_concentrated_optical_depths(
+    tau_min: float,
+    tau_max: float,
+    n_depth: int,
+    concentration: float = 0.0,
+) -> FloatArray:
+    """Return Rosseland depths, optionally concentrated near the photosphere.
+
+    ``concentration = 0`` gives the historical logarithmically uniform grid.
+    Otherwise the point density per ln(tau) is
+    ``t(tau) + concentration * exp(-((log10 tau + 0.5) / 1.2)**2)``, where
+    ``t`` falls smoothly from 1 below tau ~ 1e-3 to 1/2 in the optically
+    thin upper layers.  This is a quadrature choice, not physics: with about
+    40 points the uniform grid leaves a factor of two in optical depth per
+    interval across 0.01 < tau < 10, where both the structure's Feautrier
+    flux and the formal emergent flux acquire their discretization error
+    (1-2% of the bolometric flux in polluted helium atmospheres).  The
+    additional photospheric points are taken only from the upper layers,
+    which contribute negligibly to that error, so the deep convective
+    spacing is never coarser than the uniform grid's and the cost is
+    unchanged.
+    """
+
+    if not 0.0 < tau_min < tau_max:
+        raise ValueError("require 0 < tau_min < tau_max")
+    if n_depth < 3:
+        raise ValueError("n_depth must be at least 3")
+    if not np.isfinite(concentration) or concentration < 0.0:
+        raise ValueError("depth concentration must be finite and non-negative")
+    if concentration == 0.0:
+        return np.geomspace(tau_min, tau_max, n_depth)
+    log_tau = np.linspace(np.log(tau_min), np.log(tau_max), 8192)
+    log10_tau = log_tau / np.log(10.0)
+    upper_layer_weight = 0.5 + 0.5 / (1.0 + np.exp(-(log10_tau + 3.0) / 0.4))
+    density = upper_layer_weight + concentration * np.exp(
+        -((log10_tau + 0.5) / 1.2) ** 2
+    )
+    cumulative = np.concatenate(([0.0], np.cumsum(
+        0.5 * (density[1:] + density[:-1]) * np.diff(log_tau)
+    )))
+    cumulative /= cumulative[-1]
+    tau = np.exp(np.interp(np.linspace(0.0, 1.0, n_depth), cumulative, log_tau))
+    tau[0], tau[-1] = tau_min, tau_max
+    return tau
+
+
 def gray_helium_atmosphere(
     effective_temperature: float,
     logg: float,
@@ -484,6 +556,7 @@ def gray_helium_atmosphere(
     correlated_microfields: bool = True,
     neutral_radius_scale: float = 0.5,
     helium_reos3_table: HeliumREOS3Table | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Construct an LTE Eddington-gray, hydrostatic pure-He atmosphere."""
 
@@ -499,7 +572,9 @@ def gray_helium_atmosphere(
         raise ValueError("rosseland_opacity must be finite and positive")
     if not np.isfinite(hopf_constant) or hopf_constant <= 0.0:
         raise ValueError("hopf_constant must be finite and positive")
-    tau = np.geomspace(tau_min, tau_max, n_depth)
+    tau = photosphere_concentrated_optical_depths(
+        tau_min, tau_max, n_depth, depth_concentration
+    )
     temperature = effective_temperature * (0.75 * (tau + hopf_constant)) ** 0.25
     column_mass = tau / rosseland_opacity
     pressure = 10.0**logg * column_mass
@@ -549,6 +624,7 @@ def gray_hydrogen_helium_atmosphere(
     correlated_microfields: bool = True,
     hydrogen_neutral_radius_scale: float = 0.5,
     helium_neutral_radius_scale: float = 0.5,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Construct a homogeneous atomic H/He Eddington-gray atmosphere."""
 
@@ -564,7 +640,9 @@ def gray_hydrogen_helium_atmosphere(
         raise ValueError("rosseland_opacity must be finite and positive")
     if not np.isfinite(hopf_constant) or hopf_constant <= 0.0:
         raise ValueError("hopf_constant must be finite and positive")
-    tau = np.geomspace(tau_min, tau_max, n_depth)
+    tau = photosphere_concentrated_optical_depths(
+        tau_min, tau_max, n_depth, depth_concentration
+    )
     temperature = effective_temperature * (
         0.75 * (tau + hopf_constant)
     ) ** 0.25
@@ -622,6 +700,7 @@ def hydrogen_helium_continuum_atmosphere(
     include_helium_dimer_ion: bool = True,
     include_helium_three_body_cia: bool = True,
     include_rydberg_bound_free: bool = True,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Gray-temperature mixed atmosphere with a physical pressure scale."""
 
@@ -637,6 +716,7 @@ def hydrogen_helium_continuum_atmosphere(
         correlated_microfields=correlated_microfields,
         hydrogen_neutral_radius_scale=hydrogen_neutral_radius_scale,
         helium_neutral_radius_scale=helium_neutral_radius_scale,
+        depth_concentration=depth_concentration,
     )
     from .mixture import rosseland_mean_hydrogen_helium_continuum_opacity
 
@@ -782,7 +862,9 @@ def helium_continuum_atmosphere(
     metal_abundances: Mapping[str, float] | None = None,
     log_hydrogen_abundance: float | None = None,
     include_dense_helium_metal_ionization: bool = True,
+    metal_occupation_probability_partitions: bool = False,
     helium_reos3_table: HeliumREOS3Table | None = None,
+    depth_concentration: float = 0.0,
 ) -> Atmosphere:
     """Gray-temperature He atmosphere with a physical pressure scale.
 
@@ -810,6 +892,7 @@ def helium_continuum_atmosphere(
             include_helium_dimer_ion=include_helium_dimer_ion,
             include_helium_three_body_cia=include_helium_three_body_cia,
             include_rydberg_bound_free=include_rydberg_bound_free,
+            depth_concentration=depth_concentration,
         )
 
     seed = gray_helium_atmosphere(
@@ -818,6 +901,7 @@ def helium_continuum_atmosphere(
         correlated_microfields=correlated_microfields,
         neutral_radius_scale=neutral_radius_scale,
         helium_reos3_table=helium_reos3_table,
+        depth_concentration=depth_concentration,
     )
     from .helium import rosseland_mean_helium_continuum_opacity
 
@@ -852,6 +936,7 @@ def helium_continuum_atmosphere(
                 point,
                 metal_database,
                 metal_abundances,
+                occupation_probability_partitions=metal_occupation_probability_partitions,
                 reference_species="He",
                 include_dense_helium_ionization=(
                     include_dense_helium_metal_ionization
@@ -916,6 +1001,7 @@ def helium_continuum_atmosphere(
             provisional,
             metal_database,
             metal_abundances,
+            occupation_probability_partitions=metal_occupation_probability_partitions,
             reference_species="He",
             include_dense_helium_ionization=include_dense_helium_metal_ionization,
             log_hydrogen_abundance=log_hydrogen_abundance,
@@ -1004,15 +1090,10 @@ def radiative_equilibrium_hydrogen_atmosphere(
     unified_allard_table: AllardUnifiedLymanTable | None = None,
     jackson_lyman_table: JacksonLymanProfileTable | None = None,
     mixing_length_alpha: float | None = 0.7,
-    convective_correction_damping: float = 1.0,
-    convective_flux_tolerance: float = 2.0e-2,
     n_angle: int = 3,
     initial_temperature: FloatArray | None = None,
     initial_column_mass: FloatArray | None = None,
     initial_atmosphere: Atmosphere | None = None,
-    maximum_radiative_correction_rosseland_depth: float = 20.0,
-    apply_global_flux_correction: bool = True,
-    radiative_correction_damping: float = 0.5,
     hydrogen_eos_function: Callable[
         [FloatArray, FloatArray], HydrogenLTEState
     ]
@@ -1020,6 +1101,9 @@ def radiative_equilibrium_hydrogen_atmosphere(
     balmer_opacity_function: Callable[[Atmosphere, FloatArray], FloatArray]
     | None = None,
     continuum_opacity_function: Callable[[Atmosphere, FloatArray], FloatArray]
+    | None = None,
+    additional_structure_wavelength_angstrom: ArrayLike | None = None,
+    scattering_opacity_function: Callable[[Atmosphere, FloatArray], FloatArray]
     | None = None,
     metal_database: AtomicDatabase | None = None,
     metal_abundances: Mapping[str, float] | None = None,
@@ -1030,11 +1114,13 @@ def radiative_equilibrium_hydrogen_atmosphere(
     include_metal_lines: bool = True,
     minimum_metal_oscillator_strength: float = 1.0e-2,
     maximum_metal_lines: int | None = 1_000,
+    metal_line_opacity_sampling_resolution: float | None = None,
+    depth_concentration: float = 0.0,
     iteration_callback: Callable[
         [int, Atmosphere, Mapping[str, object]], None
     ]
     | None = None,
-    structure_solver: Literal["lambda", "adaptive-newton"] = "lambda",
+    structure_solver: Literal["adaptive-newton"] = "adaptive-newton",
 ) -> Atmosphere:
     """Relax an H-dominated atmosphere toward non-gray energy equilibrium.
 
@@ -1046,10 +1132,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
     if necessary, the same-grid solve then restores the exact formal-flux
     residual in radiative layers.  The tangent Feautrier operator includes
     both source-function and opacity/optical-depth motion, with trust-region
-    and backtracking globalization. With ``structure_solver="lambda"``, the older reference branch
-    instead corrects node temperatures from the integral absorption balance
-    ``integral kappa_abs (J-B) dlambda = 0`` plus a global flux correction.
-    Both branches require the directly evaluated total flux to satisfy the
+    and backtracking globalization. The directly evaluated total flux must satisfy the
     requested tolerance. The default ``alpha=0.7`` matches the
     current Koester DA calibration; pass ``None`` for a strictly radiative
     control model.  The Lyman through Brackett series are included in the
@@ -1086,14 +1169,21 @@ def radiative_equilibrium_hydrogen_atmosphere(
     corresponding controlled hook for replacing the thermal continuum.  It
     must return the complete true-absorption continuum (not scattering), so a
     magnetic implementation can replace H I bound-free opacity without
-    losing the otherwise validated free-free and molecular terms.
+    losing the otherwise validated free-free and molecular terms.  When it
+    is supplied, the adaptive solver's Rosseland mean (its depth coordinate)
+    is taken from the same continuum rather than the zero-field one.
+    ``additional_structure_wavelength_angstrom`` adds frequency points to the
+    structure mesh, e.g. around displaced magnetic Balmer components.
+    ``scattering_opacity_function(atmosphere, wavelength)`` returns a change
+    to the electron plus Rayleigh coherent scattering (e.g. magnetic Thomson
+    scattering; adaptive-newton solver only).
     """
 
     if max_iterations < 1:
         raise ValueError("max_iterations must be positive")
-    if structure_solver not in ("lambda", "adaptive-newton"):
+    if structure_solver != "adaptive-newton":
         raise ValueError(
-            "structure_solver must be 'lambda' or 'adaptive-newton'"
+            "Only structure_solver='adaptive-newton' is supported"
         )
     if temperature_tolerance <= 0.0 or flux_tolerance <= 0.0:
         raise ValueError("convergence tolerances must be positive")
@@ -1131,25 +1221,6 @@ def radiative_equilibrium_hydrogen_atmosphere(
         not np.isfinite(mixing_length_alpha) or mixing_length_alpha <= 0.0
     ):
         raise ValueError("mixing_length_alpha must be finite and positive")
-    if (
-        not np.isfinite(convective_correction_damping)
-        or not 0.0 < convective_correction_damping <= 1.0
-    ):
-        raise ValueError("convective_correction_damping must be in (0, 1]")
-    if (
-        not np.isfinite(convective_flux_tolerance)
-        or convective_flux_tolerance <= 0.0
-    ):
-        raise ValueError("convective_flux_tolerance must be finite and positive")
-    if maximum_radiative_correction_rosseland_depth <= 0.0:
-        raise ValueError(
-            "maximum radiative-correction Rosseland depth must be positive"
-        )
-    if (
-        not np.isfinite(radiative_correction_damping)
-        or not 0.0 < radiative_correction_damping <= 1.0
-    ):
-        raise ValueError("radiative_correction_damping must be in (0, 1]")
     if initial_atmosphere is not None and (
         initial_temperature is not None or initial_column_mass is not None
     ):
@@ -1162,37 +1233,8 @@ def radiative_equilibrium_hydrogen_atmosphere(
         else bool(resolve_lyman_line_cores)
     )
 
-    from .constants import (
-        HYDROGEN_IONIZATION_ENERGY,
-        LIGHT_SPEED,
-        PLANCK,
-        STEFAN_BOLTZMANN,
-    )
-    from .opacity import (
-        BALMER_LINES,
-        BRACKETT_LINES,
-        LYMAN_LINES,
-        PASCHEN_LINES,
-        balmer_mass_absorption_coefficient,
-        brackett_mass_absorption_coefficient,
-        electron_scattering_mass_coefficient,
-        hydrogen_dissolved_level_pseudocontinuum_mass_absorption_coefficient,
-        hydrogen_continuum_mass_absorption_coefficient,
-        hydrogen_rayleigh_scattering_mass_coefficient,
-        lyman_alpha_neutral_hydrogen_wing_mass_absorption_coefficient,
-        optical_depth_from_mass_opacity,
-        paschen_mass_absorption_coefficient,
-        lyman_mass_absorption_coefficient,
-        rosseland_mean_hydrogen_continuum_opacity,
-    )
-    from .radiative_transfer import feautrier_radiation_field
-    from .spectrum import planck_lambda_angstrom
-    if mixing_length_alpha is not None:
-        from .convection import (
-            ml2_convective_flux_for_gradient_from_thermodynamics,
-            ml2_temperature_gradient_for_total_flux_from_thermodynamics,
-        )
-
+    from .constants import LIGHT_SPEED, PLANCK
+    from .opacity import BALMER_LINES, BRACKETT_LINES, LYMAN_LINES, PASCHEN_LINES, balmer_mass_absorption_coefficient, brackett_mass_absorption_coefficient, electron_scattering_mass_coefficient, hydrogen_dissolved_level_pseudocontinuum_mass_absorption_coefficient, hydrogen_continuum_mass_absorption_coefficient, hydrogen_rayleigh_scattering_mass_coefficient, lyman_alpha_neutral_hydrogen_wing_mass_absorption_coefficient, paschen_mass_absorption_coefficient, lyman_mass_absorption_coefficient, rosseland_mean_hydrogen_continuum_opacity
     if initial_atmosphere is None:
         seed = hydrogen_continuum_atmosphere(
             effective_temperature,
@@ -1204,6 +1246,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
             include_negative_hydrogen=include_negative_hydrogen,
             trihydrogen_ion_partition_model=trihydrogen_ion_partition_model,
             h2_h2_cia_table=h2_h2_cia_table,
+            depth_concentration=depth_concentration,
         )
     else:
         if initial_atmosphere.hydrogen_lte_state is None:
@@ -1248,6 +1291,17 @@ def radiative_equilibrium_hydrogen_atmosphere(
                     )
                 )
             )
+    if additional_structure_wavelength_angstrom is not None:
+        extra_wavelength = np.asarray(
+            additional_structure_wavelength_angstrom, dtype=np.float64
+        ).ravel()
+        if np.any(~np.isfinite(extra_wavelength)) or np.any(
+            extra_wavelength <= 0.0
+        ):
+            raise ValueError(
+                "additional_structure_wavelength_angstrom must be finite and positive"
+            )
+        wavelength = np.unique(np.concatenate((wavelength, extra_wavelength)))
     infrared_line_offsets = np.asarray(
         (
             -300.0,
@@ -1318,6 +1372,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
                 )
             )
     metal_wing_sampled_lines = 0
+    structure_line_transition_keys: tuple[tuple[str, int, int, int], ...] = ()
     if metal_database is not None and metal_abundances is not None:
         from .metals import metal_lte_state, selected_metal_lines
 
@@ -1350,12 +1405,22 @@ def radiative_equilibrium_hydrogen_atmosphere(
             ion_stage_weight,
             flux_weighted=True,
         ) if include_metal_lines else []
+        structure_line_transition_keys = tuple(
+            (ion.element, ion.charge, line.lower_index, line.upper_index)
+            for ion, line in structure_lines
+        )
         metal_centers = np.asarray(
             [line.wavelength_vacuum_angstrom for _, line in structure_lines]
         )
         if metal_centers.size:
             metal_grid, metal_wing_sampled_lines = (
-                _metal_line_opacity_sampling_grid(metal_centers)
+                _metal_line_opacity_sampling_grid(
+                    metal_centers,
+                    opacity_sampling_resolution=(
+                        metal_line_opacity_sampling_resolution
+                    ),
+                    effective_temperature=effective_temperature,
+                )
             )
             wavelength = np.unique(np.concatenate((
                 wavelength,
@@ -1393,7 +1458,6 @@ def radiative_equilibrium_hydrogen_atmosphere(
                     * (1.0 + np.asarray((-1.0e-4, 1.0e-4)))
                 ).ravel(),
             )))
-    target_flux = STEFAN_BOLTZMANN * effective_temperature**4
     if initial_temperature is None:
         temperature = seed.temperature.copy()
     else:
@@ -1424,32 +1488,6 @@ def radiative_equilibrium_hydrogen_atmosphere(
             raise ValueError(
                 "initial_temperature must have one value per depth when initial_column_mass is omitted"
             )
-    flux_ratio = np.inf
-    maximum_correction = np.inf
-    maximum_radiative_correction = np.inf
-    maximum_convective_correction = np.inf
-    maximum_correction_depth_index = 0
-    maximum_total_flux_residual = (
-        np.inf if mixing_length_alpha is not None else 0.0
-    )
-    maximum_total_flux_residual_depth_index = -1
-    maximum_total_flux_residual_rosseland_depth = np.nan
-    signed_maximum_total_flux_residual = np.nan
-
-    convective_gradient_operator: FloatArray | None = None
-    if mixing_length_alpha is not None:
-        log_pressure_grid = np.log(seed.gas_pressure)
-        convective_gradient_operator = np.empty((seed.n_depth, seed.n_depth))
-        for column in range(seed.n_depth):
-            basis = np.zeros(seed.n_depth)
-            basis[column] = 1.0
-            convective_gradient_operator[:, column] = np.gradient(
-                basis, log_pressure_grid, edge_order=2
-            )
-    convective_damping_backtrack = 1.0
-    convective_flux_improvement_streak = 0
-    previous_maximum_total_flux_residual = np.inf
-
     def with_temperature(values: FloatArray) -> Atmosphere:
         eos = (
             hummer_mihalas_hydrogen_lte(
@@ -1623,6 +1661,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
                         minimum_metal_oscillator_strength
                     ),
                     maximum_lines=maximum_metal_lines,
+                    transition_keys=structure_line_transition_keys,
                 )
         hydrogen_structure_absorption_cache.clear()
         hydrogen_structure_absorption_cache.update(
@@ -1631,792 +1670,153 @@ def radiative_equilibrium_hydrogen_atmosphere(
         )
         return absorption
 
-    if structure_solver == "adaptive-newton":
-        from .adaptive_structure import (
-            rosseland_mean_from_opacity_grid,
-            solve_adaptive_lte_structure,
+    from .adaptive_structure import (
+        rosseland_mean_from_opacity_grid,
+        solve_adaptive_lte_structure,
+    )
+    from .eos import hummer_mihalas_hydrogen_thermodynamics
+
+    def scattering_opacity(current: Atmosphere) -> FloatArray:
+        result = (
+            electron_scattering_mass_coefficient(current)[np.newaxis, :]
+            + hydrogen_rayleigh_scattering_mass_coefficient(current, wavelength)
         )
-        from .eos import hummer_mihalas_hydrogen_thermodynamics
-
-        def scattering_opacity(current: Atmosphere) -> FloatArray:
-            return (
-                electron_scattering_mass_coefficient(current)[np.newaxis, :]
-                + hydrogen_rayleigh_scattering_mass_coefficient(
-                    current, wavelength
+        if scattering_opacity_function is not None:
+            extra = np.asarray(
+                scattering_opacity_function(current, wavelength), dtype=np.float64
+            )
+            if extra.shape != (wavelength.size, current.n_depth) or np.any(
+                ~np.isfinite(extra)
+            ) or np.any(result + extra < 0.0):
+                raise ValueError(
+                    "scattering_opacity_function must return a finite "
+                    "(wavelength, depth) change that keeps scattering nonnegative"
                 )
-            )
+            result = result + extra
+        return result
 
-        explicit_metal_rosseland_opacity = (
-            metal_database is not None
-            and (
-                include_metal_lines
-                or metal_photoionization_database is not None
-                or metal_topbase_photoionization_database is not None
-            )
+    explicit_metal_rosseland_opacity = (
+        metal_database is not None
+        and (
+            include_metal_lines
+            or metal_photoionization_database is not None
+            or metal_topbase_photoionization_database is not None
         )
+    )
 
-        def rosseland_opacity(current: Atmosphere) -> FloatArray:
-            if explicit_metal_rosseland_opacity:
-                if (
-                    hydrogen_structure_absorption_cache.get("atmosphere")
-                    is current
-                ):
-                    absorption = np.asarray(
-                        hydrogen_structure_absorption_cache["absorption"],
-                        dtype=np.float64,
-                    )
-                else:
-                    absorption = true_absorption(current)
-                return rosseland_mean_from_opacity_grid(
-                    wavelength,
-                    absorption + scattering_opacity(current),
-                    current.temperature,
-                )
-            return rosseland_mean_hydrogen_continuum_opacity(
-                current, h2_h2_cia_table=h2_h2_cia_table,
-                wavelength_angstrom=wavelength,
-            )
-
-        def thermodynamics(current: Atmosphere) -> object:
-            return hummer_mihalas_hydrogen_thermodynamics(
+    def rosseland_opacity(current: Atmosphere) -> FloatArray:
+        if continuum_opacity_function is not None and not explicit_metal_rosseland_opacity:
+            # Use the same continuum physics for the Rosseland depth coordinate.
+            return rosseland_mean_from_opacity_grid(
+                wavelength,
+                continuum_opacity_function(current, wavelength)
+                + scattering_opacity(current),
                 current.temperature,
-                current.gas_pressure,
-                correlated_microfields=correlated_microfields,
-                include_molecules=include_molecules,
-                include_negative_hydrogen=include_negative_hydrogen,
-                trihydrogen_ion_partition_model=(
-                    trihydrogen_ion_partition_model
-                ),
-                central_state=current.hydrogen_lte_state,
             )
-
-        adaptive_seed = with_temperature(temperature)
-        return solve_adaptive_lte_structure(
-            adaptive_seed,
-            wavelength,
-            enforce_local_energy_balance=enforce_local_energy_balance,
-            with_temperature=with_temperature,
-            true_absorption=true_absorption,
-            scattering_opacity=scattering_opacity,
-            rosseland_opacity=rosseland_opacity,
-            thermodynamics=thermodynamics,
-            mixing_length_alpha=mixing_length_alpha,
-            max_iterations=max_iterations,
-            temperature_tolerance=temperature_tolerance,
-            flux_tolerance=flux_tolerance,
-            n_angle=n_angle,
-            initial_temperature_was_supplied=initial_temperature is not None,
-            # The DA API historically treats a supplied temperature as a
-            # same-physics warm start, not proof of an exactly matching
-            # completed checkpoint.  Preserve that contract: it still gets
-            # the bounded ML2 conditioner before exact flux completion.
-            resume_supplied_structure_in_formal_flux_phase=False,
-            # The very efficient convection zones below 5000 K require the
-            # interface-based projection recovered from the successful
-            # ultracool DA solver.  Preserve the validated node-gradient path
-            # at and above 5000 K.
-            initial_convective_gradient_projection_mode=(
-                "interface-transport"
-                if effective_temperature < 5_000.0
-                or initial_temperature is not None
-                else "unstable-node-gradient"
-            ),
-            maximum_convective_preconditioner_iterations=max_iterations,
-            preconditioner_stationary_completion_iterations=None,
-            use_adiabatic_asymptotic_conditioning=(
-                effective_temperature < 5_000.0
-            ),
-            use_initial_bolometric_rescaling=(
-                effective_temperature >= 5_000.0
-            ),
-            iteration_callback=iteration_callback,
-            metadata={
-                **{
-                    key: value
-                    for key, value in seed.metadata.items()
-                    if key not in ("model", "composition", "eos")
-                },
-                "composition": (
-                    "metal-polluted-hydrogen"
-                    if metal_database is not None
-                    else "pure-hydrogen"
-                ),
-                "eos": (
-                    adaptive_seed.hydrogen_lte_state.chemical_model
-                    if adaptive_seed.hydrogen_lte_state is not None
-                    else "hummer-mihalas-occupation-probability"
-                ),
-                "radiative_equilibrium_seed_tau_min": float(tau_min),
-                "radiative_equilibrium_includes_balmer_lines": bool(
-                    include_balmer_lines
-                ),
-                "radiative_equilibrium_balmer_profile_edge_optical_depth": (
-                    1.0e-4 if include_balmer_lines else None
-                ),
-                "radiative_equilibrium_includes_paschen_lines": bool(
-                    include_paschen_lines
-                ),
-                "radiative_equilibrium_includes_brackett_lines": bool(
-                    include_brackett_lines
-                ),
-                "radiative_equilibrium_includes_lyman_lines": bool(
-                    include_lyman_lines
-                ),
-                "radiative_equilibrium_includes_series_pseudocontinuum": bool(
-                    include_lyman_lines and include_series_pseudocontinuum
-                ),
-                "radiative_equilibrium_includes_molecular_equilibrium_and_opacity": bool(
-                    include_molecules
-                ),
-                "radiative_equilibrium_metal_opacity": bool(
-                    metal_database is not None
-                ),
-                "metal_abundances": (
-                    dict(metal_abundances)
-                    if metal_abundances is not None
-                    else {}
-                ),
-                "metal_electron_feedback": (
-                    "fixed-H-nuclei shared H/metal charge closure"
-                    if metal_database is not None
-                    else "disabled"
-                ),
-                "hydrogen_metal_eos_solver": (
-                    "depth-local Newton in log(ne) and log(H partition)"
-                    if metal_database is not None
-                    else "disabled"
-                ),
-                "metal_thermodynamic_derivatives": (
-                    "trace-metal approximation: Q-MHD hydrogen derivatives"
-                    if metal_database is not None
-                    else "not applicable"
-                ),
-                "rosseland_opacity_includes_metal_bound_bound_and_bound_free": (
-                    explicit_metal_rosseland_opacity
-                ),
-                "radiative_equilibrium_includes_metal_lines": bool(
-                    metal_database is not None and include_metal_lines
-                ),
-                "radiative_equilibrium_includes_metal_bound_free": bool(
-                    metal_photoionization_database is not None
-                    or metal_topbase_photoionization_database is not None
-                ),
-                "radiative_equilibrium_level_resolved_metal_bound_free": (
-                    metal_topbase_photoionization_database.source
-                    if metal_topbase_photoionization_database is not None
-                    else "disabled"
-                ),
-                "radiative_equilibrium_minimum_metal_oscillator_strength": float(
-                    minimum_metal_oscillator_strength
-                ),
-                "radiative_equilibrium_maximum_metal_lines": (
-                    maximum_metal_lines
-                ),
-                "radiative_equilibrium_wing_sampled_metal_lines": int(
-                    metal_wing_sampled_lines
-                ),
-                "radiative_equilibrium_metal_line_selection": (
-                    "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"
-                ),
-                "radiative_equilibrium_includes_negative_hydrogen_charge_equilibrium": bool(
-                    include_negative_hydrogen
-                ),
-                "radiative_equilibrium_h3plus_partition_model": (
-                    trihydrogen_ion_partition_model
-                ),
-                "radiative_equilibrium_h_h2_lyman_alpha_temperature_dependence": (
-                    "Sahu-et-al-2025 inverse-temperature correction to "
-                    "Rohrmann-et-al-2011 6000-K profile"
-                    if include_molecules and include_lyman_lines
-                    else None
-                ),
-            },
-        )
-
-    for iteration in range(1, max_iterations + 1):
-        atmosphere = with_temperature(temperature)
-        absorption = true_absorption(atmosphere)
-        scattering = (
-            electron_scattering_mass_coefficient(atmosphere)[np.newaxis, :]
-            + hydrogen_rayleigh_scattering_mass_coefficient(
-                atmosphere, wavelength
-            )
-        )
-        total_extinction = absorption + scattering
-        optical_depth = optical_depth_from_mass_opacity(
-            atmosphere.column_mass, total_extinction
-        )
-        planck = planck_lambda_angstrom(
-            wavelength[:, np.newaxis], temperature[np.newaxis, :]
-        )
-
-        # Coherent isotropic Thomson scattering.  It is normally a small
-        # correction for these models, so a few Lambda sweeps suffice.
-        source = planck.copy()
-        for _ in range(4):
-            field = feautrier_radiation_field(
-                optical_depth, source, n_angle=n_angle
-            )
-            source = (
-                absorption * planck + scattering * field.mean_intensity
-            ) / total_extinction
-        field = feautrier_radiation_field(
-            optical_depth, source, n_angle=n_angle
-        )
-        if field.interface_flux is None:  # pragma: no cover - API invariant
-            raise RuntimeError("Feautrier solver did not return interface fluxes")
-        radiative_flux_interface = trapezoid(
-            field.interface_flux, wavelength, axis=0
-        )
-        radiative_flux = _upper_interface_values_on_nodes(
-            radiative_flux_interface
-        )
-
-        emitted = trapezoid(absorption * planck, wavelength, axis=0)
-        absorbed = trapezoid(
-            absorption * field.mean_intensity, wavelength, axis=0
-        )
-        active = (
-            relaxation_depth
-            < maximum_radiative_correction_rosseland_depth
-        )
-        convective_flux = np.zeros_like(temperature)
-        required_convective_flux = np.zeros_like(temperature)
-        convective = np.zeros_like(temperature, dtype=bool)
-        convective_weight = np.zeros_like(temperature)
-        convective_log_temperature_correction = np.zeros_like(temperature)
-        if mixing_length_alpha is not None:
-            rosseland_for_convection = (
-                rosseland_mean_hydrogen_continuum_opacity(
-                    atmosphere, h2_h2_cia_table=h2_h2_cia_table
-                )
-            )
-            required_convective_flux = np.clip(
-                target_flux - radiative_flux, 0.0, target_flux
-            )
-            actual_gradient = np.gradient(
-                np.log(temperature),
-                np.log(atmosphere.gas_pressure),
-                edge_order=2,
-            )
-            from .eos import hummer_mihalas_hydrogen_thermodynamics
-
-            thermodynamics = hummer_mihalas_hydrogen_thermodynamics(
-                temperature,
-                atmosphere.gas_pressure,
-                correlated_microfields=correlated_microfields,
-                include_molecules=include_molecules,
-                central_state=atmosphere.hydrogen_lte_state,
-            )
-            diffusion_radiative_flux_coefficient = (
-                16.0
-                * STEFAN_BOLTZMANN
-                * atmosphere.gravity
-                * atmosphere.temperature**4
-                / (
-                    3.0
-                    * rosseland_for_convection
-                    * atmosphere.gas_pressure
-                )
-            )
-            # The formal transfer solution gives a better local radiative
-            # response near the photosphere, while diffusion is the robust
-            # asymptotic coefficient at small/large optical depth.  Use the
-            # former only where its linearization is positive and resolved.
-            transfer_radiative_flux_coefficient = np.where(
-                (
-                    (relaxation_depth >= 0.1)
-                    & (relaxation_depth <= 30.0)
-                    & (actual_gradient > 1.0e-8)
-                    & (radiative_flux > 0.0)
-                ),
-                radiative_flux / np.maximum(actual_gradient, 1.0e-8),
-                diffusion_radiative_flux_coefficient,
-            )
-            desired_gradient = (
-                ml2_temperature_gradient_for_total_flux_from_thermodynamics(
-                    atmosphere,
-                    rosseland_for_convection,
-                    np.full_like(temperature, target_flux),
-                    thermodynamics.specific_heat_constant_pressure,
-                    thermodynamics.density_temperature_derivative,
-                    thermodynamics.adiabatic_temperature_gradient,
-                    mixing_length_alpha=mixing_length_alpha,
-                    radiative_flux_coefficient=(
-                        transfer_radiative_flux_coefficient
-                    ),
-                )
-            )
-            desired_convective_flux = (
-                ml2_convective_flux_for_gradient_from_thermodynamics(
-                    atmosphere,
-                    rosseland_for_convection,
-                    desired_gradient,
-                    thermodynamics.specific_heat_constant_pressure,
-                    thermodynamics.density_temperature_derivative,
-                    thermodynamics.adiabatic_temperature_gradient,
-                    mixing_length_alpha=mixing_length_alpha,
-                )
-            )
-            required_convective_flux = desired_convective_flux
-            current_convective_flux = (
-                ml2_convective_flux_for_gradient_from_thermodynamics(
-                    atmosphere,
-                    rosseland_for_convection,
-                    actual_gradient,
-                    thermodynamics.specific_heat_constant_pressure,
-                    thermodynamics.density_temperature_derivative,
-                    thermodynamics.adiabatic_temperature_gradient,
-                    mixing_length_alpha=mixing_length_alpha,
-                )
-            )
-
-            # The Schwarzschild boundary follows from the gradient radiation
-            # alone would require.  Taper both across that boundary and at the
-            # optically thin/deep limits so a layer cannot chatter between a
-            # full ML2 update and no update on successive iterations.
-            pure_radiative_gradient = (
-                target_flux / diffusion_radiative_flux_coefficient
-            )
-            relative_superadiabaticity = (
-                pure_radiative_gradient
-                / np.maximum(
-                    thermodynamics.adiabatic_temperature_gradient,
-                    np.finfo(np.float64).tiny,
-                )
-                - 1.0
-            )
-            convective_weight = np.clip(
-                np.log10(
-                    np.maximum(relaxation_depth, np.finfo(np.float64).tiny)
-                )
-                + 1.0,
-                0.0,
-                1.0,
-            )
-            convective_weight *= np.clip(
-                np.log10(
-                    100.0 / np.maximum(relaxation_depth, 1.0e-300)
-                ),
-                0.0,
-                1.0,
-            )
-            convective_weight *= np.clip(
-                relative_superadiabaticity / 0.05, 0.0, 1.0
-            )
-            convective = convective_weight > 0.0
-
-            convective_flux_interface = _node_values_on_upper_interfaces(
-                current_convective_flux, surface_value=0.0
-            )
-            convective_weight_interface = np.zeros_like(convective_weight)
-            convective_weight_interface[1:] = np.minimum(
-                convective_weight[:-1], convective_weight[1:]
-            )
-            relaxation_depth_interface = _node_values_on_upper_interfaces(
-                relaxation_depth, surface_value=0.0
-            )
-            flux_balance_monitor = (
-                (convective_weight_interface > 0.5)
-                & (relaxation_depth_interface > 1.0e-3)
-                & (relaxation_depth_interface < 10.0)
-            )
-            if np.any(flux_balance_monitor):
-                monitored_depth = np.flatnonzero(flux_balance_monitor)
-                monitored_residual = (
-                    (
-                        radiative_flux_interface[monitored_depth]
-                        + convective_flux_interface[monitored_depth]
-                    )
-                    / target_flux
-                    - 1.0
-                )
-                local_maximum = int(np.argmax(np.abs(monitored_residual)))
-                maximum_total_flux_residual_depth_index = int(
-                    monitored_depth[local_maximum]
-                )
-                signed_maximum_total_flux_residual = float(
-                    monitored_residual[local_maximum]
-                )
-                maximum_total_flux_residual = abs(
-                    signed_maximum_total_flux_residual
-                )
-                maximum_total_flux_residual_rosseland_depth = float(
-                    relaxation_depth_interface[
-                        maximum_total_flux_residual_depth_index
-                    ]
-                )
-            else:
-                maximum_total_flux_residual = 0.0
-                maximum_total_flux_residual_depth_index = -1
-                maximum_total_flux_residual_rosseland_depth = np.nan
-                signed_maximum_total_flux_residual = np.nan
+        if explicit_metal_rosseland_opacity:
             if (
-                signed_maximum_total_flux_residual < -0.2
-                and maximum_total_flux_residual_rosseland_depth >= 1.0
+                hydrogen_structure_absorption_cache.get("atmosphere")
+                is current
             ):
-                # A deep flux deficit is the well-conditioned diffusion
-                # problem the coupled root solves most directly.  It can use
-                # a full trial step; the measured-residual backtracking below
-                # still reduces that ceiling immediately if opacity changes
-                # invalidate the frozen local prediction.
-                adaptive_convective_damping = 1.0
-            elif maximum_total_flux_residual < 0.05:
-                adaptive_convective_damping = 0.05
-            elif maximum_total_flux_residual < 0.2:
-                adaptive_convective_damping = 0.1
-            elif maximum_total_flux_residual < 1.0:
-                adaptive_convective_damping = 0.25
-            elif maximum_total_flux_residual < 10.0:
-                adaptive_convective_damping = 0.5
+                absorption = np.asarray(
+                    hydrogen_structure_absorption_cache["absorption"],
+                    dtype=np.float64,
+                )
             else:
-                adaptive_convective_damping = 1.0
-            if np.isfinite(previous_maximum_total_flux_residual):
-                if (
-                    maximum_total_flux_residual
-                    > 1.01 * previous_maximum_total_flux_residual
-                ):
-                    convective_damping_backtrack = max(
-                        0.05,
-                        0.5
-                        * min(
-                            convective_correction_damping,
-                            adaptive_convective_damping,
-                            convective_damping_backtrack,
-                        ),
-                    )
-                    convective_flux_improvement_streak = 0
-                elif (
-                    maximum_total_flux_residual
-                    < previous_maximum_total_flux_residual
-                ):
-                    convective_flux_improvement_streak += 1
-                    if convective_flux_improvement_streak >= 3:
-                        convective_damping_backtrack = min(
-                            1.0, 1.25 * convective_damping_backtrack
-                        )
-                        convective_flux_improvement_streak = 0
-                else:
-                    convective_flux_improvement_streak = 0
-            previous_maximum_total_flux_residual = (
-                maximum_total_flux_residual
+                absorption = true_absorption(current)
+            return rosseland_mean_from_opacity_grid(
+                wavelength,
+                absorption + scattering_opacity(current),
+                current.temperature,
             )
-            maximum_convective_correction_damping = min(
-                convective_correction_damping,
-                adaptive_convective_damping,
-                convective_damping_backtrack,
-            )
+        return rosseland_mean_hydrogen_continuum_opacity(
+            current, h2_h2_cia_table=h2_h2_cia_table,
+            wavelength_angstrom=wavelength,
+        )
 
-            gradient_correction = convective_weight * (
-                desired_gradient - actual_gradient
-            )
-            if np.any(convective):
-                anchor = max(int(np.flatnonzero(convective)[0]) - 1, 0)
-                # Integrate the requested change in dln(T)/dln(P) inward from
-                # the radiative surface.  This local construction does not
-                # couple separated depth cells, unlike the former dense
-                # least-squares inverse of np.gradient, and is the same
-                # conservative update used by the D6 atmosphere solver.
-                log_pressure = np.log(atmosphere.gas_pressure)
-                convective_log_temperature_correction.fill(0.0)
-                for depth in range(anchor + 1, atmosphere.n_depth):
-                    cell_change = 0.5 * (
-                        gradient_correction[depth - 1]
-                        + gradient_correction[depth]
-                    )
-                    convective_log_temperature_correction[depth] = (
-                        convective_log_temperature_correction[depth - 1]
-                        + cell_change
-                        * (log_pressure[depth] - log_pressure[depth - 1])
-                    )
-            maximum_raw_convective_correction = float(
-                np.max(np.abs(convective_log_temperature_correction))
-            )
-            if maximum_raw_convective_correction > 0.04:
-                convective_log_temperature_correction *= (
-                    0.04 / maximum_raw_convective_correction
-                )
-        hotter_temperature = 1.001 * temperature
-        hotter_planck = planck_lambda_angstrom(
-            wavelength[:, np.newaxis],
-            hotter_temperature[np.newaxis, :],
-        )
-        logarithmic_derivative = trapezoid(
-            absorption * (hotter_planck - planck), wavelength, axis=0
-        ) / 0.001
-        correction = (absorbed - emitted) / np.maximum(
-            logarithmic_derivative, np.finfo(np.float64).tiny
-        )
-        correction = np.where(active, np.clip(correction, -0.04, 0.04), 0.0)
-        smoothed = _smooth_radiative_temperature_correction(
-            correction, convective_weight
-        )
-        surface_flux = radiative_flux_interface[0]
-        flux_ratio = float(surface_flux / target_flux)
-        global_correction = float(
-            np.clip(-0.25 * np.log(flux_ratio), -0.04, 0.04)
-        )
-        radiative_temperature_correction = (
-            radiative_correction_damping * smoothed
-        )
-        effective_convective_correction_damping = (
-            convective_correction_damping
-        )
-        if (
-            mixing_length_alpha is not None
-            and np.any(convective)
-            and np.any(flux_balance_monitor)
-        ):
-            # Frozen-opacity line search for the ML2 update.  Unlike the old
-            # convective-deficit iteration, this predicts *both* parts of the
-            # transported flux: the formal radiative flux is linearized in
-            # the local gradient and the nonlinear ML2 flux is reevaluated
-            # exactly for every candidate.  This makes a large correction
-            # back off before it can cross the coupled root.
-            assert convective_gradient_operator is not None
-            trial_damping = np.unique(
-                np.maximum(
-                    maximum_convective_correction_damping
-                    * np.asarray((1.0, 0.5, 0.25, 0.125, 0.0625)),
-                    0.01,
-                )
-            )
-            radiative_gradient_step = (
-                convective_gradient_operator
-                @ radiative_temperature_correction
-            )
-            convective_gradient_step = (
-                convective_gradient_operator
-                @ convective_log_temperature_correction
-            )
-            trial_gradient = (
-                actual_gradient[np.newaxis, :]
-                + radiative_gradient_step[np.newaxis, :]
-                + trial_damping[:, np.newaxis]
-                * convective_gradient_step[np.newaxis, :]
-            )
-            trial_radiative_flux = (
-                radiative_flux[np.newaxis, :]
-                + transfer_radiative_flux_coefficient[np.newaxis, :]
-                * (
-                    trial_gradient
-                    - actual_gradient[np.newaxis, :]
-                )
-            )
-            trial_convective_flux = (
-                ml2_convective_flux_for_gradient_from_thermodynamics(
-                    atmosphere,
-                    rosseland_for_convection,
-                    trial_gradient,
-                    thermodynamics.specific_heat_constant_pressure,
-                    thermodynamics.density_temperature_derivative,
-                    thermodynamics.adiabatic_temperature_gradient,
-                    mixing_length_alpha=mixing_length_alpha,
-                )
-            )
-            trial_radiative_flux_interface = np.empty_like(
-                trial_radiative_flux
-            )
-            trial_radiative_flux_interface[:, 0] = (
-                radiative_flux_interface[0]
-            )
-            trial_radiative_flux_interface[:, 1:] = 0.5 * (
-                trial_radiative_flux[:, :-1]
-                + trial_radiative_flux[:, 1:]
-            )
-            trial_convective_flux_interface = np.empty_like(
-                trial_convective_flux
-            )
-            trial_convective_flux_interface[:, 0] = 0.0
-            trial_convective_flux_interface[:, 1:] = 0.5 * (
-                trial_convective_flux[:, :-1]
-                + trial_convective_flux[:, 1:]
-            )
-            trial_total_flux_residual = np.max(
-                np.abs(
-                    (
-                        trial_radiative_flux_interface[
-                            :, flux_balance_monitor
-                        ]
-                        + trial_convective_flux_interface[
-                            :, flux_balance_monitor
-                        ]
-                    )
-                    / target_flux
-                    - 1.0
-                ),
-                axis=1,
-            )
-            effective_convective_correction_damping = float(
-                trial_damping[np.argmin(trial_total_flux_residual)]
-            )
-        convective_temperature_correction = (
-            effective_convective_correction_damping
-            * convective_log_temperature_correction
-        )
-        global_relaxation = 1.0 if np.any(convective) else 0.25
-        total_temperature_correction = (
-            radiative_temperature_correction
-            + (
-                global_relaxation * global_correction
-                if apply_global_flux_correction
-                else 0.0
-            )
-            + convective_temperature_correction
-        )
-        temperature *= np.exp(total_temperature_correction)
-        correction_monitor = active | convective
-        # Test convergence against the correction that was actually applied.
-        # The previous radiative-only branch monitored the undamped raw
-        # residual instead, even though the solver applies half of its
-        # smoothed value.  That could leave a stable hot model marked
-        # unconverged indefinitely while every temperature update was already
-        # below the requested tolerance.
-        maximum_correction = float(
-            np.max(
-                np.abs(total_temperature_correction[correction_monitor])
-            )
-        )
-        maximum_radiative_correction = float(
-            np.max(np.abs(radiative_temperature_correction[active]))
-        )
-        maximum_convective_correction = float(
-            np.max(
-                np.abs(convective_temperature_correction[correction_monitor])
-            )
-        )
-        maximum_correction_depth_index = int(
-            np.argmax(
-                np.where(
-                    correction_monitor,
-                    np.abs(total_temperature_correction),
-                    -1.0,
-                )
-            )
-        )
-        converged = bool(
-            iteration >= 12
-            and maximum_correction < temperature_tolerance
-            and abs(flux_ratio - 1.0) < flux_tolerance
-            and (
-                mixing_length_alpha is None
-                or maximum_total_flux_residual < convective_flux_tolerance
-            )
-        )
-        if iteration_callback is not None:
-            iteration_callback(
-                iteration,
-                with_temperature(temperature.copy()),
-                {
-                    "flux_ratio": flux_ratio,
-                    "maximum_log_temperature_correction": maximum_correction,
-                    "maximum_radiative_log_temperature_correction": (
-                        maximum_radiative_correction
-                    ),
-                    "maximum_convective_log_temperature_correction": (
-                        maximum_convective_correction
-                    ),
-                    "maximum_correction_depth_index": (
-                        maximum_correction_depth_index
-                    ),
-                    "maximum_convective_flux_fraction": float(
-                        np.max(required_convective_flux[convective]) / target_flux
-                        if np.any(convective)
-                        else 0.0
-                    ),
-                    "maximum_total_flux_residual": (
-                        maximum_total_flux_residual
-                    ),
-                    "signed_maximum_total_flux_residual": (
-                        signed_maximum_total_flux_residual
-                    ),
-                    "maximum_total_flux_residual_depth_index": (
-                        maximum_total_flux_residual_depth_index
-                    ),
-                    "maximum_total_flux_residual_rosseland_depth": (
-                        maximum_total_flux_residual_rosseland_depth
-                    ),
-                    "effective_convective_correction_damping": (
-                        effective_convective_correction_damping
-                    ),
-                    "converged": converged,
-                },
-            )
-        if converged:
-            break
-
-    atmosphere = with_temperature(temperature)
-    rosseland_opacity = rosseland_mean_hydrogen_continuum_opacity(
-        atmosphere, h2_h2_cia_table=h2_h2_cia_table
-    )
-    rosseland_depth = np.empty_like(atmosphere.column_mass)
-    rosseland_depth[0] = rosseland_opacity[0] * atmosphere.column_mass[0]
-    rosseland_depth[1:] = rosseland_depth[0] + np.cumsum(
-        0.5
-        * (rosseland_opacity[1:] + rosseland_opacity[:-1])
-        * np.diff(atmosphere.column_mass)
-    )
-    return Atmosphere(
-        effective_temperature=atmosphere.effective_temperature,
-        logg=atmosphere.logg,
-        rosseland_optical_depth=rosseland_depth,
-        column_mass=atmosphere.column_mass,
-        temperature=atmosphere.temperature,
-        gas_pressure=atmosphere.gas_pressure,
-        mass_density=atmosphere.mass_density,
-        neutral_h_density=atmosphere.neutral_h_density,
-        proton_density=atmosphere.proton_density,
-        electron_density=atmosphere.electron_density,
-        metadata={
-            "model": (
-                "non-gray-radiative-convective-equilibrium"
-                if mixing_length_alpha is not None
-                else "non-gray-radiative-equilibrium"
+    def thermodynamics(current: Atmosphere) -> object:
+        return hummer_mihalas_hydrogen_thermodynamics(
+            current.temperature,
+            current.gas_pressure,
+            correlated_microfields=correlated_microfields,
+            include_molecules=include_molecules,
+            include_negative_hydrogen=include_negative_hydrogen,
+            trihydrogen_ion_partition_model=(
+                trihydrogen_ion_partition_model
             ),
+            central_state=current.hydrogen_lte_state,
+        )
+
+    adaptive_seed = with_temperature(temperature)
+    return solve_adaptive_lte_structure(
+        adaptive_seed,
+        wavelength,
+        reuse_material_probe_rosseland=True,
+        enforce_local_energy_balance=enforce_local_energy_balance,
+        with_temperature=with_temperature,
+        true_absorption=true_absorption,
+        scattering_opacity=scattering_opacity,
+        rosseland_opacity=rosseland_opacity,
+        thermodynamics=thermodynamics,
+        mixing_length_alpha=mixing_length_alpha,
+        max_iterations=max_iterations,
+        temperature_tolerance=temperature_tolerance,
+        flux_tolerance=flux_tolerance,
+        n_angle=n_angle,
+        initial_temperature_was_supplied=initial_temperature is not None,
+        # The DA API historically treats a supplied temperature as a
+        # same-physics warm start, not proof of an exactly matching
+        # completed checkpoint.  Preserve that contract: it still gets
+        # the bounded ML2 conditioner before exact flux completion.
+        resume_supplied_structure_in_formal_flux_phase=False,
+        # The very efficient convection zones below 5000 K require the
+        # interface-based projection recovered from the successful
+        # ultracool DA solver.  Preserve the validated node-gradient path
+        # at and above 5000 K.
+        initial_convective_gradient_projection_mode=(
+            "interface-transport"
+            if effective_temperature < 5_000.0
+            or initial_temperature is not None
+            else "unstable-node-gradient"
+        ),
+        maximum_convective_preconditioner_iterations=max_iterations,
+        preconditioner_stationary_completion_iterations=None,
+        use_adiabatic_asymptotic_conditioning=(
+            effective_temperature < 5_000.0
+        ),
+        use_initial_bolometric_rescaling=(
+            effective_temperature >= 5_000.0
+        ),
+        iteration_callback=iteration_callback,
+        metadata={
+            **{
+                key: value
+                for key, value in seed.metadata.items()
+                if key not in ("model", "composition", "eos")
+            },
             "composition": (
                 "metal-polluted-hydrogen"
                 if metal_database is not None
                 else "pure-hydrogen"
             ),
             "eos": (
-                atmosphere.hydrogen_lte_state.chemical_model
-                if atmosphere.hydrogen_lte_state is not None
-                else (
-                    "q-mhd-correlated-occupation-probability"
-                    if correlated_microfields
-                    else "hummer-mihalas-occupation-probability"
-                )
+                adaptive_seed.hydrogen_lte_state.chemical_model
+                if adaptive_seed.hydrogen_lte_state is not None
+                else "hummer-mihalas-occupation-probability"
             ),
-            "rosseland_opacity_cm2_g": rosseland_opacity,
-            "radiative_equilibrium_iterations": iteration,
-            "radiative_equilibrium_converged": bool(
-                maximum_correction < temperature_tolerance
-                and abs(flux_ratio - 1.0) < flux_tolerance
-                and (
-                    mixing_length_alpha is None
-                    or maximum_total_flux_residual
-                    < convective_flux_tolerance
-                )
-            ),
-            "radiative_equilibrium_maximum_log_temperature_correction": maximum_correction,
-            "radiative_equilibrium_maximum_radiative_log_temperature_correction": maximum_radiative_correction,
-            "radiative_equilibrium_maximum_convective_log_temperature_correction": maximum_convective_correction,
-            "radiative_equilibrium_maximum_correction_depth_index": maximum_correction_depth_index,
-            "radiative_equilibrium_flux_ratio": flux_ratio,
-            "radiative_equilibrium_wavelength_points": int(wavelength.size),
             "radiative_equilibrium_seed_tau_min": float(tau_min),
-            "radiative_equilibrium_maximum_correction_rosseland_depth": float(
-                maximum_radiative_correction_rosseland_depth
+            "radiative_equilibrium_custom_hydrogen_eos": hydrogen_eos_function is not None,
+            "radiative_equilibrium_resolves_balmer_line_cores": bool(
+                include_balmer_lines and resolve_balmer_line_cores
             ),
-            "radiative_equilibrium_applies_global_flux_correction": bool(
-                apply_global_flux_correction
+            "radiative_equilibrium_resolves_lyman_line_cores": bool(
+                include_lyman_lines and resolved_lyman_line_cores
             ),
-            "radiative_equilibrium_radiative_correction_damping": float(
-                radiative_correction_damping
+            "radiative_equilibrium_includes_balmer_lines": bool(
+                include_balmer_lines
             ),
-            "radiative_equilibrium_includes_balmer_lines": bool(include_balmer_lines),
-            "radiative_equilibrium_custom_balmer_opacity": bool(
-                balmer_opacity_function is not None
+            "radiative_equilibrium_balmer_profile_edge_optical_depth": (
+                1.0e-4 if include_balmer_lines else None
             ),
             "radiative_equilibrium_includes_paschen_lines": bool(
                 include_paschen_lines
@@ -2424,48 +1824,11 @@ def radiative_equilibrium_hydrogen_atmosphere(
             "radiative_equilibrium_includes_brackett_lines": bool(
                 include_brackett_lines
             ),
-            "radiative_equilibrium_includes_balmer_self_broadening": bool(
-                include_balmer_lines and include_balmer_self_broadening
-            ),
-            "radiative_equilibrium_balmer_self_broadening_quadrature_order": int(
-                balmer_self_broadening_quadrature_order
-            ),
-            "radiative_equilibrium_balmer_profile_edge_optical_depth": (
-                1.0e-4 if include_balmer_lines else None
-            ),
-            "radiative_equilibrium_balmer_self_broadening_prescription": (
-                balmer_self_broadening_prescription
-            ),
-            "radiative_equilibrium_balmer_self_broadening_truncation_closure": (
-                balmer_self_broadening_truncation_closure
-            ),
-            "radiative_equilibrium_includes_lyman_lines": bool(include_lyman_lines),
-            "radiative_equilibrium_resolves_balmer_line_cores": bool(
-                include_balmer_lines and resolve_balmer_line_cores
-            ),
-            "radiative_equilibrium_balmer_line_core_step_angstrom": float(
-                balmer_line_core_step_angstrom
-            ),
-            "radiative_equilibrium_resolves_lyman_line_cores": bool(
-                include_lyman_lines and resolved_lyman_line_cores
+            "radiative_equilibrium_includes_lyman_lines": bool(
+                include_lyman_lines
             ),
             "radiative_equilibrium_includes_series_pseudocontinuum": bool(
                 include_lyman_lines and include_series_pseudocontinuum
-            ),
-            "radiative_equilibrium_includes_neutral_lyman_alpha_wing": bool(
-                include_lyman_lines
-                and include_neutral_lyman_alpha_wing
-            ),
-            "radiative_equilibrium_includes_allard_lyman_profiles": bool(
-                include_lyman_lines and unified_allard_table is not None
-            ),
-            "allard_profile_policy": "effective-nearest; half-Stark additive",
-            "radiative_equilibrium_includes_jackson_lyman_profiles": bool(
-                include_lyman_lines and jackson_lyman_table is not None
-            ),
-            "jackson_profile_policy": (
-                "replace Lyalpha/Lybeta charged Stark; depth-interpolate "
-                "log(T), log(ne); Doppler-convolved"
             ),
             "radiative_equilibrium_includes_molecular_equilibrium_and_opacity": bool(
                 include_molecules
@@ -2475,19 +1838,26 @@ def radiative_equilibrium_hydrogen_atmosphere(
             ),
             "metal_abundances": (
                 dict(metal_abundances)
-                if metal_abundances is not None else {}
+                if metal_abundances is not None
+                else {}
             ),
             "metal_electron_feedback": (
                 "fixed-H-nuclei shared H/metal charge closure"
-                if metal_database is not None else "disabled"
+                if metal_database is not None
+                else "disabled"
             ),
             "hydrogen_metal_eos_solver": (
                 "depth-local Newton in log(ne) and log(H partition)"
-                if metal_database is not None else "disabled"
+                if metal_database is not None
+                else "disabled"
             ),
             "metal_thermodynamic_derivatives": (
                 "trace-metal approximation: Q-MHD hydrogen derivatives"
-                if metal_database is not None else "not applicable"
+                if metal_database is not None
+                else "not applicable"
+            ),
+            "rosseland_opacity_includes_metal_bound_bound_and_bound_free": (
+                explicit_metal_rosseland_opacity
             ),
             "radiative_equilibrium_includes_metal_lines": bool(
                 metal_database is not None and include_metal_lines
@@ -2504,9 +1874,21 @@ def radiative_equilibrium_hydrogen_atmosphere(
             "radiative_equilibrium_minimum_metal_oscillator_strength": float(
                 minimum_metal_oscillator_strength
             ),
-            "radiative_equilibrium_maximum_metal_lines": maximum_metal_lines,
+            "radiative_equilibrium_maximum_metal_lines": (
+                maximum_metal_lines
+            ),
             "radiative_equilibrium_wing_sampled_metal_lines": int(
                 metal_wing_sampled_lines
+            ),
+            "radiative_equilibrium_metal_line_opacity_sampling_resolution": (
+                None if metal_line_opacity_sampling_resolution is None
+                else float(metal_line_opacity_sampling_resolution)
+            ),
+            "radiative_equilibrium_depth_concentration": float(
+                depth_concentration
+            ),
+            "radiative_equilibrium_metal_line_selection": (
+                "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"
             ),
             "radiative_equilibrium_includes_negative_hydrogen_charge_equilibrium": bool(
                 include_negative_hydrogen
@@ -2520,53 +1902,7 @@ def radiative_equilibrium_hydrogen_atmosphere(
                 if include_molecules and include_lyman_lines
                 else None
             ),
-            "radiative_equilibrium_includes_h2_h2_collision_induced_absorption": bool(
-                include_molecules and h2_h2_cia_table is not None
-            ),
-            "radiative_equilibrium_custom_hydrogen_eos": bool(
-                hydrogen_eos_function is not None
-            ),
-            "convection": (
-                "ML2-Bergeron-1992" if mixing_length_alpha is not None else "none"
-            ),
-            "mixing_length_alpha": mixing_length_alpha,
-            "convective_correction_damping": float(
-                convective_correction_damping
-            ),
-            "effective_convective_correction_damping": float(
-                effective_convective_correction_damping
-            ),
-            "convective_transport_solver": (
-                "coupled-radiative-plus-ML2-total-flux"
-                if mixing_length_alpha is not None
-                else "none"
-            ),
-            "convective_flux_tolerance": float(convective_flux_tolerance),
-            "maximum_total_flux_residual": float(
-                maximum_total_flux_residual
-            ),
-            "signed_maximum_total_flux_residual": float(
-                signed_maximum_total_flux_residual
-            ),
-            "maximum_total_flux_residual_depth_index": int(
-                maximum_total_flux_residual_depth_index
-            ),
-            "maximum_total_flux_residual_rosseland_depth": float(
-                maximum_total_flux_residual_rosseland_depth
-            ),
-            "maximum_convective_flux_fraction": float(
-                np.max(required_convective_flux[convective]) / target_flux
-                if np.any(convective)
-                else 0.0
-            ),
-            "convective_depth_points": int(np.count_nonzero(convective)),
-            "electron_scattering_source": "coherent-isotropic Lambda iteration",
-            "hydrogen_rayleigh_scattering": (
-                "H I Rohrmann-Vera Rueda 2022 plus H2 Dalgarno-Williams "
-                "1962 redward of Lyalpha"
-            ),
         },
-        hydrogen_lte_state=atmosphere.hydrogen_lte_state,
     )
 
 
@@ -2579,22 +1915,16 @@ def radiative_equilibrium_helium_atmosphere(
     n_depth: int = 80,
     tau_min: float = 1.0e-8,
     max_iterations: int = 300,
-    structure_solver: Literal["adaptive-newton", "lambda"] = "lambda",
+    structure_solver: Literal["adaptive-newton"] = "adaptive-newton",
     temperature_tolerance: float = 3.0e-4,
     flux_tolerance: float = 3.0e-3,
     enforce_local_energy_balance: bool = True,
-    consecutive_convergence_iterations: int = 3,
     n_continuum_wavelength: int = 500,
     include_lines: bool = True,
     include_helium_ii_lines: bool = True,
     correlated_microfields: bool = True,
     neutral_radius_scale: float = 0.5,
     mixing_length_alpha: float | None = 1.25,
-    include_absorption_temperature_derivative: bool = True,
-    temperature_correction_damping: float = 1.0,
-    convective_correction_damping: float = 1.0,
-    convective_gradient_tolerance: float = 0.03,
-    convective_flux_tolerance: float = 0.03,
     n_angle: int = 3,
     include_helium_dimer_ion: bool = True,
     include_helium_three_body_cia: bool = True,
@@ -2619,9 +1949,12 @@ def radiative_equilibrium_helium_atmosphere(
     unified_allard_table: AllardUnifiedLymanTable | None = None,
     allard_stark_weight: float = 0.5,
     include_dense_helium_metal_ionization: bool = True,
+    metal_occupation_probability_partitions: bool = False,
     include_metal_lines: bool = True,
     minimum_metal_oscillator_strength: float = 1.0e-2,
     maximum_metal_lines: int | None = 1_000,
+    metal_line_opacity_sampling_resolution: float | None = None,
+    depth_concentration: float = 0.0,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
@@ -2631,6 +1964,8 @@ def radiative_equilibrium_helium_atmosphere(
     metal_topbase_photoionization_database: (
         TOPbasePhotoionizationDatabase | None
     ) = None,
+    homogeneous_metal_host: bool = False,
+    metal_classical_electron_stark: bool = False,
     resume_supplied_structure_in_formal_flux_phase: bool = True,
     iteration_callback: Callable[
         [int, Atmosphere, Mapping[str, object]], None
@@ -2644,7 +1979,29 @@ def radiative_equilibrium_helium_atmosphere(
     released line-dissolved Beauchamp profiles should normally be supplied as
     ``stark_table``.  The default ML2 mixing length of 1.25 is the standard
     Montreal/ATMO DB calibration; pass ``None`` for a radiative control model.
+
+    With metals, ``log_hydrogen_abundance`` normally adds trace hydrogen to a
+    pure-He EOS (DZA/DBZ).  ``homogeneous_metal_host=True`` instead keeps the
+    homogeneous H/He EOS, hydrogen frequency grid and thermodynamics of the
+    metal-free mixture, so hydrogen may dominate; metals then remain trace
+    species in the shared H/He/metal charge closure and in the opacity.
+    ``metal_classical_electron_stark`` adds the SYNSPEC classical electron
+    width to ordinary metal lines that have no tabulated Stark width.
     """
+    if homogeneous_metal_host and (
+        log_hydrogen_abundance is None
+        or metal_database is None
+        or metal_abundances is None
+    ):
+        raise ValueError(
+            "homogeneous_metal_host requires log_hydrogen_abundance and metals"
+        )
+    if homogeneous_metal_host and (
+        molecular_h_he is not None or helium_reos3_table is not None
+    ):
+        raise ValueError(
+            "homogeneous_metal_host supports only the atomic ideal H/He EOS"
+        )
 
     if max_iterations < 1:
         raise ValueError("max_iterations must be positive")
@@ -2652,41 +2009,16 @@ def radiative_equilibrium_helium_atmosphere(
         raise TypeError(
             "resume_supplied_structure_in_formal_flux_phase must be boolean"
         )
-    if structure_solver not in ("adaptive-newton", "lambda"):
+    if structure_solver != "adaptive-newton":
         raise ValueError(
-            "structure_solver must be 'adaptive-newton' or 'lambda'"
+            "Only structure_solver='adaptive-newton' is supported"
         )
-    if consecutive_convergence_iterations < 1:
-        raise ValueError("consecutive_convergence_iterations must be positive")
     if n_continuum_wavelength < 80:
         raise ValueError("n_continuum_wavelength must be at least 80")
     if mixing_length_alpha is not None and (
         not np.isfinite(mixing_length_alpha) or mixing_length_alpha <= 0.0
     ):
         raise ValueError("mixing_length_alpha must be finite and positive")
-    if (
-        not np.isfinite(temperature_correction_damping)
-        or temperature_correction_damping <= 0.0
-        or temperature_correction_damping > 1.0
-    ):
-        raise ValueError(
-            "temperature_correction_damping must be in the interval (0, 1]"
-        )
-    if (
-        not np.isfinite(convective_correction_damping)
-        or not 0.0 < convective_correction_damping <= 1.0
-    ):
-        raise ValueError("convective_correction_damping must be in (0, 1]")
-    if (
-        not np.isfinite(convective_gradient_tolerance)
-        or convective_gradient_tolerance <= 0.0
-    ):
-        raise ValueError("convective_gradient_tolerance must be positive")
-    if (
-        not np.isfinite(convective_flux_tolerance)
-        or convective_flux_tolerance <= 0.0
-    ):
-        raise ValueError("convective_flux_tolerance must be positive")
     if neutral_line_broadening not in ("none", "unsold", "montreal"):
         raise ValueError(
             "neutral_line_broadening must be 'none', 'unsold', or 'montreal'"
@@ -2707,12 +2039,11 @@ def radiative_equilibrium_helium_atmosphere(
         or metal_topbase_photoionization_database is not None
     ) and metal_database is None:
         raise ValueError("metal photoionization requires metal_database and abundances")
-    homogeneous_mixture = (
-        log_hydrogen_abundance is not None and metal_database is None
+    homogeneous_mixture = log_hydrogen_abundance is not None and (
+        metal_database is None or homogeneous_metal_host
     )
     if molecular_h_he is not None and (
         not homogeneous_mixture or helium_reos3_table is not None
-        or structure_solver != "adaptive-newton"
     ):
         raise ValueError("Molecular H/He requires a homogeneous adaptive mixture without bulk-EOS substitution")
     mixed_lte = (hummer_mihalas_hydrogen_helium_lte if molecular_h_he is None
@@ -2728,44 +2059,11 @@ def radiative_equilibrium_helium_atmosphere(
         PLANCK,
         STEFAN_BOLTZMANN,
     )
-    from .helium import (
-        HELIUM_I_LINES,
-        HELIUM_I_RESONANCE_LINES,
-        HELIUM_II_LINES,
-        _helium_ii_level_distribution,
-        helium_continuum_mass_absorption_coefficient,
-        helium_i_line_mass_absorption_coefficient,
-        helium_i_resonance_line_mass_absorption_coefficient,
-        helium_ii_line_mass_absorption_coefficient,
-        helium_rayleigh_scattering_mass_coefficient,
-        rosseland_mean_helium_continuum_opacity,
-    )
+    from .helium import HELIUM_I_LINES, HELIUM_II_LINES, _helium_ii_level_distribution, helium_continuum_mass_absorption_coefficient, helium_i_line_mass_absorption_coefficient, helium_i_resonance_line_mass_absorption_coefficient, helium_ii_line_mass_absorption_coefficient, helium_rayleigh_scattering_mass_coefficient, rosseland_mean_helium_continuum_opacity
     if homogeneous_mixture:
         from .mixture import rosseland_mean_hydrogen_helium_continuum_opacity
-    from .opacity import (
-        BALMER_LINES,
-        BRACKETT_LINES,
-        LYMAN_LINES,
-        PASCHEN_LINES,
-        balmer_mass_absorption_coefficient,
-        brackett_mass_absorption_coefficient,
-        electron_scattering_mass_coefficient,
-        hydrogen_continuum_mass_absorption_coefficient,
-        hydrogen_dissolved_level_pseudocontinuum_mass_absorption_coefficient,
-        hydrogen_rayleigh_scattering_mass_coefficient,
-        lyman_mass_absorption_coefficient,
-        optical_depth_from_mass_opacity,
-        paschen_mass_absorption_coefficient,
-    )
-    from .radiative_transfer import radiation_field
+    from .opacity import BALMER_LINES, BRACKETT_LINES, LYMAN_LINES, PASCHEN_LINES, balmer_mass_absorption_coefficient, brackett_mass_absorption_coefficient, electron_scattering_mass_coefficient, hydrogen_continuum_mass_absorption_coefficient, hydrogen_dissolved_level_pseudocontinuum_mass_absorption_coefficient, hydrogen_rayleigh_scattering_mass_coefficient, lyman_mass_absorption_coefficient, paschen_mass_absorption_coefficient
     from .spectrum import planck_lambda_angstrom
-    if mixing_length_alpha is not None:
-        from .convection import (
-            ml2_convective_flux,
-            ml2_convective_flux_for_gradient,
-            ml2_temperature_gradient_for_flux,
-        )
-
     restart_seed_requested = (
         initial_gas_pressure is not None
         or initial_rosseland_optical_depth is not None
@@ -2917,15 +2215,19 @@ def radiative_equilibrium_helium_atmosphere(
     else:
         seed = helium_continuum_atmosphere(
             effective_temperature, logg, n_depth=n_depth, tau_min=tau_min,
+            depth_concentration=depth_concentration,
             correlated_microfields=correlated_microfields,
             neutral_radius_scale=neutral_radius_scale,
             include_helium_dimer_ion=include_helium_dimer_ion,
             include_helium_three_body_cia=include_helium_three_body_cia,
             include_rydberg_bound_free=include_rydberg_bound_free,
             helium_reos3_table=helium_reos3_table,
-            metal_database=metal_database,
-            metal_abundances=metal_abundances,
+            # A homogeneous host starts from the metal-free H/He continuum
+            # seed; its trace metals enter with the first non-gray state.
+            metal_database=None if homogeneous_metal_host else metal_database,
+            metal_abundances=None if homogeneous_metal_host else metal_abundances,
             log_hydrogen_abundance=log_hydrogen_abundance,
+            metal_occupation_probability_partitions=metal_occupation_probability_partitions,
             include_dense_helium_metal_ionization=(
                 include_dense_helium_metal_ionization
             ),
@@ -3066,6 +2368,7 @@ def radiative_equilibrium_helium_atmosphere(
         if line_grids:
             wavelength = np.unique(np.concatenate((wavelength, *line_grids)))
     metal_wing_sampled_lines = 0
+    structure_line_transition_keys: tuple[tuple[str, int, int, int], ...] = ()
     if (
         metal_database is not None
         and metal_abundances is not None
@@ -3077,6 +2380,7 @@ def radiative_equilibrium_helium_atmosphere(
             seed,
             metal_database,
             metal_abundances,
+            occupation_probability_partitions=metal_occupation_probability_partitions,
             log_hydrogen_abundance=log_hydrogen_abundance,
             include_dense_helium_ionization=(
                 include_dense_helium_metal_ionization
@@ -3105,12 +2409,26 @@ def radiative_equilibrium_helium_atmosphere(
             ion_stage_weight,
             flux_weighted=True,
         )
+        # The opacity must contain exactly the lines the frequency grid was
+        # built to sample; a second, unweighted ranking would swap near-UV
+        # blanketing for unsampled EUV and IR lines and could change the set
+        # between Newton iterations.
+        structure_line_transition_keys = tuple(
+            (ion.element, ion.charge, line.lower_index, line.upper_index)
+            for ion, line in structure_lines
+        )
         metal_centers = np.asarray(
             [line.wavelength_vacuum_angstrom for _, line in structure_lines]
         )
         if metal_centers.size:
             metal_grid, metal_wing_sampled_lines = (
-                _metal_line_opacity_sampling_grid(metal_centers)
+                _metal_line_opacity_sampling_grid(
+                    metal_centers,
+                    opacity_sampling_resolution=(
+                        metal_line_opacity_sampling_resolution
+                    ),
+                    effective_temperature=effective_temperature,
+                )
             )
             wavelength = np.unique(np.concatenate((wavelength, metal_grid)))
     if log_hydrogen_abundance is not None and include_trace_hydrogen_lines:
@@ -3217,7 +2535,6 @@ def radiative_equilibrium_helium_atmosphere(
         unified_profile_grids.append(ca_ii_he_profile_table.wavelength_angstrom)
     if unified_profile_grids:
         wavelength = np.unique(np.concatenate((wavelength, *unified_profile_grids)))
-    target_flux = STEFAN_BOLTZMANN * effective_temperature**4
     if initial_temperature is None:
         temperature = seed.temperature.copy()
     else:
@@ -3236,17 +2553,6 @@ def radiative_equilibrium_helium_atmosphere(
             temperature = supplied.copy()
         else:
             raise ValueError("initial_temperature must have one value per depth")
-
-    convective_gradient_operator: FloatArray | None = None
-    if mixing_length_alpha is not None:
-        log_pressure_grid = np.log(seed.gas_pressure)
-        convective_gradient_operator = np.empty((n_depth, n_depth))
-        for column in range(n_depth):
-            basis = np.zeros(n_depth)
-            basis[column] = 1.0
-            convective_gradient_operator[:, column] = np.gradient(
-                basis, log_pressure_grid, edge_order=2
-            )
 
     def with_temperature(values: FloatArray) -> Atmosphere:
         if homogeneous_mixture:
@@ -3295,6 +2601,7 @@ def radiative_equilibrium_helium_atmosphere(
                 result,
                 metal_database,
                 metal_abundances,
+                occupation_probability_partitions=metal_occupation_probability_partitions,
                 reference_species="He",
                 include_dense_helium_ionization=(
                     include_dense_helium_metal_ionization
@@ -3352,6 +2659,7 @@ def radiative_equilibrium_helium_atmosphere(
                 current,
                 metal_database,
                 metal_abundances,
+                occupation_probability_partitions=metal_occupation_probability_partitions,
                 reference_species="He",
                 include_dense_helium_ionization=(
                     include_dense_helium_metal_ionization
@@ -3392,6 +2700,10 @@ def radiative_equilibrium_helium_atmosphere(
                     ca_ii_he_profile_table=ca_ii_he_profile_table,
                     minimum_oscillator_strength=minimum_metal_oscillator_strength,
                     maximum_lines=maximum_metal_lines,
+                    transition_keys=structure_line_transition_keys,
+                    include_classical_electron_stark=(
+                        metal_classical_electron_stark
+                    ),
                 )
         if current.hydrogen_lte_state is not None:
             hydrogen_opacity = (hydrogen_continuum_mass_absorption_coefficient
@@ -3447,920 +2759,156 @@ def radiative_equilibrium_helium_atmosphere(
         )
         return result
 
-    if structure_solver == "adaptive-newton":
-        from .adaptive_structure import (
-            rosseland_mean_from_opacity_grid,
-            solve_adaptive_lte_structure,
+    from .adaptive_structure import (
+        rosseland_mean_from_opacity_grid,
+        solve_adaptive_lte_structure,
+    )
+    from .eos import (
+        hummer_mihalas_helium_thermodynamics,
+        hummer_mihalas_hydrogen_helium_thermodynamics,
+    )
+
+    def scattering_opacity(current: Atmosphere) -> FloatArray:
+        scattering = (
+            electron_scattering_mass_coefficient(current)[np.newaxis, :]
+            + helium_rayleigh_scattering_mass_coefficient(
+                current, wavelength
+            )
         )
-        from .eos import (
-            hummer_mihalas_helium_thermodynamics,
-            hummer_mihalas_hydrogen_helium_thermodynamics,
+        if current.hydrogen_lte_state is not None:
+            scattering += hydrogen_rayleigh_scattering_mass_coefficient(
+                current, wavelength
+            )
+        return scattering
+
+    def rosseland_opacity(current: Atmosphere) -> FloatArray:
+        metal_opacity_is_explicit = (
+            metal_database is not None
+            and (
+                include_metal_lines
+                or metal_photoionization_database is not None
+                or metal_topbase_photoionization_database is not None
+            )
+        )
+        if metal_opacity_is_explicit:
+            if structure_absorption_cache.get("atmosphere") is current:
+                absorption = np.asarray(
+                    structure_absorption_cache["absorption"],
+                    dtype=np.float64,
+                )
+            else:
+                absorption = true_absorption(current)
+            return rosseland_mean_from_opacity_grid(
+                wavelength,
+                absorption + scattering_opacity(current),
+                current.temperature,
+            )
+        function = (
+            rosseland_mean_hydrogen_helium_continuum_opacity
+            if homogeneous_mixture
+            else rosseland_mean_helium_continuum_opacity
+        )
+        return function(
+            current,
+            n_frequency=120,
+            wavelength_angstrom=wavelength,
+            include_helium_dimer_ion=include_helium_dimer_ion,
+            include_helium_three_body_cia=include_helium_three_body_cia,
+            include_rydberg_bound_free=include_rydberg_bound_free,
+            **({} if molecular_h_he is None else dict(molecular_h_he=molecular_h_he)),
         )
 
-        def scattering_opacity(current: Atmosphere) -> FloatArray:
-            scattering = (
-                electron_scattering_mass_coefficient(current)[np.newaxis, :]
-                + helium_rayleigh_scattering_mass_coefficient(
-                    current, wavelength
-                )
-            )
-            if current.hydrogen_lte_state is not None:
-                scattering += hydrogen_rayleigh_scattering_mass_coefficient(
-                    current, wavelength
-                )
-            return scattering
-
-        def rosseland_opacity(current: Atmosphere) -> FloatArray:
-            metal_opacity_is_explicit = (
-                metal_database is not None
-                and (
-                    include_metal_lines
-                    or metal_photoionization_database is not None
-                    or metal_topbase_photoionization_database is not None
-                )
-            )
-            if metal_opacity_is_explicit:
-                if structure_absorption_cache.get("atmosphere") is current:
-                    absorption = np.asarray(
-                        structure_absorption_cache["absorption"],
-                        dtype=np.float64,
-                    )
-                else:
-                    absorption = true_absorption(current)
-                return rosseland_mean_from_opacity_grid(
-                    wavelength,
-                    absorption + scattering_opacity(current),
-                    current.temperature,
-                )
-            function = (
-                rosseland_mean_hydrogen_helium_continuum_opacity
-                if homogeneous_mixture
-                else rosseland_mean_helium_continuum_opacity
-            )
-            return function(
-                current,
-                n_frequency=120,
-                wavelength_angstrom=wavelength,
-                include_helium_dimer_ion=include_helium_dimer_ion,
-                include_helium_three_body_cia=include_helium_three_body_cia,
-                include_rydberg_bound_free=include_rydberg_bound_free,
-                **({} if molecular_h_he is None else dict(molecular_h_he=molecular_h_he)),
-            )
-
-        def thermodynamics(current: Atmosphere) -> object:
-            if homogeneous_mixture:
-                assert log_hydrogen_abundance is not None
-                thermo_function = (hummer_mihalas_hydrogen_helium_thermodynamics
-                    if molecular_h_he is None else molecular_h_he.thermodynamics)
-                return thermo_function(
-                    current.temperature,
-                    current.gas_pressure,
-                    log_hydrogen_abundance,
-                    helium_neutral_radius_scale=neutral_radius_scale,
-                    correlated_microfields=correlated_microfields,
-                )
-            return hummer_mihalas_helium_thermodynamics(
+    def thermodynamics(current: Atmosphere) -> object:
+        if homogeneous_mixture:
+            assert log_hydrogen_abundance is not None
+            thermo_function = (hummer_mihalas_hydrogen_helium_thermodynamics
+                if molecular_h_he is None else molecular_h_he.thermodynamics)
+            return thermo_function(
                 current.temperature,
                 current.gas_pressure,
-                neutral_radius_scale=neutral_radius_scale,
+                log_hydrogen_abundance,
+                helium_neutral_radius_scale=neutral_radius_scale,
                 correlated_microfields=correlated_microfields,
-                helium_reos3_table=helium_reos3_table,
             )
+        return hummer_mihalas_helium_thermodynamics(
+            current.temperature,
+            current.gas_pressure,
+            neutral_radius_scale=neutral_radius_scale,
+            correlated_microfields=correlated_microfields,
+            helium_reos3_table=helium_reos3_table,
+        )
 
-        adaptive_seed = with_temperature(temperature)
-        return solve_adaptive_lte_structure(
-            adaptive_seed,
-            wavelength,
-            enforce_local_energy_balance=enforce_local_energy_balance,
-            with_temperature=with_temperature,
-            true_absorption=true_absorption,
-            scattering_opacity=scattering_opacity,
-            rosseland_opacity=rosseland_opacity,
-            thermodynamics=thermodynamics,
-            mixing_length_alpha=mixing_length_alpha,
-            max_iterations=max_iterations,
-            temperature_tolerance=temperature_tolerance,
-            flux_tolerance=flux_tolerance,
-            n_angle=n_angle,
-            initial_temperature_was_supplied=initial_temperature is not None,
-            resume_supplied_structure_in_formal_flux_phase=(
-                initial_temperature is not None
-                and resume_supplied_structure_in_formal_flux_phase
-            ),
-            iteration_callback=iteration_callback,
-            metadata={
-                **{
-                    key: value
-                    for key, value in seed.metadata.items()
-                    if key not in ("model", "composition", "eos")
-                },
-                "composition": (
-                    "metal-polluted-helium"
-                    if metal_database is not None
-                    else "homogeneous-hydrogen-helium"
-                    if homogeneous_mixture
-                    else "pure-helium"
-                ),
-                "eos": (
-                    "trace-metal-charge-neutral-q-mhd-helium-occupation-probability"
-                    if metal_database is not None
-                    else "hummer-mihalas-hydrogen-helium-occupation-probability"
-                    if homogeneous_mixture
-                    else "q-mhd-helium-occupation-probability"
-                    if correlated_microfields
-                    else "hummer-mihalas-helium-occupation-probability"
-                ),
-                "helium_neutral_radius_scale": float(neutral_radius_scale),
-                "includes_molecular_equilibrium": molecular_h_he is not None,
-                "mixed_chemical_model": ("molecular-h-he-hm" if molecular_h_he is not None else "atomic-h-he-hm"),
-                "radiative_equilibrium_includes_helium_lines": bool(
-                    include_lines
-                ),
-                "radiative_equilibrium_retained_helium_i_lines": int(
-                    len(structure_helium_i_lines)
-                ),
-                "radiative_equilibrium_retained_helium_ii_lines": int(
-                    len(structure_helium_ii_lines)
-                ),
-                "radiative_equilibrium_neutral_helium_line_broadening": (
-                    neutral_line_broadening if include_lines else "disabled"
-                ),
-                "helium_stark_profiles": (
-                    "Tremblay-2026/Beauchamp-2025 explicit table"
-                ),
-                "helium_i_ground_resonance_broadening": (
-                    "Dimitrijevic-Sahal-Brechot-1989 electron/He-II impact"
-                ),
-                "helium_ii_profiles": (
-                    "Schoning-Butler/SYNSPEC table"
-                    if include_lines
-                    and include_helium_ii_lines
-                    and helium_ii_stark_table is not None
-                    else "hydrogenic Z^-5 transform of unified hydrogen tables"
-                    if include_lines and include_helium_ii_lines
-                    else "disabled"
-                ),
-                "helium_dimer_ion_continuum": bool(include_helium_dimer_ion),
-                "helium_three_body_collision_induced_absorption": bool(
-                    include_helium_three_body_cia
-                ),
-                "helium_rydberg_bound_free": bool(include_rydberg_bound_free),
-                "helium_minus_free_free": (
-                    "John-1994 inside tabulated T/lambda domain; "
-                    "Carbon-1969 fit to John-1968 elsewhere"
-                ),
-                "radiative_equilibrium_hydrogen_abundance": (
-                    float(log_hydrogen_abundance)
-                    if log_hydrogen_abundance is not None
-                    else None
-                ),
-                "radiative_equilibrium_balmer_profile_edge_optical_depth": (
-                    1.0e-4 if include_trace_hydrogen_lines else None
-                ),
-                "radiative_equilibrium_metal_opacity": bool(
-                    metal_database is not None
-                ),
-                "radiative_equilibrium_includes_metal_lines": bool(
-                    metal_database is not None and include_metal_lines
-                ),
-                "radiative_equilibrium_includes_metal_bound_free": bool(
-                    metal_photoionization_database is not None
-                    or metal_topbase_photoionization_database is not None
-                ),
-                "radiative_equilibrium_level_resolved_metal_bound_free": (
-                    metal_topbase_photoionization_database.source
-                    if metal_topbase_photoionization_database is not None
-                    else "disabled"
-                ),
-                "radiative_equilibrium_minimum_metal_oscillator_strength": float(
-                    minimum_metal_oscillator_strength
-                ),
-                "radiative_equilibrium_maximum_metal_lines": maximum_metal_lines,
-                "radiative_equilibrium_wing_sampled_metal_lines": int(
-                    metal_wing_sampled_lines
-                ),
-                "radiative_equilibrium_metal_line_selection": (
-                    "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"
-                ),
-                "metal_abundances": (
-                    dict(metal_abundances)
-                    if metal_abundances is not None else {}
-                ),
-                "metal_electron_feedback": (
-                    "charge-neutral EOS and continuum opacity"
-                    if metal_database is not None else "disabled"
-                ),
-                "metal_thermodynamic_derivatives": (
-                    "trace-metal approximation: Q-MHD helium derivatives"
-                    if metal_database is not None else "not applicable"
-                ),
-                "rosseland_opacity_includes_metal_bound_bound_and_bound_free": (
-                    metal_database is not None
-                    and (
-                        include_metal_lines
-                        or metal_photoionization_database is not None
-                        or metal_topbase_photoionization_database is not None
-                    )
-                ),
+    adaptive_seed = with_temperature(temperature)
+    return solve_adaptive_lte_structure(
+        adaptive_seed,
+        wavelength,
+        reuse_material_probe_rosseland=True,
+        enforce_local_energy_balance=enforce_local_energy_balance,
+        with_temperature=with_temperature,
+        true_absorption=true_absorption,
+        scattering_opacity=scattering_opacity,
+        rosseland_opacity=rosseland_opacity,
+        thermodynamics=thermodynamics,
+        mixing_length_alpha=mixing_length_alpha,
+        max_iterations=max_iterations,
+        temperature_tolerance=temperature_tolerance,
+        flux_tolerance=flux_tolerance,
+        n_angle=n_angle,
+        initial_temperature_was_supplied=initial_temperature is not None,
+        resume_supplied_structure_in_formal_flux_phase=(
+            initial_temperature is not None
+            and resume_supplied_structure_in_formal_flux_phase
+        ),
+        iteration_callback=iteration_callback,
+        metadata={
+            **{
+                key: value
+                for key, value in seed.metadata.items()
+                if key not in ("model", "composition", "eos")
             },
-        )
-
-    flux_ratio = np.inf
-    maximum_correction = np.inf
-    maximum_correction_depth_index = 0
-    last_evaluated_temperature = temperature.copy()
-    last_flux_ratio = flux_ratio
-    last_maximum_correction = maximum_correction
-    last_maximum_correction_depth_index = maximum_correction_depth_index
-    last_required_convective_flux = np.zeros(n_depth)
-    last_convective = np.zeros(n_depth, dtype=bool)
-    last_maximum_convective_gradient_residual = 0.0
-    last_maximum_convective_gradient_residual_depth_index = 0
-    last_maximum_total_flux_residual = 0.0
-    converged = False
-    required_convective_flux = np.zeros(n_depth)
-    convective = np.zeros(n_depth, dtype=bool)
-    maximum_convective_gradient_residual = 0.0
-    maximum_convective_gradient_residual_depth_index = 0
-    maximum_total_flux_residual = 0.0
-    convergence_streak = 0
-    flux_ratio_history: list[float] = []
-    maximum_correction_history: list[float] = []
-    maximum_convective_gradient_residual_history: list[float] = []
-    maximum_convective_gradient_residual_depth_index_history: list[int] = []
-    maximum_total_flux_residual_history: list[float] = []
-    effective_convective_correction_damping_history: list[float] = []
-    convective_damping_backtrack = 1.0
-    convective_flux_improvement_streak = 0
-    previous_maximum_total_flux_residual = np.inf
-    best_total_flux_residual = np.inf
-    best_transport_state: tuple[object, ...] | None = None
-    for iteration in range(1, max_iterations + 1):
-        atmosphere = with_temperature(temperature)
-        absorption = true_absorption(atmosphere)
-        scattering = (
-            electron_scattering_mass_coefficient(atmosphere)[np.newaxis, :]
-            + helium_rayleigh_scattering_mass_coefficient(atmosphere, wavelength)
-        )
-        if atmosphere.hydrogen_lte_state is not None:
-            scattering += hydrogen_rayleigh_scattering_mass_coefficient(
-                atmosphere, wavelength
-            )
-        total = absorption + scattering
-        optical_depth = optical_depth_from_mass_opacity(atmosphere.column_mass, total)
-        planck = planck_lambda_angstrom(
-            wavelength[:, np.newaxis], temperature[np.newaxis, :]
-        )
-        source = planck.copy()
-        for _ in range(4):
-            field = radiation_field(optical_depth, source, n_angle=n_angle)
-            source = (absorption * planck + scattering * field.mean_intensity) / total
-        field = radiation_field(optical_depth, source, n_angle=n_angle)
-        emitted = trapezoid(absorption * planck, wavelength, axis=0)
-        absorbed = trapezoid(
-            absorption * field.mean_intensity, wavelength, axis=0
-        )
-        active = relaxation_depth < 10.0
-        convective_weight = np.zeros(n_depth)
-        convective_log_temperature_correction = np.zeros(n_depth)
-        if mixing_length_alpha is not None:
-            rosseland_function = (
-                rosseland_mean_hydrogen_helium_continuum_opacity
-                if homogeneous_mixture
-                else rosseland_mean_helium_continuum_opacity
-            )
-            rosseland_for_convection = rosseland_function(
-                atmosphere,
-                n_frequency=120,
-                include_helium_dimer_ion=include_helium_dimer_ion,
-                include_helium_three_body_cia=include_helium_three_body_cia,
-                include_rydberg_bound_free=include_rydberg_bound_free,
-            )
-            radiative_flux = trapezoid(field.flux, wavelength, axis=0)
-            required_convective_flux = np.clip(
-                target_flux - radiative_flux, 0.0, target_flux
-            )
-            actual_gradient = np.gradient(
-                np.log(temperature), np.log(atmosphere.gas_pressure),
-                edge_order=2,
-            )
-            if homogeneous_mixture:
-                from .eos import hummer_mihalas_hydrogen_helium_thermodynamics
-
-                assert log_hydrogen_abundance is not None
-                adiabatic_gradient = (
-                    hummer_mihalas_hydrogen_helium_thermodynamics(
-                        temperature,
-                        atmosphere.gas_pressure,
-                        log_hydrogen_abundance,
-                        helium_neutral_radius_scale=neutral_radius_scale,
-                        correlated_microfields=correlated_microfields,
-                    ).adiabatic_temperature_gradient
-                )
-            else:
-                from .eos import hummer_mihalas_helium_thermodynamics
-
-                adiabatic_gradient = hummer_mihalas_helium_thermodynamics(
-                    temperature, atmosphere.gas_pressure,
-                    neutral_radius_scale=neutral_radius_scale,
-                    correlated_microfields=correlated_microfields,
-                    helium_reos3_table=helium_reos3_table,
-                ).adiabatic_temperature_gradient
-            ml2_gradient = ml2_temperature_gradient_for_flux(
-                atmosphere, rosseland_for_convection,
-                required_convective_flux,
-                mixing_length_alpha=mixing_length_alpha,
-            )
-            current_convective_flux = ml2_convective_flux(
-                atmosphere,
-                rosseland_for_convection,
-                mixing_length_alpha=mixing_length_alpha,
-            )
-            flux_balance_monitor = (
-                (relaxation_depth > 1.0e-3)
-                & (relaxation_depth < 10.0)
-            )
-            maximum_total_flux_residual = (
-                float(
-                    np.max(
-                        np.abs(
-                            (
-                                radiative_flux[flux_balance_monitor]
-                                + current_convective_flux[flux_balance_monitor]
-                            )
-                            / target_flux
-                            - 1.0
-                        )
-                    )
-                )
-                if np.any(flux_balance_monitor)
-                else 0.0
-            )
-            convective = (
-                (required_convective_flux > 1.0e-4 * target_flux)
-                & (ml2_gradient > adiabatic_gradient)
-                & (relaxation_depth > 1.0e-3)
-            )
-            convective_weight[convective] = np.clip(
-                required_convective_flux[convective]
-                / (0.02 * target_flux),
-                0.0,
-                1.0,
-            )
-            # The radiative correction can stop at tau_R=10, but the
-            # convective gradient needs a deeper buffer.  Cutting it at the
-            # same cell leaves the centered derivative at the boundary tied
-            # to an uncorrected neighbour and makes the measured mismatch
-            # grow even while the interior improves.  Taper the ML2 update
-            # smoothly to zero between tau_R=10 and 100; this also avoids the
-            # poorly conditioned last cells of the finite atmosphere.
-            convective_depth_weight = np.clip(
-                np.log10(100.0 / np.maximum(relaxation_depth, 1.0e-300)),
-                0.0,
-                1.0,
-            )
-            convective_weight *= convective_depth_weight
-            convective = convective_weight > 0.0
-            maximum_convective_gradient_residual = float(
-                np.max(
-                    convective_weight
-                    * np.abs(ml2_gradient - actual_gradient)
-                )
-            )
-            maximum_convective_gradient_residual_depth_index = int(
-                np.argmax(
-                    convective_weight
-                    * np.abs(ml2_gradient - actual_gradient)
-                )
-            )
-            gradient_correction = convective_weight * (
-                ml2_gradient - actual_gradient
-            )
-            log_pressure = np.log(atmosphere.gas_pressure)
-            convective_log_temperature_correction.fill(0.0)
-            if np.any(convective):
-                # Anchor immediately above the first unstable layer and
-                # integrate the required change in dlnT/dlnP inward.  This
-                # preserves the already-converged radiative surface instead
-                # of anchoring at the artificial bottom boundary and cooling
-                # the whole photosphere while the deep adiabat is rebuilt.
-                anchor = max(int(np.flatnonzero(convective)[0]) - 1, 0)
-                for depth in range(anchor + 1, n_depth):
-                    cell_correction = 0.5 * (
-                        gradient_correction[depth - 1]
-                        + gradient_correction[depth]
-                    )
-                    convective_log_temperature_correction[depth] = (
-                        convective_log_temperature_correction[depth - 1]
-                        + cell_correction
-                        * (log_pressure[depth] - log_pressure[depth - 1])
-                    )
-                # np.gradient uses centered, non-uniform finite differences;
-                # simply integrating point gradients with a trapezoid does
-                # not invert that discrete operator.  At a sharp convective
-                # boundary it can therefore improve one layer while driving
-                # its neighbour in the wrong direction.  Solve the small
-                # weighted linear problem for the actual discrete gradients,
-                # with weak regularization toward the smooth integral above.
-                assert convective_gradient_operator is not None
-                fitted_depth = np.flatnonzero(convective)
-                corrected_depth = np.arange(anchor + 1, n_depth)
-                fit_weight = np.sqrt(convective_weight[fitted_depth])
-                design = convective_gradient_operator[
-                    np.ix_(fitted_depth, corrected_depth)
-                ] * fit_weight[:, np.newaxis]
-                target = (
-                    gradient_correction[fitted_depth] * fit_weight
-                )
-                regularization = 1.0e-4
-                augmented_design = np.vstack((
-                    design,
-                    np.sqrt(regularization)
-                    * np.eye(corrected_depth.size),
-                ))
-                augmented_target = np.concatenate((
-                    target,
-                    np.sqrt(regularization)
-                    * convective_log_temperature_correction[corrected_depth],
-                ))
-                convective_log_temperature_correction[corrected_depth] = (
-                    np.linalg.lstsq(
-                        augmented_design,
-                        augmented_target,
-                        rcond=None,
-                    )[0]
-                )
-            # Preserve the *shape* of the integrated gradient correction.
-            # Element-wise clipping turns a broad correction into two flat
-            # plateaus and therefore changes only one cell at their boundary;
-            # a model can then look numerically stationary while carrying no
-            # convective flux over most of the unstable zone.  A single scale
-            # factor limits the temperature step without destroying the
-            # desired gradient throughout that zone.
-            maximum_raw_convective_correction = float(
-                np.max(np.abs(convective_log_temperature_correction))
-            )
-            if maximum_raw_convective_correction > 0.04:
-                convective_log_temperature_correction *= (
-                    0.04 / maximum_raw_convective_correction
-                )
-
-        else:
-            maximum_convective_gradient_residual = 0.0
-            maximum_convective_gradient_residual_depth_index = 0
-            maximum_total_flux_residual = 0.0
-        hotter_temperature = 1.001 * temperature
-        hotter_planck = planck_lambda_angstrom(
-            wavelength[:, np.newaxis], hotter_temperature[np.newaxis, :]
-        )
-        planck_derivative = trapezoid(
-            absorption * (hotter_planck - planck), wavelength, axis=0
-        ) / 0.001
-        if include_absorption_temperature_derivative:
-            hotter_absorption = true_absorption(with_temperature(hotter_temperature))
-            residual = emitted - absorbed
-            hotter_residual = trapezoid(
-                hotter_absorption * (hotter_planck - field.mean_intensity),
-                wavelength, axis=0,
-            )
-            full_derivative = (hotter_residual - residual) / 0.001
-            derivative = np.where(
-                np.isfinite(full_derivative) & (full_derivative > 0.0),
-                full_derivative, planck_derivative,
-            )
-        else:
-            derivative = planck_derivative
-        correction = (absorbed - emitted) / np.maximum(derivative, np.finfo(np.float64).tiny)
-        correction = np.where(active, np.clip(correction, -0.04, 0.04), 0.0)
-        smoothed = _smooth_radiative_temperature_correction(
-            correction, convective_weight
-        )
-        # Smoothing a radiative-equilibrium correction after masking the
-        # convective layers leaks the neighbouring radiative update straight
-        # back into those layers.  Near the top of a coarsely sampled
-        # convection zone that small leaked gradient can oppose the ML2
-        # update and make a heavily damped iteration walk in the wrong
-        # direction.  Reapply the same smooth convective weight after the
-        # stencil so radiative and convective gradient controllers remain
-        # disjoint.
-        surface_flux = trapezoid(field.flux[:, 0], wavelength)
-        flux_ratio = float(surface_flux / target_flux)
-        global_correction = float(np.clip(-0.25 * np.log(flux_ratio), -0.04, 0.04))
-        adaptive_convective_damping = float(
-            np.clip(
-                maximum_convective_gradient_residual / 0.1,
-                0.005,
-                1.0,
-            )
-        )
-        if maximum_total_flux_residual > 0.5:
-            # A small gradient mismatch can still correspond to orders of
-            # magnitude too much ML2 flux.  In that regime the analytic line
-            # search, rather than the absolute gradient error, must set the
-            # step size; otherwise cool trace-H burn-in takes hundreds of
-            # iterations.
-            adaptive_convective_damping = 1.0
-        elif maximum_total_flux_residual < 0.1:
-            adaptive_convective_damping = min(
-                adaptive_convective_damping, 0.1
-            )
-        elif maximum_total_flux_residual < 0.5:
-            adaptive_convective_damping = min(
-                adaptive_convective_damping, 0.2
-            )
-        if np.isfinite(previous_maximum_total_flux_residual):
-            if (
-                maximum_total_flux_residual
-                > 1.01 * previous_maximum_total_flux_residual
-            ):
-                current_damping_limit = min(
-                    convective_correction_damping,
-                    adaptive_convective_damping,
-                    convective_damping_backtrack,
-                )
-                convective_damping_backtrack = max(
-                    0.0005, 0.5 * current_damping_limit
-                )
-                convective_flux_improvement_streak = 0
-            elif (
-                maximum_total_flux_residual
-                < previous_maximum_total_flux_residual
-            ):
-                convective_flux_improvement_streak += 1
-                if convective_flux_improvement_streak >= 3:
-                    convective_damping_backtrack = min(
-                        1.0, 1.25 * convective_damping_backtrack
-                    )
-                    convective_flux_improvement_streak = 0
-            else:
-                convective_flux_improvement_streak = 0
-        previous_maximum_total_flux_residual = maximum_total_flux_residual
-        maximum_convective_correction_damping = min(
-            convective_correction_damping,
-            adaptive_convective_damping,
-            convective_damping_backtrack,
-        )
-        effective_convective_correction_damping = (
-            maximum_convective_correction_damping
-        )
-        if np.any(convective):
-            # Choose the ML2 step with a cheap frozen-radiation line search.
-            # The formal transfer and opacity are not repeated: only the
-            # analytic local ML2 flux is evaluated for trial gradients.  This
-            # is enough to resolve the alternating corrections of adjacent
-            # coarse depth points and avoids many conservatively damped full
-            # atmosphere iterations.
-            assert convective_gradient_operator is not None
-            trial_damping = np.unique(
-                np.maximum(
-                    maximum_convective_correction_damping
-                    * np.array([1.0, 0.5, 0.25, 0.125, 0.0625]),
-                    5.0e-4,
-                )
-            )
-            radiative_gradient_step = (
-                temperature_correction_damping
-                * convective_gradient_operator @ (0.5 * smoothed)
-            )
-            convective_gradient_step = (
-                temperature_correction_damping
-                * convective_gradient_operator
-                @ convective_log_temperature_correction
-            )
-            trial_gradient = (
-                actual_gradient[np.newaxis, :]
-                + radiative_gradient_step[np.newaxis, :]
-                + trial_damping[:, np.newaxis]
-                * convective_gradient_step[np.newaxis, :]
-            )
-            trial_convective_flux = ml2_convective_flux_for_gradient(
-                atmosphere,
-                rosseland_for_convection,
-                trial_gradient,
-                mixing_length_alpha=mixing_length_alpha,
-            )
-            trial_total_flux_residual = np.max(
-                np.abs(
-                    (
-                        radiative_flux[np.newaxis, flux_balance_monitor]
-                        + trial_convective_flux[:, flux_balance_monitor]
-                    )
-                    / target_flux
-                    - 1.0
-                ),
-                axis=1,
-            )
-            effective_convective_correction_damping = float(
-                trial_damping[np.argmin(trial_total_flux_residual)]
-            )
-        convective_correction = (
-            effective_convective_correction_damping
-            * convective_log_temperature_correction
-        )
-        global_relaxation = 1.0 if np.any(convective) else 0.25
-        applied = (
-            0.5 * smoothed
-            + global_relaxation * global_correction
-            + convective_correction
-        )
-        applied *= temperature_correction_damping
-        correction_monitor = active | convective
-        maximum_correction = float(
-            np.max(np.abs(applied[correction_monitor]))
-        )
-        maximum_correction_depth_index = int(
-            np.argmax(
-                np.where(correction_monitor, np.abs(applied), -1.0)
-            )
-        )
-        flux_ratio_history.append(flux_ratio)
-        maximum_correction_history.append(maximum_correction)
-        maximum_convective_gradient_residual_history.append(
-            maximum_convective_gradient_residual
-        )
-        maximum_convective_gradient_residual_depth_index_history.append(
-            maximum_convective_gradient_residual_depth_index
-        )
-        maximum_total_flux_residual_history.append(
-            maximum_total_flux_residual
-        )
-        effective_convective_correction_damping_history.append(
-            effective_convective_correction_damping
-        )
-        within_tolerance = (
-            maximum_correction < temperature_tolerance
-            and abs(flux_ratio - 1.0) < flux_tolerance
-            and maximum_convective_gradient_residual
-            < convective_gradient_tolerance
-            and maximum_total_flux_residual < convective_flux_tolerance
-        )
-        convergence_streak = convergence_streak + 1 if within_tolerance else 0
-        last_evaluated_temperature = temperature.copy()
-        last_flux_ratio = flux_ratio
-        last_maximum_correction = maximum_correction
-        last_maximum_correction_depth_index = maximum_correction_depth_index
-        last_required_convective_flux = required_convective_flux.copy()
-        last_convective = convective.copy()
-        last_maximum_convective_gradient_residual = (
-            maximum_convective_gradient_residual
-        )
-        last_maximum_convective_gradient_residual_depth_index = (
-            maximum_convective_gradient_residual_depth_index
-        )
-        last_maximum_total_flux_residual = maximum_total_flux_residual
-        if (
-            mixing_length_alpha is not None
-            and maximum_total_flux_residual < best_total_flux_residual
-        ):
-            best_total_flux_residual = maximum_total_flux_residual
-            best_transport_state = (
-                temperature.copy(),
-                flux_ratio,
-                maximum_correction,
-                maximum_correction_depth_index,
-                required_convective_flux.copy(),
-                convective.copy(),
-                maximum_convective_gradient_residual,
-                maximum_convective_gradient_residual_depth_index,
-                maximum_total_flux_residual,
-                iteration,
-            )
-        if convergence_streak >= consecutive_convergence_iterations:
-            converged = True
-            break
-
-        temperature *= np.exp(applied)
-
-    selected_iteration = iteration
-    # For a capped convective run, retain the evaluated structure with the
-    # smallest *direct total-flux* residual.  The old scalar temperature merit
-    # could erase necessary burn-in; this physically targeted checkpoint does
-    # the opposite, preserving progress when a later trial crosses to the
-    # other side of a highly nonlinear ML2 boundary.  Radiative-only runs keep
-    # the last evaluated iterate.
-    if not converged:
-        if best_transport_state is not None:
-            (
-                temperature,
-                flux_ratio,
-                maximum_correction,
-                maximum_correction_depth_index,
-                required_convective_flux,
-                convective,
-                maximum_convective_gradient_residual,
-                maximum_convective_gradient_residual_depth_index,
-                maximum_total_flux_residual,
-                selected_iteration,
-            ) = best_transport_state
-        else:
-            temperature = last_evaluated_temperature
-            flux_ratio = last_flux_ratio
-            maximum_correction = last_maximum_correction
-            maximum_correction_depth_index = (
-                last_maximum_correction_depth_index
-            )
-            required_convective_flux = last_required_convective_flux
-            convective = last_convective
-            maximum_convective_gradient_residual = (
-                last_maximum_convective_gradient_residual
-            )
-            maximum_convective_gradient_residual_depth_index = (
-                last_maximum_convective_gradient_residual_depth_index
-            )
-            maximum_total_flux_residual = last_maximum_total_flux_residual
-
-    atmosphere = with_temperature(temperature)
-    final_rosseland_function = (
-        rosseland_mean_hydrogen_helium_continuum_opacity
-        if homogeneous_mixture
-        else rosseland_mean_helium_continuum_opacity
-    )
-    rosseland = final_rosseland_function(
-        atmosphere,
-        include_helium_dimer_ion=include_helium_dimer_ion,
-        include_helium_three_body_cia=include_helium_three_body_cia,
-        include_rydberg_bound_free=include_rydberg_bound_free,
-    )
-    rosseland_depth = np.empty_like(atmosphere.column_mass)
-    rosseland_depth[0] = rosseland[0] * atmosphere.column_mass[0]
-    rosseland_depth[1:] = rosseland_depth[0] + np.cumsum(
-        0.5 * (rosseland[1:] + rosseland[:-1]) * np.diff(atmosphere.column_mass)
-    )
-    return Atmosphere(
-        atmosphere.effective_temperature, atmosphere.logg, rosseland_depth,
-        atmosphere.column_mass, atmosphere.temperature, atmosphere.gas_pressure,
-        atmosphere.mass_density, atmosphere.neutral_h_density,
-        atmosphere.proton_density, atmosphere.electron_density,
-        {
-            "model": "non-gray-radiative-convective-equilibrium" if mixing_length_alpha is not None else "non-gray-radiative-equilibrium",
             "composition": (
-                "metal-polluted-helium"
+                "metal-polluted-homogeneous-hydrogen-helium"
+                if metal_database is not None and homogeneous_mixture
+                else "metal-polluted-helium"
                 if metal_database is not None
                 else "homogeneous-hydrogen-helium"
                 if homogeneous_mixture
                 else "pure-helium"
             ),
-            "metal_abundances": (
-                dict(metal_abundances) if metal_abundances is not None else {}
-            ),
-            "metal_electron_feedback": (
-                "charge-neutral EOS and continuum opacity"
-                if metal_database is not None else "disabled"
-            ),
-            "radiative_equilibrium_includes_metal_lines": bool(
-                metal_database is not None and include_metal_lines
-            ),
-            "radiative_equilibrium_includes_metal_bound_free": bool(
-                metal_photoionization_database is not None
-                or metal_topbase_photoionization_database is not None
-            ),
-            "radiative_equilibrium_level_resolved_metal_bound_free": (
-                metal_topbase_photoionization_database.source
-                if metal_topbase_photoionization_database is not None
-                else "disabled"
-            ),
-            "radiative_equilibrium_mg_ii_he_unified_profile": (
-                mg_ii_he_profile_table.source
-                if mg_ii_he_profile_table is not None else "disabled"
-            ),
-            "radiative_equilibrium_mg_i_he_unified_profile": (
-                mg_he_red_wing_table.source
-                if mg_he_red_wing_table is not None else "disabled"
-            ),
-            "radiative_equilibrium_ca_i_he_unified_profile": (
-                ca_i_he_profile_table.source
-                if ca_i_he_profile_table is not None else "disabled"
-            ),
-            "radiative_equilibrium_ca_ii_he_unified_profile": (
-                ca_ii_he_profile_table.source
-                if ca_ii_he_profile_table is not None else "disabled"
-            ),
-            "radiative_equilibrium_minimum_metal_oscillator_strength": float(
-                minimum_metal_oscillator_strength
-            ),
-            "radiative_equilibrium_maximum_metal_lines": maximum_metal_lines,
-            "radiative_equilibrium_wing_sampled_metal_lines": int(
-                metal_wing_sampled_lines
-            ),
-            "radiative_equilibrium_metal_line_selection": (
-                "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"
-            ),
-            "log_hydrogen_abundance": log_hydrogen_abundance,
-            "log_hydrogen_to_helium": (
-                float(log_hydrogen_abundance)
-                if homogeneous_mixture else None
-            ),
-            "checkpoint_restart_seed": bool(restart_seed_requested),
             "eos": (
-                "q-mhd-hydrogen-helium-occupation-probability"
-                if homogeneous_mixture and correlated_microfields
+                "trace-metal-charge-neutral-hummer-mihalas-hydrogen-helium"
+                if metal_database is not None and homogeneous_mixture
+                else "trace-metal-charge-neutral-q-mhd-helium-occupation-probability"
+                if metal_database is not None
                 else "hummer-mihalas-hydrogen-helium-occupation-probability"
                 if homogeneous_mixture
                 else "q-mhd-helium-occupation-probability"
                 if correlated_microfields
                 else "hummer-mihalas-helium-occupation-probability"
             ),
-            "hydrogen_neutral_radius_scale": (
-                atmosphere.hydrogen_lte_state.neutral_radius_scale
-                if atmosphere.hydrogen_lte_state is not None else None
-            ),
             "helium_neutral_radius_scale": float(neutral_radius_scale),
-            "rosseland_opacity_cm2_g": rosseland,
-            "radiative_equilibrium_iterations": iteration,
-            "radiative_equilibrium_selected_iteration": int(
-                selected_iteration
+            "includes_molecular_equilibrium": molecular_h_he is not None,
+            "mixed_chemical_model": ("molecular-h-he-hm" if molecular_h_he is not None else "atomic-h-he-hm"),
+            "radiative_equilibrium_includes_helium_lines": bool(
+                include_lines
             ),
-            "radiative_equilibrium_converged": converged,
-            "radiative_equilibrium_maximum_log_temperature_correction": maximum_correction,
-            "radiative_equilibrium_maximum_convective_gradient_residual": float(
-                maximum_convective_gradient_residual
+            "radiative_equilibrium_retained_helium_i_lines": int(
+                len(structure_helium_i_lines)
             ),
-            "radiative_equilibrium_maximum_convective_gradient_residual_depth_index": int(
-                maximum_convective_gradient_residual_depth_index
-            ),
-            "radiative_equilibrium_convective_gradient_tolerance": float(
-                convective_gradient_tolerance
-            ),
-            "radiative_equilibrium_maximum_total_flux_residual": float(
-                maximum_total_flux_residual
-            ),
-            "radiative_equilibrium_convective_flux_tolerance": float(
-                convective_flux_tolerance
-            ),
-            "radiative_equilibrium_maximum_correction_depth_index": maximum_correction_depth_index,
-            "radiative_equilibrium_flux_ratio": flux_ratio,
-            "radiative_equilibrium_wavelength_points": int(wavelength.size),
-            "radiative_equilibrium_temperature_correction_damping": float(
-                temperature_correction_damping
-            ),
-            "radiative_equilibrium_absorption_temperature_derivative": bool(
-                include_absorption_temperature_derivative
-            ),
-            "radiative_equilibrium_required_consecutive_convergence_iterations": int(
-                consecutive_convergence_iterations
-            ),
-            "radiative_equilibrium_final_convergence_streak": int(
-                convergence_streak
-            ),
-            "radiative_equilibrium_flux_ratio_history": tuple(
-                flux_ratio_history
-            ),
-            "radiative_equilibrium_maximum_log_temperature_correction_history": tuple(
-                maximum_correction_history
-            ),
-            "radiative_equilibrium_maximum_convective_gradient_residual_history": tuple(
-                maximum_convective_gradient_residual_history
-            ),
-            "radiative_equilibrium_maximum_convective_gradient_residual_depth_index_history": tuple(
-                maximum_convective_gradient_residual_depth_index_history
-            ),
-            "radiative_equilibrium_maximum_total_flux_residual_history": tuple(
-                maximum_total_flux_residual_history
-            ),
-            "radiative_equilibrium_effective_convective_correction_damping_history": tuple(
-                effective_convective_correction_damping_history
-            ),
-            "radiative_equilibrium_global_correction_depth_weight": "uniform",
-            "radiative_equilibrium_includes_helium_lines": bool(include_lines),
-            "radiative_equilibrium_hydrogen_self_broadening": bool(
-                include_trace_hydrogen_lines
-                and include_hydrogen_self_broadening
-            ),
-            "radiative_equilibrium_hydrogen_neutral_helium_broadening": bool(
-                include_trace_hydrogen_lines
-                and include_hydrogen_neutral_helium_broadening
-            ),
-            "radiative_equilibrium_hydrogen_self_broadening_quadrature_order": int(
-                hydrogen_self_broadening_quadrature_order
-            ),
-            "radiative_equilibrium_balmer_profile_edge_optical_depth": (
-                1.0e-4 if include_trace_hydrogen_lines else None
-            ),
-            "radiative_equilibrium_hydrogen_self_broadening_prescription": (
-                hydrogen_self_broadening_prescription
-            ),
-            "radiative_equilibrium_hydrogen_self_broadening_truncation_closure": (
-                hydrogen_self_broadening_truncation_closure
-            ),
-            "radiative_equilibrium_hydrogen_series_pseudocontinuum": bool(
-                include_trace_hydrogen_lines
-                and include_hydrogen_series_pseudocontinuum
-            ),
-            "radiative_equilibrium_includes_allard_lyman_profiles": bool(
-                include_trace_hydrogen_lines and unified_allard_table is not None
-            ),
-            "radiative_equilibrium_allard_stark_weight": float(
-                allard_stark_weight
+            "radiative_equilibrium_retained_helium_ii_lines": int(
+                len(structure_helium_ii_lines)
             ),
             "radiative_equilibrium_neutral_helium_line_broadening": (
                 neutral_line_broadening if include_lines else "disabled"
             ),
-            "helium_stark_profiles": "Tremblay-2026/Beauchamp-2025 explicit table",
+            "helium_stark_profiles": (
+                "Tremblay-2026/Beauchamp-2025 explicit table"
+            ),
             "helium_i_ground_resonance_broadening": (
                 "Dimitrijevic-Sahal-Brechot-1989 electron/He-II impact"
             ),
             "helium_ii_profiles": (
-                "Schönning-Butler/SYNSPEC table"
+                "Schoning-Butler/SYNSPEC table"
                 if include_lines
                 and include_helium_ii_lines
                 and helium_ii_stark_table is not None
@@ -4377,19 +2925,69 @@ def radiative_equilibrium_helium_atmosphere(
                 "John-1994 inside tabulated T/lambda domain; "
                 "Carbon-1969 fit to John-1968 elsewhere"
             ),
-            "convection": "ML2-Bergeron-1992" if mixing_length_alpha is not None else "none",
-            "mixing_length_alpha": mixing_length_alpha,
-            "convective_correction_damping": float(
-                convective_correction_damping
+            "radiative_equilibrium_hydrogen_abundance": (
+                float(log_hydrogen_abundance)
+                if log_hydrogen_abundance is not None
+                else None
             ),
-            "maximum_convective_flux_fraction": float(
-                np.max(required_convective_flux[convective]) / target_flux
-                if np.any(convective) else 0.0
+            "radiative_equilibrium_balmer_profile_edge_optical_depth": (
+                1.0e-4 if include_trace_hydrogen_lines else None
             ),
-            "convective_depth_points": int(np.count_nonzero(convective)),
+            "radiative_equilibrium_metal_opacity": bool(
+                metal_database is not None
+            ),
+            "radiative_equilibrium_includes_metal_lines": bool(
+                metal_database is not None and include_metal_lines
+            ),
+            "radiative_equilibrium_includes_metal_bound_free": bool(
+                metal_photoionization_database is not None
+                or metal_topbase_photoionization_database is not None
+            ),
+            "radiative_equilibrium_level_resolved_metal_bound_free": (
+                metal_topbase_photoionization_database.source
+                if metal_topbase_photoionization_database is not None
+                else "disabled"
+            ),
+            "radiative_equilibrium_minimum_metal_oscillator_strength": float(
+                minimum_metal_oscillator_strength
+            ),
+            "radiative_equilibrium_maximum_metal_lines": maximum_metal_lines,
+            "radiative_equilibrium_wing_sampled_metal_lines": int(
+                metal_wing_sampled_lines
+            ),
+            "radiative_equilibrium_metal_line_opacity_sampling_resolution": (
+                None if metal_line_opacity_sampling_resolution is None
+                else float(metal_line_opacity_sampling_resolution)
+            ),
+            "radiative_equilibrium_metal_line_selection": (
+                "abundance-gf-boltzmann-ion-fraction-Planck-flux at Teff"
+            ),
+            "metal_abundances": (
+                dict(metal_abundances)
+                if metal_abundances is not None else {}
+            ),
+            "metal_electron_feedback": (
+                "charge-neutral EOS and continuum opacity"
+                if metal_database is not None else "disabled"
+            ),
+            "metal_thermodynamic_derivatives": (
+                "trace-metal approximation: hydrogen-helium mixture derivatives"
+                if metal_database is not None and homogeneous_mixture
+                else "trace-metal approximation: Q-MHD helium derivatives"
+                if metal_database is not None else "not applicable"
+            ),
+            "metal_classical_electron_stark": bool(
+                metal_database is not None and metal_classical_electron_stark
+            ),
+            "rosseland_opacity_includes_metal_bound_bound_and_bound_free": (
+                metal_database is not None
+                and (
+                    include_metal_lines
+                    or metal_photoionization_database is not None
+                    or metal_topbase_photoionization_database is not None
+                )
+            ),
         },
-        hydrogen_lte_state=atmosphere.hydrogen_lte_state,
-        helium_lte_state=atmosphere.helium_lte_state,
     )
 
 
@@ -4418,12 +3016,6 @@ def radiative_equilibrium_hydrogen_helium_atmosphere(
     # tested 10 kK mixed structure, yet its tabulated profiles are expensive.
     # Retain it automatically once He ionization becomes structurally relevant.
     kwargs.setdefault("include_helium_ii_lines", effective_temperature >= 15_000.0)
-    # A matched 10--30 kK mixed-composition control grid gives structures that
-    # agree with the full finite-difference opacity derivative to better than
-    # 1.3e-4 pointwise in temperature.  Avoiding the second full line-opacity
-    # evaluation approximately halves every mixed-atmosphere iteration.
-    kwargs.setdefault("include_absorption_temperature_derivative",
-                      kwargs.get("molecular_h_he") is not None)
     return radiative_equilibrium_helium_atmosphere(
         effective_temperature,
         logg,

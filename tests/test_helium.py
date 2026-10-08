@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import numpy as np
+from wd_spectra.models import ModelData
 import pytest
 
 from wd_spectra._compat import trapezoid
@@ -381,7 +382,7 @@ def test_helium_ii_fuse_series_reaches_n10():
 
 
 def test_synspec_helium_ii_table_when_available():
-    path = Path(".cache/helium-stark/he2prf.dat")
+    path = ModelData.default().helium_ii_stark
     if not path.exists():
         pytest.skip("optional SYNSPEC He II profile table not downloaded")
     table = read_helium_ii_stark_table(path)
@@ -613,7 +614,7 @@ def test_helium_ground_resonance_stark_width_matches_source_table():
 
 
 def test_released_profile_table_when_available():
-    path = Path("tmp/helium/Beauchamp25_LD.txt")
+    path = ModelData.default().helium_i_stark
     if not path.exists():
         pytest.skip("optional Zenodo profile table not downloaded")
     table = read_helium_stark_table(path)
@@ -637,7 +638,7 @@ def test_released_profile_table_when_available():
 def test_compiled_helium_lorentz_kernel_matches_numpy_fallback(monkeypatch):
     import wd_spectra.helium_stark as helium_stark
 
-    path = Path(".cache/helium-stark/Beauchamp25_LD.txt")
+    path = ModelData.default().helium_i_stark
     if path.exists() is False:
         pytest.skip("optional Zenodo profile table not downloaded")
     compiled = helium_stark._rt
@@ -662,11 +663,16 @@ def test_compiled_helium_lorentz_kernel_matches_numpy_fallback(monkeypatch):
         3.0e16,
         lorentz_hwhm_angstrom=0.37,
     )
-    np.testing.assert_allclose(accelerated, fallback, rtol=2.0e-13, atol=1.0e-16)
+    # The C and numpy convolutions sum the same terms in a different order.  In
+    # the far wings (profile ~1e-5 of a 0.057 peak) the sum cancels, so rounding
+    # reaches ~4e-15 of the peak.  Scale atol to the peak, not an absolute 1e-16.
+    np.testing.assert_allclose(
+        accelerated, fallback, rtol=2.0e-13, atol=1.0e-13 * float(np.max(fallback))
+    )
 
 
 def test_montreal_neutral_broadening_uses_deridder_wings_when_available():
-    path = Path(".cache/helium-stark/Beauchamp25_LD.txt")
+    path = ModelData.default().helium_i_stark
     if not path.exists():
         pytest.skip("optional Zenodo profile table not downloaded")
     atmosphere = gray_helium_atmosphere(12_000.0, 8.0, n_depth=8)

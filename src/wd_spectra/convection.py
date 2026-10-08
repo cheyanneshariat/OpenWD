@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
+from typing import Callable
 
 from .atmosphere import Atmosphere
 from .constants import STEFAN_BOLTZMANN
@@ -15,6 +16,10 @@ from .eos import (
 
 
 FloatArray = NDArray[np.float64]
+ML2CoefficientFunction = Callable[
+    [Atmosphere, ArrayLike, ArrayLike, ArrayLike, ArrayLike, float],
+    tuple[FloatArray, FloatArray, FloatArray],
+]
 
 
 def _ml2_contrast_and_root(
@@ -193,6 +198,7 @@ def ml2_convective_flux_for_gradient_from_thermodynamics(
     adiabatic_temperature_gradient: ArrayLike,
     *,
     mixing_length_alpha: float = 1.25,
+    coefficient_function: ML2CoefficientFunction | None = None,
 ) -> FloatArray:
     """Return ML2 flux for a supplied EOS and temperature gradient."""
 
@@ -203,8 +209,10 @@ def ml2_convective_flux_for_gradient_from_thermodynamics(
         )
     if np.any(~np.isfinite(gradient)):
         raise ValueError("temperature_gradient must contain finite values")
+    if coefficient_function is None:
+        coefficient_function = _ml2_local_coefficients_from_thermodynamics
     adiabatic_gradient, radiative_loss, flux_coefficient = (
-        _ml2_local_coefficients_from_thermodynamics(
+        coefficient_function(
             atmosphere,
             rosseland_opacity,
             specific_heat_constant_pressure,
@@ -257,6 +265,7 @@ def ml2_convective_flux_gradient_derivative_from_thermodynamics(
     adiabatic_temperature_gradient: ArrayLike,
     *,
     mixing_length_alpha: float = 1.25,
+    coefficient_function: ML2CoefficientFunction | None = None,
 ) -> FloatArray:
     r"""Return the analytic ML2 derivative ``dF_conv/dnabla``.
 
@@ -274,8 +283,10 @@ def ml2_convective_flux_gradient_derivative_from_thermodynamics(
         )
     if np.any(~np.isfinite(gradient)):
         raise ValueError("temperature_gradient must contain finite values")
+    if coefficient_function is None:
+        coefficient_function = _ml2_local_coefficients_from_thermodynamics
     adiabatic_gradient, radiative_loss, flux_coefficient = (
-        _ml2_local_coefficients_from_thermodynamics(
+        coefficient_function(
             atmosphere,
             rosseland_opacity,
             specific_heat_constant_pressure,
@@ -308,6 +319,7 @@ def ml2_temperature_gradient_for_flux_from_thermodynamics(
     adiabatic_temperature_gradient: ArrayLike,
     *,
     mixing_length_alpha: float = 1.25,
+    coefficient_function: ML2CoefficientFunction | None = None,
 ) -> FloatArray:
     """Invert the local ML2 closure for an externally supplied EOS."""
 
@@ -317,8 +329,10 @@ def ml2_temperature_gradient_for_flux_from_thermodynamics(
     )
     if np.any(~np.isfinite(requested_flux)) or np.any(requested_flux < 0.0):
         raise ValueError("convective_flux must contain finite non-negative values")
+    if coefficient_function is None:
+        coefficient_function = _ml2_local_coefficients_from_thermodynamics
     adiabatic_gradient, radiative_loss, flux_coefficient = (
-        _ml2_local_coefficients_from_thermodynamics(
+        coefficient_function(
             atmosphere,
             rosseland_opacity,
             specific_heat_constant_pressure,
@@ -348,6 +362,7 @@ def ml2_temperature_gradient_for_total_flux_from_thermodynamics(
     mixing_length_alpha: float = 1.25,
     bisection_iterations: int = 48,
     radiative_flux_coefficient: ArrayLike | None = None,
+    coefficient_function: ML2CoefficientFunction | None = None,
 ) -> FloatArray:
     r"""Solve ``F_rad(nabla) + F_conv(nabla) = F_total`` locally.
 
@@ -408,6 +423,7 @@ def ml2_temperature_gradient_for_total_flux_from_thermodynamics(
             density_temperature_derivative,
             adiabatic_temperature_gradient,
             mixing_length_alpha=mixing_length_alpha,
+            coefficient_function=coefficient_function,
         )
     )
     lower = np.zeros_like(requested_flux)
@@ -425,6 +441,7 @@ def ml2_temperature_gradient_for_total_flux_from_thermodynamics(
                 density_temperature_derivative,
                 adiabatic_temperature_gradient,
                 mixing_length_alpha=mixing_length_alpha,
+                coefficient_function=coefficient_function,
             )
         )
         carried_flux = radiative_coefficient * middle + convective_flux

@@ -11,12 +11,16 @@ restart heuristics.
 from __future__ import annotations
 
 from dataclasses import replace
+import logging
+import time
 from typing import Callable, Literal, Mapping
 
 import numpy as np
 from numpy.typing import NDArray
 
 from ._compat import trapezoid
+
+_LOGGER = logging.getLogger(__name__)
 from ._material_response import temperature_response_probes
 from ._energy_balance import (
     discrete_radiative_cell_energy_balance,
@@ -31,6 +35,7 @@ from ._stable_feautrier import (
 from .atmosphere import Atmosphere, _upper_interface_values_on_nodes
 from .constants import STEFAN_BOLTZMANN
 from .convection import (
+    ML2CoefficientFunction,
     _ml2_flux_coefficient_response,
     _ml2_local_coefficients_from_thermodynamics,
     ml2_convective_flux_gradient_derivative_from_thermodynamics,
@@ -222,6 +227,7 @@ def solve_adaptive_lte_structure(
     safeguard_surface_flux: bool = False,
     use_convective_trial_correction: bool = False,
     compute_local_energy_response: bool = False,
+    reuse_material_probe_rosseland: bool = False,
     enforce_local_energy_balance: bool = False,
     physical_temperature_coordinates: bool = True,
     energy_thermal_sweeps: int = 40,
@@ -229,6 +235,8 @@ def solve_adaptive_lte_structure(
     transfer_discretization: Literal[
         "optical-depth", "column-mass"
     ] = "optical-depth",
+    column_mass_radiation_backend: object | None = None,
+    ml2_coefficient_function: ML2CoefficientFunction | None = None,
     iteration_callback: IterationCallback | None = None,
     metadata: Mapping[str, object] | None = None,
 ) -> Atmosphere:
@@ -253,9 +261,16 @@ def solve_adaptive_lte_structure(
     ``compute_local_energy_response`` adds a direct thermal-energy tangent
     to the evaluation payload for explicitly requested research formulations.
     It is off by default and does not change the residual equations.
-    ``enforce_local_energy_balance`` adds a completion phase when the original
-    formal-flux solution fails cell-local energy or has no measured final
-    correction. Bounded thermal conditioning stabilizes the temperature field,
+    ``reuse_material_probe_rosseland`` retains each centered material probe's
+    Rosseland vector while its opacity is still cached by the composition
+    callback. This avoids rebuilding its opacity for the convection response.
+    Only depth-sized vectors are retained within the current linearization;
+    the default preserves the callback order of composition-owned adapters.
+    ``enforce_local_energy_balance`` imposes flux and local energy from the
+    first step when convection is disabled. Convective starts add a completion
+    phase when the original formal-flux solution fails cell-local energy or
+    has no measured final correction. Bounded thermal conditioning stabilizes
+    the temperature field,
     then an unpenalized Newton solve imposes both flux and direct cell energy.
     Positive equation weights are frozen within each linearization, never the
     physical material/transfer response. Final certification uses fresh actual
@@ -272,13 +287,29 @@ def solve_adaptive_lte_structure(
     and local energy balance together. It changes no material physics and
     never switches during an iteration. Spectrum synthesis must use the same
     discretization. The established optical-depth default is unchanged.
+    ``column_mass_radiation_backend`` and ``ml2_coefficient_function`` are
+    explicit composition-owned physics injection points.  They let a DQ
+    calculation supply refractive transfer and its corresponding grey ML2
+    closure without replacing module globals.  The backend is valid only for
+    column-mass transfer; omitting both arguments preserves the established
+    operators exactly.
     """
 
     if transfer_discretization not in ("optical-depth", "column-mass"):
         raise ValueError("unknown transfer discretization")
     mass_transfer = transfer_discretization == "column-mass"
+    if column_mass_radiation_backend is not None and not mass_transfer:
+        raise ValueError(
+            "a column-mass radiation backend requires column-mass transfer"
+        )
+    if ml2_coefficient_function is None:
+        ml2_coefficient_function = _ml2_local_coefficients_from_thermodynamics
+    if not callable(ml2_coefficient_function):
+        raise ValueError("ml2 coefficient function must be callable")
     if not isinstance(enforce_local_energy_balance, bool):
         raise ValueError("local energy enforcement flag must be boolean")
+    if not isinstance(reuse_material_probe_rosseland, bool):
+        raise ValueError("material-probe Rosseland reuse flag must be boolean")
     if not isinstance(physical_temperature_coordinates, bool):
         raise ValueError("temperature-coordinate selection must be boolean")
     if (
@@ -288,12 +319,20 @@ def solve_adaptive_lte_structure(
     ):
         raise ValueError("energy thermal sweeps must be a nonnegative integer")
     if mass_transfer:
-        from ._mass_feautrier import (
-            mass_field,
-            mass_response,
-            mass_energy,
-            mass_energy_response,
-        )
+        if column_mass_radiation_backend is None:
+            from ._mass_feautrier import (
+                mass_field,
+                mass_response,
+                mass_energy,
+                mass_energy_response,
+            )
+            mass_boundary = _thermal_boundary_absorption_escape_bound
+        else:
+            mass_field = column_mass_radiation_backend.field
+            mass_response = column_mass_radiation_backend.response
+            mass_energy = column_mass_radiation_backend.energy
+            mass_energy_response = column_mass_radiation_backend.energy_response
+            mass_boundary = column_mass_radiation_backend.boundary
 
     wavelength = np.asarray(wavelength, dtype=np.float64)
     if wavelength.ndim != 1 or wavelength.size < 2:
@@ -388,6 +427,14 @@ def solve_adaptive_lte_structure(
             "preconditioner stationary-completion iterations must be "
             "positive or None"
         )
+    # Without ML2 transport there is no gradient to condition. Leaving this
+    # switch on also postpones local-energy equations and stable transfer:
+    # nearly identical flux rows then leave optically thin temperatures
+    # poorly constrained, even as the bolometric flux improves.
+    use_convective_gradient_preconditioner = bool(
+        use_convective_gradient_preconditioner
+        and mixing_length_alpha is not None
+    )
     preconditioner_iteration_limit = min(
         max_iterations,
         (
@@ -440,9 +487,8 @@ def solve_adaptive_lte_structure(
     )
 
     use_physical_flux_residual = not use_convective_gradient_preconditioner
-    # Keep the established cold conditioning and flux solve intact. Local
-    # energy completion follows it only when the independently evaluated
-    # heating residual or stationary proposal still needs repair.
+    # Convective starts retain their gradient conditioner. Radiative starts
+    # impose local energy immediately, including in optically thin layers.
     energy_completion_active = bool(
         enforce_local_energy_balance
         and not use_convective_gradient_preconditioner
@@ -521,6 +567,7 @@ def solve_adaptive_lte_structure(
                 expansion_interface,
                 adiabatic_gradient_interface,
                 mixing_length_alpha=mixing_length_alpha,
+                coefficient_function=ml2_coefficient_function,
             )
         )
         convective_flux_interface[0] = 0.0
@@ -550,6 +597,7 @@ def solve_adaptive_lte_structure(
                 adiabatic_gradient_interface,
                 mixing_length_alpha=mixing_length_alpha,
                 radiative_flux_coefficient=formal_radiative_coefficient,
+                coefficient_function=ml2_coefficient_function,
             )
         )
         desired_convective_flux = (
@@ -561,6 +609,7 @@ def solve_adaptive_lte_structure(
                 expansion_interface,
                 adiabatic_gradient_interface,
                 mixing_length_alpha=mixing_length_alpha,
+                coefficient_function=ml2_coefficient_function,
             )
         )
         (
@@ -586,6 +635,7 @@ def solve_adaptive_lte_structure(
                 expansion_interface,
                 adiabatic_gradient_interface,
                 mixing_length_alpha=mixing_length_alpha,
+                coefficient_function=ml2_coefficient_function,
             )
         )
         convective_flux_gradient_derivative = (
@@ -597,6 +647,7 @@ def solve_adaptive_lte_structure(
                 expansion_interface,
                 adiabatic_gradient_interface,
                 mixing_length_alpha=mixing_length_alpha,
+                coefficient_function=ml2_coefficient_function,
             )
         )
         # Convection cannot carry flux through the surface boundary, so the
@@ -604,7 +655,7 @@ def solve_adaptive_lte_structure(
         actual_convective_flux_gradient_derivative[0] = 0.0
         convective_flux_gradient_derivative[0] = 0.0
         _, ml2_loss, ml2_coefficient = (
-            _ml2_local_coefficients_from_thermodynamics(
+            ml2_coefficient_function(
                 current_interface,
                 rosseland_interface,
                 heat_capacity_interface,
@@ -648,6 +699,7 @@ def solve_adaptive_lte_structure(
         hotter: Atmosphere,
         transport: Mapping[str, FloatArray],
         logarithmic_step: float,
+        probe_rosseland: FloatArray | None = None,
     ) -> tuple[
         tuple[FloatArray, FloatArray, FloatArray],
         tuple[FloatArray, FloatArray, FloatArray],
@@ -663,7 +715,11 @@ def solve_adaptive_lte_structure(
         superadiabatic excess is differentiated analytically.
         """
         hot_thermo = thermodynamics(hotter)
-        hot_rosseland = np.asarray(rosseland_opacity(hotter), dtype=np.float64)
+        hot_rosseland = (
+            np.asarray(rosseland_opacity(hotter), dtype=np.float64)
+            if probe_rosseland is None
+            else probe_rosseland
+        )
         base_fields = (
             current.temperature,
             current.mass_density,
@@ -701,7 +757,7 @@ def solve_adaptive_lte_structure(
                 mass_density=_positive_interface_values(density),
             )
             perturbed_coefficients = (
-                _ml2_local_coefficients_from_thermodynamics(
+                ml2_coefficient_function(
                     perturbed_interface,
                     _positive_interface_values(opacity),
                     _arithmetic_interface_values(cp),
@@ -1015,14 +1071,28 @@ def solve_adaptive_lte_structure(
         )
         jacobian = None
         if need_jacobian:
+            probe_rosseland: dict[int, FloatArray] = {}
+            retain_probe_rosseland = bool(
+                reuse_material_probe_rosseland
+                and local_energy_active
+                and transport is not None
+            )
 
             def material_probe(offset):
                 point = with_temperature(current_temperature * np.exp(offset))
-                return (
+                probe = (
                     point,
                     np.asarray(true_absorption(point), dtype=np.float64),
                     np.asarray(scattering_opacity(point), dtype=np.float64),
                 )
+                if retain_probe_rosseland:
+                    # The opposite probe otherwise displaces this state from
+                    # the composition's one-entry opacity cache. Retain its
+                    # small mean-opacity vector, not another spectral grid.
+                    probe_rosseland[id(point)] = np.asarray(
+                        rosseland_opacity(point), dtype=np.float64
+                    ).copy()
+                return probe
 
             primary_probe, opposite_probe, logarithmic_step = (
                 temperature_response_probes(
@@ -1031,6 +1101,10 @@ def solve_adaptive_lte_structure(
                     centered=local_energy_active,
                 )
             )
+            if column_mass_radiation_backend is not None:
+                column_mass_radiation_backend.record_temperature_response_probes(
+                    (primary_probe, opposite_probe, logarithmic_step)
+                )
             hotter, hotter_absorption, hotter_scattering = primary_probe
             hotter_temperature = current_temperature * np.exp(logarithmic_step)
             hotter_planck = planck_lambda_angstrom(
@@ -1150,11 +1224,13 @@ def solve_adaptive_lte_structure(
                         hotter,
                         transport,
                         logarithmic_step,
+                        probe_rosseland.get(id(hotter)),
                     )
                 )
                 if centered_material_response:
                     _, cold_ml2_responses = convection_coefficient_response(
-                        current, colder, transport, -logarithmic_step
+                        current, colder, transport, -logarithmic_step,
+                        probe_rosseland.get(id(colder)),
                     )
                     ml2_responses = tuple(
                         0.5 * (hot + cold)
@@ -1242,7 +1318,7 @@ def solve_adaptive_lte_structure(
         payload: dict[str, object] = {
             "atmosphere": current,
             "lower_boundary_absorption_escape_bound": (
-                _thermal_boundary_absorption_escape_bound(
+                (mass_boundary if mass_transfer else _thermal_boundary_absorption_escape_bound)(
                     wavelength,
                     current.column_mass,
                     absorption,
@@ -1414,6 +1490,28 @@ def solve_adaptive_lte_structure(
                 "convective_flux_interface": convective_flux_interface,
                 "transport": transport,
             }
+        return evaluation
+
+    # Every structure evaluation (opacity, transfer and convection at one
+    # temperature) is logged with its phase and wall time, so long phases
+    # that accept no iteration for many evaluations remain observable.
+    untimed_evaluate_log_temperature = evaluate_log_temperature
+    structure_evaluation_count = 0
+
+    def evaluate_log_temperature(
+        log_temperature: FloatArray, need_jacobian: bool
+    ) -> NonlinearEvaluation[dict[str, object]]:
+        nonlocal structure_evaluation_count
+        started = time.perf_counter()
+        evaluation = untimed_evaluate_log_temperature(log_temperature, need_jacobian)
+        structure_evaluation_count += 1
+        _LOGGER.info(
+            "structure evaluation %d: phase %s, jacobian %s, %.1f s",
+            structure_evaluation_count,
+            solver_phase,
+            need_jacobian,
+            time.perf_counter() - started,
+        )
         return evaluation
 
     log_temperature_from_state = np.zeros(
@@ -1670,6 +1768,7 @@ def solve_adaptive_lte_structure(
                         dtype=np.float64,
                     ),
                     mixing_length_alpha=mixing_length_alpha,
+                    coefficient_function=ml2_coefficient_function,
                 )
             )
             adiabatic_gradient = np.asarray(
@@ -1898,8 +1997,29 @@ def solve_adaptive_lte_structure(
             np.max(np.abs(temperature_map() @ (new_state - old_state)))
         ),
     )
+    nonlinear_evaluator = evaluate_state
     if energy_completion_active:
-        nonlinear_options["allow_initial_convergence"] = False
+        from ._thermal_conditioning import (
+            frozen_energy_evaluator,
+            equilibrated_direction,
+        )
+
+        # Use the same unpenalized, freshly linearized energy solve as the
+        # completion phase below. A regularized flux-oriented step can stall
+        # while thin layers still have significant heating/cooling defects.
+        solver_phase = "local-energy-completion"
+        nonlinear_options.update(
+            allow_initial_convergence=False,
+            linear_regularization=0.0,
+            jacobian_refresh_interval=1,
+            # Frozen row weights are renewed with each tangent. Secants
+            # between differently weighted residuals cannot update that J.
+            broyden_updates=False,
+            step_builder=lambda state, ev, jac, radius: equilibrated_direction(
+                jac, ev.residual
+            ),
+        )
+        nonlinear_evaluator = frozen_energy_evaluator(evaluate_state)
     if use_convective_trial_correction and mixing_length_alpha is not None:
         nonlinear_options["trial_projector"] = correct_convective_trial
     initial_options = dict(nonlinear_options)
@@ -1915,7 +2035,7 @@ def solve_adaptive_lte_structure(
     nonlinear_solver_segments: list[dict[str, object]] = []
     result = solve_trust_region_newton(
         state_from_log_temperature(initial_log_temperature),
-        evaluate_state,
+        nonlinear_evaluator,
         **initial_options,
     )
     nonlinear_solver_segments.append(
@@ -2020,7 +2140,14 @@ def solve_adaptive_lte_structure(
     # that direct-resume path accidentally bypassed continuation as well.
     # Keep the number bounded so a genuinely inconsistent physical closure
     # still returns as unconverged rather than looping indefinitely.
-    if use_physical_flux_residual and not use_deep_gradient_conditioner:
+    # Energy solves rebuild an exact tangent on every step. Repeating that
+    # solve cannot repair stale Broyden history; return an unresolved grid to
+    # its composition driver instead of restarting the same stalled system.
+    if (
+        use_physical_flux_residual
+        and not use_deep_gradient_conditioner
+        and not energy_completion_active
+    ):
         for _ in range(maximum_formal_flux_continuations):
             if (
                 result.diagnostics.terminal_reason
@@ -2042,7 +2169,7 @@ def solve_adaptive_lte_structure(
                 and result.history[-1].maximum_step < temperature_tolerance
             )
             result = solve_trust_region_newton(
-                result.state, evaluate_state, **continuation_options
+                result.state, nonlinear_evaluator, **continuation_options
             )
             nonlinear_solver_segments.append(
                 {
@@ -2055,6 +2182,16 @@ def solve_adaptive_lte_structure(
             )
 
     thermal_metadata = None
+    # The formal phase stops when its accepted (line-searched) step is small.
+    # In optically thin outer layers the flux equations barely constrain T,
+    # so a residual already at round-off can leave a large unrestricted
+    # Newton proposal that the line search keeps rejecting.  The certificate
+    # measures that proposal, so complete with local energy balance (which
+    # does constrain those layers) whenever it is not yet stationary.
+    final_unrestricted_step = (
+        result.history[-1].unrestricted_maximum_step
+        if result.history else None
+    )
     if (
         enforce_local_energy_balance
         and not energy_completion_active
@@ -2069,6 +2206,10 @@ def solve_adaptive_lte_structure(
                 )
             )
             >= flux_tolerance
+            or (
+                final_unrestricted_step is not None
+                and final_unrestricted_step >= temperature_tolerance
+            )
         )
     ):
         solver_iteration_offset += result.iterations
@@ -2123,6 +2264,7 @@ def solve_adaptive_lte_structure(
         solver_phase = "local-energy-completion"
         energy_options.update(
             jacobian_refresh_interval=1,
+            broyden_updates=False,
             step_builder=lambda state, ev, jac, radius: equilibrated_direction(
                 jac, ev.residual
             ),

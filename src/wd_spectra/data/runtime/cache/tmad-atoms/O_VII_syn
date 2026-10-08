@@ -1,0 +1,985 @@
+.
+. ============================================
+. O   VII  MODEL ION   (FORMAL SOLUTION ONLY!) 
+. ============================================
+.
+. BY T. RAUCH
+.
+.     INSTITUTE FOR ASTRONOMY AND ASTROPHYSICS
+.     KEPLER CENTER FOR ASTRO AND PARTICLE PHYSICS
+.     EBERHARD KARLS UNIVERSITY
+.     SAND 1
+.     D-72076 TUEBINGEN
+.     GERMANY
+.
+.     E-mail: astro-tmad@listserv.uni-tuebingen.de
+.
+.
+. CREATED      :  5-MAY-2003 11:54:24
+. LAST MODIFIED: 25-MAY-2018 11:38:40
+.
+.
+. Sources of atomic data: see columns 81+
+.
+.      Bashkin & Stoner: 1975, Atomic Energy Levels And Grotrian Diagrams, North-Holland, American Elsevier
+.               CHIANTI: http://www.chiantidatabase.org/
+.                  NIST: http://www.nist.gov/pml/data/asd.cfm
+.          Iron Project: http://cdsweb.u-strasbg.fr/tipbase/home.html
+.
+. Some wavelengths were shifted to avoid doubly defined frequency points. 
+. Real wavelengths are shown in brackets ().
+.
+.
+. SUITABLE FOR THE CALCULATION OF A SYNTHETIC SPECTRUM ONLY!
+.
+.
+.                         NON-LTE LEVELS                                                         
+.---------------------------------------                                                         
+L                                                                               
+O701S201S O801S  2S  1.787684311903E+17     1.00000                             NIST                 
+O702S 13S O801S  2S  4.312313647383E+16     3.00000                             NIST
+O702P 03POO801S  2S  4.129500206495E+16     1.00000                             NIST
+O702P 13POO801S  2S  4.129320331020E+16     3.00000                             NIST
+O702P 23POO801S  2S  4.127671472501E+16     5.00000                             NIST
+O702S 01S O801S  2S  4.121225934654E+16     1.00000                             NIST
+O702P 11POO801S  2S  3.998847655374E+16     3.00000                             NIST
+O703S 13S O801S  2S  1.871463412839E+16     3.00000                             NIST
+O703P 13POO801S  2S  1.821000000000E+16     3.00000                             NIST uncertain +
+O703P 03POO801S  2S  1.820948383666E+16     1.00000                             NIST uncertain
+O703P 23POO801S  2S  1.820900000000E+16     5.00000                             NIST uncertain -
+O703S 01S O801S  2S  1.818699940231E+16     1.00000                             NIST
+O703D 13D O801S  2S  1.794866439820E+16     3.00000                             NIST
+O703D 23D O801S  2S  1.794686564345E+16     5.00000                             NIST
+O703D 33D O801S  2S  1.794656585099E+16     7.00000                             NIST
+O703D 21D O801S  2S  1.791568722782E+16     5.00000                             NIST
+O703P 11POO801S  2S  1.782335115075E+16     3.00000                             NIST
+O704S 13S O801S  2S  1.039479383397E+16     3.00000                             NIST
+O704P 13POO801S  2S  1.020800000000E+16     3.00000                             NIST uncertain +
+O704P 03POO801S  2S  1.020712375526E+16     1.00000                             NIST uncertain
+O704P 23POO801S  2S  1.020700000000E+16     5.00000                             NIST uncertain -
+O704S 01S O801S  2S  1.019213413236E+16     1.00000                             NIST
+O704D 13D O801S  2S  1.010639348938E+16     3.00000                             NIST
+O704D 23D O801S  2S  1.010519431954E+16     5.00000                             NIST
+O704D 33D O801S  2S  1.009020469664E+16     7.00000                             NIST
+O704F 23FOO801S  2S  1.009889900000E+16     5.00000                             NIST
+O704F 33FOO801S  2S  1.009889867793E+16     7.00000                             NIST
+O704F 43FOO801S  2S  1.009889700000E+16     9.00000                             NIST
+O704D 21D O801S  2S  1.008510822486E+16     5.00000                             NIST
+O704F 31FOO801S  2S  1.008001175307E+16     7.00000                             NIST
+O704P 11POO801S  2S  1.004223790336E+16     3.00000                             NIST
+O705S 13S O801S  2S  6.609314466805E+15     3.00000                             NIST
+O705P 03POO801S  2S  6.524473210000E+15     1.00000                             NIST uncertain +
+O705P 23POO801S  2S  6.524473201191E+15     5.00000                             NIST uncertain
+O705P 13POO801S  2S  6.524473200000E+15     3.00000                             NIST uncertain -
+O705F 23FOO801S  2S  6.471709729000E+15     5.00000                             NIST uncertain +
+O705F 33FOO801S  2S  6.471709728583E+15     7.00000                             NIST uncertain
+O705F 43FOO801S  2S  6.471709728000E+15     9.00000                             NIST uncertain -
+O705D 13D O801S  2S  6.465713879500E+15     3.00000                             NIST uncertain +
+O705D 23D O801S  2S  6.465713879400E+15     5.00000                             NIST uncertain
+O705D 33D O801S  2S  6.459118445347E+15     7.00000                             NIST
+O705F 31FOO801S  2S  6.453122596187E+15     7.00000                             NIST
+O705D 21D O801S  2S  6.440831105409E+15     5.00000                             NIST
+O705P 11POO801S  2S  6.434235671333E+15     3.00000                             NIST
+O706P 13POO801S  2S  4.537148997150E+15     3.00000                             NIST uncertain +
+O706P 03POO801S  2S  4.537148997109E+15     1.00000                             NIST uncertain
+O706P 23POO801S  2S  4.537148997080E+15     5.00000                             NIST uncertain -
+O706F 23FOO801S  2S  4.501773487080E+15     5.00000                             NIST uncertain +
+O706F 33FOO801S  2S  4.501773487065E+15     7.00000                             NIST uncertain
+O706F 43FOO801S  2S  4.501773487050E+15     9.00000                             NIST uncertain -
+O706D 13D O801S  2S  4.496976807760E+15     3.00000                             NIST uncertain +
+O706D 33D O801S  2S  4.496976807737E+15     7.00000                             NIST uncertain	
+O706D 23D O801S  2S  4.496976807730E+15     5.00000                             NIST uncertain -
+O706F 31FOO801S  2S  4.482886562211E+15     7.00000                             NIST
+O706D 21D O801S  2S  4.478689467799E+15     5.00000                             NIST
+O706P 11POO801S  2S  4.470595071433E+15     3.00000                             NIST
+O707P 13POO801S  2S  3.333182485790E+15     3.00000                             NIST uncertain +
+O707P 03POO801S  2S  3.333182485781E+15     1.00000                             NIST uncertain	
+O707P 23POO801S  2S  3.333182485775E+15     5.00000                             NIST uncertain -
+O707P 11POO801S  2S  3.307700126851E+15     3.00000                             NIST
+O707D 13D O801S  2S  3.280119220720E+15     3.00000                             NIST uncertain +
+O707D 33D O801S  2S  3.280119220715E+15     7.00000                             NIST uncertain	
+O707D 23D O801S  2S  3.280119220712E+15     5.00000                             NIST uncertain -
+O708P 13POO801S  2S  2.556420227107E+15     3.00000                             NIST uncertain +
+O708P 03POO801S  2S  2.556420227103E+15     1.00000                             NIST uncertain	
+O708P 23POO801S  2S  2.556420227100E+15     5.00000                             NIST uncertain -
+O708D 13D O801S  2S  2.538432679626E+15     3.00000                             NIST uncertain +
+O708D 23D O801S  2S  2.538432679623E+15     5.00000                             NIST uncertain	
+O708D 33D O801S  2S  2.538432679621E+15     7.00000                             NIST uncertain -
+O709D 13D O801S  2S  2.102234653236E+15     3.00000                             NIST uncertain +
+O709D 23D O801S  2S  2.102234653233E+15     5.00000                             NIST uncertain	
+O709D 33D O801S  2S  2.102234653231E+15     7.00000                             NIST uncertain -
+O709P 03POO801S  2S  2.055766822246E+15     1.00000                             NIST uncertain +
+O709P 13POO801S  2S  2.055766822243E+15     3.00000                             NIST uncertain	
+O709P 23POO801S  2S  2.055766822241E+15     5.00000                             NIST uncertain -
+O710P 03POO801S  2S  1.657042853106E+15     1.00000                             NIST uncertain +
+O710P 13POO801S  2S  1.657042853103E+15     3.00000                             NIST uncertain	
+O710P 23POO801S  2S  1.657042853101E+15     5.00000                             NIST uncertain -
+O710D 13D O801S  2S  1.576098889446E+15     3.00000                             NIST uncertain +
+O710D 23D O801S  2S  1.576098889443E+15     5.00000                             NIST uncertain
+O710D 33D O801S  2S  1.576098889441E+15     7.00000                             NIST uncertain -
+0                                                                               
+.                             LTE LEVELS                              
+.---------------------------------------                              
+LTE                                                                             
+. only LTE level
+0                                                                               
+.                       LINE TRANSITIONS                       
+.---------------------------------------                       
+.data calculated by FORMEL4 (Version 12-AUG-2015 13:12:02) by T. Rauch
+RBB
+.
+. singlets
+.
+O701S201S O702P 11PO 3 3   6.9500E-01   4.7668E+12       0.2539                 WAVELENGTH:            21.60200 A    Opacity Project
+.
+O701S201S O703P 11PO 3 3   1.4600E-01   6.4110E+12       1.2781                 WAVELENGTH:            18.62700 A    Opacity Project
+.
+O701S201S O704P 11PO 3 3   5.5100E-02   7.0459E+12       4.0260                 WAVELENGTH:            17.76799 A    Opacity Project
+.
+O701S201S O705P 11PO 3 3   2.6800E-02   7.3504E+12       9.8071                 WAVELENGTH:            17.39599 A    Opacity Project
+.
+O701S201S O706P 11PO 3 3   1.5100E-02   7.5189E+12      20.3143                 WAVELENGTH:            17.20001 A    Opacity Project
+.
+O701S201S O707P 11PO 3 3   9.3600E-03   7.6195E+12      37.1091                 WAVELENGTH:            17.08601 A    Opacity Project
+.
+O702S 01S O702P 11PO 3 3   6.6700E-02   3.7066E+08       0.2539                 WAVELENGTH:          2449.71951 A    Opacity Project
+.
+O702S 01S O703P 11PO 3 3   3.7400E-01   1.3539E+11       1.2781                 WAVELENGTH:           128.17719 A    Opacity Project
+.
+O702S 01S O704P 11PO 3 3   9.3800E-02   2.4046E+11       4.0260                 WAVELENGTH:            96.17974 A    Opacity Project
+.
+O702S 01S O705P 11PO 3 3   3.9000E-02   2.9935E+11       9.8071                 WAVELENGTH:            86.20169 A    Opacity Project
+.
+O702S 01S O706P 11PO 3 3   2.0300E-02   3.3411E+11      20.3143                 WAVELENGTH:            81.59469 A    Opacity Project
+.
+O702S 01S O707P 11PO 3 3   1.2000E-02   3.5559E+11      37.1091                 WAVELENGTH:            79.09140 A    Opacity Project
+.
+O702P 11POO703S 01S  3 3   1.8967E-02   1.1764E+11       1.2275                 WAVELENGTH:           137.51016 A    Opacity Project
+.
+O702P 11POO704S 01S  3 3   4.1000E-03   2.1973E+11       3.9084                 WAVELENGTH:           100.61385 A    Opacity Project
+.
+O702P 11POO703D 21D  3 3   7.0333E-01   1.2058E+11       1.2649                 WAVELENGTH:           135.81992 A    Opacity Project
+.
+O702P 11POO704D 21D  3 3   1.2000E-01   2.2131E+11       3.9918                 WAVELENGTH:           100.25374 A    Opacity Project
+.
+O702P 11POO705D 21D  3 3   4.3333E-02   2.7854E+11       9.7870                 WAVELENGTH:            89.36319 A    Opacity Project
+.
+O702P 11POO706D 21D  3 3   2.0933E-02   3.1208E+11      20.2409                 WAVELENGTH:            84.42530 A    Opacity Project
+.
+O703S 01S O703P 11PO 3 3   1.1700E-01   3.2729E+07       1.2781                 WAVELENGTH:          8244.02308 A    Opacity Project
+.
+O703S 01S O704P 11PO 3 3   4.0700E-01   1.6418E+10       4.0260                 WAVELENGTH:           368.08009 A    Opacity Project
+.
+O703S 01S O705P 11PO 3 3   1.0800E-01   3.4186E+10       9.8071                 WAVELENGTH:           255.08252 A    Opacity Project
+.
+O703S 01S O706P 11PO 3 3   4.6800E-02   4.6564E+10      20.3143                 WAVELENGTH:           218.56490 A    Opacity Project
+.
+O703S 01S O707P 11PO 3 3   2.5200E-02   5.4794E+10      37.1091                 WAVELENGTH:           201.48291 A    Opacity Project
+.
+O703D 21D O703P 11PO 3 3   7.3000E-03   2.1101E+06       1.2781                 WAVELENGTH:         32467.53247 A    Opacity Project
+.
+O703D 21D O704P 11PO 3 3   1.0040E-02   1.5343E+10       4.0260                 WAVELENGTH:           380.76381 A    Opacity Project
+.
+O703D 21D O705P 11PO 3 3   2.0400E-03   3.2626E+10       9.8071                 WAVELENGTH:           261.11024 A    Opacity Project
+.
+O703D 21D O706P 11PO 3 3   7.7800E-04   4.4740E+10      20.3143                 WAVELENGTH:           222.97538 A    Opacity Project
+.
+O703D 21D O707P 11PO 3 3   3.9000E-04   5.2814E+10      37.1091                 WAVELENGTH:           205.22503 A    Opacity Project
+.
+O703P 11POO704S 01S  3 3   4.2667E-02   1.4413E+10       3.9084                 WAVELENGTH:           392.85013 A    Opacity Project
+.
+O703P 11POO704D 21D  3 3   6.3333E-01   1.4820E+10       3.9918                 WAVELENGTH:           387.41671 A    Opacity Project
+.
+O703P 11POO705D 21D  3 3   1.4000E-01   3.2066E+10       9.7870                 WAVELENGTH:           263.37969 A    Opacity Project
+.
+O703P 11POO706D 21D  3 3   5.6000E-02   4.4074E+10      20.2409                 WAVELENGTH:           224.65347 A    Opacity Project
+.
+O704S 01S O704P 11PO 3 3   1.6300E-01   5.5610E+06       4.0260                 WAVELENGTH:         20000.00000 A    Opacity Project
+.
+O704S 01S O705P 11PO 3 3   4.5100E-01   3.4951E+09       9.8071                 WAVELENGTH:           797.76625 A    Opacity Project
+.
+O704S 01S O706P 11PO 3 3   1.2200E-01   8.1020E+09      20.3143                 WAVELENGTH:           523.97171 A    Opacity Project
+.
+O704S 01S O707P 11PO 3 3   5.3700E-02   1.1730E+10      37.1091                 WAVELENGTH:           435.46420 A    Opacity Project
+.
+O704D 21D O704P 11PO 3 3   1.2300E-02   4.5487E+05       4.0260                 WAVELENGTH:         69930.06992 A    Opacity Project
+.
+O704D 21D O705P 11PO 3 3   2.5800E-02   3.2988E+09       9.8071                 WAVELENGTH:           821.15290 A    Opacity Project
+.
+O704D 21D O706P 11PO 3 3   5.4400E-03   7.8018E+09      20.3143                 WAVELENGTH:           533.95985 A    Opacity Project
+.
+O704D 21D O707P 11PO 3 3   2.1200E-03   1.1368E+10      37.1091                 WAVELENGTH:           442.34087 A    Opacity Project
+.
+O704P 11POO705D 21D  3 3   6.3000E-01   3.2101E+09       9.7870                 WAVELENGTH:           832.43153 A    Opacity Project
+.
+O704P 11POO706D 21D  3 3   1.5067E-01   7.6608E+09      20.2409                 WAVELENGTH:           538.85117 A    Opacity Project
+.
+O705D 21D O705P 11PO 3 3   1.6640E-02   1.0766E+04       9.8071                 WAVELENGTH:        454545.45455 A    Opacity Project
+.
+O705D 21D O706P 11PO 3 3   4.4600E-02   9.6074E+08      20.3143                 WAVELENGTH:          1521.60682 A    Opacity Project
+.
+O705D 21D O707P 11PO 3 3   9.7000E-03   2.4296E+09      37.1091                 WAVELENGTH:           956.84623 A    Opacity Project
+.
+O705P 11POO706D 21D  3 3   6.4667E-01   9.4647E+08      20.2409                 WAVELENGTH:          1533.03695 A    Opacity Project
+.
+O706D 21D O706P 11PO 3 3   2.0800E-02   1.6216E+04      20.3143                 WAVELENGTH:        370370.37037 A    Opacity Project
+.
+O706D 21D O707P 11PO 3 3   6.5600E-02   3.3937E+08      37.1091                 WAVELENGTH:          2560.16385 A    Opacity Project
+.
+.
+. triplets
+.
+O702S 13S O702P 03PO 3 3   1.0556E-02   8.2715E+08       0.2381                 WAVELENGTH:          1639.88193 A    Opacity Project
+O702S 13S O702P 13PO 3 3   3.1667E-02   8.2878E+08       0.2381                 WAVELENGTH:          1638.26999 A    Opacity Project
+O702S 13S O702P 23PO 3 3   5.2778E-02   8.4378E+08       0.2383                 WAVELENGTH:          1623.64020 A    Opacity Project
+.
+O702S 13S O703P 03PO 3 3   3.8519E-02   1.5362E+11       1.2244                 WAVELENGTH:           120.33260 A    Opacity Project
+O702S 13S O703P 13PO 3 3   1.1556E-01   1.5361E+11       1.2244                 WAVELENGTH:           120.33509 A    Opacity Project
+O702S 13S O703P 23PO 3 3   1.9259E-01   1.5362E+11       1.2245                 WAVELENGTH:           120.33026 A    Opacity Project
+.
+O702S 13S O704P 03PO 3 3   9.8889E-03   2.6815E+11       3.8970                 WAVELENGTH:            91.07800 A    Opacity Project
+O702S 13S O704P 13PO 3 3   2.9667E-02   2.6814E+11       3.8963                 WAVELENGTH:            91.08042 A    Opacity Project
+O702S 13S O704P 23PO 3 3   4.9444E-02   2.6816E+11       3.8971                 WAVELENGTH:            91.07766 A    Opacity Project
+.
+O702S 13S O705P 03PO 3 3   4.1481E-03   3.3151E+11       9.5377                 WAVELENGTH:            81.91350 A    Opacity Project
+O702S 13S O705P 13PO 3 3   1.2444E-02   3.3151E+11       9.5377                 WAVELENGTH:            81.91351 A    Opacity Project (shifted            81.91350 A)
+O702S 13S O705P 23PO 3 3   2.0741E-02   3.3151E+11       9.5377                 WAVELENGTH:            81.91352 A    Opacity Project (shifted            81.91350 A)
+.
+O702S 13S O706P 03PO 3 3   2.1667E-03   3.6849E+11      19.7227                 WAVELENGTH:            77.69464 A    Opacity Project
+O702S 13S O706P 13PO 3 3   6.5000E-03   3.6849E+11      19.7227                 WAVELENGTH:            77.69465 A    Opacity Project (shifted            77.69464 A)
+O702S 13S O706P 23PO 3 3   1.0833E-02   3.6849E+11      19.7227                 WAVELENGTH:            77.69466 A    Opacity Project (shifted            77.69464 A)
+.
+O702S 13S O707P 03PO 3 3   1.2852E-03   3.9185E+11      36.5439                 WAVELENGTH:            75.34376 A    Opacity Project
+O702S 13S O707P 13PO 3 3   3.8557E-03   3.9185E+11      36.5439                 WAVELENGTH:            75.34377 A    Opacity Project (shifted            75.34376 A)
+O702S 13S O707P 23PO 3 3   6.4261E-03   3.9185E+11      36.5439                 WAVELENGTH:            75.34378 A    Opacity Project (shifted            75.34376 A)
+.
+O702S 13S O708P 03PO 3 3   8.2963E-04   4.0729E+11      62.1253                 WAVELENGTH:            73.90109 A    Opacity Project
+O702S 13S O708P 13PO 3 3   2.4889E-03   4.0729E+11      62.1253                 WAVELENGTH:            73.90110 A    Opacity Project (shifted            73.90109 A)
+O702S 13S O708P 23PO 3 3   4.1482E-03   4.0729E+11      62.1253                 WAVELENGTH:            73.90111 A    Opacity Project (shifted            73.90109 A)
+.
+O702S 13S O709P 03PO 3 3   5.6667E-04   4.1741E+11      96.0694                 WAVELENGTH:            73.00016 A    Opacity Project
+O702S 13S O709P 13PO 3 3   1.7000E-03   4.1741E+11      96.0694                 WAVELENGTH:            73.00017 A    Opacity Project (shifted            73.00016 A)
+O702S 13S O709P 23PO 3 3   2.8333E-03   4.1741E+11      96.0694                 WAVELENGTH:            73.00018 A    Opacity Project (shifted            73.00016 A)
+.
+O702S 13S O710P 03PO 3 3   4.0370E-04   4.2555E+11     147.8649                 WAVELENGTH:            72.29822 A    Opacity Project
+O702S 13S O710P 13PO 3 3   1.2111E-03   4.2555E+11     147.8649                 WAVELENGTH:            72.29823 A    Opacity Project (shifted            72.29822 A)
+O702S 13S O710P 23PO 3 3   2.0185E-03   4.2555E+11     147.8649                 WAVELENGTH:            72.29824 A    Opacity Project (shifted            72.29822 A)
+.
+O702P 03POO703S 13S  3 3   1.9889E-02   1.2619E+11       1.1592                 WAVELENGTH:           132.76686 A    Opacity Project
+O702P 13POO703S 13S  3 3   1.9889E-02   1.2617E+11       1.1592                 WAVELENGTH:           132.77744 A    Opacity Project
+O702P 23POO703S 13S  3 3   1.9889E-02   1.2599E+11       1.1592                 WAVELENGTH:           132.87447 A    Opacity Project
+.
+O702P 03POO704S 13S  3 3   4.2000E-03   2.3632E+11       3.7575                 WAVELENGTH:            97.01956 A    Opacity Project
+O702P 13POO704S 13S  3 3   4.2000E-03   2.3629E+11       3.7575                 WAVELENGTH:            97.02521 A    Opacity Project
+O702P 23POO704S 13S  3 3   4.2000E-03   2.3604E+11       3.7575                 WAVELENGTH:            97.07701 A    Opacity Project
+.
+O702P 03POO705S 13S  3 3   1.6333E-03   2.9776E+11       9.2944                 WAVELENGTH:            86.43117 A    Opacity Project
+O702P 13POO705S 13S  3 3   1.6333E-03   2.9773E+11       9.2944                 WAVELENGTH:            86.43565 A    Opacity Project
+O702P 23POO705S 13S  3 3   1.6333E-03   2.9745E+11       9.2944                 WAVELENGTH:            86.47676 A    Opacity Project
+.
+O702P 03POO703D 13D  3 3   6.6605E-01   1.3490E+11       1.2603                 WAVELENGTH:           128.41091 A    Opacity Project
+O702P 13POO703D 13D  3 3   1.6698E-01   1.3488E+11       1.2603                 WAVELENGTH:           128.42081 A    Opacity Project
+O702P 13POO703D 23D  3 3   5.0000E-01   1.3490E+11       1.2605                 WAVELENGTH:           128.41092 A    Opacity Project (shifted           128.41091 A)
+O702P 23POO703D 13D  3 3   6.7165E-03   1.3469E+11       1.2603                 WAVELENGTH:           128.51158 A    Opacity Project
+O702P 23POO703D 23D  3 3   1.0019E-01   1.3471E+11       1.2605                 WAVELENGTH:           128.50167 A    Opacity Project
+O702P 23POO703D 33D  3 3   5.5970E-01   1.3471E+11       1.2606                 WAVELENGTH:           128.50002 A    Opacity Project
+.
+O702P 03POO704D 13D  3 3   1.2321E-01   2.4075E+11       3.9750                 WAVELENGTH:            96.12242 A    Opacity Project
+O702P 13POO704D 13D  3 3   3.0890E-02   2.4072E+11       3.9750                 WAVELENGTH:            96.12797 A    Opacity Project
+O702P 13POO704D 23D  3 3   9.2497E-02   2.4074E+11       3.9760                 WAVELENGTH:            96.12427 A    Opacity Project
+O702P 23POO704D 13D  3 3   1.2425E-03   2.4046E+11       3.9750                 WAVELENGTH:            96.17882 A    Opacity Project
+O702P 23POO704D 23D  3 3   1.8534E-02   2.4048E+11       3.9760                 WAVELENGTH:            96.17512 A    Opacity Project
+O702P 23POO704D 33D  3 3   1.0354E-01   2.4071E+11       3.9878                 WAVELENGTH:            96.12889 A    Opacity Project
+.
+O702P 03POO705D 13D  3 3   4.5514E-02   3.0023E+11       9.7118                 WAVELENGTH:            86.07482 A    Opacity Project
+O702P 13POO705D 13D  3 3   1.1410E-02   3.0020E+11       9.7118                 WAVELENGTH:            86.07926 A    Opacity Project
+O702P 13POO705D 23D  3 3   3.4167E-02   3.0020E+11       9.7118                 WAVELENGTH:            86.07927 A    Opacity Project (shifted            86.07926 A)
+O702P 23POO705D 13D  3 3   4.5896E-04   2.9992E+11       9.7118                 WAVELENGTH:            86.12003 A    Opacity Project
+O702P 23POO705D 23D  3 3   6.8461E-03   2.9992E+11       9.7118                 WAVELENGTH:            86.12004 A    Opacity Project (shifted            86.12003 A)
+O702P 23POO705D 33D  3 3   3.8247E-02   3.0003E+11       9.7316                 WAVELENGTH:            86.10372 A    Opacity Project
+.
+O702P 03POO706D 13D  3 3   2.2423E-02   3.3513E+11      20.0767                 WAVELENGTH:            81.46971 A    Opacity Project
+O702P 13POO706D 13D  3 3   5.6215E-03   3.3510E+11      20.0767                 WAVELENGTH:            81.47370 A    Opacity Project
+O702P 13POO706D 23D  3 3   1.6833E-02   3.3510E+11      20.0767                 WAVELENGTH:            81.47371 A    Opacity Project (shifted            81.47370 A)
+O702P 23POO706D 13D  3 3   2.2611E-04   3.3480E+11      20.0767                 WAVELENGTH:            81.51022 A    Opacity Project
+O702P 23POO706D 23D  3 3   3.3729E-03   3.3480E+11      20.0767                 WAVELENGTH:            81.51023 A    Opacity Project (shifted            81.51022 A)
+O702P 23POO706D 33D  3 3   1.8843E-02   3.3480E+11      20.0767                 WAVELENGTH:            81.51024 A    Opacity Project (shifted            81.51022 A)
+.
+O702P 03POO707D 13D  3 3   1.2877E-02   3.5767E+11      37.7358                 WAVELENGTH:            78.86187 A    Opacity Project
+O702P 13POO707D 13D  3 3   3.2283E-03   3.5763E+11      37.7358                 WAVELENGTH:            78.86560 A    Opacity Project
+O702P 13POO707D 23D  3 3   9.6667E-03   3.5763E+11      37.7358                 WAVELENGTH:            78.86561 A    Opacity Project (shifted            78.86560 A)
+O702P 23POO707D 13D  3 3   1.2985E-04   3.5732E+11      37.7358                 WAVELENGTH:            78.89982 A    Opacity Project
+O702P 23POO707D 23D  3 3   1.9370E-03   3.5732E+11      37.7358                 WAVELENGTH:            78.89983 A    Opacity Project (shifted            78.89982 A)
+O702P 23POO707D 33D  3 3   1.0821E-02   3.5732E+11      37.7358                 WAVELENGTH:            78.89984 A    Opacity Project (shifted            78.89982 A)
+.
+O702P 03POO708D 13D  3 3   8.1035E-03   3.7176E+11      63.0088                 WAVELENGTH:            77.35268 A    Opacity Project
+O702P 13POO708D 13D  3 3   2.0316E-03   3.7172E+11      63.0088                 WAVELENGTH:            77.35627 A    Opacity Project
+O702P 13POO708D 23D  3 3   6.0833E-03   3.7172E+11      63.0088                 WAVELENGTH:            77.35628 A    Opacity Project (shifted            77.35627 A)
+O702P 23POO708D 13D  3 3   8.1716E-05   3.7141E+11      63.0088                 WAVELENGTH:            77.38920 A    Opacity Project
+O702P 23POO708D 23D  3 3   1.2189E-03   3.7141E+11      63.0088                 WAVELENGTH:            77.38921 A    Opacity Project (shifted            77.38920 A)
+O702P 23POO708D 33D  3 3   6.8097E-03   3.7141E+11      63.0088                 WAVELENGTH:            77.38922 A    Opacity Project (shifted            77.38920 A)
+.
+O702P 03POO709D 13D  3 3   5.4616E-03   3.8017E+11      91.8693                 WAVELENGTH:            76.49178 A    Opacity Project
+O702P 13POO709D 13D  3 3   1.3692E-03   3.8014E+11      91.8693                 WAVELENGTH:            76.49529 A    Opacity Project
+O702P 13POO709D 23D  3 3   4.1000E-03   3.8014E+11      91.8693                 WAVELENGTH:            76.49530 A    Opacity Project (shifted            76.49529 A)
+O702P 23POO709D 13D  3 3   5.5075E-05   3.7982E+11      91.8693                 WAVELENGTH:            76.52749 A    Opacity Project
+O702P 23POO709D 23D  3 3   8.2153E-04   3.7982E+11      91.8693                 WAVELENGTH:            76.52750 A    Opacity Project (shifted            76.52749 A)
+O702P 23POO709D 33D  3 3   4.5896E-03   3.7982E+11      91.8693                 WAVELENGTH:            76.52751 A    Opacity Project (shifted            76.52749 A)
+.
+O702P 03POO710D 13D  3 3   3.8742E-03   3.9045E+11     163.4428                 WAVELENGTH:            75.47853 A    Opacity Project
+O702P 13POO710D 13D  3 3   9.7126E-04   3.9041E+11     163.4428                 WAVELENGTH:            75.48195 A    Opacity Project
+O702P 13POO710D 23D  3 3   2.9083E-03   3.9041E+11     163.4428                 WAVELENGTH:            75.48196 A    Opacity Project (shifted            75.48195 A)
+O702P 23POO710D 13D  3 3   3.9067E-05   3.9009E+11     163.4428                 WAVELENGTH:            75.51330 A    Opacity Project
+O702P 23POO710D 23D  3 3   5.8276E-04   3.9009E+11     163.4428                 WAVELENGTH:            75.51331 A    Opacity Project (shifted            75.51330 A)
+O702P 23POO710D 33D  3 3   3.2556E-03   3.9009E+11     163.4428                 WAVELENGTH:            75.51332 A    Opacity Project (shifted            75.51330 A)
+.
+O703S 13S O703P 03PO 3 3   1.7703E-02   6.3155E+07       1.2244                 WAVELENGTH:          5934.71810 A    Opacity Project
+O703S 13S O703P 13PO 3 3   5.3110E-02   6.3026E+07       1.2244                 WAVELENGTH:          5940.78841 A    Opacity Project
+O703S 13S O703P 23PO 3 3   8.8517E-02   6.3276E+07       1.2245                 WAVELENGTH:          5929.03922 A    Opacity Project
+.
+O703S 13S O704P 03PO 3 3   4.1852E-02   1.7913E+10       3.8970                 WAVELENGTH:           352.38565 A    Opacity Project
+O703S 13S O704P 13PO 3 3   1.2556E-01   1.7910E+10       3.8963                 WAVELENGTH:           352.42195 A    Opacity Project
+O703S 13S O704P 23PO 3 3   2.0926E-01   1.7914E+10       3.8971                 WAVELENGTH:           352.38052 A    Opacity Project
+.
+O703S 13S O705P 03PO 3 3   1.1370E-02   3.6778E+10       9.5377                 WAVELENGTH:           245.92986 A    Opacity Project
+O703S 13S O705P 13PO 3 3   3.4110E-02   3.6778E+10       9.5377                 WAVELENGTH:           245.92987 A    Opacity Project (shifted           245.92986 A)
+O703S 13S O705P 23PO 3 3   5.6850E-02   3.6778E+10       9.5377                 WAVELENGTH:           245.92988 A    Opacity Project (shifted           245.92986 A)
+.
+O703S 13S O706P 03PO 3 3   4.9630E-03   4.9747E+10      19.7227                 WAVELENGTH:           211.45673 A    Opacity Project
+O703S 13S O706P 13PO 3 3   1.4889E-02   4.9747E+10      19.7227                 WAVELENGTH:           211.45674 A    Opacity Project (shifted           211.45673 A)
+O703S 13S O706P 23PO 3 3   2.4815E-02   4.9747E+10      19.7227                 WAVELENGTH:           211.45675 A    Opacity Project (shifted           211.45673 A)
+.
+O703S 13S O707P 03PO 3 3   2.6814E-03   5.8555E+10      36.5439                 WAVELENGTH:           194.90518 A    Opacity Project
+O703S 13S O707P 13PO 3 3   8.0443E-03   5.8555E+10      36.5439                 WAVELENGTH:           194.90519 A    Opacity Project (shifted           194.90518 A)
+O703S 13S O707P 23PO 3 3   1.3407E-02   5.8555E+10      36.5439                 WAVELENGTH:           194.90520 A    Opacity Project (shifted           194.90518 A)
+.
+O703S 13S O708P 03PO 3 3   1.6333E-03   6.4618E+10      62.1253                 WAVELENGTH:           185.53564 A    Opacity Project
+O703S 13S O708P 13PO 3 3   4.9000E-03   6.4618E+10      62.1253                 WAVELENGTH:           185.53565 A    Opacity Project (shifted           185.53564 A)
+O703S 13S O708P 23PO 3 3   8.1667E-03   6.4618E+10      62.1253                 WAVELENGTH:           185.53566 A    Opacity Project (shifted           185.53564 A)
+.
+O703S 13S O709P 03PO 3 3   1.0778E-03   6.8685E+10      96.0694                 WAVELENGTH:           179.95969 A    Opacity Project
+O703S 13S O709P 13PO 3 3   3.2333E-03   6.8685E+10      96.0694                 WAVELENGTH:           179.95970 A    Opacity Project (shifted           179.95969 A)
+O703S 13S O709P 23PO 3 3   5.3889E-03   6.8685E+10      96.0694                 WAVELENGTH:           179.95971 A    Opacity Project (shifted           179.95969 A)
+.
+O703S 13S O710P 03PO 3 3   7.5186E-04   7.2012E+10     147.8649                 WAVELENGTH:           175.75310 A    Opacity Project
+O703S 13S O710P 13PO 3 3   2.2556E-03   7.2012E+10     147.8649                 WAVELENGTH:           175.75311 A    Opacity Project (shifted           175.75310 A)
+O703S 13S O710P 23PO 3 3   3.7593E-03   7.2012E+10     147.8649                 WAVELENGTH:           175.75312 A    Opacity Project (shifted           175.75310 A)
+.
+O703P 03POO704S 13S  3 3   4.5667E-02   1.5114E+10       3.7575                 WAVELENGTH:           383.62681 A    Opacity Project
+O703P 13POO704S 13S  3 3   4.5667E-02   1.5116E+10       3.7575                 WAVELENGTH:           383.60147 A    Opacity Project
+O703P 23POO704S 13S  3 3   4.5667E-02   1.5113E+10       3.7575                 WAVELENGTH:           383.65056 A    Opacity Project
+.
+O703P 03POO705S 13S  3 3   9.9000E-03   3.3304E+10       9.2944                 WAVELENGTH:           258.43800 A    Opacity Project
+O703P 13POO705S 13S  3 3   9.9000E-03   3.3307E+10       9.2944                 WAVELENGTH:           258.42650 A    Opacity Project
+O703P 23POO705S 13S  3 3   9.9000E-03   3.3301E+10       9.2944                 WAVELENGTH:           258.44878 A    Opacity Project
+.
+O703P 03POO703D 13D  3 3   3.6299E-02   1.6836E+07       1.2603                 WAVELENGTH:         11494.25287 A    Opacity Project
+O703P 13POO703D 13D  3 3   9.1002E-03   1.6903E+07       1.2603                 WAVELENGTH:         11471.55060 A    Opacity Project
+O703P 13POO703D 23D  3 3   2.7250E-02   1.7137E+07       1.2605                 WAVELENGTH:         11393.13246 A    Opacity Project
+O703P 23POO703D 13D  3 3   3.6604E-04   1.6774E+07       1.2603                 WAVELENGTH:         11515.61507 A    Opacity Project
+O703P 23POO703D 23D  3 3   5.4601E-03   1.7007E+07       1.2605                 WAVELENGTH:         11436.59541 A    Opacity Project
+O703P 23POO703D 33D  3 3   3.0503E-02   1.7046E+07       1.2606                 WAVELENGTH:         11423.53078 A    Opacity Project
+.
+O703P 03POO704D 13D  3 3   5.7058E-01   1.6251E+10       3.9750                 WAVELENGTH:           369.97299 A    Opacity Project
+O703P 13POO704D 13D  3 3   1.4304E-01   1.6253E+10       3.9750                 WAVELENGTH:           369.94943 A    Opacity Project
+O703P 13POO704D 23D  3 3   4.2833E-01   1.6258E+10       3.9760                 WAVELENGTH:           369.89469 A    Opacity Project
+O703P 23POO704D 13D  3 3   5.7537E-03   1.6249E+10       3.9750                 WAVELENGTH:           369.99508 A    Opacity Project
+O703P 23POO704D 23D  3 3   8.5826E-02   1.6254E+10       3.9760                 WAVELENGTH:           369.94033 A    Opacity Project
+O703P 23POO704D 33D  3 3   4.7948E-01   1.6314E+10       3.9878                 WAVELENGTH:           369.25732 A    Opacity Project
+.
+O703P 03POO705D 13D  3 3   1.3543E-01   3.4134E+10       9.7118                 WAVELENGTH:           255.27787 A    Opacity Project
+O703P 13POO705D 13D  3 3   3.3953E-02   3.4137E+10       9.7118                 WAVELENGTH:           255.26665 A    Opacity Project
+O703P 13POO705D 23D  3 3   1.0167E-01   3.4137E+10       9.7118                 WAVELENGTH:           255.26666 A    Opacity Project (shifted           255.26665 A)
+O703P 23POO705D 13D  3 3   1.3657E-03   3.4131E+10       9.7118                 WAVELENGTH:           255.28839 A    Opacity Project
+O703P 23POO705D 23D  3 3   2.0372E-02   3.4131E+10       9.7118                 WAVELENGTH:           255.28840 A    Opacity Project (shifted           255.28839 A)
+O703P 23POO705D 33D  3 3   1.1381E-01   3.4169E+10       9.7316                 WAVELENGTH:           255.14509 A    Opacity Project
+.
+O703P 03POO706D 13D  3 3   5.5392E-02   4.6537E+10      20.0767                 WAVELENGTH:           218.62702 A    Opacity Project
+O703P 13POO706D 13D  3 3   1.3887E-02   4.6541E+10      20.0767                 WAVELENGTH:           218.61879 A    Opacity Project
+O703P 13POO706D 23D  3 3   4.1583E-02   4.6541E+10      20.0767                 WAVELENGTH:           218.61880 A    Opacity Project (shifted           218.61879 A)
+O703P 23POO706D 13D  3 3   5.5858E-04   4.6534E+10      20.0767                 WAVELENGTH:           218.63474 A    Opacity Project
+O703P 23POO706D 23D  3 3   8.3321E-03   4.6534E+10      20.0767                 WAVELENGTH:           218.63475 A    Opacity Project (shifted           218.63474 A)
+O703P 23POO706D 33D  3 3   4.6548E-02   4.6534E+10      20.0767                 WAVELENGTH:           218.63476 A    Opacity Project (shifted           218.63474 A)
+.
+O703P 03POO707D 13D  3 3   2.8862E-02   5.5163E+10      37.7358                 WAVELENGTH:           200.80725 A    Opacity Project
+O703P 13POO707D 13D  3 3   7.2357E-03   5.5167E+10      37.7358                 WAVELENGTH:           200.80030 A    Opacity Project
+O703P 13POO707D 23D  3 3   2.1667E-02   5.5167E+10      37.7358                 WAVELENGTH:           200.80031 A    Opacity Project (shifted           200.80030 A)
+O703P 23POO707D 13D  3 3   2.9105E-04   5.5160E+10      37.7358                 WAVELENGTH:           200.81375 A    Opacity Project
+O703P 23POO707D 23D  3 3   4.3414E-03   5.5160E+10      37.7358                 WAVELENGTH:           200.81376 A    Opacity Project (shifted           200.81375 A)
+O703P 23POO707D 33D  3 3   2.4254E-02   5.5160E+10      37.7358                 WAVELENGTH:           200.81377 A    Opacity Project (shifted           200.81375 A)
+.
+O703P 03POO708D 13D  3 3   1.7206E-02   6.0781E+10      63.0088                 WAVELENGTH:           191.30335 A    Opacity Project
+O703P 13POO708D 13D  3 3   4.3135E-03   6.0785E+10      63.0088                 WAVELENGTH:           191.29705 A    Opacity Project
+O703P 13POO708D 23D  3 3   1.2917E-02   6.0785E+10      63.0088                 WAVELENGTH:           191.29706 A    Opacity Project (shifted           191.29705 A)
+O703P 23POO708D 13D  3 3   1.7351E-04   6.0777E+10      63.0088                 WAVELENGTH:           191.30926 A    Opacity Project
+O703P 23POO708D 23D  3 3   2.5881E-03   6.0777E+10      63.0088                 WAVELENGTH:           191.30927 A    Opacity Project (shifted           191.30926 A)
+O703P 23POO708D 33D  3 3   1.4459E-02   6.0777E+10      63.0088                 WAVELENGTH:           191.30928 A    Opacity Project (shifted           191.30926 A)
+.
+O703P 03POO709D 13D  3 3   1.1212E-02   6.4211E+10      91.8693                 WAVELENGTH:           186.12269 A    Opacity Project
+O703P 13POO709D 13D  3 3   2.8107E-03   6.4215E+10      91.8693                 WAVELENGTH:           186.11673 A    Opacity Project
+O703P 13POO709D 23D  3 3   8.4165E-03   6.4215E+10      91.8693                 WAVELENGTH:           186.11674 A    Opacity Project (shifted           186.11673 A)
+O703P 23POO709D 13D  3 3   1.1306E-04   6.4208E+10      91.8693                 WAVELENGTH:           186.12828 A    Opacity Project
+O703P 23POO709D 23D  3 3   1.6864E-03   6.4208E+10      91.8693                 WAVELENGTH:           186.12829 A    Opacity Project (shifted           186.12828 A)
+O703P 23POO709D 33D  3 3   9.4215E-03   6.4208E+10      91.8693                 WAVELENGTH:           186.12830 A    Opacity Project (shifted           186.12828 A)
+.
+O703P 03POO710D 13D  3 3   7.7484E-03   6.8475E+10     163.4428                 WAVELENGTH:           180.23539 A    Opacity Project
+O703P 13POO710D 13D  3 3   1.9425E-03   6.8479E+10     163.4428                 WAVELENGTH:           180.22979 A    Opacity Project
+O703P 13POO710D 23D  3 3   5.8167E-03   6.8479E+10     163.4428                 WAVELENGTH:           180.22980 A    Opacity Project (shifted           180.22979 A)
+O703P 23POO710D 13D  3 3   7.8135E-05   6.8471E+10     163.4428                 WAVELENGTH:           180.24063 A    Opacity Project
+O703P 23POO710D 23D  3 3   1.1655E-03   6.8471E+10     163.4428                 WAVELENGTH:           180.24064 A    Opacity Project (shifted           180.24063 A)
+O703P 23POO710D 33D  3 3   6.5112E-03   6.8471E+10     163.4428                 WAVELENGTH:           180.24065 A    Opacity Project (shifted           180.24063 A)
+.
+O703D 13D O704P 03PO 3 3   7.8815E-03   1.4833E+10       3.8970                 WAVELENGTH:           387.25167 A    Opacity Project
+O703D 13D O704P 13PO 3 3   5.9277E-03   1.4829E+10       3.8963                 WAVELENGTH:           387.29551 A    Opacity Project
+O703D 13D O704P 23PO 3 3   1.0650E-02   1.4833E+10       3.8971                 WAVELENGTH:           387.24548 A    Opacity Project
+O703D 23D O704P 13PO 3 3   2.3843E-04   1.4823E+10       3.8963                 WAVELENGTH:           387.38553 A    Opacity Project
+O703D 23D O704P 23PO 3 3   2.5404E-03   1.4826E+10       3.8971                 WAVELENGTH:           387.33548 A    Opacity Project
+O703D 33D O704P 23PO 3 3   1.1039E-02   1.4825E+10       3.8971                 WAVELENGTH:           387.35048 A    Opacity Project
+.
+O703D 13D O705P 03PO 3 3   1.5430E-03   3.2301E+10       9.5377                 WAVELENGTH:           262.41898 A    Opacity Project
+O703D 13D O705P 13PO 3 3   1.1605E-03   3.2301E+10       9.5377                 WAVELENGTH:           262.41899 A    Opacity Project (shifted           262.41898 A)
+O703D 13D O705P 23PO 3 3   2.0850E-03   3.2301E+10       9.5377                 WAVELENGTH:           262.41900 A    Opacity Project (shifted           262.41898 A)
+O703D 23D O705P 13PO 3 3   4.6679E-05   3.2291E+10       9.5377                 WAVELENGTH:           262.46030 A    Opacity Project
+O703D 23D O705P 23PO 3 3   4.9735E-04   3.2291E+10       9.5377                 WAVELENGTH:           262.46031 A    Opacity Project (shifted           262.46030 A)
+O703D 33D O705P 23PO 3 3   2.1611E-03   3.2289E+10       9.5377                 WAVELENGTH:           262.46719 A    Opacity Project
+.
+O703D 13D O706P 03PO 3 3   5.8462E-04   4.4517E+10      19.7227                 WAVELENGTH:           223.53362 A    Opacity Project
+O703D 13D O706P 13PO 3 3   4.3969E-04   4.4517E+10      19.7227                 WAVELENGTH:           223.53363 A    Opacity Project (shifted           223.53362 A)
+O703D 13D O706P 23PO 3 3   7.8998E-04   4.4517E+10      19.7227                 WAVELENGTH:           223.53364 A    Opacity Project (shifted           223.53362 A)
+O703D 23D O706P 13PO 3 3   1.7686E-05   4.4505E+10      19.7227                 WAVELENGTH:           223.56360 A    Opacity Project
+O703D 23D O706P 23PO 3 3   1.8844E-04   4.4505E+10      19.7227                 WAVELENGTH:           223.56361 A    Opacity Project (shifted           223.56360 A)
+O703D 33D O706P 23PO 3 3   8.1880E-04   4.4503E+10      19.7227                 WAVELENGTH:           223.56860 A    Opacity Project
+.
+O703D 13D O707P 03PO 3 3   2.9158E-04   5.2868E+10      36.5439                 WAVELENGTH:           205.11979 A    Opacity Project
+O703D 13D O707P 13PO 3 3   2.1930E-04   5.2868E+10      36.5439                 WAVELENGTH:           205.11980 A    Opacity Project (shifted           205.11979 A)
+O703D 13D O707P 23PO 3 3   3.9400E-04   5.2868E+10      36.5439                 WAVELENGTH:           205.11981 A    Opacity Project (shifted           205.11979 A)
+O703D 23D O707P 13PO 3 3   8.8208E-06   5.2855E+10      36.5439                 WAVELENGTH:           205.14504 A    Opacity Project
+O703D 23D O707P 23PO 3 3   9.3984E-05   5.2855E+10      36.5439                 WAVELENGTH:           205.14505 A    Opacity Project (shifted           205.14504 A)
+O703D 33D O707P 23PO 3 3   4.0837E-04   5.2853E+10      36.5439                 WAVELENGTH:           205.14925 A    Opacity Project
+.
+O703D 13D O708P 03PO 3 3   1.6910E-04   5.8637E+10      62.1253                 WAVELENGTH:           194.76852 A    Opacity Project
+O703D 13D O708P 13PO 3 3   1.2718E-04   5.8637E+10      62.1253                 WAVELENGTH:           194.76853 A    Opacity Project (shifted           194.76852 A)
+O703D 13D O708P 23PO 3 3   2.2850E-04   5.8637E+10      62.1253                 WAVELENGTH:           194.76854 A    Opacity Project (shifted           194.76852 A)
+O703D 23D O708P 13PO 3 3   5.1157E-06   5.8623E+10      62.1253                 WAVELENGTH:           194.79128 A    Opacity Project
+O703D 23D O708P 23PO 3 3   5.4507E-05   5.8623E+10      62.1253                 WAVELENGTH:           194.79129 A    Opacity Project (shifted           194.79128 A)
+O703D 33D O708P 23PO 3 3   2.3684E-04   5.8621E+10      62.1253                 WAVELENGTH:           194.79508 A    Opacity Project
+.
+O703D 13D O709P 03PO 3 3   1.0805E-04   6.2514E+10      96.0694                 WAVELENGTH:           188.63298 A    Opacity Project
+O703D 13D O709P 13PO 3 3   8.1264E-05   6.2514E+10      96.0694                 WAVELENGTH:           188.63299 A    Opacity Project (shifted           188.63298 A)
+O703D 13D O709P 23PO 3 3   1.4600E-04   6.2514E+10      96.0694                 WAVELENGTH:           188.63300 A    Opacity Project (shifted           188.63298 A)
+O703D 23D O709P 13PO 3 3   3.2687E-06   6.2500E+10      96.0694                 WAVELENGTH:           188.65433 A    Opacity Project
+O703D 23D O709P 23PO 3 3   3.4827E-05   6.2500E+10      96.0694                 WAVELENGTH:           188.65434 A    Opacity Project (shifted           188.65433 A)
+O703D 33D O709P 23PO 3 3   1.5133E-04   6.2497E+10      96.0694                 WAVELENGTH:           188.65789 A    Opacity Project
+.
+O703D 13D O710P 03PO 3 3   7.3637E-05   6.5690E+10     147.8649                 WAVELENGTH:           184.01634 A    Opacity Project
+O703D 13D O710P 13PO 3 3   5.5382E-05   6.5690E+10     147.8649                 WAVELENGTH:           184.01635 A    Opacity Project (shifted           184.01634 A)
+O703D 13D O710P 23PO 3 3   9.9502E-05   6.5690E+10     147.8649                 WAVELENGTH:           184.01636 A    Opacity Project (shifted           184.01634 A)
+O703D 23D O710P 13PO 3 3   2.2277E-06   6.5675E+10     147.8649                 WAVELENGTH:           184.03666 A    Opacity Project
+O703D 23D O710P 23PO 3 3   2.3735E-05   6.5675E+10     147.8649                 WAVELENGTH:           184.03667 A    Opacity Project (shifted           184.03666 A)
+O703D 33D O710P 23PO 3 3   1.0313E-04   6.5673E+10     147.8649                 WAVELENGTH:           184.04005 A    Opacity Project
+.
+O704S 13S O704P 03PO 3 3   2.4370E-02   8.7168E+06       3.8970                 WAVELENGTH:         15974.44089 A    Opacity Project
+O704S 13S O704P 13PO 3 3   7.3110E-02   8.6356E+06       3.8963                 WAVELENGTH:         16049.37656 A    Opacity Project
+O704S 13S O704P 23PO 3 3   1.2185E-01   8.7283E+06       3.8971                 WAVELENGTH:         15963.91381 A    Opacity Project
+.
+O704S 13S O705P 03PO 3 3   4.6667E-02   3.7073E+09       9.5377                 WAVELENGTH:           774.59334 A    Opacity Project
+O704S 13S O705P 13PO 3 3   1.4000E-01   3.7073E+09       9.5377                 WAVELENGTH:           774.59335 A    Opacity Project (shifted           774.59334 A)
+O704S 13S O705P 23PO 3 3   2.3333E-01   3.7073E+09       9.5377                 WAVELENGTH:           774.59336 A    Opacity Project (shifted           774.59334 A)
+.
+O704S 13S O706P 03PO 3 3   1.2778E-02   8.4921E+09      19.7227                 WAVELENGTH:           511.79692 A    Opacity Project
+O704S 13S O706P 13PO 3 3   3.8333E-02   8.4921E+09      19.7227                 WAVELENGTH:           511.79693 A    Opacity Project (shifted           511.79692 A)
+O704S 13S O706P 23PO 3 3   6.3889E-02   8.4921E+09      19.7227                 WAVELENGTH:           511.79694 A    Opacity Project (shifted           511.79692 A)
+.
+O704S 13S O707P 03PO 3 3   5.7037E-03   1.2342E+10      36.5439                 WAVELENGTH:           424.53831 A    Opacity Project
+O704S 13S O707P 13PO 3 3   1.7111E-02   1.2342E+10      36.5439                 WAVELENGTH:           424.53832 A    Opacity Project (shifted           424.53831 A)
+O704S 13S O707P 23PO 3 3   2.8518E-02   1.2342E+10      36.5439                 WAVELENGTH:           424.53833 A    Opacity Project (shifted           424.53831 A)
+.
+O704S 13S O708P 03PO 3 3   3.1222E-03   1.5206E+10      62.1253                 WAVELENGTH:           382.46768 A    Opacity Project
+O704S 13S O708P 13PO 3 3   9.3667E-03   1.5206E+10      62.1253                 WAVELENGTH:           382.46769 A    Opacity Project (shifted           382.46768 A)
+O704S 13S O708P 23PO 3 3   1.5611E-02   1.5206E+10      62.1253                 WAVELENGTH:           382.46770 A    Opacity Project (shifted           382.46768 A)
+.
+O704S 13S O709P 03PO 3 3   1.9333E-03   1.7211E+10      96.0694                 WAVELENGTH:           359.50532 A    Opacity Project
+O704S 13S O709P 13PO 3 3   5.8000E-03   1.7211E+10      96.0694                 WAVELENGTH:           359.50533 A    Opacity Project (shifted           359.50532 A)
+O704S 13S O709P 23PO 3 3   9.6667E-03   1.7211E+10      96.0694                 WAVELENGTH:           359.50534 A    Opacity Project (shifted           359.50532 A)
+.
+O704S 13S O710P 03PO 3 3   1.2926E-03   1.8896E+10     147.8649                 WAVELENGTH:           343.10025 A    Opacity Project
+O704S 13S O710P 13PO 3 3   3.8777E-03   1.8896E+10     147.8649                 WAVELENGTH:           343.10026 A    Opacity Project (shifted           343.10025 A)
+O704S 13S O710P 23PO 3 3   6.4628E-03   1.8896E+10     147.8649                 WAVELENGTH:           343.10027 A    Opacity Project (shifted           343.10025 A)
+.
+O704P 03POO705S 13S  3 3   7.3667E-02   3.2037E+09       9.2944                 WAVELENGTH:           833.26389 A    Opacity Project
+O704P 13POO705S 13S  3 3   7.3667E-02   3.2052E+09       9.2944                 WAVELENGTH:           833.06100 A    Opacity Project
+O704P 23POO705S 13S  3 3   7.3667E-02   3.2034E+09       9.2944                 WAVELENGTH:           833.29256 A    Opacity Project
+.
+O704P 03POO704D 13D  3 3   6.3719E-02   2.5112E+06       3.9750                 WAVELENGTH:         29761.90476 A    Opacity Project
+O704P 13POO704D 13D  3 3   1.5974E-02   2.5551E+06       3.9750                 WAVELENGTH:         29505.24097 A    Opacity Project
+O704P 13POO704D 23D  3 3   4.7834E-02   2.6158E+06       3.9760                 WAVELENGTH:         29161.07910 A    Opacity Project
+O704P 23POO704D 13D  3 3   6.4254E-04   2.5051E+06       3.9750                 WAVELENGTH:         29798.51464 A    Opacity Project
+O704P 23POO704D 23D  3 3   9.5845E-03   2.5652E+06       3.9760                 WAVELENGTH:         29447.51773 A    Opacity Project
+O704P 23POO704D 33D  3 3   5.3545E-02   3.3761E+06       3.9878                 WAVELENGTH:         25668.19464 A    Opacity Project
+.
+O704P 03POO705D 13D  3 3   5.5170E-01   3.4645E+09       9.7118                 WAVELENGTH:           801.28205 A    Opacity Project
+O704P 13POO705D 13D  3 3   1.3831E-01   3.4661E+09       9.7118                 WAVELENGTH:           801.09443 A    Opacity Project
+O704P 13POO705D 23D  3 3   4.1417E-01   3.4661E+09       9.7118                 WAVELENGTH:           801.09444 A    Opacity Project (shifted           801.09443 A)
+O704P 23POO705D 13D  3 3   5.5634E-03   3.4643E+09       9.7118                 WAVELENGTH:           801.30856 A    Opacity Project
+O704P 23POO705D 23D  3 3   8.2988E-02   3.4643E+09       9.7118                 WAVELENGTH:           801.30857 A    Opacity Project (shifted           801.30856 A)
+O704P 23POO705D 33D  3 3   4.6362E-01   3.4765E+09       9.7316                 WAVELENGTH:           799.89843 A    Opacity Project
+.
+O704P 03POO706D 13D  3 3   1.4098E-01   8.0698E+09      20.0767                 WAVELENGTH:           525.01706 A    Opacity Project
+O704P 13POO706D 13D  3 3   3.5343E-02   8.0723E+09      20.0767                 WAVELENGTH:           524.93651 A    Opacity Project
+O704P 13POO706D 23D  3 3   1.0583E-01   8.0723E+09      20.0767                 WAVELENGTH:           524.93652 A    Opacity Project (shifted           524.93651 A)
+O704P 23POO706D 13D  3 3   1.4216E-03   8.0695E+09      20.0767                 WAVELENGTH:           525.02844 A    Opacity Project
+O704P 23POO706D 23D  3 3   2.1206E-02   8.0695E+09      20.0767                 WAVELENGTH:           525.02845 A    Opacity Project (shifted           525.02844 A)
+O704P 23POO706D 33D  3 3   1.1847E-01   8.0695E+09      20.0767                 WAVELENGTH:           525.02846 A    Opacity Project (shifted           525.02844 A)
+.
+O704P 03POO707D 13D  3 3   6.0500E-02   1.1876E+10      37.7358                 WAVELENGTH:           432.78802 A    Opacity Project
+O704P 13POO707D 13D  3 3   1.5167E-02   1.1879E+10      37.7358                 WAVELENGTH:           432.73328 A    Opacity Project
+O704P 13POO707D 23D  3 3   4.5417E-02   1.1879E+10      37.7358                 WAVELENGTH:           432.73329 A    Opacity Project (shifted           432.73328 A)
+O704P 23POO707D 13D  3 3   6.1008E-04   1.1875E+10      37.7358                 WAVELENGTH:           432.79575 A    Opacity Project
+O704P 23POO707D 23D  3 3   9.1003E-03   1.1875E+10      37.7358                 WAVELENGTH:           432.79576 A    Opacity Project (shifted           432.79575 A)
+O704P 23POO707D 33D  3 3   5.0840E-02   1.1875E+10      37.7358                 WAVELENGTH:           432.79577 A    Opacity Project (shifted           432.79575 A)
+.
+O704P 03POO708D 13D  3 3   3.2526E-02   1.4555E+10      63.0088                 WAVELENGTH:           390.93041 A    Opacity Project
+O704P 13POO708D 13D  3 3   8.1542E-03   1.4558E+10      63.0088                 WAVELENGTH:           390.88575 A    Opacity Project
+O704P 13POO708D 23D  3 3   2.4417E-02   1.4558E+10      63.0088                 WAVELENGTH:           390.88576 A    Opacity Project (shifted           390.88575 A)
+O704P 23POO708D 13D  3 3   3.2799E-04   1.4555E+10      63.0088                 WAVELENGTH:           390.93672 A    Opacity Project
+O704P 23POO708D 23D  3 3   4.8925E-03   1.4555E+10      63.0088                 WAVELENGTH:           390.93673 A    Opacity Project (shifted           390.93672 A)
+O704P 23POO708D 33D  3 3   2.7332E-02   1.4555E+10      63.0088                 WAVELENGTH:           390.93674 A    Opacity Project (shifted           390.93672 A)
+.
+O704P 03POO709D 13D  3 3   1.9870E-02   1.6258E+10      91.8693                 WAVELENGTH:           369.89088 A    Opacity Project
+O704P 13POO709D 13D  3 3   4.9815E-03   1.6261E+10      91.8693                 WAVELENGTH:           369.85090 A    Opacity Project
+O704P 13POO709D 23D  3 3   1.4917E-02   1.6261E+10      91.8693                 WAVELENGTH:           369.85091 A    Opacity Project (shifted           369.85090 A)
+O704P 23POO709D 13D  3 3   2.0037E-04   1.6257E+10      91.8693                 WAVELENGTH:           369.89653 A    Opacity Project
+O704P 23POO709D 23D  3 3   2.9889E-03   1.6257E+10      91.8693                 WAVELENGTH:           369.89654 A    Opacity Project (shifted           369.89653 A)
+O704P 23POO709D 33D  3 3   1.6698E-02   1.6257E+10      91.8693                 WAVELENGTH:           369.89655 A    Opacity Project (shifted           369.89653 A)
+.
+O704P 03POO710D 13D  3 3   1.3099E-02   1.8437E+10     163.4428                 WAVELENGTH:           347.34283 A    Opacity Project
+O704P 13POO710D 13D  3 3   3.2839E-03   1.8441E+10     163.4428                 WAVELENGTH:           347.30757 A    Opacity Project
+O704P 13POO710D 23D  3 3   9.8332E-03   1.8441E+10     163.4428                 WAVELENGTH:           347.30758 A    Opacity Project (shifted           347.30757 A)
+O704P 23POO710D 13D  3 3   1.3209E-04   1.8437E+10     163.4428                 WAVELENGTH:           347.34781 A    Opacity Project
+O704P 23POO710D 23D  3 3   1.9703E-03   1.8437E+10     163.4428                 WAVELENGTH:           347.34782 A    Opacity Project (shifted           347.34781 A)
+O704P 23POO710D 33D  3 3   1.1007E-02   1.8437E+10     163.4428                 WAVELENGTH:           347.34783 A    Opacity Project (shifted           347.34781 A)
+.
+O704D 13D O705P 03PO 3 3   1.9389E-02   3.1754E+09       9.5377                 WAVELENGTH:           836.96016 A    Opacity Project
+O704D 13D O705P 13PO 3 3   1.4583E-02   3.1754E+09       9.5377                 WAVELENGTH:           836.96017 A    Opacity Project (shifted           836.96016 A)
+O704D 13D O705P 23PO 3 3   2.6200E-02   3.1754E+09       9.5377                 WAVELENGTH:           836.96018 A    Opacity Project (shifted           836.96016 A)
+O704D 23D O705P 13PO 3 3   5.8656E-04   3.1733E+09       9.5377                 WAVELENGTH:           837.24046 A    Opacity Project
+O704D 23D O705P 23PO 3 3   6.2497E-03   3.1733E+09       9.5377                 WAVELENGTH:           837.24047 A    Opacity Project (shifted           837.24046 A)
+O704D 33D O705P 23PO 3 3   2.7156E-02   3.1468E+09       9.5377                 WAVELENGTH:           840.76005 A    Opacity Project
+.
+O704D 13D O706P 03PO 3 3   3.9592E-03   7.6765E+09      19.7227                 WAVELENGTH:           538.30005 A    Opacity Project
+O704D 13D O706P 13PO 3 3   2.9778E-03   7.6765E+09      19.7227                 WAVELENGTH:           538.30006 A    Opacity Project (shifted           538.30005 A)
+O704D 13D O706P 23PO 3 3   5.3500E-03   7.6765E+09      19.7227                 WAVELENGTH:           538.30007 A    Opacity Project (shifted           538.30005 A)
+O704D 23D O706P 13PO 3 3   1.1978E-04   7.6732E+09      19.7227                 WAVELENGTH:           538.41598 A    Opacity Project
+O704D 23D O706P 23PO 3 3   1.2762E-03   7.6732E+09      19.7227                 WAVELENGTH:           538.41599 A    Opacity Project (shifted           538.41598 A)
+O704D 33D O706P 23PO 3 3   5.5452E-03   7.6319E+09      19.7227                 WAVELENGTH:           539.86935 A    Opacity Project
+.
+O704D 13D O707P 03PO 3 3   1.5319E-03   1.1354E+10      36.5439                 WAVELENGTH:           442.61497 A    Opacity Project
+O704D 13D O707P 13PO 3 3   1.1521E-03   1.1354E+10      36.5439                 WAVELENGTH:           442.61498 A    Opacity Project (shifted           442.61497 A)
+O704D 13D O707P 23PO 3 3   2.0700E-03   1.1354E+10      36.5439                 WAVELENGTH:           442.61499 A    Opacity Project (shifted           442.61497 A)
+O704D 23D O707P 13PO 3 3   4.6343E-05   1.1350E+10      36.5439                 WAVELENGTH:           442.69335 A    Opacity Project
+O704D 23D O707P 23PO 3 3   4.9378E-04   1.1350E+10      36.5439                 WAVELENGTH:           442.69336 A    Opacity Project (shifted           442.69335 A)
+O704D 33D O707P 23PO 3 3   2.1455E-03   1.1300E+10      36.5439                 WAVELENGTH:           443.67541 A    Opacity Project
+.
+O704D 13D O708P 03PO 3 3   7.7705E-04   1.4108E+10      62.1253                 WAVELENGTH:           397.07751 A    Opacity Project
+O704D 13D O708P 13PO 3 3   5.8442E-04   1.4108E+10      62.1253                 WAVELENGTH:           397.07752 A    Opacity Project (shifted           397.07751 A)
+O704D 13D O708P 23PO 3 3   1.0500E-03   1.4108E+10      62.1253                 WAVELENGTH:           397.07753 A    Opacity Project (shifted           397.07751 A)
+O704D 23D O708P 13PO 3 3   2.3507E-05   1.4103E+10      62.1253                 WAVELENGTH:           397.14059 A    Opacity Project
+O704D 23D O708P 23PO 3 3   2.5047E-04   1.4103E+10      62.1253                 WAVELENGTH:           397.14060 A    Opacity Project (shifted           397.14059 A)
+O704D 33D O708P 23PO 3 3   1.0883E-03   1.4047E+10      62.1253                 WAVELENGTH:           397.93076 A    Opacity Project
+.
+O704D 13D O709P 03PO 3 3   4.5513E-04   1.6041E+10      96.0694                 WAVELENGTH:           372.38400 A    Opacity Project
+O704D 13D O709P 13PO 3 3   3.4230E-04   1.6041E+10      96.0694                 WAVELENGTH:           372.38401 A    Opacity Project (shifted           372.38400 A)
+O704D 13D O709P 23PO 3 3   6.1500E-04   1.6041E+10      96.0694                 WAVELENGTH:           372.38402 A    Opacity Project (shifted           372.38400 A)
+O704D 23D O709P 13PO 3 3   1.3769E-05   1.6036E+10      96.0694                 WAVELENGTH:           372.43948 A    Opacity Project
+O704D 23D O709P 23PO 3 3   1.4670E-04   1.6036E+10      96.0694                 WAVELENGTH:           372.43949 A    Opacity Project (shifted           372.43948 A)
+O704D 33D O709P 23PO 3 3   6.3744E-04   1.5976E+10      96.0694                 WAVELENGTH:           373.13433 A    Opacity Project
+.
+O704D 13D O710P 03PO 3 3   2.9454E-04   1.7669E+10     147.8649                 WAVELENGTH:           354.81124 A    Opacity Project
+O704D 13D O710P 13PO 3 3   2.2153E-04   1.7669E+10     147.8649                 WAVELENGTH:           354.81125 A    Opacity Project (shifted           354.81124 A)
+O704D 13D O710P 23PO 3 3   3.9800E-04   1.7669E+10     147.8649                 WAVELENGTH:           354.81126 A    Opacity Project (shifted           354.81124 A)
+O704D 23D O710P 13PO 3 3   8.9105E-06   1.7664E+10     147.8649                 WAVELENGTH:           354.86160 A    Opacity Project
+O704D 23D O710P 23PO 3 3   9.4939E-05   1.7664E+10     147.8649                 WAVELENGTH:           354.86161 A    Opacity Project (shifted           354.86160 A)
+O704D 33D O710P 23PO 3 3   4.1252E-04   1.7602E+10     147.8649                 WAVELENGTH:           355.49236 A    Opacity Project
+.
+O705S 13S O705P 03PO 3 3   3.0778E-02   1.7815E+06       9.5377                 WAVELENGTH:         35335.69271 A    Opacity Project
+O705S 13S O705P 13PO 3 3   9.2333E-02   1.7815E+06       9.5377                 WAVELENGTH:         35335.68855 A    Opacity Project
+O705S 13S O705P 23PO 3 3   1.5389E-01   1.7815E+06       9.5377                 WAVELENGTH:         35335.68905 A    Opacity Project
+.
+O705S 13S O706P 03PO 3 3   5.1481E-02   1.0627E+09      19.7227                 WAVELENGTH:          1446.75926 A    Opacity Project
+O705S 13S O706P 13PO 3 3   1.5444E-01   1.0627E+09      19.7227                 WAVELENGTH:          1446.75927 A    Opacity Project (shifted          1446.75926 A)
+O705S 13S O706P 23PO 3 3   2.5741E-01   1.0627E+09      19.7227                 WAVELENGTH:          1446.75928 A    Opacity Project (shifted          1446.75926 A)
+.
+O705S 13S O707P 03PO 3 3   1.4222E-02   2.6564E+09      36.5439                 WAVELENGTH:           915.08053 A    Opacity Project
+O705S 13S O707P 13PO 3 3   4.2667E-02   2.6564E+09      36.5439                 WAVELENGTH:           915.08054 A    Opacity Project (shifted           915.08053 A)
+O705S 13S O707P 23PO 3 3   7.1111E-02   2.6564E+09      36.5439                 WAVELENGTH:           915.08055 A    Opacity Project (shifted           915.08053 A)
+.
+O705S 13S O708P 03PO 3 3   6.3703E-03   4.0654E+09      62.1253                 WAVELENGTH:           739.69968 A    Opacity Project
+O705S 13S O708P 13PO 3 3   1.9111E-02   4.0654E+09      62.1253                 WAVELENGTH:           739.69969 A    Opacity Project (shifted           739.69968 A)
+O705S 13S O708P 23PO 3 3   3.1852E-02   4.0654E+09      62.1253                 WAVELENGTH:           739.69970 A    Opacity Project (shifted           739.69968 A)
+.
+O705S 13S O709P 03PO 3 3   3.5222E-03   5.1318E+09      96.0694                 WAVELENGTH:           658.37119 A    Opacity Project
+O705S 13S O709P 13PO 3 3   1.0567E-02   5.1318E+09      96.0694                 WAVELENGTH:           658.37120 A    Opacity Project (shifted           658.37119 A)
+O705S 13S O709P 23PO 3 3   1.7611E-02   5.1318E+09      96.0694                 WAVELENGTH:           658.37121 A    Opacity Project (shifted           658.37119 A)
+.
+O705S 13S O710P 03PO 3 3   2.2000E-03   6.0699E+09     147.8649                 WAVELENGTH:           605.36352 A    Opacity Project
+O705S 13S O710P 13PO 3 3   6.6000E-03   6.0699E+09     147.8649                 WAVELENGTH:           605.36353 A    Opacity Project (shifted           605.36352 A)
+O705S 13S O710P 23PO 3 3   1.1000E-02   6.0699E+09     147.8649                 WAVELENGTH:           605.36354 A    Opacity Project (shifted           605.36352 A)
+.
+O705P 03POO705D 13D  3 3   8.7252E-02   8.5452E+05       9.7118                 WAVELENGTH:         51020.40058 A    Opacity Project
+O705P 13POO705D 13D  3 3   2.1874E-02   8.5452E+05       9.7118                 WAVELENGTH:         51020.40926 A    Opacity Project
+O705P 13POO705D 23D  3 3   6.5500E-02   8.5452E+05       9.7118                 WAVELENGTH:         51020.40918 A    Opacity Project
+O705P 23POO705D 13D  3 3   8.7985E-04   8.5452E+05       9.7118                 WAVELENGTH:         51020.40823 A    Opacity Project
+O705P 23POO705D 23D  3 3   1.3124E-02   8.5452E+05       9.7118                 WAVELENGTH:         51020.40814 A    Opacity Project
+O705P 23POO705D 33D  3 3   7.3321E-02   1.0571E+06       9.7316                 WAVELENGTH:         45871.55963 A    Opacity Project
+.
+O705P 03POO706D 13D  3 3   5.5837E-01   1.0174E+09      20.0767                 WAVELENGTH:          1478.63374 A    Opacity Project
+O705P 13POO706D 13D  3 3   1.3998E-01   1.0174E+09      20.0767                 WAVELENGTH:          1478.63375 A    Opacity Project (shifted          1478.63374 A)
+O705P 13POO706D 23D  3 3   4.1917E-01   1.0174E+09      20.0767                 WAVELENGTH:          1478.63376 A    Opacity Project (shifted          1478.63374 A)
+O705P 23POO706D 13D  3 3   5.6306E-03   1.0174E+09      20.0767                 WAVELENGTH:          1478.63377 A    Opacity Project (shifted          1478.63374 A)
+O705P 23POO706D 23D  3 3   8.3990E-02   1.0174E+09      20.0767                 WAVELENGTH:          1478.63378 A    Opacity Project (shifted          1478.63374 A)
+O705P 23POO706D 33D  3 3   4.6922E-01   1.0174E+09      20.0767                 WAVELENGTH:          1478.63379 A    Opacity Project (shifted          1478.63374 A)
+.
+O705P 03POO707D 13D  3 3   1.4764E-01   2.6051E+09      37.7358                 WAVELENGTH:           924.04361 A    Opacity Project
+O705P 13POO707D 13D  3 3   3.7014E-02   2.6051E+09      37.7358                 WAVELENGTH:           924.04363 A    Opacity Project (shifted           924.04362 A)
+O705P 13POO707D 23D  3 3   1.1084E-01   2.6051E+09      37.7358                 WAVELENGTH:           924.04364 A    Opacity Project (shifted           924.04362 A)
+O705P 23POO707D 13D  3 3   1.4888E-03   2.6051E+09      37.7358                 WAVELENGTH:           924.04365 A    Opacity Project (shifted           924.04361 A)
+O705P 23POO707D 23D  3 3   2.2208E-02   2.6051E+09      37.7358                 WAVELENGTH:           924.04366 A    Opacity Project (shifted           924.04361 A)
+O705P 23POO707D 33D  3 3   1.2407E-01   2.6051E+09      37.7358                 WAVELENGTH:           924.04367 A    Opacity Project (shifted           924.04361 A)
+.
+O705P 03POO708D 13D  3 3   6.4496E-02   3.9324E+09      63.0088                 WAVELENGTH:           752.10589 A    Opacity Project
+O705P 13POO708D 13D  3 3   1.6169E-02   3.9324E+09      63.0088                 WAVELENGTH:           752.10591 A    Opacity Project (shifted           752.10590 A)
+O705P 13POO708D 23D  3 3   4.8417E-02   3.9324E+09      63.0088                 WAVELENGTH:           752.10592 A    Opacity Project (shifted           752.10590 A)
+O705P 23POO708D 13D  3 3   6.5038E-04   3.9324E+09      63.0088                 WAVELENGTH:           752.10593 A    Opacity Project (shifted           752.10590 A)
+O705P 23POO708D 23D  3 3   9.7015E-03   3.9324E+09      63.0088                 WAVELENGTH:           752.10594 A    Opacity Project (shifted           752.10590 A)
+O705P 23POO708D 33D  3 3   5.4198E-02   3.9324E+09      63.0088                 WAVELENGTH:           752.10595 A    Opacity Project (shifted           752.10590 A)
+.
+O705P 03POO709D 13D  3 3   3.5300E-02   4.8401E+09      91.8693                 WAVELENGTH:           677.92014 A    Opacity Project
+O705P 13POO709D 13D  3 3   8.8497E-03   4.8401E+09      91.8693                 WAVELENGTH:           677.92015 A    Opacity Project (shifted           677.92014 A)
+O705P 13POO709D 23D  3 3   2.6500E-02   4.8401E+09      91.8693                 WAVELENGTH:           677.92016 A    Opacity Project (shifted           677.92014 A)
+O705P 23POO709D 13D  3 3   3.5597E-04   4.8401E+09      91.8693                 WAVELENGTH:           677.92017 A    Opacity Project (shifted           677.92014 A)
+O705P 23POO709D 23D  3 3   5.3098E-03   4.8401E+09      91.8693                 WAVELENGTH:           677.92018 A    Opacity Project (shifted           677.92014 A)
+O705P 23POO709D 33D  3 3   2.9664E-02   4.8401E+09      91.8693                 WAVELENGTH:           677.92019 A    Opacity Project (shifted           677.92014 A)
+.
+O705P 03POO710D 13D  3 3   2.1869E-02   6.0603E+09     163.4428                 WAVELENGTH:           605.84030 A    Opacity Project
+O705P 13POO710D 13D  3 3   5.4825E-03   6.0603E+09     163.4428                 WAVELENGTH:           605.84031 A    Opacity Project (shifted           605.84030 A)
+O705P 13POO710D 23D  3 3   1.6417E-02   6.0603E+09     163.4428                 WAVELENGTH:           605.84032 A    Opacity Project (shifted           605.84030 A)
+O705P 23POO710D 13D  3 3   2.2052E-04   6.0603E+09     163.4428                 WAVELENGTH:           605.84033 A    Opacity Project (shifted           605.84030 A)
+O705P 23POO710D 23D  3 3   3.2895E-03   6.0603E+09     163.4428                 WAVELENGTH:           605.84034 A    Opacity Project (shifted           605.84030 A)
+O705P 23POO710D 33D  3 3   1.8377E-02   6.0603E+09     163.4428                 WAVELENGTH:           605.84035 A    Opacity Project (shifted           605.84030 A)
+.
+O705D 13D O706P 03PO 3 3   3.2969E-02   9.2053E+08      19.7227                 WAVELENGTH:          1554.48469 A    Opacity Project
+O705D 13D O706P 13PO 3 3   2.4796E-02   9.2053E+08      19.7227                 WAVELENGTH:          1554.48470 A    Opacity Project (shifted          1554.48469 A)
+O705D 13D O706P 23PO 3 3   4.4550E-02   9.2053E+08      19.7227                 WAVELENGTH:          1554.48471 A    Opacity Project (shifted          1554.48469 A)
+O705D 23D O706P 13PO 3 3   9.9739E-04   9.2053E+08      19.7227                 WAVELENGTH:          1554.48472 A    Opacity Project (shifted          1554.48469 A)
+O705D 23D O706P 23PO 3 3   1.0627E-02   9.2053E+08      19.7227                 WAVELENGTH:          1554.48473 A    Opacity Project (shifted          1554.48469 A)
+O705D 33D O706P 23PO 3 3   4.6175E-02   9.1424E+08      19.7227                 WAVELENGTH:          1559.81906 A    Opacity Project
+.
+O705D 13D O707P 03PO 3 3   6.8825E-03   2.4286E+09      36.5439                 WAVELENGTH:           957.02938 A    Opacity Project
+O705D 13D O707P 13PO 3 3   5.1763E-03   2.4286E+09      36.5439                 WAVELENGTH:           957.02939 A    Opacity Project (shifted           957.02938 A)
+O705D 13D O707P 23PO 3 3   9.3000E-03   2.4286E+09      36.5439                 WAVELENGTH:           957.02940 A    Opacity Project (shifted           957.02938 A)
+O705D 23D O707P 13PO 3 3   2.0821E-04   2.4286E+09      36.5439                 WAVELENGTH:           957.02941 A    Opacity Project (shifted           957.02938 A)
+O705D 23D O707P 23PO 3 3   2.2184E-03   2.4286E+09      36.5439                 WAVELENGTH:           957.02942 A    Opacity Project (shifted           957.02938 A)
+O705D 33D O707P 23PO 3 3   9.6393E-03   2.4184E+09      36.5439                 WAVELENGTH:           959.04862 A    Opacity Project
+.
+O705D 13D O708P 03PO 3 3   2.7049E-03   3.7824E+09      62.1253                 WAVELENGTH:           766.87117 A    Opacity Project
+O705D 13D O708P 13PO 3 3   2.0343E-03   3.7824E+09      62.1253                 WAVELENGTH:           766.87118 A    Opacity Project (shifted           766.87117 A)
+O705D 13D O708P 23PO 3 3   3.6550E-03   3.7824E+09      62.1253                 WAVELENGTH:           766.87119 A    Opacity Project (shifted           766.87117 A)
+O705D 23D O708P 13PO 3 3   8.1828E-05   3.7824E+09      62.1253                 WAVELENGTH:           766.87120 A    Opacity Project (shifted           766.87117 A)
+O705D 23D O708P 23PO 3 3   8.7186E-04   3.7824E+09      62.1253                 WAVELENGTH:           766.87121 A    Opacity Project (shifted           766.87117 A)
+O705D 33D O708P 23PO 3 3   3.7883E-03   3.7696E+09      62.1253                 WAVELENGTH:           768.16715 A    Opacity Project
+.
+O705D 13D O709P 03PO 3 3   1.3839E-03   4.8132E+09      96.0694                 WAVELENGTH:           679.80965 A    Opacity Project
+O705D 13D O709P 13PO 3 3   1.0408E-03   4.8132E+09      96.0694                 WAVELENGTH:           679.80966 A    Opacity Project (shifted           679.80965 A)
+O705D 13D O709P 23PO 3 3   1.8700E-03   4.8132E+09      96.0694                 WAVELENGTH:           679.80967 A    Opacity Project (shifted           679.80965 A)
+O705D 23D O709P 13PO 3 3   4.1865E-05   4.8132E+09      96.0694                 WAVELENGTH:           679.80968 A    Opacity Project (shifted           679.80965 A)
+O705D 23D O709P 23PO 3 3   4.4606E-04   4.8132E+09      96.0694                 WAVELENGTH:           679.80969 A    Opacity Project (shifted           679.80965 A)
+O705D 33D O709P 23PO 3 3   1.9382E-03   4.7988E+09      96.0694                 WAVELENGTH:           680.82789 A    Opacity Project
+.
+O705D 13D O710P 03PO 3 3   8.1774E-04   5.7229E+09     147.8649                 WAVELENGTH:           623.44140 A    Opacity Project
+O705D 13D O710P 13PO 3 3   6.1502E-04   5.7229E+09     147.8649                 WAVELENGTH:           623.44141 A    Opacity Project (shifted           623.44140 A)
+O705D 13D O710P 23PO 3 3   1.1050E-03   5.7229E+09     147.8649                 WAVELENGTH:           623.44142 A    Opacity Project (shifted           623.44140 A)
+O705D 23D O710P 13PO 3 3   2.4738E-05   5.7229E+09     147.8649                 WAVELENGTH:           623.44143 A    Opacity Project (shifted           623.44140 A)
+O705D 23D O710P 23PO 3 3   2.6358E-04   5.7229E+09     147.8649                 WAVELENGTH:           623.44144 A    Opacity Project (shifted           623.44140 A)
+O705D 33D O710P 23PO 3 3   1.1453E-03   5.7073E+09     147.8649                 WAVELENGTH:           624.29767 A    Opacity Project
+.
+O706P 03POO706D 13D  3 3   1.1090E-01   3.9941E+05      20.0767                 WAVELENGTH:         74626.86571 A    Opacity Project
+O706P 13POO706D 13D  3 3   2.7802E-02   3.9941E+05      20.0767                 WAVELENGTH:         74626.86564 A    Opacity Project
+O706P 13POO706D 23D  3 3   8.3250E-02   3.9941E+05      20.0767                 WAVELENGTH:         74626.86558 A    Opacity Project
+O706P 23POO706D 13D  3 3   1.1183E-03   3.9941E+05      20.0767                 WAVELENGTH:         74626.86577 A    Opacity Project
+O706P 23POO706D 23D  3 3   1.6681E-02   3.9941E+05      20.0767                 WAVELENGTH:         74626.86571 A    Opacity Project
+O706P 23POO706D 33D  3 3   9.3190E-02   3.9941E+05      20.0767                 WAVELENGTH:         74626.86573 A    Opacity Project
+.
+O706P 03POO707D 13D  3 3   5.7724E-01   3.9108E+08      37.7358                 WAVELENGTH:          2384.92726 A    Opacity Project
+O706P 13POO707D 13D  3 3   1.4471E-01   3.9108E+08      37.7358                 WAVELENGTH:          2384.92727 A    Opacity Project (shifted          2384.92726 A)
+O706P 13POO707D 23D  3 3   4.3333E-01   3.9108E+08      37.7358                 WAVELENGTH:          2384.92728 A    Opacity Project (shifted          2384.92726 A)
+O706P 23POO707D 13D  3 3   5.8209E-03   3.9108E+08      37.7358                 WAVELENGTH:          2384.92729 A    Opacity Project (shifted          2384.92726 A)
+O706P 23POO707D 23D  3 3   8.6829E-02   3.9108E+08      37.7358                 WAVELENGTH:          2384.92730 A    Opacity Project (shifted          2384.92726 A)
+O706P 23POO707D 33D  3 3   4.8508E-01   3.9108E+08      37.7358                 WAVELENGTH:          2384.92731 A    Opacity Project (shifted          2384.92726 A)
+.
+O706P 03POO708D 13D  3 3   1.5430E-01   9.8872E+08      63.0088                 WAVELENGTH:          1499.92500 A    Opacity Project
+O706P 13POO708D 13D  3 3   3.8682E-02   9.8872E+08      63.0088                 WAVELENGTH:          1499.92501 A    Opacity Project (shifted          1499.92500 A)
+O706P 13POO708D 23D  3 3   1.1583E-01   9.8872E+08      63.0088                 WAVELENGTH:          1499.92502 A    Opacity Project (shifted          1499.92500 A)
+O706P 23POO708D 13D  3 3   1.5559E-03   9.8872E+08      63.0088                 WAVELENGTH:          1499.92503 A    Opacity Project (shifted          1499.92500 A)
+O706P 23POO708D 23D  3 3   2.3209E-02   9.8872E+08      63.0088                 WAVELENGTH:          1499.92504 A    Opacity Project (shifted          1499.92500 A)
+O706P 23POO708D 33D  3 3   1.2966E-01   9.8872E+08      63.0088                 WAVELENGTH:          1499.92505 A    Opacity Project (shifted          1499.92500 A)
+.
+O706P 03POO709D 13D  3 3   6.8269E-02   1.4674E+09      91.8693                 WAVELENGTH:          1231.22384 A    Opacity Project
+O706P 13POO709D 13D  3 3   1.7115E-02   1.4674E+09      91.8693                 WAVELENGTH:          1231.22385 A    Opacity Project (shifted          1231.22384 A)
+O706P 13POO709D 23D  3 3   5.1250E-02   1.4674E+09      91.8693                 WAVELENGTH:          1231.22386 A    Opacity Project (shifted          1231.22384 A)
+O706P 23POO709D 13D  3 3   6.8843E-04   1.4674E+09      91.8693                 WAVELENGTH:          1231.22387 A    Opacity Project (shifted          1231.22384 A)
+O706P 23POO709D 23D  3 3   1.0269E-02   1.4674E+09      91.8693                 WAVELENGTH:          1231.22388 A    Opacity Project (shifted          1231.22384 A)
+O706P 23POO709D 33D  3 3   5.7369E-02   1.4674E+09      91.8693                 WAVELENGTH:          1231.22389 A    Opacity Project (shifted          1231.22384 A)
+.
+O706P 03POO710D 13D  3 3   3.7632E-02   2.1700E+09     163.4428                 WAVELENGTH:          1012.45317 A    Opacity Project
+O706P 13POO710D 13D  3 3   9.4343E-03   2.1700E+09     163.4428                 WAVELENGTH:          1012.45318 A    Opacity Project (shifted          1012.45317 A)
+O706P 13POO710D 23D  3 3   2.8250E-02   2.1700E+09     163.4428                 WAVELENGTH:          1012.45319 A    Opacity Project (shifted          1012.45317 A)
+O706P 23POO710D 13D  3 3   3.7948E-04   2.1700E+09     163.4428                 WAVELENGTH:          1012.45320 A    Opacity Project (shifted          1012.45317 A)
+O706P 23POO710D 23D  3 3   5.6606E-03   2.1700E+09     163.4428                 WAVELENGTH:          1012.45321 A    Opacity Project (shifted          1012.45317 A)
+O706P 23POO710D 33D  3 3   3.1623E-02   2.1700E+09     163.4428                 WAVELENGTH:          1012.45322 A    Opacity Project (shifted          1012.45317 A)
+.
+O706D 13D O707P 03PO 3 3   4.7733E-02   3.3521E+08      36.5439                 WAVELENGTH:          2575.99176 A    Opacity Project
+O706D 13D O707P 13PO 3 3   3.5900E-02   3.3521E+08      36.5439                 WAVELENGTH:          2575.99177 A    Opacity Project (shifted          2575.99176 A)
+O706D 13D O707P 23PO 3 3   6.4500E-02   3.3521E+08      36.5439                 WAVELENGTH:          2575.99178 A    Opacity Project (shifted          2575.99176 A)
+O706D 23D O707P 13PO 3 3   1.4440E-03   3.3521E+08      36.5439                 WAVELENGTH:          2575.99179 A    Opacity Project (shifted          2575.99176 A)
+O706D 23D O707P 23PO 3 3   1.5386E-02   3.3521E+08      36.5439                 WAVELENGTH:          2575.99180 A    Opacity Project (shifted          2575.99176 A)
+O706D 33D O707P 23PO 3 3   6.6853E-02   3.3521E+08      36.5439                 WAVELENGTH:          2575.99181 A    Opacity Project (shifted          2575.99176 A)
+.
+O706D 13D O708P 03PO 3 3   1.0139E-02   9.3201E+08      62.1253                 WAVELENGTH:          1544.87873 A    Opacity Project
+O706D 13D O708P 13PO 3 3   7.6255E-03   9.3201E+08      62.1253                 WAVELENGTH:          1544.87874 A    Opacity Project (shifted          1544.87873 A)
+O706D 13D O708P 23PO 3 3   1.3700E-02   9.3201E+08      62.1253                 WAVELENGTH:          1544.87875 A    Opacity Project (shifted          1544.87873 A)
+O706D 23D O708P 13PO 3 3   3.0672E-04   9.3201E+08      62.1253                 WAVELENGTH:          1544.87876 A    Opacity Project (shifted          1544.87873 A)
+O706D 23D O708P 23PO 3 3   3.2681E-03   9.3201E+08      62.1253                 WAVELENGTH:          1544.87877 A    Opacity Project (shifted          1544.87873 A)
+O706D 33D O708P 23PO 3 3   1.4200E-02   9.3201E+08      62.1253                 WAVELENGTH:          1544.87878 A    Opacity Project (shifted          1544.87873 A)
+.
+O706D 13D O709P 03PO 3 3   4.0333E-03   1.4750E+09      96.0694                 WAVELENGTH:          1228.04863 A    Opacity Project
+O706D 13D O709P 13PO 3 3   3.0334E-03   1.4750E+09      96.0694                 WAVELENGTH:          1228.04864 A    Opacity Project (shifted          1228.04863 A)
+O706D 13D O709P 23PO 3 3   5.4500E-03   1.4750E+09      96.0694                 WAVELENGTH:          1228.04865 A    Opacity Project (shifted          1228.04863 A)
+O706D 23D O709P 13PO 3 3   1.2202E-04   1.4750E+09      96.0694                 WAVELENGTH:          1228.04866 A    Opacity Project (shifted          1228.04863 A)
+O706D 23D O709P 23PO 3 3   1.3000E-03   1.4750E+09      96.0694                 WAVELENGTH:          1228.04867 A    Opacity Project (shifted          1228.04863 A)
+O706D 33D O709P 23PO 3 3   5.6489E-03   1.4750E+09      96.0694                 WAVELENGTH:          1228.04868 A    Opacity Project (shifted          1228.04863 A)
+.
+O706D 13D O710P 03PO 3 3   2.0685E-03   1.9961E+09     147.8649                 WAVELENGTH:          1055.63180 A    Opacity Project
+O706D 13D O710P 13PO 3 3   1.5557E-03   1.9961E+09     147.8649                 WAVELENGTH:          1055.63181 A    Opacity Project (shifted          1055.63180 A)
+O706D 13D O710P 23PO 3 3   2.7950E-03   1.9961E+09     147.8649                 WAVELENGTH:          1055.63182 A    Opacity Project (shifted          1055.63180 A)
+O706D 23D O710P 13PO 3 3   6.2575E-05   1.9961E+09     147.8649                 WAVELENGTH:          1055.63183 A    Opacity Project (shifted          1055.63180 A)
+O706D 23D O710P 23PO 3 3   6.6672E-04   1.9961E+09     147.8649                 WAVELENGTH:          1055.63184 A    Opacity Project (shifted          1055.63180 A)
+O706D 33D O710P 23PO 3 3   2.8970E-03   1.9961E+09     147.8649                 WAVELENGTH:          1055.63185 A    Opacity Project (shifted          1055.63180 A)
+.
+O707P 03POO707D 13D  3 3   1.3321E-01   6.9688E+05      37.7358                 WAVELENGTH:         56497.17515 A    Opacity Project
+O707P 13POO707D 13D  3 3   3.3395E-02   6.9688E+05      37.7358                 WAVELENGTH:         56497.17514 A    Opacity Project
+O707P 13POO707D 23D  3 3   9.9998E-02   6.9688E+05      37.7358                 WAVELENGTH:         56497.17513 A    Opacity Project
+O707P 23POO707D 13D  3 3   1.3433E-03   6.9688E+05      37.7358                 WAVELENGTH:         56497.17515 A    Opacity Project
+O707P 23POO707D 23D  3 3   2.0037E-02   6.9688E+05      37.7358                 WAVELENGTH:         56497.17514 A    Opacity Project
+O707P 23POO707D 33D  3 3   1.1194E-01   6.9688E+05      37.7358                 WAVELENGTH:         56497.17515 A    Opacity Project
+.
+O707P 03POO708D 13D  3 3   6.0388E-01   1.5633E+08      63.0088                 WAVELENGTH:          3772.16145 A    Opacity Project
+O707P 13POO708D 13D  3 3   1.5139E-01   1.5633E+08      63.0088                 WAVELENGTH:          3772.16146 A    Opacity Project (shifted          3772.16145 A)
+O707P 13POO708D 23D  3 3   4.5333E-01   1.5633E+08      63.0088                 WAVELENGTH:          3772.16147 A    Opacity Project (shifted          3772.16145 A)
+O707P 23POO708D 13D  3 3   6.0895E-03   1.5633E+08      63.0088                 WAVELENGTH:          3772.16148 A    Opacity Project (shifted          3772.16145 A)
+O707P 23POO708D 23D  3 3   9.0835E-02   1.5633E+08      63.0088                 WAVELENGTH:          3772.16149 A    Opacity Project (shifted          3772.16145 A)
+O707P 23POO708D 33D  3 3   5.0746E-01   1.5633E+08      63.0088                 WAVELENGTH:          3772.16150 A    Opacity Project (shifted          3772.16145 A)
+.
+O707P 03POO709D 13D  3 3   1.6207E-01   3.7501E+08      91.8693                 WAVELENGTH:          2435.46030 A    Opacity Project
+O707P 13POO709D 13D  3 3   4.0631E-02   3.7501E+08      91.8693                 WAVELENGTH:          2435.46031 A    Opacity Project (shifted          2435.46030 A)
+O707P 13POO709D 23D  3 3   1.2166E-01   3.7501E+08      91.8693                 WAVELENGTH:          2435.46032 A    Opacity Project (shifted          2435.46030 A)
+O707P 23POO709D 13D  3 3   1.6343E-03   3.7501E+08      91.8693                 WAVELENGTH:          2435.46033 A    Opacity Project (shifted          2435.46030 A)
+O707P 23POO709D 23D  3 3   2.4378E-02   3.7501E+08      91.8693                 WAVELENGTH:          2435.46034 A    Opacity Project (shifted          2435.46030 A)
+O707P 23POO709D 33D  3 3   1.3619E-01   3.7501E+08      91.8693                 WAVELENGTH:          2435.46035 A    Opacity Project (shifted          2435.46030 A)
+.
+O707P 03POO710D 13D  3 3   7.1933E-02   7.6411E+08     163.4428                 WAVELENGTH:          1706.19348 A    Opacity Project
+O707P 13POO710D 13D  3 3   1.8034E-02   7.6411E+08     163.4428                 WAVELENGTH:          1706.19349 A    Opacity Project (shifted          1706.19348 A)
+O707P 13POO710D 23D  3 3   5.4000E-02   7.6411E+08     163.4428                 WAVELENGTH:          1706.19350 A    Opacity Project (shifted          1706.19348 A)
+O707P 23POO710D 13D  3 3   7.2537E-04   7.6411E+08     163.4428                 WAVELENGTH:          1706.19351 A    Opacity Project (shifted          1706.19348 A)
+O707P 23POO710D 23D  3 3   1.0820E-02   7.6411E+08     163.4428                 WAVELENGTH:          1706.19352 A    Opacity Project (shifted          1706.19348 A)
+O707P 23POO710D 33D  3 3   6.0448E-02   7.6411E+08     163.4428                 WAVELENGTH:          1706.19353 A    Opacity Project (shifted          1706.19348 A)
+.
+O707D 13D O708P 03PO 3 3   6.3274E-02   1.2962E+08      62.1253                 WAVELENGTH:          4142.50207 A    Opacity Project
+O707D 13D O708P 13PO 3 3   4.7589E-02   1.2962E+08      62.1253                 WAVELENGTH:          4142.50208 A    Opacity Project (shifted          4142.50207 A)
+O707D 13D O708P 23PO 3 3   8.5500E-02   1.2962E+08      62.1253                 WAVELENGTH:          4142.50209 A    Opacity Project (shifted          4142.50207 A)
+O707D 23D O708P 13PO 3 3   1.9142E-03   1.2962E+08      62.1253                 WAVELENGTH:          4142.50210 A    Opacity Project (shifted          4142.50207 A)
+O707D 23D O708P 23PO 3 3   2.0395E-02   1.2962E+08      62.1253                 WAVELENGTH:          4142.50211 A    Opacity Project (shifted          4142.50207 A)
+O707D 33D O708P 23PO 3 3   8.8619E-02   1.2962E+08      62.1253                 WAVELENGTH:          4142.50212 A    Opacity Project (shifted          4142.50207 A)
+.
+O707D 13D O709P 03PO 3 3   1.3617E-02   3.7101E+08      96.0694                 WAVELENGTH:          2448.57982 A    Opacity Project
+O707D 13D O709P 13PO 3 3   1.0241E-02   3.7101E+08      96.0694                 WAVELENGTH:          2448.57983 A    Opacity Project (shifted          2448.57982 A)
+O707D 13D O709P 23PO 3 3   1.8400E-02   3.7101E+08      96.0694                 WAVELENGTH:          2448.57984 A    Opacity Project (shifted          2448.57982 A)
+O707D 23D O709P 13PO 3 3   4.1193E-04   3.7101E+08      96.0694                 WAVELENGTH:          2448.57985 A    Opacity Project (shifted          2448.57982 A)
+O707D 23D O709P 23PO 3 3   4.3891E-03   3.7101E+08      96.0694                 WAVELENGTH:          2448.57986 A    Opacity Project (shifted          2448.57982 A)
+O707D 33D O709P 23PO 3 3   1.9071E-02   3.7101E+08      96.0694                 WAVELENGTH:          2448.57987 A    Opacity Project (shifted          2448.57982 A)
+.
+O707D 13D O710P 03PO 3 3   5.4394E-03   6.5200E+08     147.8649                 WAVELENGTH:          1847.06317 A    Opacity Project
+O707D 13D O710P 13PO 3 3   4.0910E-03   6.5200E+08     147.8649                 WAVELENGTH:          1847.06318 A    Opacity Project (shifted          1847.06317 A)
+O707D 13D O710P 23PO 3 3   7.3500E-03   6.5200E+08     147.8649                 WAVELENGTH:          1847.06319 A    Opacity Project (shifted          1847.06317 A)
+O707D 23D O710P 13PO 3 3   1.6455E-04   6.5200E+08     147.8649                 WAVELENGTH:          1847.06320 A    Opacity Project (shifted          1847.06317 A)
+O707D 23D O710P 23PO 3 3   1.7533E-03   6.5200E+08     147.8649                 WAVELENGTH:          1847.06321 A    Opacity Project (shifted          1847.06317 A)
+O707D 33D O710P 23PO 3 3   7.6182E-03   6.5200E+08     147.8649                 WAVELENGTH:          1847.06322 A    Opacity Project (shifted          1847.06317 A)
+.
+O708P 03POO708D 13D  3 3   1.5430E-01   8.0078E+04      63.0088                 WAVELENGTH:        166666.66669 A    Opacity Project
+O708P 13POO708D 13D  3 3   3.8682E-02   8.0078E+04      63.0088                 WAVELENGTH:        166666.66666 A    Opacity Project
+O708P 13POO708D 23D  3 3   1.1583E-01   8.0078E+04      63.0088                 WAVELENGTH:        166666.66663 A    Opacity Project
+O708P 23POO708D 13D  3 3   1.5559E-03   8.0078E+04      63.0088                 WAVELENGTH:        166666.66672 A    Opacity Project
+O708P 23POO708D 23D  3 3   2.3209E-02   8.0078E+04      63.0088                 WAVELENGTH:        166666.66669 A    Opacity Project
+O708P 23POO708D 33D  3 3   1.2966E-01   8.0078E+04      63.0088                 WAVELENGTH:        166666.66668 A    Opacity Project
+.
+O708P 03POO709D 13D  3 3   6.3274E-01   5.1055E+07      91.8693                 WAVELENGTH:          6600.66007 A    Opacity Project
+O708P 13POO709D 13D  3 3   1.5863E-01   5.1055E+07      91.8693                 WAVELENGTH:          6600.66008 A    Opacity Project (shifted          6600.66007 A)
+O708P 13POO709D 23D  3 3   4.7500E-01   5.1055E+07      91.8693                 WAVELENGTH:          6600.66009 A    Opacity Project (shifted          6600.66007 A)
+O708P 23POO709D 13D  3 3   6.3806E-03   5.1055E+07      91.8693                 WAVELENGTH:          6600.66010 A    Opacity Project (shifted          6600.66007 A)
+O708P 23POO709D 23D  3 3   9.5177E-02   5.1055E+07      91.8693                 WAVELENGTH:          6600.66011 A    Opacity Project (shifted          6600.66007 A)
+O708P 23POO709D 33D  3 3   5.3171E-01   5.1055E+07      91.8693                 WAVELENGTH:          6600.66012 A    Opacity Project (shifted          6600.66007 A)
+.
+O708P 03POO710D 13D  3 3   1.6984E-01   2.3785E+08     163.4428                 WAVELENGTH:          3058.10398 A    Opacity Project
+O708P 13POO710D 13D  3 3   4.2579E-02   2.3785E+08     163.4428                 WAVELENGTH:          3058.10399 A    Opacity Project (shifted          3058.10398 A)
+O708P 13POO710D 23D  3 3   1.2750E-01   2.3785E+08     163.4428                 WAVELENGTH:          3058.10400 A    Opacity Project (shifted          3058.10398 A)
+O708P 23POO710D 13D  3 3   1.7127E-03   2.3785E+08     163.4428                 WAVELENGTH:          3058.10401 A    Opacity Project (shifted          3058.10398 A)
+O708P 23POO710D 23D  3 3   2.5548E-02   2.3785E+08     163.4428                 WAVELENGTH:          3058.10402 A    Opacity Project (shifted          3058.10398 A)
+O708P 23POO710D 33D  3 3   1.4272E-01   2.3785E+08     163.4428                 WAVELENGTH:          3058.10403 A    Opacity Project (shifted          3058.10398 A)
+.
+O708D 13D O709P 03PO 3 3   7.9553E-02   5.7658E+07      96.0694                 WAVELENGTH:          6211.18012 A    Opacity Project
+O708D 13D O709P 13PO 3 3   5.9832E-02   5.7658E+07      96.0694                 WAVELENGTH:          6211.18013 A    Opacity Project (shifted          6211.18012 A)
+O708D 13D O709P 23PO 3 3   1.0750E-01   5.7658E+07      96.0694                 WAVELENGTH:          6211.18014 A    Opacity Project (shifted          6211.18012 A)
+O708D 23D O709P 13PO 3 3   2.4067E-03   5.7658E+07      96.0694                 WAVELENGTH:          6211.18015 A    Opacity Project (shifted          6211.18012 A)
+O708D 23D O709P 23PO 3 3   2.5642E-02   5.7658E+07      96.0694                 WAVELENGTH:          6211.18016 A    Opacity Project (shifted          6211.18012 A)
+O708D 33D O709P 23PO 3 3   1.1142E-01   5.7658E+07      96.0694                 WAVELENGTH:          6211.18017 A    Opacity Project (shifted          6211.18012 A)
+.
+O708D 13D O710P 03PO 3 3   1.7243E-02   1.9227E+08     147.8649                 WAVELENGTH:          3401.36054 A    Opacity Project
+O708D 13D O710P 13PO 3 3   1.2969E-02   1.9227E+08     147.8649                 WAVELENGTH:          3401.36055 A    Opacity Project (shifted          3401.36054 A)
+O708D 13D O710P 23PO 3 3   2.3300E-02   1.9227E+08     147.8649                 WAVELENGTH:          3401.36056 A    Opacity Project (shifted          3401.36054 A)
+O708D 23D O710P 13PO 3 3   5.2165E-04   1.9227E+08     147.8649                 WAVELENGTH:          3401.36057 A    Opacity Project (shifted          3401.36054 A)
+O708D 23D O710P 23PO 3 3   5.5580E-03   1.9227E+08     147.8649                 WAVELENGTH:          3401.36058 A    Opacity Project (shifted          3401.36054 A)
+O708D 33D O710P 23PO 3 3   2.4150E-02   1.9227E+08     147.8649                 WAVELENGTH:          3401.36059 A    Opacity Project (shifted          3401.36054 A)
+.
+O709D 13D O709P 03PO 3 3   9.8058E-02   5.3441E+05      96.0694                 WAVELENGTH:         64516.12903 A    Opacity Project
+O709D 13D O709P 13PO 3 3   7.3750E-02   5.3441E+05      96.0694                 WAVELENGTH:         64516.12904 A    Opacity Project (shifted         64516.12903 A)
+O709D 13D O709P 23PO 3 3   1.3250E-01   5.3441E+05      96.0694                 WAVELENGTH:         64516.12905 A    Opacity Project (shifted         64516.12903 A)
+O709D 23D O709P 13PO 3 3   2.9665E-03   5.3441E+05      96.0694                 WAVELENGTH:         64516.12906 A    Opacity Project (shifted         64516.12903 A)
+O709D 23D O709P 23PO 3 3   3.1607E-02   5.3441E+05      96.0694                 WAVELENGTH:         64516.12907 A    Opacity Project (shifted         64516.12903 A)
+O709D 33D O709P 23PO 3 3   1.3734E-01   5.3441E+05      96.0694                 WAVELENGTH:         64516.12908 A    Opacity Project (shifted         64516.12903 A)
+.
+O709P 03POO710D 13D  3 3   6.6494E-01   5.6944E+07     163.4428                 WAVELENGTH:          6250.00000 A    Opacity Project
+O709P 13POO710D 13D  3 3   1.6670E-01   5.6944E+07     163.4428                 WAVELENGTH:          6250.00001 A    Opacity Project (shifted          6250.00000 A)
+O709P 13POO710D 23D  3 3   4.9917E-01   5.6944E+07     163.4428                 WAVELENGTH:          6250.00002 A    Opacity Project (shifted          6250.00000 A)
+O709P 23POO710D 13D  3 3   6.7053E-03   5.6944E+07     163.4428                 WAVELENGTH:          6250.00003 A    Opacity Project (shifted          6250.00000 A)
+O709P 23POO710D 23D  3 3   1.0002E-01   5.6944E+07     163.4428                 WAVELENGTH:          6250.00004 A    Opacity Project (shifted          6250.00000 A)
+O709P 23POO710D 33D  3 3   5.5877E-01   5.6944E+07     163.4428                 WAVELENGTH:          6250.00006 A    Opacity Project (shifted          6250.00000 A)
+.
+O709D 13D O710P 03PO 3 3   9.6205E-02   4.9053E+07     147.8649                 WAVELENGTH:          6734.00673 A    Opacity Project
+O709D 13D O710P 13PO 3 3   7.2356E-02   4.9053E+07     147.8649                 WAVELENGTH:          6734.00674 A    Opacity Project (shifted          6734.00673 A)
+O709D 13D O710P 23PO 3 3   1.3000E-01   4.9053E+07     147.8649                 WAVELENGTH:          6734.00675 A    Opacity Project (shifted          6734.00673 A)
+O709D 23D O710P 13PO 3 3   2.9104E-03   4.9053E+07     147.8649                 WAVELENGTH:          6734.00676 A    Opacity Project (shifted          6734.00673 A)
+O709D 23D O710P 23PO 3 3   3.1010E-02   4.9053E+07     147.8649                 WAVELENGTH:          6734.00677 A    Opacity Project (shifted          6734.00673 A)
+O709D 33D O710P 23PO 3 3   1.3474E-01   4.9053E+07     147.8649                 WAVELENGTH:          6734.00678 A    Opacity Project (shifted          6734.00673 A)
+.
+O710P 03POO710D 13D  3 3   1.9649E-01   1.6216E+06     163.4428                 WAVELENGTH:         37037.03704 A    Opacity Project
+O710P 13POO710D 13D  3 3   4.9259E-02   1.6216E+06     163.4428                 WAVELENGTH:         37037.03705 A    Opacity Project (shifted         37037.03704 A)
+O710P 13POO710D 23D  3 3   1.4750E-01   1.6216E+06     163.4428                 WAVELENGTH:         37037.03706 A    Opacity Project (shifted         37037.03704 A)
+O710P 23POO710D 13D  3 3   1.9814E-03   1.6216E+06     163.4428                 WAVELENGTH:         37037.03707 A    Opacity Project (shifted         37037.03704 A)
+O710P 23POO710D 23D  3 3   2.9556E-02   1.6216E+06     163.4428                 WAVELENGTH:         37037.03708 A    Opacity Project (shifted         37037.03704 A)
+O710P 23POO710D 33D  3 3   1.6511E-01   1.6216E+06     163.4428                 WAVELENGTH:         37037.03709 A    Opacity Project (shifted         37037.03704 A)
+0
+.                        PHOTOIONISATION              
+.---------------------------------------              
+RBF                                                                             
+O701S201S O801S  2S  4 0     
+O702S 13S O801S  2S  4 0
+O702P 03POO801S  2S  4 0
+O702P 13POO801S  2S  4 0
+O702P 23POO801S  2S  4 0
+O702S 01S O801S  2S  4 0
+O702P 11POO801S  2S  4 0
+O703S 13S O801S  2S  4 0
+O703P 13POO801S  2S  4 0
+O703P 03POO801S  2S  4 0
+O703P 23POO801S  2S  4 0
+O703S 01S O801S  2S  4 0
+O703D 13D O801S  2S  4 0
+O703D 23D O801S  2S  4 0
+O703D 33D O801S  2S  4 0
+O703D 21D O801S  2S  4 0
+O703P 11POO801S  2S  4 0
+O704S 13S O801S  2S  4 0
+O704P 13POO801S  2S  4 0
+O704P 03POO801S  2S  4 0
+O704P 23POO801S  2S  4 0
+O704S 01S O801S  2S  4 0
+O704D 13D O801S  2S  4 0
+O704D 23D O801S  2S  4 0
+O704D 33D O801S  2S  4 0
+O704F 23FOO801S  2S  4 0
+O704F 33FOO801S  2S  4 0
+O704F 43FOO801S  2S  4 0
+O704D 21D O801S  2S  4 0
+O704F 31FOO801S  2S  4 0
+O704P 11POO801S  2S  4 0
+O705S 13S O801S  2S  4 0
+O705P 03POO801S  2S  4 0
+O705P 23POO801S  2S  4 0
+O705P 13POO801S  2S  4 0
+O705F 23FOO801S  2S  4 0
+O705F 33FOO801S  2S  4 0
+O705F 43FOO801S  2S  4 0
+O705D 13D O801S  2S  4 0
+O705D 23D O801S  2S  4 0
+O705D 33D O801S  2S  4 0
+O705F 31FOO801S  2S  4 0
+O705D 21D O801S  2S  4 0
+O705P 11POO801S  2S  4 0
+O706P 13POO801S  2S  4 0
+O706P 03POO801S  2S  4 0
+O706P 23POO801S  2S  4 0
+O706F 23FOO801S  2S  4 0
+O706F 33FOO801S  2S  4 0
+O706F 43FOO801S  2S  4 0
+O706D 13D O801S  2S  4 0
+O706D 33D O801S  2S  4 0
+O706D 23D O801S  2S  4 0
+O706F 31FOO801S  2S  4 0
+O706D 21D O801S  2S  4 0
+O706P 11POO801S  2S  4 0
+O707P 13POO801S  2S  4 0
+O707P 03POO801S  2S  4 0
+O707P 23POO801S  2S  4 0
+O707P 11POO801S  2S  4 0
+O707D 13D O801S  2S  4 0
+O707D 33D O801S  2S  4 0
+O707D 23D O801S  2S  4 0
+O708P 13POO801S  2S  4 0
+O708P 03POO801S  2S  4 0
+O708P 23POO801S  2S  4 0
+O708D 13D O801S  2S  4 0
+O708D 23D O801S  2S  4 0
+O708D 33D O801S  2S  4 0
+O709D 13D O801S  2S  4 0
+O709D 23D O801S  2S  4 0
+O709D 33D O801S  2S  4 0
+O709P 03POO801S  2S  4 0
+O709P 13POO801S  2S  4 0
+O709P 23POO801S  2S  4 0
+O710P 03POO801S  2S  4 0
+O710P 13POO801S  2S  4 0
+O710P 23POO801S  2S  4 0
+O710D 13D O801S  2S  4 0
+O710D 23D O801S  2S  4 0
+O710D 33D O801S  2S  4 0
+0                                                                               
+.             DIELECTRONIC RECOMBINATION
+.---------------------------------------
+RDI
+0                                     
+.                 COLLISIONAL EXCITATION                                                          
+.---------------------------------------                                                          
+CBB
+0
+.   COLLISIONAL EXCITATION TO LTE LEVELS            
+.---------------------------------------            
+CBX                                                                             
+0                                                                               
+.                 COLLISIONAL IONISATION                        
+.---------------------------------------                        
+CBF                                                                             
+0                                                                               
+.                      FREE-FREE OPACITY                
+.---------------------------------------                
+RFF                                                                             
+O7        3 0
+

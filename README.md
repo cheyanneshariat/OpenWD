@@ -9,30 +9,28 @@ temperature, surface gravity, and composition. It solves the atmospheric
 structure and radiative transfer from scratch, rather than interpolating a
 precomputed spectral grid.
 
-## White dwarf modeling capabilities
+OpenWD provides plane-parallel models for these classes:
 
-The atmosphere models are plane-parallel and LTE. The table distinguishes
-implemented physics from the availability of a ready-made interface.
+| Class | Atmosphere | Populations | Guide |
+| --- | --- | --- | --- |
+| DA | Hydrogen | LTE | [DA](docs/models/DA.md) |
+| DAZ | Hydrogen with metals | LTE | [DAZ](docs/models/DAZ.md) |
+| DB | Helium | LTE | [DB](docs/models/DB.md) |
+| DAB/DBA | Homogeneous hydrogen–helium mixture | LTE | [DAB/DBA](docs/models/DAB.md) |
+| DZ/DBZ | Helium with metals | LTE | [DZ/DBZ](docs/models/DZ.md) |
+| DQ | Helium with trace carbon and C₂, refractive transfer | LTE | [DQ](docs/models/DQ.md) |
+| DO/DAO | Hot helium or hydrogen–helium | NLTE hydrogen and helium (LTE charge closure) | [DO/DAO](docs/models/DO-DAO.md) |
+| PG 1159 | Hot helium–carbon–oxygen | NLTE He, C and O; trace elements in the line formation | [PG 1159](docs/models/PG1159.md) |
+| D6 | Hydrogen/helium-free carbon–oxygen with heavier elements | LTE | [D6](docs/models/D6.md) |
+| DAH | Magnetic hydrogen spectra, normalized Kurucz/Griem profiles on a DA structure | LTE | [DAH](docs/models/DAH.md) |
+| sdB | Lower-gravity hydrogen–helium with trace metals | LTE structure; NLTE H/He and selected metals | [sdB](docs/models/sdB.md) |
 
-| Type | Physics implemented | Ready-made interface |
-|:---|:---:|:---:|
-| DA — hydrogen | ✓ | ✓ |
-| DB — helium | ✓ | ✓ |
-| DAB / DBA — mixed H/He | ✓ | ✓ |
-| DZ / DBZ — polluted helium | ✓ | ✓ |
-| DAZ — polluted hydrogen | ✓ | ✗ |
-| DC — featureless H/He | ✓ | ✓ |
-| Magnetic WDs | ◐ | ✗ |
-| DQ — carbon-bearing | ◐ | ✗ |
-| DO / DAO — hot He / H–He | ◐ | ✗ |
-| PG 1159 / D6 | ✗ | ✗ |
-
-**✓ Implemented · ◐ Some ingredients implemented · ✗ Not implemented**
-
-DC spectra use the existing H/He interfaces. DAZ requires lower-level functions.
-Magnetic, DQ, and hot-WD models require additional physics, not just a new interface.
-
-*Implementation does not imply validation across all stellar parameters.*
+The white-dwarf presets are calculated from a cold start and report whether
+the result passed its numerical convergence checks. The sdB workflow first
+calculates an LTE structure, then solves NLTE populations and line formation
+on that fixed structure. The guides describe each class's
+physics and options; the [tested points](docs/tested-temperature-ranges.md)
+list the temperatures and compositions that have been run from a cold start.
 
 ## Get started
 
@@ -70,12 +68,13 @@ changing composition, output files, and cool-model data requirements.
 
 ## How it works
 
-OpenWD couples hydrostatic structure, LTE equations of state, opacity,
-radiative transfer, and ML2 convection. Hydrogen and helium line profiles,
-continuum absorption, and metal opacity are included as appropriate to the
-composition. `run_model` selects the implemented physics using composition
-and local material diagnostics before solving; it does not change physics
-in response to a failed calculation.
+OpenWD couples hydrostatic structure, equations of state, LTE or NLTE level
+populations, opacity, radiative transfer, and ML2 convection, and solves them
+with a shared nonlinear (trust-region Newton) solver. Line profiles, continuum
+absorption and metal opacity are included as appropriate to the composition.
+`run_model` selects the implemented physics from the configuration and local
+material diagnostics before solving; it never changes physics in response to
+a failed calculation.
 
 An optional C extension accelerates the expensive transfer and opacity
 kernels. See the [model guides](docs/models/README.md) for the physical
@@ -86,12 +85,13 @@ for threading and benchmarks.
 
 ## Caveats and limitations
 
-OpenWD is pre-alpha research software. Convergence and physical applicability
-must be checked for each result. Exploratory spectra remain available with a
-warning; pass `require_convergence=True` to require numerical qualification.
-The [limitations guide](docs/limitations.md) explains what that qualification
-means, known accuracy limits, and which temperatures and compositions have
-been tested.
+OpenWD is research software under active development. Check convergence and
+physical applicability for each result. A spectrum that did not pass its
+module's checks is kept with a warning for exploratory work; pass
+`require_convergence=True` to make qualification mandatory. The
+[limitations guide](docs/limitations.md) explains what the checks establish,
+known accuracy limits, and which temperatures and compositions have been
+tested.
 
 ## Documentation and development
 
@@ -108,8 +108,9 @@ python -m pytest
 
 ## Data and license
 
-Data for the established presets are bundled. Molecular cool-model workflows
-require additional public tables, described in the
+The atomic and constitutive data for all classes are bundled. The one
+exception is the molecular cool DAB/DBA workflow, which needs additional
+public tables described in the
 [data instructions](research/cool_models/README.md#additional-molecular-dab-data).
 
 OpenWD source is BSD-3-Clause licensed. Scientific tables retain their own

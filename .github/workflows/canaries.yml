@@ -1,22 +1,8 @@
 name: protected model canaries
 
 on:
-  push:
-    paths:
-      - 'src/**'
-      - 'research/cool_models/**'
-      - 'research/validate_public_cold_start.py'
-      - 'tests/**'
-      - '.github/workflows/**'
-      - 'pyproject.toml'
   pull_request:
-    paths:
-      - 'src/**'
-      - 'research/cool_models/**'
-      - 'research/validate_public_cold_start.py'
-      - 'tests/**'
-      - '.github/workflows/**'
-      - 'pyproject.toml'
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft, labeled, unlabeled]
   workflow_dispatch:
   schedule:
     - cron: "17 9 * * 1"
@@ -24,88 +10,63 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: qualification-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   OMP_NUM_THREADS: "1"
   OPENBLAS_NUM_THREADS: "1"
   OPENWD_NUM_THREADS: "1"
 
 jobs:
-  protected-models:
+  plan:
     runs-on: ubuntu-latest
+    outputs:
+      required: ${{ steps.select.outputs.required }}
+      requested: ${{ steps.select.outputs.requested }}
+      cold_cases: ${{ steps.select.outputs.cold_cases }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: select
+        run: python tools/validation_policy.py
+
+  preflight:
+    needs: plan
+    if: needs.plan.outputs.requested == 'true'
+    runs-on: ubuntu-latest
+    # The fast and fixed-spectrum suites run sequentially and can exceed 30 minutes.
     timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        group: ['protected_db or standard_db', 'protected_da', 'ultracool_da']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-      - run: python -m pip install --upgrade pip
       - run: python -m pip install -e '.[test]'
-      - name: Verify compiled acceleration backend
+      - name: Require compiled acceleration
         run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'hydrogen_stark_lorentz_convolution')"
-      - name: Run no-fallback atmosphere canaries
-        run: python -m pytest tests/test_protected_model_canaries.py -k '${{ matrix.group }}' -o 'addopts=-ra'
-
-  atomic-mixed-model:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-      - run: python -m pip install -e '.[test]'
-      - name: Cold 20000 K DAB, strict equilibrium and paper-spectrum control
-        run: python -u research/validate_public_cold_start.py dab-20000 results/cold-dab-20000
+      - run: python tools/validate.py fast --output results/preflight-fast
+      - run: python tools/validate.py spectra --output results/preflight-spectra
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: atomic-dab-20000-cold-start
-          path: results/cold-dab-20000
-          retention-days: 7
+          name: qualification-preflight
+          path: results/preflight-*
 
-  automatic-dense-models:
+  cold-model:
+    needs: [plan, preflight]
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        temperature: [5000, 8000]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-      - run: python -m pip install -e '.[test]'
-      - name: Automatic physics selection, fresh start, strict qualification
-        run: |
-          python -u - <<'PY'
-          from wd_spectra import DBConfig, run_model
-          result = run_model(DBConfig(effective_temperature=${{ matrix.temperature }}, quality='production'),
-                             'results/automatic-db', require_convergence=True)
-          assert result.selection.workflow == 'dense-db'
-          assert result.convergence_verified
-          PY
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: dense-db-${{ matrix.temperature }}
-          path: results/automatic-db
-          retention-days: 7
-
-  automatic-molecular-cold-start:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        temperature: [7500, 9000, 10000]
+        case: ${{ fromJSON(needs.plan.outputs.cold_cases) }}
     env:
       OPENWD_RESEARCH_DATA: ${{ github.workspace }}/.cache/molecular-opacity
     steps:
@@ -115,32 +76,90 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -e '.[test]'
+      - name: Require compiled acceleration
+        run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'hydrogen_stark_lorentz_convolution')"
       - uses: actions/cache@v4
+        if: startsWith(matrix.case, 'molecular-dab-')
         id: molecular-data
         with:
           path: .cache/molecular-opacity
           key: molecular-4f0eb9cd69a1c383-276f5a36d094e7e1
-      - name: Fetch the declared public tables (no alternate input)
-        if: steps.molecular-data.outputs.cache-hit != 'true'
+      - name: Fetch the declared tables (no alternate input)
+        if: startsWith(matrix.case, 'molecular-dab-') && steps.molecular-data.outputs.cache-hit != 'true'
         run: |
           mkdir -p "$OPENWD_RESEARCH_DATA"
           curl --fail --location --retry 2 https://hitran.org/data/CIA/main/H2-He_2011.cia --output "$OPENWD_RESEARCH_DATA/H2-He_2011.cia"
           curl --fail --location --retry 2 https://exomol.com/db/H2/1H2/RACPPK/1H2__RACPPK.states.bz2 --output "$OPENWD_RESEARCH_DATA/1H2__RACPPK.states.bz2"
-      - name: Check checksums even on cache hits
+      - name: Validate exact checksums, including cache hits
+        if: startsWith(matrix.case, 'molecular-dab-')
         run: python research/cool_models/check_data.py
-      - name: Fresh DAB, no saved atmosphere or neighboring model
-        run: |
-          python -u - <<'PY'
-          from wd_spectra import DABConfig, run_model
-          result = run_model(DABConfig(effective_temperature=${{ matrix.temperature }}, quality='production'),
-                             'results/automatic-dab',
-                             require_convergence=True)
-          assert result.selection.workflow == 'molecular-dab'
-          assert result.convergence_verified
-          PY
+      - name: One fresh model, full physical gates
+        run: python tools/validate.py cold --case '${{ matrix.case }}' --jobs 1 --timeout 19800 --output results/validation
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: molecular-dab-${{ matrix.temperature }}-cold-start
-          path: results/automatic-dab
-          retention-days: 7
+          name: cold-${{ matrix.case }}
+          path: results/validation
+          retention-days: 14
+
+  d6-regression:
+    name: J1637 warm trajectory regression
+    needs: preflight
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    # Two full-resolution updates measured ~77 minutes locally; hosted CPU
+    # speed has varied by roughly a factor of two. Keep a generous work guard.
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e '.[test]'
+      - name: Require compiled acceleration
+        run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'stark_manifold_bins')"
+      - name: Two measured warm-start steps, full-resolution physics
+        run: python tools/validate.py regression --case d6-j1637 --jobs 1 --timeout 13800 --output results/d6-regression
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d6-warm-regression
+          path: results/d6-regression
+          retention-days: 14
+
+  qualification:
+    # Require this stable check in branch protection, not a matrix job.
+    # A skipped matrix is NOT a physical pass.
+    if: always()
+    needs: [plan, preflight, cold-model, d6-regression]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check qualification was actually performed when required
+        env:
+          PLAN_RESULT: ${{ needs.plan.result }}
+          REQUIRED: ${{ needs.plan.outputs.required }}
+          REQUESTED: ${{ needs.plan.outputs.requested }}
+          PREFLIGHT_RESULT: ${{ needs.preflight.result }}
+          COLD_RESULT: ${{ needs.cold-model.result }}
+          D6_RESULT: ${{ needs.d6-regression.result }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          test "$PLAN_RESULT" = success
+          if [ "$REQUESTED" = true ]; then
+            test "$PREFLIGHT_RESULT" = success
+            test "$COLD_RESULT" = success
+            if [ "$EVENT_NAME" = pull_request ]; then
+              test "$D6_RESULT" = success
+              echo "PR regression checks passed: J1637 used a bounded warm trajectory and fixed spectrum. Full-suite cold-start qualification was not performed."
+              echo "J1637: two-step warm trajectory and fixed spectrum. Other protected cases: cold starts. Full-suite cold-start qualification was not performed." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "All protected cold-start cases passed, including J1637."
+              echo "All protected cold-start cases passed, including J1637." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          elif [ "$REQUIRED" = true ]; then
+            echo "::error::Physics/qualification inputs changed. Add the full-validation PR label when this candidate is ready. Remove it or use a draft PR while iterating. No cold-start qualification has passed."
+            exit 1
+          else
+            echo "No numerical inputs changed; cold-start qualification is not required."
+          fi

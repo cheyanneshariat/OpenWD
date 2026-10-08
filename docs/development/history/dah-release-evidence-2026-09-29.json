@@ -1,0 +1,367 @@
+{
+  "date": "2026-09-29",
+  "scope": "Local partial validation before GitHub full-validation; not full-suite qualification.",
+  "tested_commit": "1a53fd4ea4e6a800eeab7bf18de16bd7b1458a85",
+  "runner_identity_sha256": "731c1947ea9a10cf4e0acc3d3a2c59e3ad4499814f81a8dd717a800376f1b769",
+  "summary_sha256": "54c85dda01294b4d5abd82e3a0d8a7bd7c36eca36586e3a6bd4dc1b0c1e14a72",
+  "inputs_unchanged_during_run": true,
+  "local_runner_status": "failed",
+  "local_runner_status_reason": "Intentionally interrupted when remaining validation was moved to GitHub Actions.",
+  "full_qualification": false,
+  "runtime": {
+    "python": "3.11.9",
+    "numpy": "2.3.5",
+    "scipy": "1.15.3",
+    "pytest": "8.4.0",
+    "platform": "macOS-26.6.2-arm64-arm-64bit"
+  },
+  "fast_tests": {
+    "passed": 1710,
+    "skipped": 1,
+    "skip_reason": "Optional cached Koester validation spectrum unavailable."
+  },
+  "tasks": {
+    "fast/components": {
+      "status": "passed",
+      "elapsed_seconds": 535.580426499946
+    },
+    "fast/cool-components": {
+      "status": "passed",
+      "elapsed_seconds": 17.362281041918322
+    },
+    "spectra/dah-j1007+1237": {
+      "status": "passed",
+      "elapsed_seconds": 141.94166562519968
+    },
+    "spectra/dah-j1034+0327": {
+      "status": "passed",
+      "elapsed_seconds": 73.93131533404812
+    },
+    "spectra/dah-j1154+0117": {
+      "status": "passed",
+      "elapsed_seconds": 73.28847683314234
+    },
+    "spectra/dah-j2149-0728": {
+      "status": "passed",
+      "elapsed_seconds": 73.49107554205693
+    },
+    "spectra/dah-j1254+5612": {
+      "status": "passed",
+      "elapsed_seconds": 76.20759837492369
+    },
+    "spectra/dah-j1018+0111": {
+      "status": "passed",
+      "elapsed_seconds": 75.5241698329337
+    },
+    "spectra/dah-j1351+5419": {
+      "status": "passed",
+      "elapsed_seconds": 68.61391254188493
+    },
+    "spectra/dah-j2247+1456": {
+      "status": "passed",
+      "elapsed_seconds": 59.81402579089627
+    },
+    "spectra/da-3000": {
+      "status": "passed",
+      "elapsed_seconds": 17.968122208025306
+    },
+    "spectra/da-4000": {
+      "status": "passed",
+      "elapsed_seconds": 33.317463875049725
+    },
+    "spectra/da-5000": {
+      "status": "passed",
+      "elapsed_seconds": 31.84360645781271
+    },
+    "spectra/da-20000": {
+      "status": "passed",
+      "elapsed_seconds": 13.054039458977059
+    },
+    "spectra/db-10000": {
+      "status": "passed",
+      "elapsed_seconds": 4.7057841250207275
+    },
+    "spectra/db-22000": {
+      "status": "passed",
+      "elapsed_seconds": 4.288459791103378
+    },
+    "spectra/dab-9000": {
+      "status": "passed",
+      "elapsed_seconds": 27.377359666163102
+    },
+    "spectra/dab-20000": {
+      "status": "passed",
+      "elapsed_seconds": 24.10217679105699
+    },
+    "spectra/dz-pg1225": {
+      "status": "passed",
+      "elapsed_seconds": 17.9797514998354
+    },
+    "spectra/dz-j0738": {
+      "status": "passed",
+      "elapsed_seconds": 18.368335125036538
+    },
+    "spectra/daz-g149-28": {
+      "status": "passed",
+      "elapsed_seconds": 11.03412316692993
+    },
+    "spectra/daz-galex1931": {
+      "status": "passed",
+      "elapsed_seconds": 19.18392250011675
+    },
+    "spectra/dq-j1235": {
+      "status": "passed",
+      "elapsed_seconds": 7.342460874933749
+    },
+    "cold/da-radiative-g76-48": {
+      "status": "passed",
+      "elapsed_seconds": 543.4338686659466
+    },
+    "cold/dah-j1007+1237": {
+      "status": "passed",
+      "elapsed_seconds": 235.41223508305848
+    },
+    "cold/dah-j1254+5612": {
+      "status": "passed",
+      "elapsed_seconds": 210.82045629085042
+    },
+    "cold/do-50000": {
+      "status": "interrupted",
+      "elapsed_seconds": 1008.3985229998361
+    },
+    "cold/dao-60000": {
+      "status": "interrupted",
+      "elapsed_seconds": 797.5845587090589
+    },
+    "cold/dz-pg1225": {
+      "status": "passed",
+      "elapsed_seconds": 767.9746580829378
+    },
+    "cold/pg1159-pg1424": {
+      "status": "interrupted",
+      "elapsed_seconds": 464.9176710001193
+    },
+    "cold/d6-j1637": {
+      "status": "interrupted",
+      "elapsed_seconds": 4.907206708099693
+    },
+    "cold/db-10000": {
+      "status": "interrupted"
+    },
+    "cold/db-22000": {
+      "status": "interrupted"
+    },
+    "cold/db-22000-standard": {
+      "status": "interrupted"
+    },
+    "cold/da-5000": {
+      "status": "interrupted"
+    },
+    "cold/da-20000": {
+      "status": "interrupted"
+    },
+    "cold/da-3000": {
+      "status": "interrupted"
+    },
+    "cold/da-4000": {
+      "status": "interrupted"
+    },
+    "cold/dq-j1235": {
+      "status": "interrupted"
+    },
+    "cold/dab-20000": {
+      "status": "interrupted"
+    },
+    "cold/dense-db-5000": {
+      "status": "interrupted"
+    },
+    "cold/dense-db-8000": {
+      "status": "interrupted"
+    },
+    "cold/molecular-dab-7500": {
+      "status": "interrupted"
+    },
+    "cold/molecular-dab-9000": {
+      "status": "interrupted"
+    },
+    "cold/molecular-dab-10000": {
+      "status": "interrupted"
+    },
+    "cold/daz-g29-38": {
+      "status": "interrupted"
+    },
+    "cold/daz-g149-28": {
+      "status": "interrupted"
+    },
+    "cold/daz-galex1931": {
+      "status": "interrupted"
+    }
+  },
+  "cold_paper_spectra": {
+    "j1007+1237": {
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true,
+        "checks": {
+          "all_depth_flux": {
+            "value": 5.1839137427123205e-09,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 2.771301393989125e-06,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 1.2190113274357373e-06,
+            "tolerance": 0.0002,
+            "passed": true,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 3.9389281522939056e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.5105382976599978e-06,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "certificate_scope": "nonmagnetic DA structure; magnetic spectrum is post-processed",
+      "maximum_relative_spectrum_difference": 3.042011087472929e-14,
+      "rms_relative_spectrum_difference": 1.153846277216045e-15
+    },
+    "j1254+5612": {
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.9874704932097984e-08,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 6.55063963992803e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 5.100417275372138e-05,
+            "tolerance": 0.0002,
+            "passed": true,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 2.941473862221215e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 3.564278777664401e-19,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "certificate_scope": "nonmagnetic DA structure; magnetic spectrum is post-processed",
+      "maximum_relative_spectrum_difference": 2.2652988896698645e-05,
+      "rms_relative_spectrum_difference": 4.4247161209507626e-07
+    }
+  },
+  "package": {
+    "tested_numerical_commit": "2935f3a",
+    "note": "Later commits only update a unit assertion and documentation. Package tested outside the source checkout.",
+    "wheel": "openwd-0.1.4-cp311-cp311-macosx_11_0_arm64.whl",
+    "wheel_bytes": 154815844,
+    "wheel_sha256": "579b8ebb3fc6a6f2b1bec21c6ec27822a32de7992636fe20311306e3187158b9",
+    "native_build_compiler": "Apple clang",
+    "pure_python_tests": {
+      "passed": 27,
+      "seconds": 144.08
+    },
+    "native_install_smoke": {
+      "imported_from": "wd_spectra/__init__.py",
+      "native_backend": "wd_spectra/_rt.cpython-311-darwin.so",
+      "atomic_data": "wd_spectra/data/runtime/cache/h2db/h2db_balmer_subset.npz",
+      "atomic_data_sha256": "ccceb1520fd4307e09dac2f29a22eb503891245d9986c8a6fdddf1cfaf8daba7",
+      "balmer_levels": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "selection": "PhysicsSelection(workflow='dah', reason='Magnetic pure-H LTE (H2db Halpha-H12 components; maximum visible field 17.87 MG), kurucz-griem profiles on nonmagnetic structure', diagnostics={'maximum_visible_field_megagauss': 17.871720116618068, 'balmer_profile': 'kurucz-griem', 'atmosphere_structure': 'nonmagnetic'}, tested_point=False, experimental=False)"
+    },
+    "native_tests": {
+      "passed": 27,
+      "seconds": 132.35,
+      "warnings": "Only pytest marker-registration warnings from running outside the project configuration."
+    }
+  },
+  "github_handoff": "Run all 25 cold cases, fast checks and 21 fixed spectra using the full-validation label on the non-draft PR."
+}

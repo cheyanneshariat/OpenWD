@@ -1,5 +1,22 @@
 # Synthetic regression controls
 
+## Additional public-default DA guard (2026-09-08)
+
+`da-12000-public.npz` is a separate, explicitly documented addition, not a
+replacement for any original control below. It freezes the established formal
+synthesis on the saved 12,000 K / log g 8 / 40-depth notebook atmosphere, with
+0.5-Angstrom samples through H-alpha to H-delta and broad continuum coverage.
+It is not an observed spectrum or a new equilibrium calculation. The one-time
+capture script refuses to overwrite it. `test_da_public_spectrum.py` uses it
+and the original `da-20000.npz`, calls `compute_da` **without** a transfer-method
+override, and runs in the default/fast suite. Its common numerical budgets are
+0.1% in significant absolute flux and 0.1 continuum percentage point in line
+profiles. Synthetic scale/core/wing damage must fail the same checker.
+Both public-output cases failed with the withdrawn matched default before
+the synthesis default was restored. No reference was changed to make them pass.
+
+## Original controls
+
 These are **OpenWD outputs**, not observations or published-grid spectra.
 Captured from immutable Git commit `263b92e77bf207eb21ee8bd7b25f2b9312fb6828`
 on 2026-09-07 with Python 3.9.16, NumPy 1.26.4, SciPy 1.11.1 and the compiled

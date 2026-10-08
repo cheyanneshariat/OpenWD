@@ -208,6 +208,9 @@ def emergent_stokes_specific_intensity(
     The default stable backward-Euler formal solution is used cell by cell.
     ``formal_solver='matrix-exponential'`` instead uses a midpoint-constant
     matrix exponential, matching the MATEXP class of high-field solvers. In the
+    ``formal_solver='delo-linear'`` path, the matrix exponential integrates
+    a linear equilibrium source ``K^-1 j`` in scalar optical depth, preserving
+    constant LTE equilibrium even when the propagation matrix varies. In the
     exactly unpolarized limit the established scalar piecewise-linear solver
     is called directly, giving an exact regression limit rather than merely a
     depth-grid-convergent one.  The lower boundary is thermalized and the
@@ -260,9 +263,10 @@ def emergent_stokes_specific_intensity(
     mu = float(ray_mu)
     if not np.isfinite(mu) or not 0.0 < mu <= 1.0:
         raise ValueError("ray_mu must be finite and lie in (0, 1]")
-    if formal_solver not in {"backward-euler", "matrix-exponential"}:
+    if formal_solver not in {"backward-euler", "matrix-exponential", "delo-linear"}:
         raise ValueError(
-            "formal_solver must be 'backward-euler' or 'matrix-exponential'"
+            "formal_solver must be 'backward-euler', 'matrix-exponential' "
+            "or 'delo-linear'"
         )
     dichroism = np.sqrt(eta_q_array**2 + eta_v_array**2)
     if np.any(dichroism > eta_i_array * (1.0 + 2.0e-10)):
@@ -285,6 +289,12 @@ def emergent_stokes_specific_intensity(
         scalar = emergent_specific_intensity(optical_depth, source, mu)
         zero = np.zeros_like(scalar)
         return StokesIntensity(scalar, zero.copy(), zero.copy(), zero.copy())
+
+    if formal_solver == "delo-linear":
+        return _delo_linear_stokes(
+            mass, eta_i_array, eta_q_array, eta_v_array, rho_q_array,
+            rho_v_array, source, mu, emission,
+        )
 
     n_wave, n_depth = eta_i_array.shape
     identity = np.broadcast_to(np.eye(4), (n_wave, 4, 4))
@@ -390,6 +400,117 @@ def emergent_stokes_specific_intensity(
             identity + surface_scaled,
             stokes + surface_delta * surface_emission_per_mass,
         )
+    return StokesIntensity(
+        np.asarray(stokes[:, 0]),
+        np.asarray(stokes[:, 1]),
+        np.asarray(stokes[:, 2]),
+        np.asarray(stokes[:, 3]),
+    )
+
+
+def _stokes_propagation_matrices(eta_i, eta_q, eta_v, rho_q, rho_v, depth):
+    """Dimensionless ``K/eta_I`` at one depth for every wavelength."""
+
+    n_wave = eta_i.shape[0]
+    matrix = np.zeros((n_wave, 4, 4), dtype=np.float64)
+    q = eta_q[:, depth] / eta_i[:, depth]
+    v = eta_v[:, depth] / eta_i[:, depth]
+    rq = rho_q[:, depth] / eta_i[:, depth]
+    rv = rho_v[:, depth] / eta_i[:, depth]
+    for index in range(4):
+        matrix[:, index, index] = 1.0
+    matrix[:, 0, 1] = matrix[:, 1, 0] = q
+    matrix[:, 0, 3] = matrix[:, 3, 0] = v
+    matrix[:, 1, 2] = rv
+    matrix[:, 2, 1] = -rv
+    matrix[:, 2, 3] = rq
+    matrix[:, 3, 2] = -rq
+    return matrix
+
+
+def _exponential_integral_weights(matrix, delta):
+    """Return ``exp(-M d)``, ``int_0^d exp(-M u) du`` and ``int_0^d u exp(-M u) du``.
+
+    Evaluated by eigendecomposition with cancellation-free series for
+    small ``lambda d`` (eigenvalues may be complex through dispersion).
+    """
+
+    eigenvalue, eigenvector = np.linalg.eig(matrix)
+    inverse = np.linalg.inv(eigenvector)
+    x = eigenvalue * delta[:, np.newaxis]
+    small = np.abs(x) < 1.0e-3
+    safe = np.where(small, 1.0, x)
+    decay = np.exp(-x)
+    g1 = np.where(small, 1.0 - x / 2.0 + x**2 / 6.0 - x**3 / 24.0, -np.expm1(-safe) / safe)
+    g2 = np.where(
+        small,
+        0.5 - x / 3.0 + x**2 / 8.0 - x**3 / 30.0,
+        (-np.expm1(-safe) - safe * np.exp(-safe)) / safe**2,
+    )
+    d = delta[:, np.newaxis]
+
+    def rebuild(values):
+        return np.real(
+            np.einsum("wij,wj,wjk->wik", eigenvector, values, inverse, optimize=True)
+        )
+
+    return rebuild(decay), rebuild(d * g1), rebuild(d**2 * g2)
+
+
+def _delo_linear_stokes(mass, eta_i, eta_q, eta_v, rho_q, rho_v, source, mu, emission):
+    """Exponential formal solution with a linear equilibrium source in tau_I.
+
+    In each cell the coordinate is the scalar optical depth of ``eta_I``
+    (the same trapezoidal quadrature as the scalar solver), the propagation
+    matrix ``K/eta_I`` is taken at the cell midpoint, and ``K^-1 j`` varies
+    linearly between the nodes. Emission uses the same midpoint matrix, so
+    constant LTE equilibrium is preserved even across changing dichroism.
+    The resulting cell equation is integrated exactly. Without polarization
+    it is the scalar piecewise-linear solution, including the thermalized
+    lower boundary and the finite surface cell with constant source.
+    """
+
+    n_wave, n_depth = eta_i.shape
+    tau = np.empty_like(eta_i)
+    tau[:, 0] = eta_i[:, 0] * mass[0]
+    tau[:, 1:] = tau[:, [0]] + np.cumsum(
+        0.5 * (eta_i[:, 1:] + eta_i[:, :-1]) * np.diff(mass)[np.newaxis, :], axis=1
+    )
+    matrices = [
+        _stokes_propagation_matrices(eta_i, eta_q, eta_v, rho_q, rho_v, depth)
+        for depth in range(n_depth)
+    ]
+    if emission is None:
+        vectors = []
+        for depth in range(n_depth):
+            thermal = np.zeros((n_wave, 4))
+            thermal[:, 0] = source[:, depth]
+            vectors.append(thermal)
+    else:
+        vectors = [
+            _solve_stacked_vector_systems(
+                matrices[depth], emission[:, depth] / eta_i[:, depth, np.newaxis]
+            )
+            for depth in range(n_depth)
+        ]
+    stokes = vectors[-1].copy()
+    for depth in range(n_depth - 2, -1, -1):
+        delta = (tau[:, depth + 1] - tau[:, depth]) / mu
+        midpoint = 0.5 * (matrices[depth] + matrices[depth + 1])
+        decay, first, _ = _exponential_integral_weights(midpoint, delta)
+        slope = (vectors[depth + 1] - vectors[depth]) / delta[:, np.newaxis]
+        # Integrate M*S(u) with the same M that propagates I. Written around
+        # equilibrium this also avoids subtracting nearly equal opaque-cell
+        # emission and attenuation terms for an isothermal atmosphere.
+        stokes = (
+            vectors[depth]
+            + np.einsum("wij,wj->wi", decay, stokes - vectors[depth + 1])
+            + np.einsum("wij,wj->wi", first, slope)
+        )
+    decay, _, _ = _exponential_integral_weights(matrices[0], tau[:, 0] / mu)
+    stokes = vectors[0] + np.einsum(
+        "wij,wj->wi", decay, stokes - vectors[0]
+    )
     return StokesIntensity(
         np.asarray(stokes[:, 0]),
         np.asarray(stokes[:, 1]),
