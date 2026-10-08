@@ -37,7 +37,7 @@ four D6, DAH and PG1159 requests omitted from the figure.
 
 ## Downloads
 
-The [draft release](https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-700e0decdcd9372017e4)
+The [draft release](https://github.com/cheyanneshariat/OpenWD/releases)
 contains 1,599 spectra, packaged by type: DA, DB, DZ, DAB/DBA, DAZ and DQ.
 It also contains full model settings, request tables and file checksums.
 The files total about 433 MB. No certified DAO or DO spectra are available yet.
