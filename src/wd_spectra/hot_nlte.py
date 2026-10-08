@@ -72,6 +72,12 @@ class HotNLTEModel:
     population_maximum_iterations: int = 120
     population_tolerance: float = 1e-4
     hydrogenic_collision_model: str = "tlusty-mihalas"
+    # None: TLUSTY 14-term He I.  A different atom needs matching collision
+    # data (read with that atom file for the ionization scale).
+    helium_i_atom: object = None
+    # "last" (default) or "dominant": which helium equation particle
+    # conservation replaces (see solve_coupled_helium_statistical_equilibrium).
+    helium_conservation_row: str = "last"
 
     def __post_init__(self):
         if self.hydrogenic_collision_model not in ("ccc-scaled", "tlusty-mihalas"):
@@ -87,6 +93,9 @@ class HotNLTEModel:
             raise ValueError("population_tolerance must be finite and positive")
         if self.log_hydrogen_to_helium is not None and not np.isfinite(self.log_hydrogen_to_helium):
             raise ValueError("log_hydrogen_to_helium must be finite")
+        scale = getattr(self.helium_i_collision_data, 'ionization_scale', None)
+        if self.helium_i_atom is not None and scale is not None and scale.size != self.helium_i_atom.n_terms:
+            raise ValueError("He I collision ionization scale does not match the He I atom")
 
     def rebuild_atmosphere(self, template, temperature, previous_state=None):
         metadata = {**template.metadata, 'nlte_charge_feedback': False,
@@ -148,7 +157,8 @@ class HotNLTEModel:
     def _rate_state(self, atmosphere, wavelength=None, mean=None, neutral=None, ion=None, hydrogen=None):
         helium = he.solve_coupled_helium_statistical_equilibrium(
             atmosphere, self.collision_data, maximum_helium_ii_level=self.maximum_helium_ii_level,
-            helium_i_collision_data=self.helium_i_collision_data,
+            helium_i_collision_data=self.helium_i_collision_data, helium_i_atom=self.helium_i_atom,
+            conservation_row=self.helium_conservation_row,
             hydrogenic_collision_model=self.hydrogenic_collision_model,
             neutral_line_mean_intensity_nu=neutral, helium_ii_line_mean_intensity_nu=ion,
             neutral_continuum_wavelength_angstrom=wavelength,
@@ -164,7 +174,7 @@ class HotNLTEModel:
         return HotPopulationState(helium, hydrogen_state)
 
     def _line_problems(self, atmosphere):
-        neutral = he._neutral_helium_line_components(atmosphere, self.helium_i_stark_table)
+        neutral = he._neutral_helium_line_components(atmosphere, self.helium_i_stark_table, self.helium_i_atom)
         ion = {(lower, upper): (he._prepare_helium_line_transfer_problem(
             atmosphere, he.helium_ii_shell_transition(lower, upper),
             self.maximum_helium_ii_level, stark_table=self.helium_ii_stark_table),)
@@ -187,9 +197,16 @@ class HotNLTEModel:
                 for lower, upper in transitions}
         return neutral, ion, hydrogen
 
-    def solve_populations(self, atmosphere, previous_state=None):
+    def solve_populations(self, atmosphere, previous_state=None, *, accelerated_lambda=False):
+        """Fixed-temperature populations by iterated statistical equilibrium.
+
+        ``accelerated_lambda`` (opt-in) preconditions the bound-bound rates
+        with the diagonal approximate lambda operator (MALI, see
+        ``_hot_mali``).  It changes the iteration path, not the fixed point
+        or the convergence test; the default leaves this method unchanged.
+        """
         groups = self._line_problems(atmosphere)
-        grids = [he.default_neutral_helium_continuum_wavelength(),
+        grids = [he.default_neutral_helium_continuum_wavelength(self.helium_i_atom),
                  he.default_helium_ii_continuum_wavelength(self.maximum_helium_ii_level)]
         if self.log_hydrogen_to_helium is not None:
             grids.append(h._default_continuum_wavelength(self.maximum_hydrogen_level))
@@ -199,6 +216,10 @@ class HotNLTEModel:
         current = self._rate_state(atmosphere) if previous_state is None else self.remap(atmosphere, previous_state)
         history = []
         coefficient_cache = _FixedTransferCache(atmosphere, wave)
+        accelerator = None
+        if accelerated_lambda:
+            from ._hot_mali import HotMALI
+            accelerator = HotMALI(self, atmosphere, wave, groups)
         for iteration in range(1, self.population_maximum_iterations+1):
             c = self.transfer_coefficients(atmosphere, wave, current, _cache=coefficient_cache)
             _, field, _ = transfer_field(atmosphere, c, n_angle=self.n_angle, check_source=False)
@@ -211,7 +232,9 @@ class HotNLTEModel:
                     for p in problems], axis=0,
                     weights=[p.line.absorption_oscillator_strength for p in problems])
                     for key, problems in group.items()})
-            candidate = self._rate_state(atmosphere, wave, field.mean_intensity, *fields)
+            candidate = (self._rate_state(atmosphere, wave, field.mean_intensity, *fields)
+                         if accelerator is None else
+                         accelerator.state(current, c, field.mean_intensity, fields))
             old, reference = population_arrays(current)
             new, _ = population_arrays(candidate)
             relative_change = abs(new-old)/np.maximum(new, 1e-12*reference.sum(axis=1)[:, None])
@@ -259,14 +282,15 @@ def population_arrays(state):
 def with_departures(state, departures):
     """Normalize each elemental reservoir independently after acceleration."""
     _, reference = population_arrays(state)
-    nhe = 15+state.helium.singly_ionized_population_density.shape[1]
+    n_neutral = state.helium.neutral_population_density.shape[1]
+    nhe = n_neutral+1+state.helium.singly_ionized_population_density.shape[1]
     departures = departures.copy()
     for section in (slice(0, nhe), slice(nhe, None)):
         if reference[:, section].size:
             departures[:, section] *= (reference[:, section].sum(axis=1)/
                 (reference[:, section]*departures[:, section]).sum(axis=1))[:, None]
     helium = he._replace_coupled_departures(
-        state.helium, departures[:, :14], departures[:, 14:nhe-1], departures[:, nhe-1],
+        state.helium, departures[:, :n_neutral], departures[:, n_neutral:nhe-1], departures[:, nhe-1],
         iterations=0, converged=False, maximum_change=float('inf'), metadata=state.helium.metadata)
     hydrogen = state.hydrogen
     if hydrogen is not None:

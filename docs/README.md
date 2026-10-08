@@ -24,6 +24,9 @@ inspect its convergence status, then change the parameters for your application.
 - [Hot DA/DAO trace metals](development/hot-daz-trace-metals.md): experimental
   fixed-host NLTE metals (C, N, O, Al, Si, P, S, Fe, Ni) and the G191-B2B
   benchmark; development record, not a validated preset.
+- [Hot subdwarf (sdB) H/He models](development/sdb-hybrid.md): experimental
+  LTE-structure + NLTE H/He hybrid for 20-40 kK sdBs, with MALI and opt-in
+  helium-solver options; development record, not a validated preset.
 - [Research history](development/history/README.md): dated investigations,
   rejected experiments, and detailed validation records. These are not the
   current user instructions.

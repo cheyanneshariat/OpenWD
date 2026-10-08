@@ -834,6 +834,7 @@ def solve_multilevel_hydrogen_statistical_equilibrium(
     collision_rate_multiplier: float = 1.0,
     fix_continuum_departure: bool = False,
     _return_rate_matrix: bool = False,
+    _rate_matrix_transform=None,
 ) -> MultilevelHydrogenNLTEState:
     """Solve one fixed-radiation statistical-equilibrium rate matrix.
 
@@ -1079,6 +1080,10 @@ def solve_multilevel_hydrogen_statistical_equilibrium(
             + three_body_recombination
         )
 
+    if _rate_matrix_transform is not None:
+        # Research hook (e.g. MALI preconditioning of the line rates); None
+        # leaves the assembled matrix untouched.
+        rate = _rate_matrix_transform(rate)
     if _return_rate_matrix:
         return rate
     reference = np.column_stack((lte_population, lte_proton))
