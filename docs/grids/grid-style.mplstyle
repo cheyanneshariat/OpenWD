@@ -1,0 +1,36 @@
+# Recent Shariat serif / Computer Modern math convention.
+# Explicit approximation: DejaVu Serif text + CM mathtext; no external TeX.
+# Starting values for compact multipanel figures; inspect delivered size.
+figure.facecolor: white
+axes.facecolor: white
+savefig.facecolor: white
+font.family: serif
+font.serif: DejaVu Serif
+mathtext.fontset: cm
+text.usetex: False
+font.size: 12
+axes.labelsize: 15
+axes.titlesize: 13
+xtick.labelsize: 12
+ytick.labelsize: 12
+legend.fontsize: 10
+legend.frameon: False
+axes.linewidth: 1.0
+axes.edgecolor: black
+axes.grid: False
+axes.spines.top: True
+axes.spines.right: True
+xtick.direction: in
+ytick.direction: in
+xtick.top: True
+ytick.right: True
+xtick.minor.visible: True
+ytick.minor.visible: True
+xtick.major.size: 5
+ytick.major.size: 5
+xtick.minor.size: 2.5
+ytick.minor.size: 2.5
+lines.linewidth: 1.7
+pdf.fonttype: 42
+ps.fonttype: 42
+savefig.dpi: 250

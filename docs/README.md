@@ -1,5 +1,7 @@
 # OpenWD documentation
 
+[Initial precomputed grid coverage and downloads](grids/README.md)
+
 OpenWD turns a white dwarf's temperature, surface gravity, and composition
 into a model atmosphere and surface spectrum. Start with one fresh calculation,
 inspect its convergence status, then change the parameters for your application.

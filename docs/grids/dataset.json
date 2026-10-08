@@ -1,0 +1,60 @@
+{
+  "kind": "development preview",
+  "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+  "snapshots": {
+    "showcase-bank-v6": {
+      "created_utc": "2026-10-08T08:23:25.175441+00:00",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "index_sha256": "72c42bb07330a296dadf409b2ba1f1a002dc53e8d8a23000a896a61c6150df19"
+    },
+    "showcase-extra-bank-v2": {
+      "created_utc": "2026-10-08T09:03:27.062904+00:00",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "index_sha256": "2ae95223d0cc5d9f3d7f535b5c9fa155853dae0eca6d5f2f175676eac240994a"
+    }
+  },
+  "requests": 1848,
+  "qualified_spectra": 1599,
+  "families": {
+    "DA": {
+      "models": 807,
+      "archive": "OpenWD-DA-initial-20261008.tar.gz",
+      "bytes": 215429900,
+      "raw_spectrum_bytes": 762702963
+    },
+    "DB": {
+      "models": 489,
+      "archive": "OpenWD-DB-initial-20261008.tar.gz",
+      "bytes": 129389918,
+      "raw_spectrum_bytes": 456200405
+    },
+    "DZ": {
+      "models": 293,
+      "archive": "OpenWD-DZ-initial-20261008.tar.gz",
+      "bytes": 78661500,
+      "raw_spectrum_bytes": 276916937
+    },
+    "DAB": {
+      "models": 5,
+      "archive": "OpenWD-DAB-initial-20261008.tar.gz",
+      "bytes": 1343594,
+      "raw_spectrum_bytes": 4725545
+    },
+    "DAZ": {
+      "models": 3,
+      "archive": "OpenWD-DAZ-initial-20261008.tar.gz",
+      "bytes": 805451,
+      "raw_spectrum_bytes": 2835327
+    },
+    "DQ": {
+      "models": 2,
+      "archive": "OpenWD-DQ-initial-20261008.tar.gz",
+      "bytes": 6516036,
+      "raw_spectrum_bytes": 21852118
+    }
+  },
+  "spectra_only": true,
+  "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification"
+}
