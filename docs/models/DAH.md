@@ -275,6 +275,11 @@ Agreement with eight objects does not guarantee an unbiased parameter fit.
 At zero field the default still uses Kurucz/Griem profiles; select unified
 profiles to recover the ordinary DA line-profile limit.
 
+The full-IQUV dispersion transform treats each sampled absorption profile as
+piecewise linear in frequency and zero outside its mesh. Kurucz/Griem wing
+values can be nonzero at the mesh ends; the exact transform then diverges at
+those endpoints. Returned endpoint values retain the existing finite convention.
+
 Scientific use should cite the relevant ingredients and observational sources:
 
 - [Kurucz (1970), SAO Special Report 309](https://articles.adsabs.harvard.edu/pdf/1970SAOSR.309.....K), section 5.14 and `STARK` on p. 243: historical Griem-based shape.

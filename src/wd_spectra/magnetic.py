@@ -231,9 +231,10 @@ def frequency_hilbert_dispersion(
     values_all = profile[::-1]
     # Distinct wavelength nodes can round to the same (or a few-ulp-apart)
     # frequency. Only an exact duplicate is a zero-length segment; its slope is
-    # 0/0 and would spread NaN to every output. Nodes within 64 ulp of the
-    # retained (first) node of their group are merged into it, provided each
-    # value agrees with the retained value to 1e-9 of the per-depth maximum.
+    # 0/0 and would spread NaN to every output. Nodes within 64 relative machine
+    # epsilons of the retained (first) node of their group are merged into it,
+    # provided each value agrees with the retained value to 1e-9 of the
+    # per-depth maximum.
     # Anchoring both tests to the retained node (not to the neighbouring node)
     # bounds the whole group's frequency span and value drift, so a chain of
     # small steps cannot accumulate a large merged error. A larger difference

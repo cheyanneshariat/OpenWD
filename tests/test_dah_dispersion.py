@@ -185,8 +185,8 @@ def _psi_reference(freq, values):
 
 @pytest.mark.parametrize("ulps", [8, 63, 65, 1000])
 def test_near_coincident_nodes_match_a_high_precision_reference(ulps):
-    # Merged (<= 64 ulp) and unmerged near-coincident nodes both reproduce the exact piecewise-linear
-    # partner; the measured coalescence error is ~1e-12 of the peak.
+    # The 8-, 63- and 65-ULP gaps here lie within 64 relative machine epsilons and are merged;
+    # the 1000-ULP gap is retained. Both reproduce the exact piecewise-linear partner.
     freq = NU0 + np.linspace(-12e-3, 12e-3, 241)
     values = np.exp(-((freq - NU0) / 1e-3) ** 2)
     new = freq[90] + ulps * np.spacing(freq[90])
@@ -196,6 +196,26 @@ def test_near_coincident_nodes_match_a_high_precision_reference(ulps):
     psi = frequency_hilbert_dispersion(wavelength[::-1], values[::-1, None])[::-1, 0]
     reference = _psi_reference(freq, values)
     assert np.max(np.abs(psi - reference)) < 1e-10 * np.max(np.abs(reference))
+
+
+@pytest.mark.parametrize("frequency", [0.497, 1.003])
+@pytest.mark.parametrize("relative_epsilons, merged", [(63, True), (65, False)])
+def test_discontinuous_nodes_bracket_the_relative_epsilon_merge_boundary(frequency, relative_epsilons, merged):
+    # Bracket 64 relative epsilons at two mantissas, where a fixed ULP count would give different gaps.
+    # Verify which side survives the wavelength conversion before testing rejection of a value jump.
+    neighbour = frequency * (1.0 + relative_epsilons * np.finfo(np.float64).eps)
+    freq = np.array([frequency - 0.1, frequency, neighbour, frequency + 0.1])
+    wavelength = _mesh(freq)
+    roundtrip = (LIGHT_SPEED / (wavelength * 1e-8) / 1e15)[::-1]
+    gap = roundtrip[2] - roundtrip[1]
+    assert gap > 0.0
+    assert bool(gap <= 64 * np.finfo(np.float64).eps * roundtrip[2]) is merged
+    profile = np.array([0.0, 1.0, 2.0, 0.0])[::-1]
+    if merged:
+        with pytest.raises(ValueError, match="discontinuous"):
+            _psi(wavelength, profile)
+    else:
+        assert np.all(np.isfinite(_psi(wavelength, profile)))
 
 
 @pytest.mark.parametrize("cosine, k_first, k_second", [(1.0, 10.0, 0.1), (0.0, 1.0, 5.05)])
@@ -229,7 +249,7 @@ def _group_case(step_value):
 
 def test_drifting_coincident_group_is_rejected_not_silently_merged():
     # Reviewer's case: adjacent changes 4e-10 (< 1e-9) but the 64-node chain drifts 2.5e-8; the drift
-    # relative to the retained node exceeds the tolerance within one 64-ulp window, so it is rejected.
+    # relative to the retained node exceeds the tolerance within one 64-relative-epsilon window.
     wave, values, _, _ = _group_case(4e-10)
     with pytest.raises(ValueError, match="discontinuous"):
         frequency_hilbert_dispersion(wave, values[:, None])
