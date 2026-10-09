@@ -1,0 +1,29 @@
+{
+ "key": "j1351+5419",
+ "tag": "drift-32",
+ "overrides": {
+  "disk_component_drift_angstrom": 32
+ },
+ "diagnostic_switches": {
+  "no_pseudo": false,
+  "no_lines": false
+ },
+ "quadrature": "config",
+ "surface_cells": 134,
+ "synthesis_seconds": 279.20507654198445,
+ "peak_rss_mb": 1548.61568,
+ "score": {
+  "target": "j1351+5419",
+  "velocity_kms": 0.0,
+  "velocity_correlation": 0.0,
+  "velocity_reference": "Hardy curve",
+  "broad_rms": 0.09112274993219166,
+  "blue_ratio": 0.9287188986300555,
+  "feature_rms": 0.04474530193017809,
+  "hardy": {
+   "broad_rms": 0.0501804434965151,
+   "blue_ratio": 1.0089170534096736,
+   "feature_rms": 0.04333814539244213
+  }
+ }
+}

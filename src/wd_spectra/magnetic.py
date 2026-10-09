@@ -41,7 +41,7 @@ of each cell's atmosphere and enters every ray as an unpolarized source.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Callable, Literal
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -839,6 +839,207 @@ def dipole_surface_cells(
         np.asarray(mus),
         weights_array / np.sum(weights_array),
         bounds, bounds_exact,
+    )
+
+
+MAXIMUM_DRIFT_RESOLVED_FIELD_BINS = 4096
+
+
+def balmer_component_drift_rate(
+    field_strength_megagauss: ArrayLike,
+    wavelength_range_angstrom: tuple[float, float],
+    transitions: H2dbTransitionDatabase | None,
+    *,
+    maximum_upper_level: int = MAXIMUM_H2DB_BALMER_UPPER_LEVEL,
+    minimum_relative_strength: float = 0.01,
+) -> FloatArray:
+    """Return the fastest component drift ``max |d lambda / dB|`` in A/MG.
+
+    At each field of an increasing grid, the maximum is taken over Balmer
+    components whose center lies in ``wavelength_range_angstrom`` and whose
+    dipole-strength proxy ``E d`` is at least ``minimum_relative_strength`` of
+    the strongest component of the same line. H2db tracks are interpolated
+    linearly in field, as in :meth:`H2dbTransition.values_at_field`, and
+    differentiated on the supplied grid. Without H2db data (or below its
+    lowest tabulated field) the normal-triplet drift
+    ``lambda^2 e / (4 pi m_e c^2)`` is used. Lower-state Boltzmann factors are
+    omitted: they only select which components are counted.
+    """
+
+    from .magnetic_atomic import H2DB_REFERENCE_FIELD_MEGAGAUSS
+
+    field = np.asarray(field_strength_megagauss, dtype=np.float64)
+    if (field.ndim != 1 or field.size < 2 or np.any(~np.isfinite(field))
+            or np.any(np.diff(field) <= 0.0) or field[0] < 0.0):
+        raise ValueError("field_strength_megagauss must be an increasing nonnegative grid")
+    lower, upper = (float(value) for value in wavelength_range_angstrom)
+    if not np.isfinite(lower) or not np.isfinite(upper) or lower < 0.0 or upper <= lower:
+        raise ValueError("wavelength range must be finite, nonnegative and increasing")
+    if not np.isfinite(minimum_relative_strength) or not 0.0 <= minimum_relative_strength <= 1.0:
+        raise ValueError("minimum_relative_strength must lie between zero and one")
+    linear_per_megagauss = LINEAR_ZEEMAN_FREQUENCY_HZ_PER_GAUSS * 1.0e6 / LIGHT_SPEED * 1.0e-8
+    triplet = max(
+        (
+            line.wavelength_vacuum_angstrom**2 * linear_per_megagauss
+            for line in BALMER_LINES
+            if line.upper_level <= maximum_upper_level
+            and lower <= line.wavelength_vacuum_angstrom <= upper
+        ),
+        default=0.0,
+    )
+    drift = np.full(field.size, triplet)
+    if transitions is None:
+        return drift
+    floor = max(
+        t.beta[0] for group in transitions.transitions_by_upper_level.values() for t in group
+    ) * H2DB_REFERENCE_FIELD_MEGAGAUSS
+    tabulated = field >= floor
+    if np.count_nonzero(tabulated) < 2:
+        return drift
+    beta = field[tabulated] / H2DB_REFERENCE_FIELD_MEGAGAUSS
+    strong_drift = np.zeros(beta.size)
+    for line in BALMER_LINES:
+        level = line.upper_level
+        if level > maximum_upper_level or level not in transitions.transitions_by_upper_level:
+            continue
+        zero_energy = 0.25 - 1.0 / level**2
+        wavelengths, proxies = [], []
+        for transition in transitions.transitions_by_upper_level[level]:
+            inside = (beta >= transition.beta[0]) & (beta <= transition.beta[-1])
+            energy = np.interp(beta, transition.beta, transition.transition_energy_rydberg)
+            finite = np.isfinite(transition.dipole_strength)
+            dipole = (
+                np.interp(beta, transition.beta[finite], transition.dipole_strength[finite])
+                if np.count_nonzero(finite) >= 2
+                else np.zeros(beta.size)
+            )
+            valid = inside & (energy > 0.0)
+            wavelengths.append(
+                np.where(valid, line.wavelength_vacuum_angstrom * zero_energy / np.where(valid, energy, 1.0), np.nan)
+            )
+            proxies.append(np.where(valid, np.maximum(0.0, energy * dipole), 0.0))
+        wavelength = np.asarray(wavelengths)
+        proxy = np.asarray(proxies)
+        strongest = np.max(proxy, axis=0)
+        rate = np.abs(np.gradient(wavelength, field[tabulated], axis=1))
+        counted = (
+            (proxy >= minimum_relative_strength * strongest[np.newaxis, :])
+            & (proxy > 0.0)
+            & (wavelength >= lower)
+            & (wavelength <= upper)
+            & np.isfinite(rate)
+        )
+        if np.any(counted):
+            strong_drift = np.maximum(strong_drift, np.max(np.where(counted, rate, 0.0), axis=0))
+    drift[tabulated] = strong_drift
+    return drift
+
+
+def drift_resolved_field_edges(
+    field_bounds_megagauss: tuple[float, float],
+    drift_rate: Callable[[FloatArray], ArrayLike],
+    tolerance_angstrom: float,
+    *,
+    n_field_samples: int = 4001,
+) -> FloatArray:
+    """Field-bin edges at equal increments of accumulated component drift.
+
+    ``drift_rate(field_grid)`` returns ``max |d lambda/dB|`` (A/MG). Edges are
+    placed where ``s(B) = int |d lambda/dB| dB`` crosses multiples of at most
+    ``tolerance_angstrom``, so no counted component moves farther than the
+    tolerance across a bin on this sampled estimate. This is not a bound on
+    flux error or on tracks excluded by the component screen. The 1-MG
+    boundary is always an edge. Excessive requests fail rather than coarsen.
+    """
+
+    tolerance = float(tolerance_angstrom)
+    if not np.isfinite(tolerance) or tolerance <= 0.0:
+        raise ValueError("tolerance_angstrom must be finite and positive")
+    lower, upper = (float(value) for value in field_bounds_megagauss)
+    if not (np.isfinite(lower) and np.isfinite(upper)) or lower < 0.0 or upper < lower:
+        raise ValueError("field bounds must be finite, nonnegative and ordered")
+    if upper == lower:
+        return np.asarray([lower, upper])
+    if not np.isfinite(n_field_samples) or int(n_field_samples) != n_field_samples or n_field_samples < 2:
+        raise ValueError("n_field_samples must be an integer of at least two")
+    grid = np.linspace(lower, upper, int(n_field_samples))
+    rate = np.asarray(drift_rate(grid), dtype=np.float64)
+    if rate.shape != grid.shape or np.any(~np.isfinite(rate)) or np.any(rate < 0.0):
+        raise ValueError("drift_rate must return finite nonnegative values on the grid")
+    accumulated = np.concatenate(([0.0], np.cumsum(0.5 * (rate[1:] + rate[:-1]) * np.diff(grid))))
+    # The relative guard keeps an exact multiple from gaining a round-off bin.
+    required = accumulated[-1] / tolerance
+    if not np.isfinite(required) or required > MAXIMUM_DRIFT_RESOLVED_FIELD_BINS:
+        raise ValueError(
+            f"drift resolution requires more than {MAXIMUM_DRIFT_RESOLVED_FIELD_BINS} "
+            "field intervals; choose a larger drift tolerance"
+        )
+    count = max(1, int(np.ceil(required * (1.0 - 1.0e-12))))
+    if accumulated[-1] > 0.0:
+        targets = np.linspace(0.0, accumulated[-1], count + 1)[1:-1]
+        # Invert the monotone accumulated drift; flat (zero-drift) stretches
+        # need no interior edge.
+        inner = np.interp(targets, accumulated, grid)
+    else:
+        inner = np.zeros(0)
+    edges = np.unique(np.concatenate(([lower], inner, [upper])))
+    if lower < WEAK_FIELD_MAXIMUM_MEGAGAUSS < upper:
+        edges = np.unique(np.concatenate((edges, [WEAK_FIELD_MAXIMUM_MEGAGAUSS])))
+    return edges
+
+
+def field_binned_surface_cells(
+    cells: SurfaceCells,
+    edges_megagauss: ArrayLike,
+    *,
+    n_limb_bins: int = 1,
+) -> SurfaceCells:
+    """Compress surface cells into the supplied field intervals.
+
+    Each nonempty field interval uses its weighted mean field. Optionally
+    subdivide it into ``n_limb_bins`` intervals in limb cosine, preserving
+    each subgroup's weight, mean limb cosine and rms field--ray cosine.
+    Subgroups share exactly the same field so consecutive rays reuse the
+    local opacity and source calculation in the spectrum synthesizer.
+    """
+
+    edges = np.asarray(edges_megagauss, dtype=np.float64)
+    if (edges.ndim != 1 or edges.size < 2 or np.any(~np.isfinite(edges))
+            or np.any(np.diff(edges) <= 0.0)):
+        raise ValueError("edges_megagauss must be strictly increasing")
+    if (not np.isfinite(n_limb_bins) or int(n_limb_bins) != n_limb_bins
+            or not 1 <= n_limb_bins <= 64):
+        raise ValueError("n_limb_bins must be an integer between 1 and 64")
+    n_limb_bins = int(n_limb_bins)
+    field = cells.field_strength_megagauss
+    if np.any(field < edges[0]) or np.any(field > edges[-1]):
+        raise ValueError("edges_megagauss must cover every surface field")
+    index = np.clip(np.searchsorted(edges, field, side="right") - 1, 0, edges.size - 2)
+    # As in the default compression, never merge B<=1 MG with B>1 MG,
+    # including cells that lie exactly on the boundary.
+    index = 2 * index + (field > WEAK_FIELD_MAXIMUM_MEGAGAUSS)
+    field_weight = np.bincount(index, weights=cells.projected_weight)
+    mean_field = np.divide(
+        np.bincount(index, weights=cells.projected_weight * field),
+        field_weight, out=np.zeros_like(field_weight), where=field_weight > 0.0,
+    )
+    limb = np.minimum((cells.ray_mu * n_limb_bins).astype(int), n_limb_bins - 1)
+    group = index * n_limb_bins + limb
+    weight = np.bincount(group, weights=cells.projected_weight)
+    occupied = np.flatnonzero(weight > 0.0)
+    weights_array = weight[occupied]
+    mus = np.bincount(group, weights=cells.projected_weight * cells.ray_mu)[occupied] / weights_array
+    cosines = np.sqrt(
+        np.bincount(group, weights=cells.projected_weight * cells.field_ray_cosine**2)[occupied]
+        / weights_array
+    )
+    return SurfaceCells(
+        mean_field[occupied // n_limb_bins],
+        cosines,
+        mus,
+        weights_array / np.sum(weights_array),
+        cells.field_bounds_megagauss,
+        cells.field_bounds_exact,
     )
 
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable, Literal, Mapping
 
 import numpy as np
@@ -13,6 +13,9 @@ from ..magnetic import (
     DAH_WAVELENGTH_RANGE_ANGSTROM,
     WEAK_FIELD_MAXIMUM_MEGAGAUSS,
     BalmerBroadening,
+    balmer_component_drift_rate,
+    drift_resolved_field_edges,
+    field_binned_surface_cells,
     MagneticPhysics,
     SurfaceCells,
     default_magnetic_da_wavelength_grid,
@@ -25,6 +28,7 @@ from ..magnetic import (
     uniform_field_surface_cells,
 )
 from ..magnetic_atomic import (
+    H2dbTransitionDatabase,
     read_h2db_energy_database,
     read_h2db_transition_database,
 )
@@ -101,20 +105,43 @@ class DAHConfig:
     include_centered_motion: bool = False
     mixing_length_alpha: float | None = None
     balmer_self_broadening_prescription: str | None = None
+    # Append new fields to preserve the existing positional constructor.
+    # Opt-in; takes precedence over disk_field_bins.
+    disk_component_drift_angstrom: float | None = None
 
 
-def dah_surface_cells(config: DAHConfig) -> SurfaceCells:
-    """Return the visible-disk quadrature of a configuration."""
+def dah_surface_cells(
+    config: DAHConfig,
+    *,
+    transitions: H2dbTransitionDatabase | None = None,
+    wavelength_range_angstrom: tuple[float, float] = DAH_WAVELENGTH_RANGE_ANGSTROM,
+) -> SurfaceCells:
+    """Return the visible-disk quadrature of a configuration.
 
+    With ``disk_component_drift_angstrom`` a dense offset-dipole grid is
+    compressed using a sampled estimate of Balmer-component wavelength drift
+    in ``wavelength_range_angstrom``. This is not a flux-error tolerance.
+    Above 1 MG the H2db ``transitions`` (by default the bundled subset)
+    supply the drift. Without a table, or below its floor, the normal-triplet
+    estimate is used, matching the selected synthesis data.
+    """
+
+    drift = config.disk_component_drift_angstrom
+    if drift is not None and (not np.isfinite(drift) or drift <= 0.0):
+        raise ValueError("disk_component_drift_angstrom must be finite and positive")
     if config.field_geometry == "uniform":
         if config.dipole_offset_radius != (0.0, 0.0, 0.0):
             raise ValueError("dipole_offset_radius applies to field_geometry='dipole'")
+        if config.disk_component_drift_angstrom is not None:
+            raise ValueError("disk_component_drift_angstrom applies to field_geometry='dipole'")
         return uniform_field_surface_cells(
             config.magnetic_field_megagauss, field_angle_deg=config.field_angle_deg
         )
     if config.field_geometry == "dipole":
         if config.field_angle_deg is not None:
             raise ValueError("field_angle_deg applies to field_geometry='uniform'")
+        if config.disk_component_drift_angstrom is not None:
+            return _drift_resolved_dipole_cells(config, transitions, wavelength_range_angstrom)
         return dipole_surface_cells(
             config.magnetic_field_megagauss,
             field_strength_definition=config.field_strength_definition,
@@ -123,6 +150,84 @@ def dah_surface_cells(config: DAHConfig) -> SurfaceCells:
             n_field_bins=config.disk_field_bins,
         )
     raise ValueError("field_geometry must be 'uniform' or 'dipole'")
+
+
+# Dense raw quadrature for the drift-resolved disk. Distinct field bins
+# require new opacity/source calculations; limb rays share those results.
+DRIFT_RESOLVED_RAW_MU_NODES = 192
+DRIFT_RESOLVED_RAW_AZIMUTHS = 384
+DRIFT_RESOLVED_LIMB_BINS = 8
+
+
+def _drift_resolved_dipole_cells(
+    config: DAHConfig,
+    transitions: H2dbTransitionDatabase | None,
+    wavelength_range_angstrom: tuple[float, float],
+) -> SurfaceCells:
+    offset = np.asarray(config.dipole_offset_radius, dtype=np.float64)
+    if offset.shape != (3,) or np.any(~np.isfinite(offset)) or np.linalg.norm(offset) >= 0.8:
+        raise ValueError("dipole_offset_radius must be three finite values with modulus < 0.8")
+    distance_scale = 1.0 - float(np.linalg.norm(offset))
+    raw = dipole_surface_cells(
+        config.magnetic_field_megagauss,
+        field_strength_definition=config.field_strength_definition,
+        inclination_deg=config.dipole_inclination_deg,
+        offset_vector_radius=tuple(config.dipole_offset_radius),  # type: ignore[arg-type]
+        n_mu=int(np.ceil(DRIFT_RESOLVED_RAW_MU_NODES / distance_scale)),
+        n_azimuth=int(np.ceil(DRIFT_RESOLVED_RAW_AZIMUTHS / distance_scale)),
+        n_field_bins=None,
+    )
+    if transitions is None and raw.maximum_field_megagauss > WEAK_FIELD_MAXIMUM_MEGAGAUSS:
+        data = ModelData.default()
+        data.require(data.h2db_balmer_subset)
+        transitions = read_h2db_transition_database(data.h2db_balmer_subset)
+    sampled = (
+        float(np.min(raw.field_strength_megagauss)),
+        float(np.max(raw.field_strength_megagauss)),
+    )
+    if sampled[0] == sampled[1]:
+        edges = [sampled[0], np.nextafter(sampled[1], np.inf)]
+        return field_binned_surface_cells(raw, edges, n_limb_bins=DRIFT_RESOLVED_LIMB_BINS)
+    edges = drift_resolved_field_edges(
+        sampled,
+        lambda grid: balmer_component_drift_rate(grid, wavelength_range_angstrom, transitions),
+        float(config.disk_component_drift_angstrom),  # type: ignore[arg-type]
+    )
+    return field_binned_surface_cells(raw, edges, n_limb_bins=DRIFT_RESOLVED_LIMB_BINS)
+
+
+# Above this, adjacent equal-weight bins can place H2db components tens of
+# Angstroms apart (docs/development/history/dah-high-field-2026-10-08.md).
+EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS = 100.0
+
+
+def _domain_notes(config: DAHConfig, cells: SurfaceCells, strong: bool) -> list[str]:
+    """Documented approximations that apply to this particular request."""
+
+    maximum = cells.maximum_field_megagauss
+    notes = []
+    if strong and not config.include_rwa_photoionization:
+        notes.append(
+            "zero-field H I bound-free and dissolved-level Balmer pseudo-continuum "
+            "retained above 1 MG"
+        )
+    if config.disk_component_drift_angstrom is not None:
+        notes.append(
+            "component drift is a screened, sampled binning estimate, not a "
+            "flux-error bound or validation of magnetic continuum/structure physics"
+        )
+    if (
+        config.field_geometry == "dipole"
+        and config.disk_component_drift_angstrom is None
+        and config.disk_field_bins is not None
+        and maximum > EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS
+    ):
+        notes.append(
+            "equal-weight field bins can under-resolve the field spread above "
+            f"{EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS:g} MG; see "
+            "disk_component_drift_angstrom"
+        )
+    return notes
 
 
 def structure_field_megagauss(cells: SurfaceCells) -> float:
@@ -151,6 +256,11 @@ def _validate(config: DAHConfig) -> None:
         raise ValueError("magnetic_field_megagauss must be finite and nonnegative")
     if config.polarized_transfer not in ("full-stokes-iquv", "scalar-stokes-i"):
         raise ValueError("polarized_transfer must be 'full-stokes-iquv' or 'scalar-stokes-i'")
+    drift = config.disk_component_drift_angstrom
+    if drift is not None and (not np.isfinite(drift) or drift <= 0.0):
+        raise ValueError("disk_component_drift_angstrom must be finite and positive")
+    if drift is not None and config.field_geometry != "dipole":
+        raise ValueError("disk_component_drift_angstrom applies to field_geometry='dipole'")
 
 
 def compute_dah(
@@ -199,7 +309,9 @@ def compute_dah(
             f"DAH synthesis requires a finite, increasing 1D wavelength grid "
             f"with at least two points in {lower:g}--{upper:g} A"
         )
-    cells = dah_surface_cells(config)
+    # The continuous field bounds (and so the atomic regime) do not depend on
+    # the compression; a drift-resolved disk is built once the data are read.
+    cells = dah_surface_cells(replace(config, disk_component_drift_angstrom=None))
     maximum_field = cells.maximum_field_megagauss
     strong = maximum_field > WEAK_FIELD_MAXIMUM_MEGAGAUSS
     structure_field = structure_field_megagauss(cells)
@@ -220,6 +332,14 @@ def compute_dah(
         data.require(data.h2db_balmer_subset)
         transitions = read_h2db_transition_database(data.h2db_balmer_subset)
         energies = read_h2db_energy_database(data.h2db_balmer_subset)
+    if config.disk_component_drift_angstrom is not None and config.field_geometry == "dipole":
+        # Components just outside the output window still contribute wings.
+        cells = dah_surface_cells(
+            config,
+            transitions=transitions,
+            wavelength_range_angstrom=(max(0.0, wave[0] - 100.0), wave[-1] + 100.0),
+        )
+        structure_field = structure_field_megagauss(cells)
     # In the normal-triplet regime the structure is the DA structure, whose
     # molecular chemistry (below 12000 K) the synthesis must also see.
     molecules = (not strong) and config.effective_temperature <= 12_000.0
@@ -420,6 +540,21 @@ def compute_dah(
             "visible_field_bounds_exact": cells.field_bounds_exact,
             "visible_field_bounds_megagauss": cells.field_bounds_megagauss,
             "maximum_synthesis_cell_field_megagauss": float(np.max(cells.field_strength_megagauss)),
+            "disk_distinct_field_bins": int(np.unique(cells.field_strength_megagauss).size),
+            "disk_limb_bins_per_field": (
+                DRIFT_RESOLVED_LIMB_BINS if config.disk_component_drift_angstrom is not None else None
+            ),
+            "disk_quadrature": (
+                f"{np.unique(cells.field_strength_megagauss).size} field bins with Balmer-component drift "
+                f"target {config.disk_component_drift_angstrom:g} A (estimated); "
+                f"{cells.projected_weight.size} limb rays"
+                if config.disk_component_drift_angstrom is not None
+                else (
+                    f"{cells.projected_weight.size} equal-weight field bins"
+                    if config.field_geometry == "dipole" and config.disk_field_bins is not None
+                    else f"{cells.projected_weight.size} cells"
+                )
+            ),
             "convection": (
                 "suppressed; radiative equilibrium"
                 if mixing_length_alpha is None
@@ -436,6 +571,7 @@ def compute_dah(
             ),
             "line_physics": spectrum.metadata["magnetic_line_regime"],
             "transfer": spectrum.metadata["polarized_transfer"],
+            "domain_notes": _domain_notes(config, cells, strong),
             "atmosphere_convergence_status": convergence_status,
             "model_request_fingerprint": request_fingerprint,
             "limitations": (
