@@ -47,12 +47,16 @@ def test_explicit_depth_truncation_refines_inside_source_domain(monkeypatch):
     predictor.tau=np.geomspace(1e-8,1e5,20)
     predictor.temperature=2000*(predictor.pressure/1e5)**.1
     predictor.teff=6000.
+    predictor.logg=7.75
     predictor.truncate_optical_depth=100.
     predictor.refine_pressure=True
     predictor.unscaled_temperature=False
-    monkeypatch.setattr(runner,'atmosphere_at',lambda teff,p,t,tau:
-        SimpleNamespace(pressure=p,temperature=t,tau=tau))
-    seed=predictor.seed(7000,40,100)
+    monkeypatch.setattr(runner,'atmosphere_at',lambda teff,p,t,tau,*,logg:
+        SimpleNamespace(pressure=p,temperature=t,tau=tau,logg=logg))
+    seed=predictor.seed(7000,40,100,logg=7.75)
+    assert seed.logg==7.75
+    with pytest.raises(ValueError,match='same recorded gravity'):
+        predictor.seed(7000,40,100,logg=8.)
     assert len(seed.pressure)==40
     assert np.all(np.diff(seed.pressure)>0)
     np.testing.assert_allclose(seed.tau[-1],100,rtol=1e-14)

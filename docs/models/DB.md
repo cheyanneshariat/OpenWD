@@ -55,6 +55,12 @@ It combines the tabulated bulk EOS with approximate chemical potentials and
 trace-ion chemistry, without inserting that closure into warm ionized helium.
 The command-line example uses the same automatic selection as `run_model`.
 The lower-level `compute_db` preset remains an explicit atomic-physics interface.
+The dense driver propagates the requested `logg` through hydrostatic column mass,
+ML2 initialization, the structure solver and the independent spectrum audit.
+Saved structures record their gravity, and the audit rejects a mismatch with
+the request. The production recipe and its numerical tolerances are unchanged.
+The material-domain checks still apply at every depth; accepting a parameter is
+not a claim that its atmosphere or spectrum has been qualified.
 
 Protected cold starts cover the established prescription at 10000 and 22000 K
 and the dense workflow at 5000 and 8000 K. See [tested points](../tested-temperature-ranges.md),
@@ -88,9 +94,9 @@ metadata and retained by the independent spectrum audit. Older saved runs
 without that flag retain their previous audit option.
 
 The regression fixture is one transfer row from a 5,000 K/log g 7 development
-calculation. It checks the transfer operation; it does not add public
-low-gravity support or qualify an entire atmosphere. The cool public workflow's
-existing gravity restriction is unchanged by this spectrum repair.
+calculation. It checks the transfer operation. Dense DB runs preserve the
+requested gravity as described in [Cool helium](#cool-helium); individual
+parameter points still require atmosphere and spectrum qualification.
 
 ## A tested warm-model setting
 

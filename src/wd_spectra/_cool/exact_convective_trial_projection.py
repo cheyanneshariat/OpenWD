@@ -21,7 +21,7 @@ def project_trial(seed,runner,options):
         if gradient>0:
             pressure=seed.gas_pressure[i-1:i+1]
             tau=seed.rosseland_optical_depth[i-1:i+1]
-            def at(t):return runner.atmosphere_at(seed.effective_temperature,pressure,t,tau)
+            def at(t):return runner.atmosphere_at(seed.effective_temperature,pressure,t,tau,logg=seed.logg)
             material=MaterialCoefficients(at,options['thermodynamics'],options['rosseland_opacity'],
                 options['mixing_length_alpha'])
             def residual(g):

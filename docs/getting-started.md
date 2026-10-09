@@ -172,8 +172,10 @@ See [DQ physics and limitations](models/DQ.md) and the
 
 The automatic interface screens local material conditions before solving and
 selects the dense-helium or molecular workflow when indicated. These workflows
-are included in the installed package and currently require `quality="production"`, log g = 8,
-and integer-K temperatures. Their Python dependencies are included in the
+are included in the installed package and require `quality="production"`
+and integer-K temperatures. Dense DB preserves the requested gravity through
+the initializer, atmosphere calculation and independent spectrum audit.
+Molecular DAB retains its log g = 8 restriction. Their Python dependencies are included in the
 normal installation; there is no separate dependency extra to enable.
 
 Molecular DAB additionally needs the checksum-pinned public tables in the
@@ -196,6 +198,8 @@ cool_dab = run_model(
 
 Read the [tested points](tested-temperature-ranges.md) before extrapolating
 these examples to other temperatures, gravities, or mixtures.
+Allowing a dense-DB gravity does not qualify that point: the material-domain
+guards and all native equilibrium and independent spectrum checks still apply.
 
 ### DO/DAO hot helium and hydrogen–helium atmospheres
 
