@@ -1,0 +1,24 @@
+{
+ "key": "j1018+0111",
+ "tag": "drift-32",
+ "overrides": {
+  "disk_component_drift_angstrom": 32
+ },
+ "diagnostic_switches": {
+  "no_pseudo": false,
+  "no_lines": false
+ },
+ "quadrature": "config",
+ "surface_cells": 65,
+ "synthesis_seconds": 153.5588842079742,
+ "peak_rss_mb": 1407.336448,
+ "score": {
+  "target": "j1018+0111",
+  "velocity_kms": 34.0,
+  "velocity_correlation": 0.3186118742542369,
+  "velocity_reference": "model",
+  "broad_rms": 0.08870272298604756,
+  "blue_ratio": 0.8934254450343538,
+  "feature_rms": 0.03811823879506263
+ }
+}

@@ -32,6 +32,7 @@ class IterationResume:
         raw=self.path.read_bytes()
         self.file_sha=hashlib.sha256(raw).hexdigest()
         self.teff=options['temperature']
+        self.logg=float(options.get('logg',8.))
         if options['log_h_he'] is not None or options['experimental_physics']!=PHYSICS:
             raise ValueError('iteration source composition/physics mismatch')
         table=Path(options['experimental_dense_options']['interaction_table']).resolve()
@@ -66,11 +67,11 @@ class IterationResume:
         self.kind='pseudo-time initializer' if pseudo_time_snapshot else 'iteration'
         self.description=(f'EXPLICIT continuation of UNCONVERGED {self.kind} from {self.path}; '
             'identical Teff, pressure grid and temperature values; NOT a cold start or convergence claim')
-    def seed(self,teff,n_depth,bottom_tau,table=None,mesh='pressure'):
-        if teff!=self.teff or n_depth!=len(self.temperature) or table is not None:
-            raise ValueError('iteration resume requires identical Teff, layer count and EOS')
+    def seed(self,teff,n_depth,bottom_tau,table=None,mesh='pressure',*,logg=8.):
+        if teff!=self.teff or logg!=self.logg or n_depth!=len(self.temperature) or table is not None:
+            raise ValueError('iteration resume requires identical Teff, gravity, layer count and EOS')
         from . import check_cool_db_transport_seed as runner
-        return runner.atmosphere_at(teff,self.pressure.copy(),self.temperature.copy(),self.tau.copy())
+        return runner.atmosphere_at(teff,self.pressure.copy(),self.temperature.copy(),self.tau.copy(),logg=logg)
     def __call__(self,seed,options):
         np.testing.assert_array_equal(seed.temperature,self.temperature)
         np.testing.assert_array_equal(seed.gas_pressure,self.pressure)

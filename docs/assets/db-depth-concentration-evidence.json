@@ -1,0 +1,191 @@
+{
+  "scope": "Two actual same-source public cold runs; only depth concentration differs. Before failed temperature stationarity. No physical accuracy or independent depth-convergence claim.",
+  "runs": [
+    {
+      "label": "before",
+      "config": {
+        "effective_temperature": 27000.0,
+        "logg": 9.25,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "cold_start": true,
+      "source_commit": "33176c81226f2e2084f8765b52ff09547b9d2857",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.0203671271156196e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.000911821324078766,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.002991893719812566,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5587841907852666e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 5.368189801378776e-17,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "input_sha256": {
+        "request.json": "4d29d21c23c8c388dbee790bcd50fe4ad9821bac6077288f08605cf7b1b0e1ad",
+        "model/metadata.json": "7a778e91ba6700bfdf7a414319839981ba0f667d687975c91d8d3f6d9a021310",
+        "model/atmosphere.npz": "641bc3be551ce782c7a47934f598c697952cb021f068a866c9b99e6879562c06",
+        "model/spectrum.txt": "4a61e9dbd7a7ced7f5b33b6fc5a6cba99a050a575bf2589c4512d3264eb3a48d"
+      }
+    },
+    {
+      "label": "after",
+      "config": {
+        "effective_temperature": 27000.0,
+        "logg": 9.25,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 2.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "cold_start": true,
+      "source_commit": "33176c81226f2e2084f8765b52ff09547b9d2857",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.2121926512852497e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 2.2641174006742146e-06,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 1.4455064789586913e-06,
+            "tolerance": 0.0003,
+            "passed": true,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.4650409884220962e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 4.8892467892146796e-17,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "input_sha256": {
+        "request.json": "ae9a6dcf30ef8c87afe60983a81baabf6c56fa383f720c48b422eb79404f245b",
+        "model/metadata.json": "d90f437472f0ab1870d27ef42a461105bf789de5e51972c57c5115653d88d72d",
+        "model/atmosphere.npz": "8508cf6ab4d55a07de1b31b009769c4a2815324169d3aa166674b2816222148b",
+        "model/spectrum.txt": "7438c52996ae6e995879780f77357fa7aaeaf8f61e1b4734029b8f884cd0978f"
+      }
+    }
+  ],
+  "layers": [
+    80,
+    80
+  ],
+  "photospheric_layers_tau_001_to_10": [
+    37,
+    43
+  ],
+  "comparison": {
+    "optical_interval_angstrom": [
+      3000,
+      10000
+    ],
+    "optical_max_absolute_relative_difference_percent": 0.1504036594571989,
+    "optical_integrated_absolute_difference_percent": 0.004791537228113656,
+    "temperature_structure_comparison": "Linear interpolation in log column mass over common support; includes interpolation/discretization differences, not a physical accuracy estimate.",
+    "max_temperature_difference_percent_on_common_log_mass_interpolation": 0.21137782131849248,
+    "spectral_resampling": "none",
+    "flux_normalization": "none"
+  },
+  "figure_sha256": {
+    "png": "5ed92267589a8f735eaa3486b8932e3484c0f8bb7976ef617d53b3c45bace69a",
+    "pdf": "198fac06b98474984c1d280d49395326d7dfdb0900653ca3d9fc76c4b805f991"
+  }
+}

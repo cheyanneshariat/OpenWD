@@ -1,0 +1,22 @@
+{
+ "key": "j1018+0111",
+ "tag": "baseline",
+ "overrides": {},
+ "synthesis_seconds": 46.07504162500845,
+ "peak_rss_mb": 1379.827712,
+ "git_head": "33176c81226f2e2084f8765b52ff09547b9d2857",
+ "git_dirty": false,
+ "surface_cells": 21,
+ "maximum_visible_field_megagauss": 159.77902738055502,
+ "visible_mean_field_megagauss": 81.78493213967234,
+ "max_rel_diff_vs_frozen": 9.769962616701378e-15,
+ "score": {
+  "target": "j1018+0111",
+  "velocity_kms": 96.0,
+  "velocity_correlation": 0.2119752742844046,
+  "velocity_reference": "model",
+  "broad_rms": 0.08895326822269255,
+  "blue_ratio": 0.8821485421085294,
+  "feature_rms": 0.041796191880797855
+ }
+}

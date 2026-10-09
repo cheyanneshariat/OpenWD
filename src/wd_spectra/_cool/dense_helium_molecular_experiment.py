@@ -36,6 +36,16 @@ PHYSICS=('EXPERIMENTAL REOS3 + HNC He/He+/He2+ + thesis electron insertion; '
 TABLE_VERSION='molecular-hnc-young1981-bruno2010-chang2002-tail-electron-domain-v4'
 
 
+def run_coordinates(arguments):
+    """Parse coordinate values before an unknown option can become Teff."""
+    parser=argparse.ArgumentParser(add_help=False)
+    parser.add_argument('temperature',type=int)
+    parser.add_argument('--logg',type=float,default=8.)
+    parser.add_argument('--output-root',type=Path,required=True)
+    parser.add_argument('--n-depth',type=int,default=80)
+    return parser.parse_known_args(arguments)[0]
+
+
 def insertion_tail_corrections(grid,temperature,density):
     """Long-range contribution to the HNC chemical-potential functional.
 
@@ -233,11 +243,7 @@ def main():
     from .research_paths import REPOSITORY, source_paths
     model.source_sha256={str(p):hashlib.sha256((REPOSITORY/p).read_bytes()).hexdigest()
                          for p in source_paths()}
-    run_parser=argparse.ArgumentParser(add_help=False)
-    run_parser.add_argument('temperature',type=int)
-    run_parser.add_argument('--output-root',type=Path,required=True)
-    run_parser.add_argument('--n-depth',type=int,default=80)
-    run_args,_=run_parser.parse_known_args(remaining)
+    run_args=run_coordinates(remaining)
     print(model.physics,flush=True)
     sys.argv=[sys.argv[0]]+remaining
     with ExitStack() as stack:

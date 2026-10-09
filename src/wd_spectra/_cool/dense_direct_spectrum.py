@@ -24,9 +24,9 @@ def direct_result(result,n_angle,*,mass_conservative=False):
     if mass_conservative:
         from .mass_conservative_feautrier import mass_field
         source,field=mass_field(depths,planck,absorption,scattering,
-            column_mass=atmosphere.column_mass,n_angle=n_angle)
+            column_mass=atmosphere.column_mass,n_angle=n_angle,reconstruct_intensity=True)
         _,independent=mass_field(depths,source,absorption+scattering,np.zeros_like(scattering),
-            column_mass=atmosphere.column_mass,n_angle=n_angle)
+            column_mass=atmosphere.column_mass,n_angle=n_angle,reconstruct_intensity=True)
     else:
         source,field=cancellation_safe_field(depths,planck,absorption,scattering,n_angle=n_angle)
         independent=cancellation_safe_scalar_field(depths,source,n_angle=n_angle)
@@ -38,6 +38,7 @@ def direct_result(result,n_angle,*,mass_conservative=False):
         raise RuntimeError('coupled experimental synthesis failed its source-equation check')
     method='mass-coupled-feautrier' if mass_conservative else 'coupled-feautrier'
     metadata=dict(experimental_spectrum_transfer=f'{method}-{n_angle}',
+        experimental_positive_intensity_reconstruction=mass_conservative,
         experimental_spectrum_source_check='independent prescribed-source formal solve',
         experimental_spectrum_radiation_scale_source_error=error,
         experimental_ordinary_four_sweep_bolometric_flux=result.spectrum.bolometric_flux)

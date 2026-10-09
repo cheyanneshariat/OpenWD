@@ -22,7 +22,7 @@ def discrete_seed(seed,runner,options):
         pressure=seed.gas_pressure[i-1:i+1]
         tau=seed.rosseland_optical_depth[i-1:i+1]
         def with_temperature(t):
-            return runner.atmosphere_at(seed.effective_temperature,pressure,t,tau)
+            return runner.atmosphere_at(seed.effective_temperature,pressure,t,tau,logg=seed.logg)
         material=MaterialCoefficients(with_temperature,options['thermodynamics'],
             options['rosseland_opacity'],options['mixing_length_alpha'])
         def residual(gradient):
