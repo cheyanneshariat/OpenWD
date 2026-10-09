@@ -94,9 +94,9 @@ metadata and retained by the independent spectrum audit. Older saved runs
 without that flag retain their previous audit option.
 
 The regression fixture is one transfer row from a 5,000 K/log g 7 development
-calculation. It checks the transfer operation; it does not add public
-low-gravity support or qualify an entire atmosphere. The cool public workflow's
-existing gravity restriction is unchanged by this spectrum repair.
+calculation. It checks the transfer operation. Dense DB runs preserve the
+requested gravity as described in [Cool helium](#cool-helium); individual
+parameter points still require atmosphere and spectrum qualification.
 
 ## A tested warm-model setting
 
