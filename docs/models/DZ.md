@@ -4,10 +4,11 @@
 
 `compute_dz` solves a helium-dominated polluted LTE atmosphere at fixed input
 abundances. Metals contribute electrons, bound-free opacity, sampled line
-blanketing, and therefore feed back on the relaxed structure. The default GD
-40 mixture uses the Stout v3.00b4 line data used for every object in the
-published DZ/DAZ comparison, with levels through charge 3, dense-helium
-ionization shifts, and available unified Mg I--He and Ca I--He profiles.
+blanketing, and therefore feed back on the relaxed structure. The default
+metal database uses Stout v3.00b4, adding the bundled Kurucz Cr II
+missing-transition supplement when chromium is present. The GD 40 preset
+includes levels through charge 3, dense-helium ionization shifts, and
+available unified Mg I--He and Ca I--He profiles.
 Observable helium and trace-hydrogen lines use the same policies as DB and
 DAB. Evaluated NIST replacements for matched strong transitions remain
 available as the explicit `strong_line_atomic_data="nist-asd"` alternative.
@@ -51,7 +52,8 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
 - The `strong_line_atomic_data="nist-asd"` option replaces every exactly
   matched Stout transition down to f = 1e-4 with evaluated NIST ASD values
   (accuracy C or better), including 115--300 nm (Mg I 2852, Mg II h/k, Si II,
-  C II, Al II, Fe I/II). The default keeps the paper-figure Stout data.
+  C II, Al II, Fe I/II). The default retains Stout oscillator strengths and
+  adds missing Cr II transitions from Kurucz.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and
@@ -155,3 +157,113 @@ uniformly validated abundance grid. In particular, the older plotted J0738
 atmosphere and a fresh calculation with the present certificate are distinct
 checks; consult the linked tested-point record before treating it as a
 qualified cold start.
+
+## Xu et al. (2019) HIRES comparisons
+
+These three comparisons use the helium-dominated stars in Figures 11--13 of
+[Xu et al. (2019), AJ, 158, 242](https://doi.org/10.3847/1538-3881/ab4cee).
+The black curves are public Keck/HIRES spectra retrieved from the
+[Keck Observatory Archive](https://koa.ipac.caltech.edu/); the red curves are
+OpenWD predictions at the paper's fixed parameters and detected abundances
+(Tables 1 and 4). No atmospheric parameters or abundances were fitted.
+
+The default metal line list now includes the complete Kurucz Cr II
+`gf2401.all` missing-transition supplement. It preserves existing Stout
+levels, transitions and oscillator strengths, while adding absent transitions
+and their Kurucz damping constants. The file is bundled and checksum-verified,
+so these examples require no separate line-list download or custom atomic
+database. It is used in both atmospheric line blanketing and the final
+synthesis, subject to their normal line-selection budgets. See the
+[atomic-data provenance](../../src/wd_spectra/data/atomic/README.md).
+
+The plotted spectra were computed with OpenWD commit
+[`57f95fc`](https://github.com/kareemelbadry/OpenWD/commit/57f95fc), plus this
+same Cr II supplement, using standard-quality relaxed atmospheres and
+ML2/alpha = 1.25 convection. They predate the metal-physics audit described
+above. The commands below generate new spectra with the current defaults at
+the same stellar parameters; they do not exactly reproduce these archived
+curves. Their convergence must be checked independently.
+
+For display, the synthetic flux and line-free continuum were convolved to
+`R = 40000` and integrated over native detector pixels. Observed orders were
+coadded with inverse-variance weights without smoothing. Data and models were
+normalized independently with matched local pseudo-continuum masks and
+weights, including local fits around Ca II H/K that avoid extrapolating the
+continuum. The plots use rest-frame **air** wavelengths; the generated model
+files use rest-frame **vacuum** wavelengths. Residual line-depth and Ca/He
+core differences remain, so these are comparisons at a literature composition,
+not abundance fits or a claim of agreement in the absolute flux.
+
+Run the commands from a source checkout with OpenWD installed. Abundances are
+`log10[N(element)/N(He)]`, and the listed metals replace the entire default
+mixture. Reported upper limits are omitted. Each command saves the intrinsic
+surface flux in `spectrum.txt` (vacuum Å, erg s^-1 cm^-2 Å^-1), together with
+the atmosphere and provenance. The fine wavelength grid covers the displayed
+regions; it does not apply instrumental convolution or the observational
+normalization used in the figures. `--require-convergence` rejects a run
+that fails the model's convergence certificate. Use a fresh output directory
+for each run.
+
+### WD 1232+563
+
+`Teff = 11787 K`, `log g = 8.30`, `log N(H)/N(He) = -5.90`. The HIRES blue
+observations are from 2015 April 11 and 2016 April 1. This comparison covers
+the blue metal-line windows and Ca II H/K in Figure 11; ESI data are not
+included. The rest-frame correction uses the paper's photospheric velocity
+of +19.0 km s^-1. Al and Ni are upper limits and are omitted.
+
+![WD 1232+563 HIRES data and OpenWD at the Xu et al. composition](../assets/wd1232-xu2019-hires.png)
+
+```bash
+python examples/one_shot_dz.py --teff 11787 --logg 8.30 --log-h-he -5.90 \
+  --abundance O=-5.14 --abundance Mg=-6.09 --abundance Si=-6.36 \
+  --abundance Ca=-7.69 --abundance Ti=-8.96 --abundance Cr=-8.16 \
+  --abundance Mn=-8.54 --abundance Fe=-6.45 \
+  --wavelength-min 3200 --wavelength-max 8000 --wavelength-step 0.02 \
+  --quality standard --require-convergence --output results/wd1232-xu2019
+```
+
+### WD 1551+175
+
+`Teff = 14756 K`, `log g = 8.02`, `log N(H)/N(He) = -4.45`. The HIRES blue
+observations are from 2013 May 8 and the red observations from 2015 April 9,
+with a photospheric velocity of +22.9 km s^-1. Ni is an upper limit and is
+omitted; Al is a detection. The Halpha region has an archive coverage gap.
+The O I 7774-Å panel shows **only the model**: the available red-CCD products
+lack a wavelength calibration for that region, so no observational comparison
+is possible there.
+
+![WD 1551+175 HIRES data and OpenWD at the Xu et al. composition](../assets/wd1551-xu2019-hires.png)
+
+```bash
+python examples/one_shot_dz.py --teff 14756 --logg 8.02 --log-h-he -4.45 \
+  --abundance O=-5.48 --abundance Mg=-6.29 --abundance Al=-6.99 \
+  --abundance Si=-6.33 --abundance Ca=-6.93 --abundance Ti=-8.68 \
+  --abundance Cr=-8.25 --abundance Mn=-8.74 --abundance Fe=-6.60 \
+  --wavelength-min 3200 --wavelength-max 8000 --wavelength-step 0.02 \
+  --quality standard --require-convergence --output results/wd1551-xu2019
+```
+
+### WD 2207+127
+
+`Teff = 14752 K`, `log g = 7.97`, `log N(H)/N(He) = -6.32`. The paper calls
+this object **WD 2207+121 in its tables** and **WD 2207+127 in Figure 13**;
+both identify the same target at RA = 332.3951°, Dec = +12.3934°
+(J2209+1223). The HIRES blue observations are from 2012 October 28--29 and
+the red observations from 2013 September 17, with a photospheric velocity
+of +34.5 km s^-1. All ten listed metals, including Ni, are detections.
+Faulty extracted orders were rejected before coaddition. Halpha has a
+coverage gap, and the O I 7774-Å panel again shows **only the model** because
+the archive red-CCD products lack a wavelength calibration there.
+
+![WD 2207+127 HIRES data and OpenWD at the Xu et al. composition](../assets/wd2207-xu2019-hires.png)
+
+```bash
+python examples/one_shot_dz.py --teff 14752 --logg 7.97 --log-h-he -6.32 \
+  --abundance O=-5.32 --abundance Mg=-6.15 --abundance Al=-7.08 \
+  --abundance Si=-6.17 --abundance Ca=-7.40 --abundance Ti=-8.84 \
+  --abundance Cr=-8.16 --abundance Mn=-8.50 --abundance Fe=-6.46 \
+  --abundance Ni=-7.55 \
+  --wavelength-min 3200 --wavelength-max 8000 --wavelength-step 0.02 \
+  --quality standard --require-convergence --output results/wd2207-xu2019
+```

@@ -45,8 +45,8 @@ _MODEL_FAMILY_PHYSICS_REVISIONS = {
     # Shared metal physics revised by the 2026-09-30 DZ audit: ground-term
     # bound-free populations, 1/Z^2 Unsold radii, frequency Voigt profiles,
     # structure line identity and continuous dense-He ionization.
-    "DZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05",
-    "DAZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05",
+    "DZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05:default-crii-kurucz-2026-10-08",
+    "DAZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05:default-crii-kurucz-2026-10-08",
     "D6": "metal-audit-2026-09-30",
 }
 

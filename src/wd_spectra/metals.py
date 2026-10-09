@@ -71,6 +71,9 @@ EV_TO_WAVENUMBER = EV_TO_ERG / WAVENUMBER_TO_ERG
 BOHR_RADIUS_CM = 5.291_772_105_44e-9
 STOUT_ARCHIVE_URL = "https://linelist.pa.uky.edu/newpage/downloads/stout.tar.gz"
 STOUT_ARCHIVE_SHA256 = "6be3a8ee145aa9364e06eec25348a3ac65cdcaf68951c52203b9bd7a4413341e"
+KURUCZ_CR_II_URL = "http://kurucz.harvard.edu/atoms/2401/gf2401.all"
+KURUCZ_CR_II_SHA256 = "6f0c4d0e01421fb0549ddbcf5649af391ca9b930e4e83e693e662d5874505205"
+_KURUCZ_CR_II_SOURCE = "Kurucz Cr II gf2401.all missing-transition supplement"
 MG_HE_RED_WING_URL = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/619/A152/fig5.dat"
 MG_HE_RED_WING_SHA256 = "b79879240f935aadb7afbf68a590a26a2a43c572315323c8785fc750bb0f9aa7"
 VERNER_PHOTOIONIZATION_URL = "https://www.pa.uky.edu/~verner/dima/photo/photo.dat"
@@ -2707,12 +2710,16 @@ def read_stout_atomic_database(
     *,
     elements: Iterable[str] = tuple(ATOMIC_MASS_U),
     maximum_charge: int | Mapping[str, int] = 2,
+    include_default_supplements: bool = True,
 ) -> AtomicDatabase:
     """Read consecutive ion stages for the requested elements.
 
     ``maximum_charge`` may be one common charge or an element-to-charge
     mapping.  Requesting charge ``Z`` appends a one-level bare nucleus, which
     closes the Saha ladder without requiring a non-existent Stout file.
+    By default the bundled Kurucz Cr II missing-transition supplement is
+    applied when Cr II is present. Set ``include_default_supplements=False``
+    to read the unmodified Stout database for atomic-data comparisons.
     """
 
     if isinstance(maximum_charge, Mapping):
@@ -2741,7 +2748,50 @@ def read_stout_atomic_database(
         for charge in range(local_maximum + 1):
             ion = read_stout_atomic_ion(root, symbol, charge)
             ions[(symbol, charge)] = ion
-    return AtomicDatabase(MappingProxyType(ions))
+    database = AtomicDatabase(MappingProxyType(ions))
+    if include_default_supplements:
+        database = augment_chromium_ii_kurucz_transitions(database)
+    return database
+
+
+def augment_chromium_ii_kurucz_transitions(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Add missing Cr II transitions from the bundled full Kurucz ion list.
+
+    Preserve every existing Stout level and transition, including its
+    oscillator strength and damping data. Match Kurucz levels by energy and
+    statistical weight, append absent levels, and retain Kurucz damping
+    constants on the added lines. Vacuum wavelengths come from the Kurucz
+    level-energy differences. The full file is used without a wavelength cut;
+    the usual synthesis strength and line-budget selections still apply.
+    No network access is needed, and repeated calls are idempotent.
+    """
+
+    import lzma
+    import tempfile
+
+    key = ("Cr", 1)
+    ion = database.ions.get(key)
+    if ion is None or _KURUCZ_CR_II_SOURCE in ion.source:
+        return database
+    resource = files("wd_spectra").joinpath("data/atomic/gf2401.all.xz")
+    content = lzma.decompress(resource.read_bytes())
+    if hashlib.sha256(content).hexdigest() != KURUCZ_CR_II_SHA256:
+        raise ValueError("Kurucz Cr II checksum mismatch: gf2401.all")
+    with tempfile.TemporaryDirectory(prefix="openwd-crii-") as scratch:
+        path = Path(scratch) / "gf2401.all"
+        path.write_bytes(content)
+        merged = read_kurucz_gf100_atomic_database(
+            [path], database, elements=("Cr",), replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    ions = dict(merged.ions)
+    provenance = f"{_KURUCZ_CR_II_SOURCE} (SHA256 {KURUCZ_CR_II_SHA256})"
+    ions[key] = replace(ions[key], source=f"{ion.source}; {provenance}")
+    return AtomicDatabase(
+        MappingProxyType(ions), source=f"{database.source}; {provenance}",
+    )
 
 
 def augment_oxygen_i_6258_6271_multiplet(
