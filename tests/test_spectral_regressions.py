@@ -28,7 +28,12 @@ APPROVED_DENSITY_EDGE = (
     Path(__file__).parent
     / "data/approved_regressions/stark_density_floor_2026_10_05/fixed"
 )
+APPROVED_CRII = (
+    Path(__file__).parent
+    / "data/approved_regressions/kurucz_crii_2026_10_08/fixed"
+)
 DENSITY_EDGE_CASES = frozenset({"da-4000", "da-5000", "dab-9000"})
+CRII_CASES = frozenset({"dz-pg1225", "dz-j0738"})
 pytestmark = pytest.mark.spectral
 CASES = [
     "da-3000",
@@ -45,7 +50,7 @@ CASES = [
 
 
 @pytest.mark.parametrize("case", CASES)
-def test_checked_scattering_preserves_broad_spectral_controls(case):
+def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch):
     path = CONTROLS / (case + ".npz")
     with np.load(path) as saved:
         kind = str(saved["spectral_type"])
@@ -56,6 +61,8 @@ def test_checked_scattering_preserves_broad_spectral_controls(case):
     # Explicitly reviewed density-edge outputs are versioned separately.
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
+    if case in CRII_CASES:
+        approved_directory = APPROVED_CRII
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -97,3 +104,27 @@ def test_checked_scattering_preserves_broad_spectral_controls(case):
             expected[take], wave[take]
         )
         assert abs(change) < 1e-5
+
+    if case in CRII_CASES:
+        # Keep the historical control as an independent check: the only
+        # intended difference is the newly default Cr II supplement.
+        from wd_spectra.models import stellar
+        from wd_spectra.metals import KURUCZ_CR_II_SHA256
+
+        assert KURUCZ_CR_II_SHA256 in result.metadata["atomic_lines"]
+        reader = stellar.read_stout_atomic_database
+
+        def raw_stout(*args, **kwargs):
+            return reader(*args, **kwargs, include_default_supplements=False)
+
+        monkeypatch.setattr(stellar, "read_stout_atomic_database", raw_stout)
+        with pytest.warns(AtmosphereConvergenceWarning):
+            original = compute_dz(
+                config, wave, initial_atmosphere=atmosphere, relax_atmosphere=False,
+            )
+        with np.load(APPROVED / (case + ".npz")) as historical:
+            old_flux = historical["surface_flux"]
+        np.testing.assert_allclose(
+            original.spectrum.surface_flux_lambda, old_flux,
+            rtol=2e-6, atol=1e-12 * np.max(old_flux),
+        )
