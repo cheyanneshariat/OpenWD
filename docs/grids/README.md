@@ -1,8 +1,9 @@
 # Precomputed model grids
 
-The current grid table contains **1,920 numerical completions from 2,179 requests**.
+The current grid table contains **1,923 numerical completions from 2,179 requests**.
 The October 9 update adds a 336-point production DAB/DBA grid, with 326 accepted
-spectra. DA, DB, DZ, DAZ, DQ and hot-family counts retain their October 8 results.
+spectra. A separate cold DB supplement selects four verified 5,000 K models,
+adding three accepted parameter points. Other families retain their October 8 results.
 
 ![Current grid progress](grid_progress.png)
 
@@ -18,7 +19,7 @@ grid's six abundance planes. Blank regions were not requested.
 | Family | Numerical completions | Requests | Source snapshot |
 |---|---:|---:|---|
 | DA | 807 | 852 | October 8 |
-| DB | 489 | 638 | October 8 |
+| DB | 492 | 638 | October 8 + cold supplement |
 | DZ | 293 | 322 | October 8 |
 | DAO | 0 | 15 | October 8 |
 | DO | 0 | 7 | October 8 |
@@ -30,21 +31,26 @@ The eight-family figure covers 2,175 requests. The full table retains 2,179,
 including four D6, DAH and PG1159 cases omitted from the figure. Current counts
 replace the five earlier standard-quality DAB examples with the new production
 grid. Those examples remain in the [October 8 snapshot](history/2026-10-08/README.md)
-and original archive; they are excluded from the current denominator.
+and original archive; they are excluded from the current denominator. The cold
+DB supplement replaces four selected records at matching original coordinates;
+three add coverage and log g 8 repeats a comparison model. Its prior outcomes
+remain in [the preceding snapshot](history/2026-10-09-dab/README.md).
 
 ## Downloads and spectrum examples
 
 The [contributor's draft releases](https://github.com/cheyanneshariat/OpenWD/releases)
 contain the original DA/DB/DZ/DAZ/DQ archives and the new 326-spectrum DAB/DBA
-production archive. Draft files require write access to the fork. They become
+production archive, plus a four-model cold DB supplement. Draft files require
+write access to the fork. They become
 public only when the releases are published. Numerical development previews are
 distinct from a physically qualified release grid.
 
 [DAB/DBA coverage, downloads and spectrum sequences](dab-2026-10-09/README.md)
 show abundance, temperature and gravity varied separately. The 84.2-MiB DAB
 archive includes all settings, native numerical checks, the ten gaps and checksums.
-The original grid archives remain unchanged. No qualified hot-family grid was
-added by this update.
+[Cold DB downloads and Montreal comparison](db-cold-2026-10-09/README.md) identify
+all four numerical demonstrations and their experimental-physics scope. The
+original grid archives remain unchanged. No qualified hot-family grid was added.
 
 Wavelengths are vacuum Angstroms. Flux is surface Fλ in
 `erg s^-1 cm^-2 Angstrom^-1`, without normalization or resampling.
@@ -54,6 +60,10 @@ Different families can use different wavelength grids.
 
 The October 8 grids use source `cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5`.
 The October 9 DAB/DBA grid uses `0a74fdbe06596fc145f5169a3b239ddd67053141`.
+The cold DB supplement uses that source for log g 7/8, and
+`54e401e20936119d707bb3623e0a13e29373b6e8` for log g 7.5/7.75. Those saved
+calculations predate the final merged gravity follow-up; they are not reruns of
+current main.
 [Dataset records](dataset.json) and each status row identify the actual source.
 Updating the repository does not retroactively recompute stored spectra.
 

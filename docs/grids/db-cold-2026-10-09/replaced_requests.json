@@ -1,0 +1,90 @@
+[
+  {
+    "previous": {
+      "model_id": "db-9423f894edef9d57708e237f",
+      "family": "DB",
+      "role": "grid-node",
+      "teff_K": "5000.0",
+      "logg": "8.0",
+      "pattern": "",
+      "metal_scale_dex": "",
+      "log_H_He": "",
+      "log_C_He": "",
+      "magnetic_field_MG": "",
+      "status": "COMPLETE_NUMERICAL",
+      "plot_status": "completed",
+      "plot_note": "Passed the bank numerical checks",
+      "snapshot": "2026-10-08",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "quality": "native preset; see archived full request"
+    },
+    "selected_new": "db-cold-7dd9ae88b3171eb0f0f0b4dd"
+  },
+  {
+    "previous": {
+      "model_id": "db-7359ba0ed7be75a842de4821",
+      "family": "DB",
+      "role": "grid-node",
+      "teff_K": "5000.0",
+      "logg": "7.75",
+      "pattern": "",
+      "metal_scale_dex": "",
+      "log_H_He": "",
+      "log_C_He": "",
+      "magnetic_field_MG": "",
+      "status": "DOMAIN_OR_UNSUPPORTED_CONFIG",
+      "plot_status": "unsupported",
+      "plot_note": "Requested parameters blocked by the current driver",
+      "snapshot": "2026-10-08",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "quality": "native preset; see archived full request"
+    },
+    "selected_new": "db-cold-574f93c32f8e5230907d74dd"
+  },
+  {
+    "previous": {
+      "model_id": "db-e2967987164982c6de51debf",
+      "family": "DB",
+      "role": "grid-node",
+      "teff_K": "5000.0",
+      "logg": "7.5",
+      "pattern": "",
+      "metal_scale_dex": "",
+      "log_H_He": "",
+      "log_C_He": "",
+      "magnetic_field_MG": "",
+      "status": "DOMAIN_OR_UNSUPPORTED_CONFIG",
+      "plot_status": "unsupported",
+      "plot_note": "Requested parameters blocked by the current driver",
+      "snapshot": "2026-10-08",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "quality": "native preset; see archived full request"
+    },
+    "selected_new": "db-cold-e3973decf8ef0c8390c3af73"
+  },
+  {
+    "previous": {
+      "model_id": "db-5390e87d19e108e6aed14331",
+      "family": "DB",
+      "role": "grid-node",
+      "teff_K": "5000.0",
+      "logg": "7.0",
+      "pattern": "",
+      "metal_scale_dex": "",
+      "log_H_He": "",
+      "log_C_He": "",
+      "magnetic_field_MG": "",
+      "status": "DOMAIN_OR_UNSUPPORTED_CONFIG",
+      "plot_status": "unsupported",
+      "plot_note": "Requested parameters blocked by the current driver",
+      "snapshot": "2026-10-08",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "quality": "native preset; see archived full request"
+    },
+    "selected_new": "db-cold-27dc566d77052c8077fb58c8"
+  }
+]

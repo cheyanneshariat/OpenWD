@@ -2,6 +2,12 @@
 
 [Model guide](README.md) · [Getting started](../getting-started.md)
 
+[Precomputed DB grids and cold-model comparison](../grids/db-cold-2026-10-09/README.md):
+a verified 5,000 K supplement adds three accepted parameter points at log g 7,
+7.5 and 7.75, with log g 8 repeated for comparison. Current selected DB coverage
+is 492/638. These experimental dense-He models retain their numerical qualification
+and unresolved physical/depth/interpolation limits.
+
 `compute_db` solves a homogeneous pure-helium LTE atmosphere. It combines a
 Hummer--Mihalas/Q-MHD helium EOS, He I/II/III continuum opacity, corrected
 Doppler-convolved Beauchamp25-LD He I Stark profiles, Schoening/SYNSPEC He II

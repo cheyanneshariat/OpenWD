@@ -20,33 +20,10 @@
       "requests": 336,
       "spectra": 326,
       "archive_sha256": "e6c6c1101dac6295fcff7c434555ff59b57b61a1878e47960625d9b793ac0d2d"
-    },
-    "DB-cold-2026-10-09": {
-      "accepted_npz_arrays_read": 148,
-      "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
-      "bytes": 426446,
-      "control_points": 1,
-      "files_verified": 23,
-      "models": 4,
-      "native_spectrum_bytes_preserved": true,
-      "new_parameter_points": 3,
-      "sha256": "5c434fc64177715f3e168d7620fe70b0ad6359869b3b1f5490c7a770002b5e92",
-      "source_hashes_verified": true,
-      "source_commits": [
-        "0a74fdbe06596fc145f5169a3b239ddd67053141",
-        "54e401e20936119d707bb3623e0a13e29373b6e8"
-      ],
-      "temperature_K": 5000,
-      "gravities": [
-        7,
-        7.5,
-        7.75,
-        8
-      ]
     }
   },
   "requests": 2179,
-  "qualified_spectra": 1923,
+  "qualified_spectra": 1920,
   "families": {
     "DA": {
       "models": 807,
@@ -55,30 +32,10 @@
       "raw_spectrum_bytes": 762702963
     },
     "DB": {
-      "models": 492,
-      "requests": 638,
-      "archives": [
-        {
-          "archive": "OpenWD-DB-initial-20261008.tar.gz",
-          "models": 489,
-          "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
-          "bytes": 129389918
-        },
-        {
-          "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
-          "models": 4,
-          "new_parameter_points": 3,
-          "repeated_control_points": 1,
-          "source_commits": [
-            "0a74fdbe06596fc145f5169a3b239ddd67053141",
-            "54e401e20936119d707bb3623e0a13e29373b6e8"
-          ],
-          "bytes": 426446
-        }
-      ],
-      "archive_spectrum_count": 493,
-      "current_selected_grid_points": 492,
-      "duplicate_policy": "Do not count the new log g 8 control as another requested parameter point"
+      "models": 489,
+      "archive": "OpenWD-DB-initial-20261008.tar.gz",
+      "bytes": 129389918,
+      "raw_spectrum_bytes": 456200405
     },
     "DZ": {
       "models": 293,
@@ -112,12 +69,8 @@
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
   "source_commits": {
     "2026-10-08": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
-    "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141",
-    "DB-cold-2026-10-09": [
-      "0a74fdbe06596fc145f5169a3b239ddd67053141",
-      "54e401e20936119d707bb3623e0a13e29373b6e8"
-    ]
+    "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141"
   },
   "history": "history/2026-10-08/dataset.json",
-  "selection": "Keep earlier non-DB/DAB requests, use the 336-point DAB production grid, and select four verified cold DB supplement records at matching original parameters. Three add coverage; log g 8 is a repeated control. Previous outcomes remain in dated snapshots."
+  "selection": "Keep all October 8 non-DAB requests; use the 336 production DAB requests from October 9. The earlier five DAB examples remain in the historical snapshot and original draft assets, excluded from current counts."
 }
