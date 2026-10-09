@@ -222,14 +222,41 @@ def frequency_hilbert_dispersion(
     profile = np.asarray(absorption_profile, dtype=np.float64)
     if profile.ndim != 2 or profile.shape[0] != wavelength_angstrom.size:
         raise ValueError("absorption_profile must have shape (wavelength, depth)")
+    if not np.all(np.isfinite(profile)):
+        raise ValueError("absorption_profile must be finite")
     if not np.any(profile):
         return np.zeros_like(profile)
     # Ascending frequency in units of 1e15 Hz keeps the logarithms well scaled.
-    frequency = (LIGHT_SPEED / (wavelength_angstrom * 1.0e-8))[::-1] / 1.0e15
-    values = profile[::-1]
+    frequency_all = (LIGHT_SPEED / (wavelength_angstrom * 1.0e-8))[::-1] / 1.0e15
+    values_all = profile[::-1]
+    # Distinct wavelength nodes can round to the same (or a few-ulp-apart)
+    # frequency. Only an exact duplicate is a zero-length segment; its slope is
+    # 0/0 and would spread NaN to every output. Nodes within 64 ulp of the
+    # retained (first) node of their group are merged into it, provided each
+    # value agrees with the retained value to 1e-9 of the per-depth maximum.
+    # Anchoring both tests to the retained node (not to the neighbouring node)
+    # bounds the whole group's frequency span and value drift, so a chain of
+    # small steps cannot accumulate a large merged error. A larger difference
+    # is a jump this continuous interpolant cannot represent and is rejected.
+    tolerance = 64.0 * np.finfo(np.float64).eps
+    keep = np.ones(frequency_all.size, dtype=bool)
+    close = np.flatnonzero(np.diff(frequency_all) <= tolerance * frequency_all[1:]) + 1
+    if close.size:
+        scale = np.max(np.abs(values_all), axis=0)
+        anchor = -1
+        for j in close:
+            if keep[j - 1]:
+                anchor = j - 1
+            if frequency_all[j] - frequency_all[anchor] <= tolerance * frequency_all[j]:
+                if np.any(np.abs(values_all[j] - values_all[anchor]) > 1.0e-9 * scale):
+                    raise ValueError("absorption profile is discontinuous at coincident frequency nodes")
+                keep[j] = False
+            else:
+                anchor = j
+    frequency = frequency_all[keep]
+    values = values_all[keep]
     step = np.diff(frequency)
     slope = np.diff(values, axis=0) / step[:, np.newaxis]
-    n = frequency.size
     left_slope = np.vstack((np.zeros((1, values.shape[1])), slope))  # segment j-1
     right_slope = np.vstack((slope, np.zeros((1, values.shape[1]))))  # segment j
     left_value = np.vstack((np.zeros((1, values.shape[1])), values[:-1] + slope * step[:, None]))
@@ -238,10 +265,12 @@ def frequency_hilbert_dispersion(
     # c_j(x) = [f_j + s_j (x - y_j)] - [f_{j-1}(y_j) + s_{j-1} (x - y_j)]
     alpha = right_value - left_value - (right_slope - left_slope) * frequency[:, None]
     beta = right_slope - left_slope
-    result = np.empty_like(values)
     constant = (values[-1] - values[0])[np.newaxis, :]
-    for start in range(0, n, chunk):
-        x = frequency[start : start + chunk]
+    # Evaluate at every original node (merged duplicates receive the value at
+    # their shared frequency).
+    result = np.empty_like(values_all)
+    for start in range(0, frequency_all.size, chunk):
+        x = frequency_all[start : start + chunk]
         distance = np.abs(x[:, None] - frequency[None, :])
         logarithm = np.log(np.where(distance > 0.0, distance, 1.0))
         result[start : start + chunk] = (
