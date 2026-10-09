@@ -75,3 +75,65 @@ sigma Teff^4. The bare-grid formal solution partly cancelled this, so the
 totals looked right while the structure was not. Standard-quality totals
 are now within about 0.75% (see the [DZ guide](DZ.md) for the method). Setting
 both to 0 and 1 restores the previous numerics.
+
+## Dense spectrum reconstruction
+
+The experimental mass-conservative dense-He spectrum uses the existing
+positive-intensity reconstruction option in both its coupled transfer solve
+and independent prescribed-source check. This avoids tiny negative source
+values caused by numerical cancellation in faint radiation fields. It does
+not clip negative values, normalize the flux, change the atmosphere, or relax
+the qualification limits. The selected transfer option is saved in the
+metadata and retained by the independent spectrum audit. Older saved runs
+without that flag retain their previous audit option.
+
+The regression fixture is one transfer row from a 5,000 K/log g 7 development
+calculation. It checks the transfer operation; it does not add public
+low-gravity support or qualify an entire atmosphere. The cool public workflow's
+existing gravity restriction is unchanged by this spectrum repair.
+
+## A tested warm-model setting
+
+At 27,000 K/log g 9.25, a fresh production calculation with the default
+`photospheric_depth_concentration=1` failed the temperature-stationarity check.
+Changing this existing setting to 2 passed all five required structure checks
+on the same unchanged source, with the same physics and acceptance limits:
+
+```python
+from wd_spectra.models import DBConfig, run_model
+
+result = run_model(
+    DBConfig(
+        effective_temperature=27000,
+        logg=9.25,
+        quality="production",
+        photospheric_depth_concentration=2,
+    ),
+    "results/db-27000-9.25-depth2",  # fresh output directory
+    require_convergence=True,
+)
+```
+
+Both runs used 80 layers. The solved atmospheres had 37 and 43 layers,
+respectively, between Rosseland optical depths 0.01 and 10. The measured
+unrestricted log-temperature correction decreased from 0.00299 to
+0.00000145; the acceptance limit stayed at 0.0003. The maximum optical
+surface-flux difference was 0.1504% over 3,000–10,000 Å, without normalization.
+The failed default result remains an unfinished reference despite that small
+spectral difference.
+
+[![Warm DB layer placement and convergence before/after](../assets/db-depth-concentration-before-after.png)](../assets/db-depth-concentration-before-after.pdf)
+
+[Download the before/after figure (PDF)](../assets/db-depth-concentration-before-after.pdf).
+The upper panels show temperature versus column mass and differences at the
+same column mass. The latter use linear interpolation in log column mass
+within the shared domain. The lower panels show the actual layer placement
+and three residuals divided by their unchanged acceptance limits. Values below
+one pass those displayed checks. Source closure and lower-boundary screening
+also pass in both runs; the [evidence record](../assets/db-depth-concentration-evidence.json)
+retains all five checks and the two exact configurations.
+
+This is a demonstrated numerical setting for one model, not a new default or
+automatic retry policy. Independent depth convergence and physical accuracy
+at these parameters remain unverified. The opacity, equation of state,
+convection prescription, solver limits, and production point count are unchanged.

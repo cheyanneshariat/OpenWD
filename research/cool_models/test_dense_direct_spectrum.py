@@ -56,6 +56,8 @@ def test_mass_synthesis_matches_structure_and_rejects_wrong_transfer(monkeypatch
         module.direct_result(original,8)
     result=module.direct_result(original,8,mass_conservative=True)
     tau=optical_depth_from_mass_opacity(m,absorption+scattering)
-    _,field=mass_field(tau,planck_lambda_angstrom(wave[:,None],t[None,:]),absorption,scattering,column_mass=m,n_angle=8)
+    _,field=mass_field(tau,planck_lambda_angstrom(wave[:,None],t[None,:]),absorption,scattering,
+                      column_mass=m,n_angle=8,reconstruct_intensity=True)
     np.testing.assert_array_equal(result.spectrum.surface_flux_lambda,field.interface_flux[:,0])
     assert result.atmosphere.temperature is t
+    assert result.atmosphere.metadata['experimental_positive_intensity_reconstruction'] is True
