@@ -1,0 +1,236 @@
+{
+  "index_sha256": "5a0af26318e26028239219a421754ff911d65f7532f6c3941bd75165b969bbc7",
+  "interpretation": "Parameter response of saved numerically accepted models; no external physical/interpolation/recovery validation",
+  "plots": {
+    "dab_abundance_sequence": {
+      "fixed_parameters": {
+        "logg": 8,
+        "teff_K": 20000
+      },
+      "flux_normalization": "none",
+      "models": [
+        {
+          "model_id": "dab-c93c57fb65a5823d0d647021",
+          "parameters": {
+            "log_H_He": -6.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "77fe861a9e20a18b6691e99e77d3123042c69c9084c688e430fac31118de3fd4"
+        },
+        {
+          "model_id": "dab-c218c7629dff97566f4b3958",
+          "parameters": {
+            "log_H_He": -4.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "dcaeb65f5b55e82e96d8dc1c4293ddf83d844ce2939f8586cbb7b048eaf1da29"
+        },
+        {
+          "model_id": "dab-dfa7e09f866ea007520f9403",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "79e5a5558cf874b165a26b4e5063e30862bc0e20705004f1a900d75f602378a8"
+        },
+        {
+          "model_id": "dab-384c120fb1e0e6bee1c6d63b",
+          "parameters": {
+            "log_H_He": 0.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "b42bdb306d56511aa3f15694f3adc3dbee16d9e1cf58b7f91b403e948b35a773"
+        },
+        {
+          "model_id": "dab-913d1b6533dafbde6483f379",
+          "parameters": {
+            "log_H_He": 2.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "1e491d666398b48c9c8a7445c07cd20e37ed069b7c98732c694b19387bb15e90"
+        },
+        {
+          "model_id": "dab-1976f2705c57ff1a061670c8",
+          "parameters": {
+            "log_H_He": 4.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "a09afc28d9f5d1b5ecf9ee691533d265bab05db80fef692e330478faeba953bb"
+        }
+      ],
+      "ratio_definition": "Saved native F_lambda divided by the named reference spectrum at identical samples",
+      "reference_value": -2,
+      "variable": "log_H_He",
+      "wavelength_interpolation": "none"
+    },
+    "dab_gravity_sequence": {
+      "fixed_parameters": {
+        "log_H_He": -2,
+        "teff_K": 20000
+      },
+      "flux_normalization": "none",
+      "models": [
+        {
+          "model_id": "dab-a33d1de1e611bd41b01cb2fb",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 6.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "055eb23a59bb3bb0160e164b7829ccfcba5dd897c47fc958e385d84e2a35cf24"
+        },
+        {
+          "model_id": "dab-be07c8b2a0bfae7b558b1837",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 6.5,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "d8abe4ebc7f8f4849105114312a4b77499a2b8aad9b40b2d828fcbb9641cb23c"
+        },
+        {
+          "model_id": "dab-387fea33230cc0de130af894",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 7.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "1541ab6a418ee194f8c344a1d4813c6d034cf7385ca69cb33ce22d4c75ffde93"
+        },
+        {
+          "model_id": "dab-a7dd67a6d841abc5c02ae089",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 7.5,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "2c4da50e7ac09e8029b3e054a431c39428c2b4282ffcec9cf89339e2bd7706b6"
+        },
+        {
+          "model_id": "dab-dfa7e09f866ea007520f9403",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "79e5a5558cf874b165a26b4e5063e30862bc0e20705004f1a900d75f602378a8"
+        },
+        {
+          "model_id": "dab-c8c3dfc07b6f872f9ceccb54",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.5,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "086965192d07319bac270e333a02b141cbe746904404ef9a78b09d671784b9c9"
+        },
+        {
+          "model_id": "dab-366a6a0dedd5101f9a726560",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 9.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "374f37d1df3948a1c35ed58ede0056b6f50b0f13788679fd94b6c96758fc275a"
+        },
+        {
+          "model_id": "dab-dd71d809518bb56682021590",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 9.5,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "5f44083d7437c799816fa3f83419bebd59b2160a2820d297f89ac3ef467f15b5"
+        }
+      ],
+      "ratio_definition": "Saved native F_lambda divided by the named reference spectrum at identical samples",
+      "reference_value": 8,
+      "variable": "logg",
+      "wavelength_interpolation": "none"
+    },
+    "dab_temperature_sequence": {
+      "fixed_parameters": {
+        "log_H_He": -2,
+        "logg": 8
+      },
+      "flux_normalization": "none",
+      "models": [
+        {
+          "model_id": "dab-93527fd5e36a54cdb9abd90a",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 12000.0
+          },
+          "spectrum_sha256": "45e91bf13a18588c663975a7376cd25371864e866dc10f0f0691e1492c917ed7"
+        },
+        {
+          "model_id": "dab-56dc0120bb012402e4f08e8b",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 15000.0
+          },
+          "spectrum_sha256": "d81d3f820deb76451096af38cc4e093ec7f94936d5056bff0838453f48629882"
+        },
+        {
+          "model_id": "dab-dfa7e09f866ea007520f9403",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 20000.0
+          },
+          "spectrum_sha256": "79e5a5558cf874b165a26b4e5063e30862bc0e20705004f1a900d75f602378a8"
+        },
+        {
+          "model_id": "dab-7d6f77dd2f6e15eb1839ee06",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 25000.0
+          },
+          "spectrum_sha256": "5518fe5875f60d3e6b037ae5187a084b14d82ea44fc1cd150e1478ef1286365e"
+        },
+        {
+          "model_id": "dab-7a42c418decf210e1bc107f5",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 30000.0
+          },
+          "spectrum_sha256": "c04985f57f8a76a857316dc9696dfaca9acba746053078901ced3b84bc43e047"
+        },
+        {
+          "model_id": "dab-49d7373dfc7f754df7775c06",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 35000.0
+          },
+          "spectrum_sha256": "738f505cc94d5245ec76304ed953db3c4d2d07a0e0f8abcac6ffe556af0528bd"
+        },
+        {
+          "model_id": "dab-03beeda12a98a468a1483ea5",
+          "parameters": {
+            "log_H_He": -2.0,
+            "logg": 8.0,
+            "teff_K": 40000.0
+          },
+          "spectrum_sha256": "2055a07bf35421b4bfbfbbb89a3c66464e0bbf791c7ae01ddd16d7221359a975"
+        }
+      ],
+      "ratio_definition": "Saved native F_lambda divided by the named reference spectrum at identical samples",
+      "reference_value": 20000,
+      "variable": "teff_K",
+      "wavelength_interpolation": "none"
+    }
+  },
+  "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
+  "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+}

@@ -1,0 +1,73 @@
+{
+  "composition": "Homogeneous metal-free H/He; log_H_He=log10[N(H)/N(He)]",
+  "dataset": "Initial homogeneous DAB/DBA production grid",
+  "fitted_parameter_recovery_verified": false,
+  "flux": {
+    "normalization": "none",
+    "quantity": "Surface F_lambda",
+    "resampling": "none",
+    "unit": "erg s^-1 cm^-2 Angstrom^-1"
+  },
+  "format_version": 1,
+  "independent_depth_convergence_verified": false,
+  "interpolation_accuracy_verified": false,
+  "parameter_axes": {
+    "log_H_He": [
+      -6,
+      -4,
+      -2,
+      0,
+      2,
+      4
+    ],
+    "logg": [
+      6.0,
+      6.5,
+      7.0,
+      7.5,
+      8.0,
+      8.5,
+      9.0,
+      9.5
+    ],
+    "teff_K": [
+      12000,
+      15000,
+      20000,
+      25000,
+      30000,
+      35000,
+      40000
+    ]
+  },
+  "physical_accuracy_verified": false,
+  "qualification": "Native atmosphere equilibrium certificate plus independent native final-source checks",
+  "quality": "production",
+  "release_ready": false,
+  "requests": 336,
+  "saved_date": "2026-10-09",
+  "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
+  "source_bank_archive_sha256": "38fe1276ffbd0590e6620f19e7a6cee71d7ac22152e31587463afa242302f74e",
+  "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+  "spectra": 326,
+  "status_counts": {
+    "COMPLETE_NUMERICAL": 326,
+    "DOMAIN_OR_UNSUPPORTED_CONFIG": 9,
+    "NUMERICAL_NONCONVERGENCE": 1
+  },
+  "wavelength": {
+    "maximum": 30000,
+    "minimum": 900,
+    "points": 18901,
+    "unit": "vacuum Angstrom"
+  },
+  "archive": {
+    "models": 326,
+    "requests": 336,
+    "archive": "OpenWD-DAB-production-20261009.tar.gz",
+    "bytes": 88273096,
+    "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+    "release_tag": "grid-preview-2026-10-09-dab",
+    "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks"
+  }
+}

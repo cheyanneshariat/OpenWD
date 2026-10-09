@@ -1,5 +1,6 @@
 {
-  "kind": "Development grids; current DAB replaces the five historical standard-quality DAB examples",
+  "kind": "development preview",
+  "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
   "snapshots": {
     "showcase-bank-v6": {
       "created_utc": "2026-10-08T08:23:25.175441+00:00",
@@ -12,18 +13,10 @@
       "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
       "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
       "index_sha256": "2ae95223d0cc5d9f3d7f535b5c9fa155853dae0eca6d5f2f175676eac240994a"
-    },
-    "DAB-2026-10-09": {
-      "saved_date": "2026-10-09",
-      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
-      "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
-      "requests": 336,
-      "spectra": 326,
-      "archive_sha256": "e6c6c1101dac6295fcff7c434555ff59b57b61a1878e47960625d9b793ac0d2d"
     }
   },
-  "requests": 2179,
-  "qualified_spectra": 1920,
+  "requests": 1848,
+  "qualified_spectra": 1599,
   "families": {
     "DA": {
       "models": 807,
@@ -44,13 +37,10 @@
       "raw_spectrum_bytes": 276916937
     },
     "DAB": {
-      "models": 326,
-      "requests": 336,
-      "archive": "OpenWD-DAB-production-20261009.tar.gz",
-      "bytes": 88273096,
-      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
-      "release_tag": "grid-preview-2026-10-09-dab",
-      "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks"
+      "models": 5,
+      "archive": "OpenWD-DAB-initial-20261008.tar.gz",
+      "bytes": 1343594,
+      "raw_spectrum_bytes": 4725545
     },
     "DAZ": {
       "models": 3,
@@ -66,11 +56,5 @@
     }
   },
   "spectra_only": true,
-  "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "source_commits": {
-    "2026-10-08": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
-    "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141"
-  },
-  "history": "history/2026-10-08/dataset.json",
-  "selection": "Keep all October 8 non-DAB requests; use the 336 production DAB requests from October 9. The earlier five DAB examples remain in the historical snapshot and original draft assets, excluded from current counts."
+  "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification"
 }

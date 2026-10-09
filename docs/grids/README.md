@@ -1,71 +1,83 @@
-# Initial model grids
+# Precomputed model grids
 
-We are building precomputed OpenWD grids. This page shows which requested
-models passed their numerical checks and which still need work.
+The current grid table contains **1,920 numerical completions from 2,179 requests**.
+The October 9 update adds a 336-point production DAB/DBA grid, with 326 accepted
+spectra. DA, DB, DZ, DAZ, DQ and hot-family counts retain their October 8 results.
 
-![Initial grid progress](grid_progress.png)
+![Current grid progress](grid_progress.png)
 
-Each title gives completed models divided by requested models. The symbols mean:
+Each title gives numerical completions divided by requests. Green circles passed
+the recorded checks. Red crosses failed at least one required numerical check.
+Grey squares reached a time limit. Grey triangles could not run their requested
+configuration. Grey circles were not started. Timeouts remain unfinished.
 
-- Green circles: the model passed the required numerical checks.
-- Red crosses: at least one required numerical check failed.
-- Grey squares: the run reached its time limit.
-- Grey triangles: the workflow used here could not run the requested inputs.
-- Grey circles: no calculation was started.
+Different compositions can share temperature and gravity, so symbols can overlap.
+The [DAB composition panels](dab-2026-10-09/README.md#coverage) separate that
+grid's six abundance planes. Blank regions were not requested.
 
-Timeouts remain unfinished. Red crosses include stalled calculations, unstable
-temperature profiles and failed bottom-boundary checks. The bottom boundary is
-the deepest layer we calculate. That check asks whether this layer is deep
-enough to isolate the result from the assumed conditions below it.
+| Family | Numerical completions | Requests | Source snapshot |
+|---|---:|---:|---|
+| DA | 807 | 852 | October 8 |
+| DB | 489 | 638 | October 8 |
+| DZ | 293 | 322 | October 8 |
+| DAO | 0 | 15 | October 8 |
+| DO | 0 | 7 | October 8 |
+| DAB/DBA | 326 | 336 | October 9 |
+| DAZ | 3 | 3 | October 8 |
+| DQ | 2 | 2 | October 8 |
 
-Different compositions can share the same temperature and gravity, so their
-symbols can overlap. Blank regions were not requested.
+The eight-family figure covers 2,175 requests. The full table retains 2,179,
+including four D6, DAH and PG1159 cases omitted from the figure. Current counts
+replace the five earlier standard-quality DAB examples with the new production
+grid. Those examples remain in the [October 8 snapshot](history/2026-10-08/README.md)
+and original archive; they are excluded from the current denominator.
 
-| Family | Completed | Requested |
-|---|---:|---:|
-| DA | 807 | 852 |
-| DB | 489 | 638 |
-| DZ | 293 | 322 |
-| DAO | 0 | 15 |
-| DO | 0 | 7 |
-| DAB/DBA | 5 | 5 |
-| DAZ | 3 | 3 |
-| DQ | 2 | 2 |
+## Downloads and spectrum examples
 
-The figure covers 1,844 requests. The full table retains 1,848 IDs, including
-four D6, DAH and PG1159 requests omitted from the figure.
+The [contributor's draft releases](https://github.com/cheyanneshariat/OpenWD/releases)
+contain the original DA/DB/DZ/DAZ/DQ archives and the new 326-spectrum DAB/DBA
+production archive. Draft files require write access to the fork. They become
+public only when the releases are published. Numerical development previews are
+distinct from a physically qualified release grid.
 
-## Downloads
+[DAB/DBA coverage, downloads and spectrum sequences](dab-2026-10-09/README.md)
+show abundance, temperature and gravity varied separately. The 84.2-MiB DAB
+archive includes all settings, native numerical checks, the ten gaps and checksums.
+The original grid archives remain unchanged. No qualified hot-family grid was
+added by this update.
 
-The [draft release](https://github.com/cheyanneshariat/OpenWD/releases)
-contains 1,599 spectra, packaged by type: DA, DB, DZ, DAB/DBA, DAZ and DQ.
-It also contains full model settings, request tables and file checksums.
-The files total about 433 MB. No certified DAO or DO spectra are available yet.
-GitHub shows draft files to users with write access to the fork. Publishing
-the release will make the downloads public.
-
-Wavelengths are vacuum Angstroms. Flux is surface F_lambda in
+Wavelengths are vacuum Angstroms. Flux is surface Fλ in
 `erg s^-1 cm^-2 Angstrom^-1`, without normalization or resampling.
-Different workflows can use different wavelength grids.
+Different families can use different wavelength grids.
 
-These models were computed with source
-`cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5` and saved on October 8, 2026.
-Newer development runs use a separate source version and are not included here.
+## Source versions and qualification
 
-Passing numerical checks does not establish physical accuracy. We have not shown that every model stays unchanged when we add atmosphere
-layers or extend the calculation deeper.
-Cool dense-helium DB models use experimental physics, identified in their records.
-This is an incomplete initial grid.
+The October 8 grids use source `cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5`.
+The October 9 DAB/DBA grid uses `0a74fdbe06596fc145f5169a3b239ddd67053141`.
+[Dataset records](dataset.json) and each status row identify the actual source.
+Updating the repository does not retroactively recompute stored spectra.
 
-## Reproduce and update the plot
+Numerical checks include atmosphere equilibrium and the recorded spectrum checks.
+A failed check can reflect a stalled solve, temperature instability, source
+inconsistency, or an insufficient bottom boundary. The deepest calculated layer
+must isolate the spectrum from the assumed conditions below it. The DAB page
+records its one temperature-stationarity failure and nine unsupported requests.
 
-The [status table](progress.csv) keeps each original outcome alongside the
-category used in the plot. Use the existing NumPy/Matplotlib environment:
+Passing these checks does not establish physical accuracy, independent depth
+convergence, interpolation precision or calibrated parameter recovery.
+Cool dense-helium DB models retain their experimental-physics labels.
+The grids are useful for inspecting coverage and model response; several families
+and parameter regions still need work.
+
+## Reproduce the coverage figure
+
+[The status table](progress.csv) preserves original outcomes alongside plot
+categories. Run in the existing NumPy/Matplotlib environment:
 
 ```bash
 python docs/grids/plot_grid_progress.py --output output/grid-progress
 ```
 
-For an update, export a new verified status table and regenerate the figure.
-Record the source version, model settings and saved date. Retain earlier results.
-Models stopped by a resource limit or missing required checks remain unfinished.
+The [DAB plotting script](plot_dab_spectra.py) reads the new archive and reproduces
+its coverage and spectrum figures. For later updates, retain the earlier snapshot,
+record the new source and full settings, and regenerate dependent tables and plots.

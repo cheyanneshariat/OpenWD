@@ -2,6 +2,11 @@
 
 [Model guide](README.md) · [Getting started](../getting-started.md)
 
+[Precomputed production grid and spectrum sequences](../grids/dab-2026-10-09/README.md):
+326 numerically accepted spectra from 336 requests, spanning 12,000–40,000 K,
+log g 6–9.5, and log10 N(H)/N(He) −6 to +4. The table retains ten gaps and
+the original source/settings; physical and interpolation accuracy remain unqualified.
+
 `compute_dab` defaults to one homogeneous atomic H/He layer in LTE; it is not a
 stratified thin-hydrogen-layer calculation. Hydrogen and helium share the
 charge-neutrality solution and nonideal occupation-probability EOS. The module
