@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DAH_PAPER = ("j1007+1237", "j1034+0327", "j1154+0117", "j2149-0728",
              "j1254+5612", "j1018+0111", "j1351+5419", "j2247+1456")
 SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
+    "dah-limb-integral",
     "d6-j1637",
     "da-3000",
     "da-4000",
@@ -100,6 +101,10 @@ def commands(tier, cases=()):
             tasks[case] = pytest + [REGRESSIONS[case]]
         elif tier == "spectra" and case == "d6-j1637":
             tasks[case] = pytest + ["tests/test_d6_regression.py::test_j1637_fixed_atmosphere_spectrum"]
+        elif tier == "spectra" and case == "dah-limb-integral":
+            tasks[case] = pytest + [
+                "tests/test_dah_disk_quadrature.py::test_near_zero_spectrum_matches_independent_limb_integral"
+            ]
         elif tier == "spectra" and case.startswith("dah-"):
             tasks[case] = pytest + [f"tests/test_dah_paper.py::test_public_default_reproduces_frozen_paper_spectrum[{case[4:]}]"]
         elif tier == "spectra" and case == "dq-j1235":
