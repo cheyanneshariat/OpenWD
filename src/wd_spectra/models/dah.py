@@ -152,10 +152,11 @@ def dah_surface_cells(
     raise ValueError("field_geometry must be 'uniform' or 'dipole'")
 
 
-# Dense raw quadrature for the drift-resolved disk. Only distinct field bins
-# cost a transfer solution; the raw grid only fixes each bin's statistics.
+# Dense raw quadrature for the drift-resolved disk. Distinct field bins
+# require new opacity/source calculations; limb rays share those results.
 DRIFT_RESOLVED_RAW_MU_NODES = 192
 DRIFT_RESOLVED_RAW_AZIMUTHS = 384
+DRIFT_RESOLVED_LIMB_BINS = 8
 
 
 def _drift_resolved_dipole_cells(
@@ -166,10 +167,6 @@ def _drift_resolved_dipole_cells(
     offset = np.asarray(config.dipole_offset_radius, dtype=np.float64)
     if offset.shape != (3,) or np.any(~np.isfinite(offset)) or np.linalg.norm(offset) >= 0.8:
         raise ValueError("dipole_offset_radius must be three finite values with modulus < 0.8")
-    if config.magnetic_field_megagauss == 0.0:
-        # No component drift exists, but the limb-angle quadrature still
-        # matters. Preserve it rather than compress the disk to one ray.
-        return dah_surface_cells(replace(config, disk_component_drift_angstrom=None))
     distance_scale = 1.0 - float(np.linalg.norm(offset))
     raw = dipole_surface_cells(
         config.magnetic_field_megagauss,
@@ -189,13 +186,14 @@ def _drift_resolved_dipole_cells(
         float(np.max(raw.field_strength_megagauss)),
     )
     if sampled[0] == sampled[1]:
-        return field_binned_surface_cells(raw, [sampled[0], np.nextafter(sampled[1], np.inf)])
+        edges = [sampled[0], np.nextafter(sampled[1], np.inf)]
+        return field_binned_surface_cells(raw, edges, n_limb_bins=DRIFT_RESOLVED_LIMB_BINS)
     edges = drift_resolved_field_edges(
         sampled,
         lambda grid: balmer_component_drift_rate(grid, wavelength_range_angstrom, transitions),
         float(config.disk_component_drift_angstrom),  # type: ignore[arg-type]
     )
-    return field_binned_surface_cells(raw, edges)
+    return field_binned_surface_cells(raw, edges, n_limb_bins=DRIFT_RESOLVED_LIMB_BINS)
 
 
 # Above this, adjacent equal-weight bins can place H2db components tens of
@@ -542,9 +540,14 @@ def compute_dah(
             "visible_field_bounds_exact": cells.field_bounds_exact,
             "visible_field_bounds_megagauss": cells.field_bounds_megagauss,
             "maximum_synthesis_cell_field_megagauss": float(np.max(cells.field_strength_megagauss)),
+            "disk_distinct_field_bins": int(np.unique(cells.field_strength_megagauss).size),
+            "disk_limb_bins_per_field": (
+                DRIFT_RESOLVED_LIMB_BINS if config.disk_component_drift_angstrom is not None else None
+            ),
             "disk_quadrature": (
-                f"{cells.projected_weight.size} field bins with Balmer-component drift "
-                f"target {config.disk_component_drift_angstrom:g} A (estimated)"
+                f"{np.unique(cells.field_strength_megagauss).size} field bins with Balmer-component drift "
+                f"target {config.disk_component_drift_angstrom:g} A (estimated); "
+                f"{cells.projected_weight.size} limb rays"
                 if config.disk_component_drift_angstrom is not None
                 else (
                     f"{cells.projected_weight.size} equal-weight field bins"

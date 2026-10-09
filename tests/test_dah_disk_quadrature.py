@@ -1,4 +1,4 @@
-"""Opt-in drift-resolved DAH disk quadrature (geometry only; no synthesis)."""
+"""Opt-in drift-resolved DAH disk quadrature and its zero-field limit."""
 
 import numpy as np
 import pytest
@@ -122,11 +122,111 @@ def test_zero_field_drift_quadrature_is_finite():
     config = DAHConfig(magnetic_field_megagauss=0.0, field_geometry="dipole",
                        disk_component_drift_angstrom=16.0)
     cells = dah_surface_cells(config)
-    reference = dah_surface_cells(DAHConfig(magnetic_field_megagauss=0.0, field_geometry="dipole"))
-    np.testing.assert_array_equal(cells.field_strength_megagauss, reference.field_strength_megagauss)
-    np.testing.assert_array_equal(cells.ray_mu, reference.ray_mu)
-    np.testing.assert_array_equal(cells.projected_weight, reference.projected_weight)
+    assert cells.projected_weight.size == 8
+    assert np.all(cells.field_strength_megagauss == 0.0)
+    assert np.all(np.isfinite(cells.ray_mu))
+    assert cells.projected_weight.sum() == pytest.approx(1.0)
     assert cells.field_bounds_megagauss == (0.0, 0.0)
+
+
+@pytest.mark.parametrize("field", [0.0, 1e-8, 0.1, 0.5])
+def test_small_drift_preserves_independent_limb_quadrature(field):
+    cells = dah_surface_cells(DAHConfig(magnetic_field_megagauss=field,
+                                       field_geometry="dipole", disk_component_drift_angstrom=16.0))
+    # With projected-area weight 2 mu dmu, these moments are independently
+    # known. A single mean ray has the right first moment but gives 4/9,
+    # rather than 1/2, for the second moment and misintegrates curved I(mu).
+    assert np.dot(cells.projected_weight, cells.ray_mu) == pytest.approx(2.0 / 3.0, abs=1e-12)
+    assert np.dot(cells.projected_weight, cells.ray_mu**2) == pytest.approx(0.5, abs=0.002)
+    intensity = 1.0 + 2.0 * cells.ray_mu + 3.0 * cells.ray_mu**2
+    expected = 1.0 + 4.0 / 3.0 + 1.5
+    assert np.dot(cells.projected_weight, intensity) == pytest.approx(expected, rel=0.002)
+
+
+def test_limb_quadrature_has_a_continuous_zero_field_limit():
+    zero = dah_surface_cells(DAHConfig(magnetic_field_megagauss=0.0,
+                                      field_geometry="dipole", disk_component_drift_angstrom=16.0))
+    tiny = dah_surface_cells(DAHConfig(magnetic_field_megagauss=1e-8,
+                                      field_geometry="dipole", disk_component_drift_angstrom=16.0))
+    np.testing.assert_array_equal(tiny.ray_mu, zero.ray_mu)
+    np.testing.assert_array_equal(tiny.projected_weight, zero.projected_weight)
+
+
+@pytest.mark.spectral
+def test_near_zero_spectrum_matches_independent_limb_integral(monkeypatch):
+    from pathlib import Path
+    from wd_spectra import compute_dah
+    from wd_spectra.magnetic import uniform_field_surface_cells
+    from wd_spectra.models import dah
+    from wd_spectra.models.common import AtmosphereConvergenceWarning, load_atmosphere_checkpoint
+
+    checkpoint = Path(__file__).parent / "data/dah_paper/j1351+5419.npz"
+    atmosphere = load_atmosphere_checkpoint(
+        checkpoint, 13937.0, 8.43, "hydrogen", include_molecules=False,
+        include_negative_hydrogen=False, trihydrogen_ion_partition_model="neale-tennyson-1995",
+    )
+    wavelength = np.array([4510.0, 4862.694, 6564.636])
+    config = DAHConfig(effective_temperature=13937.0, logg=8.43, quality="production",
+                       magnetic_field_megagauss=1e-8, field_geometry="dipole",
+                       disk_component_drift_angstrom=16.0)
+    line_calls = []
+    original = dah.synthesize_magnetic_hydrogen_spectrum
+
+    def counted_synthesis(*args, **kwargs):
+        from wd_spectra import magnetic
+        manifolds = magnetic._line_manifolds
+
+        def counted(*args, **kwargs):
+            line_calls.append(1)
+            return manifolds(*args, **kwargs)
+
+        with monkeypatch.context() as local:
+            local.setattr(magnetic, "_line_manifolds", counted)
+            return original(*args, **kwargs)
+
+    monkeypatch.setattr(dah, "synthesize_magnetic_hydrogen_spectrum", counted_synthesis)
+    with pytest.warns(AtmosphereConvergenceWarning):
+        result = compute_dah(config, wavelength, initial_atmosphere=atmosphere, relax_atmosphere=False)
+    # All eight rays share one field and therefore one local opacity/source.
+    assert len(line_calls) == 1
+    assert result.metadata["disk_distinct_field_bins"] == 1
+    assert result.spectrum.metadata["surface_cells"] == 8
+
+    # Independent zero-field reference: 16 Gauss-Legendre rays, rather than
+    # the implementation's averages within eight equal-width limb bins.
+    reference_cells = uniform_field_surface_cells(0.0, n_mu=16, field_angle_deg=0.0)
+    monkeypatch.setattr(dah, "dah_surface_cells", lambda *args, **kwargs: reference_cells)
+    monkeypatch.setattr(dah, "synthesize_magnetic_hydrogen_spectrum", original)
+    reference_config = DAHConfig(effective_temperature=13937.0, logg=8.43, quality="production",
+                                 magnetic_field_megagauss=0.0)
+    with pytest.warns(AtmosphereConvergenceWarning):
+        reference = compute_dah(reference_config, wavelength, initial_atmosphere=atmosphere,
+                                relax_atmosphere=False)
+    np.testing.assert_allclose(result.spectrum.surface_flux_lambda,
+                               reference.spectrum.surface_flux_lambda, rtol=1e-3, atol=0.0)
+
+
+def test_limb_subgroups_share_fields_and_conserve_surface_moments(transitions):
+    raw = dipole_surface_cells(368.52, inclination_deg=34.0, offset_vector_radius=(0.0, 0.0, 0.07),
+                               n_mu=96, n_azimuth=192, n_field_bins=None)
+    edges = np.linspace(raw.field_strength_megagauss.min(), raw.field_strength_megagauss.max(), 50)
+    single = field_binned_surface_cells(raw, edges)
+    refined = field_binned_surface_cells(raw, edges, n_limb_bins=8)
+    np.testing.assert_array_equal(np.unique(refined.field_strength_megagauss), single.field_strength_megagauss)
+    for values in ("field_strength_megagauss", "ray_mu"):
+        expected = np.dot(raw.projected_weight, getattr(raw, values))
+        assert np.dot(refined.projected_weight, getattr(refined, values)) == pytest.approx(expected, rel=1e-12)
+    expected_cosine_squared = np.dot(raw.projected_weight, raw.field_ray_cosine**2)
+    assert np.dot(refined.projected_weight, refined.field_ray_cosine**2) == pytest.approx(expected_cosine_squared, rel=1e-12)
+    assert refined.field_bounds_megagauss == raw.field_bounds_megagauss
+    assert refined.projected_weight.sum() == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize("count", [0, 1.5, np.nan, np.inf, 65])
+def test_invalid_limb_bin_counts_are_rejected(count):
+    raw = dipole_surface_cells(0.5)
+    with pytest.raises(ValueError, match="integer between 1 and 64"):
+        field_binned_surface_cells(raw, [0.0, 1.0], n_limb_bins=count)
 
 
 def test_binning_does_not_merge_exact_atomic_boundary():

@@ -94,9 +94,19 @@ Components outside the screen, broad wings, angular compression and finite
 raw-surface resolution still require convergence checks. Requests needing
 more than 4096 drift intervals fail rather than silently coarsen.
 
+Each field interval also retains up to eight limb-cosine subgroups. Their
+projected weights and mean limb cosines preserve disk integration when
+component drift is negligible, including at zero field. The subgroups
+share the interval's mean field, so they reuse its opacity and radiation
+source calculation; their field–ray angles are averaged separately. The
+result reports distinct field bins and limb rays separately.
+
 With 16 Å, the archived J1018+0111 and J1351+5419 calculations use 130 and
-267 bins. The option is slower than the 21-bin default because every bin
-needs a transfer calculation. See the
+267 field bins. These archived runs preceded the independent limb sampling;
+their spectra and timings describe the earlier one-ray-per-field version.
+The option is slower than the 21-bin default because every field bin needs
+an opacity/source calculation and each limb subgroup needs an emergent ray.
+See the
 [disk-quadrature benchmark](../development/history/dah-disk-quadrature-2026-10-08.md)
 for measured accuracy and cost. Start with 16 Å for these cases and tighten
 it for your target and instrumental resolution; it is not a universal

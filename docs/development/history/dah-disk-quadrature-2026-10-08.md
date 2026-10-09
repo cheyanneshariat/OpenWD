@@ -26,8 +26,11 @@ Each bin is synthesized at its mean field. Rapid component motion between
 bins can leave discrete spectral copies rather than a smooth disk integral.
 The new option uses a dense surface grid and estimates the largest
 component wavelength derivative on a 4001-point field grid. It places edges
-at equal increments of accumulated drift. Each bin retains projected
-weight, mean field, rms field–ray cosine and mean limb cosine. Bins never
+at equal increments of accumulated drift. Each field bin retains its mean
+field and up to eight limb-cosine subgroups, each with projected weight,
+rms field–ray cosine and mean limb cosine. The subgroups share the
+mean-field opacity/source calculation. This preserves limb integration
+even when component motion permits only one field bin. Bins never
 merge fields at or below 1 MG with fields above it; continuous surface
 bounds remain independent of compression.
 
@@ -41,6 +44,11 @@ compression. Extremely fine requests fail at 4096 drift intervals rather
 than being silently made coarser.
 
 ## Fixed-atmosphere evidence and cost
+
+The archived diagnostic spectra below predate the independent limb
+subgroups and use one mean limb ray per field bin. They are historical
+measurements of field-binning error, not current angular-quadrature
+accuracy or timings.
 
 The diagnostic spectra use the immutable paper atmospheres and published
 geometries for J1018+0111 and J1351+5419. Only disk quadrature changes;
@@ -87,7 +95,8 @@ this change.
 
 The focused tests cover component derivatives, default-path identity,
 weight/mean-field conservation, interval construction, the exact 1-MG
-boundary, the zero-field limit, invalid requests and preservation of the
+boundary, analytic projected-area limb moments, the continuous zero-field
+limit, shared fields across limb subgroups, invalid requests and preservation of the
 positional configuration interface. Existing frozen-paper tests retain
 their original absolute-flux tolerances. Fast and fixed-spectrum checks
 complement, but do not replace, the protected PR qualification workflow.

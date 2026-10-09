@@ -36,6 +36,8 @@ solve or magnetic radiative equilibrium. It does not enable RWA, magnetic
 EOS, altered continuum, fitted widths or changed geometry.
 
 The archived spectra were generated before the PR review added validation
-and boundary/resource guards. Compare newly generated spectra to these
-diagnostics if using a different implementation; do not treat archived
-times as a measurement of new code.
+and boundary/resource guards or independent limb sampling. They use one
+mean limb ray per field bin. Current drift-resolved synthesis keeps up to
+eight limb subgroups in every field bin and shares their mean-field
+opacity/source calculation. The archive is historical evidence, not an
+accuracy or runtime measurement of this corrected angular quadrature.

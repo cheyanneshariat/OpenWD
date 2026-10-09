@@ -988,18 +988,29 @@ def drift_resolved_field_edges(
     return edges
 
 
-def field_binned_surface_cells(cells: SurfaceCells, edges_megagauss: ArrayLike) -> SurfaceCells:
+def field_binned_surface_cells(
+    cells: SurfaceCells,
+    edges_megagauss: ArrayLike,
+    *,
+    n_limb_bins: int = 1,
+) -> SurfaceCells:
     """Compress surface cells into the supplied field intervals.
 
-    Each nonempty interval keeps the projected weight, weighted mean field,
-    rms field--ray cosine and mean limb cosine of its cells, as in the
-    equal-weight compression of :func:`dipole_surface_cells`.
+    Each nonempty field interval uses its weighted mean field. Optionally
+    subdivide it into ``n_limb_bins`` intervals in limb cosine, preserving
+    each subgroup's weight, mean limb cosine and rms field--ray cosine.
+    Subgroups share exactly the same field so consecutive rays reuse the
+    local opacity and source calculation in the spectrum synthesizer.
     """
 
     edges = np.asarray(edges_megagauss, dtype=np.float64)
     if (edges.ndim != 1 or edges.size < 2 or np.any(~np.isfinite(edges))
             or np.any(np.diff(edges) <= 0.0)):
         raise ValueError("edges_megagauss must be strictly increasing")
+    if (not np.isfinite(n_limb_bins) or int(n_limb_bins) != n_limb_bins
+            or not 1 <= n_limb_bins <= 64):
+        raise ValueError("n_limb_bins must be an integer between 1 and 64")
+    n_limb_bins = int(n_limb_bins)
     field = cells.field_strength_megagauss
     if np.any(field < edges[0]) or np.any(field > edges[-1]):
         raise ValueError("edges_megagauss must cover every surface field")
@@ -1007,22 +1018,25 @@ def field_binned_surface_cells(cells: SurfaceCells, edges_megagauss: ArrayLike) 
     # As in the default compression, never merge B<=1 MG with B>1 MG,
     # including cells that lie exactly on the boundary.
     index = 2 * index + (field > WEAK_FIELD_MAXIMUM_MEGAGAUSS)
-    fields, cosines, mus, weights = [], [], [], []
-    for value in np.unique(index):
-        selected = index == value
-        w = cells.projected_weight[selected]
-        total = float(np.sum(w))
-        if total <= 0.0:
-            continue
-        fields.append(float(np.sum(w * field[selected]) / total))
-        cosines.append(float(np.sqrt(np.sum(w * cells.field_ray_cosine[selected] ** 2) / total)))
-        mus.append(float(np.sum(w * cells.ray_mu[selected]) / total))
-        weights.append(total)
-    weights_array = np.asarray(weights)
+    field_weight = np.bincount(index, weights=cells.projected_weight)
+    mean_field = np.divide(
+        np.bincount(index, weights=cells.projected_weight * field),
+        field_weight, out=np.zeros_like(field_weight), where=field_weight > 0.0,
+    )
+    limb = np.minimum((cells.ray_mu * n_limb_bins).astype(int), n_limb_bins - 1)
+    group = index * n_limb_bins + limb
+    weight = np.bincount(group, weights=cells.projected_weight)
+    occupied = np.flatnonzero(weight > 0.0)
+    weights_array = weight[occupied]
+    mus = np.bincount(group, weights=cells.projected_weight * cells.ray_mu)[occupied] / weights_array
+    cosines = np.sqrt(
+        np.bincount(group, weights=cells.projected_weight * cells.field_ray_cosine**2)[occupied]
+        / weights_array
+    )
     return SurfaceCells(
-        np.asarray(fields),
-        np.asarray(cosines),
-        np.asarray(mus),
+        mean_field[occupied // n_limb_bins],
+        cosines,
+        mus,
         weights_array / np.sum(weights_array),
         cells.field_bounds_megagauss,
         cells.field_bounds_exact,
