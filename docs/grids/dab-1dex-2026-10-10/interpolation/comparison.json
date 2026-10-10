@@ -1,0 +1,614 @@
+{
+  "both_targets_pass": 2,
+  "measured": 7,
+  "method": "Bilinear absolute F_lambda in Teff/logg at the exact newly available abundance; identical native wavelengths; no normalization/extrapolation",
+  "optical_interval_angstrom": [
+    3000,
+    10000
+  ],
+  "records": [
+    {
+      "both_targets_pass": false,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.05479451384798928,
+        "integrated_signed_error_fraction": -0.05377596991321624,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4862.25,
+        "maximum_relative_error_fraction": 0.17194111867299328,
+        "rms_relative_error_fraction": 0.05279950840073892
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-a169ec7ebfa71d2add5791db",
+          "parameters": [
+            15000,
+            7,
+            -3
+          ],
+          "spectrum_sha256": "5440b836f79dc8fac328ab65c03f0b4523d072aa62775bb08dc62e5739472690",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-0e7924bc42fc3adb21175488",
+          "parameters": [
+            15000,
+            7.5,
+            -3
+          ],
+          "spectrum_sha256": "29d26c4332f711b28bb992f27fea97e443d1778192c9c091dd50bc883684d8b1",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-fea3311f160118e57565730e",
+          "parameters": [
+            20000,
+            7,
+            -3
+          ],
+          "spectrum_sha256": "4b1d3f24d08a922453de411ffb072cd46c405cdb650292ec99bc8e2a7bb01d80",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-d378e0a4dbc122bc247026aa",
+          "parameters": [
+            20000,
+            7.5,
+            -3
+          ],
+          "spectrum_sha256": "7991c5ba7e9629c5e588e7b87006673fe6973d3d05f318c503fa37f26dc08417",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "dbf7e35d253ee1d0fc3d773b0301e455e44fcc54835e0b0890a02e1bc7451648",
+        "native_request_sha256": "e263015f8ce806b1571270052d0b67a54f9712b4e22a6690b3d70774a82660ff",
+        "spectrum_sha256": "0c334b70ef2167ce275ef0ff1b0d2a6b6809de5351f342d6b50ff26f36d47b62"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.04384209377127604,
+        "integrated_signed_error_fraction": -0.042043077990310984,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4862.5,
+        "maximum_relative_error_fraction": 0.26378368090149423,
+        "rms_relative_error_fraction": 0.04689263597775287
+      },
+      "missing_corners": [],
+      "model_id": "dab-374d033f304af774b62c246a",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 7.25,
+        "teff_K": 17500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.029887099045374167,
+        "integrated_signed_error_fraction": -0.024362804106133965,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4863.25,
+        "maximum_relative_error_fraction": 0.20229305382426857,
+        "rms_relative_error_fraction": 0.031539824049118294
+      },
+      "comparison_status": "MISSING_QUALIFIED_CORNER",
+      "corners": [],
+      "direct_provenance": {
+        "metadata_sha256": "2e8af0343faf9ccd6ba0326337f47f223d285c64918017ae12baf8bf30b23fef",
+        "native_request_sha256": "91ac6c508de7c07de17b43ff7a9409b37d69b1be6e0f97c9aabca6dc12c49d61",
+        "spectrum_sha256": "d69518283630c9175f99658ec9ac9f722b55fbb3fa072754d8d648e974e72566"
+      },
+      "missing_corners": [
+        [
+          25000,
+          8.5,
+          -1
+        ]
+      ],
+      "model_id": "dab-69c9762223d42303bd1d0602",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 8.25,
+        "teff_K": 22500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "both_targets_pass": false,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.04230402465667707,
+        "integrated_signed_error_fraction": 0.04230402465667707,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4473.0,
+        "maximum_relative_error_fraction": 0.20264566060166256,
+        "rms_relative_error_fraction": 0.038671129508421
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-721227940e713f1ece06a127",
+          "parameters": [
+            25000,
+            8,
+            1
+          ],
+          "spectrum_sha256": "ed30b4ba14de7583277614919b637257b227ca152c10cd99bbfc625bb182f0c9",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-88a5a859181b1dcad376b485",
+          "parameters": [
+            25000,
+            8.5,
+            1
+          ],
+          "spectrum_sha256": "73e18b84cfaf45d07cee66615866fb3ae31a0773952dfe72419d1cebba845763",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-1a746bda510cf154c02db0da",
+          "parameters": [
+            30000,
+            8,
+            1
+          ],
+          "spectrum_sha256": "a5921cf2cf28c4b67af30aef01638777611d3327c1987736b4949f9d7a1c901d",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-8b84d9df6de18177679d2691",
+          "parameters": [
+            30000,
+            8.5,
+            1
+          ],
+          "spectrum_sha256": "f9c4e525ea11d48f096f108ae570190f6fb30e6784d1ca7bcc1d22ee16f27a47",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "4573ea535c8d83f91973bba949a08c7d7f244fb136129fe6b408e80c8951d19b",
+        "native_request_sha256": "789f6dfbdad95b02a3c29eb37e104d8fc7b47d16ecfca0496a47aae2fe1d8600",
+        "spectrum_sha256": "18a958fb4bdd2aaa9b5372f960b721821ad9b02832a2794a104f8cbd86d1d4d5"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.01936106427049447,
+        "integrated_signed_error_fraction": 0.01936106427049447,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4473.0,
+        "maximum_relative_error_fraction": 0.06870482691416219,
+        "rms_relative_error_fraction": 0.016456340251741825
+      },
+      "missing_corners": [],
+      "model_id": "dab-b983052d084d3ad98827780d",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 8.25,
+        "teff_K": 27500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "both_targets_pass": true,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.006655171081613957,
+        "integrated_signed_error_fraction": -0.0066543662928602795,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4473.0,
+        "maximum_relative_error_fraction": 0.06096213601188908,
+        "rms_relative_error_fraction": 0.007084681052650471
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-e2f8a3aab913dc2436de06ff",
+          "parameters": [
+            30000,
+            7.5,
+            3
+          ],
+          "spectrum_sha256": "5d1e2e45c36eeafa21fcf9a7b3ceb45762ac19a52899a9b20a7e9eb5fc6d95d4",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-f99385c7ae107cdc1d112987",
+          "parameters": [
+            30000,
+            8,
+            3
+          ],
+          "spectrum_sha256": "769d0f415c181d6282c0fa2c22b7dbe65d2608ff835d58ab5cfdd90acd87b70c",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-fc74007fef24d7118e721388",
+          "parameters": [
+            35000,
+            7.5,
+            3
+          ],
+          "spectrum_sha256": "3b55b9f9f85b9b7de73d7ac0b878a22a4123012ec26c539ba01b0dcdf37e80c6",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-27df3def49a9f084b3b5cb6d",
+          "parameters": [
+            35000,
+            8,
+            3
+          ],
+          "spectrum_sha256": "c204f4fa7e035423c9617a93025898f771d8c476f854dcd8a38b13789d958628",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "daf8f63b35db81b11018b187069fc91924ec9aa4dc63f600d9168deeef62b029",
+        "native_request_sha256": "78a8fc213de18c1010f95941f4fe77a7c5a8fd2218c33098b415caf8994c1cb5",
+        "spectrum_sha256": "5068da282b370a824b661fd94479b8961feb14dfba200bb356c8b7246f0e4b62"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.007527769254381336,
+        "integrated_signed_error_fraction": -0.007527769254381336,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 3890.5,
+        "maximum_relative_error_fraction": 0.010776733335407497,
+        "rms_relative_error_fraction": 0.007110877189693874
+      },
+      "missing_corners": [],
+      "model_id": "dab-3e34301cc245863691548625",
+      "parameters": {
+        "log_H_He": 3,
+        "logg": 7.75,
+        "teff_K": 32500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "both_targets_pass": false,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.0060848059147772925,
+        "integrated_signed_error_fraction": 0.003139385649293313,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4026.75,
+        "maximum_relative_error_fraction": 0.10154118264608335,
+        "rms_relative_error_fraction": 0.0088084672938198
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-9b91e356c2fe49530efaa640",
+          "parameters": [
+            15000,
+            8,
+            -5
+          ],
+          "spectrum_sha256": "a7bef616cd9b328278ea3d5b9fc871fcf2cc8170f204d9182956a410bfb40f77",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-9f5353c5aa487f82ceb2291a",
+          "parameters": [
+            15000,
+            8.5,
+            -5
+          ],
+          "spectrum_sha256": "4103097b3f96383ac47776f50387e04870d0bef696173ad9b633c40143143c1b",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-30e7f3a6d88afb7868938961",
+          "parameters": [
+            20000,
+            8,
+            -5
+          ],
+          "spectrum_sha256": "257cb90b7020d7bfc49fc0dfb269c9364ef9f5a1cbb96c431d0f55eaa251688d",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-208e62382d7f02a1f033fee9",
+          "parameters": [
+            20000,
+            8.5,
+            -5
+          ],
+          "spectrum_sha256": "b4b61cf3b83992776f069b46fa694332f47c5a20310e23e33501903c0c6b27f5",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "ebada8a9e69b465a0e9b5ca54d8d179841745422121c443ce112f42da9215216",
+        "native_request_sha256": "6bd3a99db9fc9827ce033a17a3fc9a2ef7a8a06190f27997dfd8cedeaa00d533",
+        "spectrum_sha256": "46245101066ea30e2fdcc46abd09f70d3cb2afe8688f625e2d6504c579de5846"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.005131961645107907,
+        "integrated_signed_error_fraction": 0.001726657794000251,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4714.75,
+        "maximum_relative_error_fraction": 0.07592378758449549,
+        "rms_relative_error_fraction": 0.006863071296921785
+      },
+      "missing_corners": [],
+      "model_id": "dab-710241cd589d4dec2276f928",
+      "parameters": {
+        "log_H_He": -5,
+        "logg": 8.25,
+        "teff_K": 17500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "both_targets_pass": true,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.03393980487233726,
+        "integrated_signed_error_fraction": 0.03393928401267294,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 3190.92818844576,
+        "maximum_relative_error_fraction": 0.05445728939391736,
+        "rms_relative_error_fraction": 0.030419208459571353
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-d1d3b8dd1468f2f316a8d967",
+          "parameters": [
+            35000,
+            8.5,
+            -3
+          ],
+          "spectrum_sha256": "05af9228d099099a6fb85c65224480bb008c9cf79a3a9f77c262e9f1e10638f4",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-41cfd983f554db808f40f49b",
+          "parameters": [
+            35000,
+            9,
+            -3
+          ],
+          "spectrum_sha256": "22de90a8560be64374b4875e93e56f5ba4f8a4e3d93e0debf043203e86994c8f",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-d0e2caad7aeed8aee5ca96e8",
+          "parameters": [
+            40000,
+            8.5,
+            -3
+          ],
+          "spectrum_sha256": "327baf23524d6cf738358187da0f972c20cbf405041f06d66d29a281c638b107",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-5ae31bace3f7e6ba66ece8c9",
+          "parameters": [
+            40000,
+            9,
+            -3
+          ],
+          "spectrum_sha256": "713529c930e9d114374ee392b5b3d578a10a4c178c7abfec6db2aa3b22fa08ac",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "a4fff0ce65002a05a73ca82f48277fa5f95790e9987571f1d0cac1236ca0c8eb",
+        "native_request_sha256": "599554aa3aa834a4d035a4be37abac701e6f77171490c5e20d20b47e61d28f7c",
+        "spectrum_sha256": "aa8c9be4ce9295d0b5ba3a2eced6c691c1a90002ce42d6ec6a1fe5a44bd614af"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.007430839225629424,
+        "integrated_signed_error_fraction": 0.007422837962795798,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 3190.92818844576,
+        "maximum_relative_error_fraction": 0.013823907648643038,
+        "rms_relative_error_fraction": 0.006174373522868305
+      },
+      "missing_corners": [],
+      "model_id": "dab-4dbe1400d92ad71ec76badc0",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 8.75,
+        "teff_K": 37500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "both_targets_pass": false,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.035822264156356635,
+        "integrated_signed_error_fraction": 0.03543668372638791,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4027.5,
+        "maximum_relative_error_fraction": 0.14118503877974875,
+        "rms_relative_error_fraction": 0.030885921457924948
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-3bd2f076ba73b215c3361cae",
+          "parameters": [
+            20000,
+            6,
+            1
+          ],
+          "spectrum_sha256": "0acf2fbcc5e1e7fc9b9359a527738b93ef8878f3dd162dc42bedd383dbf91e57",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-1e6d75f740af2150f153c4d9",
+          "parameters": [
+            20000,
+            6.5,
+            1
+          ],
+          "spectrum_sha256": "bd98421d6ef436b29a2418459903ba33017cefe5115c3bd7d68f0456eb2ada37",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-2999c6cb9d604856cda1e8a2",
+          "parameters": [
+            25000,
+            6,
+            1
+          ],
+          "spectrum_sha256": "d60c4ebaa77cf243ca29242a8c0f1914c0254b82fbcd141271e4c526c4d7fbc1",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-3afef5440f20e1698bc6d610",
+          "parameters": [
+            25000,
+            6.5,
+            1
+          ],
+          "spectrum_sha256": "683bd5134dd703dd9e7ce2ecc983fc8fef2c74732f3b1da9c6d5f079e50158ab",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "587b579f6cbdedde03674505def7f7defcf1612adf52d2589a76b62c6c4b178b",
+        "native_request_sha256": "156053165ae487840cd491740d40af7b7f48200d0819642e296a90651ba9d119",
+        "spectrum_sha256": "73a58b85c19d31dd564d28c1beebc4bff79ff580172e534b43dbabb6e619ce92"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.015506667029294006,
+        "integrated_signed_error_fraction": 0.015505926363079356,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4027.75,
+        "maximum_relative_error_fraction": 0.039071650304690016,
+        "rms_relative_error_fraction": 0.011908118739978418
+      },
+      "missing_corners": [],
+      "model_id": "dab-7e761c90d62ea49123a49c00",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 6.25,
+        "teff_K": 22500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    {
+      "both_targets_pass": false,
+      "coarse_optical": {
+        "integrated_absolute_error_fraction": 0.038372344515963025,
+        "integrated_signed_error_fraction": -0.03834380721787242,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4341.75,
+        "maximum_relative_error_fraction": 0.11227666004966606,
+        "rms_relative_error_fraction": 0.03710729146145395
+      },
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "model_id": "dab-2444f1a1d763763c61d6fe3c",
+          "parameters": [
+            25000,
+            9,
+            -1
+          ],
+          "spectrum_sha256": "a7d56f2be817e240e43475ff49fc4c215d1cdce627ecb5621a3e36eea0a018e2",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-29c0fe55e89f7a49f80fd24f",
+          "parameters": [
+            25000,
+            9.5,
+            -1
+          ],
+          "spectrum_sha256": "feb6f68a513a756c782cb7d1a2d277882478829655f718a38971125cb30fbb5a",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-1ee5287edc6529db42aacfd8",
+          "parameters": [
+            30000,
+            9,
+            -1
+          ],
+          "spectrum_sha256": "546ce1db07ef3dfea6b9e2a68120fa015f2eb91da6edb2777adafab820526be2",
+          "weight": 0.25
+        },
+        {
+          "model_id": "dab-38a30827b4e90ee3b0db077c",
+          "parameters": [
+            30000,
+            9.5,
+            -1
+          ],
+          "spectrum_sha256": "015a32b7796c3b4136f0d13050626c57c7e3988e4ace35185b8b88093c9c8530",
+          "weight": 0.25
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "60ef7ea9f73bc5a617ff196dc90f7689b09f0f63866192c41110a1d9b105e105",
+        "native_request_sha256": "9e19fdb5f0369af79b5890afd884e2599090f8d98c76df7f9aad421439c8ab9f",
+        "spectrum_sha256": "a6d908c93652c7afc7617522ad5f56e2df640e1f42531efb17d110e81836304f"
+      },
+      "fine_optical": {
+        "integrated_absolute_error_fraction": 0.013906827481954969,
+        "integrated_signed_error_fraction": 0.0139003646279852,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 3190.92818844576,
+        "maximum_relative_error_fraction": 0.03639218576476051,
+        "rms_relative_error_fraction": 0.012855689708836
+      },
+      "missing_corners": [],
+      "model_id": "dab-c044bac91abb97f2e80663c8",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 9.25,
+        "teff_K": 27500
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    }
+  ],
+  "requested": 8,
+  "scope": "Eight independent heldouts; not physical accuracy or full-grid fitting validation"
+}

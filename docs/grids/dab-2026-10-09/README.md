@@ -1,4 +1,8 @@
-# DAB/DBA production grid
+# Original DAB/DBA production grid
+
+The latest [one-dex abundance mesh](../dab-1dex-2026-10-10/README.md) has
+588/616 accepted coordinates and an eleven-spectrum abundance sequence.
+This page preserves the original six-plane archive and its plots.
 
 The current selection contains **327 accepted points from 336 requested
 homogeneous H/He models**. All requests were attempted. Nine requests selected a

@@ -1,6 +1,6 @@
 {
-  "current_index_sha256": "7427755f2a0ae9b1605da23721907e6c577ae082d0286dbc3d80b83399a732c4",
-  "current_snapshot_utc": "2026-10-10T07:51:20.076141+00:00",
+  "current_index_sha256": "1c7870da890e88959132830172a058a1c53b4019233c1eb53a90dc23849ea1bf",
+  "current_snapshot_utc": "2026-10-10T02:39:28.047948+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
@@ -11,29 +11,15 @@
       "raw_spectrum_bytes": 762702963
     },
     "DAB": {
-      "additional_validation_points_outside_original_grid": 11,
+      "additional_validation_points_outside_original_grid": 15,
       "archive": "OpenWD-DAB-production-20261009.tar.gz",
       "bytes": 88273096,
-      "current_selected_grid_points": 588,
+      "current_selected_grid_points": 327,
       "initial_archive_models": 326,
-      "models": 588,
-      "one_dex_abundance_planes": [
-        -6,
-        -5,
-        -4,
-        -3,
-        -2,
-        -1,
-        0,
-        1,
-        2,
-        3,
-        4
-      ],
-      "original_archive_requests": 336,
+      "models": 327,
       "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks",
       "release_tag": "grid-preview-2026-10-09-dab",
-      "requests": 616,
+      "requests": 336,
       "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
     },
     "DAO": {
@@ -94,44 +80,15 @@
     }
   },
   "family_models_definition": "Current selected original-grid coordinates; per-archive model counts remain separate",
-  "history": "history/2026-10-10-before-abundance-refinement/dataset.json",
+  "history": "history/2026-10-09-before-fill/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2283,
-  "requests": 2459,
-  "selection": "Add280 intermediate abundance coordinates; four previously separate validation coordinates join the selected DAB mesh. The original archives and all earlier selected tables remain intact. Remaining11 DAB validation coordinates are separate from616 grid requests.",
+  "qualified_spectra": 2022,
+  "requests": 2179,
+  "selection": "Select 121 new outcomes at matching original DA/DB/DAB/DO/DAO coordinates; the total remains 2179 original requests. Four repeated DB controls do not add coordinates. Fifteen additional DAB validation/refinement coordinates are separate. All prior selections and original archives remain intact. The accepted DA initialization and DAB mesh-concentration variants are explicit in the supplement full configurations.",
   "snapshots": {
-    "DAB-1dex-2026-10-10": {
-      "active_jobs": [],
-      "actual_phase_node_hours": 3.8330555555555557,
-      "additional_accepted_coordinates": 261,
-      "additional_requests": 280,
-      "archive": "OpenWD-DAB-intermediate-abundances-20261010.tar.gz",
-      "bytes": 78983977,
-      "files_verified": 1327,
-      "full_grid_interpolation_verified": false,
-      "independent_depth_convergence_verified": false,
-      "is_draft": true,
-      "minus_one_anchor_seconds": 5409.469668604004,
-      "native_spectrum_bytes_preserved": true,
-      "new_calculations_accepted": 257,
-      "numerical_completions": 588,
-      "physical_accuracy_verified": false,
-      "release_tag": "grid-preview-2026-10-10-dab-1dex",
-      "requests": 280,
-      "reused_previous_validation_coordinates": 4,
-      "sha256": "d1f20770306e46bfdf00e1497410781ab86bd0208602e13c2e19751a05a6e73b",
-      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
-      "spectra": 261,
-      "statuses": {
-        "COMPLETE_NUMERICAL": 588,
-        "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
-        "TIMEOUT": 9,
-        "WORKER_CRASH_SIGSEGV": 2
-      }
-    },
     "DAB-2026-10-09": {
       "archive_sha256": "e6c6c1101dac6295fcff7c434555ff59b57b61a1878e47960625d9b793ac0d2d",
       "requests": 336,
@@ -254,10 +211,8 @@
       "TIMEOUT": 1
     },
     "DAB": {
-      "COMPLETE_NUMERICAL": 588,
-      "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
-      "INFRASTRUCTURE_INTERRUPTION": 2,
-      "TIMEOUT": 9
+      "COMPLETE_NUMERICAL": 327,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 9
     },
     "DAH": {
       "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2

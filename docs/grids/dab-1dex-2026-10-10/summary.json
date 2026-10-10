@@ -1,0 +1,21 @@
+{
+  "active_jobs": [],
+  "actual_phase_node_hours": 3.8330555555555557,
+  "additional_accepted_coordinates": 261,
+  "additional_requests": 280,
+  "full_grid_interpolation_verified": false,
+  "independent_depth_convergence_verified": false,
+  "minus_one_anchor_seconds": 5409.469668604004,
+  "new_calculations_accepted": 257,
+  "numerical_completions": 588,
+  "physical_accuracy_verified": false,
+  "requests": 616,
+  "reused_previous_validation_coordinates": 4,
+  "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+  "statuses": {
+    "COMPLETE_NUMERICAL": 588,
+    "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
+    "TIMEOUT": 9,
+    "WORKER_CRASH_SIGSEGV": 2
+  }
+}

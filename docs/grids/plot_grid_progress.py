@@ -33,13 +33,14 @@ STYLES = {
     'not_started': ('#bcbcbc', 'o', 'Not started'),
     'running': ('#8d8d8d', '>', 'Running'),
     'unfinished': ('#bcbcbc', 'D', 'Awaiting qualification'),
+    'process_failure': ('#555555', 'x', 'Worker crash'),
 }
 
 def panel(ax, rows, family):
     subset = [r for r in rows if r['family'] == family]
     counts = Counter(r['plot_status'] for r in subset)
     dense = len(subset) > 100
-    layers = ('not_started', 'unsupported', 'unfinished', 'running', 'timed_out', 'completed', 'numerical_failure')
+    layers = ('not_started', 'unsupported', 'unfinished', 'running', 'timed_out', 'completed', 'numerical_failure', 'process_failure')
     for key in layers:
         points = sorted({(float(r['teff_K']), float(r['logg']))
                          for r in subset if r['plot_status'] == key})
@@ -49,7 +50,7 @@ def panel(ax, rows, family):
         options = dict(marker=marker, zorder=layers.index(key)+1)
         if key == 'timed_out':
             options.update(s=48 if dense else 100, facecolors='none', edgecolors=color, linewidths=1.2)
-        elif key == 'numerical_failure':
+        elif key in ('numerical_failure', 'process_failure'):
             options.update(s=25 if dense else 58, color=color, linewidths=1.1)
         else:
             options.update(s=(13 if dense else 44) if key == 'completed' else (28 if dense else 70),

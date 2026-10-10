@@ -1,0 +1,62 @@
+{
+  "selected_table_sha256": "492fbd7d5f0fb2775182884889edb95e6fcec808b4f1a64d51bf0a857c02724d",
+  "abundance_sequence": [
+    {
+      "model_id": "dab-c93c57fb65a5823d0d647021",
+      "log_H_He": -6,
+      "spectrum_sha256": "77fe861a9e20a18b6691e99e77d3123042c69c9084c688e430fac31118de3fd4"
+    },
+    {
+      "model_id": "dab-30e7f3a6d88afb7868938961",
+      "log_H_He": -5,
+      "spectrum_sha256": "257cb90b7020d7bfc49fc0dfb269c9364ef9f5a1cbb96c431d0f55eaa251688d"
+    },
+    {
+      "model_id": "dab-c218c7629dff97566f4b3958",
+      "log_H_He": -4,
+      "spectrum_sha256": "dcaeb65f5b55e82e96d8dc1c4293ddf83d844ce2939f8586cbb7b048eaf1da29"
+    },
+    {
+      "model_id": "dab-f938f4d4571a654b390ac2ec",
+      "log_H_He": -3,
+      "spectrum_sha256": "e7f0999d5329f4fae6fd961927a5a0cecab83311662b7a9be137f9e00d52789b"
+    },
+    {
+      "model_id": "dab-dfa7e09f866ea007520f9403",
+      "log_H_He": -2,
+      "spectrum_sha256": "79e5a5558cf874b165a26b4e5063e30862bc0e20705004f1a900d75f602378a8"
+    },
+    {
+      "model_id": "dab-7686964bf09e1fbfaeeed5c1",
+      "log_H_He": -1,
+      "spectrum_sha256": "4ca6fadded71cb9f047a0a50b01fa9c53bb1f4194f07b7efcbd82a08078c4948"
+    },
+    {
+      "model_id": "dab-384c120fb1e0e6bee1c6d63b",
+      "log_H_He": 0,
+      "spectrum_sha256": "b42bdb306d56511aa3f15694f3adc3dbee16d9e1cf58b7f91b403e948b35a773"
+    },
+    {
+      "model_id": "dab-a99d6d546a033edc05705a23",
+      "log_H_He": 1,
+      "spectrum_sha256": "9c64f9069e242ca8d6f8af4f321afc918b38273e07fee89ba31151c3b2d9e90a"
+    },
+    {
+      "model_id": "dab-913d1b6533dafbde6483f379",
+      "log_H_He": 2,
+      "spectrum_sha256": "1e491d666398b48c9c8a7445c07cd20e37ed069b7c98732c694b19387bb15e90"
+    },
+    {
+      "model_id": "dab-fe0b280ca9eed92ea2002143",
+      "log_H_He": 3,
+      "spectrum_sha256": "1cb53789024231ab8464f9608f0dcf11d8185b0c753a717f8cd9e0b804f68f89"
+    },
+    {
+      "model_id": "dab-1976f2705c57ff1a061670c8",
+      "log_H_He": 4,
+      "spectrum_sha256": "a09afc28d9f5d1b5ecf9ee691533d265bab05db80fef692e330478faeba953bb"
+    }
+  ],
+  "flux_normalization": "none",
+  "wavelength_interpolation": "none"
+}
