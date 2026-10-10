@@ -37,7 +37,8 @@ def coverage(rows,out):
     for ax in axes[:,0]:ax.set_ylabel(r'$\log g$ (cgs)')
     fig.legend([Line2D([],[],marker=MARKERS[s],color=COLORS[s],ls='') for s in COLORS if s in statuses],
                [LABELS[s] for s in COLORS if s in statuses],loc='lower center',ncol=3,fontsize=11,frameon=False)
-    fig.suptitle('DAB/DBA production grid: 326/336 numerical completions',fontsize=15)
+    completed=sum(r['status']=='COMPLETE_NUMERICAL' for r in rows)
+    fig.suptitle(f'DAB/DBA production grid: {completed}/{len(rows)} numerical completions',fontsize=15)
     fig.subplots_adjust(left=.075,right=.985,bottom=.14,top=.89,hspace=.3,wspace=.1)
     for ext in ['png','pdf']:fig.savefig(out/f'dab_coverage.{ext}',dpi=250)
     plt.close(fig)
@@ -95,11 +96,18 @@ def sequence(bank,rows,out,name,axis,values,fixed,title):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--bank',type=Path,required=True);ap.add_argument('--output',type=Path,required=True)
+    ap.add_argument('--coverage-table',type=Path,
+                    help='Optional selected status table; spectrum sequences still use the unchanged original bank')
     ap.add_argument('--style',type=Path,default=Path(__file__).with_name('grid-style.mplstyle'));args=ap.parse_args()
     rows=list(csv.DictReader((args.bank/'requests.csv').open()));assert len(rows)==len({r['model_id'] for r in rows})==336
     assert Counter(r['status'] for r in rows)==Counter(COMPLETE_NUMERICAL=326,DOMAIN_OR_UNSUPPORTED_CONFIG=9,NUMERICAL_NONCONVERGENCE=1)
     args.output.mkdir(parents=True,exist_ok=False);plt.style.use(args.style)
-    coverage(rows,args.output)
+    coverage_rows=list(csv.DictReader(args.coverage_table.open())) if args.coverage_table else rows
+    expected={(float(r['teff_K']),float(r['logg']),float(r['log_H_He'])) for r in rows}
+    assert len(coverage_rows)==336 and len({r['model_id'] for r in coverage_rows})==336
+    assert {(float(r['teff_K']),float(r['logg']),float(r['log_H_He'])) for r in coverage_rows}==expected
+    assert all(r['status'] in COLORS for r in coverage_rows)
+    coverage(coverage_rows,args.output)
     records={}
     records['dab_abundance_sequence']=sequence(args.bank,rows,args.output,'dab_abundance_sequence','log_H_He',[-6,-4,-2,0,2,4],
         dict(teff_K=20000,logg=8),r'Change H/He abundance: $T_{\mathrm{eff}}=20\,\mathrm{kK}$, $\log g=8$')
@@ -109,6 +117,8 @@ def main():
         dict(teff_K=20000,log_H_He=-2),r'Change gravity: $T_{\mathrm{eff}}=20\,\mathrm{kK}$, $\log_{10}[N(\mathrm{H})/N(\mathrm{He})]=-2$')
     record=dict(index_sha256=file_sha(args.bank/'requests.csv'),source_commit=json.loads((args.bank/'dataset.json').read_text())['source_commit'],
         scientific_identity=json.loads((args.bank/'dataset.json').read_text())['scientific_identity'],plots=records,
+        coverage_index_sha256=file_sha(args.coverage_table if args.coverage_table else args.bank/'requests.csv'),
+        coverage_status_counts=dict(Counter(r['status'] for r in coverage_rows)),
         interpretation='Parameter response of saved numerically accepted models; no external physical/interpolation/recovery validation')
     (args.output/'dab_plot_provenance.json').write_text(json.dumps(record,indent=2,sort_keys=True)+'\n')
     print(json.dumps(dict(plots=4,unique_spectra=len({m['model_id'] for r in records.values() for m in r['models']}),source_commit=record['source_commit'])))

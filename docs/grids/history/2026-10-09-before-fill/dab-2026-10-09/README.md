@@ -1,13 +1,11 @@
 # DAB/DBA production grid
 
-The current selection contains **327 accepted points from 336 requested
-homogeneous H/He models**. All requests were attempted. Nine requests selected a
-molecular workflow that does not support their gravities. The original archive
-contains 326 spectra; the native validation supplement supplies the repaired point.
+This grid contains **326 spectra from 336 requested homogeneous H/He models**.
+All requests were attempted. One model failed a numerical check; nine requests
+selected a molecular workflow that does not support their gravities.
 
 [Download files](https://github.com/cheyanneshariat/OpenWD/releases)
-· [Original archive table](requests.csv) · [Current selection](selected-requests.csv)
-· [Dataset record](dataset.json)
+· [Full request table](requests.csv) · [Dataset record](dataset.json)
 · [All grid families](../README.md)
 
 The draft release is named **DAB/DBA production grid — numerical development preview**
@@ -26,18 +24,11 @@ fork. They are not public downloads until the release is published.
 
 Each panel holds H/He abundance fixed. Its title gives numerical completions
 divided by requests. Green circles passed the native atmosphere and independent
-final-source checks. The point at 40,000 K, log g 7, log(H/He) −6 now passes
-with the existing `photospheric_depth_concentration=2` option. Its original
-default-mesh attempt failed temperature stationarity and remains in the old archive.
+final-source checks. The red cross marks the uncertified model at 40,000 K,
+log g 7, log(H/He) −6. Its temperature-stationarity check did not certify completion.
 Purple triangles mark nine molecular selections at 12,000 K away from log g 8.
 Those requests stopped without substituting a different gravity or atomic physics.
 No request remains unattempted or timed out; four earlier resource retries passed.
-
-The [native validation supplement](../validation-2026-10-09/README.md) also contains
-15 independent DAB interpolation and refinement points outside these 336 coordinates.
-They are counted separately. All eight coarse-cell interpolation tests exceeded
-at least one optical error target. A finer abundance interval reduced the peak
-optical error to 0.66% at one temperature/gravity; full fitting accuracy remains unverified.
 
 [Coverage PDF](dab_coverage.pdf). The auxiliary standard-resolution comparison
 and DAO resource profile are excluded from the 336-request grid.
@@ -125,9 +116,7 @@ it there, then make the figures:
 tar -xzf OpenWD-DAB-production-20261009.tar.gz
 (cd OpenWD-DAB-production-20261009 && shasum -a 256 -c SHA256SUMS)
 python docs/grids/plot_dab_spectra.py \
-  --bank OpenWD-DAB-production-20261009 \
-  --coverage-table docs/grids/dab-2026-10-09/selected-requests.csv \
-  --output output/dab-grid
+  --bank OpenWD-DAB-production-20261009 --output output/dab-grid
 ```
 
 The script reads the saved table and verifies checksums for every displayed

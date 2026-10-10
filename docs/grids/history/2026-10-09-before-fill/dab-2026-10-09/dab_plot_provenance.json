@@ -1,9 +1,4 @@
 {
-  "coverage_index_sha256": "a7c982cd40c21b9b9f046c847cc6b011da9fba6004a14d0b326c125777a20851",
-  "coverage_status_counts": {
-    "COMPLETE_NUMERICAL": 327,
-    "DOMAIN_OR_UNSUPPORTED_CONFIG": 9
-  },
   "index_sha256": "5a0af26318e26028239219a421754ff911d65f7532f6c3941bd75165b969bbc7",
   "interpretation": "Parameter response of saved numerically accepted models; no external physical/interpolation/recovery validation",
   "plots": {

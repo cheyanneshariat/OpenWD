@@ -1,0 +1,54 @@
+{
+  "additional_DAB_validation_points": 15,
+  "families": {
+    "D6": {
+      "TIMEOUT": 1
+    },
+    "DA": {
+      "COMPLETE_NUMERICAL": 808,
+      "NUMERICAL_NONCONVERGENCE": 43,
+      "TIMEOUT": 1
+    },
+    "DAB": {
+      "COMPLETE_NUMERICAL": 327,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 9
+    },
+    "DAH": {
+      "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2
+    },
+    "DAO": {
+      "MISSING_UNATTEMPTED": 14,
+      "TIMEOUT": 1
+    },
+    "DAZ": {
+      "COMPLETE_NUMERICAL": 3
+    },
+    "DB": {
+      "COMPLETE_NUMERICAL": 588,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+      "NUMERICAL_GRID_FAILURE": 5,
+      "NUMERICAL_NONCONVERGENCE": 11,
+      "TIMEOUT": 29
+    },
+    "DO": {
+      "COMPLETE_NUMERICAL": 1,
+      "MISSING_UNATTEMPTED": 6
+    },
+    "DQ": {
+      "COMPLETE_NUMERICAL": 2
+    },
+    "DZ": {
+      "COMPLETE_NUMERICAL": 293,
+      "NUMERICAL_NONCONVERGENCE": 2,
+      "TIMEOUT": 27
+    },
+    "PG1159": {
+      "NUMERICAL_NONCONVERGENCE": 1
+    }
+  },
+  "index_sha256": "1c7870da890e88959132830172a058a1c53b4019233c1eb53a90dc23849ea1bf",
+  "numerical_completions": 2022,
+  "records_updated": 121,
+  "requests": 2179,
+  "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece"
+}

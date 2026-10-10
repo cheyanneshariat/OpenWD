@@ -1,0 +1,42 @@
+{
+  "control_points": 1,
+  "flux_unit": "erg s^-1 cm^-2 Angstrom^-1",
+  "gravities": [
+    7,
+    7.5,
+    7.75,
+    8
+  ],
+  "grid_policy": "Four selected requests replace earlier records at the same parameters in current coverage. Original 638-request outcomes and the 489-model archive are retained. Three earlier unsupported cases gain accepted models; log g 8 is a repeated control, not an extra grid point.",
+  "independent_depth_convergence_verified": false,
+  "interpolation_accuracy_verified": false,
+  "kind": "Numerically qualified experimental cold-helium supplement",
+  "models": 4,
+  "native_checks": "Atmosphere completion; independent local energy, wavelength, angular and source checks",
+  "new_parameter_points": 3,
+  "npz_arrays_read": 148,
+  "physical_accuracy_verified": false,
+  "release_ready": false,
+  "saved_date": "2026-10-09",
+  "source_commits": [
+    "0a74fdbe06596fc145f5169a3b239ddd67053141",
+    "54e401e20936119d707bb3623e0a13e29373b6e8"
+  ],
+  "spectrum_normalization": "none",
+  "spectrum_resampling": "none",
+  "temperature_K": 5000,
+  "updated_merged_source_rerun": false,
+  "wavelength_unit": "vacuum Angstrom",
+  "package_verification": {
+    "accepted_npz_arrays_read": 148,
+    "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
+    "bytes": 426446,
+    "control_points": 1,
+    "files_verified": 23,
+    "models": 4,
+    "native_spectrum_bytes_preserved": true,
+    "new_parameter_points": 3,
+    "sha256": "5c434fc64177715f3e168d7620fe70b0ad6359869b3b1f5490c7a770002b5e92",
+    "source_hashes_verified": true
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "data_sha256": "8f0534b89cad445fef3ce134fe48367b4f95edeefa8f4584f097ad1aab240a96",
+  "sources": [
+    {
+      "teff_K": 5000,
+      "logg": 7.0,
+      "OpenWD_spectrum_sha256": "0f27356bc88dbde5fcd8b9d30bb5fcea3e9bc3a4a29edef9e5a4b0c18782ba4e",
+      "Montreal_archive_member": "models/700_300_ML125",
+      "converted_reference_sha256": "3b26c382c3ef9c4d5f662c7c7dac7f47beb9abdc0ddb9b1fafc673a5d7632e7e",
+      "optical_absolute_difference_percent": 15.244504801244585
+    },
+    {
+      "teff_K": 5000,
+      "logg": 7.5,
+      "OpenWD_spectrum_sha256": "5bf756552c02c0476a927d6b4ef390b8900b3fa9896da94b3ba928ec605f8604",
+      "Montreal_archive_member": "models/750_300_ML125",
+      "converted_reference_sha256": "b399c69f1143fabd60b97524fea8c574ff7f837ef33638ccd7c2a7b0ef747a03",
+      "optical_absolute_difference_percent": 12.56040926383936
+    },
+    {
+      "teff_K": 5000,
+      "logg": 8.0,
+      "OpenWD_spectrum_sha256": "892525038d996a8fc2b7c335f4f41aed87a9b06ac0ced1cd878c3f1a997dfe07",
+      "Montreal_archive_member": "models/800_300_ML125",
+      "converted_reference_sha256": "c5bb723b757d15819e70f522dcc31923d3557e6917e4e081a5686d3776ad4ceb",
+      "optical_absolute_difference_percent": 9.526711485584562
+    }
+  ],
+  "reference_url": "https://warwick.ac.uk/fac/sci/physics/research/astro/people/tremblay/modelgrids/he-grid_v3.tar",
+  "reference_info_url": "https://warwick.ac.uk/fac/sci/physics/research/astro/people/tremblay/modelgrids/readmedb.txt",
+  "reference_archive_sha256": "1134ae1257784b465bbc84ded6bb509023c35e12b4f35cb00a3c562e276096d1",
+  "conversion": "Flambda_surface=4*pi*c_A_per_second*Hnu_eddington/lambda_vacuum_A^2; no radius/distance or fitted scale",
+  "wavelength_policy": "Native OpenWD legacy Montreal convention: optical air-to-vacuum correction at lambda>=2000A; shorter wavelengths unchanged. Primary quantitative interval3000\u201310000A is optical.",
+  "interpolation": "Saved-model linear wavelength interpolation on the union of both grids; no parameter interpolation",
+  "flux_normalization": "none",
+  "no_new_model_calculations": true,
+  "scope": "Comparison between declared experimental OpenWD dense-He physics and public 1D LTE spectra; not validation against ground truth"
+}

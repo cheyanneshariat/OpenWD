@@ -1,0 +1,49 @@
+{
+  "DAB_additional_validation_points": 15,
+  "DB_new_accepted_original_coordinates": 96,
+  "DB_repeated_control_points": 4,
+  "backend_experiments_excluded": 7,
+  "date_Pacific": "2026-10-09",
+  "families": {
+    "DA": {
+      "COMPLETE_NUMERICAL": 1,
+      "NUMERICAL_NONCONVERGENCE": 3,
+      "TIMEOUT": 1
+    },
+    "DAB": {
+      "COMPLETE_NUMERICAL": 16
+    },
+    "DAO": {
+      "TIMEOUT": 1
+    },
+    "DB": {
+      "COMPLETE_NUMERICAL": 100,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+      "NUMERICAL_GRID_FAILURE": 5,
+      "NUMERICAL_NONCONVERGENCE": 3
+    },
+    "DO": {
+      "COMPLETE_NUMERICAL": 1
+    }
+  },
+  "full_grid_interpolation_verified": false,
+  "independent_depth_convergence_verified": false,
+  "kind": "Native numerical-development grid update",
+  "original_DAB_repaired_points": 1,
+  "original_DAB_requests": 336,
+  "physical_accuracy_verified": false,
+  "release_ready": false,
+  "requests": 136,
+  "source_commits": {
+    "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+    "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
+  },
+  "source_model_and_array_verification_sha256": "ac4c4661332cedfd2940f3d951080c68b51e8a4d90e09587ea019ff46933beae",
+  "spectra": 118,
+  "spectrum_units": {
+    "flux": "surface F_lambda, erg s^-1 cm^-2 Angstrom^-1",
+    "normalization": "none",
+    "resampling": "none",
+    "wavelength": "vacuum Angstrom"
+  }
+}

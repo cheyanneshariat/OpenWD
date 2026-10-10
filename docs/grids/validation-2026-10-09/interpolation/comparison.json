@@ -1,0 +1,1258 @@
+{
+  "measured": 8,
+  "method": {
+    "method": "Trilinear in Teff/logg/log10 HHe; absolute F_lambda at identical native wavelength samples",
+    "optical_interval_A": [
+      3000,
+      10000
+    ],
+    "refinement_targets": {
+      "optical_integrated_absolute_error_fraction": 0.01,
+      "optical_max_relative_error_fraction": 0.03
+    },
+    "scope": "Exploratory refinement targets, not calibrated parameter or physical accuracy"
+  },
+  "observation_checked": "2026-10-10T00:04:45.496365+00:00",
+  "observation_sha256": "8b7cabf2f5c4dcf25eb6abbf260b92bcc45a072caceadaf89c1fcc5a9273344c",
+  "outcome_counts": {
+    "COMPLETE_NUMERICAL": 8
+  },
+  "plan_sha256": "c3ac2d3cfc2e4e4e9c9de5ce67d902e990e8a142c3eb9acf3a3c642335ed0e7d",
+  "records": [
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "cb044ada8f287f91a113d9e8e2a56c4b6ef207ae86e58f3e12e3ddd1bea3c417",
+          "model_id": "dab-099621db9e1ea83d4cc010ea",
+          "native_request_sha256": "cabd0226c8e51158c7574cc2e0266b08d57e647b5c0cd9c8cf5692e085f50b1d",
+          "parameters": [
+            15000,
+            7,
+            -4
+          ],
+          "spectrum_sha256": "03dac18cd751b6396e5d87c545b86cf9a42621b2ec8ee017bbcd7356dbd52ef9",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "5ca40c18d55aff396f5551ac599c070e30314e87332d4cf6c4f3fa603b2eefb8",
+          "model_id": "dab-b402f23fcdaf46662ff91c12",
+          "native_request_sha256": "56b7151e83d5cf967db568e579eca2d2d8f8d3e2e639e2f161be751150605fda",
+          "parameters": [
+            15000,
+            7,
+            -2
+          ],
+          "spectrum_sha256": "9d1a11c77b5c5c9421512805aec3f12def9ada421c5bb3a02f3d697f118d9da9",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "89081cdabc6db7c06b0f071378b8bf2d7260c8cab3a0269eca53826c0996f01a",
+          "model_id": "dab-c219ff75a53681415ffbb1e8",
+          "native_request_sha256": "4d5c68cfb2d1c7e682de7c7f35bcf268b04741d3648d8520b9898a67cb7fd027",
+          "parameters": [
+            15000,
+            7.5,
+            -4
+          ],
+          "spectrum_sha256": "d70238b2f3bdd8887b3159b20fe48d51d09ca89d5687648aa1c12d1b2e8428e3",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "3a462e9a028d90a80c1123adbe7a690d0bc2e825a2cf76f25f71b087838908e6",
+          "model_id": "dab-f0f852fdb08afeb4910fc067",
+          "native_request_sha256": "50ffb756a8b81c6e175230ada3de60dc4d5f5b08f04e9a664dc4795716ed13ff",
+          "parameters": [
+            15000,
+            7.5,
+            -2
+          ],
+          "spectrum_sha256": "81e9195cae9be75ad56c994914335d2124916c05cfcce1ec57844c876de43e2d",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "3ca312011342fbf092badcc4cb06b106b065a045dbd6b6f62d49dc6880445c60",
+          "model_id": "dab-2f7f889d4ff6984816030a54",
+          "native_request_sha256": "38f02eec1d80101b201640a5f36693960e4fa5cb2ca1d7f57d78c8bd98bf0610",
+          "parameters": [
+            20000,
+            7,
+            -4
+          ],
+          "spectrum_sha256": "ff127380326a02fff5499001f65b612ffcd8a41b8e4ba3bd86f46ee6cf4b9529",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "8fbc4a9f9d305282c461b263ba6e71e6810be6572f723e90c56e66fc7d2ddb7b",
+          "model_id": "dab-387fea33230cc0de130af894",
+          "native_request_sha256": "b45ba4b4bb0f0b87574f31342df701210acdf2aa274a7a0953dd7a2f3bce3ca2",
+          "parameters": [
+            20000,
+            7,
+            -2
+          ],
+          "spectrum_sha256": "1541ab6a418ee194f8c344a1d4813c6d034cf7385ca69cb33ce22d4c75ffde93",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "f73dcd14b29082a39f05cbbba7d039f9534cbb2a857528f366af5b571cff1ff2",
+          "model_id": "dab-db1a6bcb37d6e38540c188ec",
+          "native_request_sha256": "5558fe3af8d28fb941f40a7e53d1061ad960b2b1ffe9c22888a756334532404f",
+          "parameters": [
+            20000,
+            7.5,
+            -4
+          ],
+          "spectrum_sha256": "65b6fcd42e2e2bcf56dcc51d4dda832d6098da365d8cc524184437dd2f00e24f",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "02533ef847f2d97d912df34c37489f67acfd5c6d4bc19114d67227c9b4120cb1",
+          "model_id": "dab-a7dd67a6d841abc5c02ae089",
+          "native_request_sha256": "65c207b777923f84e921367d8b73b05bc3bda372502a9576b1dffd7c2f7caa2c",
+          "parameters": [
+            20000,
+            7.5,
+            -2
+          ],
+          "spectrum_sha256": "2c4da50e7ac09e8029b3e054a431c39428c2b4282ffcec9cf89339e2bd7706b6",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "dbf7e35d253ee1d0fc3d773b0301e455e44fcc54835e0b0890a02e1bc7451648",
+        "native_request_sha256": "e263015f8ce806b1571270052d0b67a54f9712b4e22a6690b3d70774a82660ff",
+        "spectrum_sha256": "0c334b70ef2167ce275ef0ff1b0d2a6b6809de5351f342d6b50ff26f36d47b62"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-374d033f304af774b62c246a",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.05479451384798928,
+        "integrated_signed_error_fraction": -0.05377596991321624,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4862.25,
+        "maximum_relative_error_fraction": 0.17194111867299328,
+        "rms_relative_error_fraction": 0.05279950840073892
+      },
+      "parameter_brackets": [
+        [
+          15000,
+          20000
+        ],
+        [
+          7,
+          7.5
+        ],
+        [
+          -4,
+          -2
+        ]
+      ],
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 7.25,
+        "teff_K": 17500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.12913600822140017,
+        "integrated_signed_error_fraction": 0.08872999948164524,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 923.021089508034,
+        "maximum_relative_error_fraction": 53.12829867530739,
+        "rms_relative_error_fraction": 1.6192534635532785
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "ab1c3235fcb289ec203a32689c472ed84f4a9de2e35a51cdecb4eba3164f48be",
+          "model_id": "dab-dfa7e09f866ea007520f9403",
+          "native_request_sha256": "1718833062ef4df3843b56fdea03a0376c213d01600798135995c50884ce0531",
+          "parameters": [
+            20000,
+            8,
+            -2
+          ],
+          "spectrum_sha256": "79e5a5558cf874b165a26b4e5063e30862bc0e20705004f1a900d75f602378a8",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "24e82eb4f4869fffc134658425d4361b601b06d81ed79108f47c6a9cfd15b0a8",
+          "model_id": "dab-384c120fb1e0e6bee1c6d63b",
+          "native_request_sha256": "a573d4c8139f61b53fbb0b1dd0f7eb1acdf003638a9cf5c85cee37541469c2ca",
+          "parameters": [
+            20000,
+            8,
+            0
+          ],
+          "spectrum_sha256": "b42bdb306d56511aa3f15694f3adc3dbee16d9e1cf58b7f91b403e948b35a773",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "db875e7351e1752944c3cd32fc956bf5fbb2eecd91df8132a9c86d0b40059146",
+          "model_id": "dab-c8c3dfc07b6f872f9ceccb54",
+          "native_request_sha256": "50ca5bce0499ce1d712f7c663f4ebb5c4dab10d8b7a6aa428c89715ddf5b1119",
+          "parameters": [
+            20000,
+            8.5,
+            -2
+          ],
+          "spectrum_sha256": "086965192d07319bac270e333a02b141cbe746904404ef9a78b09d671784b9c9",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "36b94ed3a23f6ec11ce21c1962cfa70a8c0f0201b24fea151ad13a9e6b2ea60f",
+          "model_id": "dab-dd2ef54857496acbe233466d",
+          "native_request_sha256": "6a59a6149b5106634471bd3f30a9bd563147b8ef256de908395dcc0accd6a45b",
+          "parameters": [
+            20000,
+            8.5,
+            0
+          ],
+          "spectrum_sha256": "5d370f44374c764b33ec51eff66b9c99de5a227cd0681709b144d30c7a046060",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "d364c9c583d200bbdec3acab584bcc63c5545490a1fae91fcb12bb0a5e1f8967",
+          "model_id": "dab-7d6f77dd2f6e15eb1839ee06",
+          "native_request_sha256": "06eed56c3c8521273e53b6822ca9d8bfa535e05c32995398f806a3c50c14bd3e",
+          "parameters": [
+            25000,
+            8,
+            -2
+          ],
+          "spectrum_sha256": "5518fe5875f60d3e6b037ae5187a084b14d82ea44fc1cd150e1478ef1286365e",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "2165ea0c77af6da9e6f579055e5f1ddc0198859d699a88611acf7bb45f51235f",
+          "model_id": "dab-8583e2e3568189563a762627",
+          "native_request_sha256": "064d9b78f496dcf6292962bc6262367e697db92978d48b7cb282b711b27ca894",
+          "parameters": [
+            25000,
+            8,
+            0
+          ],
+          "spectrum_sha256": "c78f7ea623ff5e1f2d80b8d392077dbe1f1b1e8142f0255c4b5a737b8baafe70",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "a2aceb77bf6343858d7282cbc45b7a88aefe71fea8ca7f57fc9e48bac80c6d6e",
+          "model_id": "dab-37fcd065ace49f013df1454f",
+          "native_request_sha256": "40466973823441c493ce9ff86bff3cbea19ed71a3e61d3a4b2cdf1092e1043f6",
+          "parameters": [
+            25000,
+            8.5,
+            -2
+          ],
+          "spectrum_sha256": "12d5f99de042256ce294830cfeed7114acf245a0aeccc228537ae50f30a3cd53",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "0c335c1f91c6c3b9ef915d314811d1a03341eb5f045b5506632bcdeff77ef9e2",
+          "model_id": "dab-00e081f894cb0184879ac4c6",
+          "native_request_sha256": "31fe8f8b9e2ab6581f7efed56bc5afded549f97f7c118742e4ac479917a61e22",
+          "parameters": [
+            25000,
+            8.5,
+            0
+          ],
+          "spectrum_sha256": "13c54c0e2b48c80d886234eba4b3f3d629829311eeaa8ea98c65811df5233907",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "2e8af0343faf9ccd6ba0326337f47f223d285c64918017ae12baf8bf30b23fef",
+        "native_request_sha256": "91ac6c508de7c07de17b43ff7a9409b37d69b1be6e0f97c9aabca6dc12c49d61",
+        "spectrum_sha256": "d69518283630c9175f99658ec9ac9f722b55fbb3fa072754d8d648e974e72566"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-69c9762223d42303bd1d0602",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.029887099045374167,
+        "integrated_signed_error_fraction": -0.024362804106133965,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4863.25,
+        "maximum_relative_error_fraction": 0.20229305382426857,
+        "rms_relative_error_fraction": 0.031539824049118294
+      },
+      "parameter_brackets": [
+        [
+          20000,
+          25000
+        ],
+        [
+          8,
+          8.5
+        ],
+        [
+          -2,
+          0
+        ]
+      ],
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 8.25,
+        "teff_K": 22500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.05493429455166964,
+        "integrated_signed_error_fraction": 0.0308727633661287,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 930.8249069411862,
+        "maximum_relative_error_fraction": 40.79872714448399,
+        "rms_relative_error_fraction": 0.6870664690849094
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "2165ea0c77af6da9e6f579055e5f1ddc0198859d699a88611acf7bb45f51235f",
+          "model_id": "dab-8583e2e3568189563a762627",
+          "native_request_sha256": "064d9b78f496dcf6292962bc6262367e697db92978d48b7cb282b711b27ca894",
+          "parameters": [
+            25000,
+            8,
+            0
+          ],
+          "spectrum_sha256": "c78f7ea623ff5e1f2d80b8d392077dbe1f1b1e8142f0255c4b5a737b8baafe70",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "95051eff9a27d55a7a0efc6d532050825e7f17ff6d412750d361bd69a716ccf4",
+          "model_id": "dab-91abbea6fcb450a816edfef7",
+          "native_request_sha256": "eafabf0da2f653b6126b0eb9e80701fdb0ac1e276d4a74b4638aab625a166712",
+          "parameters": [
+            25000,
+            8,
+            2
+          ],
+          "spectrum_sha256": "ddd4100bd3353ebdf9d0027c6e4607bf5b725918d082b1f4e9abce3a845afb20",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "0c335c1f91c6c3b9ef915d314811d1a03341eb5f045b5506632bcdeff77ef9e2",
+          "model_id": "dab-00e081f894cb0184879ac4c6",
+          "native_request_sha256": "31fe8f8b9e2ab6581f7efed56bc5afded549f97f7c118742e4ac479917a61e22",
+          "parameters": [
+            25000,
+            8.5,
+            0
+          ],
+          "spectrum_sha256": "13c54c0e2b48c80d886234eba4b3f3d629829311eeaa8ea98c65811df5233907",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "f05176d6074dcf0d9e8de32fe5a005a69c1d44f54ab116ffd557bda56bb3fb4f",
+          "model_id": "dab-dcd9a958cb97be2dd41f0d23",
+          "native_request_sha256": "95920ee08847cb2f89b304c161428d93748690762d8ca0dc66a0b0e128247d98",
+          "parameters": [
+            25000,
+            8.5,
+            2
+          ],
+          "spectrum_sha256": "fc8af61ac34f678cd0e91ad9d122232c1ed5ff72334b7c140297819be4b6b204",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "57ec4564fa2a669b9c85a9c9648a00dfe18d10cc5e08b8ce7d8427c6e1cd31e8",
+          "model_id": "dab-c69a9a0227b577d9370e7139",
+          "native_request_sha256": "ca332abbb15294297a1f44165cb664110171f20ec58e924f325cc19aa71e9d24",
+          "parameters": [
+            30000,
+            8,
+            0
+          ],
+          "spectrum_sha256": "04ead18ee7730c0cdef2f1ef33dba5ad0a406d133c898f9666c5f36735e26778",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "bf03ef09e207e671ff166a8168dfb31e43957f719a48880f2e2eaa20240d5999",
+          "model_id": "dab-e1547f34a368d079e27246e0",
+          "native_request_sha256": "39f4ff8efecd7553f44e72c2bd31d2b228b3974e46fe8bcdee4757678743730a",
+          "parameters": [
+            30000,
+            8,
+            2
+          ],
+          "spectrum_sha256": "2e109d1415ec5460058a5309d49b55396b2e263eeae93a40689b2910b56f3f23",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "df692f2922831cd18f60062e451df40b7050aa4b4f8dcec37af633d86d63bcc6",
+          "model_id": "dab-44553148785ee29ade299540",
+          "native_request_sha256": "02eff7f44577270515b8f08b8823b841dfedc7da87ac133adb699ffc2d8c1410",
+          "parameters": [
+            30000,
+            8.5,
+            0
+          ],
+          "spectrum_sha256": "e30e37d04e3a12a0d02528c51588cbe51608a57639aef0fbcb4f60314e90b268",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "6bde162aed9fbea4d1b518d02f3fe1a5b13e1fddbb092469c95be35088cdb486",
+          "model_id": "dab-6837d71b628733068ac8ee55",
+          "native_request_sha256": "876af1c7a151970a0c389301a5e2876e53ce84735e8f0825f1be54839b4345d9",
+          "parameters": [
+            30000,
+            8.5,
+            2
+          ],
+          "spectrum_sha256": "99a89bf17af508e87251a07f5cf4ec0df10f5e6eed4a659299b8f88b9b69f3c6",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "4573ea535c8d83f91973bba949a08c7d7f244fb136129fe6b408e80c8951d19b",
+        "native_request_sha256": "789f6dfbdad95b02a3c29eb37e104d8fc7b47d16ecfca0496a47aae2fe1d8600",
+        "spectrum_sha256": "18a958fb4bdd2aaa9b5372f960b721821ad9b02832a2794a104f8cbd86d1d4d5"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-b983052d084d3ad98827780d",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.04230402465667707,
+        "integrated_signed_error_fraction": 0.04230402465667707,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4473.0,
+        "maximum_relative_error_fraction": 0.20264566060166256,
+        "rms_relative_error_fraction": 0.038671129508421
+      },
+      "parameter_brackets": [
+        [
+          25000,
+          30000
+        ],
+        [
+          8,
+          8.5
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 8.25,
+        "teff_K": 27500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.047857140849173835,
+        "integrated_signed_error_fraction": 0.03905769716890827,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 925.6150652797111,
+        "maximum_relative_error_fraction": 4.68236174623349,
+        "rms_relative_error_fraction": 0.09930913242617201
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "25b894b597454dcde213b703b78854fc0af4f68b2e3d8ee29d04662f7e242033",
+          "model_id": "dab-e7438f499cd1b17d7cc5985e",
+          "native_request_sha256": "963450ec5a6caf971ad2808f11f487eb1d8e36162e4745b1f97c8a74a2e03ffd",
+          "parameters": [
+            30000,
+            7.5,
+            2
+          ],
+          "spectrum_sha256": "a41a50942ad3a2fd4bfea4f241ce6743bc1797afefdd129f5ec7753c3fd9b774",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "c3dfe8a4ef4060923975f9a6b7a625a4107c878b974b242ac9928a502b460704",
+          "model_id": "dab-634f893408a0cff37defe244",
+          "native_request_sha256": "50640d21b1532c5f7db9ff8fb23d6c633e1540980abf1fc70a25c3f5f6267918",
+          "parameters": [
+            30000,
+            7.5,
+            4
+          ],
+          "spectrum_sha256": "c8bcc3a6b40107dd9373e58b0ee41a54cc18a4ba096636b1c57a8c158b683200",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "bf03ef09e207e671ff166a8168dfb31e43957f719a48880f2e2eaa20240d5999",
+          "model_id": "dab-e1547f34a368d079e27246e0",
+          "native_request_sha256": "39f4ff8efecd7553f44e72c2bd31d2b228b3974e46fe8bcdee4757678743730a",
+          "parameters": [
+            30000,
+            8,
+            2
+          ],
+          "spectrum_sha256": "2e109d1415ec5460058a5309d49b55396b2e263eeae93a40689b2910b56f3f23",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "b614f1ec9dcc2ce7e11cc7f92131c6f5d6a92ba8d86636d98505384b801cb3a6",
+          "model_id": "dab-fa93c959763fa085f3a6470e",
+          "native_request_sha256": "45443a07a4b84e948809288c673a76f09b5fd2659d339a897b94fc33636f017b",
+          "parameters": [
+            30000,
+            8,
+            4
+          ],
+          "spectrum_sha256": "15301c0990c6145147f8f112109b1239596c9d33415715f444a4e0e6ac9fa4b8",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "3883be13a986910637320df5a1a910a9e3f48c239cdcad5b58a57f7d57821059",
+          "model_id": "dab-e0bc279603bd12db0fcd663a",
+          "native_request_sha256": "e40ed212b0ab2b3e2b9cf9c4c18d794b7450c9cde636db3b17832541b28040c0",
+          "parameters": [
+            35000,
+            7.5,
+            2
+          ],
+          "spectrum_sha256": "7410518a0fd731effd68eb8ea79481f2eace142634a38c00d98bb30a2385971c",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "90d9b8e533fca60304fdb4676e0c141a6fb853db78d65cb3f5035c1ac34f80d7",
+          "model_id": "dab-5f3d53475d947d705c95c293",
+          "native_request_sha256": "566f3f0471d49978416d397195b2b3a5c1f1f26ba67ae270e06e356c5374469f",
+          "parameters": [
+            35000,
+            7.5,
+            4
+          ],
+          "spectrum_sha256": "23e7ee9c3c49742175ca6905ad72cddeba5302004831b3fbf53a3e0fccac9e16",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "f17facb70d01828e5ad712b77d8be68306650b40254623cd1cafe46df377145e",
+          "model_id": "dab-5e5060b45bdad3953ee4dccd",
+          "native_request_sha256": "2e54449b25570cf40c756403e51ffd043d6866043332ce0a60dc4c36b61d05bc",
+          "parameters": [
+            35000,
+            8,
+            2
+          ],
+          "spectrum_sha256": "e7a48802a029f5f26d6178be81d0c0c077fac16c9ba525a563bec31ce1bf3558",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "4bf63c1a2517f8217a39081447ad92fd238fbbe517048f32d0035f77e12624eb",
+          "model_id": "dab-fba4d2264280ba014863521e",
+          "native_request_sha256": "47a88c0593a1a266ada546f863ab4556a54892df2761b6baa3ac0eceb255dec7",
+          "parameters": [
+            35000,
+            8,
+            4
+          ],
+          "spectrum_sha256": "1fcd625cd88f5ec4245a11786134a86d1dae3d47b70202bffbadb349e75b8906",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "daf8f63b35db81b11018b187069fc91924ec9aa4dc63f600d9168deeef62b029",
+        "native_request_sha256": "78a8fc213de18c1010f95941f4fe77a7c5a8fd2218c33098b415caf8994c1cb5",
+        "spectrum_sha256": "5068da282b370a824b661fd94479b8961feb14dfba200bb356c8b7246f0e4b62"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-3e34301cc245863691548625",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.006655171081613957,
+        "integrated_signed_error_fraction": -0.0066543662928602795,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4473.0,
+        "maximum_relative_error_fraction": 0.06096213601188908,
+        "rms_relative_error_fraction": 0.007084681052650471
+      },
+      "parameter_brackets": [
+        [
+          30000,
+          35000
+        ],
+        [
+          7.5,
+          8
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "parameters": {
+        "log_H_He": 3,
+        "logg": 7.75,
+        "teff_K": 32500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.009566907458652706,
+        "integrated_signed_error_fraction": 0.006707938833062251,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 925.6150652797111,
+        "maximum_relative_error_fraction": 0.42854950241762796,
+        "rms_relative_error_fraction": 0.014102326538240976
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "e6c770f802218a65bd2006e1055b2c93ee2a2a31ac8f358e6344664134270107",
+          "model_id": "dab-a5e17be424b3beade06bf974",
+          "native_request_sha256": "b0e2555e77033d7d6bd7e266047a3c992703c76da17df4f2aeaffd2889e2dd9b",
+          "parameters": [
+            15000,
+            8,
+            -6
+          ],
+          "spectrum_sha256": "5f90a93c01c329f71af394da4fe37bf5d5b07eb54da353f328ba3953ab4f8395",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "ff471daea134c9f35395843604cb23737f50b0dc7f3ebc9c14d4a31660d32836",
+          "model_id": "dab-32a5f9d2ea4f8ceb690f1864",
+          "native_request_sha256": "c0b9fc6259da9076fe92515b0bc0bd0d0b387b576aff734f342efb1e695a1ac1",
+          "parameters": [
+            15000,
+            8,
+            -4
+          ],
+          "spectrum_sha256": "624a81252bda7a328507a7832666b27a58cad2df115b307126a138eb4e40c220",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "2b017903f59b266a66134a9438b7d23ae5f220d413dbd39b8e75f5a322bc9875",
+          "model_id": "dab-155a95497247baec46c62498",
+          "native_request_sha256": "c44c180c77dc55e20f1c10b867cb68043c51cbddcab268c37898d07216d84fba",
+          "parameters": [
+            15000,
+            8.5,
+            -6
+          ],
+          "spectrum_sha256": "f9e15ca1689f56d5a9bdb64bed63e38989cbb4bcfdea5f4e1d1c88fde9167df8",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "07dd2c82d4ac529c51b625761f7ac738ee136d0f316bf007dc3f1aec37d6f0e5",
+          "model_id": "dab-b06783f9a8c943bbe5828d4a",
+          "native_request_sha256": "d781058ba6cafc44576797bdebbfd34d98d2c81c7612408259d782b2a3848f29",
+          "parameters": [
+            15000,
+            8.5,
+            -4
+          ],
+          "spectrum_sha256": "bc47a096cbbaf95e072c54d92bb134885038c5a78cb29033a459aa75bd7d76f4",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "a925008c040267dce6b4c63ae86a8a24185c68630da0a76e6a5d63a6a48c278d",
+          "model_id": "dab-c93c57fb65a5823d0d647021",
+          "native_request_sha256": "e5c2fbabc41ddb71e6d745d4599809eb367061a1269ca1f234c1bb758acd5b4a",
+          "parameters": [
+            20000,
+            8,
+            -6
+          ],
+          "spectrum_sha256": "77fe861a9e20a18b6691e99e77d3123042c69c9084c688e430fac31118de3fd4",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "456e7b0f7c94ab8bee2f6439b354e57b48d8897c8c3986efc8dd79ad871c2c24",
+          "model_id": "dab-c218c7629dff97566f4b3958",
+          "native_request_sha256": "d1bff748f412f7e1c810cccf7f15b3aeacb74ee334a43fa8d5dcd668e419379c",
+          "parameters": [
+            20000,
+            8,
+            -4
+          ],
+          "spectrum_sha256": "dcaeb65f5b55e82e96d8dc1c4293ddf83d844ce2939f8586cbb7b048eaf1da29",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "9a0a3c6081eeef86a311890488f246b3af892d0357db7e3835b59f56389e27b9",
+          "model_id": "dab-fed17b86c8fc791733aebb90",
+          "native_request_sha256": "34c5b12ad0ce63a4db832bc141c97101eb9db978add0f990c06294b2c4107d67",
+          "parameters": [
+            20000,
+            8.5,
+            -6
+          ],
+          "spectrum_sha256": "597710d2f38236c522d77c8cdd8965f4a57dc43c83735dbfa9cffc69d209c485",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "d3b0ea8d72f16a190efbc518b1c3dc92a0d66e7c42035ebf9b317245eae74a87",
+          "model_id": "dab-19773049b8d43c6509b38601",
+          "native_request_sha256": "d80b4de6ead3491b3c545cb6f2d7ac7b91073b7b09c1c4687321e294a0a9b5a3",
+          "parameters": [
+            20000,
+            8.5,
+            -4
+          ],
+          "spectrum_sha256": "ed01788c8599d7caee990f87bba819565bd29a30d5f0f98924364d73c6d80455",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "ebada8a9e69b465a0e9b5ca54d8d179841745422121c443ce112f42da9215216",
+        "native_request_sha256": "6bd3a99db9fc9827ce033a17a3fc9a2ef7a8a06190f27997dfd8cedeaa00d533",
+        "spectrum_sha256": "46245101066ea30e2fdcc46abd09f70d3cb2afe8688f625e2d6504c579de5846"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-710241cd589d4dec2276f928",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.0060848059147772925,
+        "integrated_signed_error_fraction": 0.003139385649293313,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4026.75,
+        "maximum_relative_error_fraction": 0.10154118264608335,
+        "rms_relative_error_fraction": 0.0088084672938198
+      },
+      "parameter_brackets": [
+        [
+          15000,
+          20000
+        ],
+        [
+          8,
+          8.5
+        ],
+        [
+          -6,
+          -4
+        ]
+      ],
+      "parameters": {
+        "log_H_He": -5,
+        "logg": 8.25,
+        "teff_K": 17500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.09863988382976056,
+        "integrated_signed_error_fraction": 0.09776493047777741,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 972.2081300676884,
+        "maximum_relative_error_fraction": 10.699088778733987,
+        "rms_relative_error_fraction": 0.12496040256000021
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "1658175370b425985938dc3fd55d4900f2e6243dc3cdd202a797ca0e9acadcf6",
+          "model_id": "dab-bc63ecbabb5827cc1acbe891",
+          "native_request_sha256": "de744761937c959a83e82a172d7ac90d785161fe6e1338602cd7619743d83b13",
+          "parameters": [
+            35000,
+            8.5,
+            -4
+          ],
+          "spectrum_sha256": "cafa99c286421486b762b1de6dfe9549c75b71a8caa432a8c0222c4461714095",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "d77e591e9b6e9b31b9cbbc0f6c6d24e87622b8929e9cd805528c0e5ba9ce127d",
+          "model_id": "dab-1ebcd1db0d25f6c8dfa5287a",
+          "native_request_sha256": "fd8951ef53d9e81be7e903b80b55be9e03be6da6c0c6f4525e1aecacdc56f73e",
+          "parameters": [
+            35000,
+            8.5,
+            -2
+          ],
+          "spectrum_sha256": "bbb6f7e9eebce35325d76683f6c5f60145dc74a90874ec627304cbb868eae625",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "8d8275efe19ae1de105aae787161b5081e2c0763e37b130eecda3ffb80adeffb",
+          "model_id": "dab-4feb50171e185bb4cc0614a4",
+          "native_request_sha256": "b745e3297bf49616f01349e31db3804d02e79dc834005c10a2a8a43a39b035d1",
+          "parameters": [
+            35000,
+            9,
+            -4
+          ],
+          "spectrum_sha256": "577adca4ddd721259c3b35b6fb94e0ea6cf7d3bffce1346b3928e85b5d0a64f0",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "4173bee7cb6947ad29b913a717325ba42b20d986e606c038ab4c594ff19027d6",
+          "model_id": "dab-14e396171403cf3a964afd7f",
+          "native_request_sha256": "1097c9f6650f26ef417fc8fb7b448c9168c3a6775052081ceadb06de182dae1e",
+          "parameters": [
+            35000,
+            9,
+            -2
+          ],
+          "spectrum_sha256": "cbb5affeb7512b80028dfee0e3505e4a9ee0521e3d9211307af47c3de6aaf8e6",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "d09f0febe9aad2b38e3c5e83d5f88fb4569342d34594d36714298e959c7808eb",
+          "model_id": "dab-5ceada02ffba4ee672ce2e66",
+          "native_request_sha256": "3c6241780781bad81e379befb291729f4879d8ddcda5eddaafb8bab60103f924",
+          "parameters": [
+            40000,
+            8.5,
+            -4
+          ],
+          "spectrum_sha256": "6db4c3044b9bec04efaaa0b87e3fb3fb4349ac2778a662770508dff3290f084e",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "47335e2471348dc56cb128baddde86b5d8cad929ba0c35d94d8256e53cd1bb7c",
+          "model_id": "dab-ef2f00ba4213ee20caf0292f",
+          "native_request_sha256": "5fac70034aa502bd0ee615606d8ccfbaee990053b105dde49140c224ece97f36",
+          "parameters": [
+            40000,
+            8.5,
+            -2
+          ],
+          "spectrum_sha256": "35b9b236ac6baaaedb0c7d2b7eb5f20f67562ec438bdfc2f4379e72c6501d10f",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "6a2b97862e954d71b56abd110791c5f8a4495384b24032fe784a7b7ef2f91897",
+          "model_id": "dab-d16f51dc7f55696411d436c8",
+          "native_request_sha256": "e8983d28382c9cae0a2c4673ec4fb15ea90910086f48d7d71478615cbf7a2830",
+          "parameters": [
+            40000,
+            9,
+            -4
+          ],
+          "spectrum_sha256": "6656cf7b2c27023caaf9ce88d2bb17220c0410ed14b83f3a983fbd07f79a22be",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "199ad580d33a3ca80fabe09e5ee9cf751ad4fef2c3ec03d4c77762a0d373cfc7",
+          "model_id": "dab-a24291b20d51b4b4407cd7ac",
+          "native_request_sha256": "96620df308a0315a21b39b40af297e234d2271bbece287a103a461efbc165ab5",
+          "parameters": [
+            40000,
+            9,
+            -2
+          ],
+          "spectrum_sha256": "0be6bc017ef92118f64b474d4c1607d255d22d87da8a7e6a3ea59620d7f67ea1",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "a4fff0ce65002a05a73ca82f48277fa5f95790e9987571f1d0cac1236ca0c8eb",
+        "native_request_sha256": "599554aa3aa834a4d035a4be37abac701e6f77171490c5e20d20b47e61d28f7c",
+        "spectrum_sha256": "aa8c9be4ce9295d0b5ba3a2eced6c691c1a90002ce42d6ec6a1fe5a44bd614af"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-4dbe1400d92ad71ec76badc0",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.03393980487233726,
+        "integrated_signed_error_fraction": 0.03393928401267294,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 3190.92818844576,
+        "maximum_relative_error_fraction": 0.05445728939391736,
+        "rms_relative_error_fraction": 0.030419208459571353
+      },
+      "parameter_brackets": [
+        [
+          35000,
+          40000
+        ],
+        [
+          8.5,
+          9
+        ],
+        [
+          -4,
+          -2
+        ]
+      ],
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 8.75,
+        "teff_K": 37500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.052197965934546765,
+        "integrated_signed_error_fraction": 0.044077352503439915,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 1215.2149235263073,
+        "maximum_relative_error_fraction": 0.18339448735650726,
+        "rms_relative_error_fraction": 0.031649790056322784
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "0fa9aff67ce59398e6ddc202f338183ca22c80de2e9c7546bf32e678415b34de",
+          "model_id": "dab-9189d4e40b57231c185b980c",
+          "native_request_sha256": "623c0f9731a76fb88ec2511ab83a2a57578287be2ec578b8a72d14ac10d7e0aa",
+          "parameters": [
+            20000,
+            6,
+            0
+          ],
+          "spectrum_sha256": "38d7232c83fd0ccfa096c98c45573622e5345bd63aa4bf86d6e47e25c8c10ca0",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "b0f2cedd8493818c0ce1c62796e2b581c9d3d9eabaaf684d0f34fb9b1bcdc526",
+          "model_id": "dab-d42159edbb55d471c96be3a0",
+          "native_request_sha256": "516b4fbf1e91f5b2772c316976bc80738b60038ebdc229d46d26f298e264e9b8",
+          "parameters": [
+            20000,
+            6,
+            2
+          ],
+          "spectrum_sha256": "b0afe05b08b8d63f74b50cc07358876700492e1187b9aabf1cc64155c7ff428f",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "bd2cab8f2feb9079cf021671db3a7113fffe28c2a8b683e23b81ddcb2f6269cc",
+          "model_id": "dab-db0dd37a4a8068b84c2a6afc",
+          "native_request_sha256": "92c387239f63ae14bb0625fa11080fd7129c76966cf08d7d48dc89f0bc47f84e",
+          "parameters": [
+            20000,
+            6.5,
+            0
+          ],
+          "spectrum_sha256": "3979871aa980e829b0d669d57db34e6e12fa463e97f1fe8b3cf11b898c6e3321",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "630902fe4be5efc8b2ef94a09ba2b3cf1a5f1d0b9adf38493e17e8bc59d7cd20",
+          "model_id": "dab-f1d9b5a00ddddbfc8df9b533",
+          "native_request_sha256": "9050f99bd8b5dfda8adb685f27db1488730eef0c5da4bd5461439f598632f21e",
+          "parameters": [
+            20000,
+            6.5,
+            2
+          ],
+          "spectrum_sha256": "bbfa91a11863bf6b4587f52075545b2f5d2576c20f0fe6329388fd06c670b47c",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "3170452cf9bbc2b67a70bf63c5704918cd0818ba400a5e178198cd8d9fc16748",
+          "model_id": "dab-95a14de794a84d66a3a06605",
+          "native_request_sha256": "dde1bdf7ca3fcc52d4dc1643080eb1e639e0179bf0c7ac08f0758482f9ba217e",
+          "parameters": [
+            25000,
+            6,
+            0
+          ],
+          "spectrum_sha256": "c8bbe78c3224e52edf72942f5d061e653d9cda9c3fadc87ba624632609942d29",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "4a4896e77c289f3ade84fc334aa3f3cfa6d98d5e82eb22df380a6aeced483741",
+          "model_id": "dab-13ebb047c011584af83d73b0",
+          "native_request_sha256": "8638ae64212288abb38c0eb4908b997a54fe00632fe21e0a5ff142279e14a9ac",
+          "parameters": [
+            25000,
+            6,
+            2
+          ],
+          "spectrum_sha256": "3a67926b7ebe1d90e49bedbd62c9b4101867675f11931514d03296c5a893940d",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "b7cd665b478cb5b12837a0934c3e41cd149e68fa406d2806ab72edfd808a3f38",
+          "model_id": "dab-5e2b87d2686b4708e1f34534",
+          "native_request_sha256": "56178144aff60727830a8a6478694b3790162f6f703d57741c49bb287eec3283",
+          "parameters": [
+            25000,
+            6.5,
+            0
+          ],
+          "spectrum_sha256": "cc099fc4a8d6e66921d62010bc16e1fb34ddd2d632f1bf9601f01b696de5b5de",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "845f26a9337302374e0000a017fe77b3741079bcd2c74513d423d3745591265b",
+          "model_id": "dab-211621798ea52f9bc3c397a7",
+          "native_request_sha256": "9743b3f3fc4f747ccd7d69383668d346d9ebfc71fed414a86292c63f0c6222d8",
+          "parameters": [
+            25000,
+            6.5,
+            2
+          ],
+          "spectrum_sha256": "86653415b5a4bb932e84f4b03efdb7dc5804f503c970afbde8f2eee38634673f",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "587b579f6cbdedde03674505def7f7defcf1612adf52d2589a76b62c6c4b178b",
+        "native_request_sha256": "156053165ae487840cd491740d40af7b7f48200d0819642e296a90651ba9d119",
+        "spectrum_sha256": "73a58b85c19d31dd564d28c1beebc4bff79ff580172e534b43dbabb6e619ce92"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-7e761c90d62ea49123a49c00",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.035822264156356635,
+        "integrated_signed_error_fraction": 0.03543668372638791,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4027.5,
+        "maximum_relative_error_fraction": 0.14118503877974875,
+        "rms_relative_error_fraction": 0.030885921457924948
+      },
+      "parameter_brackets": [
+        [
+          20000,
+          25000
+        ],
+        [
+          6,
+          6.5
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 6.25,
+        "teff_K": 22500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.07352658544757473,
+        "integrated_signed_error_fraction": 0.07347815266016888,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 915.2826974476615,
+        "maximum_relative_error_fraction": 2.0677665501909046,
+        "rms_relative_error_fraction": 0.09347480234146929
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    },
+    {
+      "comparison_status": "MEASURED",
+      "corners": [
+        {
+          "metadata_sha256": "b8c6b096b9859f7f9fd76e3b819675654e434a44240394013b0eebcf84fbaf82",
+          "model_id": "dab-0a953eb9cdcaf7df9920c869",
+          "native_request_sha256": "750853d073484968f9062ad51ead69b212233c6504fed11185f3d5693a4eeb0f",
+          "parameters": [
+            25000,
+            9,
+            -2
+          ],
+          "spectrum_sha256": "a00e72ea532b669f70a275cd0687ed150130f69b850e756633b95f12c8d410d5",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "6c94d62968637b75a1fdb74f5ef6d67edcb40d3d82801a00d80b8a9991a0d193",
+          "model_id": "dab-a20ba842403ff8dca258ebf8",
+          "native_request_sha256": "e4bd6c674342c3a5219e5e664e90f2aa1903d2aa2ab777091511f209cc107b53",
+          "parameters": [
+            25000,
+            9,
+            0
+          ],
+          "spectrum_sha256": "26946c0b86f5e96aadf5c79c8ad8ad636ed1c1ee6baa7774258514d9db017e3c",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "9f3f0fce6c76083886f8ab6d583e73338b0856ee5bdb9bd8b9be02a8abb7ff99",
+          "model_id": "dab-4ded86e3342e4b8f117c2a63",
+          "native_request_sha256": "8ae8919fe66105baa6e09a41c281431d219b9f2298c9027fed761b1e616a0289",
+          "parameters": [
+            25000,
+            9.5,
+            -2
+          ],
+          "spectrum_sha256": "63e52b76435f6585561a341ea2c1b7d97c1a4edd302479894825d2114ec4203b",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "642b8c68139b3e04c5b1c40884da01b3a01f123ac119a5cc42dccab7b35e5ee6",
+          "model_id": "dab-06b5978995a105c61c846fb9",
+          "native_request_sha256": "cff1345c63dfe02da7f6bc3a57d9bb1f661a4b9dca8a4e08ed4b53f0239fb7c8",
+          "parameters": [
+            25000,
+            9.5,
+            0
+          ],
+          "spectrum_sha256": "389aa9aba8b84f7d44eb4ac4ace9f654fc33bfe17a2a6ab8999f518e12c78fd5",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "10d7edd74566bc12f8db3e6ebc5ca6971e397e4c77db03f6371ed59372856ef7",
+          "model_id": "dab-cb5f5b1adf34660531daa209",
+          "native_request_sha256": "4a194eb32de0fd4651fa7e975d73864820c40bea2f63689a242011a04659c4e8",
+          "parameters": [
+            30000,
+            9,
+            -2
+          ],
+          "spectrum_sha256": "c55cd649d45daa96f60f5a66ee6adb5ef1e159f4fe56bdbf140a322df833c20d",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "b9acb3b41ea217fd0ab7d2ab0b9e74cccc17f8ee7aff207aa89ad4b714ef1bf8",
+          "model_id": "dab-5613d155b7a0eefde495b17b",
+          "native_request_sha256": "47ac2aab52fb68111aeb0d3bb95c7a87cc314301ec63566ae7f01c9726ef25bb",
+          "parameters": [
+            30000,
+            9,
+            0
+          ],
+          "spectrum_sha256": "74398b4f5d61801c9e2ce3f439b973ec08f59bfbee830a2a4ab6ac06a46a941c",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "20e35bbc821f9920e31c45288b23625d3abec031125dbd2bf16e76d4e9981799",
+          "model_id": "dab-4b123f7974489cf8cf126575",
+          "native_request_sha256": "faacdd34a1bc906bc05584baebe7c6ed3d29d8aa96669080472b0b2175043137",
+          "parameters": [
+            30000,
+            9.5,
+            -2
+          ],
+          "spectrum_sha256": "67e0e4e081362a9a3327d3589b6cf1b020ee67ab27f1fee194fa53f2d8397b71",
+          "weight": 0.125
+        },
+        {
+          "metadata_sha256": "7be7075159d73943de30b0e4e230fe5f4da8f5ae2436d791c62e1e8543873071",
+          "model_id": "dab-ba722bcf72664359b7cf2c35",
+          "native_request_sha256": "00c27a1d986831cd4d0fb09d0fd48baa62c7c6188a989205011c75919c3becde",
+          "parameters": [
+            30000,
+            9.5,
+            0
+          ],
+          "spectrum_sha256": "49042d82c1b52599c1cab4f986874a49111f6f1d9108c30f730c30922d3eeff1",
+          "weight": 0.125
+        }
+      ],
+      "direct_provenance": {
+        "metadata_sha256": "60ef7ea9f73bc5a617ff196dc90f7689b09f0f63866192c41110a1d9b105e105",
+        "native_request_sha256": "9e19fdb5f0369af79b5890afd884e2599090f8d98c76df7f9aad421439c8ab9f",
+        "spectrum_sha256": "a6d908c93652c7afc7617522ad5f56e2df640e1f42531efb17d110e81836304f"
+      },
+      "flux_normalization": "none",
+      "model_id": "dab-c044bac91abb97f2e80663c8",
+      "optical": {
+        "integrated_absolute_error_fraction": 0.038372344515963025,
+        "integrated_signed_error_fraction": -0.03834380721787242,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4341.75,
+        "maximum_relative_error_fraction": 0.11227666004966606,
+        "rms_relative_error_fraction": 0.03710729146145395
+      },
+      "parameter_brackets": [
+        [
+          25000,
+          30000
+        ],
+        [
+          9,
+          9.5
+        ],
+        [
+          -2,
+          0
+        ]
+      ],
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 9.25,
+        "teff_K": 27500
+      },
+      "physical_accuracy_verified": false,
+      "refinement_target_exceeded": true,
+      "saved_band": {
+        "integrated_absolute_error_fraction": 0.0494113225317705,
+        "integrated_signed_error_fraction": -0.023605829975571504,
+        "interval_angstrom": [
+          900.0,
+          30000.0
+        ],
+        "maximum_error_wavelength_angstrom": 949.2913622439214,
+        "maximum_relative_error_fraction": 1.2829389052206648,
+        "rms_relative_error_fraction": 0.05570211407930059
+      },
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "status": "COMPLETE_NUMERICAL",
+      "wavelength_interpolation": "none"
+    }
+  ],
+  "requested": 8,
+  "scope": "Independent cold models test interpolation only at these eight points; no physical accuracy or parameter-recovery claim",
+  "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+}

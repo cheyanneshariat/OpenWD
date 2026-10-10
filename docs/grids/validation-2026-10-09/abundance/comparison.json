@@ -1,0 +1,160 @@
+{
+  "Teff_K": 22500,
+  "half_dex": {
+    "heldout_log_H_He": 0.25,
+    "metrics": {
+      "integrated_absolute_error_fraction": 0.0016697514521528283,
+      "integrated_signed_error_fraction": 0.0015756010898002751,
+      "interval_angstrom": [
+        3000.0,
+        10000.0
+      ],
+      "maximum_error_wavelength_angstrom": 3894.25,
+      "maximum_relative_error_fraction": 0.006623346289220225,
+      "rms_relative_error_fraction": 0.001750557988755961
+    }
+  },
+  "logg": 6.25,
+  "normalization": "none",
+  "one_dex": {
+    "heldout_log_H_He": 0.5,
+    "metrics": {
+      "integrated_absolute_error_fraction": 0.007238132728134934,
+      "integrated_signed_error_fraction": 0.006835762523499222,
+      "interval_angstrom": [
+        3000.0,
+        10000.0
+      ],
+      "maximum_error_wavelength_angstrom": 4027.5,
+      "maximum_relative_error_fraction": 0.027673248035738923,
+      "rms_relative_error_fraction": 0.006894675671192016
+    }
+  },
+  "physical_accuracy_verified": false,
+  "plan_sha256": "a9555a152048e5c64c753907f066d5de13725b1ba5d11ed8ae292916194276dc",
+  "provenance": [
+    {
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 22500,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": 1,
+        "logg": 6.25,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "metadata_sha256": "587b579f6cbdedde03674505def7f7defcf1612adf52d2589a76b62c6c4b178b",
+      "model_id": "dab-7e761c90d62ea49123a49c00",
+      "native_request_sha256": "156053165ae487840cd491740d40af7b7f48200d0819642e296a90651ba9d119",
+      "spectrum_sha256": "73a58b85c19d31dd564d28c1beebc4bff79ff580172e534b43dbabb6e619ce92"
+    },
+    {
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 22500,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": 0.5,
+        "logg": 6.25,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "metadata_sha256": "55ea4935066788f18498db8a913b0f281ff49fd1db1279243fc57d07f98c23d3",
+      "model_id": "dab-b826e9a7f042240eeb97faad",
+      "native_request_sha256": "fb43047ebdbcbdefb6fa203ec9c9bedc0c3bc9c5f33ba1452dd31fc29236a36c",
+      "spectrum_sha256": "bf780063f8e9cce5c953bd0e0fbc8c8c7282a1c1f69f53821e535475245e7cd1"
+    },
+    {
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 22500,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": 0,
+        "logg": 6.25,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "metadata_sha256": "81c9d617eeed2855cdeb98df0031cf2732586f09d1a743effd32dbfbb617e1f5",
+      "model_id": "dab-0f173a634cd5570c2645b95f",
+      "native_request_sha256": "26bf00d9bb815c51124e1961db3ecb66ac5c09c1f5a60796470df3cb57db39c3",
+      "spectrum_sha256": "294403247102772af0877be38c38ad14ddfd514ace3b97469e7eb3c3a5a98170"
+    },
+    {
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 22500,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": 0.25,
+        "logg": 6.25,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "metadata_sha256": "3ef1b4bd3bf487f37b39464e55437e61c7c276ee260405d141a5708b0bfb9042",
+      "model_id": "dab-3cd971dac1f3b8c7cb5abf2b",
+      "native_request_sha256": "8934adbbd5665c65cb498cadc96ad6dc2445c7cfa1e0355fabb5d56efca33b58",
+      "spectrum_sha256": "6b8670a232d0d04c7f211da7ec5993d74862b4daa51e133c459ebf8bfcf0e9ad"
+    }
+  ],
+  "scope": "Two independent abundance tests at one Teff/gravity. Does not validate temperature/gravity interpolation or the full grid.",
+  "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+  "wavelength_resampling": "none"
+}

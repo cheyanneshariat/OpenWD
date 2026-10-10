@@ -1,25 +1,98 @@
 {
-  "kind": "Development grids; current DAB replaces the five historical standard-quality DAB examples",
-  "snapshots": {
-    "showcase-bank-v6": {
-      "created_utc": "2026-10-08T08:23:25.175441+00:00",
-      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
-      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
-      "index_sha256": "72c42bb07330a296dadf409b2ba1f1a002dc53e8d8a23000a896a61c6150df19"
+  "current_index_sha256": "1c7870da890e88959132830172a058a1c53b4019233c1eb53a90dc23849ea1bf",
+  "current_snapshot_utc": "2026-10-10T02:39:28.047948+00:00",
+  "families": {
+    "DA": {
+      "archive": "OpenWD-DA-initial-20261008.tar.gz",
+      "bytes": 215429900,
+      "current_selected_grid_points": 808,
+      "initial_archive_models": 807,
+      "models": 808,
+      "raw_spectrum_bytes": 762702963
     },
-    "showcase-extra-bank-v2": {
-      "created_utc": "2026-10-08T09:03:27.062904+00:00",
-      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
-      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
-      "index_sha256": "2ae95223d0cc5d9f3d7f535b5c9fa155853dae0eca6d5f2f175676eac240994a"
-    },
-    "DAB-2026-10-09": {
-      "saved_date": "2026-10-09",
-      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
-      "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
+    "DAB": {
+      "additional_validation_points_outside_original_grid": 15,
+      "archive": "OpenWD-DAB-production-20261009.tar.gz",
+      "bytes": 88273096,
+      "current_selected_grid_points": 327,
+      "initial_archive_models": 326,
+      "models": 327,
+      "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks",
+      "release_tag": "grid-preview-2026-10-09-dab",
       "requests": 336,
-      "spectra": 326,
-      "archive_sha256": "e6c6c1101dac6295fcff7c434555ff59b57b61a1878e47960625d9b793ac0d2d"
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    "DAO": {
+      "current_selected_grid_points": 0,
+      "models": 0,
+      "requests": 15
+    },
+    "DAZ": {
+      "archive": "OpenWD-DAZ-initial-20261008.tar.gz",
+      "bytes": 805451,
+      "models": 3,
+      "raw_spectrum_bytes": 2835327
+    },
+    "DB": {
+      "archive_spectrum_count_before_validation": 493,
+      "archives": [
+        {
+          "archive": "OpenWD-DB-initial-20261008.tar.gz",
+          "bytes": 129389918,
+          "models": 489,
+          "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+        },
+        {
+          "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
+          "bytes": 426446,
+          "models": 4,
+          "new_parameter_points": 3,
+          "repeated_control_points": 1,
+          "source_commits": [
+            "0a74fdbe06596fc145f5169a3b239ddd67053141",
+            "54e401e20936119d707bb3623e0a13e29373b6e8"
+          ]
+        }
+      ],
+      "current_selected_grid_points": 588,
+      "duplicate_policy": "Do not count the new log g 8 control as another requested parameter point",
+      "models": 588,
+      "new_accepted_original_coordinates": 96,
+      "requests": 638
+    },
+    "DO": {
+      "current_selected_grid_points": 1,
+      "models": 1,
+      "requests": 7,
+      "supplement_spectra": 1
+    },
+    "DQ": {
+      "archive": "OpenWD-DQ-initial-20261008.tar.gz",
+      "bytes": 6516036,
+      "models": 2,
+      "raw_spectrum_bytes": 21852118
+    },
+    "DZ": {
+      "archive": "OpenWD-DZ-initial-20261008.tar.gz",
+      "bytes": 78661500,
+      "models": 293,
+      "raw_spectrum_bytes": 276916937
+    }
+  },
+  "history": "history/2026-10-09-before-fill/dataset.json",
+  "kind": "Selected numerical-development grids with dated native supplements",
+  "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
+  "qualified_spectra": 2022,
+  "requests": 2179,
+  "selection": "Select 121 new outcomes at matching original DA/DB/DAB/DO/DAO coordinates; the total remains 2179 original requests. Four repeated DB controls do not add coordinates. Fifteen additional DAB validation/refinement coordinates are separate. All prior selections and original archives remain intact. The accepted DA initialization and DAB mesh-concentration variants are explicit in the supplement full configurations.",
+  "snapshots": {
+    "DAB-2026-10-09": {
+      "archive_sha256": "e6c6c1101dac6295fcff7c434555ff59b57b61a1878e47960625d9b793ac0d2d",
+      "requests": 336,
+      "saved_date": "2026-10-09",
+      "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "spectra": 326
     },
     "DB-cold-2026-10-09": {
       "accepted_npz_arrays_read": 148,
@@ -27,97 +100,148 @@
       "bytes": 426446,
       "control_points": 1,
       "files_verified": 23,
-      "models": 4,
-      "native_spectrum_bytes_preserved": true,
-      "new_parameter_points": 3,
-      "sha256": "5c434fc64177715f3e168d7620fe70b0ad6359869b3b1f5490c7a770002b5e92",
-      "source_hashes_verified": true,
-      "source_commits": [
-        "0a74fdbe06596fc145f5169a3b239ddd67053141",
-        "54e401e20936119d707bb3623e0a13e29373b6e8"
-      ],
-      "temperature_K": 5000,
       "gravities": [
         7,
         7.5,
         7.75,
         8
-      ]
-    }
-  },
-  "requests": 2179,
-  "qualified_spectra": 1923,
-  "families": {
-    "DA": {
-      "models": 807,
-      "archive": "OpenWD-DA-initial-20261008.tar.gz",
-      "bytes": 215429900,
-      "raw_spectrum_bytes": 762702963
-    },
-    "DB": {
-      "models": 492,
-      "requests": 638,
-      "archives": [
-        {
-          "archive": "OpenWD-DB-initial-20261008.tar.gz",
-          "models": 489,
-          "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
-          "bytes": 129389918
-        },
-        {
-          "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
-          "models": 4,
-          "new_parameter_points": 3,
-          "repeated_control_points": 1,
-          "source_commits": [
-            "0a74fdbe06596fc145f5169a3b239ddd67053141",
-            "54e401e20936119d707bb3623e0a13e29373b6e8"
-          ],
-          "bytes": 426446
-        }
       ],
-      "archive_spectrum_count": 493,
-      "current_selected_grid_points": 492,
-      "duplicate_policy": "Do not count the new log g 8 control as another requested parameter point"
+      "models": 4,
+      "native_spectrum_bytes_preserved": true,
+      "new_parameter_points": 3,
+      "sha256": "5c434fc64177715f3e168d7620fe70b0ad6359869b3b1f5490c7a770002b5e92",
+      "source_commits": [
+        "0a74fdbe06596fc145f5169a3b239ddd67053141",
+        "54e401e20936119d707bb3623e0a13e29373b6e8"
+      ],
+      "source_hashes_verified": true,
+      "temperature_K": 5000
     },
-    "DZ": {
-      "models": 293,
-      "archive": "OpenWD-DZ-initial-20261008.tar.gz",
-      "bytes": 78661500,
-      "raw_spectrum_bytes": 276916937
+    "native-validation-2026-10-09": {
+      "DAB_additional_validation_points": 15,
+      "DB_new_accepted_original_coordinates": 96,
+      "DB_repeated_control_points": 4,
+      "archive": "OpenWD-grid-validation-20261009.tar.gz",
+      "archive_bytes": 15912007,
+      "archive_sha256": "4d6b73b64503963211e6ad0a1dc659cc93288d5434799fb55dd7d70db2e947cb",
+      "backend_experiments_excluded": 7,
+      "date_Pacific": "2026-10-09",
+      "families": {
+        "DA": {
+          "COMPLETE_NUMERICAL": 1,
+          "NUMERICAL_NONCONVERGENCE": 3,
+          "TIMEOUT": 1
+        },
+        "DAB": {
+          "COMPLETE_NUMERICAL": 16
+        },
+        "DAO": {
+          "TIMEOUT": 1
+        },
+        "DB": {
+          "COMPLETE_NUMERICAL": 100,
+          "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+          "NUMERICAL_GRID_FAILURE": 5,
+          "NUMERICAL_NONCONVERGENCE": 3
+        },
+        "DO": {
+          "COMPLETE_NUMERICAL": 1
+        }
+      },
+      "full_grid_interpolation_verified": false,
+      "independent_depth_convergence_verified": false,
+      "is_draft": true,
+      "kind": "Native numerical-development grid update",
+      "original_DAB_repaired_points": 1,
+      "original_DAB_requests": 336,
+      "physical_accuracy_verified": false,
+      "release_ready": false,
+      "release_tag": "grid-validation-2026-10-09",
+      "requests": 136,
+      "source_commits": {
+        "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+        "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
+      },
+      "source_model_and_array_verification_sha256": "ac4c4661332cedfd2940f3d951080c68b51e8a4d90e09587ea019ff46933beae",
+      "spectra": 118,
+      "spectrum_units": {
+        "flux": "surface F_lambda, erg s^-1 cm^-2 Angstrom^-1",
+        "normalization": "none",
+        "resampling": "none",
+        "wavelength": "vacuum Angstrom"
+      }
     },
-    "DAB": {
-      "models": 326,
-      "requests": 336,
-      "archive": "OpenWD-DAB-production-20261009.tar.gz",
-      "bytes": 88273096,
-      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
-      "release_tag": "grid-preview-2026-10-09-dab",
-      "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks"
+    "showcase-bank-v6": {
+      "created_utc": "2026-10-08T08:23:25.175441+00:00",
+      "index_sha256": "72c42bb07330a296dadf409b2ba1f1a002dc53e8d8a23000a896a61c6150df19",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
     },
-    "DAZ": {
-      "models": 3,
-      "archive": "OpenWD-DAZ-initial-20261008.tar.gz",
-      "bytes": 805451,
-      "raw_spectrum_bytes": 2835327
-    },
-    "DQ": {
-      "models": 2,
-      "archive": "OpenWD-DQ-initial-20261008.tar.gz",
-      "bytes": 6516036,
-      "raw_spectrum_bytes": 21852118
+    "showcase-extra-bank-v2": {
+      "created_utc": "2026-10-08T09:03:27.062904+00:00",
+      "index_sha256": "2ae95223d0cc5d9f3d7f535b5c9fa155853dae0eca6d5f2f175676eac240994a",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
     }
   },
-  "spectra_only": true,
-  "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
   "source_commits": {
     "2026-10-08": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
     "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141",
     "DB-cold-2026-10-09": [
       "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "54e401e20936119d707bb3623e0a13e29373b6e8"
-    ]
+    ],
+    "native-validation-2026-10-09": {
+      "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
+    }
   },
-  "history": "history/2026-10-08/dataset.json",
-  "selection": "Keep earlier non-DB/DAB requests, use the 336-point DAB production grid, and select four verified cold DB supplement records at matching original parameters. Three add coverage; log g 8 is a repeated control. Previous outcomes remain in dated snapshots."
+  "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece",
+  "spectra_only": true,
+  "status_counts_by_family": {
+    "D6": {
+      "TIMEOUT": 1
+    },
+    "DA": {
+      "COMPLETE_NUMERICAL": 808,
+      "NUMERICAL_NONCONVERGENCE": 43,
+      "TIMEOUT": 1
+    },
+    "DAB": {
+      "COMPLETE_NUMERICAL": 327,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 9
+    },
+    "DAH": {
+      "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2
+    },
+    "DAO": {
+      "MISSING_UNATTEMPTED": 14,
+      "TIMEOUT": 1
+    },
+    "DAZ": {
+      "COMPLETE_NUMERICAL": 3
+    },
+    "DB": {
+      "COMPLETE_NUMERICAL": 588,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+      "NUMERICAL_GRID_FAILURE": 5,
+      "NUMERICAL_NONCONVERGENCE": 11,
+      "TIMEOUT": 29
+    },
+    "DO": {
+      "COMPLETE_NUMERICAL": 1,
+      "MISSING_UNATTEMPTED": 6
+    },
+    "DQ": {
+      "COMPLETE_NUMERICAL": 2
+    },
+    "DZ": {
+      "COMPLETE_NUMERICAL": 293,
+      "NUMERICAL_NONCONVERGENCE": 2,
+      "TIMEOUT": 27
+    },
+    "PG1159": {
+      "NUMERICAL_NONCONVERGENCE": 1
+    }
+  }
 }

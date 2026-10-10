@@ -22,19 +22,14 @@ contributor fork. Publishing the release makes them publicly downloadable.
 | 5,000 | 7.75 | `54e401e2` | Perlmutter | New accepted parameter point |
 | 5,000 | 8.0 | `0a74fdbe` | Perlmutter | Repeated comparison model |
 
-The earlier overview selected these four records at the same parameters as four
-original requests. That selection had **492/638 numerical completions**:
+The current overview selects these four records at the same parameters as four
+original requests. DB coverage becomes **492/638 numerical completions**:
 492 passed, 109 unsupported, eight numerical failures and 29 timeouts.
 The three new points replace previously unsupported records. The log g 8
 calculation does not increase the requested or completed denominator.
 
-The later [native validation supplement](../validation-2026-10-09/README.md) adds
-96 accepted original coordinates using the merged solver. The current overview
-therefore has **588/638** DB completions. This four-model archive and its Montreal
-figure remain tied to their original calculations.
-
-The [previous selected snapshot](../history/2026-10-09-dab/README.md),
-[original October 8 snapshot](../history/2026-10-08/README.md), and original
+The [previous selected snapshot](../../2026-10-09-dab/README.md),
+[original October 8 snapshot](../../2026-10-08/README.md), and original
 489-spectrum archive remain unchanged. Both archives together contain 493 spectra,
 because they include two versions of the log g 8 comparison model. Do not count
 those versions as separate grid coordinates.
@@ -88,10 +83,9 @@ unchanged native samples, with vacuum wavelengths and surface flux in
 
 They are not a complete low-gravity temperature grid. Independent atmosphere-depth
 convergence, physical accuracy and interpolation precision remain unverified.
-The merged-solver follow-up now fills many temperature/gravity gaps; its settings
-and outcomes are in the native validation supplement. A genuine structure-depth
-comparison and physical validation still need work. Adding grid points alone does
-not resolve the Montreal discrepancy.
+A useful next computation is a small temperature/gravity sequence on the merged
+solver, plus a genuine structure-depth comparison, before a wider cold-grid run.
+Simply adding more points does not resolve the Montreal discrepancy.
 
 The saved calculations use the source versions listed above and predate the final
 merged convective-trial gravity follow-up in PR #20. They have not been relabeled
