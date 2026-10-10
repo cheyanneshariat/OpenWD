@@ -85,9 +85,8 @@ need independent tests before this bank supports precision fitting.
 ## Remaining model gaps
 
 The five DB material-domain stops raised `DenseHeliumDomainError` because a
-native atomic HNC table was sampled outside its allowed domain. HNC names the
-hypernetted-chain treatment used by that table. No alternate material table or
-atomic fallback was substituted. Five other DB errors raised
+native atomic HNC table was sampled outside its allowed domain. No alternate
+material table or atomic fallback was substituted. Five other DB errors raised
 `optical_depth must increase strictly inward`; those are numerical-grid failures,
 not material-domain stops. Their exact causes still need diagnosis.
 

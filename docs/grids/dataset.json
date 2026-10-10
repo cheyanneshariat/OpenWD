@@ -79,8 +79,11 @@
       "raw_spectrum_bytes": 276916937
     }
   },
+  "family_models_definition": "Current selected original-grid coordinates; per-archive model counts remain separate",
   "history": "history/2026-10-09-before-fill/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
+  "native_validation_supplement_contains_saved_structures": true,
+  "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
   "qualified_spectra": 2022,
   "requests": 2179,
@@ -197,7 +200,7 @@
     }
   },
   "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece",
-  "spectra_only": true,
+  "spectra_only": false,
   "status_counts_by_family": {
     "D6": {
       "TIMEOUT": 1
