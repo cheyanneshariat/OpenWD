@@ -250,7 +250,10 @@ controls the transverse-mass weighting in both the EOS and RWA populations.
 These are separate diagnostic options, not ingredients of the paper default.
 
 Full IQUV transfer includes dichroism and magneto-optical dispersion at each
-cell, but only disk-integrated Stokes I is returned. The compressed geometry
+cell, but only disk-integrated Stokes I is returned. Full IQUV transfer works with both
+line prescriptions: each magneto-optical profile is the Kramers–Kronig partner of
+its absorption profile, and template nodes that round to the same frequency
+are merged before the transform. The compressed geometry
 does not retain the azimuths needed for Q/U, and V has not been validated
 against polarimetry. `include_cyclotron_absorption=True` additionally uses
 magneto-ionic free-free and Thomson coefficients with a Doppler-broadened
@@ -271,6 +274,11 @@ molecular chemistry is absent, which limits cool-star applications.
 Agreement with eight objects does not guarantee an unbiased parameter fit.
 At zero field the default still uses Kurucz/Griem profiles; select unified
 profiles to recover the ordinary DA line-profile limit.
+
+The full-IQUV dispersion transform treats each sampled absorption profile as
+piecewise linear in frequency and zero outside its mesh. Kurucz/Griem wing
+values can be nonzero at the mesh ends; the exact transform then diverges at
+those endpoints. Returned endpoint values retain the existing finite convention.
 
 Scientific use should cite the relevant ingredients and observational sources:
 
