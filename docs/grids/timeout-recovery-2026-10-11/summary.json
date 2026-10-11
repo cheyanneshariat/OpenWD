@@ -1,0 +1,59 @@
+{
+  "NPZ_files_read": 39,
+  "arrays_read": 359,
+  "checked_utc": "2026-10-11T15:40:53.467719+00:00",
+  "counts": {
+    "COMPLETE_NUMERICAL": 38,
+    "INFRASTRUCTURE_INTERRUPTION": 1,
+    "NUMERICAL_NONCONVERGENCE": 16,
+    "TIMEOUT": 13
+  },
+  "full_grid_interpolation_verified": false,
+  "independent_depth_convergence_verified": false,
+  "model_cap_seconds": 21600,
+  "numerical_completions": 38,
+  "physical_accuracy_verified": false,
+  "release_ready": false,
+  "remote_and_local_file_hashes_verified": 659,
+  "requests": 68,
+  "selected_grid_completions": 2321,
+  "selected_grid_requests": 2459,
+  "source_versions": {
+    "dab-matched": {
+      "identity": "2938a3602c7ff1b7753cc8574acf23016c64e3a0fbd5c4d1566aa344b6b597da",
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    "legacy": {
+      "identity": "9310e200ac3d35915fa0da08da2bf651450731ee08af701fc2bd2fc470baaaba",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+    },
+    "merged": {
+      "identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+      "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66"
+    }
+  },
+  "status_counts_by_family": {
+    "D6": {
+      "TIMEOUT": 1
+    },
+    "DA": {
+      "NUMERICAL_NONCONVERGENCE": 1
+    },
+    "DAB": {
+      "COMPLETE_NUMERICAL": 9
+    },
+    "DAO": {
+      "COMPLETE_NUMERICAL": 1
+    },
+    "DB": {
+      "COMPLETE_NUMERICAL": 4,
+      "NUMERICAL_NONCONVERGENCE": 13,
+      "TIMEOUT": 12
+    },
+    "DZ": {
+      "COMPLETE_NUMERICAL": 24,
+      "INFRASTRUCTURE_INTERRUPTION": 1,
+      "NUMERICAL_NONCONVERGENCE": 2
+    }
+  }
+}

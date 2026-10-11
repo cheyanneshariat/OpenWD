@@ -1,0 +1,10 @@
+{
+  "archive": "OpenWD-timeout-recovery-20261011.tar.gz",
+  "bytes": 18653145,
+  "sha256": "50f223f44a6df8b11a5fd45f3e3f98db995dcbd98a0f3b32a7f17f316520a94b",
+  "files_verified": 529,
+  "requests": 68,
+  "numerical_spectra": 38,
+  "native_spectrum_bytes_preserved": true,
+  "execution_receipt_included": true
+}

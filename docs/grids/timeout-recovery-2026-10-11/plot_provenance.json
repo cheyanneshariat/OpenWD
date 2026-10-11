@@ -1,0 +1,8 @@
+{
+  "dab_table_sha256": "fd35f14da0099119c0cc1826c353cdd9acb142d03ce82a578c408bf18ba38972",
+  "requests_sha256": "1041ab5e5dfdea5aff3c7b885419ae185fb0f02e2c2c30c8775ee72cf0f8a6f3",
+  "comparison_sha256": "e194ab36073a5a1dcdb2c5410bfeeeb43bb18845ba7cc05a3fbb134b18542985",
+  "dao_spectrum_sha256": "26f4b2707f6a1ca6ce52c6adb8cc1c4a25c8a0ca585c864b4f5649d53e04d5b2",
+  "flux_normalization": "none",
+  "wavelength_interpolation": "none"
+}

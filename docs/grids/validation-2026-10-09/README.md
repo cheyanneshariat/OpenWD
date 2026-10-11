@@ -1,5 +1,8 @@
 # Native grid validation supplement — October 9
 
+This page records its dated snapshot. The [October 11 update](../timeout-recovery-2026-10-11/README.md)
+has the current retry outcomes, DAB coverage and all eight interpolation tests.
+
 This supplement contains **118 accepted native spectra from 136 model requests**.
 It adds 96 accepted DB coordinates to the original grid, repairs one DA and one
 DAB coordinate, and supplies a successful DO pilot. The original archives remain

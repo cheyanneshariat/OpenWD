@@ -1,5 +1,8 @@
 # DAB/DBA grid with one-dex abundance spacing
 
+This page records its dated snapshot. The [October 11 update](../timeout-recovery-2026-10-11/README.md)
+has the current retry outcomes, DAB coverage and all eight interpolation tests.
+
 The selected mesh has **588 numerically accepted models from 616 coordinates**.
 All coordinates were attempted. It covers 12,000–40,000 K, log g 6–9.5 and
 log10[N(H)/N(He)] = −6 to +4 in steps of one dex. The atmospheres are homogeneous,
