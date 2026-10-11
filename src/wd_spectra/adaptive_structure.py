@@ -44,6 +44,7 @@ from .convection import (
 )
 from .nonlinear import (
     NonlinearEvaluation,
+    NonlinearIteration,
     RecoverableEvaluationError,
     nonlinear_result_metadata,
     solve_trust_region_newton,
@@ -195,6 +196,123 @@ def _thermal_boundary_absorption_escape_bound(
     )
 
 
+class _PreconditionerFluxHandoff:
+    """Caller-scoped progress policy; never an equilibrium certificate."""
+
+    def __init__(
+        self,
+        initial_state: FloatArray,
+        target_flux: float,
+        tolerance: float,
+        callback: Callable[
+            [NonlinearIteration, FloatArray, NonlinearEvaluation[dict[str, object]]],
+            None,
+        ]
+        | None,
+    ) -> None:
+        self.previous_state = initial_state.copy()
+        self.target_flux = target_flux
+        self.tolerance = tolerance
+        self.original_callback = callback
+        self.pending_observation: dict[str, object] | None = None
+        self.streak = 0
+        self.observed_updates = 0
+        self.eligible_updates = 0
+        self.ignored_callbacks = 0
+        self.triggered = False
+        self.observations: list[dict[str, object]] = []
+
+    def callback(
+        self,
+        record: NonlinearIteration,
+        current: FloatArray,
+        evaluation: NonlinearEvaluation[dict[str, object]],
+    ) -> None:
+        genuine = (
+            record.step_kind == "newton"
+            and np.isfinite(record.line_search_factor)
+            and record.line_search_factor > 0.0
+            and np.isfinite(record.maximum_step)
+            and record.maximum_step > 0.0
+            and np.all(np.isfinite(current))
+            and not np.array_equal(self.previous_state, current)
+        )
+        if genuine:
+            self.pending_observation = {
+                "iteration": int(record.iteration),
+                "line_search_factor": float(record.line_search_factor),
+                "measured_log_temperature_step": float(record.maximum_step),
+                "step_kind": record.step_kind,
+                "proposal_limited": bool(record.proposal_limited),
+            }
+            self.observed_updates += 1
+        else:
+            self.pending_observation = None
+            self.streak = 0
+            self.ignored_callbacks += 1
+        self.previous_state = current.copy()
+        if self.original_callback is not None:
+            self.original_callback(record, current, evaluation)
+
+    def handoff(
+        self,
+        current: FloatArray,
+        evaluation: NonlinearEvaluation[dict[str, object]],
+    ) -> bool:
+        if self.pending_observation is None:
+            return False
+        observation = self.pending_observation
+        self.pending_observation = None
+        if not np.array_equal(self.previous_state, current):
+            raise ValueError("preconditioner handoff anchor differs from accepted callback")
+        flux = float(
+            np.max(
+                np.abs(
+                    np.asarray(evaluation.payload["total_flux_interface"])
+                    / self.target_flux
+                    - 1.0
+                )
+            )
+        )
+        residual = float(np.max(np.abs(evaluation.residual)))
+        energy = float(
+            np.max(
+                np.abs(evaluation.payload["cell_energy_balance_relative_residual"])
+            )
+        )
+        finite = bool(np.all(np.isfinite((flux, residual, energy))))
+        eligible = bool(
+            finite
+            and flux < self.tolerance
+            and residual < self.tolerance
+            and energy >= self.tolerance
+        )
+        self.streak = self.streak + 1 if eligible else 0
+        self.eligible_updates += int(eligible)
+        self.observations.append(
+            {
+                **observation,
+                "eligible": eligible,
+                "streak": self.streak,
+                "flux": flux if np.isfinite(flux) else None,
+                "phase_residual": residual if np.isfinite(residual) else None,
+                "energy": energy if np.isfinite(energy) else None,
+            }
+        )
+        self.triggered = self.streak >= 2
+        return self.triggered
+
+    def metadata(self) -> dict[str, object]:
+        return {
+            "observed_accepted_newton_updates": self.observed_updates,
+            "eligible_accepted_newton_updates": self.eligible_updates,
+            "consecutive_eligible_updates": self.streak,
+            "ignored_callback_observations": self.ignored_callbacks,
+            "triggered": self.triggered,
+            "observations": tuple(dict(item) for item in self.observations),
+        }
+
+
 def solve_adaptive_lte_structure(
     seed: Atmosphere,
     wavelength: FloatArray,
@@ -221,6 +339,7 @@ def solve_adaptive_lte_structure(
     use_convective_gradient_preconditioner: bool = True,
     maximum_convective_preconditioner_iterations: int | None = None,
     preconditioner_stationary_completion_iterations: int | None = 2,
+    use_preconditioner_flux_handoff: bool = True,
     maximum_formal_flux_continuations: int = 2,
     use_adiabatic_asymptotic_conditioning: bool = False,
     use_initial_bolometric_rescaling: bool = True,
@@ -255,6 +374,13 @@ def solve_adaptive_lte_structure(
     exact checkpoint that may bypass conditioning. The projection mode and
     stationary-completion setting preserve validated composition-specific
     initialization policies without duplicating the nonlinear solver.
+    ``use_preconditioner_flux_handoff`` (enabled by default) is a progress
+    policy for the first convective-gradient preconditioner. With
+    local energy enforcement enabled, two genuine accepted Newton updates
+    with balanced actual flux and provisional residual but unresolved local
+    energy end that phase as unconverged. Formal and energy completion plus
+    all original final qualification gates remain authoritative. A requested
+    policy is unused without that preconditioner or local energy enforcement.
     ``use_convective_trial_correction`` is an experimental, disabled-by-default
     repair of overcarrying ML2 trial gradients. It does not cap evaluated
     fluxes or bypass any acceptance or final physical convergence tests.
@@ -306,6 +432,8 @@ def solve_adaptive_lte_structure(
         ml2_coefficient_function = _ml2_local_coefficients_from_thermodynamics
     if not callable(ml2_coefficient_function):
         raise ValueError("ml2 coefficient function must be callable")
+    if not isinstance(use_preconditioner_flux_handoff, bool):
+        raise ValueError("preconditioner flux-handoff flag must be boolean")
     if not isinstance(enforce_local_energy_balance, bool):
         raise ValueError("local energy enforcement flag must be boolean")
     if not isinstance(reuse_material_probe_rosseland, bool):
@@ -2023,6 +2151,29 @@ def solve_adaptive_lte_structure(
     if use_convective_trial_correction and mixing_length_alpha is not None:
         nonlinear_options["trial_projector"] = correct_convective_trial
     initial_options = dict(nonlinear_options)
+    initial_state = state_from_log_temperature(initial_log_temperature)
+    preconditioner_handoff: _PreconditionerFluxHandoff | None = None
+    handoff_inactive_reason = None
+    if not use_preconditioner_flux_handoff:
+        handoff_inactive_reason = "not-requested"
+    elif not use_convective_gradient_preconditioner:
+        handoff_inactive_reason = "no-gradient-preconditioner"
+    elif not enforce_local_energy_balance:
+        handoff_inactive_reason = "local-energy-enforcement-disabled"
+    handoff_metadata: dict[str, object] = {
+        "requested": use_preconditioner_flux_handoff,
+        "used": False,
+        "triggered": False,
+        "phase": "convective-gradient-preconditioner",
+        "required_accepted_newton_updates": 2,
+        "observed_accepted_newton_updates": 0,
+        "eligible_accepted_newton_updates": 0,
+        "consecutive_eligible_updates": 0,
+        "ignored_callback_observations": 0,
+        "observations": (),
+        "certifies_equilibrium": False,
+        "inactive_reason": handoff_inactive_reason,
+    }
     if use_convective_gradient_preconditioner:
         # This phase solves a deliberately approximate local ML2-gradient
         # problem.  It is a warm-start construction, not a second atmosphere
@@ -2032,9 +2183,19 @@ def solve_adaptive_lte_structure(
         initial_options["stationary_completion_iterations"] = (
             preconditioner_stationary_completion_iterations
         )
+        if use_preconditioner_flux_handoff and enforce_local_energy_balance:
+            if initial_options.get("accepted_state_handoff") is not None:
+                raise ValueError("preconditioner already has an accepted-state handoff")
+            preconditioner_handoff = _PreconditionerFluxHandoff(
+                initial_state, target_flux, flux_tolerance,
+                initial_options.get("callback"),
+            )
+            initial_options["callback"] = preconditioner_handoff.callback
+            initial_options["accepted_state_handoff"] = preconditioner_handoff.handoff
+            handoff_metadata["used"] = True
     nonlinear_solver_segments: list[dict[str, object]] = []
     result = solve_trust_region_newton(
-        state_from_log_temperature(initial_log_temperature),
+        initial_state,
         nonlinear_evaluator,
         **initial_options,
     )
@@ -2044,6 +2205,8 @@ def solve_adaptive_lte_structure(
             **nonlinear_result_metadata(result),
         }
     )
+    if preconditioner_handoff is not None:
+        handoff_metadata.update(preconditioner_handoff.metadata())
     preconditioner_iterations = (
         result.iterations if use_convective_gradient_preconditioner else 0
     )
@@ -2609,6 +2772,11 @@ def solve_adaptive_lte_structure(
     if mass_transfer:
         # Do not let copied seed metadata mislabel the equations actually used.
         common_metadata["transfer_discretization"] = "column-mass"
+    # This policy record describes the current solve, not inherited seed history.
+    if use_preconditioner_flux_handoff:
+        common_metadata["convective_preconditioner_flux_handoff"] = handoff_metadata
+    else:
+        common_metadata.pop("convective_preconditioner_flux_handoff", None)
     from ._convergence import equilibrium_certificate
 
     common_metadata["radiative_equilibrium_solver_converged"] = (

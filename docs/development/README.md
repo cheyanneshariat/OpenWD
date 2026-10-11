@@ -9,6 +9,9 @@ investigations live in the [research history](history/README.md).
 The [hydrogen-line and native-boundary fixes](physics-boundary-fixes-2026-10-05.md)
 document their reproduction tests and validation status.
 
+The [preconditioner handoff and thermal-conditioning steps](../solver-preconditioner-handoff.md)
+note records the default solver-phase policy and its validation.
+
 The [solver cache/robustness measurements](../solver-cache-validation.md) and
 [native frequency-Voigt measurements](../native-frequency-voigt-validation.md)
 document the performance changes, reproduction commands and qualification
