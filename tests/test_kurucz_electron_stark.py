@@ -126,3 +126,25 @@ def test_forbidden_lines_sharing_levels_are_not_broadened():
     types = {t.transition_type: t.electron_stark_rate_coefficient_cm3_s for t in lines}
     assert types["E1"] is not None
     assert types["M2"] is None
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_daz_config_option_controls_attachment(monkeypatch, enabled):
+    import wd_spectra.models.daz as daz
+    from wd_spectra.models import DAZConfig
+
+    calls = []
+
+    def fake_attach(database):
+        calls.append(database)
+        return database
+
+    def stop(*args, **kwargs):
+        raise _Stop
+
+    monkeypatch.setattr(daz, "atomic_database_with_kurucz_electron_stark", fake_attach)
+    monkeypatch.setattr(daz, "read_verner_photoionization_database", stop)
+    assert DAZConfig().kurucz_electron_stark is False
+    with pytest.raises(_Stop):
+        daz.compute_daz(DAZConfig(kurucz_electron_stark=enabled))
+    assert len(calls) == (1 if enabled else 0)

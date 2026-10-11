@@ -13,6 +13,7 @@ import numpy as np
 from ..atmosphere import radiative_equilibrium_hydrogen_atmosphere
 from ..metals import (
     NIST_ASD_STRONG_ION_FILES,
+    atomic_database_with_kurucz_electron_stark,
     read_barklem_neutral_hydrogen_broadening,
     read_nist_asd_strong_atomic_database,
     read_stout_atomic_database,
@@ -87,6 +88,9 @@ class DAZConfig:
     ca_ii_resonance_source: Literal["chianti-reduced", "lte"] = "chianti-reduced"
     metal_neutral_h_broadening: Literal["barklem", "unsold"] = "unsold"
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
+    # Kurucz electron-impact Stark constants for Stout E1 lines without a
+    # tabulated Stark width, as DZConfig.kurucz_electron_stark.
+    kurucz_electron_stark: bool = False
 
 
 def compute_daz(
@@ -155,6 +159,8 @@ def compute_daz(
         atomic = read_barklem_neutral_hydrogen_broadening(
             data.barklem_neutral_h_broadening, atomic
         )
+    if config.kurucz_electron_stark:
+        atomic = atomic_database_with_kurucz_electron_stark(atomic)
     photo = read_verner_photoionization_database(
         data.verner_photoionization,
         elements=elements,
@@ -280,6 +286,7 @@ def compute_daz(
             abundance_reference="hydrogen",
             atomic_lines=getattr(atomic, "source", "Stout"),
             strong_line_atomic_data=config.strong_line_atomic_data,
+            kurucz_electron_stark=config.kurucz_electron_stark,
             metal_neutral_hydrogen_broadening=config.metal_neutral_h_broadening,
             maximum_metal_charge=config.maximum_metal_charge,
             metal_electron_feedback=True,

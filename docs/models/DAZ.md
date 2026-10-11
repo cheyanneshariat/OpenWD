@@ -95,6 +95,17 @@ metal-line prescription. The later `strong_line_atomic_data="nist-asd"` and
 neither is selected by target name. Hydrogen Balmer self-broadening is a
 separate prescription and follows the DA policy.
 
+Most Stout lines have no electron-impact (Stark) width, so by default they
+get no Stark broadening. `kurucz_electron_stark=True` attaches Kurucz's
+tabulated constants to those lines. It uses the same bundled table and rules
+as the [DZ option](DZ.md), and measured widths always take precedence. In a
+fixed-structure comparison on the accepted checkpoints of eight DAZ targets
+(5900--23100 K, 34 windows), the mean window residual fell by 1.2%: 6
+windows improved and 1 got worse by 0.2%. All the gains were in Si II lines
+of the hot DAZs, where electron densities are high (GALEX J1931+0117 Si II
+5041/5056 -18%, 4128/4131 -11%; WD 1226+110 Si II 5042/5057 -4%); Ca and
+Mg windows did not change. The option defaults to off.
+
 The fixed-atmosphere regression controls include G149-28 (8600 K) and GALEX
 J1931+0117 (20890 K) from the paper's metal-polluted-star figure. These tests
 use the paper's Stark-only Lyman setting (`lyman_profile_source="stark"`);
