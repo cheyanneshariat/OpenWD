@@ -31,7 +31,7 @@ The eight-family figure covers 2,455 requests. The full table retains 2,459,
 including four D6, DAH and PG1159 cases omitted from the figure. The production
 DAB bank replaces the five earlier standard-quality DAB examples in these counts.
 Four repeated DB comparison models are counted once at their original coordinates.
-All previous selections remain in [dated snapshots](history/2026-10-11-before-timeout-recovery/README.md).
+All previous selections remain in [dated snapshots](history/README.md).
 
 ## Downloads and spectrum examples
 

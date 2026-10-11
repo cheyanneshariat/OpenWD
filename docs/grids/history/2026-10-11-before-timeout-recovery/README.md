@@ -8,7 +8,7 @@ models at existing coordinates. Earlier files remain unchanged.
 ![Previous grid coverage](grid_progress.png)
 
 [Previous selected table](progress.csv) · [Previous dataset](dataset.json)
-· [Figure PDF](grid_progress.pdf) · [Original README text](README.snapshot.md)
+· [Figure PDF](grid_progress.pdf) · [Original README text](README.snapshot.txt)
 
 The original README text retains its original relative links for provenance;
 those links were relative to the former docs/grids parent directory.
