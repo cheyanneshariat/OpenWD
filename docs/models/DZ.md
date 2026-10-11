@@ -54,6 +54,27 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   (accuracy C or better), including 115--300 nm (Mg I 2852, Mg II h/k, Si II,
   C II, Al II, Fe I/II). The default retains Stout oscillator strengths and
   adds missing Cr II transitions from Kurucz.
+- Most Stout transitions carry no electron-impact (Stark) width. The default
+  therefore applies no Stark broadening to them; the classical SYNSPEC
+  fallback stays off. `kurucz_electron_stark=True` instead attaches Kurucz's
+  tabulated `log Gamma_4/n_e` at 10^4 K, scaled as (T/10^4 K)^(1/6), to every
+  E1 transition that has no width of its own and matches a Kurucz line
+  (wavelength, level energies and statistical weights). Measured or
+  previously tabulated widths are kept, and no other atomic data change.
+  The constants come from `src/wd_spectra/data/stark/kurucz_stark_constants.csv.xz`
+  (153,641 Stout transitions for charges 0--3, vacuum 900--11000 A), built by
+  `scripts/build_kurucz_stark_table.py` from Kurucz `gfZZCC` lines between
+  observed levels. The table is keyed by Stout level indices, because Stout
+  has distinct levels with equal energy and weight, and the energies and
+  weights are checked again on use. The source URLs and SHA-256 checksums
+  are in the file's trailer. Lines outside that range still get no Stark
+  width.
+  For example, Si II 1260/1264/1265 gets `log Gamma_4/n_e = -5.75`, the same
+  value VALD3 lists. A 54-window comparison, with GD 40, G241-6 and seven
+  further optical DZ/DAZ targets at fixed published parameters, lowered the
+  mean window residual by 1.2%: 20 windows improved, 5 got worse, and every
+  change elsewhere was tiny. The COS Si II 1260 residual fell 16--18%, but
+  the lines remain weaker than observed. The option defaults to off.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and

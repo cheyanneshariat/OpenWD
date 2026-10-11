@@ -3607,6 +3607,114 @@ _KURUCZ_SUPPLEMENT_SOURCE = "Kurucz GF100 missing-transition supplement"
 # treated as a duplicate of it rather than a level missing from Stout.
 _KURUCZ_DUPLICATE_LEVEL_TOLERANCE_WAVENUMBER = 5.0
 
+# Kurucz electron Stark constants attached to Stout transitions; see
+# scripts/build_kurucz_stark_table.py for provenance and coverage.
+KURUCZ_STARK_TABLE_RESOURCE = "data/stark/kurucz_stark_constants.csv.xz"
+_KURUCZ_STARK_TABLE_COLUMNS = [
+    "element", "charge", "lower_index", "upper_index", "lower_energy_cm1",
+    "lower_g", "upper_energy_cm1", "upper_g", "vacuum_wavelength_A",
+    "log10_gamma_e_per_ne_10000K",
+]
+# Level energies stored in the table are the Stout energies it was matched
+# against, written to 1e-4 cm^-1.
+_KURUCZ_STARK_LEVEL_ENERGY_TOLERANCE_WAVENUMBER = 1.0e-3
+
+
+@lru_cache(maxsize=1)
+def read_kurucz_stark_table() -> Mapping[
+    tuple[str, int, int, int], tuple[float, float, float, float, float]
+]:
+    """Return the bundled Kurucz electron Stark constants.
+
+    Keys are element, ion charge and the Stout lower and upper level indices;
+    Stout contains distinct levels with equal energy and weight, so energies
+    alone cannot identify a transition.  Values are the lower and upper level
+    energies (cm^-1) and statistical weights used for the match, followed by
+    Gamma_e/n_e in cm3 s-1: angular-frequency FWHM per electron at 10,000 K
+    (Kurucz convention).
+    """
+
+    import lzma
+
+    resource = files("wd_spectra").joinpath(KURUCZ_STARK_TABLE_RESOURCE)
+    table: dict[tuple[str, int, int, int], tuple[float, float, float, float, float]] = {}
+    with resource.open("rb") as raw, lzma.open(raw, "rt", encoding="ascii") as stream:
+        reader = csv.reader(
+            line for line in stream if line.strip() and not line.startswith("#")
+        )
+        if next(reader) != _KURUCZ_STARK_TABLE_COLUMNS:
+            raise ValueError("unexpected Kurucz Stark table header")
+        for row in reader:
+            key = (row[0], int(row[1]), int(row[2]), int(row[3]))
+            if key in table:
+                raise ValueError(f"duplicate Kurucz Stark table entry {key}")
+            table[key] = (
+                float(row[4]), float(row[5]), float(row[6]), float(row[7]),
+                10.0 ** float(row[9]),
+            )
+    return MappingProxyType(table)
+
+
+def atomic_database_with_kurucz_electron_stark(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Attach Kurucz electron Stark constants to lines that have none.
+
+    Only E1 transitions whose ``electron_stark_rate_coefficient_cm3_s`` is
+    unset receive a value (Stout also lists forbidden lines between the same
+    levels), and only when the tabulated Stout level indices, energies and
+    statistical weights all agree with the database levels.  Existing
+    tabulated widths, oscillator strengths, radiative and van der Waals
+    constants are unchanged.  The opacity code applies the usual Kurucz
+    (T/10^4 K)^(1/6) scaling.
+    """
+
+    table = read_kurucz_stark_table()
+    tolerance = _KURUCZ_STARK_LEVEL_ENERGY_TOLERANCE_WAVENUMBER
+    ions = dict(database.ions)
+    attached = 0
+    for key, ion in database.ions.items():
+        levels = {level.index: level for level in ion.levels}
+        changed = []
+        any_changed = False
+        for transition in ion.transitions:
+            entry = None
+            if (
+                transition.transition_type == "E1"
+                and transition.electron_stark_rate_coefficient_cm3_s is None
+            ):
+                entry = table.get((
+                    ion.element, ion.charge,
+                    transition.lower_index, transition.upper_index,
+                ))
+            if entry is not None:
+                lower_energy, lower_g, upper_energy, upper_g, value = entry
+                lower = levels.get(transition.lower_index)
+                upper = levels.get(transition.upper_index)
+                if (
+                    lower is not None
+                    and upper is not None
+                    and abs(lower.energy_wavenumber - lower_energy) <= tolerance
+                    and abs(upper.energy_wavenumber - upper_energy) <= tolerance
+                    and lower.statistical_weight == lower_g
+                    and upper.statistical_weight == upper_g
+                ):
+                    transition = replace(
+                        transition, electron_stark_rate_coefficient_cm3_s=value
+                    )
+                    attached += 1
+                    any_changed = True
+            changed.append(transition)
+        if any_changed:
+            ions[key] = replace(ion, transitions=tuple(changed))
+    if attached == 0:
+        return database
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=database.source
+        + f"; Kurucz electron Stark constants for {attached} lines without Stark data",
+    )
+
 
 def atomic_database_with_kurucz_iron_group_positions(
     database: AtomicDatabase, directory: str | Path | None = None
