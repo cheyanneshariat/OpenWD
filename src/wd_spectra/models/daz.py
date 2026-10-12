@@ -95,7 +95,7 @@ class DAZConfig:
     kurucz_electron_stark: bool = True
     # Kurucz Si II transitions between existing Stout levels, as
     # DZConfig.si_ii_kurucz_transitions.
-    si_ii_kurucz_transitions: bool = False
+    si_ii_kurucz_transitions: bool = True
 
 
 def compute_daz(

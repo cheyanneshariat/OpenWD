@@ -97,7 +97,8 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   stay weaker than observed. Known approximations: LS potentials (no fine
   structure), no 3s² 3d–3s 3p² mixing, a constant transition dipole, and
   independent ab initio Si⁺–He potentials that give a smaller improvement.
-- `si_ii_kurucz_transitions=True` adds Kurucz Si II transitions between
+- `si_ii_kurucz_transitions=True` (the default since 2026-10-12; `False` keeps
+  Stout's Si II lines) adds Kurucz Si II transitions between
   levels that Stout already contains but does not connect. Stout lists the
   3s3p(³P°)3d ²F° levels (131677.1 and 131918.8 cm⁻¹) with no transitions, so
   the strong 3s3p² ²D–²F° lines at 1305.59, 1309.45 and 1309.73 Å
@@ -110,7 +111,8 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   J1931+0117, 24% for WD 1226+110, 6% for PG 0843+516 and 2% for PG 1015+161;
   the five DBZs and the two 12000 K DAZs change by less than 0.5%. All 68
   optical DZ/DAZ windows are unchanged (mean ratio 0.9999). The ²D level lies
-  6.86 eV above the ground, so the lines matter only in hot atmospheres.
+  6.86 eV above the ground, so the lines matter only in hot atmospheres. New regression
+  controls are in `tests/data/approved_regressions/si_kurucz_2026_10_12`.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and

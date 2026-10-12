@@ -242,7 +242,7 @@ class DZConfig:
     # Kurucz Si II transitions between levels Stout already contains but does
     # not connect (e.g. 3s3p2 2D - 3s3p(3Po)3d 2Fo at 1305.59/1309.45 A);
     # Kurucz-only levels are not imported.  False keeps Stout's Si II lines.
-    si_ii_kurucz_transitions: bool = False
+    si_ii_kurucz_transitions: bool = True
 
 
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0

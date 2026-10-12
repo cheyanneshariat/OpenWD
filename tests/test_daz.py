@@ -28,6 +28,9 @@ def wiring(monkeypatch):
         daz, "atomic_database_with_kurucz_electron_stark", lambda database: database
     )
     monkeypatch.setattr(
+        daz, "augment_silicon_ii_kurucz_transitions", lambda database: database
+    )
+    monkeypatch.setattr(
         daz, "_allard_lyman_profiles_for_effective_temperature", lambda *a, **k: None
     )
 

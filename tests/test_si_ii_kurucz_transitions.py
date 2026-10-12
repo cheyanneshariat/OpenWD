@@ -72,6 +72,6 @@ def test_idempotent_and_no_op_without_si_ii(stout):
     assert augment_silicon_ii_kurucz_transitions(magnesium) is magnesium
 
 
-def test_option_is_opt_in():
-    assert DZConfig().si_ii_kurucz_transitions is False
-    assert DAZConfig().si_ii_kurucz_transitions is False
+def test_option_defaults_on():
+    assert DZConfig().si_ii_kurucz_transitions is True
+    assert DAZConfig().si_ii_kurucz_transitions is True

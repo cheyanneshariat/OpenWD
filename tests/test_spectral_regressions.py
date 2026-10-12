@@ -41,6 +41,10 @@ APPROVED_SI_HE_UNIFIED = (
     Path(__file__).parent
     / "data/approved_regressions/si_he_unified_2026_10_11/fixed"
 )
+APPROVED_SI_KURUCZ = (
+    Path(__file__).parent
+    / "data/approved_regressions/si_kurucz_2026_10_12/fixed"
+)
 DENSITY_EDGE_CASES = frozenset({"da-4000", "da-5000", "dab-9000"})
 CRII_CASES = frozenset({"dz-pg1225", "dz-j0738"})
 pytestmark = pytest.mark.spectral
@@ -71,7 +75,7 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        approved_directory = APPROVED_SI_HE_UNIFIED
+        approved_directory = APPROVED_SI_KURUCZ
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -115,9 +119,23 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
-        # Disabling only the default unified Si+-He profile must recover the
-        # previous (default Kurucz electron Stark) control.
-        stark_config = replace(config, si_ii_he_unified_profile=False)
+        # Disabling only the default Kurucz Si II missing transitions must
+        # recover the previous (default unified Si+-He profile) control.
+        unified_config = replace(config, si_ii_kurucz_transitions=False)
+        with pytest.warns(AtmosphereConvergenceWarning):
+            unified = compute_dz(
+                unified_config, wave, initial_atmosphere=atmosphere,
+                relax_atmosphere=False,
+            )
+        with np.load(APPROVED_SI_HE_UNIFIED / (case + ".npz")) as control:
+            unified_flux = control["surface_flux"]
+        np.testing.assert_allclose(
+            unified.spectrum.surface_flux_lambda, unified_flux,
+            rtol=2e-6, atol=1e-12 * np.max(unified_flux),
+        )
+        # Disabling the unified Si+-He profile as well must recover the
+        # default Kurucz electron Stark control.
+        stark_config = replace(unified_config, si_ii_he_unified_profile=False)
         with pytest.warns(AtmosphereConvergenceWarning):
             stark = compute_dz(
                 stark_config, wave, initial_atmosphere=atmosphere,
