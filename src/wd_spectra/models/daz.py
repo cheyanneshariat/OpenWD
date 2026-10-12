@@ -89,8 +89,9 @@ class DAZConfig:
     metal_neutral_h_broadening: Literal["barklem", "unsold"] = "unsold"
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
     # Kurucz electron-impact Stark constants for Stout E1 lines without a
-    # tabulated Stark width, as DZConfig.kurucz_electron_stark.
-    kurucz_electron_stark: bool = False
+    # tabulated Stark width, as DZConfig.kurucz_electron_stark.  False
+    # restores the previous default without electron broadening for them.
+    kurucz_electron_stark: bool = True
 
 
 def compute_daz(

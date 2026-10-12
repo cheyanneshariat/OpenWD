@@ -54,6 +54,18 @@ source-code license. Credit Robert L. Kurucz and the
 in scientific uses. The decompressed checksum and default supplementation
 policy are recorded in the [atomic-data notes](src/wd_spectra/data/atomic/README.md).
 
+## Kurucz electron Stark constants
+
+`src/wd_spectra/data/stark/kurucz_stark_constants.csv.xz` lists Robert L.
+Kurucz's electron-impact Stark constants, log Gamma_4/n_e at 10,000 K, from
+his per-ion `gfZZCC.all`/`.lines` files at <http://kurucz.harvard.edu/atoms/>.
+It has one row per Stout transition, matched to Kurucz lines between observed
+levels by `scripts/build_kurucz_stark_table.py`. Oscillator strengths and
+other Kurucz fields are not included. These independently authored data are
+not covered by OpenWD's BSD source-code license. Credit Robert L. Kurucz in
+scientific uses. The source URL and original SHA-256 of every file are in the
+table's trailing `# SOURCES` record.
+
 ## HIRES comparisons in the DZ guide
 
 The three `docs/assets/wd*-xu2019-hires.png` figures contain OpenWD model

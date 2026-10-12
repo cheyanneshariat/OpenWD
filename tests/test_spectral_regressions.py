@@ -5,6 +5,7 @@ The atmosphere/cold-start tests separately protect equilibrium diagnostics.
 """
 
 import json
+from dataclasses import replace
 from pathlib import Path
 import numpy as np
 import pytest
@@ -31,6 +32,10 @@ APPROVED_DENSITY_EDGE = (
 APPROVED_CRII = (
     Path(__file__).parent
     / "data/approved_regressions/kurucz_crii_2026_10_08/fixed"
+)
+APPROVED_KURUCZ_STARK = (
+    Path(__file__).parent
+    / "data/approved_regressions/kurucz_stark_2026_10_11/fixed"
 )
 DENSITY_EDGE_CASES = frozenset({"da-4000", "da-5000", "dab-9000"})
 CRII_CASES = frozenset({"dz-pg1225", "dz-j0738"})
@@ -62,7 +67,7 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        approved_directory = APPROVED_CRII
+        approved_directory = APPROVED_KURUCZ_STARK
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -106,8 +111,22 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
-        # Keep the historical control as an independent check: the only
-        # intended difference is the newly default Cr II supplement.
+        # Disabling only the default Kurucz electron Stark constants must
+        # recover the previous (default Cr II) control.
+        previous_config = replace(config, kurucz_electron_stark=False)
+        with pytest.warns(AtmosphereConvergenceWarning):
+            previous = compute_dz(
+                previous_config, wave, initial_atmosphere=atmosphere,
+                relax_atmosphere=False,
+            )
+        with np.load(APPROVED_CRII / (case + ".npz")) as control:
+            previous_flux = control["surface_flux"]
+        np.testing.assert_allclose(
+            previous.spectrum.surface_flux_lambda, previous_flux,
+            rtol=2e-6, atol=1e-12 * np.max(previous_flux),
+        )
+        # Keep the historical control as an independent check: disabling the
+        # Cr II supplement as well recovers the pre-Cr II spectrum.
         from wd_spectra.models import stellar
         from wd_spectra.metals import KURUCZ_CR_II_SHA256
 
@@ -120,7 +139,8 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         monkeypatch.setattr(stellar, "read_stout_atomic_database", raw_stout)
         with pytest.warns(AtmosphereConvergenceWarning):
             original = compute_dz(
-                config, wave, initial_atmosphere=atmosphere, relax_atmosphere=False,
+                previous_config, wave, initial_atmosphere=atmosphere,
+                relax_atmosphere=False,
             )
         with np.load(APPROVED / (case + ".npz")) as historical:
             old_flux = historical["surface_flux"]

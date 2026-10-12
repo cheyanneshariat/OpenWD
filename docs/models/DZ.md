@@ -54,10 +54,9 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   (accuracy C or better), including 115--300 nm (Mg I 2852, Mg II h/k, Si II,
   C II, Al II, Fe I/II). The default retains Stout oscillator strengths and
   adds missing Cr II transitions from Kurucz.
-- Most Stout transitions carry no electron-impact (Stark) width. The default
-  therefore applies no Stark broadening to them; the classical SYNSPEC
-  fallback stays off. `kurucz_electron_stark=True` instead attaches Kurucz's
-  tabulated `log Gamma_4/n_e` at 10^4 K, scaled as (T/10^4 K)^(1/6), to every
+- Most Stout transitions carry no electron-impact (Stark) width, and the
+  classical SYNSPEC fallback stays off. By default (`kurucz_electron_stark=True`,
+  since 2026-10-11) OpenWD attaches Kurucz's tabulated `log Gamma_4/n_e` at 10^4 K, scaled as (T/10^4 K)^(1/6), to every
   E1 transition that has no width of its own and matches a Kurucz line
   (wavelength, level energies and statistical weights). Measured or
   previously tabulated widths are kept, and no other atomic data change.
@@ -74,7 +73,8 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   further optical DZ/DAZ targets at fixed published parameters, lowered the
   mean window residual by 1.2%: 20 windows improved, 5 got worse, and every
   change elsewhere was tiny. The COS Si II 1260 residual fell 16--18%, but
-  the lines remain weaker than observed. The option defaults to off.
+  the lines remain weaker than observed. `kurucz_electron_stark=False`
+  restores the previous behaviour, with no Stark broadening for these lines.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and

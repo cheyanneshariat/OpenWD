@@ -229,8 +229,9 @@ class DZConfig:
     # Stout E1 lines that have no tabulated Stark width, matched to Kurucz
     # lines once at build time (bundled table, 900-11000 A).  Measured widths
     # always take precedence; oscillator strengths and neutral broadening are
-    # unchanged.  Without this, such lines have no electron broadening.
-    kurucz_electron_stark: bool = False
+    # unchanged.  False restores the previous default, in which such lines
+    # have no electron broadening.
+    kurucz_electron_stark: bool = True
 
 
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0

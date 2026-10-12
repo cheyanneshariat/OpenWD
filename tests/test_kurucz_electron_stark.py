@@ -106,7 +106,7 @@ def test_dz_config_option_controls_attachment(monkeypatch, enabled):
 
     monkeypatch.setattr(stellar, "atomic_database_with_kurucz_electron_stark", fake_attach)
     monkeypatch.setattr(stellar, "read_verner_photoionization_database", stop)
-    assert DZConfig().kurucz_electron_stark is False
+    assert DZConfig().kurucz_electron_stark is True
     with pytest.raises(_Stop):
         stellar.compute_dz(DZConfig(kurucz_electron_stark=enabled))
     assert len(calls) == (1 if enabled else 0)
@@ -144,7 +144,7 @@ def test_daz_config_option_controls_attachment(monkeypatch, enabled):
 
     monkeypatch.setattr(daz, "atomic_database_with_kurucz_electron_stark", fake_attach)
     monkeypatch.setattr(daz, "read_verner_photoionization_database", stop)
-    assert DAZConfig().kurucz_electron_stark is False
+    assert DAZConfig().kurucz_electron_stark is True
     with pytest.raises(_Stop):
         daz.compute_daz(DAZConfig(kurucz_electron_stark=enabled))
     assert len(calls) == (1 if enabled else 0)
