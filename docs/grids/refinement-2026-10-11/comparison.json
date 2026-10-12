@@ -1,0 +1,3751 @@
+{
+  "completed_subset_snapshot": false,
+  "disjoint_retrieved_folders": [
+    "/Users/bijan1339/Documents/ChatGPT/openWD/work/grid_refinement_2026-10-11/dab-terminal-preview-v1/retrieved/grid",
+    "/Users/bijan1339/Documents/ChatGPT/openWD/work/grid_refinement_2026-10-11/dab-terminal-increment-v2/retrieved/grid"
+  ],
+  "measured": 32,
+  "method_summary": {
+    "coarse_linear_F_Tg": {
+      "both_targets_pass": 10,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.010716228052745478,
+      "worst_maximum_relative_fraction": 0.2972111324484413
+    },
+    "coarse_log_F_Tg": {
+      "both_targets_pass": 11,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.00946277455057754,
+      "worst_maximum_relative_fraction": 0.19462682453129435
+    },
+    "coarse_log_F_logTg": {
+      "both_targets_pass": 8,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.010600874740192962,
+      "worst_maximum_relative_fraction": 0.16578704418190365
+    },
+    "coarse_pchip_logF_local_T_then_g": {
+      "both_targets_pass": 11,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.009462774550577528,
+      "worst_maximum_relative_fraction": 0.1946268245312972
+    },
+    "refined_linear_F_Tg": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.003902489890230315,
+      "worst_maximum_relative_fraction": 0.14327326740987253
+    },
+    "refined_log_F_Tg": {
+      "both_targets_pass": 20,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.005263873714180639,
+      "worst_maximum_relative_fraction": 0.09897325173784827
+    },
+    "refined_log_F_logTg": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.003824058209895542,
+      "worst_maximum_relative_fraction": 0.0888780482007103
+    },
+    "refined_pchip_logF_local_T_then_g": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.0008646997625505186,
+      "worst_maximum_relative_fraction": 0.08063608578971398
+    }
+  },
+  "no_spectral_normalization_or_extrapolation": true,
+  "old_eight_targets_are_refinement_inputs": true,
+  "records": [
+    {
+      "cell_id": "T15000-20000_g7-7.5_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "b48ddab83b378ce02c1792f6846eb50807d1be2ca24e6fd6be78dafe79321aaa",
+        "native_request_sha256": "a97bc411463e0ee46ef1a9a90e5588009a5379f9c332b3a13afad9f4e9067504",
+        "spectrum_sha256": "917c91108bad653c7f1328cb97110693ed6cac6defa7c74f1a3a4890a3f5e902"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.032637988295352645,
+          "integrated_signed_error_fraction": -0.03112834966732421,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.28463504245963167,
+          "rms_relative_error_fraction": 0.03620230406494539
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.06609670089317421,
+          "integrated_signed_error_fraction": -0.06576169359114988,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3971.25,
+          "maximum_relative_error_fraction": 0.15330929752136865,
+          "rms_relative_error_fraction": 0.06323734121063714
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.050728299947544846,
+          "integrated_signed_error_fraction": -0.05014098716177713,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.15287164721434018,
+          "rms_relative_error_fraction": 0.04906108746398475
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.06609670089317428,
+          "integrated_signed_error_fraction": -0.06576169359114992,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3971.25,
+          "maximum_relative_error_fraction": 0.15330929752136865,
+          "rms_relative_error_fraction": 0.06323734121063714
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004353331727710248,
+          "integrated_signed_error_fraction": -0.0032402108638415225,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.13327409055968867,
+          "rms_relative_error_fraction": 0.00840440657782312
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.02203734538668516,
+          "integrated_signed_error_fraction": -0.02191945113886559,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.06062919774351589,
+          "rms_relative_error_fraction": 0.021278011962929548
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01481539820359145,
+          "integrated_signed_error_fraction": -0.014634194295145522,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.0642890532919428,
+          "rms_relative_error_fraction": 0.01469362145147007
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004960360349990226,
+          "integrated_signed_error_fraction": 0.004240485343687052,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4342.25,
+          "maximum_relative_error_fraction": 0.06409630464585848,
+          "rms_relative_error_fraction": 0.005701106263660275
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-979739210232af3a13aba652",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 7.125,
+        "teff_K": 16250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g7-7.5_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "47205939a479bd39e09d328a4c9476243eaec2485a5d09a1ddaf946fdd47b27c",
+        "native_request_sha256": "e568c3c431b593ac9377960768d4deeb5f63ff3859c150901edb5dfe682ae28e",
+        "spectrum_sha256": "30d717daad47dcc75fc382c49ca87d3ec68f1dcd1acf088b458980c697132ca5"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.025744207115755684,
+          "integrated_signed_error_fraction": -0.0242014678692893,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.2972111324484413,
+          "rms_relative_error_fraction": 0.03129795176781051
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.06237138232581617,
+          "integrated_signed_error_fraction": -0.06208870921061335,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.13611298143646425,
+          "rms_relative_error_fraction": 0.06014999612343187
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.046259213976570464,
+          "integrated_signed_error_fraction": -0.045740484779493676,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.13590165333260026,
+          "rms_relative_error_fraction": 0.0453022802956408
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.06237138232581608,
+          "integrated_signed_error_fraction": -0.06208870921061326,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.13611298143646425,
+          "rms_relative_error_fraction": 0.060149996123431866
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0037433815673673645,
+          "integrated_signed_error_fraction": -0.0021217111321098457,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.14327326740987253,
+          "rms_relative_error_fraction": 0.008159949394487347
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.021444737851125047,
+          "integrated_signed_error_fraction": -0.02133097989549449,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.050985472401032274,
+          "rms_relative_error_fraction": 0.02083255916972073
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.014124890337769975,
+          "integrated_signed_error_fraction": -0.013933931162937108,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.06484815393765356,
+          "rms_relative_error_fraction": 0.014145446353522202
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0031335601725804626,
+          "integrated_signed_error_fraction": 0.0025163658732245,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.07221503643546431,
+          "rms_relative_error_fraction": 0.004546676691234006
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-56c6ec857f07aaca72ac4421",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 7.375,
+        "teff_K": 16250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g7-7.5_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "0130d5aeaca7c95e1ec850fe00e2e8cafd3d299f0d91e8c73dafbbb97b147e4d",
+        "native_request_sha256": "f9a129058bc5dc552d439d5ea2648c3141c1e3f298bec1e2a755f136f017e5c8",
+        "spectrum_sha256": "a492a70162fb203fbb20338aa36d4749292c641320b0ca3cbc389ed50abdc3ab"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.043237803844014086,
+          "integrated_signed_error_fraction": -0.042022765340249214,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.25,
+          "maximum_relative_error_fraction": 0.09996145183493556,
+          "rms_relative_error_fraction": 0.04329682507412438
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.07095468116281162,
+          "integrated_signed_error_fraction": -0.07055571595355027,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.19462682453129435,
+          "rms_relative_error_fraction": 0.06732127636344068
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.05708725422273664,
+          "integrated_signed_error_fraction": -0.05634425175399559,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.16578704418190365,
+          "rms_relative_error_fraction": 0.054461923318416705
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.07095468116281159,
+          "integrated_signed_error_fraction": -0.07055571595355026,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.1946268245312972,
+          "rms_relative_error_fraction": 0.06732127636344067
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.02141550643805643,
+          "integrated_signed_error_fraction": -0.02086178207032072,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.25,
+          "maximum_relative_error_fraction": 0.055955294133997684,
+          "rms_relative_error_fraction": 0.020853777029476505
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.02638862791816995,
+          "integrated_signed_error_fraction": -0.026178006689955194,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.09897325173784827,
+          "rms_relative_error_fraction": 0.025235987018027237
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.023210692112677234,
+          "integrated_signed_error_fraction": -0.022846938350563905,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.0888780482007103,
+          "rms_relative_error_fraction": 0.0222905457102853
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.007652145303908953,
+          "integrated_signed_error_fraction": -0.006941767417587663,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.08063608578971398,
+          "rms_relative_error_fraction": 0.008131486625194265
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-1d0be11d9bc39b1e0f07a3ba",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 7.125,
+        "teff_K": 18750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g7-7.5_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "f32cd305a81709ccbfa783029d6ae00d162d4562c403fbc2d7159b69f3e1e116",
+        "native_request_sha256": "7b5992a85ac53b7ad36df8da0578733f2953887941d0db3e152f285f8011f641",
+        "spectrum_sha256": "387d25fda41c5001075e62249c73c444e485644ebac988f148b93b6fd945cf0e"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0340189116301563,
+          "integrated_signed_error_fraction": -0.03290267493245591,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4863.25,
+          "maximum_relative_error_fraction": 0.10675877828871408,
+          "rms_relative_error_fraction": 0.03539198787556719
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.06431268926053592,
+          "integrated_signed_error_fraction": -0.06394388202725963,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.17568961783242612,
+          "rms_relative_error_fraction": 0.06147436687298702
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.04969026451394884,
+          "integrated_signed_error_fraction": -0.049025330357218073,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.14731646577372073,
+          "rms_relative_error_fraction": 0.047939995797571765
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.06431268926053596,
+          "integrated_signed_error_fraction": -0.06394388202725969,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.0,
+          "maximum_relative_error_fraction": 0.17568961783242906,
+          "rms_relative_error_fraction": 0.06147436687298701
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01671835341330661,
+          "integrated_signed_error_fraction": -0.016199531590947697,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4103.25,
+          "maximum_relative_error_fraction": 0.04615072525795281,
+          "rms_relative_error_fraction": 0.016655734218176888
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.022752763929428387,
+          "integrated_signed_error_fraction": -0.022538045922514204,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.09606859657444648,
+          "rms_relative_error_fraction": 0.021896123700046975
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0192317825616985,
+          "integrated_signed_error_fraction": -0.018881584418196887,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.08594451630856302,
+          "rms_relative_error_fraction": 0.01865081229734638
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0049988374209753664,
+          "integrated_signed_error_fraction": -0.004323926888432549,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.07678937375205142,
+          "rms_relative_error_fraction": 0.005928012882397061
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-f6a9eb0e201bb2885ff767bf",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 7.375,
+        "teff_K": 18750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g8-8.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "e7e2fda36307b01104861dde7a5798e8941c3264f13c1cb84f1ff4614bbc91b8",
+        "native_request_sha256": "597138da64fcf44a19b8a4e5d4749ca47e225069da27ebaae1d2a5c806500990",
+        "spectrum_sha256": "d91dce7fde4a4b376d6ac1d1f22deb96d2d5a6fa038aa14bf75627724de8d8af"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.006238912652977567,
+          "integrated_signed_error_fraction": -0.003308064436138165,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.11271693548658365,
+          "rms_relative_error_fraction": 0.011327420330822412
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.022013733247263932,
+          "integrated_signed_error_fraction": -0.021497466546706104,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.07446035277815248,
+          "rms_relative_error_fraction": 0.01905130768733797
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.013838524406401102,
+          "integrated_signed_error_fraction": -0.012625109531585093,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.0816107805767987,
+          "rms_relative_error_fraction": 0.012701792363793334
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.022013733247263904,
+          "integrated_signed_error_fraction": -0.021497466546706076,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.07446035277815248,
+          "rms_relative_error_fraction": 0.019051307687337947
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01316103409329213,
+          "integrated_signed_error_fraction": -0.01303711261190397,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3965.75,
+          "maximum_relative_error_fraction": 0.021078975404797844,
+          "rms_relative_error_fraction": 0.01159605699108233
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01897201536373165,
+          "integrated_signed_error_fraction": -0.018958535256510145,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4122.25,
+          "maximum_relative_error_fraction": 0.02845659443881033,
+          "rms_relative_error_fraction": 0.016145546964288455
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01592321499705669,
+          "integrated_signed_error_fraction": -0.01589525843769033,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4122.25,
+          "maximum_relative_error_fraction": 0.02492973867492858,
+          "rms_relative_error_fraction": 0.013497422765242927
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01814132498795904,
+          "integrated_signed_error_fraction": -0.018141172251905265,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3000.0,
+          "maximum_relative_error_fraction": 0.023009615937538058,
+          "rms_relative_error_fraction": 0.01563562615494932
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-a79fd4905f58944e95c860d3",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 8.125,
+        "teff_K": 21250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g8-8.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "ed9f3d3c42ace255be4a54eb632c96efc8e0998447838c98a63bb1746401cc66",
+        "native_request_sha256": "6c2bc468abc70ffa8ae35313db0ccb964e1f705b70078eee3c6746caf360b68e",
+        "spectrum_sha256": "38edb9c25f9a02513d2f64c3013bd8eee9b0bb7d3e973c89a2e0e2b289195619"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.02194105157031206,
+          "integrated_signed_error_fraction": -0.02107658628995677,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.25,
+          "maximum_relative_error_fraction": 0.08682847043893847,
+          "rms_relative_error_fraction": 0.02082560564346485
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.038427601268006116,
+          "integrated_signed_error_fraction": -0.03826510603889419,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4122.25,
+          "maximum_relative_error_fraction": 0.06402005745186945,
+          "rms_relative_error_fraction": 0.03331735568806099
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.03003231831602198,
+          "integrated_signed_error_fraction": -0.02970554798526608,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.06882224357123545,
+          "rms_relative_error_fraction": 0.026068238724802614
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.038427601268006116,
+          "integrated_signed_error_fraction": -0.03826510603889419,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4122.25,
+          "maximum_relative_error_fraction": 0.06402005745186945,
+          "rms_relative_error_fraction": 0.03331735568806098
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.018825781422149492,
+          "integrated_signed_error_fraction": -0.018755360842872815,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3965.75,
+          "maximum_relative_error_fraction": 0.027759325763997252,
+          "rms_relative_error_fraction": 0.016597192717626302
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.025630323251649968,
+          "integrated_signed_error_fraction": -0.025623659841427695,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4122.25,
+          "maximum_relative_error_fraction": 0.03753134908676575,
+          "rms_relative_error_fraction": 0.022014795226263918
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.022345150715309844,
+          "integrated_signed_error_fraction": -0.022333417962958048,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4122.25,
+          "maximum_relative_error_fraction": 0.033498906633954245,
+          "rms_relative_error_fraction": 0.019138036472670674
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.019318696962281626,
+          "integrated_signed_error_fraction": -0.019318696962281626,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3008.308908516223,
+          "maximum_relative_error_fraction": 0.024387305350920856,
+          "rms_relative_error_fraction": 0.01659617305040138
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-eaeeda15c0ac816c576f6f41",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 8.375,
+        "teff_K": 21250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g8-8.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "f9d1b7036120bc551e735980c84eae90a873853e5e3f54944dfb3e949989d44e",
+        "native_request_sha256": "bc280741cdf0d61253d479fc4d6620709789dc6203c82825e1420f4d42341c2a",
+        "spectrum_sha256": "f9407a3b8357f2701d4c5deffbaa4d5961cfc0b7d9537aafa7874480e3acf850"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.02184641592545302,
+          "integrated_signed_error_fraction": 0.02184641592545302,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.14407066047716655,
+          "rms_relative_error_fraction": 0.022034836684341273
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.005694661482583689,
+          "integrated_signed_error_fraction": 0.005505196461807133,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.13346269595611385,
+          "rms_relative_error_fraction": 0.010812729288289587
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.014057005414884107,
+          "integrated_signed_error_fraction": 0.014057005414884107,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.14021378593442826,
+          "rms_relative_error_fraction": 0.016602199676884453
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0056946614825837995,
+          "integrated_signed_error_fraction": 0.005505196461807254,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.13346269595610985,
+          "rms_relative_error_fraction": 0.010812729288289571
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.013046110260484444,
+          "integrated_signed_error_fraction": 0.013046110260484444,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.06990695926943112,
+          "rms_relative_error_fraction": 0.012377718769374596
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.007455798761644346,
+          "integrated_signed_error_fraction": 0.007455790450856093,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.05954545632684748,
+          "rms_relative_error_fraction": 0.007853837188152381
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01017824690257123,
+          "integrated_signed_error_fraction": 0.01017824690257123,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.06338728931331714,
+          "rms_relative_error_fraction": 0.010139558442776591
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.007929027256069683,
+          "integrated_signed_error_fraction": 0.007920564540858694,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.03043537798327847,
+          "rms_relative_error_fraction": 0.007170412077171723
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-2ee5f68f014e7a93298f976e",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 8.125,
+        "teff_K": 23750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g8-8.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "42084ee81c7a864f18c29aa9dc8335788ae3deb56ac7a33d8672f2ce5b57edd5",
+        "native_request_sha256": "91265b6f13e5c96cfc3d56157e8f1bac79aee7faa9f6dd88b3957b9426d115af",
+        "spectrum_sha256": "afc6767f2d3062daf76a6a3d35f3b8b3c333aff58780275e143e7be58b61a83c"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.012232764092218906,
+          "integrated_signed_error_fraction": 0.012232104385672118,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.12303489200695074,
+          "rms_relative_error_fraction": 0.013551331574048411
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.005959394819270215,
+          "integrated_signed_error_fraction": -0.0033758574018952227,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.114096022429223,
+          "rms_relative_error_fraction": 0.007941359311867733
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.005352763245155199,
+          "integrated_signed_error_fraction": 0.004941243718066698,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.119172558601782,
+          "rms_relative_error_fraction": 0.009483931751551752
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.00595939481927032,
+          "integrated_signed_error_fraction": -0.003375857401895313,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.114096022429223,
+          "rms_relative_error_fraction": 0.007941359311867728
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.013512865065025234,
+          "integrated_signed_error_fraction": 0.013512865065025234,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.06112454095656337,
+          "rms_relative_error_fraction": 0.012201966030176209
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.009160277764327967,
+          "integrated_signed_error_fraction": 0.009160277764327967,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.054518771547870576,
+          "rms_relative_error_fraction": 0.008629764328605807
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.011554707754294567,
+          "integrated_signed_error_fraction": 0.011554707754294567,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.05751330642086407,
+          "rms_relative_error_fraction": 0.010708483907511166
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.014447885547761316,
+          "integrated_signed_error_fraction": 0.014446938499430734,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.02920389293845965,
+          "rms_relative_error_fraction": 0.012518474805883917
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-beeee5ffca9c462b9a12332b",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 8.375,
+        "teff_K": 23750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g8-8.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "238aaa293f523d7a4b59aab6b9f15f64112620d6e9f21fc5b63ff9a7a588c1e6",
+        "native_request_sha256": "8aae1de50f50a565731696c38fbff01ead0361dab1a12dbb4d7d9617da56297b",
+        "spectrum_sha256": "57ba705e9893927f0fa643376a932b61dbc8b532e314b01993ba0008aa6da50f"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01534140866199765,
+          "integrated_signed_error_fraction": 0.01534140866199765,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.048316281337599805,
+          "rms_relative_error_fraction": 0.01280596467948035
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0027875966251555027,
+          "integrated_signed_error_fraction": -0.0022128458080535544,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.040045272705049643,
+          "rms_relative_error_fraction": 0.0027075380672891315
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004998408416221598,
+          "integrated_signed_error_fraction": 0.004998408416221598,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.04445648417771572,
+          "rms_relative_error_fraction": 0.006004599810793951
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0027875966251554715,
+          "integrated_signed_error_fraction": -0.002212845808053522,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.040045272705049643,
+          "rms_relative_error_fraction": 0.0027075380672891406
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004646562148123464,
+          "integrated_signed_error_fraction": 0.004646562148123464,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.01563712932188146,
+          "rms_relative_error_fraction": 0.003825331890259488
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0011026129445290494,
+          "integrated_signed_error_fraction": -0.0009629142538316426,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.01305901890309378,
+          "rms_relative_error_fraction": 0.0009414649917987072
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.001508738268323891,
+          "integrated_signed_error_fraction": 0.001508738268323891,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.014771107858121846,
+          "rms_relative_error_fraction": 0.0018156541835224105
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0003344187342850875,
+          "integrated_signed_error_fraction": -0.00032987872673004434,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.004070589279886777,
+          "rms_relative_error_fraction": 0.0003449230041697622
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-11f7132d953826bf4337e3a3",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 8.125,
+        "teff_K": 26250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g8-8.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "debda3174aaf9ed5cbf5cee9db732a4ecdb89148d0fd78aed72f5eb28ef867c0",
+        "native_request_sha256": "8bc827dcafb170d4b4ee5f66d9e4d2cbc551ccde5f6a0e5cbeec1584636234d1",
+        "spectrum_sha256": "e9b3842451cda203b70446a0410dbe008e4f2a24514db577586f272ce1b61242"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0154864408248618,
+          "integrated_signed_error_fraction": 0.0154864408248618,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.05008257022530506,
+          "rms_relative_error_fraction": 0.013012573140374066
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0027940467967402234,
+          "integrated_signed_error_fraction": -0.002182322080331841,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6680.0,
+          "maximum_relative_error_fraction": 0.037828364458191995,
+          "rms_relative_error_fraction": 0.0027056644668639832
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.005053370067076827,
+          "integrated_signed_error_fraction": 0.005053370067076827,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.043475263311347725,
+          "rms_relative_error_fraction": 0.006107789221974514
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0027940467967402594,
+          "integrated_signed_error_fraction": -0.0021823220803318844,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6680.0,
+          "maximum_relative_error_fraction": 0.037828364458191995,
+          "rms_relative_error_fraction": 0.0027056644668639876
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004784766608095419,
+          "integrated_signed_error_fraction": 0.004784755922385104,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.015577771958978314,
+          "rms_relative_error_fraction": 0.0039600037752663495
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0010158113969774042,
+          "integrated_signed_error_fraction": -0.0008693858097222246,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.013326042364037586,
+          "rms_relative_error_fraction": 0.0008718296666738026
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0016123562486496273,
+          "integrated_signed_error_fraction": 0.0016121912795075838,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.014921183606369218,
+          "rms_relative_error_fraction": 0.0019022745804873839
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0002145407104840171,
+          "integrated_signed_error_fraction": -0.0002095433281626359,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 7283.5,
+          "maximum_relative_error_fraction": 0.004062993762032831,
+          "rms_relative_error_fraction": 0.0003025167912549839
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-6e26db0cd7a38a4a50fcb801",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 8.375,
+        "teff_K": 26250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g8-8.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "c8b14b7a485ca52996a4d1cd78e33d277964b6e24e0c72452d0eae0b22fbc315",
+        "native_request_sha256": "a76b31afdd0ba72e25ef0454db8ca936cfe94ee02ed56612ce5c2ae1e02408fa",
+        "spectrum_sha256": "4f04966c3309c458a5afd8f4db13c4272dc21d5ed496c8de5617f1429f36fc93"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.013582370809314731,
+          "integrated_signed_error_fraction": 0.013582370809314731,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.05628513598807991,
+          "rms_relative_error_fraction": 0.011649383469711358
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0025422857070494164,
+          "integrated_signed_error_fraction": -0.0018068475581999202,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.049174597995393074,
+          "rms_relative_error_fraction": 0.002760354606252359
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0050306737953724765,
+          "integrated_signed_error_fraction": 0.0050306737953724765,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.05328676403883314,
+          "rms_relative_error_fraction": 0.006144150446147976
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.002542285707049403,
+          "integrated_signed_error_fraction": -0.0018068475581998734,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.049174597995389334,
+          "rms_relative_error_fraction": 0.0027603546062523643
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0048411295428362556,
+          "integrated_signed_error_fraction": 0.0048411295428362556,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.022022014519993194,
+          "rms_relative_error_fraction": 0.004197482150468803
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.000783025948176808,
+          "integrated_signed_error_fraction": -0.0004897649089718877,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.017530641496448982,
+          "rms_relative_error_fraction": 0.0009328327215781423
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00171931630591607,
+          "integrated_signed_error_fraction": 0.00171931630591607,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.019471844242691154,
+          "rms_relative_error_fraction": 0.0021237144517298593
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0001640891032577985,
+          "integrated_signed_error_fraction": 0.0001481209299696762,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.005409741812616887,
+          "rms_relative_error_fraction": 0.00020804295306925996
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-81faee5ab152418c8ef23fd7",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 8.125,
+        "teff_K": 28750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g8-8.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "d3b174a5e558ac848876215727c772a77f0e2e23e387b5de12dc43d5257e588c",
+        "native_request_sha256": "43d9af00a284ad9827652ac8c798cb3a76fa5693b495b764160b9c4c223bc7c2",
+        "spectrum_sha256": "e1df556232e81bd71c225e8614a5089d6d0354f694c77370c544b7b42170bdf9"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.013423694696135786,
+          "integrated_signed_error_fraction": 0.013423694696135786,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.052741788670815276,
+          "rms_relative_error_fraction": 0.011614508691447945
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.00277569793282472,
+          "integrated_signed_error_fraction": -0.002053717866124156,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.046914784792857336,
+          "rms_relative_error_fraction": 0.0029114663455054265
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004804641155197523,
+          "integrated_signed_error_fraction": 0.004804641155197523,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.05061941532711039,
+          "rms_relative_error_fraction": 0.006077365665101803
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.002775697932824698,
+          "integrated_signed_error_fraction": -0.002053717866124143,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.04691478479285367,
+          "rms_relative_error_fraction": 0.0029114663455054235
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004685464979480863,
+          "integrated_signed_error_fraction": 0.004685464979480863,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.021865100296423166,
+          "rms_relative_error_fraction": 0.004111391536257301
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0009320550395487346,
+          "integrated_signed_error_fraction": -0.0006725665212223145,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.018121964787130698,
+          "rms_relative_error_fraction": 0.0010233494992629738
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0015420865886564786,
+          "integrated_signed_error_fraction": 0.0015420865886564786,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4473.0,
+          "maximum_relative_error_fraction": 0.019852389495480103,
+          "rms_relative_error_fraction": 0.0020412790125878618
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 5.672091661697317e-05,
+          "integrated_signed_error_fraction": -4.3143564097911545e-06,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.005788054507115099,
+          "rms_relative_error_fraction": 0.000165735346620592
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-e8da532a996613bab6e7e8eb",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 8.375,
+        "teff_K": 28750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T30000-35000_g7.5-8_HHe3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "5a01d528fe6824949939a9366ed52a4c87049ae3b5b391e528ad9dc6c7e9e4fe",
+        "native_request_sha256": "56db053191bfc45fb33ab9445475b4f63b07563e4bd9ad69e20770ba1b60b893",
+        "spectrum_sha256": "8e73ea9fe7baff52067712325b7dfa50c2487ce37fbec389ead3d231f0b303c9"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004691872346204113,
+          "integrated_signed_error_fraction": -0.004690949194772404,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3836.5,
+          "maximum_relative_error_fraction": 0.006947724158193542,
+          "rms_relative_error_fraction": 0.004492136618147427
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.016758754765414836,
+          "integrated_signed_error_fraction": -0.016758754765414836,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.02740764504781988,
+          "rms_relative_error_fraction": 0.014100433643082822
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.011700766188519536,
+          "integrated_signed_error_fraction": -0.011700766188519536,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.020263592009601403,
+          "rms_relative_error_fraction": 0.009594223737645265
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01675875476541488,
+          "integrated_signed_error_fraction": -0.01675875476541488,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.02740764504781988,
+          "rms_relative_error_fraction": 0.014100433643082817
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0007082678656594064,
+          "integrated_signed_error_fraction": -0.0006675816564889228,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4340.0,
+          "maximum_relative_error_fraction": 0.0024942144168099162,
+          "rms_relative_error_fraction": 0.0007766065380758454
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005582409558177861,
+          "integrated_signed_error_fraction": -0.005582409558177861,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.009102650652472176,
+          "rms_relative_error_fraction": 0.0045936096258087315
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0036296634032645866,
+          "integrated_signed_error_fraction": -0.0036296634032645866,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.006277965772589379,
+          "rms_relative_error_fraction": 0.002871345172069487
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0004420093406325273,
+          "integrated_signed_error_fraction": 0.0004420093406325273,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4865.0,
+          "maximum_relative_error_fraction": 0.001957266533958282,
+          "rms_relative_error_fraction": 0.0005449472530702814
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-d7b0cf43ce578ed4a59dd976",
+      "parameters": {
+        "log_H_He": 3,
+        "logg": 7.625,
+        "teff_K": 31250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T30000-35000_g7.5-8_HHe3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "a20c8585c02ffabfa8a763c1dd9223fc32b725069afded9db57e0debad2c4efc",
+        "native_request_sha256": "d8cad662fd3f6cebd5d7ba8b4ee6e0e43122e340b3b5c0035fd18d8e4bdaf4da",
+        "spectrum_sha256": "ebd05c2e505e5b6b52e89cf37d83dc1bbe7d64cb26198e5a2991c031e1c38b42"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005116459884527895,
+          "integrated_signed_error_fraction": -0.005116459884527895,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6564.5,
+          "maximum_relative_error_fraction": 0.0076840340619892,
+          "rms_relative_error_fraction": 0.004858518205204257
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.016873268430857152,
+          "integrated_signed_error_fraction": -0.016873268430857152,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.02789561216257017,
+          "rms_relative_error_fraction": 0.014256528659721483
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01187811789500077,
+          "integrated_signed_error_fraction": -0.01187811789500077,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.02088647895928424,
+          "rms_relative_error_fraction": 0.00980091082093139
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.016873268430857086,
+          "integrated_signed_error_fraction": -0.016873268430857086,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.02789561216257017,
+          "rms_relative_error_fraction": 0.01425652865972148
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0009535621712613471,
+          "integrated_signed_error_fraction": -0.0009312641446344381,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4338.849554655623,
+          "maximum_relative_error_fraction": 0.0018188002552795917,
+          "rms_relative_error_fraction": 0.0009775302536341188
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005734139385912606,
+          "integrated_signed_error_fraction": -0.005734139385912606,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.009619002860551293,
+          "rms_relative_error_fraction": 0.00474925540866999
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0038036173070211425,
+          "integrated_signed_error_fraction": -0.0038036173070211425,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.75,
+          "maximum_relative_error_fraction": 0.006829317193357352,
+          "rms_relative_error_fraction": 0.0030430507657934285
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0002722522799495808,
+          "integrated_signed_error_fraction": 0.000272244233318793,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.0018632295615852146,
+          "rms_relative_error_fraction": 0.00039694951371541023
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-7d57e70ed0664eefc561a1a5",
+      "parameters": {
+        "log_H_He": 3,
+        "logg": 7.875,
+        "teff_K": 31250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T30000-35000_g7.5-8_HHe3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "a25e67d48373fa17b4fae11003b950430e7ef36bb756b36e9b81667278db9a85",
+        "native_request_sha256": "66ca56674dcea3d7716c19de33e825314b0f20402eb8a343836b2e85023664b0",
+        "spectrum_sha256": "b1e9bf74ec3202dc113e06463c653ef4ab031d8ad528e2626c21a64a0b3a0f99"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005835415723991598,
+          "integrated_signed_error_fraction": -0.005835415723991598,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3890.5,
+          "maximum_relative_error_fraction": 0.008271066160653547,
+          "rms_relative_error_fraction": 0.005507630333038764
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01660406793386681,
+          "integrated_signed_error_fraction": -0.01660406793386681,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.027386755675228185,
+          "rms_relative_error_fraction": 0.014147383759937788
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.011780116330866938,
+          "integrated_signed_error_fraction": -0.011780116330866938,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.02042215829036143,
+          "rms_relative_error_fraction": 0.009859144121600442
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.016604067933866682,
+          "integrated_signed_error_fraction": -0.016604067933866682,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.027386755675228185,
+          "rms_relative_error_fraction": 0.014147383759937775
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.002419174758427403,
+          "integrated_signed_error_fraction": -0.002419174758427403,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3890.5,
+          "maximum_relative_error_fraction": 0.0034344560987569534,
+          "rms_relative_error_fraction": 0.0022533079328671173
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00531130433217642,
+          "integrated_signed_error_fraction": -0.00531130433217642,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.008791407774762682,
+          "rms_relative_error_fraction": 0.004594673412947745
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003920297276737479,
+          "integrated_signed_error_fraction": -0.003920297276737479,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.006819187366815849,
+          "rms_relative_error_fraction": 0.0033495274478909875
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00011959303279706712,
+          "integrated_signed_error_fraction": 7.753899251639077e-06,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.0007229664415058162,
+          "rms_relative_error_fraction": 0.00013725280685296438
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-8ff37b7473f5f7d42705298a",
+      "parameters": {
+        "log_H_He": 3,
+        "logg": 7.625,
+        "teff_K": 33750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T30000-35000_g7.5-8_HHe3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "a2491c0b2b7b115e9b2d41ef5e8f7c91210bcb9c30e24d3f65f17da85e05f12a",
+        "native_request_sha256": "cf48d18fd00b9567a17a2cce0b30931493ea9dbe48c10bf701dd1d5e4fa61fff",
+        "spectrum_sha256": "282c1f882093fe785f7755b056f0d1dd28337af3751474a4b464c7e4e030748d"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005964391898115215,
+          "integrated_signed_error_fraction": -0.005964391898115215,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3890.5,
+          "maximum_relative_error_fraction": 0.008471852551068856,
+          "rms_relative_error_fraction": 0.005622494792333734
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.016472017668376537,
+          "integrated_signed_error_fraction": -0.016472017668376537,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.026972732946512038,
+          "rms_relative_error_fraction": 0.01407691261783666
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.011707415075784041,
+          "integrated_signed_error_fraction": -0.011707415075784041,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.020132418388672545,
+          "rms_relative_error_fraction": 0.009836646901071446
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.016472017668376512,
+          "integrated_signed_error_fraction": -0.016472017668376512,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.026972732946512038,
+          "rms_relative_error_fraction": 0.014076912617836662
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0024037876601554495,
+          "integrated_signed_error_fraction": -0.0024037876601554495,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3890.5,
+          "maximum_relative_error_fraction": 0.00341222745598811,
+          "rms_relative_error_fraction": 0.0022397634876689153
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005216443096184858,
+          "integrated_signed_error_fraction": -0.005216443096184858,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.008508860286242094,
+          "rms_relative_error_fraction": 0.004521727232493694
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003844499112769941,
+          "integrated_signed_error_fraction": -0.003844499112769941,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4341.75,
+          "maximum_relative_error_fraction": 0.006575925791790052,
+          "rms_relative_error_fraction": 0.0032925931751245406
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00013550139822288658,
+          "integrated_signed_error_fraction": 8.176493241703009e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 5877.25,
+          "maximum_relative_error_fraction": 0.0006631450049418987,
+          "rms_relative_error_fraction": 0.0001034161304229169
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-7166f3e37a3c127f33dc2489",
+      "parameters": {
+        "log_H_He": 3,
+        "logg": 7.875,
+        "teff_K": 33750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g8-8.5_HHe-5",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "7528f343a6c14a943dfc21524c7ad08c0acb2d6c6b2e415bcb95a7abe37bed2b",
+        "native_request_sha256": "0bae52d6a2803cee28c7f36cc61ae83101947c809a0d2574ee600f98fc9d70a9",
+        "spectrum_sha256": "b3ffbf172f8570a6a79ad052e79d12baba838d49dd58ccf2ab50adf01532a6bd"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004073840986629462,
+          "integrated_signed_error_fraction": 0.002861539852592899,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.08643063292261043,
+          "rms_relative_error_fraction": 0.005493349020726031
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.03351252434852478,
+          "integrated_signed_error_fraction": -0.03325867571361754,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.08654188808414152,
+          "rms_relative_error_fraction": 0.031225995273576956
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.017471999218295727,
+          "integrated_signed_error_fraction": -0.016942457989862873,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.0783135410145408,
+          "rms_relative_error_fraction": 0.016509543020355698
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.033512524348524794,
+          "integrated_signed_error_fraction": -0.033258675713617555,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.08654188808413836,
+          "rms_relative_error_fraction": 0.031225995273576966
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0030929886655475477,
+          "integrated_signed_error_fraction": 0.0030322779952190594,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.05044457643631922,
+          "rms_relative_error_fraction": 0.003793079552252997
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.011771673414573301,
+          "integrated_signed_error_fraction": -0.011603284136181329,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.04602050517759563,
+          "rms_relative_error_fraction": 0.01038914266697937
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.005471083611497707,
+          "integrated_signed_error_fraction": -0.005095805579127653,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.04960087943435979,
+          "rms_relative_error_fraction": 0.004841899850353703
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.002165561229220701,
+          "integrated_signed_error_fraction": 0.0003070226567496618,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.5,
+          "maximum_relative_error_fraction": 0.03724539372878566,
+          "rms_relative_error_fraction": 0.002802496939573621
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-d17bf474ac78063a1c574037",
+      "parameters": {
+        "log_H_He": -5,
+        "logg": 8.125,
+        "teff_K": 16250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g8-8.5_HHe-5",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "5072fbb31dd098512e8636028fa60f64a7c814cf4f65b7bfcf88289945a5e792",
+        "native_request_sha256": "80cfb7ba7cdb06dc09e5d1806d626c9a240729724d3c95b8d75988342e942c66",
+        "spectrum_sha256": "82567e3650410a1bc86fc08cee4ed5351bd10f71b288910071c6fc5f9267b699"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.006903294238456441,
+          "integrated_signed_error_fraction": 0.006794264504400604,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.09957928027201549,
+          "rms_relative_error_fraction": 0.007121266120415159
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.030804417225006365,
+          "integrated_signed_error_fraction": -0.03051704208456295,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.0826182366885989,
+          "rms_relative_error_fraction": 0.02796125668606869
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01452753154522004,
+          "integrated_signed_error_fraction": -0.01391991810549432,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.09426164683921166,
+          "rms_relative_error_fraction": 0.013252446004747877
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.030804417225006264,
+          "integrated_signed_error_fraction": -0.030517042084562844,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.08261823668860274,
+          "rms_relative_error_fraction": 0.0279612566860687
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004163139850887748,
+          "integrated_signed_error_fraction": 0.004148040771236295,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.5,
+          "maximum_relative_error_fraction": 0.054692714596379276,
+          "rms_relative_error_fraction": 0.004934510068667754
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.010736796188968625,
+          "integrated_signed_error_fraction": -0.010570508979929684,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.5,
+          "maximum_relative_error_fraction": 0.050910572318881145,
+          "rms_relative_error_fraction": 0.00916338176884908
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004629902818870762,
+          "integrated_signed_error_fraction": -0.0040436055180147765,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.5,
+          "maximum_relative_error_fraction": 0.05409627138244345,
+          "rms_relative_error_fraction": 0.003989723258685791
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0023208580726550914,
+          "integrated_signed_error_fraction": 0.0003058541540565182,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.5,
+          "maximum_relative_error_fraction": 0.03843206217496,
+          "rms_relative_error_fraction": 0.0029683329962050028
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-647e9f95d2e636d8b4300f6f",
+      "parameters": {
+        "log_H_He": -5,
+        "logg": 8.375,
+        "teff_K": 16250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g8-8.5_HHe-5",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "633cd94f350ee4ed05b323f20627dde0b54851dd3e55ecff1b4e5e06cbe05af8",
+        "native_request_sha256": "28259cfe3ad08ddf1b9af229ad5edb7dbe9b2278ea53b1036ce4a7ec647984d0",
+        "spectrum_sha256": "f02ee5bef01c4a70e23f18a31d6ade18fa1100ddedee2c6fe2b331a52ae8d174"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.005107791929224402,
+          "integrated_signed_error_fraction": -0.0030436317620869255,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3965.75,
+          "maximum_relative_error_fraction": 0.035055543294684285,
+          "rms_relative_error_fraction": 0.00787560624568693
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.03283445377158169,
+          "integrated_signed_error_fraction": -0.0327762955390222,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.5,
+          "maximum_relative_error_fraction": 0.05448250803948472,
+          "rms_relative_error_fraction": 0.03216383800097605
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.018149115144859597,
+          "integrated_signed_error_fraction": -0.017884305103421035,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.5,
+          "maximum_relative_error_fraction": 0.03796080881180222,
+          "rms_relative_error_fraction": 0.01861789022507598
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.03283445377158155,
+          "integrated_signed_error_fraction": -0.03277629553902206,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4862.5,
+          "maximum_relative_error_fraction": 0.05448250803948472,
+          "rms_relative_error_fraction": 0.03216383800097603
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0028280490407280754,
+          "integrated_signed_error_fraction": -0.002623040467652087,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6566.0,
+          "maximum_relative_error_fraction": 0.009630006471394894,
+          "rms_relative_error_fraction": 0.0045002351393800535
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.010718228482733069,
+          "integrated_signed_error_fraction": -0.01071821116083712,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6565.5,
+          "maximum_relative_error_fraction": 0.02172439495234133,
+          "rms_relative_error_fraction": 0.010946410798202206
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0065541074824492776,
+          "integrated_signed_error_fraction": -0.006522761261696842,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6563.75,
+          "maximum_relative_error_fraction": 0.016408360340209132,
+          "rms_relative_error_fraction": 0.007182529101752797
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0012055809783807973,
+          "integrated_signed_error_fraction": -0.00030549161893387363,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.015074861757549468,
+          "rms_relative_error_fraction": 0.0016906865448902068
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-c9a08a76b146b4be54f6b00b",
+      "parameters": {
+        "log_H_He": -5,
+        "logg": 8.125,
+        "teff_K": 18750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T15000-20000_g8-8.5_HHe-5",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "045854def27604cd11799882c4312f0fc80e12b1fed1dc69ab822c785a9685d4",
+        "native_request_sha256": "d633c45ea828dc1805b1ff476d3614af3fa2058a5daa12c92eeb7f033715267e",
+        "spectrum_sha256": "fa492423b9698c6ee2c4413631e7c10b0e565f543ff1ba701e5ad67914422f30"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.004153170496095241,
+          "integrated_signed_error_fraction": 3.8215965522093516e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.04471152260962883,
+          "rms_relative_error_fraction": 0.005493341281576004
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.030677014889920112,
+          "integrated_signed_error_fraction": -0.030570861175406513,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.049012761243378784,
+          "rms_relative_error_fraction": 0.029701414117824166
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.015808842495376663,
+          "integrated_signed_error_fraction": -0.015431227594832689,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.04121339394833873,
+          "rms_relative_error_fraction": 0.015993836681220848
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.03067701488992013,
+          "integrated_signed_error_fraction": -0.030570861175406534,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.75,
+          "maximum_relative_error_fraction": 0.049012761243378784,
+          "rms_relative_error_fraction": 0.029701414117824176
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.002344113617114097,
+          "integrated_signed_error_fraction": -0.0016261196117871564,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4715.25,
+          "maximum_relative_error_fraction": 0.008741930535409441,
+          "rms_relative_error_fraction": 0.0037333975045881376
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.010219045359178034,
+          "integrated_signed_error_fraction": -0.010215972063793398,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6563.661751479656,
+          "maximum_relative_error_fraction": 0.020004445797706192,
+          "rms_relative_error_fraction": 0.010516442186722338
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005961170955619377,
+          "integrated_signed_error_fraction": -0.005889307865332406,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 6563.661751479656,
+          "maximum_relative_error_fraction": 0.014628921547203248,
+          "rms_relative_error_fraction": 0.006640492108756877
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0013816016110610014,
+          "integrated_signed_error_fraction": -0.0005295500623801351,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4714.75,
+          "maximum_relative_error_fraction": 0.020082863046086797,
+          "rms_relative_error_fraction": 0.002044912103511101
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-44c3c8b1c404945f4506768c",
+      "parameters": {
+        "log_H_He": -5,
+        "logg": 8.375,
+        "teff_K": 18750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T35000-40000_g8.5-9_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "f981ab53bb6564270e4bc5ec4fcc9946aa35f65fe1e6388f40a28e78971b10b0",
+        "native_request_sha256": "385736e625e3118627f8b39391531813a4694e3c613dff1305df882f4e1f0c1e",
+        "spectrum_sha256": "71768344d9c08199c2b84d9ae4f72ef39cfdba4898448af06b3be0dbe0aad75c"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005837533640557844,
+          "integrated_signed_error_fraction": 0.005831111412229532,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.010856737623647137,
+          "rms_relative_error_fraction": 0.00483240801628129
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0003650828734167705,
+          "integrated_signed_error_fraction": 4.0969267657471335e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.011697946268263636,
+          "rms_relative_error_fraction": 0.0005371756078263982
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003130903411934962,
+          "integrated_signed_error_fraction": 0.003122643651685549,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.009813912966187745,
+          "rms_relative_error_fraction": 0.003006636318009236
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0003650828734167988,
+          "integrated_signed_error_fraction": 4.096926765747576e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.011697946268263636,
+          "rms_relative_error_fraction": 0.0005371756078264029
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0019481828748177026,
+          "integrated_signed_error_fraction": 0.0019466658139804457,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.003635293299038606,
+          "rms_relative_error_fraction": 0.0016227702742373311
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00012729002872616615,
+          "integrated_signed_error_fraction": 8.369621872940225e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.003746190296931411,
+          "rms_relative_error_fraction": 0.0002186726336888884
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0011263473346018126,
+          "integrated_signed_error_fraction": 0.0011243165138660816,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.002985062011618226,
+          "rms_relative_error_fraction": 0.0010776184866674223
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 8.17158518472806e-05,
+          "integrated_signed_error_fraction": 8.091669360204903e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.0013534994162833955,
+          "rms_relative_error_fraction": 9.766762744148772e-05
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-0457dcc4d6fa9d6b42bff6c0",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 8.625,
+        "teff_K": 36250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T35000-40000_g8.5-9_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "983fcbb41a20b7391bec0c9facd31bd5c8b8a7520f6cf68649321ddbe0443e8c",
+        "native_request_sha256": "de972599f15e9168caa1a592d4855ac9864e40fdf86490d891a46533df406886",
+        "spectrum_sha256": "900b9755a95d202187ec6dbc76b191d1d83dd0cc6e19949e53f9d0e2927fe4a4"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005990139521045135,
+          "integrated_signed_error_fraction": 0.005988370396587518,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.011307453854079502,
+          "rms_relative_error_fraction": 0.004977313660893574
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0004110304867841609,
+          "integrated_signed_error_fraction": 0.000356940144853894,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.007301729666285117,
+          "rms_relative_error_fraction": 0.0006746117956176287
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003400591330554168,
+          "integrated_signed_error_fraction": 0.0033977993189389833,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4716.25,
+          "maximum_relative_error_fraction": 0.006903789188879444,
+          "rms_relative_error_fraction": 0.0032312625947831268
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00041103048678416533,
+          "integrated_signed_error_fraction": 0.00035694014485381946,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.007301729666281671,
+          "rms_relative_error_fraction": 0.0006746117956176114
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0019489936151104957,
+          "integrated_signed_error_fraction": 0.0019489325991696265,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.003765724424211852,
+          "rms_relative_error_fraction": 0.0016238495648189179
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00016051994016277817,
+          "integrated_signed_error_fraction": 0.00015161293193559868,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.001509266170493841,
+          "rms_relative_error_fraction": 0.00024798241333865025
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0011741695921088742,
+          "integrated_signed_error_fraction": 0.001173965932428705,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4716.25,
+          "maximum_relative_error_fraction": 0.0024252660670641456,
+          "rms_relative_error_fraction": 0.0011112548787743266
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 3.761611702380123e-05,
+          "integrated_signed_error_fraction": 3.350868316413885e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.25,
+          "maximum_relative_error_fraction": 0.000995325635173431,
+          "rms_relative_error_fraction": 5.96458787649168e-05
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-f18418e5ae5ce93d3769b064",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 8.875,
+        "teff_K": 36250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T35000-40000_g8.5-9_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "c9fada7720c5e8696c98f7202811eb251fb57fc0cba3b901b008886f445ac70f",
+        "native_request_sha256": "82442d7408f049201687f7c807d096836c8f3b61de2bf114852455b20eb8fbda",
+        "spectrum_sha256": "4894ce090560fd230f6ba8d6430326ed6890c1b16a9acbd93d7f0c9ab11a4524"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004989607043075908,
+          "integrated_signed_error_fraction": 0.004979455012064914,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.011214087872680746,
+          "rms_relative_error_fraction": 0.004131291891391723
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0005025490157866075,
+          "integrated_signed_error_fraction": -0.0003739112747879331,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.013417748909211769,
+          "rms_relative_error_fraction": 0.0005138041880426466
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0025929273591844245,
+          "integrated_signed_error_fraction": 0.0025796954775820394,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.011618885129487938,
+          "rms_relative_error_fraction": 0.002518644400492491
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0005025490157866007,
+          "integrated_signed_error_fraction": -0.00037391127478798104,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.013417748909211769,
+          "rms_relative_error_fraction": 0.0005138041880426277
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0016474894662871263,
+          "integrated_signed_error_fraction": 0.001643148796284546,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.0040791209777408756,
+          "rms_relative_error_fraction": 0.0013564451633784472
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00022229708400398136,
+          "integrated_signed_error_fraction": -0.00020932257964578546,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.004635142931980651,
+          "rms_relative_error_fraction": 0.0002101102926205818
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0007677276055088989,
+          "integrated_signed_error_fraction": 0.0007620534091151822,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.0041374055045112395,
+          "rms_relative_error_fraction": 0.000755285171510436
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00015097060061657498,
+          "integrated_signed_error_fraction": -0.0001504352102478116,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4719.0,
+          "maximum_relative_error_fraction": 0.0005759163387401304,
+          "rms_relative_error_fraction": 0.00014427340338015547
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-38cca59af1b8ff1826d89063",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 8.625,
+        "teff_K": 38750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T35000-40000_g8.5-9_HHe-3",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "f1daea36a1e5032e5bda06764e4f8ddcc6be69fe71dcdf2a3f23f59b575ec43b",
+        "native_request_sha256": "00f8c2bee02f6536c2b8962e6f44b9f1a79b3995105725668e1d86ef0f99092c",
+        "spectrum_sha256": "3eefc1e6214535ecbb9550886f5aef2d123c136d706b0ba5bad72f816afa6354"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005339708064271614,
+          "integrated_signed_error_fraction": 0.00533335431029083,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.009967148852489642,
+          "rms_relative_error_fraction": 0.004455371893264626
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0003242676450736639,
+          "integrated_signed_error_fraction": 0.00012025418718332478,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.01225622759802953,
+          "rms_relative_error_fraction": 0.0005595571741309103
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003043751970234124,
+          "integrated_signed_error_fraction": 0.0030350658151086867,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.010153484126304485,
+          "rms_relative_error_fraction": 0.002910534173155908
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0003242676450736905,
+          "integrated_signed_error_fraction": 0.00012025418718330491,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.01225622759802953,
+          "rms_relative_error_fraction": 0.0005595571741309077
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0018574169819509834,
+          "integrated_signed_error_fraction": 0.0018536748944294813,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.004846302887965235,
+          "rms_relative_error_fraction": 0.001548395202390384
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00010868936102779216,
+          "integrated_signed_error_fraction": 3.6117878777908935e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.005648846867704015,
+          "rms_relative_error_fraction": 0.00020206414179684934
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0010033468326226616,
+          "integrated_signed_error_fraction": 0.0009985062351956556,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.005016409113184453,
+          "rms_relative_error_fraction": 0.0009640492260330886
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 3.2480871468001184e-05,
+          "integrated_signed_error_fraction": -2.676432373740917e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4686.96090241863,
+          "maximum_relative_error_fraction": 0.0023756096379039804,
+          "rms_relative_error_fraction": 7.005175268334181e-05
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-d5973de18a886d9c59156100",
+      "parameters": {
+        "log_H_He": -3,
+        "logg": 8.875,
+        "teff_K": 38750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g6-6.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "4824f02f9df6d400dce4e71430487d7939a625acca303debf2f2e4e28ccbe63b",
+        "native_request_sha256": "55cebcdd2322e72354d1e196cca8b3897fef452d2aa3d75c2ba4c617e3a4ccef",
+        "spectrum_sha256": "648971fe28e01ea521e78375777f1ad2935995719e659353c2eddc167f09598a"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.012731790874410481,
+          "integrated_signed_error_fraction": 0.012728847408570335,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.0298123909022485,
+          "rms_relative_error_fraction": 0.009764536779673387
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009569169753283039,
+          "integrated_signed_error_fraction": -0.009454491096339324,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.02436923375435825,
+          "rms_relative_error_fraction": 0.007546960746782005
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.001905861444330567,
+          "integrated_signed_error_fraction": 0.0003434141636940752,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.02900877943209546,
+          "rms_relative_error_fraction": 0.00230442223533502
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009569169753283,
+          "integrated_signed_error_fraction": -0.009454491096339277,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4923.5,
+          "maximum_relative_error_fraction": 0.02436923375435825,
+          "rms_relative_error_fraction": 0.007546960746782007
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004069174516971291,
+          "integrated_signed_error_fraction": 0.0040574305535128466,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.010262132093604465,
+          "rms_relative_error_fraction": 0.0031154736357253223
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0035631541300836234,
+          "integrated_signed_error_fraction": -0.0035430124409918462,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3820.75,
+          "maximum_relative_error_fraction": 0.010452707528615338,
+          "rms_relative_error_fraction": 0.002803786752397924
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0006573692364621266,
+          "integrated_signed_error_fraction": -3.0148804407613582e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.010393415992248701,
+          "rms_relative_error_fraction": 0.0006861847838335947
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0004861001332706467,
+          "integrated_signed_error_fraction": -0.00048472233759838516,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3820.75,
+          "maximum_relative_error_fraction": 0.007758924861574737,
+          "rms_relative_error_fraction": 0.0005003646558823112
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-6236aa5537ef09d401661793",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 6.125,
+        "teff_K": 21250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g6-6.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "a62fa138fb15d4fc00e3d98590974fa9922af1ff8de524d2dcefd7db5483d3a8",
+        "native_request_sha256": "91006d3b7ad808d7fbd79f4669df5eaf8144002b188a36c7d36c4bfc940f328a",
+        "spectrum_sha256": "e574660af58a7b984b7a883fc663857f83ccc4ed83a0f2dcd9b94ee4ddaa18c1"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.012727457399894978,
+          "integrated_signed_error_fraction": 0.012717938281691432,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.03150898476922827,
+          "rms_relative_error_fraction": 0.009748178865728437
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009535823889094162,
+          "integrated_signed_error_fraction": -0.009448369096504403,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.02744445077772892,
+          "rms_relative_error_fraction": 0.0075119000498201005
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0018721247656811272,
+          "integrated_signed_error_fraction": 0.00034706002744993116,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.031402349138429736,
+          "rms_relative_error_fraction": 0.0022015752810378214
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009535823889094162,
+          "integrated_signed_error_fraction": -0.009448369096504407,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.02744445077772892,
+          "rms_relative_error_fraction": 0.007511900049820117
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004039529378847926,
+          "integrated_signed_error_fraction": 0.004025269817696886,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.011248406786415806,
+          "rms_relative_error_fraction": 0.0030840915060466184
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0035763391769466153,
+          "integrated_signed_error_fraction": -0.0035653755202749867,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3820.75,
+          "maximum_relative_error_fraction": 0.011609155737244463,
+          "rms_relative_error_fraction": 0.0028201398751827706
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0006504352884906159,
+          "integrated_signed_error_fraction": -5.4329849369837445e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4472.75,
+          "maximum_relative_error_fraction": 0.011348908955999378,
+          "rms_relative_error_fraction": 0.0006587567808015817
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0005238185467202399,
+          "integrated_signed_error_fraction": -0.0005229579284645762,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.006441910939219551,
+          "rms_relative_error_fraction": 0.0005378327326603412
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-897f04a7e1b85d0901555afc",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 6.375,
+        "teff_K": 21250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g6-6.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "6881edf574a7af4e76b729225b0d5dafa69a22e94a93ff8d04fb88af4c19b164",
+        "native_request_sha256": "deacc94470c20eb2f86905b864b43e9c5001d2da11bbacf9dab05ee3e1762e72",
+        "spectrum_sha256": "b5fa7966047a14808980f78145e1008020a29eae8386ee10b8fdf3d30cd4f2c7"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.010698132404849122,
+          "integrated_signed_error_fraction": 0.010698132404849122,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.037953862676217684,
+          "rms_relative_error_fraction": 0.008260112327234262
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.008714831587370653,
+          "integrated_signed_error_fraction": -0.008528433019534296,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.03470522867765917,
+          "rms_relative_error_fraction": 0.006784824955845742
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0017980812576114263,
+          "integrated_signed_error_fraction": 0.0006952510154921486,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.03780026673660615,
+          "rms_relative_error_fraction": 0.002658262097846781
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.008714831587370646,
+          "integrated_signed_error_fraction": -0.00852843301953429,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.03470522867765917,
+          "rms_relative_error_fraction": 0.006784824955845745
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003746850221456145,
+          "integrated_signed_error_fraction": 0.003746850221456145,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.015607579166102146,
+          "rms_relative_error_fraction": 0.0029304887518522655
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0025773942017787506,
+          "integrated_signed_error_fraction": -0.002478302118913685,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.013718938232180112,
+          "rms_relative_error_fraction": 0.002044885504938973
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0006104665058352076,
+          "integrated_signed_error_fraction": 0.0003835981473480058,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.015163855000844068,
+          "rms_relative_error_fraction": 0.0010590027187100796
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0004731882816107616,
+          "integrated_signed_error_fraction": 0.0004719782769938458,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3820.75,
+          "maximum_relative_error_fraction": 0.008177372360068033,
+          "rms_relative_error_fraction": 0.00047420352770666133
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-887e94464d4873e798e55307",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 6.125,
+        "teff_K": 23750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T20000-25000_g6-6.5_HHe1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "e1c815d31ff7270e679071ed15d93a52c5b32cee7a69b7f6ae16c8a243fc17e5",
+        "native_request_sha256": "313c368405e72d357e35aab9f10c57d3c93b7d1bf47692e5c46617d0f9d47789",
+        "spectrum_sha256": "2c7066e31ce399a61f4bfdf21c615d5b666ffadc8e9c7b9f457782dc6fbe9c0c"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.010734323700641833,
+          "integrated_signed_error_fraction": 0.010734323700641833,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.75,
+          "maximum_relative_error_fraction": 0.029973856981097568,
+          "rms_relative_error_fraction": 0.008278916181229647
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.008638953999660018,
+          "integrated_signed_error_fraction": -0.008477991520140789,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.026456659063763568,
+          "rms_relative_error_fraction": 0.006691997742578659
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.0017465519590059598,
+          "integrated_signed_error_fraction": 0.0007432824468307613,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.75,
+          "maximum_relative_error_fraction": 0.03015429613251454,
+          "rms_relative_error_fraction": 0.0025599709133470507
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.008638953999659978,
+          "integrated_signed_error_fraction": -0.008477991520140747,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.026456659063763568,
+          "rms_relative_error_fraction": 0.006691997742578641
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0037654504016127045,
+          "integrated_signed_error_fraction": 0.0037654504016127045,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.01384935179115487,
+          "rms_relative_error_fraction": 0.0029445554842723685
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0025484750392112208,
+          "integrated_signed_error_fraction": -0.002459203405986607,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.012368655434323448,
+          "rms_relative_error_fraction": 0.0020089620878009726
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0005937562681268983,
+          "integrated_signed_error_fraction": 0.00040260449852670455,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4027.5,
+          "maximum_relative_error_fraction": 0.013507914434452203,
+          "rms_relative_error_fraction": 0.0010359859717574626
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0004766412876918602,
+          "integrated_signed_error_fraction": 0.00047599408394676516,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3820.75,
+          "maximum_relative_error_fraction": 0.006433504467720205,
+          "rms_relative_error_fraction": 0.0004818396281574425
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-a47a249a1bfdebc5a9d2f407",
+      "parameters": {
+        "log_H_He": 1,
+        "logg": 6.375,
+        "teff_K": 23750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g9-9.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "3425ed66f59c177df3b9e0bb97ffec39ce04106848ba33b3f06060b8d221c6d8",
+        "native_request_sha256": "1f15c519f9c9761ed130f7d52b7056463dbf53f424dc8fecee8fd45854870e1a",
+        "spectrum_sha256": "6a156f0453ad8bd5f68519f5fe300704a3555779b0165159e082b11d03de6ed7"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.013527133499291216,
+          "integrated_signed_error_fraction": 0.013526516324865177,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.03420993828406695,
+          "rms_relative_error_fraction": 0.012341960353741719
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0044761061376221494,
+          "integrated_signed_error_fraction": 0.004092889114176599,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.75,
+          "maximum_relative_error_fraction": 0.020488975550726343,
+          "rms_relative_error_fraction": 0.005640771756582022
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009500983291866386,
+          "integrated_signed_error_fraction": 0.00942022173549116,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.02539001518995417,
+          "rms_relative_error_fraction": 0.009706434268371204
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004476106137622082,
+          "integrated_signed_error_fraction": 0.0040928891141765456,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.75,
+          "maximum_relative_error_fraction": 0.020488975550726343,
+          "rms_relative_error_fraction": 0.0056407717565820185
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.007621435644007271,
+          "integrated_signed_error_fraction": 0.007621435644007271,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.01603653067962357,
+          "rms_relative_error_fraction": 0.00693166253808291
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004567185808010624,
+          "integrated_signed_error_fraction": 0.004555827086678926,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4715.5,
+          "maximum_relative_error_fraction": 0.011836858303259768,
+          "rms_relative_error_fraction": 0.00455774973275612
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.006385974591254442,
+          "integrated_signed_error_fraction": 0.006385822149042694,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.013893516181511167,
+          "rms_relative_error_fraction": 0.006117290268316853
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004693382617051616,
+          "integrated_signed_error_fraction": 0.004693382617051616,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.25,
+          "maximum_relative_error_fraction": 0.010067102500118871,
+          "rms_relative_error_fraction": 0.004341555472604391
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-b91fd2e059d271a2cef62ebd",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 9.125,
+        "teff_K": 26250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g9-9.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "f1515c9e49792bb31eaac777e248da27bcc5d3cc0eb34e726e21feef7b08ceec",
+        "native_request_sha256": "efd0dc70509e46868f43200b1164f6eed8c74b33ac4dd9bd7b98eda8c00e9aea",
+        "spectrum_sha256": "eeabd8652bc9f0d9cece56a69de09e585e0c99e0428e1f06a3f33d7cceecec81"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.01730884641847793,
+          "integrated_signed_error_fraction": 0.01730884641847793,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.0351507234374292,
+          "rms_relative_error_fraction": 0.01540010974813827
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009389725212060919,
+          "integrated_signed_error_fraction": 0.009348102273698203,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.022557726231011203,
+          "rms_relative_error_fraction": 0.009186347692933562
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": false,
+          "integrated_absolute_error_fraction": 0.014257398012841661,
+          "integrated_signed_error_fraction": 0.014255310999624455,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.028656135279136324,
+          "rms_relative_error_fraction": 0.013419309609289031
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.009389725212060893,
+          "integrated_signed_error_fraction": 0.009348102273698176,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.022557726231011203,
+          "rms_relative_error_fraction": 0.009186347692933566
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.008315358673927546,
+          "integrated_signed_error_fraction": 0.008315358673927546,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.25,
+          "maximum_relative_error_fraction": 0.014716035632326804,
+          "rms_relative_error_fraction": 0.007339014842003139
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00597496942305583,
+          "integrated_signed_error_fraction": 0.0059749632167296375,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4467.25,
+          "maximum_relative_error_fraction": 0.01127745625845862,
+          "rms_relative_error_fraction": 0.005475626863350129
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.007565434566015442,
+          "integrated_signed_error_fraction": 0.007565434566015442,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4467.75,
+          "maximum_relative_error_fraction": 0.013114563786176469,
+          "rms_relative_error_fraction": 0.006874000356406231
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.004131723093615151,
+          "integrated_signed_error_fraction": 0.004131723093615151,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.25,
+          "maximum_relative_error_fraction": 0.008242272393756446,
+          "rms_relative_error_fraction": 0.003614183139283539
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-cbeebed319fe1f8c78bafcd2",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 9.375,
+        "teff_K": 26250.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g9-9.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "8894db0b38cbc00548a71a55e701c07fb27250c08cc34853774219ede5299b6e",
+        "native_request_sha256": "3f6970ee1546f4597a371dc46a7343ed4edcd43d9d20c1fe365b6899ba96f560",
+        "spectrum_sha256": "1112ce3abe7dcf5c5262610c3a93ae4e484998c6d56ed546109021bf2f317412"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.005060626306027531,
+          "integrated_signed_error_fraction": 0.004940497683556578,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.01748077077673812,
+          "rms_relative_error_fraction": 0.004810440732801267
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0036732149903343234,
+          "integrated_signed_error_fraction": -0.0034111662684146735,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.25,
+          "maximum_relative_error_fraction": 0.026607364084864853,
+          "rms_relative_error_fraction": 0.004241084115357628
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0022857654287073196,
+          "integrated_signed_error_fraction": 0.0015822092335550557,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.5,
+          "maximum_relative_error_fraction": 0.019337550457955516,
+          "rms_relative_error_fraction": 0.003500806323589312
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.003673214990334344,
+          "integrated_signed_error_fraction": -0.003411166268414693,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.25,
+          "maximum_relative_error_fraction": 0.026607364084864853,
+          "rms_relative_error_fraction": 0.004241084115357631
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0005243721543519985,
+          "integrated_signed_error_fraction": 0.00019764251356968528,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.111776993254,
+          "maximum_relative_error_fraction": 0.00477675750361386,
+          "rms_relative_error_fraction": 0.0007521725716892354
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.002633213872037445,
+          "integrated_signed_error_fraction": -0.002633213872037445,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.111776993254,
+          "maximum_relative_error_fraction": 0.009332056705079987,
+          "rms_relative_error_fraction": 0.002532118608254016
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0010226735107991703,
+          "integrated_signed_error_fraction": -0.0010174305895546652,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.111776993254,
+          "maximum_relative_error_fraction": 0.0072734669929155555,
+          "rms_relative_error_fraction": 0.0012563642158812693
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0023873119560525275,
+          "integrated_signed_error_fraction": -0.0023873119560525275,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3891.5,
+          "maximum_relative_error_fraction": 0.005917381825410357,
+          "rms_relative_error_fraction": 0.0024613357226993112
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-c278e0482f9cf8e137e90438",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 9.125,
+        "teff_K": 28750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    },
+    {
+      "cell_id": "T25000-30000_g9-9.5_HHe-1",
+      "comparison_status": "MEASURED",
+      "direct_provenance": {
+        "metadata_sha256": "2999bfabbc60d3302742d1a5e404d118cf11f8f0ed1b33c1a27a2014d5a2c96e",
+        "native_request_sha256": "eb7e16293f1ef900d4c0c04b89d396540059b9e3c718ab7852b18bd187a0bb04",
+        "spectrum_sha256": "ebf596f9453f22bd2430d7ca5b68b3d16bc84806e49f0d2be0cf3bf15fda0196"
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.008654905054678143,
+          "integrated_signed_error_fraction": 0.008647658400229873,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.02184774875259582,
+          "rms_relative_error_fraction": 0.007988533497456811
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0022151532551828255,
+          "integrated_signed_error_fraction": 0.001564137751772598,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.0,
+          "maximum_relative_error_fraction": 0.01717906794074213,
+          "rms_relative_error_fraction": 0.003500801819514093
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.00625940691164878,
+          "integrated_signed_error_fraction": 0.006160997946624229,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.01688967071196097,
+          "rms_relative_error_fraction": 0.006581835027136845
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0022151532551828853,
+          "integrated_signed_error_fraction": 0.001564137751772659,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4861.0,
+          "maximum_relative_error_fraction": 0.01717906794074565,
+          "rms_relative_error_fraction": 0.0035008018195140946
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0012410517158343497,
+          "integrated_signed_error_fraction": 0.0011711035003360187,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3190.92818844576,
+          "maximum_relative_error_fraction": 0.004624757581361732,
+          "rms_relative_error_fraction": 0.001291705499043531
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0014943006025644316,
+          "integrated_signed_error_fraction": -0.0014788997807548558,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4860.25,
+          "maximum_relative_error_fraction": 0.007490549145399212,
+          "rms_relative_error_fraction": 0.0015521446855558737
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0005519247122827546,
+          "integrated_signed_error_fraction": 8.43448825615258e-05,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 4860.5,
+          "maximum_relative_error_fraction": 0.005483515883737388,
+          "rms_relative_error_fraction": 0.000972148044651034
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": true,
+          "integrated_absolute_error_fraction": 0.0032085171734917406,
+          "integrated_signed_error_fraction": -0.0032085171734917406,
+          "interval_angstrom": [
+            3000.0,
+            10000.0
+          ],
+          "maximum_error_wavelength_angstrom": 3889.0341940886437,
+          "maximum_relative_error_fraction": 0.006823669929320114,
+          "rms_relative_error_fraction": 0.0029758490653311286
+        }
+      },
+      "missing_refined_knots": [],
+      "model_id": "dab-461da655dade5a94c400175c",
+      "parameters": {
+        "log_H_He": -1,
+        "logg": 9.375,
+        "teff_K": 28750.0
+      },
+      "target_native_status": "COMPLETE_NUMERICAL"
+    }
+  ],
+  "requested_new_independent_targets": 32,
+  "scope": "Fresh independent targets in eight targeted cells, not whole-grid or physical validation",
+  "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+  "status_counts": {
+    "MEASURED": 32
+  },
+  "unretrieved_status_evidence": {
+    "statuses": {}
+  }
+}

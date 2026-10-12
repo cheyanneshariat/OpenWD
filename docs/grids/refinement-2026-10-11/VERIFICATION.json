@@ -1,0 +1,19 @@
+{
+  "PDF_renders_inspected": true,
+  "PNG_exports_reproduced": true,
+  "figures": 4,
+  "independent_targets": 32,
+  "prediction_metrics_rechecked": 256,
+  "previous_selection_rows_preserved": 2459,
+  "archive_hash_verified": true,
+  "file_hashes": {
+    "grid_progress.png": "cfca2abc09cf072b0c389e27026fbd713a6a2e677dd4ba434e7f00168b6ace14",
+    "grid_progress.pdf": "b543db7923b064420ea4d87292661341e24e141efca52c71fd38dd1f81649a93",
+    "refinement-2026-10-11/interpolation_gain.png": "46797c9baec9f6a3f264a8c4332ebdd7028dc6f22df56be105b7b8cb986f1248",
+    "refinement-2026-10-11/spectrum_examples.png": "8ffb6db813bc8ab6006f33dcf4dedd42dd5dac0d3222edae75d4d3a31a72c4eb",
+    "refinement-2026-10-11/new_dab_points.png": "86d4dfef92cbe699f7951223024e5c8993c21fdf57de06885de667e90863b7ee",
+    "refinement-2026-10-11/interpolation_gain.pdf": "5c89e282cd9d3ca17ccd18ce66130afe940f109966f7b8b3a6178f01803fb976",
+    "refinement-2026-10-11/spectrum_examples.pdf": "c838aa08717e35bcb710279d81eaff2633c07c7d6ccc129492109b1dc5f27808",
+    "refinement-2026-10-11/new_dab_points.pdf": "a739c17a4ede9b8599910798ff2a6f6e0c730fcf3e3de035378d927e3da4ec99"
+  }
+}

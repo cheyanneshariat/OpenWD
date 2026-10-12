@@ -1,0 +1,71 @@
+{
+  "NPZ_files_read": 104,
+  "archived_native_models": 104,
+  "arrays_read": 936,
+  "checked_utc": "2026-10-12T02:18:04.707030+00:00",
+  "coarse_corners": 32,
+  "fresh_native_requests": 64,
+  "independent_depth_convergence_verified": false,
+  "method_summary": {
+    "coarse_linear_F_Tg": {
+      "both_targets_pass": 10,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.010716228052745478,
+      "worst_maximum_relative_fraction": 0.2972111324484413
+    },
+    "coarse_log_F_Tg": {
+      "both_targets_pass": 11,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.00946277455057754,
+      "worst_maximum_relative_fraction": 0.19462682453129435
+    },
+    "coarse_log_F_logTg": {
+      "both_targets_pass": 8,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.010600874740192962,
+      "worst_maximum_relative_fraction": 0.16578704418190365
+    },
+    "coarse_pchip_logF_local_T_then_g": {
+      "both_targets_pass": 11,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.009462774550577528,
+      "worst_maximum_relative_fraction": 0.1946268245312972
+    },
+    "refined_linear_F_Tg": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.003902489890230315,
+      "worst_maximum_relative_fraction": 0.14327326740987253
+    },
+    "refined_log_F_Tg": {
+      "both_targets_pass": 20,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.005263873714180639,
+      "worst_maximum_relative_fraction": 0.09897325173784827
+    },
+    "refined_log_F_logTg": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.003824058209895542,
+      "worst_maximum_relative_fraction": 0.0888780482007103
+    },
+    "refined_pchip_logF_local_T_then_g": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.0008646997625505186,
+      "worst_maximum_relative_fraction": 0.08063608578971398
+    }
+  },
+  "new_grid_calculations": 32,
+  "new_independent_tests": 32,
+  "physical_accuracy_verified": false,
+  "reused_centers": 8,
+  "role_counts": {
+    "DAB-new-validation": 32,
+    "DAB-refinement": 32,
+    "coarse-corner": 32,
+    "reused-center": 8
+  },
+  "stage": "Completed DAB refinement and validation only; hot batch separate",
+  "whole_phase_complete": false
+}

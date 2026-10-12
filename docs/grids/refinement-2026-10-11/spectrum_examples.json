@@ -1,0 +1,90 @@
+[
+  {
+    "model_id": "dab-81faee5ab152418c8ef23fd7",
+    "parameters": {
+      "log_H_He": 1,
+      "logg": 8.125,
+      "teff_K": 28750.0
+    },
+    "metrics": {
+      "coarse_linear_F_Tg": {
+        "both_targets_pass": false,
+        "integrated_absolute_error_fraction": 0.013582370809314731,
+        "integrated_signed_error_fraction": 0.013582370809314731,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4472.75,
+        "maximum_relative_error_fraction": 0.05628513598807991,
+        "rms_relative_error_fraction": 0.011649383469711358
+      },
+      "refined_linear_F_Tg": {
+        "both_targets_pass": true,
+        "integrated_absolute_error_fraction": 0.0048411295428362556,
+        "integrated_signed_error_fraction": 0.0048411295428362556,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4472.75,
+        "maximum_relative_error_fraction": 0.022022014519993194,
+        "rms_relative_error_fraction": 0.004197482150468803
+      }
+    },
+    "direct_spectrum_sha256": "4f04966c3309c458a5afd8f4db13c4272dc21d5ed496c8de5617f1429f36fc93",
+    "plotted_band_angstrom": [
+      4250,
+      4950
+    ],
+    "metric_band_angstrom": [
+      3000,
+      10000
+    ],
+    "selection": "Illustrative recovered pass and remaining large-error case"
+  },
+  {
+    "model_id": "dab-56c6ec857f07aaca72ac4421",
+    "parameters": {
+      "log_H_He": -3,
+      "logg": 7.375,
+      "teff_K": 16250.0
+    },
+    "metrics": {
+      "coarse_linear_F_Tg": {
+        "both_targets_pass": false,
+        "integrated_absolute_error_fraction": 0.025744207115755684,
+        "integrated_signed_error_fraction": -0.0242014678692893,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4862.75,
+        "maximum_relative_error_fraction": 0.2972111324484413,
+        "rms_relative_error_fraction": 0.03129795176781051
+      },
+      "refined_linear_F_Tg": {
+        "both_targets_pass": false,
+        "integrated_absolute_error_fraction": 0.0037433815673673645,
+        "integrated_signed_error_fraction": -0.0021217111321098457,
+        "interval_angstrom": [
+          3000.0,
+          10000.0
+        ],
+        "maximum_error_wavelength_angstrom": 4341.75,
+        "maximum_relative_error_fraction": 0.14327326740987253,
+        "rms_relative_error_fraction": 0.008159949394487347
+      }
+    },
+    "direct_spectrum_sha256": "30d717daad47dcc75fc382c49ca87d3ec68f1dcd1acf088b458980c697132ca5",
+    "plotted_band_angstrom": [
+      4250,
+      4950
+    ],
+    "metric_band_angstrom": [
+      3000,
+      10000
+    ],
+    "selection": "Illustrative recovered pass and remaining large-error case"
+  }
+]

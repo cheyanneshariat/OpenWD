@@ -1,6 +1,6 @@
 {
-  "current_index_sha256": "c84497da255aab20cdac23718231ef964ebe28c4941972a8d1d9a06249a58b5a",
-  "current_snapshot_utc": "2026-10-11T12:50:23.334982+00:00",
+  "current_index_sha256": "b2a2b8c94bf716d87da1847c9ccc6403fd6fa391499371e547248bb900a7362a",
+  "current_snapshot_utc": "2026-10-12T02:47:56.962840+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
@@ -11,12 +11,13 @@
       "raw_spectrum_bytes": 762702963
     },
     "DAB": {
+      "additional_validation_points_outside_current_grid": 35,
       "additional_validation_points_outside_original_grid": 11,
       "archive": "OpenWD-DAB-production-20261009.tar.gz",
       "bytes": 88273096,
-      "current_selected_grid_points": 597,
+      "current_selected_grid_points": 637,
       "initial_archive_models": 326,
-      "models": 597,
+      "models": 637,
       "one_dex_abundance_planes": [
         -6,
         -5,
@@ -33,7 +34,7 @@
       "original_archive_requests": 336,
       "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks",
       "release_tag": "grid-preview-2026-10-09-dab",
-      "requests": 616,
+      "requests": 656,
       "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
     },
     "DAO": {
@@ -96,16 +97,16 @@
       "raw_spectrum_bytes": 276916937
     }
   },
-  "family_models_definition": "Current selected original-grid coordinates; per-archive model counts remain separate",
-  "history": "history/2026-10-11-before-timeout-recovery/dataset.json",
+  "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
+  "history": "history/2026-10-11-before-temperature-gravity-refinement/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2321,
-  "requests": 2459,
-  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity.",
-  "selection": "Replace exactly 68 previously timed-out requests with checked October 11 six-hour attempts; retain 2459 original request identities, earlier snapshots and original archives. The 11 DAB validation coordinates remain separate.",
+  "qualified_spectra": 2361,
+  "requests": 2499,
+  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json.",
+  "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
   "snapshots": {
     "DAB-1dex-2026-10-10": {
       "active_jobs": [],
@@ -143,6 +144,79 @@
       "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
       "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "spectra": 326
+    },
+    "DAB-refinement-2026-10-11": {
+      "NPZ_files_read": 104,
+      "archive": "OpenWD-DAB-refinement-20261011.tar.gz",
+      "archive_bytes": 74216623,
+      "archive_member_hashes_verified": 1101,
+      "archive_sha256": "029ab23abb72320696d974321747ebbeffe4e091af66eb47fb7d5e5da06451f4",
+      "arrays_read": 936,
+      "coarse_corners": 32,
+      "full_grid_interpolation_verified": false,
+      "independent_depth_convergence_verified": false,
+      "independent_targets": 32,
+      "is_draft": true,
+      "method_summary": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": 10,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.010716228052745478,
+          "worst_maximum_relative_fraction": 0.2972111324484413
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": 11,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.00946277455057754,
+          "worst_maximum_relative_fraction": 0.19462682453129435
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": 8,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.010600874740192962,
+          "worst_maximum_relative_fraction": 0.16578704418190365
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": 11,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.009462774550577528,
+          "worst_maximum_relative_fraction": 0.1946268245312972
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": 22,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.003902489890230315,
+          "worst_maximum_relative_fraction": 0.14327326740987253
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": 20,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.005263873714180639,
+          "worst_maximum_relative_fraction": 0.09897325173784827
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": 22,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.003824058209895542,
+          "worst_maximum_relative_fraction": 0.0888780482007103
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": 22,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.0008646997625505186,
+          "worst_maximum_relative_fraction": 0.08063608578971398
+        }
+      },
+      "native_models": 104,
+      "new_calculations": 64,
+      "new_grid_knots": 32,
+      "physical_accuracy_verified": false,
+      "release_tag": "grid-preview-2026-10-11-dab-refinement",
+      "reused_centers": 8,
+      "scope": "Fresh independent targets in eight targeted cells, not whole-grid or physical validation",
+      "selected_mesh_additions": 40,
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "source_data_identity": "2938a3602c7ff1b7753cc8574acf23016c64e3a0fbd5c4d1566aa344b6b597da"
     },
     "DB-cold-2026-10-09": {
       "accepted_npz_arrays_read": 148,
@@ -307,6 +381,7 @@
   "source_commits": {
     "2026-10-08": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
     "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+    "DAB-refinement-2026-10-11": "0a74fdbe06596fc145f5169a3b239ddd67053141",
     "DB-cold-2026-10-09": [
       "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "54e401e20936119d707bb3623e0a13e29373b6e8"
@@ -332,7 +407,7 @@
       "NUMERICAL_NONCONVERGENCE": 44
     },
     "DAB": {
-      "COMPLETE_NUMERICAL": 597,
+      "COMPLETE_NUMERICAL": 637,
       "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
       "INFRASTRUCTURE_INTERRUPTION": 2
     },

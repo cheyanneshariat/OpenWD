@@ -1,0 +1,75 @@
+{
+  "native_knots_completed": 32,
+  "old_centers_reused": 8,
+  "new_tests_completed_and_measured": 32,
+  "new_tests_requested": 32,
+  "selected_cells": 8,
+  "temperature_spacing_K": {
+    "before": 5000,
+    "after": 2500
+  },
+  "gravity_spacing": {
+    "before": 0.5,
+    "after": 0.25
+  },
+  "composition_interpolation_tested": false,
+  "DAB_stage_status": "All64 DAB native products and all32 independent test spectra verified. Hot batch remains a separate running branch.",
+  "independent_depth_convergence_verified": false,
+  "physical_accuracy_verified": false,
+  "input_hashes": {
+    "execution-v1/plan.json": "e6637dbc032bcef856c3cc6b405aa9d72535947943ae10fcc339a8ba9d5fca14",
+    "dab-terminal-preview-v1/VERIFICATION.json": "f50588121e89147a3232768db59b17478dcdbade487c5cb5361f9e2dab86376a",
+    "new-validation-v1/comparison.json": "fa9c37806dd82f9695f9afae99c278436ebf760dc4be62561cb8b64cec6815a6"
+  },
+  "native_and_prediction_input_hashes_rechecked": 35,
+  "method_summary": {
+    "coarse_linear_F_Tg": {
+      "both_targets_pass": 10,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.010716228052745478,
+      "worst_maximum_relative_fraction": 0.2972111324484413
+    },
+    "coarse_log_F_Tg": {
+      "both_targets_pass": 11,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.00946277455057754,
+      "worst_maximum_relative_fraction": 0.19462682453129435
+    },
+    "coarse_log_F_logTg": {
+      "both_targets_pass": 8,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.010600874740192962,
+      "worst_maximum_relative_fraction": 0.16578704418190365
+    },
+    "coarse_pchip_logF_local_T_then_g": {
+      "both_targets_pass": 11,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.009462774550577528,
+      "worst_maximum_relative_fraction": 0.1946268245312972
+    },
+    "refined_linear_F_Tg": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.003902489890230315,
+      "worst_maximum_relative_fraction": 0.14327326740987253
+    },
+    "refined_log_F_Tg": {
+      "both_targets_pass": 20,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.005263873714180639,
+      "worst_maximum_relative_fraction": 0.09897325173784827
+    },
+    "refined_log_F_logTg": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.003824058209895542,
+      "worst_maximum_relative_fraction": 0.0888780482007103
+    },
+    "refined_pchip_logF_local_T_then_g": {
+      "both_targets_pass": 22,
+      "measured": 32,
+      "median_integrated_absolute_fraction": 0.0008646997625505186,
+      "worst_maximum_relative_fraction": 0.08063608578971398
+    }
+  }
+}
