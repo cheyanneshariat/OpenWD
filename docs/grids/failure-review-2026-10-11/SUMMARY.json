@@ -1,0 +1,31 @@
+{
+  "checked_utc": "2026-10-12T04:51:22.969769+00:00",
+  "selected_requests": 2499,
+  "selected_numerical_completions": 2361,
+  "current_unresolved_selected_flags": 118,
+  "not_started_excluded": 20,
+  "status_counts": {
+    "COMPLETE_NUMERICAL": 2361,
+    "NUMERICAL_NONCONVERGENCE": 73,
+    "TIMEOUT": 13,
+    "NUMERICAL_GRID_FAILURE": 5,
+    "DOMAIN_OR_UNSUPPORTED_CONFIG": 22,
+    "INFRASTRUCTURE_INTERRUPTION": 3,
+    "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2,
+    "MISSING_UNATTEMPTED": 20
+  },
+  "flag_counts": {
+    "NUMERICAL_NONCONVERGENCE": 73,
+    "TIMEOUT": 13,
+    "NUMERICAL_GRID_FAILURE": 5,
+    "DOMAIN_OR_UNSUPPORTED_CONFIG": 22,
+    "INFRASTRUCTURE_INTERRUPTION": 3,
+    "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2
+  },
+  "native_numerical_or_grid_failure_or_crash_flags": 81,
+  "interpolation_misses_separate": 10,
+  "timeout_records_reviewed": 13,
+  "bounded_longer_diagnostic_candidates": 2,
+  "source_status_table_sha256": "b2a2b8c94bf716d87da1847c9ccc6403fd6fa391499371e547248bb900a7362a",
+  "no_source_defect_proved_by_status_alone": true
+}

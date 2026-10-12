@@ -1,0 +1,177 @@
+{
+  "models": [
+    {
+      "RSS_cap_bytes": 4294967296,
+      "case_id": "db-40be62125f65c51373a61487",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 7000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "family": "DB",
+      "group": "slow",
+      "model_id": "db-d4ffbde2fbde9514f6687bb0",
+      "previous_attempt_id": "db-9dc29e99fdcf178084c1e2f2",
+      "previous_config_source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+      "role": "diagnostic-more-time-only",
+      "seconds": 28800,
+      "source_change_note": "Same source/config as previous six-hour timeout; eight-hour resource cap",
+      "source_key": "merged"
+    },
+    {
+      "RSS_cap_bytes": 4294967296,
+      "case_id": "db-40be62125f65c51373a61487",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 7000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "family": "DB",
+      "group": "slow",
+      "model_id": "db-843d958715297021153fc48c",
+      "previous_attempt_id": "db-9dc29e99fdcf178084c1e2f2",
+      "previous_config_source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+      "role": "diagnostic-current-upstream",
+      "seconds": 28800,
+      "source_change_note": "New upstream source/data/default numerical policy; not attributable to time alone",
+      "source_key": "upstream"
+    },
+    {
+      "RSS_cap_bytes": 12884901888,
+      "case_id": "d6-4a021fbba72f3f0cc86c9fe5",
+      "config": {
+        "abundances": {
+          "Al": -4.0,
+          "C": 0.0,
+          "Ca": -2.85,
+          "Fe": -3.0,
+          "Mg": -2.33,
+          "Ne": -1.86,
+          "O": 0.27,
+          "S": -2.84,
+          "Si": -1.76
+        },
+        "effective_temperature": 15680.0,
+        "formal_maximum_metal_lines": null,
+        "include_linear_stark_quasistatic": true,
+        "include_metal_series_pseudocontinuum": true,
+        "include_oxygen_i_series_stark": true,
+        "include_rydberg_dissolution": true,
+        "line_profile_edge_optical_depth": 0.001,
+        "linear_stark_profile": "manifold",
+        "logg": 6.3,
+        "metal_series_pseudocontinuum_elements": [
+          "O",
+          "Mg",
+          "C"
+        ],
+        "microturbulent_velocity_kms": 0.0,
+        "mixing_length_alpha": 1.25,
+        "quality": "standard",
+        "reference_element": "C",
+        "structure_maximum_metal_lines": null
+      },
+      "family": "D6",
+      "group": "slow",
+      "model_id": "d6-95ef682851fac4ba320ea486",
+      "previous_attempt_id": "d6-552cf7d09062495d9b7893e3",
+      "previous_config_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "role": "diagnostic-more-time-only",
+      "seconds": 28800,
+      "source_change_note": "Same source/config as previous six-hour timeout; eight-hour resource cap",
+      "source_key": "legacy"
+    },
+    {
+      "RSS_cap_bytes": 12884901888,
+      "case_id": "d6-4a021fbba72f3f0cc86c9fe5",
+      "config": {
+        "abundances": {
+          "Al": -4.0,
+          "C": 0.0,
+          "Ca": -2.85,
+          "Fe": -3.0,
+          "Mg": -2.33,
+          "Ne": -1.86,
+          "O": 0.27,
+          "S": -2.84,
+          "Si": -1.76
+        },
+        "effective_temperature": 15680.0,
+        "formal_maximum_metal_lines": null,
+        "include_linear_stark_quasistatic": true,
+        "include_metal_series_pseudocontinuum": true,
+        "include_oxygen_i_series_stark": true,
+        "include_rydberg_dissolution": true,
+        "line_profile_edge_optical_depth": 0.001,
+        "linear_stark_profile": "manifold",
+        "logg": 6.3,
+        "metal_series_pseudocontinuum_elements": [
+          "O",
+          "Mg",
+          "C"
+        ],
+        "microturbulent_velocity_kms": 0.0,
+        "mixing_length_alpha": 1.25,
+        "quality": "standard",
+        "reference_element": "C",
+        "structure_maximum_metal_lines": null
+      },
+      "family": "D6",
+      "group": "slow",
+      "model_id": "d6-a94fa52da97edec3e1dfd7f5",
+      "previous_attempt_id": "d6-552cf7d09062495d9b7893e3",
+      "previous_config_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "role": "diagnostic-current-upstream",
+      "seconds": 28800,
+      "source_change_note": "New upstream source/data/default numerical policy; not attributable to time alone",
+      "source_key": "upstream"
+    }
+  ],
+  "physical_accuracy_verified": false,
+  "resource_guard": {
+    "allocation_hours": 8.5,
+    "conservative_charge_fraction_ceiling": 0.5,
+    "conservative_reserved_node_hours": 4.25,
+    "human_phase_ceiling": 13,
+    "memory_GiB": 40,
+    "model_cap_seconds": 28800,
+    "phase_settled_and_active_bound_before_submission": 6.505,
+    "total_conservative_phase_ceiling_with_diagnostic": 10.755,
+    "worker_cap_total_GiB": 32
+  },
+  "scheduler_submission": {
+    "command": "sbatch --parsable /global/u2/c/cshariat/OpenWD_release_20261007/grid-diagnostics-20261011-v1/diagnostic.sbatch",
+    "conservative_reservation_node_hours": 4.25,
+    "job_id": "59699007",
+    "native_model_cap_hours": 8,
+    "physical_coordinates": 2,
+    "requests": 4,
+    "source_controls": true,
+    "total_phase_conservative_ceiling": 10.755
+  },
+  "sources": {
+    "legacy": {
+      "identity": "9310e200ac3d35915fa0da08da2bf651450731ee08af701fc2bd2fc470baaaba",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+    },
+    "merged": {
+      "identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+      "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66"
+    },
+    "upstream": {
+      "identity": "4bec566ec18eb164f787a806484043b59cca750797cd9d64efa6ee9377f01321",
+      "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136"
+    }
+  },
+  "status": "QUEUED; required fixed-spectrum checks gate each source branch"
+}

@@ -66,6 +66,9 @@ Wavelengths are vacuum Angstroms. Flux is surface Fλ in
 `erg s^-1 cm^-2 Angstrom^-1`, without normalization or resampling.
 Different families can use different wavelength grids.
 
+The [failure and timeout review](failure-review-2026-10-11/README.md) lists
+the unresolved coordinates, failed checks and bounded diagnostic follow-ups.
+
 ## Source versions and remaining limits
 
 The October 8 grids use `cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5`.
