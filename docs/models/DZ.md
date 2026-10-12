@@ -30,7 +30,12 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   (Q-MHD charged microfields and the neutral-He excluded volume), iterated
   with charge neutrality; the line opacity applies the same level survival.
   `occupation_probability_metal_partitions=False` restores the fixed 0.1-eV
-  cutoff.
+  cutoff. Since 2026-10-12 the line-opacity survival counts every ion in the
+  charged microfield, including the host He⁺/He²⁺ ions. Before, it counted
+  the metal ions only, which in GD 61 is 10⁻³–10⁻⁵ of the electron density,
+  so the line opacity applied almost no dissolution and was inconsistent
+  with the partition functions. Spectra change by at most 3% (one pixel in
+  the J0738 control).
 - The Blouin et al. (2018) dense-He shift enters the Saha equation with the
   full partition functions, so it vanishes in the dilute limit. Outside the
   authors' tested 2000--10000 K and 0--1.5 g cm^-3 range the fit is held at
@@ -75,6 +80,44 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   change elsewhere was tiny. The COS Si II 1260 residual fell 16--18%, but
   the lines remain weaker than observed. `kurucz_electron_stark=False`
   restores the previous behaviour, with no Stark broadening for these lines.
+- `si_ii_he_unified_profile=True` (the default since 2026-10-11; `False` restores
+  the Unsöld Lorentzian) replaces the Lorentzian
+  neutral-He broadening of the Si II 1260/1264/1265 Å triplet
+  (3s² 3p ²P°–3s² 3d ²D) with a unified binary-collision profile. The bundled
+  table `src/wd_spectra/data/profiles/si_ii_1260_he_unified.npz` (checksum
+  verified) covers 4000–40000 K. It was computed from one-electron
+  model-potential Si⁺–He adiabatic potentials, with dipole-weighted Λ
+  components, straight classical paths, a Maxwell average and the
+  Anderson–Talman autocorrelation. The same method reproduces Allard et al.
+  (2016) Mg II–He widths to 0.3–2% and Hammond's (1975) laboratory Ca II H&K
+  width to 13%. Electron and radiative damping still come from each line's own
+  data, and the Doppler core from its Voigt profile, merged by an envelope as
+  for the Mg II and Ca II He tables. Nothing is fitted to a stellar spectrum.
+  With the stellar parameters, abundances and structures fixed, the COS
+  1258–1269 Å residual falls from 0.221 to 0.153 for GD 40 and from 0.166 to
+  0.104 for G241−6, and in three further DBZs computed from cold starts at
+  their published parameters from 0.095 to 0.082 (GD 61), 0.069 to 0.056
+  (GD 378) and 0.066 to 0.056 (WD 1425+540); every other COS window is
+  unchanged. The triplet wings
+  stay weaker than observed. Known approximations: LS potentials (no fine
+  structure), no 3s² 3d–3s 3p² mixing, a constant transition dipole, and
+  independent ab initio Si⁺–He potentials that give a smaller improvement.
+- `si_ii_kurucz_transitions=True` (the default since 2026-10-12; `False` keeps
+  Stout's Si II lines) adds Kurucz Si II transitions between
+  levels that Stout already contains but does not connect. Stout lists the
+  3s3p(³P°)3d ²F° levels (131677.1 and 131918.8 cm⁻¹) with no transitions, so
+  the strong 3s3p² ²D–²F° lines at 1305.59, 1309.45 and 1309.73 Å
+  (log gf +0.47, +0.32, −0.86) are missing. The bundled observed-level subset
+  of Kurucz's `gf1401.all` adds 1471 transitions and no levels; Kurucz-only
+  levels, mostly autoionizing states far above the first limit, are not
+  imported. In COS spectra of 11 polluted white dwarfs (v2 comparison with
+  airglow and interstellar lines masked, published parameters, fixed
+  structures) the whole-spectrum χ² per pixel falls by 25% for GALEX
+  J1931+0117, 24% for WD 1226+110, 6% for PG 0843+516 and 2% for PG 1015+161;
+  the five DBZs and the two 12000 K DAZs change by less than 0.5%. All 68
+  optical DZ/DAZ windows are unchanged (mean ratio 0.9999). The ²D level lies
+  6.86 eV above the ground, so the lines matter only in hot atmospheres. New regression
+  controls are in `tests/data/approved_regressions/si_kurucz_2026_10_12`.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and

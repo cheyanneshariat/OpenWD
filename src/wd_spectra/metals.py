@@ -74,6 +74,11 @@ STOUT_ARCHIVE_SHA256 = "6be3a8ee145aa9364e06eec25348a3ac65cdcaf68951c52203b9bd7a
 KURUCZ_CR_II_URL = "http://kurucz.harvard.edu/atoms/2401/gf2401.all"
 KURUCZ_CR_II_SHA256 = "6f0c4d0e01421fb0549ddbcf5649af391ca9b930e4e83e693e662d5874505205"
 _KURUCZ_CR_II_SOURCE = "Kurucz Cr II gf2401.all missing-transition supplement"
+# Observed-level subset of Kurucz's gf1401.all (see data/atomic/README.md).
+KURUCZ_SI_II_SHA256 = "8dc64ef88de44a91d59ec431b631149a87afca70f7a805a5b0537db4af1e0b39"
+_KURUCZ_SI_II_SOURCE = (
+    "Kurucz Si II gf1401.all missing transitions between Stout levels"
+)
 MG_HE_RED_WING_URL = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/619/A152/fig5.dat"
 MG_HE_RED_WING_SHA256 = "b79879240f935aadb7afbf68a590a26a2a43c572315323c8785fc750bb0f9aa7"
 VERNER_PHOTOIONIZATION_URL = "https://www.pa.uky.edu/~verner/dima/photo/photo.dat"
@@ -838,6 +843,10 @@ class AtomicTransition:
     electron_stark_rate_coefficient_cm3_s: float | None = None
     neutral_h_vdw_rate_coefficient_cm3_s: float | None = None
     neutral_h_vdw_temperature_exponent: float | None = None
+    # Optional unified (non-impact) neutral-He line profile replacing the
+    # Lorentzian He broadening of this line in helium atmospheres; see
+    # atomic_database_with_si_ii_he_unified_profile.
+    helium_unified_profile: "SiIIHeUnifiedProfile | None" = None
 
 
 @dataclass(frozen=True)
@@ -2794,6 +2803,60 @@ def augment_chromium_ii_kurucz_transitions(
     )
 
 
+def augment_silicon_ii_kurucz_transitions(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Add Kurucz Si II transitions between levels Stout already contains.
+
+    Stout lists the Si II 3s3p(3Po)3d 2Fo_{5/2,7/2} levels (131677.1 and
+    131918.8 cm^-1) but no transitions to them, so the strong 3s3p2 2D -
+    2Fo lines at 1305.59, 1309.45 and 1309.73 A are absent; other level
+    pairs are also unconnected.  This reads the bundled observed-level subset
+    of Kurucz's gf1401.all in missing-transition mode and keeps only the
+    added transitions whose two levels both match existing Stout levels
+    (energy within 0.1 cm^-1 and equal weight).  Kurucz-only levels, most of
+    them autoionizing states far above the first limit, are not imported, so
+    partition functions are unchanged.  Existing Stout transitions are kept
+    unchanged; added lines carry Kurucz's oscillator strengths and damping
+    constants.  The checksum is verified; repeated calls are idempotent.
+    """
+
+    import lzma
+    import tempfile
+
+    key = ("Si", 1)
+    ion = database.ions.get(key)
+    if ion is None or _KURUCZ_SI_II_SOURCE in ion.source:
+        return database
+    resource = files("wd_spectra").joinpath("data/atomic/gf1401_observed.all.xz")
+    content = lzma.decompress(resource.read_bytes())
+    if hashlib.sha256(content).hexdigest() != KURUCZ_SI_II_SHA256:
+        raise ValueError("Kurucz Si II checksum mismatch: gf1401_observed.all")
+    subset = AtomicDatabase(MappingProxyType({key: ion}), source=database.source)
+    with tempfile.TemporaryDirectory(prefix="openwd-siii-") as scratch:
+        path = Path(scratch) / "gf1401.all"
+        path.write_bytes(content)
+        merged = read_kurucz_gf100_atomic_database(
+            [path], subset, elements=("Si",), replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    stout_levels = {level.index for level in ion.levels}
+    transitions = tuple(
+        transition
+        for transition in merged.ions[key].transitions
+        if transition.lower_index in stout_levels
+        and transition.upper_index in stout_levels
+    )
+    provenance = f"{_KURUCZ_SI_II_SOURCE} (SHA256 {KURUCZ_SI_II_SHA256})"
+    ions = dict(database.ions)
+    ions[key] = replace(
+        ion, transitions=transitions, source=f"{ion.source}; {provenance}"
+    )
+    return AtomicDatabase(
+        MappingProxyType(ions), source=f"{database.source}; {provenance}",
+    )
+
+
 def augment_oxygen_i_6258_6271_multiplet(
     database: AtomicDatabase,
 ) -> AtomicDatabase:
@@ -3713,6 +3776,200 @@ def atomic_database_with_kurucz_electron_stark(
         MappingProxyType(ions),
         source=database.source
         + f"; Kurucz electron Stark constants for {attached} lines without Stark data",
+    )
+
+
+SI_II_HE_UNIFIED_PROFILE_RESOURCE = "data/profiles/si_ii_1260_he_unified.npz"
+_SI_II_HE_UNIFIED_PROFILE_SHA256 = (
+    "39d61bf3b3c231a7fafa2c4f83b6c2602ed86be3bcf9549dd034f51de37bf76c"
+)
+_ATOMIC_TIME_S = 2.4188843265857e-17
+
+
+class SiIIHeUnifiedProfile:
+    """Unified Si II 3s2 3p 2P - 3s2 3d 2D (1260/1264/1265 A) + He profile.
+
+    Tabulated binary-collision (Anderson--Talman) autocorrelation from
+    one-electron model-potential Si+--He adiabatic potentials, dipole-weighted
+    Lambda components, straight classical paths and a Maxwell average
+    (4000--40000 K).  The normalized profile per unit angular frequency is
+
+        I(dw) = (1/pi) Re[exp(n g_inf)/(i dw - kappa)] + n F(dw, T),
+        kappa = -(n w + Gamma_other)/2 + i n d,
+
+    with dw > 0 blue and n the neutral-He density.  Above
+    ``exact_above_helium_density`` the exact exp(n g(s)) transform of the
+    stored autocorrelation is used instead of the first-order wing term.
+    Electron and radiative damping (``Gamma_other``) enter as impact widths.
+    Temperatures outside the table are held at the edge.
+    """
+
+    window_angstrom = 60.0
+    exact_above_helium_density = 5.0e19
+
+    def __init__(self, data, source: str) -> None:
+        self.temperatures = np.asarray(data["temperature_K"], dtype=np.float64)
+        self.detuning_cm1 = np.asarray(data["detuning_cm1"], dtype=np.float64)
+        self.width = np.asarray(data["w"], dtype=np.float64)
+        self.shift = np.asarray(data["d"], dtype=np.float64)
+        self.g_infinity = np.asarray(data["ginf"])
+        self.wing = np.asarray(data["F"], dtype=np.float64)
+        self.autocorrelation = np.asarray(data["g"])
+        self.time_grid_s = (
+            np.asarray(data["s_grid_au"], dtype=np.float64) * _ATOMIC_TIME_S
+        )
+        self.source = source
+        self._log_temperatures = np.log(self.temperatures)
+
+    def _temperature_weights(self, temperature):
+        log_t = np.log(
+            np.clip(temperature, self.temperatures[0], self.temperatures[-1])
+        )
+        index = np.clip(
+            np.searchsorted(self._log_temperatures, log_t) - 1,
+            0,
+            self.temperatures.size - 2,
+        )
+        weight = (log_t - self._log_temperatures[index]) / (
+            self._log_temperatures[index + 1] - self._log_temperatures[index]
+        )
+        return index, weight
+
+    def profile(self, detuning_cm1, temperature, helium_density, gamma_other):
+        """Profile per unit angular frequency [s], shape (n_detuning, n_depth)."""
+
+        temperature = np.atleast_1d(np.asarray(temperature, dtype=np.float64))
+        density = np.broadcast_to(
+            np.asarray(helium_density, dtype=np.float64), temperature.shape
+        )
+        gamma = np.broadcast_to(
+            np.asarray(gamma_other, dtype=np.float64), temperature.shape
+        )
+        detuning = np.asarray(detuning_cm1, dtype=np.float64)
+        index, weight = self._temperature_weights(temperature)
+        width = (1 - weight) * self.width[index] + weight * self.width[index + 1]
+        shift = (1 - weight) * self.shift[index] + weight * self.shift[index + 1]
+        g_inf = (
+            (1 - weight) * self.g_infinity[index]
+            + weight * self.g_infinity[index + 1]
+        )
+        omega = 2.0 * PI * LIGHT_SPEED * detuning[:, np.newaxis]
+        kappa = -(density * width + gamma) / 2.0 + 1j * density * shift
+        lorentz = (
+            np.exp(density * g_inf)[np.newaxis, :]
+            / (1j * omega - kappa[np.newaxis, :])
+        ).real / PI
+        wing_rows = np.array([
+            np.interp(detuning, self.detuning_cm1, row, left=0.0, right=0.0)
+            for row in self.wing
+        ])
+        wing = (
+            (1 - weight)[np.newaxis, :] * wing_rows[index].T
+            + weight[np.newaxis, :] * wing_rows[index + 1].T
+        )
+        result = np.maximum(lorentz + density[np.newaxis, :] * wing, 0.0)
+        for depth in np.flatnonzero(density > self.exact_above_helium_density):
+            result[:, depth] = self._exact(
+                detuning, index[depth], weight[depth], density[depth],
+                gamma[depth], width[depth], shift[depth], g_inf[depth],
+            )
+        return result
+
+    def _exact(self, detuning, index, weight, density, gamma, width, shift,
+               g_inf, stride=5):
+        g = (
+            (1 - weight) * self.autocorrelation[index]
+            + weight * self.autocorrelation[index + 1]
+        )
+        s = self.time_grid_s[::stride]
+        gs = g[::stride]
+        kappa = -(density * width + gamma) / 2.0 + 1j * density * shift
+        difference = (
+            np.exp(density * gs - gamma * s / 2.0)
+            - np.exp(density * g_inf + kappa * s)
+        )
+        ds = s[1] - s[0]
+        quadrature = np.full(s.size, ds)
+        quadrature[0] = quadrature[-1] = ds / 2.0
+        omega = 2.0 * PI * LIGHT_SPEED * detuning
+        out = np.empty(omega.size)
+        for start in range(0, omega.size, 256):
+            chunk = omega[start:start + 256]
+            value = (
+                difference[np.newaxis, :]
+                * np.exp(-1j * chunk[:, np.newaxis] * s[np.newaxis, :])
+                * quadrature[np.newaxis, :]
+            ).sum(axis=1)
+            value += np.exp(density * g_inf) / (1j * chunk - kappa)
+            out[start:start + 256] = value.real / PI
+        return np.maximum(out, 0.0)
+
+
+@lru_cache(maxsize=1)
+def read_si_ii_he_unified_profile() -> SiIIHeUnifiedProfile:
+    """Read and checksum-verify the bundled unified Si II 1260 + He profile."""
+
+    import hashlib
+    import io
+
+    resource = files("wd_spectra").joinpath(SI_II_HE_UNIFIED_PROFILE_RESOURCE)
+    content = resource.read_bytes()
+    if hashlib.sha256(content).hexdigest() != _SI_II_HE_UNIFIED_PROFILE_SHA256:
+        raise ValueError("Si II 1260 unified He profile table checksum mismatch")
+    with np.load(io.BytesIO(content), allow_pickle=False) as data:
+        arrays = {key: data[key] for key in data.files if key != "meta"}
+    return SiIIHeUnifiedProfile(
+        arrays,
+        "OpenWD model-potential unified Si+--He profile for Si II 1260/1264/1265 "
+        f"(SHA256 {_SI_II_HE_UNIFIED_PROFILE_SHA256[:16]})",
+    )
+
+
+def _stout_core_orbital_term(level: AtomicLevel) -> tuple[str, str, str] | None:
+    # Stout labels are "core.orbital.(term<J>)", e.g. "3s2.3d.(2D<3/2>)".
+    parts = level.label.split(".")
+    if len(parts) < 3 or not parts[-1].startswith("(") or "<" not in parts[-1]:
+        return None
+    return ".".join(parts[:-2]), parts[-2], parts[-1][1:].split("<", 1)[0]
+
+
+def atomic_database_with_si_ii_he_unified_profile(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Attach the unified Si+--He profile to the Si II 3p 2P - 3d 2D triplet.
+
+    Only the three E1 components of 3s2 3p 2P - 3s2 3d 2D are changed: their
+    neutral-He broadening is replaced by the tabulated unified profile in
+    helium atmospheres.  Oscillator strengths, populations and electron and
+    radiative widths are unchanged; other lines are untouched.
+    """
+
+    ion = database.ions.get(("Si", 1))
+    if ion is None:
+        return database
+    table = read_si_ii_he_unified_profile()
+    levels = {level.index: level for level in ion.levels}
+    changed = []
+    attached = 0
+    for transition in ion.transitions:
+        lower = levels.get(transition.lower_index)
+        upper = levels.get(transition.upper_index)
+        if (
+            transition.transition_type == "E1"
+            and lower is not None and upper is not None
+            and _stout_core_orbital_term(lower) == ("3s2", "3p", "2Po")
+            and _stout_core_orbital_term(upper) == ("3s2", "3d", "2D")
+        ):
+            transition = replace(transition, helium_unified_profile=table)
+            attached += 1
+        changed.append(transition)
+    if attached == 0:
+        return database
+    ions = dict(database.ions)
+    ions["Si", 1] = replace(ion, transitions=tuple(changed))
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=database.source + f"; {table.source} for {attached} lines",
     )
 
 
@@ -7672,12 +7929,37 @@ def metal_ionic_microfield_perturber_density(
     singly charged.  The distinction is normally negligible in cool line-
     forming layers, but keeping the actual moment avoids a composition-
     dependent approximation in bulk-metal atmospheres.
+
+    Every ion in the plasma contributes, not only the metals.  In a trace-
+    metal atmosphere the host ions (He+ and He++ in helium, H+ in hydrogen)
+    dominate the microfield.  Host stages in ``host_ion_number_density`` are
+    counted with their charges; any remaining positive charge, ``n_e`` minus
+    the metal and tabulated host electrons (for example trace-hydrogen
+    protons, or H+ in a hydrogen host), is counted as singly charged ions.
+    In a bulk-metal plasma every electron comes from a metal and the moment
+    reduces to the metal sum.
     """
 
-    result = np.zeros_like(metal_state.electron_density, dtype=np.float64)
+    electron_density = np.asarray(metal_state.electron_density, dtype=np.float64)
+    result = np.zeros_like(electron_density)
     for populations in metal_state.ion_number_density.values():
         for charge in range(1, populations.shape[0]):
             result += charge**1.5 * populations[charge]
+    host_electrons = np.zeros_like(electron_density)
+    host = metal_state.host_ion_number_density
+    if host is not None:
+        host = np.asarray(host, dtype=np.float64)
+        if host.ndim == 2 and host.shape[1] == electron_density.size:
+            for charge in range(1, host.shape[0]):
+                result += charge**1.5 * host[charge]
+                host_electrons += charge * host[charge]
+    remaining = (
+        electron_density
+        - np.asarray(metal_state.metal_electron_density, dtype=np.float64)
+        - host_electrons
+    )
+    # Round-off in the charge balance must not create or remove perturbers.
+    result += np.where(remaining > 1.0e-10 * electron_density, remaining, 0.0)
     if np.any(~np.isfinite(result)) or np.any(result < 0.0):
         raise ValueError("ionic populations must give a physical microfield density")
     return result
@@ -8571,7 +8853,10 @@ def metal_line_mass_absorption_coefficient(
         "MgII": empty_profile_batch(),
         "CaII": empty_profile_batch(),
         "CaI_reference": empty_profile_batch(),
+        "HeUnified": empty_profile_batch(),
     }
+    helium_present = bool(np.any(helium_density > 0.0))
+    unified_he_lines: list[tuple] = []
 
     def flush_profile_batch(key: str) -> None:
         batch = ordinary_profile_batches[key]
@@ -8847,8 +9132,12 @@ def metal_line_mass_absorption_coefficient(
             "CaI" if is_ca_i_resonance and ca_i_he_profile_table is not None
             else "MgII" if is_mg_ii_resonance and mg_ii_he_profile_table is not None
             else "CaII" if is_ca_ii_resonance and ca_ii_he_profile_table is not None
+            else "HeUnified"
+            if line.helium_unified_profile is not None and helium_present
             else None
         )
+        if replacement_key == "HeUnified" and "HeUnified" not in replacement_ordinary:
+            replacement_ordinary["HeUnified"] = np.zeros_like(result)
         if line.neutral_h_vdw_rate_coefficient_cm3_s is not None:
             # Kurucz gamma_w/nH and ABO FWHM/NH are tabulated at 10,000 K.
             # ABO supplies a line-specific exponent; legacy Kurucz records
@@ -9289,6 +9578,18 @@ def metal_line_mass_absorption_coefficient(
             batch["population_scale"].append(population_factor)
             if len(batch["center"]) >= 2_048:
                 flush_profile_batch(batch_key)
+            if replacement_key == "HeUnified":
+                # Electron and radiative damping enter the unified profile as
+                # impact widths; neutral He is supplied by the profile itself.
+                unified_he_lines.append((
+                    center,
+                    line.absorption_oscillator_strength,
+                    population_factor,
+                    np.broadcast_to(
+                        natural_rate + electron_stark_rate, (atmosphere.n_depth,)
+                    ).astype(np.float64),
+                    line.helium_unified_profile,
+                ))
             if replacement_key == "CaI":
                 reference_scale = np.minimum(
                     helium_density / ca_i_reference_density, 1.0
@@ -9317,6 +9618,27 @@ def metal_line_mass_absorption_coefficient(
                 )
     for batch_key in ordinary_profile_batches:
         flush_profile_batch(batch_key)
+    if unified_he_lines:
+        unified = np.zeros_like(result)
+        for center, oscillator_strength, population, gamma_other, table in (
+            unified_he_lines
+        ):
+            window = np.abs(wavelength - center) < table.window_angstrom
+            if not np.any(window):
+                continue
+            detuning = 1.0e8 / wavelength[window] - 1.0e8 / center
+            profile = table.profile(
+                detuning, atmosphere.temperature, helium_density, gamma_other
+            )
+            # sigma(nu) = (pi e^2 / m c) f phi_nu with phi_nu = 2 pi I(omega).
+            unified[window] += (
+                integrated_cross_section * oscillator_strength
+                * 2.0 * PI * profile * population[np.newaxis, :]
+            )
+        # As for the Mg II and Ca II tables, merge with the ordinary Voigt
+        # opacity by an envelope: the Doppler core comes from the Voigt
+        # profile, the collision wings from the unified profile.
+        result += np.maximum(unified, replacement_ordinary["HeUnified"])
     if mg_ii_he_profile_table is not None and "Mg" in line_abundances:
         mg_ii = atomic_database.ions.get(("Mg", 1))
         if mg_ii is not None and metal_state.ion_number_density["Mg"].shape[0] > 1:

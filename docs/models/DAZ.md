@@ -52,7 +52,8 @@ included in charge balance and structural opacity, then synthesized with the
 more detailed metal line list. Number abundances in these two panels are
 relative to hydrogen; the middle panels use helium. The plotted DAZ models
 retain the paper's Stout strengths, Unsold neutral-H metal-line widths and
-Stark-only Lyman setting described below.
+Stark-only Lyman setting described below; the regression controls pin the
+Unsold widths.
 
 For display, predictions are convolved to `R = 2000` for G149-28 and
 `R = 40970` for GALEX J1931+0117. Observations and models are independently
@@ -89,11 +90,19 @@ J1931+0117 is now much faster. `structure_opacity_sampling_resolution=None`,
 Dense-helium ionization corrections and helium-perturber profiles are
 not applied to hydrogen hosts.
 
-Stout strengths and Unsold neutral-H metal-line widths preserve the paper's
-metal-line prescription. The later `strong_line_atomic_data="nist-asd"` and
-`metal_neutral_h_broadening="barklem"` options are explicit alternatives;
-neither is selected by target name. Hydrogen Balmer self-broadening is a
-separate prescription and follows the DA policy.
+Metal-line broadening by neutral hydrogen uses the Anstee-Barklem-O'Mara
+(ABO) cross sections where they are tabulated (`metal_neutral_h_broadening="barklem"`,
+the default since 2026-10-12), with Unsold widths for the remaining lines.
+Unsold widths alone underestimate this broadening, which matters only in cool
+hosts where hydrogen is mostly neutral. In a fixed-structure comparison of
+eight DAZ targets (34 windows), the mean window residual fell by 1.1%: 6
+windows improved and 1 got worse by 0.2%. The gains were in the coolest star,
+NLTT 43806 (5900 K): Ca II H&K -13%, Al I 3945/3962 -15%, Ca I 4228 -6%.
+G149-28 Ca II K improved by 2.5%, and the hot DAZs did not change.
+`metal_neutral_h_broadening="unsold"` restores the paper's prescription.
+Stout strengths remain the default; `strong_line_atomic_data="nist-asd"` is an
+explicit alternative. No option is selected by target name. Hydrogen Balmer
+self-broadening is a separate prescription and follows the DA policy.
 
 Most Stout lines have no electron-impact (Stark) width. By default
 (`kurucz_electron_stark=True`, since 2026-10-11) OpenWD attaches Kurucz's
@@ -106,6 +115,15 @@ of the hot DAZs, where electron densities are high (GALEX J1931+0117 Si II
 5041/5056 -18%, 4128/4131 -11%; WD 1226+110 Si II 5042/5057 -4%); Ca and
 Mg windows did not change. `kurucz_electron_stark=False` restores the
 previous behaviour, with no Stark broadening for these lines.
+
+By default (`si_ii_kurucz_transitions=True`, since 2026-10-12) OpenWD adds
+the Kurucz Si II transitions that Stout
+omits between its own levels, including the 3s3p² ²D–3s3p(³P°)3d ²F° lines at
+1305.59, 1309.45 and 1309.73 Å; see the [DZ guide](DZ.md). These lines are
+strong in hot DAZs: the whole-spectrum COS χ² per pixel falls by 25% for
+GALEX J1931+0117, 24% for WD 1226+110, 6% for PG 0843+516 and 2% for
+PG 1015+161, with no change in the optical windows.
+`si_ii_kurucz_transitions=False` restores Stout's Si II lines.
 
 The fixed-atmosphere regression controls include G149-28 (8600 K) and GALEX
 J1931+0117 (20890 K) from the paper's metal-polluted-star figure. These tests

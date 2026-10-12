@@ -28,6 +28,8 @@ from ..metals import (
     NIST_ASD_STRONG_ION_FILES,
     atomic_database_with_kurucz_iron_group_positions,
     atomic_database_with_kurucz_electron_stark,
+    augment_silicon_ii_kurucz_transitions,
+    atomic_database_with_si_ii_he_unified_profile,
     atomic_database_with_rauch_zn_cu_transitions,
     read_barklem_neutral_hydrogen_broadening,
     read_ca_i_he_profile_table,
@@ -232,6 +234,15 @@ class DZConfig:
     # unchanged.  False restores the previous default, in which such lines
     # have no electron broadening.
     kurucz_electron_stark: bool = True
+    # Unified (non-impact) Si+--He profile for Si II 1260/1264/1265 from
+    # model-potential binary-collision calculations, replacing their
+    # Lorentzian neutral-He broadening.  No stellar fitting.  False restores
+    # the previous Unsold neutral-He Lorentzian for these lines.
+    si_ii_he_unified_profile: bool = True
+    # Kurucz Si II transitions between levels Stout already contains but does
+    # not connect (e.g. 3s3p2 2D - 3s3p(3Po)3d 2Fo at 1305.59/1309.45 A);
+    # Kurucz-only levels are not imported.  False keeps Stout's Si II lines.
+    si_ii_kurucz_transitions: bool = True
 
 
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0
@@ -1317,6 +1328,8 @@ def compute_dz(
         elements=elements,
         maximum_charge=config.maximum_metal_charge,
     )
+    if config.si_ii_kurucz_transitions:
+        atomic = augment_silicon_ii_kurucz_transitions(atomic)
     if config.strong_line_atomic_data not in ("stout", "nist-asd"):
         raise ValueError(
             "strong_line_atomic_data must be 'stout' or 'nist-asd'"
@@ -1342,6 +1355,8 @@ def compute_dz(
             )
     if config.kurucz_electron_stark:
         atomic = atomic_database_with_kurucz_electron_stark(atomic)
+    if config.si_ii_he_unified_profile:
+        atomic = atomic_database_with_si_ii_he_unified_profile(atomic)
     photo = read_verner_photoionization_database(
         data.verner_photoionization,
         elements=elements,
@@ -1592,6 +1607,8 @@ def compute_dz(
             "atomic_lines": getattr(atomic, "source", "Stout"),
             "strong_line_atomic_data": config.strong_line_atomic_data,
             "kurucz_electron_stark": config.kurucz_electron_stark,
+            "si_ii_he_unified_profile": config.si_ii_he_unified_profile,
+            "si_ii_kurucz_transitions": config.si_ii_kurucz_transitions,
             "maximum_metal_charge": config.maximum_metal_charge,
             "photoionization": (
                 "level-resolved TOPbase for the bundled model-atom ions; "

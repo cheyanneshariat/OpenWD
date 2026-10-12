@@ -1,3 +1,4 @@
+from dataclasses import replace
 from types import MappingProxyType
 
 import numpy as np
@@ -1013,6 +1014,43 @@ def test_metal_ionic_microfield_density_uses_multicharge_moment():
         metal_ionic_microfield_perturber_density(state), expected
     )
     assert np.all(expected > electron_density)
+
+
+def test_metal_ionic_microfield_density_counts_host_ions():
+    # Trace metal in helium: He+ and He++ dominate the microfield, and the
+    # remaining positive charge (trace-H protons) counts as singly charged.
+    metal_singly = np.asarray([1.0e11, 2.0e11])
+    helium = np.stack((
+        np.asarray([1.0e18, 1.0e18]),
+        np.asarray([4.0e15, 8.0e15]),
+        np.asarray([1.0e13, 3.0e13]),
+    ))
+    protons = np.asarray([5.0e12, 0.0])
+    electron_density = metal_singly + helium[1] + 2.0 * helium[2] + protons
+    state = MetalLTEState(
+        reference_species="He",
+        log_number_abundance=MappingProxyType({"Ca": -8.0}),
+        element_number_density=MappingProxyType({"Ca": metal_singly}),
+        ion_number_density=MappingProxyType(
+            {"Ca": np.stack((np.zeros(2), metal_singly))}
+        ),
+        partition_function=MappingProxyType({}),
+        electron_density=electron_density,
+        metal_electron_density=metal_singly,
+        host_ion_number_density=helium,
+    )
+    expected = metal_singly + helium[1] + 2.0**1.5 * helium[2] + protons
+    np.testing.assert_allclose(
+        metal_ionic_microfield_perturber_density(state), expected, rtol=1e-12
+    )
+    # A hydrogen host has no tabulated host stages: protons enter through the
+    # remaining charge.
+    hydrogen_state = replace(state, host_ion_number_density=None)
+    np.testing.assert_allclose(
+        metal_ionic_microfield_perturber_density(hydrogen_state),
+        electron_density,
+        rtol=1e-12,
+    )
 
 
 def test_neutral_hard_sphere_dissolution_targets_large_rydberg_orbits():

@@ -28,6 +28,9 @@ def wiring(monkeypatch):
         daz, "atomic_database_with_kurucz_electron_stark", lambda database: database
     )
     monkeypatch.setattr(
+        daz, "augment_silicon_ii_kurucz_transitions", lambda database: database
+    )
+    monkeypatch.setattr(
         daz, "_allard_lyman_profiles_for_effective_temperature", lambda *a, **k: None
     )
 
@@ -50,7 +53,7 @@ def test_default_and_automatic_selection_do_not_use_a_helium_host(monkeypatch):
         lambda *a: pytest.fail("helium probe"),
     )
     assert DAZConfig().strong_line_atomic_data == "stout"
-    assert DAZConfig().metal_neutral_h_broadening == "unsold"
+    assert DAZConfig().metal_neutral_h_broadening == "barklem"
     assert DAZConfig().abundances["Ca"] == -6.58
     assert select_physics(DAZConfig()).workflow == "daz"
     assert not select_physics(DAZConfig()).experimental
