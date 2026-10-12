@@ -54,6 +54,18 @@ source-code license. Credit Robert L. Kurucz and the
 in scientific uses. The decompressed checksum and default supplementation
 policy are recorded in the [atomic-data notes](src/wd_spectra/data/atomic/README.md).
 
+## Kurucz Si II atomic line data
+
+`src/wd_spectra/data/atomic/gf1401_observed.all.xz` contains the lines of
+Robert L. Kurucz's Si II `gf1401.all` list
+(<http://kurucz.harvard.edu/atoms/1401/gf1401.all>, original SHA-256
+`d18ba25a8496d777d4017039c1e0567533b250e4d14c2e2eb0c24e5295c12c19`) between
+observed levels that have a tabulated electron Stark constant, 90--1100 nm,
+otherwise unmodified. These independently authored scientific data are not
+covered by OpenWD's BSD source-code license. Credit Robert L. Kurucz in
+scientific uses. The selection and checksum are recorded in the
+[atomic-data notes](src/wd_spectra/data/atomic/README.md).
+
 ## Kurucz electron Stark constants
 
 `src/wd_spectra/data/stark/kurucz_stark_constants.csv.xz` lists Robert L.

@@ -116,6 +116,13 @@ of the hot DAZs, where electron densities are high (GALEX J1931+0117 Si II
 Mg windows did not change. `kurucz_electron_stark=False` restores the
 previous behaviour, with no Stark broadening for these lines.
 
+`si_ii_kurucz_transitions=True` adds the Kurucz Si II transitions that Stout
+omits between its own levels, including the 3s3p² ²D–3s3p(³P°)3d ²F° lines at
+1305.59, 1309.45 and 1309.73 Å; see the [DZ guide](DZ.md). These lines are
+strong in hot DAZs: the whole-spectrum COS χ² per pixel falls by 25% for
+GALEX J1931+0117, 24% for WD 1226+110, 6% for PG 0843+516 and 2% for
+PG 1015+161, with no change in the optical windows.
+
 The fixed-atmosphere regression controls include G149-28 (8600 K) and GALEX
 J1931+0117 (20890 K) from the paper's metal-polluted-star figure. These tests
 use the paper's Stark-only Lyman setting (`lyman_profile_source="stark"`);

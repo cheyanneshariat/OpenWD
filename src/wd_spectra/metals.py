@@ -74,6 +74,11 @@ STOUT_ARCHIVE_SHA256 = "6be3a8ee145aa9364e06eec25348a3ac65cdcaf68951c52203b9bd7a
 KURUCZ_CR_II_URL = "http://kurucz.harvard.edu/atoms/2401/gf2401.all"
 KURUCZ_CR_II_SHA256 = "6f0c4d0e01421fb0549ddbcf5649af391ca9b930e4e83e693e662d5874505205"
 _KURUCZ_CR_II_SOURCE = "Kurucz Cr II gf2401.all missing-transition supplement"
+# Observed-level subset of Kurucz's gf1401.all (see data/atomic/README.md).
+KURUCZ_SI_II_SHA256 = "8dc64ef88de44a91d59ec431b631149a87afca70f7a805a5b0537db4af1e0b39"
+_KURUCZ_SI_II_SOURCE = (
+    "Kurucz Si II gf1401.all missing transitions between Stout levels"
+)
 MG_HE_RED_WING_URL = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/619/A152/fig5.dat"
 MG_HE_RED_WING_SHA256 = "b79879240f935aadb7afbf68a590a26a2a43c572315323c8785fc750bb0f9aa7"
 VERNER_PHOTOIONIZATION_URL = "https://www.pa.uky.edu/~verner/dima/photo/photo.dat"
@@ -2793,6 +2798,60 @@ def augment_chromium_ii_kurucz_transitions(
     ions = dict(merged.ions)
     provenance = f"{_KURUCZ_CR_II_SOURCE} (SHA256 {KURUCZ_CR_II_SHA256})"
     ions[key] = replace(ions[key], source=f"{ion.source}; {provenance}")
+    return AtomicDatabase(
+        MappingProxyType(ions), source=f"{database.source}; {provenance}",
+    )
+
+
+def augment_silicon_ii_kurucz_transitions(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Add Kurucz Si II transitions between levels Stout already contains.
+
+    Stout lists the Si II 3s3p(3Po)3d 2Fo_{5/2,7/2} levels (131677.1 and
+    131918.8 cm^-1) but no transitions to them, so the strong 3s3p2 2D -
+    2Fo lines at 1305.59, 1309.45 and 1309.73 A are absent; other level
+    pairs are also unconnected.  This reads the bundled observed-level subset
+    of Kurucz's gf1401.all in missing-transition mode and keeps only the
+    added transitions whose two levels both match existing Stout levels
+    (energy within 0.1 cm^-1 and equal weight).  Kurucz-only levels, most of
+    them autoionizing states far above the first limit, are not imported, so
+    partition functions are unchanged.  Existing Stout transitions are kept
+    unchanged; added lines carry Kurucz's oscillator strengths and damping
+    constants.  The checksum is verified; repeated calls are idempotent.
+    """
+
+    import lzma
+    import tempfile
+
+    key = ("Si", 1)
+    ion = database.ions.get(key)
+    if ion is None or _KURUCZ_SI_II_SOURCE in ion.source:
+        return database
+    resource = files("wd_spectra").joinpath("data/atomic/gf1401_observed.all.xz")
+    content = lzma.decompress(resource.read_bytes())
+    if hashlib.sha256(content).hexdigest() != KURUCZ_SI_II_SHA256:
+        raise ValueError("Kurucz Si II checksum mismatch: gf1401_observed.all")
+    subset = AtomicDatabase(MappingProxyType({key: ion}), source=database.source)
+    with tempfile.TemporaryDirectory(prefix="openwd-siii-") as scratch:
+        path = Path(scratch) / "gf1401.all"
+        path.write_bytes(content)
+        merged = read_kurucz_gf100_atomic_database(
+            [path], subset, elements=("Si",), replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    stout_levels = {level.index for level in ion.levels}
+    transitions = tuple(
+        transition
+        for transition in merged.ions[key].transitions
+        if transition.lower_index in stout_levels
+        and transition.upper_index in stout_levels
+    )
+    provenance = f"{_KURUCZ_SI_II_SOURCE} (SHA256 {KURUCZ_SI_II_SHA256})"
+    ions = dict(database.ions)
+    ions[key] = replace(
+        ion, transitions=transitions, source=f"{ion.source}; {provenance}"
+    )
     return AtomicDatabase(
         MappingProxyType(ions), source=f"{database.source}; {provenance}",
     )

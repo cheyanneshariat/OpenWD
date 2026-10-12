@@ -14,6 +14,7 @@ from ..atmosphere import radiative_equilibrium_hydrogen_atmosphere
 from ..metals import (
     NIST_ASD_STRONG_ION_FILES,
     atomic_database_with_kurucz_electron_stark,
+    augment_silicon_ii_kurucz_transitions,
     read_barklem_neutral_hydrogen_broadening,
     read_nist_asd_strong_atomic_database,
     read_stout_atomic_database,
@@ -92,6 +93,9 @@ class DAZConfig:
     # tabulated Stark width, as DZConfig.kurucz_electron_stark.  False
     # restores the previous default without electron broadening for them.
     kurucz_electron_stark: bool = True
+    # Kurucz Si II transitions between existing Stout levels, as
+    # DZConfig.si_ii_kurucz_transitions.
+    si_ii_kurucz_transitions: bool = False
 
 
 def compute_daz(
@@ -146,6 +150,8 @@ def compute_daz(
     atomic = read_stout_atomic_database(
         data.stout, elements=elements, maximum_charge=config.maximum_metal_charge
     )
+    if config.si_ii_kurucz_transitions:
+        atomic = augment_silicon_ii_kurucz_transitions(atomic)
     if config.strong_line_atomic_data == "nist-asd":
         paths = [
             data.nist_asd_strong / filename
@@ -288,6 +294,7 @@ def compute_daz(
             atomic_lines=getattr(atomic, "source", "Stout"),
             strong_line_atomic_data=config.strong_line_atomic_data,
             kurucz_electron_stark=config.kurucz_electron_stark,
+            si_ii_kurucz_transitions=config.si_ii_kurucz_transitions,
             metal_neutral_hydrogen_broadening=config.metal_neutral_h_broadening,
             maximum_metal_charge=config.maximum_metal_charge,
             metal_electron_feedback=True,
