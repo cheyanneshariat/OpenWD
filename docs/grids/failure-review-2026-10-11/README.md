@@ -41,12 +41,13 @@ Two cases merit an uncertain, bounded diagnostic:
 | DB | 7,000 | 6.0 | Changed phase and reduced energy residual from about 1 to 0.254; the last 20 updates worsen |
 | D6 | 15,680 | 6.3 | Only 18 preconditioner updates fit six hours; flux improves, but local energy ends at 0.0403 and grows |
 
-Job **59699007** is queued with four fresh cold attempts: an original-source
+Job **59699007** started on October 12 with four fresh cold attempts: an original-source
 control and a current-upstream run at each coordinate. Each has an eight-hour
 resource cap. [Full requests and resource limits](diagnostic-requests.json) preserve
 the physical inputs, native tolerances and iteration limits. The controls test
 extra wall time; updated source/data is a separate comparison. Required
-fixed-spectrum checks withhold any source branch that fails preflight.
+fixed-spectrum checks passed for all three source branches; all four attempts
+are running. A failed source check would withhold its dependent requests.
 
 Original sources are c8329d86 for DB and cfe2d2ff for D6. Updated source is
 14e2067. The complete source changes include D6 Rosseland-probe reuse and
@@ -58,5 +59,9 @@ of **10.755**, below the authorized 13. Models must pass their native checks
 before acceptance. A timeout, queued job or worker crash is not a converged
 spectrum. Numerical completion remains distinct from physical accuracy and
 independent depth convergence.
+
+The later [hot batch](../hot-2026-10-12/README.md) adds four six-hour timeout
+records outside the earlier 118-flag snapshot. Its other four models passed.
+The table above retains its original selection and denominator.
 
 [Current grids](../README.md)

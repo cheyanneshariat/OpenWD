@@ -1,6 +1,6 @@
 # Precomputed model grids
 
-The selected grid table contains **2,361 numerical completions from 2,499 requests**.
+The selected grid table contains **2,365 numerical completions from 2,499 requests**.
 DAB/DBA has **637 accepted coordinates from 656 requests**. The latest update
 adds 32 newly calculated knots and eight reused centers in eight selected
 patches. It also adds 32 independent test spectra, which remain outside the
@@ -14,8 +14,9 @@ Each title gives numerical completions divided by requests. Green circles passed
 the recorded checks. Red crosses failed a numerical check or encountered an
 invalid numerical depth grid. Grey squares reached a time limit. Grey triangles
 could not run their requested configuration. Grey circles were not started in the saved selection. Dark grey crosses mark worker crashes.
-A separate four-DO/four-DAO batch is running. Its outcomes await verified collection
-and have not replaced the saved DO/DAO statuses shown here.
+The [four-DO/four-DAO batch](hot-2026-10-12/README.md) finished with four numerical
+completions and four six-hour timeouts. Its verified outcomes now replace the
+eight previously unattempted rows shown here.
 Timeouts remain unfinished. Different compositions can share temperature and
 gravity, so symbols can overlap. Blank regions were not requested.
 
@@ -24,8 +25,8 @@ gravity, so symbols can overlap. Blank regions were not requested.
 | DA | 808 | 852 | October 8 + native validation supplement |
 | DB | 592 | 638 | October 8 + cold, validation and retry supplements |
 | DZ | 317 | 322 | October 8 + October 11 retries |
-| DAO | 1 | 15 | One verified spectrum; follow-up running |
-| DO | 1 | 7 | One verified spectrum; follow-up running |
+| DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
+| DO | 3 | 7 | Three verified spectra; remaining gaps retained |
 | DAB/DBA | 637 | 656 | October 9/10 + October 11 retries and refinement |
 | DAZ | 3 | 3 | October 8 |
 | DQ | 2 | 2 | October 8 |
@@ -43,7 +44,8 @@ hold the original DA/DB/DZ/DAZ/DQ archives, the 326-spectrum DAB archive, the
 four-model cold DB supplement, the 118-spectrum native validation supplement,
 the 261-spectrum DAB abundance supplement, the 38-spectrum timeout-recovery
 supplement and the 104-model DAB refinement archive. The last archive includes
-64 new calculations and 40 earlier predictor inputs.
+64 new calculations and 40 earlier predictor inputs. The hot-batch archive
+retains four accepted DO/DAO spectra and all eight attempts.
 Draft assets require write access to the fork. They are not public downloads until
 the releases are published. The original archives remain unchanged.
 
@@ -59,6 +61,8 @@ the releases are published. The original archives remain unchanged.
   show all 68 outcomes, the nine recovered DAB points and all eight measurable
   earlier DAB interpolation tests. Eight of those targets are now predictor inputs
   in the new refinement.
+- [Four new DO/DAO spectra and four six-hour timeouts](hot-2026-10-12/README.md)
+  retain native structures, full inputs and source-check scope.
 - [Cold DB and Montreal comparison](db-cold-2026-10-09/README.md) preserve the
   earlier four-model demonstration and its unresolved spectral disagreement.
 
@@ -89,9 +93,9 @@ DB has 24 nonconvergence cases, five depth-grid errors, five material-domain
 stops and 12 six-hour timeouts. DA has 44 numerical failures. DZ has four
 numerical failures and one SIGSEGV crash. The D6 example still timed out.
 All nine DAB timeouts passed; its 19 remaining gaps are 17 unsupported
-configurations and two earlier SIGSEGV crashes. DAO passed after 261.24 minutes,
-and remains the only DAO spectrum in this verified selection.
-The separate four-DO/four-DAO batch is still running.
+configurations and two earlier SIGSEGV crashes. The first DAO passed after 261.24 minutes.
+The [latest hot batch](hot-2026-10-12/README.md) adds two DO and two DAO spectra.
+Its other four cases reached their six-hour caps; these remain unfinished.
 
 The DAB abundance mesh has one-dex spacing. In eight selected patches,
 temperature spacing falls from 5,000 to 2,500 K and gravity spacing from 0.5 to
@@ -136,3 +140,6 @@ These scripts perform no atmosphere calculation.
 The [temperature and gravity refinement script](plot_dab_temperature_refinement.py)
 reads the checksummed 104-model archive. It reproduces the new-knot map, paired
 errors and two direct-spectrum examples, and rechecks all 256 saved predictions.
+
+The [hot-spectrum script](plot_hot_spectra.py) checks the eight-attempt archive
+and reproduces the four accepted spectra and the batch outcome figure.

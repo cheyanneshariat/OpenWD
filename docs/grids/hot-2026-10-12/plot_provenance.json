@@ -1,0 +1,13 @@
+{
+  "archive_sha256": "ad231a6cceb6556066ba3a0ea72357789ed9b0c61eb66884989d56b9bf9481f3",
+  "accepted_spectra": 4,
+  "timeouts": 4,
+  "flux_normalization": "none",
+  "wavelength_interpolation": "none",
+  "display_band_angstrom": [
+    3500,
+    7000
+  ],
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

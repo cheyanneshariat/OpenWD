@@ -1,0 +1,974 @@
+[
+  {
+    "archive_attempt_path": "attempts/dao-d758fdee208a6db7fdf09e9d/attempt-v1",
+    "case_id": "dao-494105c7e4fec0a617c58327",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 40000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "log_hydrogen_to_helium": 0,
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "maximum_hydrogen_level": 8,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DAO",
+    "group": "slow",
+    "last_hour_log_samples": [
+      {
+        "correction": null,
+        "elapsed_seconds": 18648.242588779016,
+        "flux": 7.46581779420552e-06,
+        "iteration": 40,
+        "local_energy": 0.0007585884113385623,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18918.603363611997,
+        "flux": 7.46345545765692e-06,
+        "iteration": 41,
+        "local_energy": 0.0007585752672437139,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20128.899149792996,
+        "flux": 7.461373276118621e-06,
+        "iteration": 43,
+        "local_energy": 0.0007585894270752374,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20358.119230881013,
+        "flux": 7.459012117072561e-06,
+        "iteration": 44,
+        "local_energy": 0.0007585762574339041,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21180.69544804201,
+        "flux": 7.4569287438208676e-06,
+        "iteration": 46,
+        "local_energy": 0.0007585904418942723,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21378.10630083902,
+        "flux": 7.454568749842849e-06,
+        "iteration": 47,
+        "local_energy": 0.0007585772467158283,
+        "phase": "simultaneous-hot-nlte"
+      }
+    ],
+    "last_log_sample": {
+      "correction": null,
+      "elapsed_seconds": 21378.10630083902,
+      "flux": 7.454568749842849e-06,
+      "iteration": 47,
+      "local_energy": 0.0007585772467158283,
+      "phase": "simultaneous-hot-nlte"
+    },
+    "model_id": "dao-d758fdee208a6db7fdf09e9d",
+    "peak_owned_RSS_bytes": 13163495424,
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "status": "TIMEOUT",
+    "timeout_interpretation": "Resource stop before a final certificate; logged flux/energy alone cannot establish final qualification.",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 21601.100784120994
+  },
+  {
+    "archive_attempt_path": "attempts/dao-de124d1d8b0a553be5cdd3b4/attempt-v1",
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 8.098706627546193e-08
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 9.653399938271673e-08
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 2.0525232294061643e-06
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.615300225788555e-15
+          },
+          "surface_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 6.817385078683458e-08
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 1.386444268907741e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": true,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "metals": false,
+          "nlte_charge_feedback": false
+        },
+        "experimental": true,
+        "reason": "Restricted H/He NLTE with shared thermal Newton solver",
+        "tested_point": false,
+        "workflow": "dao"
+      },
+      "spectrum": {
+        "maximum_angstrom": 30000.0,
+        "minimum_angstrom": 900.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 18901,
+        "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+      },
+      "spectrum_audit_scope": "native hot_nlte.transfer_field independent fixed-source formal solution on identical mass volumes; no independent grid refinement",
+      "spectrum_source_verified": true
+    },
+    "case_id": "dao-7d35de84ec90fab1f563d557",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 60000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "log_hydrogen_to_helium": 4,
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "maximum_hydrogen_level": 8,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DAO",
+    "group": "slow",
+    "model_id": "dao-de124d1d8b0a553be5cdd3b4",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 12555153408,
+    "raw_status": "COMPLETE_NUMERICAL",
+    "returncode": 0,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "spectrum_archive_path": "attempts/dao-de124d1d8b0a553be5cdd3b4/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "5f1f99dbc46e47d4746e01c4ab680e0f9a6a1f4e899d570b80d32e29026446a3",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 17408.451921975997
+  },
+  {
+    "archive_attempt_path": "attempts/dao-c2f1d0e70f8e3dce826fe90b/attempt-v1",
+    "case_id": "dao-9ba46741d73c2192115e200d",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 100000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "log_hydrogen_to_helium": 2,
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "maximum_hydrogen_level": 8,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DAO",
+    "group": "slow",
+    "last_hour_log_samples": [
+      {
+        "correction": null,
+        "elapsed_seconds": 18915.38837883802,
+        "flux": 1.7573558164230008e-09,
+        "iteration": 36,
+        "local_energy": 8.044932575702196e-06,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20240.068896310026,
+        "flux": 5.90179045389938e-06,
+        "iteration": 37,
+        "local_energy": 0.0015788732393918286,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20307.283492668008,
+        "flux": 8.421662383018003e-07,
+        "iteration": 38,
+        "local_energy": 0.00017610404634549605,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20845.626139567,
+        "flux": 4.632960237671568e-09,
+        "iteration": 39,
+        "local_energy": 1.4978830560132e-05,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21511.504376420024,
+        "flux": 2.024359718411084e-05,
+        "iteration": 40,
+        "local_energy": 0.0023062800769906647,
+        "phase": "simultaneous-hot-nlte"
+      }
+    ],
+    "last_log_sample": {
+      "correction": null,
+      "elapsed_seconds": 21511.504376420024,
+      "flux": 2.024359718411084e-05,
+      "iteration": 40,
+      "local_energy": 0.0023062800769906647,
+      "phase": "simultaneous-hot-nlte"
+    },
+    "model_id": "dao-c2f1d0e70f8e3dce826fe90b",
+    "peak_owned_RSS_bytes": 12832235520,
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "status": "TIMEOUT",
+    "timeout_interpretation": "Resource stop before a final certificate; logged flux/energy alone cannot establish final qualification.",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 21601.082956849015
+  },
+  {
+    "archive_attempt_path": "attempts/dao-0d8fc9a79ec91ef9a641f0d9/attempt-v1",
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.841304886340822e-12
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 4.6882456860571526e-07
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 5.836466314839439e-06
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.7578179349918747e-15
+          },
+          "surface_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.7912338279302276e-12
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 3.281169989736407e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": true,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "metals": false,
+          "nlte_charge_feedback": false
+        },
+        "experimental": true,
+        "reason": "Restricted H/He NLTE with shared thermal Newton solver",
+        "tested_point": false,
+        "workflow": "dao"
+      },
+      "spectrum": {
+        "maximum_angstrom": 30000.0,
+        "minimum_angstrom": 900.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 18901,
+        "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+      },
+      "spectrum_audit_scope": "native hot_nlte.transfer_field independent fixed-source formal solution on identical mass volumes; no independent grid refinement",
+      "spectrum_source_verified": true
+    },
+    "case_id": "dao-c2c599a6843143588050cd8b",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 60000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "log_hydrogen_to_helium": 2.0,
+      "logg": 7,
+      "maximum_helium_ii_level": 32,
+      "maximum_hydrogen_level": 8,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DAO",
+    "group": "slow",
+    "model_id": "dao-0d8fc9a79ec91ef9a641f0d9",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 12750692352,
+    "raw_status": "COMPLETE_NUMERICAL",
+    "returncode": 0,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "spectrum_archive_path": "attempts/dao-0d8fc9a79ec91ef9a641f0d9/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "088a3adff0baef4ac8285981611f5f2c27bb8d73414ea8f36feacfff0795a95b",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 17002.771651469986
+  },
+  {
+    "archive_attempt_path": "attempts/do-8c33ac1dbc0c6fcf90346a1d/attempt-v1",
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 3.0707658638107205e-12
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.3666545474145757e-11
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 8.005280308112839e-08
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.9588035844743646e-15
+          },
+          "surface_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 2.8704816301683422e-12
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 3.856960258643425e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": true,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "metals": false,
+          "nlte_charge_feedback": false
+        },
+        "experimental": true,
+        "reason": "Restricted H/He NLTE with shared thermal Newton solver",
+        "tested_point": false,
+        "workflow": "do"
+      },
+      "spectrum": {
+        "maximum_angstrom": 30000.0,
+        "minimum_angstrom": 900.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 18901,
+        "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+      },
+      "spectrum_audit_scope": "native hot_nlte.transfer_field independent fixed-source formal solution on identical mass volumes; no independent grid refinement",
+      "spectrum_source_verified": true
+    },
+    "case_id": "do-d2fea31316aa6e441a080499",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 60000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DO",
+    "group": "slow",
+    "model_id": "do-8c33ac1dbc0c6fcf90346a1d",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 8940412928,
+    "raw_status": "COMPLETE_NUMERICAL",
+    "returncode": 0,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "spectrum_archive_path": "attempts/do-8c33ac1dbc0c6fcf90346a1d/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "e0a3aa21a026b2e6906da654e3770836fd4ce26b7a3d5cbe341ca340f0658689",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 16374.461187975015
+  },
+  {
+    "archive_attempt_path": "attempts/do-75e0be162ec50c5bc161a7d5/attempt-v1",
+    "case_id": "do-67c2bb6aad7b5c2ea6b8a8aa",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 90000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DO",
+    "group": "slow",
+    "last_hour_log_samples": [
+      {
+        "correction": null,
+        "elapsed_seconds": 17873.587837134983,
+        "flux": 0.0003204418333134784,
+        "iteration": 73,
+        "local_energy": 0.0004112748301988716,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18219.135671331984,
+        "flux": 0.00032044183163693063,
+        "iteration": 74,
+        "local_energy": 0.00041127482983169234,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 19048.51925765298,
+        "flux": 0.00032041702803675687,
+        "iteration": 75,
+        "local_energy": 0.00041127914034003323,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 19289.40072915898,
+        "flux": 0.00032041702119178783,
+        "iteration": 76,
+        "local_energy": 0.00041127913829049875,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20052.447122821002,
+        "flux": 0.0003203747569572313,
+        "iteration": 77,
+        "local_energy": 0.0004112865251733871,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20483.507827213994,
+        "flux": 0.00032037475050317177,
+        "iteration": 78,
+        "local_energy": 0.00041128652362074775,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20968.095586028998,
+        "flux": 0.00032031516858754827,
+        "iteration": 79,
+        "local_energy": 0.00041129708095641966,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21113.976671045006,
+        "flux": 0.0003203151626952616,
+        "iteration": 80,
+        "local_energy": 0.00041129708012178413,
+        "phase": "simultaneous-hot-nlte"
+      }
+    ],
+    "last_log_sample": {
+      "correction": null,
+      "elapsed_seconds": 21113.976671045006,
+      "flux": 0.0003203151626952616,
+      "iteration": 80,
+      "local_energy": 0.00041129708012178413,
+      "phase": "simultaneous-hot-nlte"
+    },
+    "model_id": "do-75e0be162ec50c5bc161a7d5",
+    "peak_owned_RSS_bytes": 9289142272,
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "status": "TIMEOUT",
+    "timeout_interpretation": "Resource stop before a final certificate; logged flux/energy alone cannot establish final qualification.",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 21601.098255344987
+  },
+  {
+    "archive_attempt_path": "attempts/do-5f6443f496aa8849c091c988/attempt-v1",
+    "case_id": "do-ecbbae814f1df47c66296d5d",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 120000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DO",
+    "group": "slow",
+    "last_hour_log_samples": [
+      {
+        "correction": null,
+        "elapsed_seconds": 18014.093742230005,
+        "flux": 3.244325049944763e-06,
+        "iteration": 51,
+        "local_energy": 0.02409773075154305,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18058.689575709024,
+        "flux": 3.1696885341991887e-06,
+        "iteration": 52,
+        "local_energy": 0.024917899224347218,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18097.912855481,
+        "flux": 3.101660387194727e-06,
+        "iteration": 53,
+        "local_energy": 0.02917555907763437,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18855.81165572902,
+        "flux": 3.0422324377443744e-06,
+        "iteration": 54,
+        "local_energy": 0.0334897383093828,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18897.938223223027,
+        "flux": 2.9785051068875745e-06,
+        "iteration": 55,
+        "local_energy": 0.03252078111191004,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 18937.759902612015,
+        "flux": 2.9462564197224594e-06,
+        "iteration": 56,
+        "local_energy": 0.0318275254410338,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 19629.63741702703,
+        "flux": 2.9493036401984085e-06,
+        "iteration": 57,
+        "local_energy": 0.03643275002670409,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 19671.585654747003,
+        "flux": 2.850232859286095e-06,
+        "iteration": 58,
+        "local_energy": 0.035335458471597456,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 19711.996012532007,
+        "flux": 2.7680367651328197e-06,
+        "iteration": 59,
+        "local_energy": 0.038859626824245264,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20330.901618545002,
+        "flux": 2.6997279015672504e-06,
+        "iteration": 60,
+        "local_energy": 0.04279040661919585,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20358.087352587027,
+        "flux": 2.605225290386315e-06,
+        "iteration": 61,
+        "local_energy": 0.04142201772661942,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20384.02594730002,
+        "flux": 2.6112498110464344e-06,
+        "iteration": 62,
+        "local_energy": 0.04047167314338871,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20698.742547199014,
+        "flux": 2.764447670888792e-06,
+        "iteration": 63,
+        "local_energy": 0.040322926307703386,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20725.951962903026,
+        "flux": 2.6765327121314186e-06,
+        "iteration": 64,
+        "local_energy": 0.042899568472388266,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 20753.77760545601,
+        "flux": 2.595630374302438e-06,
+        "iteration": 65,
+        "local_energy": 0.046060419783818585,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21042.197690725006,
+        "flux": 2.521139432998254e-06,
+        "iteration": 66,
+        "local_energy": 0.049454224163318405,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21070.230107940006,
+        "flux": 2.46445397089623e-06,
+        "iteration": 67,
+        "local_energy": 0.0484940835702508,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21099.099899739027,
+        "flux": 2.4121798469778355e-06,
+        "iteration": 68,
+        "local_energy": 0.0477768845079801,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21446.091086928005,
+        "flux": 2.3645528389737436e-06,
+        "iteration": 69,
+        "local_energy": 0.052128488895217505,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21474.112071044015,
+        "flux": 2.334138378912165e-06,
+        "iteration": 70,
+        "local_energy": 0.051457943043371,
+        "phase": "simultaneous-hot-nlte"
+      },
+      {
+        "correction": null,
+        "elapsed_seconds": 21501.643486124027,
+        "flux": 2.30458383920773e-06,
+        "iteration": 71,
+        "local_energy": 0.050834682431460894,
+        "phase": "simultaneous-hot-nlte"
+      }
+    ],
+    "last_log_sample": {
+      "correction": null,
+      "elapsed_seconds": 21501.643486124027,
+      "flux": 2.30458383920773e-06,
+      "iteration": 71,
+      "local_energy": 0.050834682431460894,
+      "phase": "simultaneous-hot-nlte"
+    },
+    "model_id": "do-5f6443f496aa8849c091c988",
+    "peak_owned_RSS_bytes": 8879579136,
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "status": "TIMEOUT",
+    "timeout_interpretation": "Resource stop before a final certificate; logged flux/energy alone cannot establish final qualification.",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 21601.135922591
+  },
+  {
+    "archive_attempt_path": "attempts/do-4a9f76804239dd052e701f00/attempt-v1",
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 5.300204719560497e-12
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 7.928715117498105e-12
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.7198018284103787e-07
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 2.2323329441940315e-15
+          },
+          "surface_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 5.190181617820144e-12
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 0.00019129391823238405
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": true,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "metals": false,
+          "nlte_charge_feedback": false
+        },
+        "experimental": true,
+        "reason": "Restricted H/He NLTE with shared thermal Newton solver",
+        "tested_point": false,
+        "workflow": "do"
+      },
+      "spectrum": {
+        "maximum_angstrom": 30000.0,
+        "minimum_angstrom": 900.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 18901,
+        "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+      },
+      "spectrum_audit_scope": "native hot_nlte.transfer_field independent fixed-source formal solution on identical mass volumes; no independent grid refinement",
+      "spectrum_source_verified": true
+    },
+    "case_id": "do-26a8b22080df53c935631bdc",
+    "cell_id": null,
+    "config": {
+      "effective_temperature": 60000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "logg": 7,
+      "maximum_helium_ii_level": 32,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DO",
+    "group": "slow",
+    "model_id": "do-4a9f76804239dd052e701f00",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 8949374976,
+    "raw_status": "COMPLETE_NUMERICAL",
+    "returncode": 0,
+    "role": "hot-grid-representative",
+    "source_change_note": "Merged source matches successful native DO/DAO pilot; original unattempted request/config retained",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "spectrum_archive_path": "attempts/do-4a9f76804239dd052e701f00/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "6667fe20e227e5014c157b1cc585b6e3991228df263ffdf682bf681662d58bfc",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 6553.764502832026
+  }
+]

@@ -1,6 +1,6 @@
 {
-  "current_index_sha256": "b2a2b8c94bf716d87da1847c9ccc6403fd6fa391499371e547248bb900a7362a",
-  "current_snapshot_utc": "2026-10-12T02:47:56.962840+00:00",
+  "current_index_sha256": "85a4b51683db97aa1e473c0ab284f5779051ae56f899ecdce6e9ec77409f6142",
+  "current_snapshot_utc": "2026-10-12T08:12:45.680447+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
@@ -38,8 +38,8 @@
       "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
     },
     "DAO": {
-      "current_selected_grid_points": 1,
-      "models": 1,
+      "current_selected_grid_points": 3,
+      "models": 3,
       "requests": 15
     },
     "DAZ": {
@@ -77,8 +77,8 @@
       "requests": 638
     },
     "DO": {
-      "current_selected_grid_points": 1,
-      "models": 1,
+      "current_selected_grid_points": 3,
+      "models": 3,
       "requests": 7,
       "supplement_spectra": 1
     },
@@ -98,12 +98,12 @@
     }
   },
   "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
-  "history": "history/2026-10-11-before-temperature-gravity-refinement/dataset.json",
+  "history": "history/2026-10-12-before-hot-batch/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2361,
+  "qualified_spectra": 2365,
   "requests": 2499,
   "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json.",
   "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
@@ -240,6 +240,20 @@
       ],
       "source_hashes_verified": true,
       "temperature_K": 5000
+    },
+    "DO-DAO-2026-10-12": {
+      "NPZ_files_read": 8,
+      "accepted_spectra": 4,
+      "archive": "OpenWD-DO-DAO-representatives-20261012.tar.gz",
+      "archive_bytes": 1648602,
+      "archive_sha256": "ad231a6cceb6556066ba3a0ea72357789ed9b0c61eb66884989d56b9bf9481f3",
+      "arrays_read": 90,
+      "is_draft": true,
+      "release_tag": "grid-preview-2026-10-12-hot",
+      "scope": "Restricted H/He NLTE; fixed-source formal check on identical mass volumes; no independent depth or full physical validation",
+      "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+      "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+      "terminal_attempts": 8
     },
     "native-validation-2026-10-09": {
       "DAB_additional_validation_points": 15,
@@ -386,6 +400,7 @@
       "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "54e401e20936119d707bb3623e0a13e29373b6e8"
     ],
+    "DO-DAO-2026-10-12": "c8329d86c98f956617ec1bb3746181350492ce66",
     "native-validation-2026-10-09": {
       "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
@@ -415,8 +430,9 @@
       "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2
     },
     "DAO": {
-      "COMPLETE_NUMERICAL": 1,
-      "MISSING_UNATTEMPTED": 14
+      "COMPLETE_NUMERICAL": 3,
+      "MISSING_UNATTEMPTED": 10,
+      "TIMEOUT": 2
     },
     "DAZ": {
       "COMPLETE_NUMERICAL": 3
@@ -429,8 +445,9 @@
       "TIMEOUT": 12
     },
     "DO": {
-      "COMPLETE_NUMERICAL": 1,
-      "MISSING_UNATTEMPTED": 6
+      "COMPLETE_NUMERICAL": 3,
+      "MISSING_UNATTEMPTED": 2,
+      "TIMEOUT": 2
     },
     "DQ": {
       "COMPLETE_NUMERICAL": 2
