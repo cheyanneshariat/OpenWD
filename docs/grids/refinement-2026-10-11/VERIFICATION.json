@@ -1,19 +1,23 @@
 {
+  "checked_utc": "2026-10-12T03:27:04.412102+00:00",
   "PDF_renders_inspected": true,
-  "PNG_exports_reproduced": true,
+  "PNG_exports_inspected": true,
   "figures": 4,
+  "figure_text": "Titles, axis labels and ticks only; legends and notes removed",
+  "figure_artist_text_checks_passed": true,
+  "plotted_points_and_spectrum_metrics_unchanged": true,
+  "selected_table_and_input_records_unchanged": true,
   "independent_targets": 32,
   "prediction_metrics_rechecked": 256,
-  "previous_selection_rows_preserved": 2459,
   "archive_hash_verified": true,
   "file_hashes": {
-    "grid_progress.png": "cfca2abc09cf072b0c389e27026fbd713a6a2e677dd4ba434e7f00168b6ace14",
-    "grid_progress.pdf": "b543db7923b064420ea4d87292661341e24e141efca52c71fd38dd1f81649a93",
-    "refinement-2026-10-11/interpolation_gain.png": "46797c9baec9f6a3f264a8c4332ebdd7028dc6f22df56be105b7b8cb986f1248",
-    "refinement-2026-10-11/spectrum_examples.png": "8ffb6db813bc8ab6006f33dcf4dedd42dd5dac0d3222edae75d4d3a31a72c4eb",
-    "refinement-2026-10-11/new_dab_points.png": "86d4dfef92cbe699f7951223024e5c8993c21fdf57de06885de667e90863b7ee",
-    "refinement-2026-10-11/interpolation_gain.pdf": "5c89e282cd9d3ca17ccd18ce66130afe940f109966f7b8b3a6178f01803fb976",
-    "refinement-2026-10-11/spectrum_examples.pdf": "c838aa08717e35bcb710279d81eaff2633c07c7d6ccc129492109b1dc5f27808",
-    "refinement-2026-10-11/new_dab_points.pdf": "a739c17a4ede9b8599910798ff2a6f6e0c730fcf3e3de035378d927e3da4ec99"
+    "grid_progress.png": "12efcd394830acb895d254fc94b2b2ac97029e480243c638ac95349e3efe2524",
+    "grid_progress.pdf": "aec2f3e6ec3de2d349798443dad43e8ddbee9007a768d47c4d11863affc38e6b",
+    "refinement-2026-10-11/interpolation_gain.png": "39173d94f5108330e94f04f06379c3eadecebb723a0c664f116e92dcfdd835cb",
+    "refinement-2026-10-11/spectrum_examples.png": "a13ba4e147342acff63136a7a598416c5d27c3fe0a696a85cab3b6d251fc466d",
+    "refinement-2026-10-11/new_dab_points.png": "748b438d448e824c205a2133249414f7bf64093e60d4434063d1b388b17a4e6a",
+    "refinement-2026-10-11/interpolation_gain.pdf": "7824d177e82cf3ecc3adc6c543f6fac5a4e7d546c63b87db970314e280c6ea0f",
+    "refinement-2026-10-11/spectrum_examples.pdf": "c383fb00a813ee34bb3d6888c9a06543dfa01f45c172f837d444a0c45fdc36ee",
+    "refinement-2026-10-11/new_dab_points.pdf": "fc57ce216857a855db92e12004f72db2e7ad531230101631f2a47f7ddd16215d"
   }
 }

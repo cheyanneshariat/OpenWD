@@ -17,7 +17,6 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 
-from matplotlib.lines import Line2D
 
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
@@ -85,14 +84,9 @@ def main():
     fig, axes = plt.subplots(2, 4, figsize=(15, 6.8))
     for ax, family in zip(axes.flat, DISPLAY_ORDER):
         panel(ax, rows, family)
-    handles = [Line2D([], [], linestyle='none', marker=marker, color=color,
-                      markerfacecolor='none' if key == 'timed_out' else color,
-                      markersize=7, label=label)
-               for key, (color, marker, label) in STYLES.items()
-               if any(r['family'] in DISPLAY_ORDER and r['plot_status'] == key for r in rows)]
-    fig.legend(handles=handles, loc='lower center', bbox_to_anchor=(.5, .012),
-               frameon=False, fontsize=11, ncol=len(handles), columnspacing=2)
-    fig.subplots_adjust(left=.055, right=.985, bottom=.14, top=.93, wspace=.35, hspace=.4)
+    fig.subplots_adjust(left=.055, right=.985, bottom=.09, top=.93, wspace=.35, hspace=.4)
+    assert not fig.legends and not fig.texts
+    assert all(not ax.texts and ax.get_legend() is None for ax in fig.axes)
     for ext in ('png','pdf'):
         fig.savefig(args.output/f'grid_progress.{ext}',dpi=250)
     plt.close(fig)

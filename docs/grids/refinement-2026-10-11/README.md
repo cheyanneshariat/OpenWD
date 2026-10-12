@@ -54,7 +54,7 @@ parameter recovery.
 Black dotted curves show direct OpenWD calculations. Orange dashed curves show
 coarse linear interpolation; blue curves show refined linear interpolation.
 The upper panels show absolute surface flux and the lower panels show fractional
-errors. The display spans 4,250–4,950 Angstrom; reported metrics use the full
+errors. Dotted horizontal lines mark ±3%. The display spans 4,250–4,950 Angstrom; reported metrics use the full
 3,000–10,000 Angstrom interval. These examples show a recovered pass and a
 remaining large error. They are not a random sample of the 32 tests.
 

@@ -14,7 +14,6 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 
 ROOT = Path(__file__).resolve().parent
 PLAN = None
@@ -34,6 +33,11 @@ def digest(path):
 
 
 def save(fig, name):
+    # Titles and axis labels are the only prose drawn on a figure.
+    allowed = [fig._supxlabel, fig._supylabel, fig._suptitle]
+    assert not fig.legends
+    assert all(t in allowed or not t.get_text() for t in fig.texts)
+    assert all(not ax.texts and ax.get_legend() is None for ax in fig.axes)
     for ext in ['png', 'pdf']:
         fig.savefig(OUT / (name + '.' + ext), dpi=250)
     plt.close(fig)
@@ -97,19 +101,9 @@ def knot_map(plan, accepted, report):
         ax.set_yticks(gs)
         ax.tick_params(labelsize=11)
     fig.supxlabel(r'$T_{\rm eff}$ (kK)', fontsize=15, y=.045)
-    fig.supylabel(r'$\log g$', fontsize=15, x=.015)
-    handles = [
-        Line2D([], [], ls='none', marker='o', color=GRAY, label='Original grid'),
-        Line2D([], [], ls='none', marker='s', color=BLUE, label='New grid point'),
-        Line2D([], [], ls='none', marker='D', color='black', label='Reused center'),
-        Line2D([], [], ls='none', marker='^', mfc='none', mec=ORANGE,
-               color=ORANGE, label='Independent test: completed'),
-    ]
-    fig.legend(handles=handles, loc='upper center', bbox_to_anchor=(.5, .965),
-               ncol=2, fontsize=11, columnspacing=1.8, handletextpad=.6)
-    fig.text(.5, .995, '32 new DAB/DBA grid points in eight selected cells',
-             ha='center', va='top', fontsize=15)
-    fig.subplots_adjust(left=.075, right=.985, bottom=.13, top=.81,
+    fig.supylabel(r'$\log g$ (cgs)', fontsize=15, x=.015)
+    fig.suptitle('DAB/DBA refinement', fontsize=15, y=.98)
+    fig.subplots_adjust(left=.075, right=.985, bottom=.10, top=.89,
                         wspace=.34, hspace=.38)
     save(fig, 'new_dab_points')
     fields = ['model_id', 'cell_id', 'teff_K', 'logg', 'log_H_He', 'role', 'numerical_status']
@@ -148,10 +142,7 @@ def paired_errors(report):
         ax.set_title(title, fontsize=14)
         ax.set_xlabel('Before refinement (%)', fontsize=14)
         ax.set_ylabel('After refinement (%)', fontsize=14)
-    axes[0].legend(loc='upper left', fontsize=11)
-    fig.text(.5, .01, '32 independent spectra; 3000–10000 Å. Points below the diagonal have smaller errors.',
-             ha='center', fontsize=11)
-    fig.subplots_adjust(left=.09, right=.98, bottom=.17, top=.90, wspace=.31)
+    fig.subplots_adjust(left=.09, right=.98, bottom=.14, top=.91, wspace=.31)
     save(fig, 'interpolation_gain')
 
 
@@ -208,12 +199,7 @@ def spectrum_examples(report):
                 metric_band_angstrom=[3000, 10000], selection='Illustrative recovered pass and remaining large-error case'))
     axes[0, 0].set_ylabel(r'$F_\lambda$ (erg s$^{-1}$ cm$^{-2}$ Å$^{-1}$)', fontsize=13)
     axes[1, 0].set_ylabel('Flux error (%)', fontsize=14)
-    handles, labels = axes[0, 0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(.5, .99),
-               ncol=3, fontsize=11)
-    fig.text(.5, .018, 'Linear interpolation; absolute surface flux. Dotted residual lines mark ±3%.',
-             ha='center', fontsize=11)
-    fig.subplots_adjust(left=.085, right=.985, bottom=.11, top=.865,
+    fig.subplots_adjust(left=.085, right=.985, bottom=.10, top=.935,
                         hspace=.08, wspace=.26)
     save(fig, 'spectrum_examples')
     (OUT / 'spectrum_examples.json').write_text(json.dumps(examples, indent=2)+'\n')
