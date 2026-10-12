@@ -75,6 +75,24 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   change elsewhere was tiny. The COS Si II 1260 residual fell 16--18%, but
   the lines remain weaker than observed. `kurucz_electron_stark=False`
   restores the previous behaviour, with no Stark broadening for these lines.
+- `si_ii_he_unified_profile=True` (off by default) replaces the Lorentzian
+  neutral-He broadening of the Si II 1260/1264/1265 Å triplet
+  (3s² 3p ²P°–3s² 3d ²D) with a unified binary-collision profile. The bundled
+  table `src/wd_spectra/data/profiles/si_ii_1260_he_unified.npz` (checksum
+  verified) covers 4000–40000 K. It was computed from one-electron
+  model-potential Si⁺–He adiabatic potentials, with dipole-weighted Λ
+  components, straight classical paths, a Maxwell average and the
+  Anderson–Talman autocorrelation. The same method reproduces Allard et al.
+  (2016) Mg II–He widths to 0.3–2% and Hammond's (1975) laboratory Ca II H&K
+  width to 13%. Electron and radiative damping still come from each line's own
+  data, and the Doppler core from its Voigt profile, merged by an envelope as
+  for the Mg II and Ca II He tables. Nothing is fitted to a stellar spectrum.
+  With the stellar parameters, abundances and structures fixed, the COS
+  1258–1269 Å residual falls from 0.221 to 0.153 for GD 40 and from 0.166 to
+  0.104 for G241−6; every other COS window is unchanged. The triplet wings
+  stay weaker than observed. Known approximations: LS potentials (no fine
+  structure), no 3s² 3d–3s 3p² mixing, a constant transition dipole, and
+  independent ab initio Si⁺–He potentials that give a smaller improvement.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and

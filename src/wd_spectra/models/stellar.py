@@ -28,6 +28,7 @@ from ..metals import (
     NIST_ASD_STRONG_ION_FILES,
     atomic_database_with_kurucz_iron_group_positions,
     atomic_database_with_kurucz_electron_stark,
+    atomic_database_with_si_ii_he_unified_profile,
     atomic_database_with_rauch_zn_cu_transitions,
     read_barklem_neutral_hydrogen_broadening,
     read_ca_i_he_profile_table,
@@ -232,6 +233,10 @@ class DZConfig:
     # unchanged.  False restores the previous default, in which such lines
     # have no electron broadening.
     kurucz_electron_stark: bool = True
+    # Unified (non-impact) Si+--He profile for Si II 1260/1264/1265 from
+    # model-potential binary-collision calculations, replacing their
+    # Lorentzian neutral-He broadening.  No stellar fitting; off by default.
+    si_ii_he_unified_profile: bool = False
 
 
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0
@@ -1342,6 +1347,8 @@ def compute_dz(
             )
     if config.kurucz_electron_stark:
         atomic = atomic_database_with_kurucz_electron_stark(atomic)
+    if config.si_ii_he_unified_profile:
+        atomic = atomic_database_with_si_ii_he_unified_profile(atomic)
     photo = read_verner_photoionization_database(
         data.verner_photoionization,
         elements=elements,
@@ -1592,6 +1599,7 @@ def compute_dz(
             "atomic_lines": getattr(atomic, "source", "Stout"),
             "strong_line_atomic_data": config.strong_line_atomic_data,
             "kurucz_electron_stark": config.kurucz_electron_stark,
+            "si_ii_he_unified_profile": config.si_ii_he_unified_profile,
             "maximum_metal_charge": config.maximum_metal_charge,
             "photoionization": (
                 "level-resolved TOPbase for the bundled model-atom ions; "
