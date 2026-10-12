@@ -23,6 +23,10 @@ def wiring(monkeypatch):
         "read_borysow_h2_h2_cia_table",
     ):
         monkeypatch.setattr(daz, name, lambda *args, **kwargs: object())
+    # The stub database passes through the default Kurucz Stark attachment.
+    monkeypatch.setattr(
+        daz, "atomic_database_with_kurucz_electron_stark", lambda database: database
+    )
     monkeypatch.setattr(
         daz, "_allard_lyman_profiles_for_effective_temperature", lambda *a, **k: None
     )

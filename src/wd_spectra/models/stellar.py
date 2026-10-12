@@ -27,6 +27,7 @@ from ..helium_stark import read_helium_stark_table
 from ..metals import (
     NIST_ASD_STRONG_ION_FILES,
     atomic_database_with_kurucz_iron_group_positions,
+    atomic_database_with_kurucz_electron_stark,
     atomic_database_with_rauch_zn_cu_transitions,
     read_barklem_neutral_hydrogen_broadening,
     read_ca_i_he_profile_table,
@@ -224,6 +225,13 @@ class DZConfig:
     # (Q-MHD charged microfields plus neutral-He excluded volume), with the
     # same level survival applied to the line opacity.
     occupation_probability_metal_partitions: bool = True
+    # Kurucz electron-impact Stark constants (log Gamma_e/n_e at 10^4 K) for
+    # Stout E1 lines that have no tabulated Stark width, matched to Kurucz
+    # lines once at build time (bundled table, 900-11000 A).  Measured widths
+    # always take precedence; oscillator strengths and neutral broadening are
+    # unchanged.  False restores the previous default, in which such lines
+    # have no electron broadening.
+    kurucz_electron_stark: bool = True
 
 
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0
@@ -1332,6 +1340,8 @@ def compute_dz(
             atomic = read_nist_asd_strong_atomic_database(
                 nist_paths, atomic, minimum_oscillator_strength=1.0e-4
             )
+    if config.kurucz_electron_stark:
+        atomic = atomic_database_with_kurucz_electron_stark(atomic)
     photo = read_verner_photoionization_database(
         data.verner_photoionization,
         elements=elements,
@@ -1581,6 +1591,7 @@ def compute_dz(
             ),
             "atomic_lines": getattr(atomic, "source", "Stout"),
             "strong_line_atomic_data": config.strong_line_atomic_data,
+            "kurucz_electron_stark": config.kurucz_electron_stark,
             "maximum_metal_charge": config.maximum_metal_charge,
             "photoionization": (
                 "level-resolved TOPbase for the bundled model-atom ions; "
