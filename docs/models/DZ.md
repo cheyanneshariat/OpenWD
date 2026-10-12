@@ -30,7 +30,12 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   (Q-MHD charged microfields and the neutral-He excluded volume), iterated
   with charge neutrality; the line opacity applies the same level survival.
   `occupation_probability_metal_partitions=False` restores the fixed 0.1-eV
-  cutoff.
+  cutoff. Since 2026-10-12 the line-opacity survival counts every ion in the
+  charged microfield, including the host He⁺/He²⁺ ions. Before, it counted
+  the metal ions only, which in GD 61 is 10⁻³–10⁻⁵ of the electron density,
+  so the line opacity applied almost no dissolution and was inconsistent
+  with the partition functions. Spectra change by at most 3% (one pixel in
+  the J0738 control).
 - The Blouin et al. (2018) dense-He shift enters the Saha equation with the
   full partition functions, so it vanishes in the dilute limit. Outside the
   authors' tested 2000--10000 K and 0--1.5 g cm^-3 range the fit is held at

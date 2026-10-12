@@ -45,6 +45,19 @@ APPROVED_SI_KURUCZ = (
     Path(__file__).parent
     / "data/approved_regressions/si_kurucz_2026_10_12/fixed"
 )
+APPROVED_MICROFIELD_HOSTS = (
+    Path(__file__).parent
+    / "data/approved_regressions/microfield_hosts_2026_10_12/fixed"
+)
+
+
+def _legacy_metal_only_microfield_moment(metal_state):
+    """The pre-2026-10-12 moment, which omitted the host ions."""
+    result = np.zeros_like(metal_state.electron_density, dtype=np.float64)
+    for populations in metal_state.ion_number_density.values():
+        for charge in range(1, populations.shape[0]):
+            result += charge**1.5 * populations[charge]
+    return result
 DENSITY_EDGE_CASES = frozenset({"da-4000", "da-5000", "dab-9000"})
 CRII_CASES = frozenset({"dz-pg1225", "dz-j0738"})
 pytestmark = pytest.mark.spectral
@@ -75,7 +88,7 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        approved_directory = APPROVED_SI_KURUCZ
+        approved_directory = APPROVED_MICROFIELD_HOSTS
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -119,6 +132,26 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
+        # Restoring only the previous metal-only microfield moment must recover
+        # the previous (default Kurucz Si II transitions) control; the older
+        # controls below were all captured with that moment.
+        from wd_spectra import metals
+
+        monkeypatch.setattr(
+            metals, "metal_ionic_microfield_perturber_density",
+            _legacy_metal_only_microfield_moment,
+        )
+        with pytest.warns(AtmosphereConvergenceWarning):
+            legacy = compute_dz(
+                config, wave, initial_atmosphere=atmosphere,
+                relax_atmosphere=False,
+            )
+        with np.load(APPROVED_SI_KURUCZ / (case + ".npz")) as control:
+            legacy_flux = control["surface_flux"]
+        np.testing.assert_allclose(
+            legacy.spectrum.surface_flux_lambda, legacy_flux,
+            rtol=2e-6, atol=1e-12 * np.max(legacy_flux),
+        )
         # Disabling only the default Kurucz Si II missing transitions must
         # recover the previous (default unified Si+-He profile) control.
         unified_config = replace(config, si_ii_kurucz_transitions=False)

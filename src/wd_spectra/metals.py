@@ -7929,12 +7929,37 @@ def metal_ionic_microfield_perturber_density(
     singly charged.  The distinction is normally negligible in cool line-
     forming layers, but keeping the actual moment avoids a composition-
     dependent approximation in bulk-metal atmospheres.
+
+    Every ion in the plasma contributes, not only the metals.  In a trace-
+    metal atmosphere the host ions (He+ and He++ in helium, H+ in hydrogen)
+    dominate the microfield.  Host stages in ``host_ion_number_density`` are
+    counted with their charges; any remaining positive charge, ``n_e`` minus
+    the metal and tabulated host electrons (for example trace-hydrogen
+    protons, or H+ in a hydrogen host), is counted as singly charged ions.
+    In a bulk-metal plasma every electron comes from a metal and the moment
+    reduces to the metal sum.
     """
 
-    result = np.zeros_like(metal_state.electron_density, dtype=np.float64)
+    electron_density = np.asarray(metal_state.electron_density, dtype=np.float64)
+    result = np.zeros_like(electron_density)
     for populations in metal_state.ion_number_density.values():
         for charge in range(1, populations.shape[0]):
             result += charge**1.5 * populations[charge]
+    host_electrons = np.zeros_like(electron_density)
+    host = metal_state.host_ion_number_density
+    if host is not None:
+        host = np.asarray(host, dtype=np.float64)
+        if host.ndim == 2 and host.shape[1] == electron_density.size:
+            for charge in range(1, host.shape[0]):
+                result += charge**1.5 * host[charge]
+                host_electrons += charge * host[charge]
+    remaining = (
+        electron_density
+        - np.asarray(metal_state.metal_electron_density, dtype=np.float64)
+        - host_electrons
+    )
+    # Round-off in the charge balance must not create or remove perturbers.
+    result += np.where(remaining > 1.0e-10 * electron_density, remaining, 0.0)
     if np.any(~np.isfinite(result)) or np.any(result < 0.0):
         raise ValueError("ionic populations must give a physical microfield density")
     return result
