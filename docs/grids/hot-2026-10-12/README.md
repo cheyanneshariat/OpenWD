@@ -3,7 +3,8 @@
 Four of eight fresh cold-start models passed the required native atmosphere and
 final-spectrum checks. Two DO and two DAO models reached the six-hour resource
 limit. All eight outcomes, full inputs and raw attempts remain recorded.
-The current selection now contains **3/7 DO and 3/15 DAO spectra**. These runs
+This update brought the selection to **3/7 DO and 3/15 DAO spectra**.
+The [later DO continuation](../do-continuation-2026-10-12/README.md) adds another DO coordinate. These runs
 replace eight previously unattempted rows; they add no new coordinates.
 
 | Family | Teff, K | log g | log10[N(H)/N(He)] | Outcome | Hours |

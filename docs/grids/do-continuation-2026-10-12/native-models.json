@@ -1,0 +1,274 @@
+[
+  {
+    "RSS_cap_bytes": 17179869184,
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 3.0707658638107205e-12
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.3666545474145757e-11
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 8.005280308112839e-08
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.9588035844743646e-15
+          },
+          "surface_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 2.8704816301683422e-12
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 3.856960258643425e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": true,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "metals": false,
+          "nlte_charge_feedback": false
+        },
+        "experimental": true,
+        "reason": "Restricted H/He NLTE with shared thermal Newton solver",
+        "tested_point": false,
+        "workflow": "do"
+      },
+      "spectrum": {
+        "maximum_angstrom": 30000.0,
+        "minimum_angstrom": 900.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 18901,
+        "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+      },
+      "spectrum_audit_scope": "native hot_nlte.transfer_field independent fixed-source formal solution on identical mass volumes; no independent grid refinement",
+      "spectrum_source_verified": true
+    },
+    "case_id": "do-d2fea31316aa6e441a080499",
+    "config": {
+      "effective_temperature": 60000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DO",
+    "group": "slow",
+    "label": "DO T60000",
+    "model_id": "do-0265cd31c856fca517151539",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 8944943104,
+    "raw_status": "COMPLETE_NUMERICAL",
+    "release_ready": false,
+    "returncode": 0,
+    "role": "matched-current-source-control",
+    "scope_tags": [
+      "initial_extra_family",
+      "physical_accuracy_unqualified"
+    ],
+    "seconds": 21600,
+    "selection_policy": {
+      "dense_density_fraction": 0.05,
+      "molecular_electron_fraction": 0.001,
+      "molecular_nuclei_fraction": 0.0001
+    },
+    "source_change_note": "Latest upstream 70bca78; exact original public request retained. Source/data comparison is distinct from added compute time.",
+    "source_commit": "70bca78e82e7b7dd5860ca3e337bd1f83919e09a",
+    "source_data_identity": "ce36372f45b85a7684421c0403727730943acf9141dd2f1cafe8a20fe7855cf3",
+    "source_key": "upstream",
+    "source_unchanged": true,
+    "spectrum_archive_path": "native-attempts/do-0265cd31c856fca517151539/attempt-v1/model/spectrum.txt",
+    "spectrum_path": "do-0265cd31c856fca517151539/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "e0a3aa21a026b2e6906da654e3770836fd4ce26b7a3d5cbe341ca340f0658689",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 5483.495166055,
+    "wavelength": "native-default"
+  },
+  {
+    "RSS_cap_bytes": 17179869184,
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 4.778785145376219e-10
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 6.273037873276597e-08
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.2262566077628062e-06
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 2.748415558840453e-15
+          },
+          "surface_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 4.760472016585027e-10
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 0.00010353845254209005
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": true,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "metals": false,
+          "nlte_charge_feedback": false
+        },
+        "experimental": true,
+        "reason": "Restricted H/He NLTE with shared thermal Newton solver",
+        "tested_point": false,
+        "workflow": "do"
+      },
+      "spectrum": {
+        "maximum_angstrom": 30000.0,
+        "minimum_angstrom": 900.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 18901,
+        "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+      },
+      "spectrum_audit_scope": "native hot_nlte.transfer_field independent fixed-source formal solution on identical mass volumes; no independent grid refinement",
+      "spectrum_source_verified": true
+    },
+    "case_id": "do-04fccd79ea401d9031bc41dd",
+    "config": {
+      "effective_temperature": 70000,
+      "helium_i_profile": "Tremblay26.txt",
+      "helium_ii_interpolation": "series-adaptive",
+      "hydrogenic_collision_model": "tlusty-mihalas",
+      "logg": 8.0,
+      "maximum_helium_ii_level": 32,
+      "population_maximum_iterations": 120,
+      "population_tolerance": 0.0001,
+      "quality": "standard"
+    },
+    "family": "DO",
+    "group": "slow",
+    "label": "DO T70000",
+    "model_id": "do-dd6aee56405451c2040b9e0b",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 8943394816,
+    "raw_status": "COMPLETE_NUMERICAL",
+    "release_ready": false,
+    "returncode": 0,
+    "role": "previously-unattempted-grid-point",
+    "scope_tags": [
+      "initial_extra_family",
+      "physical_accuracy_unqualified"
+    ],
+    "seconds": 21600,
+    "selection_policy": {
+      "dense_density_fraction": 0.05,
+      "molecular_electron_fraction": 0.001,
+      "molecular_nuclei_fraction": 0.0001
+    },
+    "source_change_note": "Latest upstream 70bca78; exact original public request retained. Source/data comparison is distinct from added compute time.",
+    "source_commit": "70bca78e82e7b7dd5860ca3e337bd1f83919e09a",
+    "source_data_identity": "ce36372f45b85a7684421c0403727730943acf9141dd2f1cafe8a20fe7855cf3",
+    "source_key": "upstream",
+    "source_unchanged": true,
+    "spectrum_archive_path": "native-attempts/do-dd6aee56405451c2040b9e0b/attempt-v1/model/spectrum.txt",
+    "spectrum_path": "do-dd6aee56405451c2040b9e0b/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "3943c33bebb9265a0817044094d020f185756b76eaa5613a3c6e650a46ecf519",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 21600,
+    "wall_seconds": 4612.254250755999,
+    "wavelength": "native-default"
+  }
+]

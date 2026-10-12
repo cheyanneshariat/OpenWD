@@ -1,0 +1,464 @@
+{
+  "current_index_sha256": "85a4b51683db97aa1e473c0ab284f5779051ae56f899ecdce6e9ec77409f6142",
+  "current_snapshot_utc": "2026-10-12T08:12:45.680447+00:00",
+  "families": {
+    "DA": {
+      "archive": "OpenWD-DA-initial-20261008.tar.gz",
+      "bytes": 215429900,
+      "current_selected_grid_points": 808,
+      "initial_archive_models": 807,
+      "models": 808,
+      "raw_spectrum_bytes": 762702963
+    },
+    "DAB": {
+      "additional_validation_points_outside_current_grid": 35,
+      "additional_validation_points_outside_original_grid": 11,
+      "archive": "OpenWD-DAB-production-20261009.tar.gz",
+      "bytes": 88273096,
+      "current_selected_grid_points": 637,
+      "initial_archive_models": 326,
+      "models": 637,
+      "one_dex_abundance_planes": [
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_archive_requests": 336,
+      "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks",
+      "release_tag": "grid-preview-2026-10-09-dab",
+      "requests": 656,
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+    },
+    "DAO": {
+      "current_selected_grid_points": 3,
+      "models": 3,
+      "requests": 15
+    },
+    "DAZ": {
+      "archive": "OpenWD-DAZ-initial-20261008.tar.gz",
+      "bytes": 805451,
+      "current_selected_grid_points": 3,
+      "models": 3,
+      "raw_spectrum_bytes": 2835327
+    },
+    "DB": {
+      "archive_spectrum_count_before_validation": 493,
+      "archives": [
+        {
+          "archive": "OpenWD-DB-initial-20261008.tar.gz",
+          "bytes": 129389918,
+          "models": 489,
+          "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+        },
+        {
+          "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
+          "bytes": 426446,
+          "models": 4,
+          "new_parameter_points": 3,
+          "repeated_control_points": 1,
+          "source_commits": [
+            "0a74fdbe06596fc145f5169a3b239ddd67053141",
+            "54e401e20936119d707bb3623e0a13e29373b6e8"
+          ]
+        }
+      ],
+      "current_selected_grid_points": 592,
+      "duplicate_policy": "Do not count the new log g 8 control as another requested parameter point",
+      "models": 592,
+      "new_accepted_original_coordinates": 96,
+      "requests": 638
+    },
+    "DO": {
+      "current_selected_grid_points": 3,
+      "models": 3,
+      "requests": 7,
+      "supplement_spectra": 1
+    },
+    "DQ": {
+      "archive": "OpenWD-DQ-initial-20261008.tar.gz",
+      "bytes": 6516036,
+      "current_selected_grid_points": 2,
+      "models": 2,
+      "raw_spectrum_bytes": 21852118
+    },
+    "DZ": {
+      "archive": "OpenWD-DZ-initial-20261008.tar.gz",
+      "bytes": 78661500,
+      "current_selected_grid_points": 317,
+      "models": 317,
+      "raw_spectrum_bytes": 276916937
+    }
+  },
+  "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
+  "history": "history/2026-10-12-before-hot-batch/dataset.json",
+  "kind": "Selected numerical-development grids with dated native supplements",
+  "native_validation_supplement_contains_saved_structures": true,
+  "original_archives_spectra_only": true,
+  "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
+  "qualified_spectra": 2365,
+  "requests": 2499,
+  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json.",
+  "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
+  "snapshots": {
+    "DAB-1dex-2026-10-10": {
+      "active_jobs": [],
+      "actual_phase_node_hours": 3.8330555555555557,
+      "additional_accepted_coordinates": 261,
+      "additional_requests": 280,
+      "archive": "OpenWD-DAB-intermediate-abundances-20261010.tar.gz",
+      "bytes": 78983977,
+      "files_verified": 1327,
+      "full_grid_interpolation_verified": false,
+      "independent_depth_convergence_verified": false,
+      "is_draft": true,
+      "minus_one_anchor_seconds": 5409.469668604004,
+      "native_spectrum_bytes_preserved": true,
+      "new_calculations_accepted": 257,
+      "numerical_completions": 588,
+      "physical_accuracy_verified": false,
+      "release_tag": "grid-preview-2026-10-10-dab-1dex",
+      "requests": 280,
+      "reused_previous_validation_coordinates": 4,
+      "sha256": "d1f20770306e46bfdf00e1497410781ab86bd0208602e13c2e19751a05a6e73b",
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "spectra": 261,
+      "statuses": {
+        "COMPLETE_NUMERICAL": 588,
+        "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
+        "TIMEOUT": 9,
+        "WORKER_CRASH_SIGSEGV": 2
+      }
+    },
+    "DAB-2026-10-09": {
+      "archive_sha256": "e6c6c1101dac6295fcff7c434555ff59b57b61a1878e47960625d9b793ac0d2d",
+      "requests": 336,
+      "saved_date": "2026-10-09",
+      "scientific_identity": "10a0b9c926b6862d629bc69b78d4387194196b8bcb894de76278c320e267a8da",
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "spectra": 326
+    },
+    "DAB-refinement-2026-10-11": {
+      "NPZ_files_read": 104,
+      "archive": "OpenWD-DAB-refinement-20261011.tar.gz",
+      "archive_bytes": 74216623,
+      "archive_member_hashes_verified": 1101,
+      "archive_sha256": "029ab23abb72320696d974321747ebbeffe4e091af66eb47fb7d5e5da06451f4",
+      "arrays_read": 936,
+      "coarse_corners": 32,
+      "full_grid_interpolation_verified": false,
+      "independent_depth_convergence_verified": false,
+      "independent_targets": 32,
+      "is_draft": true,
+      "method_summary": {
+        "coarse_linear_F_Tg": {
+          "both_targets_pass": 10,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.010716228052745478,
+          "worst_maximum_relative_fraction": 0.2972111324484413
+        },
+        "coarse_log_F_Tg": {
+          "both_targets_pass": 11,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.00946277455057754,
+          "worst_maximum_relative_fraction": 0.19462682453129435
+        },
+        "coarse_log_F_logTg": {
+          "both_targets_pass": 8,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.010600874740192962,
+          "worst_maximum_relative_fraction": 0.16578704418190365
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "both_targets_pass": 11,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.009462774550577528,
+          "worst_maximum_relative_fraction": 0.1946268245312972
+        },
+        "refined_linear_F_Tg": {
+          "both_targets_pass": 22,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.003902489890230315,
+          "worst_maximum_relative_fraction": 0.14327326740987253
+        },
+        "refined_log_F_Tg": {
+          "both_targets_pass": 20,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.005263873714180639,
+          "worst_maximum_relative_fraction": 0.09897325173784827
+        },
+        "refined_log_F_logTg": {
+          "both_targets_pass": 22,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.003824058209895542,
+          "worst_maximum_relative_fraction": 0.0888780482007103
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "both_targets_pass": 22,
+          "measured": 32,
+          "median_integrated_absolute_fraction": 0.0008646997625505186,
+          "worst_maximum_relative_fraction": 0.08063608578971398
+        }
+      },
+      "native_models": 104,
+      "new_calculations": 64,
+      "new_grid_knots": 32,
+      "physical_accuracy_verified": false,
+      "release_tag": "grid-preview-2026-10-11-dab-refinement",
+      "reused_centers": 8,
+      "scope": "Fresh independent targets in eight targeted cells, not whole-grid or physical validation",
+      "selected_mesh_additions": 40,
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "source_data_identity": "2938a3602c7ff1b7753cc8574acf23016c64e3a0fbd5c4d1566aa344b6b597da"
+    },
+    "DB-cold-2026-10-09": {
+      "accepted_npz_arrays_read": 148,
+      "archive": "OpenWD-DB-cold-supplement-20261009.tar.gz",
+      "bytes": 426446,
+      "control_points": 1,
+      "files_verified": 23,
+      "gravities": [
+        7,
+        7.5,
+        7.75,
+        8
+      ],
+      "models": 4,
+      "native_spectrum_bytes_preserved": true,
+      "new_parameter_points": 3,
+      "sha256": "5c434fc64177715f3e168d7620fe70b0ad6359869b3b1f5490c7a770002b5e92",
+      "source_commits": [
+        "0a74fdbe06596fc145f5169a3b239ddd67053141",
+        "54e401e20936119d707bb3623e0a13e29373b6e8"
+      ],
+      "source_hashes_verified": true,
+      "temperature_K": 5000
+    },
+    "DO-DAO-2026-10-12": {
+      "NPZ_files_read": 8,
+      "accepted_spectra": 4,
+      "archive": "OpenWD-DO-DAO-representatives-20261012.tar.gz",
+      "archive_bytes": 1648602,
+      "archive_sha256": "ad231a6cceb6556066ba3a0ea72357789ed9b0c61eb66884989d56b9bf9481f3",
+      "arrays_read": 90,
+      "is_draft": true,
+      "release_tag": "grid-preview-2026-10-12-hot",
+      "scope": "Restricted H/He NLTE; fixed-source formal check on identical mass volumes; no independent depth or full physical validation",
+      "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+      "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+      "terminal_attempts": 8
+    },
+    "native-validation-2026-10-09": {
+      "DAB_additional_validation_points": 15,
+      "DB_new_accepted_original_coordinates": 96,
+      "DB_repeated_control_points": 4,
+      "archive": "OpenWD-grid-validation-20261009.tar.gz",
+      "archive_bytes": 15912007,
+      "archive_sha256": "4d6b73b64503963211e6ad0a1dc659cc93288d5434799fb55dd7d70db2e947cb",
+      "backend_experiments_excluded": 7,
+      "date_Pacific": "2026-10-09",
+      "families": {
+        "DA": {
+          "COMPLETE_NUMERICAL": 1,
+          "NUMERICAL_NONCONVERGENCE": 3,
+          "TIMEOUT": 1
+        },
+        "DAB": {
+          "COMPLETE_NUMERICAL": 16
+        },
+        "DAO": {
+          "TIMEOUT": 1
+        },
+        "DB": {
+          "COMPLETE_NUMERICAL": 100,
+          "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+          "NUMERICAL_GRID_FAILURE": 5,
+          "NUMERICAL_NONCONVERGENCE": 3
+        },
+        "DO": {
+          "COMPLETE_NUMERICAL": 1
+        }
+      },
+      "full_grid_interpolation_verified": false,
+      "independent_depth_convergence_verified": false,
+      "is_draft": true,
+      "kind": "Native numerical-development grid update",
+      "original_DAB_repaired_points": 1,
+      "original_DAB_requests": 336,
+      "physical_accuracy_verified": false,
+      "release_ready": false,
+      "release_tag": "grid-validation-2026-10-09",
+      "requests": 136,
+      "source_commits": {
+        "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+        "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
+      },
+      "source_model_and_array_verification_sha256": "ac4c4661332cedfd2940f3d951080c68b51e8a4d90e09587ea019ff46933beae",
+      "spectra": 118,
+      "spectrum_units": {
+        "flux": "surface F_lambda, erg s^-1 cm^-2 Angstrom^-1",
+        "normalization": "none",
+        "resampling": "none",
+        "wavelength": "vacuum Angstrom"
+      }
+    },
+    "showcase-bank-v6": {
+      "created_utc": "2026-10-08T08:23:25.175441+00:00",
+      "index_sha256": "72c42bb07330a296dadf409b2ba1f1a002dc53e8d8a23000a896a61c6150df19",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+    },
+    "showcase-extra-bank-v2": {
+      "created_utc": "2026-10-08T09:03:27.062904+00:00",
+      "index_sha256": "2ae95223d0cc5d9f3d7f535b5c9fa155853dae0eca6d5f2f175676eac240994a",
+      "scientific_identity": "58faa4377006afb855cb3db77ca0c48382389a321419731c946976e4e1513fd6",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+    },
+    "six-hour-timeout-recovery-2026-10-11": {
+      "NPZ_files_read": 39,
+      "additional_parameter_points": 0,
+      "archive": "OpenWD-timeout-recovery-20261011.tar.gz",
+      "arrays_read": 359,
+      "bytes": 18653145,
+      "checked_utc": "2026-10-11T15:40:53.467719+00:00",
+      "counts": {
+        "COMPLETE_NUMERICAL": 38,
+        "INFRASTRUCTURE_INTERRUPTION": 1,
+        "NUMERICAL_NONCONVERGENCE": 16,
+        "TIMEOUT": 13
+      },
+      "execution_receipt_included": true,
+      "files_verified": 529,
+      "full_grid_interpolation_verified": false,
+      "independent_depth_convergence_verified": false,
+      "is_draft": true,
+      "model_cap_seconds": 21600,
+      "native_spectrum_bytes_preserved": true,
+      "new_accepted_original_coordinates": 38,
+      "numerical_completions": 38,
+      "numerical_spectra": 38,
+      "physical_accuracy_verified": false,
+      "release_ready": false,
+      "release_tag": "grid-preview-2026-10-11-timeout6",
+      "remote_and_local_file_hashes_verified": 659,
+      "requests": 68,
+      "selected_grid_completions": 2321,
+      "selected_grid_requests": 2459,
+      "sha256": "50f223f44a6df8b11a5fd45f3e3f98db995dcbd98a0f3b32a7f17f316520a94b",
+      "source_versions": {
+        "dab-matched": {
+          "identity": "2938a3602c7ff1b7753cc8574acf23016c64e3a0fbd5c4d1566aa344b6b597da",
+          "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+        },
+        "legacy": {
+          "identity": "9310e200ac3d35915fa0da08da2bf651450731ee08af701fc2bd2fc470baaaba",
+          "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+        },
+        "merged": {
+          "identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+          "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66"
+        }
+      },
+      "status_counts_by_family": {
+        "D6": {
+          "TIMEOUT": 1
+        },
+        "DA": {
+          "NUMERICAL_NONCONVERGENCE": 1
+        },
+        "DAB": {
+          "COMPLETE_NUMERICAL": 9
+        },
+        "DAO": {
+          "COMPLETE_NUMERICAL": 1
+        },
+        "DB": {
+          "COMPLETE_NUMERICAL": 4,
+          "NUMERICAL_NONCONVERGENCE": 13,
+          "TIMEOUT": 12
+        },
+        "DZ": {
+          "COMPLETE_NUMERICAL": 24,
+          "INFRASTRUCTURE_INTERRUPTION": 1,
+          "NUMERICAL_NONCONVERGENCE": 2
+        }
+      }
+    }
+  },
+  "source_commits": {
+    "2026-10-08": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+    "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+    "DAB-refinement-2026-10-11": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+    "DB-cold-2026-10-09": [
+      "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "54e401e20936119d707bb3623e0a13e29373b6e8"
+    ],
+    "DO-DAO-2026-10-12": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "native-validation-2026-10-09": {
+      "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
+    },
+    "six-hour-timeout-recovery-2026-10-11": {
+      "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "legacy": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
+    }
+  },
+  "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece",
+  "spectra_only": false,
+  "status_counts_by_family": {
+    "D6": {
+      "TIMEOUT": 1
+    },
+    "DA": {
+      "COMPLETE_NUMERICAL": 808,
+      "NUMERICAL_NONCONVERGENCE": 44
+    },
+    "DAB": {
+      "COMPLETE_NUMERICAL": 637,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
+      "INFRASTRUCTURE_INTERRUPTION": 2
+    },
+    "DAH": {
+      "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2
+    },
+    "DAO": {
+      "COMPLETE_NUMERICAL": 3,
+      "MISSING_UNATTEMPTED": 10,
+      "TIMEOUT": 2
+    },
+    "DAZ": {
+      "COMPLETE_NUMERICAL": 3
+    },
+    "DB": {
+      "COMPLETE_NUMERICAL": 592,
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+      "NUMERICAL_GRID_FAILURE": 5,
+      "NUMERICAL_NONCONVERGENCE": 24,
+      "TIMEOUT": 12
+    },
+    "DO": {
+      "COMPLETE_NUMERICAL": 3,
+      "MISSING_UNATTEMPTED": 2,
+      "TIMEOUT": 2
+    },
+    "DQ": {
+      "COMPLETE_NUMERICAL": 2
+    },
+    "DZ": {
+      "COMPLETE_NUMERICAL": 317,
+      "INFRASTRUCTURE_INTERRUPTION": 1,
+      "NUMERICAL_NONCONVERGENCE": 4
+    },
+    "PG1159": {
+      "NUMERICAL_NONCONVERGENCE": 1
+    }
+  }
+}

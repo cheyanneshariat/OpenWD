@@ -1,6 +1,6 @@
 # Precomputed model grids
 
-The selected grid table contains **2,365 numerical completions from 2,499 requests**.
+The selected grid table contains **2,366 numerical completions from 2,499 requests**.
 DAB/DBA has **637 accepted coordinates from 656 requests**. The latest update
 adds 32 newly calculated knots and eight reused centers in eight selected
 patches. It also adds 32 independent test spectra, which remain outside the
@@ -26,7 +26,7 @@ gravity, so symbols can overlap. Blank regions were not requested.
 | DB | 592 | 638 | October 8 + cold, validation and retry supplements |
 | DZ | 317 | 322 | October 8 + October 11 retries |
 | DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
-| DO | 3 | 7 | Three verified spectra; remaining gaps retained |
+| DO | 4 | 7 | Four verified spectra; remaining gaps retained |
 | DAB/DBA | 637 | 656 | October 9/10 + October 11 retries and refinement |
 | DAZ | 3 | 3 | October 8 |
 | DQ | 2 | 2 | October 8 |
@@ -61,6 +61,9 @@ the releases are published. The original archives remain unchanged.
   show all 68 outcomes, the nine recovered DAB points and all eight measurable
   earlier DAB interpolation tests. Eight of those targets are now predictor inputs
   in the new refinement.
+- [New DO temperature sequence and matched source control](do-continuation-2026-10-12/README.md)
+  add the 70,000 K/log g 8 coordinate under current source; the repeated
+  60,000 K control has an identical native spectrum.
 - [Four new DO/DAO spectra and four six-hour timeouts](hot-2026-10-12/README.md)
   retain native structures, full inputs and source-check scope.
 - [Cold DB and Montreal comparison](db-cold-2026-10-09/README.md) preserve the
@@ -79,7 +82,8 @@ The October 8 grids use `cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5`.
 The production DAB grids and their matching interpolation tests use
 `0a74fdbe06596fc145f5169a3b239ddd67053141`. The earlier cold DB supplement
 preserves its `0a74fdbe` and `54e401e2` records. The new DB, DA and hot pilots
-use merged source `c8329d86c98f956617ec1bb3746181350492ce66`.
+use merged source `c8329d86c98f956617ec1bb3746181350492ce66`. The latest
+DO continuation uses `70bca78e82e7b7dd5860ca3e337bd1f83919e09a`.
 [Dataset records](dataset.json) and the full request tables identify each source.
 Updating OpenWD does not recompute a saved archive.
 
@@ -91,7 +95,8 @@ and acceptance tolerances were unchanged.
 
 DB has 24 nonconvergence cases, five depth-grid errors, five material-domain
 stops and 12 six-hour timeouts. DA has 44 numerical failures. DZ has four
-numerical failures and one SIGSEGV crash. The D6 example still timed out.
+numerical failures and one SIGSEGV crash. The selected D6 example retains its earlier timeout. Its updated-source
+diagnostic now reports numerical completion and awaits final tier verification.
 All nine DAB timeouts passed; its 19 remaining gaps are 17 unsupported
 configurations and two earlier SIGSEGV crashes. The first DAO passed after 261.24 minutes.
 The [latest hot batch](hot-2026-10-12/README.md) adds two DO and two DAO spectra.
@@ -143,3 +148,6 @@ errors and two direct-spectrum examples, and rechecks all 256 saved predictions.
 
 The [hot-spectrum script](plot_hot_spectra.py) checks the eight-attempt archive
 and reproduces the four accepted spectra and the batch outcome figure.
+
+The [DO temperature script](plot_do_temperature.py) reproduces the new
+fixed-gravity sequence from its checked archive.

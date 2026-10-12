@@ -46,8 +46,9 @@ control and a current-upstream run at each coordinate. Each has an eight-hour
 resource cap. [Full requests and resource limits](diagnostic-requests.json) preserve
 the physical inputs, native tolerances and iteration limits. The controls test
 extra wall time; updated source/data is a separate comparison. Required
-fixed-spectrum checks passed for all three source branches; all four attempts
-are running. A failed source check would withhold its dependent requests.
+fixed-spectrum checks passed for all three source branches. The current-source
+D6 worker now reports numerical completion; its final archive verification is
+pending while the other three attempts run. A failed source check would withhold its dependent requests.
 
 Original sources are c8329d86 for DB and cfe2d2ff for D6. Updated source is
 14e2067. The complete source changes include D6 Rosseland-probe reuse and

@@ -13,3 +13,5 @@ updates. Their counts belong to the recorded snapshot. Use the
 - [2026 10 11 before temperature and gravity refinement](2026-10-11-before-temperature-gravity-refinement/README.md)
 
 - [2026 10 12 before hot batch](2026-10-12-before-hot-batch/README.md)
+
+- [2026 10 12 before DO continuation](2026-10-12-before-DO-continuation/README.md)

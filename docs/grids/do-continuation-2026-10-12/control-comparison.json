@@ -1,0 +1,32 @@
+{
+  "case_id": "do-d2fea31316aa6e441a080499",
+  "configuration_matched": true,
+  "old_source": "c8329d86c98f956617ec1bb3746181350492ce66",
+  "new_source": "70bca78e82e7b7dd5860ca3e337bd1f83919e09a",
+  "old_spectrum_sha256": "e0a3aa21a026b2e6906da654e3770836fd4ce26b7a3d5cbe341ca340f0658689",
+  "new_spectrum_sha256": "e0a3aa21a026b2e6906da654e3770836fd4ce26b7a3d5cbe341ca340f0658689",
+  "same_native_wavelengths": true,
+  "flux_normalization": "none",
+  "extrapolation": "none",
+  "optical": {
+    "wavelength_angstrom": [
+      3000,
+      10000
+    ],
+    "maximum_relative_percent": 0.0,
+    "integrated_absolute_percent": 0.0
+  },
+  "full_saved_band": {
+    "wavelength_angstrom": [
+      900.0,
+      30000.0
+    ],
+    "maximum_relative_percent": 0.0,
+    "integrated_absolute_percent": 0.0
+  },
+  "old_wall_minutes": 272.90768646625025,
+  "new_wall_minutes": 91.39158610091665,
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false,
+  "scope": "Source/configuration control at one coordinate; changed runtime/node and full source/data prevent attribution to a single implementation change"
+}

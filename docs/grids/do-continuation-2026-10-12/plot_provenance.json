@@ -1,0 +1,12 @@
+{
+  "archive_sha256": "6690d662d28a85d03cb5275b535712527319505623d1e2e9272de2c77106b956",
+  "temperatures_K": [
+    60000,
+    70000
+  ],
+  "logg": 8,
+  "flux_normalization": "none",
+  "wavelength_resampling": "none",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}
