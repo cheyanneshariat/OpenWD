@@ -177,6 +177,7 @@ def test_public_dz_option_only_changes_synthesis(monkeypatch):
     monkeypatch.setattr(stellar.ModelData, 'require', lambda *args, **kwargs: None)
     monkeypatch.setattr(stellar, 'read_stout_atomic_database', lambda *args, **kwargs: SimpleNamespace(source='test'))
     monkeypatch.setattr(stellar, 'atomic_database_with_kurucz_electron_stark', lambda database: database)
+    monkeypatch.setattr(stellar, 'atomic_database_with_si_ii_he_unified_profile', lambda database: database)
     monkeypatch.setattr(stellar, 'read_verner_photoionization_database', lambda *args, **kwargs: SimpleNamespace(fits={}, source='test'))
     monkeypatch.setattr(stellar, 'read_verner_phfit2_database', lambda *args, **kwargs: {})
     monkeypatch.setattr(stellar, '_polluted_helium_level_resolved_photoionization', lambda *args, **kwargs: None)

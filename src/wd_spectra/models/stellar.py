@@ -235,8 +235,9 @@ class DZConfig:
     kurucz_electron_stark: bool = True
     # Unified (non-impact) Si+--He profile for Si II 1260/1264/1265 from
     # model-potential binary-collision calculations, replacing their
-    # Lorentzian neutral-He broadening.  No stellar fitting; off by default.
-    si_ii_he_unified_profile: bool = False
+    # Lorentzian neutral-He broadening.  No stellar fitting.  False restores
+    # the previous Unsold neutral-He Lorentzian for these lines.
+    si_ii_he_unified_profile: bool = True
 
 
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0

@@ -75,7 +75,8 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   change elsewhere was tiny. The COS Si II 1260 residual fell 16--18%, but
   the lines remain weaker than observed. `kurucz_electron_stark=False`
   restores the previous behaviour, with no Stark broadening for these lines.
-- `si_ii_he_unified_profile=True` (off by default) replaces the Lorentzian
+- `si_ii_he_unified_profile=True` (the default since 2026-10-11; `False` restores
+  the Unsöld Lorentzian) replaces the Lorentzian
   neutral-He broadening of the Si II 1260/1264/1265 Å triplet
   (3s² 3p ²P°–3s² 3d ²D) with a unified binary-collision profile. The bundled
   table `src/wd_spectra/data/profiles/si_ii_1260_he_unified.npz` (checksum
@@ -89,7 +90,10 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   for the Mg II and Ca II He tables. Nothing is fitted to a stellar spectrum.
   With the stellar parameters, abundances and structures fixed, the COS
   1258–1269 Å residual falls from 0.221 to 0.153 for GD 40 and from 0.166 to
-  0.104 for G241−6; every other COS window is unchanged. The triplet wings
+  0.104 for G241−6, and in three further DBZs computed from cold starts at
+  their published parameters from 0.095 to 0.082 (GD 61), 0.069 to 0.056
+  (GD 378) and 0.066 to 0.056 (WD 1425+540); every other COS window is
+  unchanged. The triplet wings
   stay weaker than observed. Known approximations: LS potentials (no fine
   structure), no 3s² 3d–3s 3p² mixing, a constant transition dipole, and
   independent ab initio Si⁺–He potentials that give a smaller improvement.

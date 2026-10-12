@@ -37,6 +37,10 @@ APPROVED_KURUCZ_STARK = (
     Path(__file__).parent
     / "data/approved_regressions/kurucz_stark_2026_10_11/fixed"
 )
+APPROVED_SI_HE_UNIFIED = (
+    Path(__file__).parent
+    / "data/approved_regressions/si_he_unified_2026_10_11/fixed"
+)
 DENSITY_EDGE_CASES = frozenset({"da-4000", "da-5000", "dab-9000"})
 CRII_CASES = frozenset({"dz-pg1225", "dz-j0738"})
 pytestmark = pytest.mark.spectral
@@ -67,7 +71,7 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        approved_directory = APPROVED_KURUCZ_STARK
+        approved_directory = APPROVED_SI_HE_UNIFIED
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -111,9 +115,23 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
-        # Disabling only the default Kurucz electron Stark constants must
-        # recover the previous (default Cr II) control.
-        previous_config = replace(config, kurucz_electron_stark=False)
+        # Disabling only the default unified Si+-He profile must recover the
+        # previous (default Kurucz electron Stark) control.
+        stark_config = replace(config, si_ii_he_unified_profile=False)
+        with pytest.warns(AtmosphereConvergenceWarning):
+            stark = compute_dz(
+                stark_config, wave, initial_atmosphere=atmosphere,
+                relax_atmosphere=False,
+            )
+        with np.load(APPROVED_KURUCZ_STARK / (case + ".npz")) as control:
+            stark_flux = control["surface_flux"]
+        np.testing.assert_allclose(
+            stark.spectrum.surface_flux_lambda, stark_flux,
+            rtol=2e-6, atol=1e-12 * np.max(stark_flux),
+        )
+        # Disabling the Kurucz electron Stark constants as well must recover
+        # the default Cr II control.
+        previous_config = replace(stark_config, kurucz_electron_stark=False)
         with pytest.warns(AtmosphereConvergenceWarning):
             previous = compute_dz(
                 previous_config, wave, initial_atmosphere=atmosphere,

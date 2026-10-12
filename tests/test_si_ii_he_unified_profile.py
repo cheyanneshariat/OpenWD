@@ -1,6 +1,8 @@
 import numpy as np
 import pytest
 
+from wd_spectra._compat import trapezoid
+
 from wd_spectra.metals import (
     atomic_database_with_kurucz_electron_stark,
     atomic_database_with_si_ii_he_unified_profile,
@@ -26,7 +28,7 @@ def test_profile_is_normalized_and_positive(temperature, density):
     gamma = 1.0e11
     profile = table.profile(detuning, np.array([temperature]), np.array([density]), np.array([gamma]))[:, 0]
     assert np.all(profile >= 0.0)
-    area = np.trapz(profile, 2 * np.pi * C * detuning) if hasattr(np, "trapz") else np.trapezoid(profile, 2 * np.pi * C * detuning)
+    area = trapezoid(profile, 2 * np.pi * C * detuning)
     assert area == pytest.approx(1.0, abs=0.01)
 
 
@@ -40,5 +42,5 @@ def test_only_the_3p_3d_triplet_is_attached(databases):
     assert unified.ions["Si", 2] is base.ions["Si", 2]
 
 
-def test_option_defaults_off():
-    assert DZConfig().si_ii_he_unified_profile is False
+def test_option_defaults_on():
+    assert DZConfig().si_ii_he_unified_profile is True
