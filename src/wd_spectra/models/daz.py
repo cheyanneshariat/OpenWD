@@ -86,7 +86,7 @@ class DAZConfig:
     formal_minimum_metal_oscillator_strength: float = 1.0e-4
     synthesis_transfer_depth_refinement: int = 4
     ca_ii_resonance_source: Literal["chianti-reduced", "lte"] = "chianti-reduced"
-    metal_neutral_h_broadening: Literal["barklem", "unsold"] = "unsold"
+    metal_neutral_h_broadening: Literal["barklem", "unsold"] = "barklem"
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
     # Kurucz electron-impact Stark constants for Stout E1 lines without a
     # tabulated Stark width, as DZConfig.kurucz_electron_stark.  False
