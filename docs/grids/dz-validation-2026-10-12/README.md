@@ -17,8 +17,8 @@ No stellar parameters or flux normalization were fitted.
 ## Compare spectra before solving new structures
 
 We first synthesized each saved original structure under `70bca78` and `1386029`.
-Temperature, pressure, mass density, electron density, column mass and optical
-depth restored within the recorded tolerance. Both sources used the same
+Each source restored temperature, pressure, mass density, electron density,
+column mass and optical depth within the recorded tolerance. Both used the same
 14,376 vacuum-wavelength points: the earlier output grid plus a common
 0.05 Å sampling of 1,150–1,500 Å. Thus no wavelength interpolation separates the
 old and new OpenWD curves. The fixed spectra passed independent source checks;
@@ -48,11 +48,11 @@ continuum fitting or extrapolation was used. The cool UV maximum occurs near
 5.522% at a sampled line feature, despite its small integrated difference.
 These are changes between models, not accuracy estimates against observations.
 
-The verified changes justified the two bounded cold starts. Each retained its
-original supported composition, used no saved atmosphere as an initial state,
-and required native convergence. The cool model passed all-depth flux,
-local energy, stationarity, source closure and lower-boundary checks. The warm
-model passed the same checks. Final-spectrum independent source errors were
+We then solved two new atmospheres from public cold starts. Each retained its
+original supported composition and required native convergence. Neither used a
+saved atmosphere as its initial state. Both models passed all-depth flux,
+local energy, stationarity, source closure and lower-boundary checks.
+Final-spectrum independent source errors were
 6.41 × 10⁻¹⁶ and 8.62 × 10⁻¹⁶. No native tolerance or iteration limit was weakened.
 
 ## Compare with the collaborator spectra
@@ -84,6 +84,7 @@ origin is not established and they remain in the reported denominator.
 | 21,939 K, optical | 1.6559% | 1.6559% | 1.6555% |
 
 UV uses 35 bins over 1,150–1,500 Å; optical uses 600 bins over 3,000–9,000 Å.
+RMS is the root-mean-square fractional difference from the reference flux.
 Each RMS gives equal weight to the retained 10 Å bins. The cool UV disagreement
 remains very large. At fixed structure, the new opacity slightly worsens that
 binned reference comparison. The updated cold structure improves it modestly,
@@ -111,7 +112,7 @@ environment only after exact C/header/setup equality checks. Both upstream DZ
 frozen-spectrum tests then passed at unchanged tolerances, including the chained
 historical controls. Eleven silicon and host-ion component tests also passed.
 The matched fixed-structure tier was repeated under this checked runtime before
-cold dispatch. Source, data, original inputs and frozen adapters remained unchanged.
+cold starts. Source, data, original inputs and frozen adapters remained unchanged.
 The source snapshot lacks Git metadata, so the Git-dependent validation wrapper
 could not run; the exact two public pytest cases it selects were run directly.
 
@@ -119,7 +120,7 @@ could not run; the exact two public pytest cases it selects were run directly.
 · [Preflight log](PREFLIGHT_PASSED.log) · [Component log](COMPONENT_TESTS.log)
 
 Cold-start partition warnings were preserved. Both final models passed their
-required native gates; warnings alone do not establish a physical defect or
+required native checks; warnings alone do not establish a physical defect or
 explain the earlier DZ crash.
 
 ## Qualification, budget and remaining limits

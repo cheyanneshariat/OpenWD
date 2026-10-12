@@ -1,10 +1,16 @@
 # Precomputed model grids
 
-The selected grid table contains **2,368 numerical completions from 2,499 requests**.
-DAB/DBA has **637 accepted coordinates from 656 requests**. The latest update
-adds 32 newly calculated knots and eight reused centers in eight selected
-patches. It also adds 32 independent test spectra, which remain outside the
-predictor mesh. Together with three earlier validation coordinates, there are
+OpenWD calculates an atmosphere and spectrum for a chosen temperature, gravity
+and composition. These saved grids let users reuse those calculations. The
+selected grid table contains **2,368 numerical completions from 2,499 requests**.
+Each completion passed the atmosphere and spectrum checks recorded for its
+source version. Numerical completion alone does not establish physical accuracy
+or accurate interpolation between grid points.
+
+DAB/DBA has **637 accepted coordinates from 656 requests**. The October 11
+refinement adds 32 newly calculated knots and eight reused centers in eight
+selected patches. Its 32 independent test spectra remain outside the predictor
+mesh. Together with three earlier validation coordinates, there are
 35 separate DAB test coordinates. Earlier settings, attempts and archives remain
 unchanged.
 
@@ -15,8 +21,8 @@ the recorded checks. Red crosses failed a numerical check or encountered an
 invalid numerical depth grid. Grey squares reached a time limit. Grey triangles
 could not run their requested configuration. Grey circles were not started in the saved selection. Dark grey crosses mark worker crashes.
 The [four-DO/four-DAO batch](hot-2026-10-12/README.md) finished with four numerical
-completions and four six-hour timeouts. Its verified outcomes now replace the
-eight previously unattempted rows shown here.
+completions and four six-hour timeouts. The figure includes those outcomes in
+place of the eight previously unattempted rows.
 Timeouts remain unfinished. Different compositions can share temperature and
 gravity, so symbols can overlap. Blank regions were not requested.
 
@@ -169,3 +175,7 @@ spectra from their checked archive.
 
 The [DO temperature script](plot_do_temperature.py) reproduces the new
 fixed-gravity sequence from its checked archive.
+
+[The updated DZ rerun](dz-rerun-2026-10-12/README.md) is queued for an eight-model
+pilot. The remaining 314 requests await verified pilot results and resource
+measurements. The selected DZ counts above are unchanged.

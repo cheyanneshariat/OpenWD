@@ -104,8 +104,9 @@ metrics from all 256 saved predictions, and writes three PNG/PDF figures.
 The archive contains the frozen numerical adapters and full source/data locks
 for reproducing the atmosphere calculations separately.
 
-This is the completed DAB stage. The separate four-DO/four-DAO batch is still
-running and contributes no new accepted spectra here. DZ expansion remains
-paused for matched external validation. The cold DB/Montreal discrepancy remains
+This page records the completed DAB stage. The separate
+[four-DO/four-DAO batch](../hot-2026-10-12/README.md) finished with four numerical
+completions and four six-hour timeouts. Those models are separate from the DAB
+results here. The cold DB/Montreal discrepancy remains
 unresolved. Use the [current grid page](../README.md) for the full selection and
 [dated history](../history/README.md) for the earlier counts.
