@@ -4,7 +4,9 @@ The updated-source D6 model passed its required native atmosphere and independen
 final-spectrum checks in **4.388 hours**. Both DB models and the original-source
 D6 control reached their eight-hour limits. These are four attempts at two
 existing coordinates. The accepted D6 replaces its earlier selected timeout;
-the mesh now has **2,367 numerical completions from 2,499 requests**.
+this diagnostic brought the mesh to **2,367 numerical completions from 2,499 requests**.
+The [final DO/DAO extension](../hot-extension-2026-10-12/README.md) subsequently
+brings the current selection to 2,368/2,499.
 
 | Request | Source | Outcome | Wall time, h | Last logged local energy |
 |---|---|---|---:|---:|

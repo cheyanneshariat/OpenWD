@@ -1,0 +1,32 @@
+{
+  "case_id": "dao-7d35de84ec90fab1f563d557",
+  "configuration_matched": true,
+  "extrapolation": "none",
+  "flux_normalization": "none",
+  "full_saved_band": {
+    "integrated_absolute_percent": 0.0,
+    "maximum_relative_percent": 0.0,
+    "wavelength_angstrom": [
+      900,
+      30000
+    ]
+  },
+  "independent_depth_convergence_verified": false,
+  "new_source": "70bca78e82e7b7dd5860ca3e337bd1f83919e09a",
+  "new_spectrum_sha256": "5f1f99dbc46e47d4746e01c4ab680e0f9a6a1f4e899d570b80d32e29026446a3",
+  "new_wall_minutes": 253.12520699336673,
+  "old_source": "c8329d86c98f956617ec1bb3746181350492ce66",
+  "old_spectrum_sha256": "5f1f99dbc46e47d4746e01c4ab680e0f9a6a1f4e899d570b80d32e29026446a3",
+  "old_wall_minutes": 290.1408653662666,
+  "optical": {
+    "integrated_absolute_percent": 0.0,
+    "maximum_relative_percent": 0.0,
+    "wavelength_angstrom": [
+      3000,
+      10000
+    ]
+  },
+  "physical_accuracy_verified": false,
+  "same_native_wavelengths": true,
+  "scope": "Matched source/configuration check at one coordinate; source/node/worker packing differences prevent attribution of runtime change to a single fix"
+}

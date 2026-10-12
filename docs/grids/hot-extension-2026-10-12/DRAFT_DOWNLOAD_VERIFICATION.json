@@ -1,0 +1,10 @@
+{
+  "NPZ_files_read": 4,
+  "archive_bytes": 1114248,
+  "arrays_read": 45,
+  "cold_native_requests_verified": true,
+  "downloaded_archive_sha256": "478046d8139536a3cbbc56b732c268a1b1992e4dec1911bbb8f4e4753526c312",
+  "is_draft": true,
+  "member_hashes_verified": 43,
+  "native_spectra_read": 2
+}

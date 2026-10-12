@@ -1,0 +1,16 @@
+{
+  "ARCHIVE_VERIFICATION.json": "6518087d386d7818c82dbd5f67a98adf8d20962792128a3ade62644596f6e738",
+  "DRAFT_DOWNLOAD_VERIFICATION.json": "6cf2756b601916f1fa89fcacb0fcaa8ab05ac6e66df2c9a17467ceee537976aa",
+  "README.md": "a8954f6594e40a75cc00a9c05c452e3598dad10d87ede39c8eb8fd5bd51e5129",
+  "SHA256SUMS": "04768e7a1ef815f7487002d68b7ab13e4853c632b02808f9c8a00d313843c4c9",
+  "allocation-records.txt": "d75d81e3874828e2bb1df9c86f0a75f8b56b5f5cdb7901b75999f492eb79bd11",
+  "billing-configuration.txt": "8accf6966377a08166a3422783723b19a57eabf9377163af16c5b88e540b1df5",
+  "control-comparison.json": "54405af77980ba4fea95af3db9ece12be70d91152483e3e4765e743890e4f01f",
+  "hot_extension.pdf": "71b354e4cbc0292cbea65f889da1f3840bd67bb5849e8d013a420823708287e6",
+  "hot_extension.png": "1495700fbdb57600c67ee06097fa5843f6fa91fde520f72b8563447b50cfd040",
+  "native-models.json": "7da2c09d5e051b324f0989e5d3adf791e91e49a5da5d05c77cb1dce90196f629",
+  "phase-accounting.csv": "a48a1c9f0c21d0e7aac84635182911bbd96f89ec915e86a9a41a66afb4220f6e",
+  "phase-accounting.json": "23ffba4af6b719c7b2ce30be997a71aca4a214bba87c9f2a8cefef6e8352d419",
+  "plan.json": "4af41618f517069cf1e7a35c85f8830705c97c6de2142577566e3d119be8870b",
+  "requests.csv": "a6075090f46a4cc9c87b231f2b702a22a8fd068606d51413a3f6ae9c3525feb8"
+}

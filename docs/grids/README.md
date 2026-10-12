@@ -1,6 +1,6 @@
 # Precomputed model grids
 
-The selected grid table contains **2,367 numerical completions from 2,499 requests**.
+The selected grid table contains **2,368 numerical completions from 2,499 requests**.
 DAB/DBA has **637 accepted coordinates from 656 requests**. The latest update
 adds 32 newly calculated knots and eight reused centers in eight selected
 patches. It also adds 32 independent test spectra, which remain outside the
@@ -26,17 +26,24 @@ gravity, so symbols can overlap. Blank regions were not requested.
 | DB | 592 | 638 | October 8 + cold, validation and retry supplements |
 | DZ | 317 | 322 | October 8 + October 11 retries |
 | DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
-| DO | 4 | 7 | Four verified spectra; remaining gaps retained |
+| DO | 5 | 7 | Five verified spectra; two timeouts retained |
 | DAB/DBA | 637 | 656 | October 9/10 + October 11 retries and refinement |
 | DAZ | 3 | 3 | October 8 |
 | DQ | 2 | 2 | October 8 |
 
 The eight-family figure covers 2,495 requests. The full table retains 2,499,
 including four D6, DAH and PG1159 cases omitted from the figure. D6 now has
-one accepted coordinate from one request; the eight plotted families are unchanged. The production
+one accepted coordinate from one request. The production
 DAB bank replaces the five earlier standard-quality DAB examples in these counts.
 Four repeated DB comparison models are counted once at their original coordinates.
 All previous selections remain in [dated snapshots](history/README.md).
+
+The [final DO/DAO tier and phase overview](hot-extension-2026-10-12/README.md)
+add the 60,000 K/log g 9 DO coordinate and a byte-identical DAO source check.
+All five phase allocations are settled, with **7.0207 charged CPU node-hours**.
+The phase produced 73 numerical completions and seven timeouts from 80 fresh
+attempts. Repeated coordinates and independent test spectra are counted separately
+from the selected mesh.
 
 ## Downloads and spectrum examples
 
@@ -86,7 +93,7 @@ The production DAB grids and their matching interpolation tests use
 `0a74fdbe06596fc145f5169a3b239ddd67053141`. The earlier cold DB supplement
 preserves its `0a74fdbe` and `54e401e2` records. The new DB, DA and hot pilots
 use merged source `c8329d86c98f956617ec1bb3746181350492ce66`. The latest
-DO continuation uses `70bca78e82e7b7dd5860ca3e337bd1f83919e09a`.
+DO continuation and DO/DAO extension use `70bca78e82e7b7dd5860ca3e337bd1f83919e09a`.
 The D6 diagnostic uses `14e206729d06f0989e03a0d2f1744a9cc518a136`.
 [Dataset records](dataset.json) and the full request tables identify each source.
 Updating OpenWD does not recompute a saved archive.
@@ -153,6 +160,9 @@ errors and two direct-spectrum examples, and rechecks all 256 saved predictions.
 
 The [hot-spectrum script](plot_hot_spectra.py) checks the eight-attempt archive
 and reproduces the four accepted spectra and the batch outcome figure.
+
+The [final hot-spectrum script](plot_hot_extension.py) reproduces the two final
+spectra from their checked archive.
 
 The [DO temperature script](plot_do_temperature.py) reproduces the new
 fixed-gravity sequence from its checked archive.

@@ -2,7 +2,8 @@
 
 The new **70,000 K/log g 8** DO model passed the required native checks in
 76.87 minutes. A fresh **60,000 K/log g 8** control passed in 91.39 minutes.
-The current mesh now has **four accepted DO coordinates from seven requests**.
+This tier brought the mesh to **four accepted DO coordinates from seven requests**.
+The [final extension](../hot-extension-2026-10-12/README.md) now brings DO to five of seven.
 The control repeats an existing coordinate and does not enlarge the grid.
 
 ![DO spectra at fixed gravity](do_temperature.png)
@@ -54,5 +55,5 @@ python docs/grids/plot_do_temperature.py \
 it performs no atmosphere calculation.
 
 The earlier DO 90,000/120,000 K six-hour timeouts remain unfinished.
-The remaining unattempted DO coordinate is 60,000 K/log g 9.
+The 60,000 K/log g 9 coordinate subsequently passed in the final extension.
 [Earlier hot outcomes](../hot-2026-10-12/README.md) · [Current grids](../README.md)
