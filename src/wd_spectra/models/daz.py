@@ -21,6 +21,7 @@ from ..metals import (
     read_verner_photoionization_database,
 )
 from ..molecules import read_borysow_h2_h2_cia_table
+from ..h2_lines import read_h2_lyman_werner_data
 from ..spectrum import synthesize_hydrogen_spectrum
 from .common import (
     ModelData,
@@ -67,6 +68,10 @@ class DAZConfig:
     lyman_profile_source: Literal["allard", "stark"] = "allard"
     allard_minimum_effective_temperature: float = 9_000.0
     include_molecules: bool | None = None
+    # Photospheric H2 Lyman/Werner lines with fluorescent source functions
+    # (h2_lines; Xu et al. 2013 detect them below ~14,000 K).  When enabled,
+    # molecules are kept in the EOS at any temperature.  Final spectrum only.
+    h2_lyman_werner_lines: bool = False
     h3plus_partition_model: Literal["neale-tennyson-1995", "none"] = (
         "neale-tennyson-1995"
     )
@@ -211,10 +216,12 @@ def compute_daz(
             minimum_effective_temperature=config.allard_minimum_effective_temperature,
         )
     molecules = (
-        config.effective_temperature <= 12_000.0
+        (config.effective_temperature <= 12_000.0 or config.h2_lyman_werner_lines)
         if config.include_molecules is None
         else config.include_molecules
     )
+    if config.h2_lyman_werner_lines and not molecules:
+        raise ValueError("h2_lyman_werner_lines requires include_molecules")
     cia = None
     if molecules:
         data.require(data.h2_h2_cia)
@@ -272,6 +279,9 @@ def compute_daz(
     spectrum = synthesize_hydrogen_spectrum(
         atmosphere,
         wave,
+        h2_line_data=(
+            read_h2_lyman_werner_data() if config.h2_lyman_werner_lines else None
+        ),
         include_molecular_absorption=molecules,
         include_dense_helium_metal_ionization=False,
         minimum_metal_oscillator_strength=config.formal_minimum_metal_oscillator_strength,
@@ -294,6 +304,7 @@ def compute_daz(
             atomic_lines=getattr(atomic, "source", "Stout"),
             strong_line_atomic_data=config.strong_line_atomic_data,
             kurucz_electron_stark=config.kurucz_electron_stark,
+            h2_lyman_werner_lines=config.h2_lyman_werner_lines,
             si_ii_kurucz_transitions=config.si_ii_kurucz_transitions,
             metal_neutral_hydrogen_broadening=config.metal_neutral_h_broadening,
             maximum_metal_charge=config.maximum_metal_charge,

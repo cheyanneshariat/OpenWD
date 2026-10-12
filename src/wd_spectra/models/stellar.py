@@ -46,6 +46,7 @@ from ..quasimolecular import (
     read_allard_temperature_dependent_tables,
     read_allard_tlusty205_tables,
 )
+from ..h2_lines import read_h2_lyman_werner_data
 from ..spectrum import (
     synthesize_helium_spectrum,
     synthesize_hydrogen_helium_spectrum,
@@ -76,6 +77,10 @@ class DAConfig:
     lyman_profile_source: Literal["allard", "stark"] = "allard"
     allard_minimum_effective_temperature: float = 9_000.0
     include_molecules: bool | None = None
+    # Photospheric H2 Lyman/Werner lines with fluorescent source functions
+    # (h2_lines; Xu et al. 2013 detect them below ~14,000 K).  When enabled,
+    # molecules are kept in the EOS at any temperature.  Final spectrum only.
+    h2_lyman_werner_lines: bool = False
     h3plus_partition_model: Literal[
         "neale-tennyson-1995", "none"
     ] = "neale-tennyson-1995"
@@ -417,10 +422,12 @@ def compute_da(
     elif config.lyman_profile_source != "stark":
         raise ValueError("lyman_profile_source must be 'allard' or 'stark'")
     molecules = (
-        config.effective_temperature <= 12_000.0
+        (config.effective_temperature <= 12_000.0 or config.h2_lyman_werner_lines)
         if config.include_molecules is None
         else config.include_molecules
     )
+    if config.h2_lyman_werner_lines and not molecules:
+        raise ValueError("h2_lyman_werner_lines requires include_molecules")
     self_broadening_prescription = _da_self_broadening_prescription(
         config.effective_temperature, config.balmer_self_broadening_prescription
     )
@@ -620,6 +627,9 @@ def compute_da(
     spectrum = synthesize_hydrogen_spectrum(
         atmosphere,
         wave,
+        h2_line_data=(
+            read_h2_lyman_werner_data() if config.h2_lyman_werner_lines else None
+        ),
         include_molecular_absorption=molecules,
         h2_h2_cia_table=cia,
         include_series_pseudocontinuum=True,
@@ -678,6 +688,7 @@ def compute_da(
                 )
             ),
             "allard_profiles_active": allard is not None,
+            "h2_lyman_werner_lines": config.h2_lyman_werner_lines,
             "allard_profile_policy": (
                 "fixed TLUSTY205 Lyalpha below 13000 K; temperature-dependent "
                 "Allard Lyalpha--Lygamma at and above 13000 K"

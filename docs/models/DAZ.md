@@ -147,3 +147,12 @@ of the 2026-09-30 audit (exact frequency Voigt profiles, `1/Z^2` Unsold
 radii, structure line identity) also apply to DAZ models; see the
 [DZ guide](DZ.md). A low-temperature pure-DA validation does not establish
 the same validity range for arbitrary metal abundances.
+
+## H2 Lyman and Werner lines (opt-in)
+
+`DAZConfig(h2_lyman_werner_lines=True)` adds photospheric H2 Lyman and
+Werner lines with fluorescent source functions to the final spectrum. The
+physics and data are the same as for DA; see the [DA guide](DA.md). In the
+COS G130M spectra of GD 133 and G29-38, at fixed published parameters, it
+lowers chi^2 (1153-1437 Å) from 2.37 to 1.47 and from 3.26 to 2.71. The fitted
+line-strength scale `k` is 1.14 and 0.78. The option is off by default.
