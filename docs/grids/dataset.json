@@ -1,6 +1,6 @@
 {
-  "current_index_sha256": "9772c05a3c64e421d4b75acf4ee87824085c9ed6f0690e887329206e16e25fc8",
-  "current_snapshot_utc": "2026-10-12T12:19:56.126124+00:00",
+  "current_index_sha256": "7bc2c699b3f459d65b7acd174258992a89ae3374e14ad72dedf6abd34da11ef6",
+  "current_snapshot_utc": "2026-10-12T15:55:08.595775+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
@@ -98,12 +98,12 @@
     }
   },
   "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
-  "history": "history/2026-10-12-before-DO-continuation/dataset.json",
+  "history": "history/2026-10-12-before-D6-diagnostic/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2366,
+  "qualified_spectra": 2367,
   "requests": 2499,
   "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json.",
   "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
@@ -217,6 +217,27 @@
       "selected_mesh_additions": 40,
       "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "source_data_identity": "2938a3602c7ff1b7753cc8574acf23016c64e3a0fbd5c4d1566aa344b6b597da"
+    },
+    "DB-D6-diagnostics-2026-10-12": {
+      "NPZ_files_read": 1,
+      "archive": "OpenWD-DB-D6-diagnostics-20261012.tar.gz",
+      "archive_bytes": 1660945,
+      "archive_sha256": "450fca877c095b437206b1ed39dbce8d91a1288c56b11f2dc9cacd1f6e342fbe",
+      "arrays_read": 9,
+      "cases": 4,
+      "counts": {
+        "COMPLETE_NUMERICAL": 1,
+        "TIMEOUT": 3
+      },
+      "is_draft": true,
+      "native_spectra_read": 1,
+      "release_tag": "grid-preview-2026-10-12-diagnostics",
+      "scope": "Native atmosphere and independent final spectrum checks; no independent depth or physical validation",
+      "source_commits": {
+        "legacy": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+        "merged": "c8329d86c98f956617ec1bb3746181350492ce66",
+        "upstream": "14e206729d06f0989e03a0d2f1744a9cc518a136"
+      }
     },
     "DB-cold-2026-10-09": {
       "accepted_npz_arrays_read": 148,
@@ -409,6 +430,7 @@
   },
   "source_commits": {
     "2026-10-08": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+    "D6-diagnostic-2026-10-12": "14e206729d06f0989e03a0d2f1744a9cc518a136",
     "DAB-2026-10-09": "0a74fdbe06596fc145f5169a3b239ddd67053141",
     "DAB-refinement-2026-10-11": "0a74fdbe06596fc145f5169a3b239ddd67053141",
     "DB-cold-2026-10-09": [
@@ -431,7 +453,7 @@
   "spectra_only": false,
   "status_counts_by_family": {
     "D6": {
-      "TIMEOUT": 1
+      "COMPLETE_NUMERICAL": 1
     },
     "DA": {
       "COMPLETE_NUMERICAL": 808,

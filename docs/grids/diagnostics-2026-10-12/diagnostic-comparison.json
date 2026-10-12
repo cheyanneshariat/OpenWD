@@ -1,0 +1,142 @@
+{
+  "attempts": [
+    {
+      "family": "DB",
+      "final_certificate_available": false,
+      "last_hour_first": {
+        "correction": 8.456565170433805e-05,
+        "elapsed_seconds": 25321.005576850002,
+        "flux": 0.0001448915644206572,
+        "iteration": 709,
+        "local_energy": 0.3153357914265052,
+        "phase": "local-energy-completion"
+      },
+      "last_hour_last": {
+        "correction": 0.009621691927314657,
+        "elapsed_seconds": 28767.636048448003,
+        "flux": 0.00013808342257481954,
+        "iteration": 773,
+        "local_energy": 0.311298664824361,
+        "phase": "local-energy-completion"
+      },
+      "last_hour_sample_count": 62,
+      "last_log_sample": {
+        "correction": 0.009621691927314657,
+        "elapsed_seconds": 28767.636048448003,
+        "flux": 0.00013808342257481954,
+        "iteration": 773,
+        "local_energy": 0.311298664824361,
+        "phase": "local-energy-completion"
+      },
+      "model_id": "db-d4ffbde2fbde9514f6687bb0",
+      "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+      "status": "TIMEOUT",
+      "wall_seconds": 28803.784871186
+    },
+    {
+      "family": "DB",
+      "final_certificate_available": false,
+      "last_hour_first": {
+        "correction": 0.01443253789097021,
+        "elapsed_seconds": 25194.780796787003,
+        "flux": 0.00014567231825324267,
+        "iteration": 716,
+        "local_energy": 0.26526309399273584,
+        "phase": "local-energy-completion"
+      },
+      "last_hour_last": {
+        "correction": 0.015204648971558044,
+        "elapsed_seconds": 28760.084461657003,
+        "flux": 8.120855920068504e-05,
+        "iteration": 778,
+        "local_energy": 0.3692078259053004,
+        "phase": "local-energy-completion"
+      },
+      "last_hour_sample_count": 57,
+      "last_log_sample": {
+        "correction": 0.015204648971558044,
+        "elapsed_seconds": 28760.084461657003,
+        "flux": 8.120855920068504e-05,
+        "iteration": 778,
+        "local_energy": 0.3692078259053004,
+        "phase": "local-energy-completion"
+      },
+      "model_id": "db-843d958715297021153fc48c",
+      "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136",
+      "status": "TIMEOUT",
+      "wall_seconds": 28803.783550248
+    },
+    {
+      "family": "D6",
+      "final_certificate_available": false,
+      "last_hour_first": {
+        "correction": 0.03999999999999915,
+        "elapsed_seconds": 25581.790795908,
+        "flux": 7.524052781926471e-06,
+        "iteration": 21,
+        "local_energy": 0.04076418447921482,
+        "phase": "formal-radiative-flux-completion"
+      },
+      "last_hour_last": {
+        "correction": 0.03281815152884171,
+        "elapsed_seconds": 28615.817318217003,
+        "flux": 2.582434510678411e-07,
+        "iteration": 25,
+        "local_energy": 0.0013725653365252385,
+        "phase": "formal-radiative-flux-completion"
+      },
+      "last_hour_sample_count": 5,
+      "last_log_sample": {
+        "correction": 0.03281815152884171,
+        "elapsed_seconds": 28615.817318217003,
+        "flux": 2.582434510678411e-07,
+        "iteration": 25,
+        "local_energy": 0.0013725653365252385,
+        "phase": "formal-radiative-flux-completion"
+      },
+      "model_id": "d6-95ef682851fac4ba320ea486",
+      "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "status": "TIMEOUT",
+      "wall_seconds": 28803.866457939
+    },
+    {
+      "family": "D6",
+      "final_certificate_available": true,
+      "last_hour_first": {
+        "correction": 0.04000000000000084,
+        "elapsed_seconds": 12446.310018051998,
+        "flux": 1.848443059759841e-05,
+        "iteration": 11,
+        "local_energy": 0.036646765078146556,
+        "phase": "formal-radiative-flux-completion"
+      },
+      "last_hour_last": {
+        "correction": 2.547441487393067e-05,
+        "elapsed_seconds": 15541.465047539998,
+        "flux": 3.5224902994457352e-09,
+        "iteration": 17,
+        "local_energy": 2.2686724641134488e-05,
+        "phase": "formal-radiative-flux-completion"
+      },
+      "last_hour_sample_count": 7,
+      "last_log_sample": {
+        "correction": 2.547441487393067e-05,
+        "elapsed_seconds": 15541.465047539998,
+        "flux": 3.5224902994457352e-09,
+        "iteration": 17,
+        "local_energy": 2.2686724641134488e-05,
+        "phase": "formal-radiative-flux-completion"
+      },
+      "model_id": "d6-a94fa52da97edec3e1dfd7f5",
+      "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136",
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 15795.944926426
+    }
+  ],
+  "fresh_attempts": 4,
+  "more_time_only_controls_accepted": 0,
+  "physical_coordinates": 2,
+  "scope": "Full source and shipped data changes; cannot identify one numerical fix. Raw iteration samples are not final certificates.",
+  "spectrum_comparison_to_time_controls_available": false,
+  "updated_source_accepted": 1
+}

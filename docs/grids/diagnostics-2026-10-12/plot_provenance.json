@@ -1,0 +1,8 @@
+{
+  "archive_sha256": "450fca877c095b437206b1ed39dbce8d91a1288c56b11f2dc9cacd1f6e342fbe",
+  "spectrum_sha256": "6a8d28f7b0066d2e9e05749b22c715cfb2651fbd94e128c292ca64029ac28a2d",
+  "flux_normalization": "none",
+  "wavelength_resampling": "none",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

@@ -1,0 +1,267 @@
+[
+  {
+    "RSS_cap_bytes": 4294967296,
+    "case_id": "db-40be62125f65c51373a61487",
+    "config": {
+      "atmosphere_solver": "adaptive-newton",
+      "effective_temperature": 7000.0,
+      "logg": 6.0,
+      "mixing_length_alpha": 1.25,
+      "neutral_broadening": "unsold",
+      "photospheric_depth_concentration": 1.0,
+      "quality": "production",
+      "synthesis_transfer_depth_refinement": 4
+    },
+    "family": "DB",
+    "group": "slow",
+    "model_id": "db-d4ffbde2fbde9514f6687bb0",
+    "peak_owned_RSS_bytes": 269541376,
+    "previous_attempt_id": "db-9dc29e99fdcf178084c1e2f2",
+    "previous_config_source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "diagnostic-more-time-only",
+    "seconds": 28800,
+    "source_change_note": "Same source/config as previous six-hour timeout; eight-hour resource cap",
+    "source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "source_data_identity": "015fe5ab06e533be970efe926379d6a4b1b8e343efcab37a47f6832952233b1f",
+    "source_key": "merged",
+    "source_unchanged": true,
+    "status": "TIMEOUT",
+    "wall_cap_seconds": 28800,
+    "wall_seconds": 28803.784871186
+  },
+  {
+    "RSS_cap_bytes": 4294967296,
+    "case_id": "db-40be62125f65c51373a61487",
+    "config": {
+      "atmosphere_solver": "adaptive-newton",
+      "effective_temperature": 7000.0,
+      "logg": 6.0,
+      "mixing_length_alpha": 1.25,
+      "neutral_broadening": "unsold",
+      "photospheric_depth_concentration": 1.0,
+      "quality": "production",
+      "synthesis_transfer_depth_refinement": 4
+    },
+    "family": "DB",
+    "group": "slow",
+    "model_id": "db-843d958715297021153fc48c",
+    "peak_owned_RSS_bytes": 271925248,
+    "previous_attempt_id": "db-9dc29e99fdcf178084c1e2f2",
+    "previous_config_source_commit": "c8329d86c98f956617ec1bb3746181350492ce66",
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "diagnostic-current-upstream",
+    "seconds": 28800,
+    "source_change_note": "New upstream source/data/default numerical policy; not attributable to time alone",
+    "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136",
+    "source_data_identity": "4bec566ec18eb164f787a806484043b59cca750797cd9d64efa6ee9377f01321",
+    "source_key": "upstream",
+    "source_unchanged": true,
+    "status": "TIMEOUT",
+    "wall_cap_seconds": 28800,
+    "wall_seconds": 28803.783550248
+  },
+  {
+    "RSS_cap_bytes": 12884901888,
+    "case_id": "d6-4a021fbba72f3f0cc86c9fe5",
+    "config": {
+      "abundances": {
+        "Al": -4.0,
+        "C": 0.0,
+        "Ca": -2.85,
+        "Fe": -3.0,
+        "Mg": -2.33,
+        "Ne": -1.86,
+        "O": 0.27,
+        "S": -2.84,
+        "Si": -1.76
+      },
+      "effective_temperature": 15680.0,
+      "formal_maximum_metal_lines": null,
+      "include_linear_stark_quasistatic": true,
+      "include_metal_series_pseudocontinuum": true,
+      "include_oxygen_i_series_stark": true,
+      "include_rydberg_dissolution": true,
+      "line_profile_edge_optical_depth": 0.001,
+      "linear_stark_profile": "manifold",
+      "logg": 6.3,
+      "metal_series_pseudocontinuum_elements": [
+        "O",
+        "Mg",
+        "C"
+      ],
+      "microturbulent_velocity_kms": 0.0,
+      "mixing_length_alpha": 1.25,
+      "quality": "standard",
+      "reference_element": "C",
+      "structure_maximum_metal_lines": null
+    },
+    "family": "D6",
+    "group": "slow",
+    "model_id": "d6-95ef682851fac4ba320ea486",
+    "peak_owned_RSS_bytes": 3681816576,
+    "previous_attempt_id": "d6-552cf7d09062495d9b7893e3",
+    "previous_config_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+    "raw_status": "TIMEOUT",
+    "returncode": -15,
+    "role": "diagnostic-more-time-only",
+    "seconds": 28800,
+    "source_change_note": "Same source/config as previous six-hour timeout; eight-hour resource cap",
+    "source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+    "source_data_identity": "9310e200ac3d35915fa0da08da2bf651450731ee08af701fc2bd2fc470baaaba",
+    "source_key": "legacy",
+    "source_unchanged": true,
+    "status": "TIMEOUT",
+    "wall_cap_seconds": 28800,
+    "wall_seconds": 28803.866457939
+  },
+  {
+    "RSS_cap_bytes": 12884901888,
+    "audit": {
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 3.5224902994457352e-09
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 4.406135945576393e-16
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 2.2686724641134488e-05
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.7767093353542176e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 2.547441487393067e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "completion_status": "COMPLETE_NUMERICAL",
+      "depth_resolution_verified": false,
+      "experimental": false,
+      "heldout_accuracy_verified": false,
+      "independent_final_spectrum_source_verified": true,
+      "native_spectrum_finite_verified": true,
+      "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+      "release_ready": false,
+      "selected_physics": {
+        "diagnostics": {
+          "bulk_metal_charge_pressure_closure": true,
+          "trace_host": null
+        },
+        "experimental": false,
+        "reason": "Hydrogen/helium-free bulk-metal LTE mixture with shared trust-region solver",
+        "tested_point": false,
+        "workflow": "d6"
+      },
+      "spectrum": {
+        "maximum_angstrom": 7699.999999996089,
+        "minimum_angstrom": 3400.0,
+        "normalization": "none",
+        "path": "spectrum.txt",
+        "points": 43001,
+        "wavelength_sha256": "65aab0ba6dba9aaf0845e2ad53e004972466f92815ae12d50f65fe179a1429f8"
+      },
+      "spectrum_audit_scope": "independent native source equation",
+      "spectrum_source_verified": true
+    },
+    "case_id": "d6-4a021fbba72f3f0cc86c9fe5",
+    "config": {
+      "abundances": {
+        "Al": -4.0,
+        "C": 0.0,
+        "Ca": -2.85,
+        "Fe": -3.0,
+        "Mg": -2.33,
+        "Ne": -1.86,
+        "O": 0.27,
+        "S": -2.84,
+        "Si": -1.76
+      },
+      "effective_temperature": 15680.0,
+      "formal_maximum_metal_lines": null,
+      "include_linear_stark_quasistatic": true,
+      "include_metal_series_pseudocontinuum": true,
+      "include_oxygen_i_series_stark": true,
+      "include_rydberg_dissolution": true,
+      "line_profile_edge_optical_depth": 0.001,
+      "linear_stark_profile": "manifold",
+      "logg": 6.3,
+      "metal_series_pseudocontinuum_elements": [
+        "O",
+        "Mg",
+        "C"
+      ],
+      "microturbulent_velocity_kms": 0.0,
+      "mixing_length_alpha": 1.25,
+      "quality": "standard",
+      "reference_element": "C",
+      "structure_maximum_metal_lines": null
+    },
+    "family": "D6",
+    "group": "slow",
+    "model_id": "d6-a94fa52da97edec3e1dfd7f5",
+    "numerical_checks_reread": true,
+    "peak_owned_RSS_bytes": 3640627200,
+    "previous_attempt_id": "d6-552cf7d09062495d9b7893e3",
+    "previous_config_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+    "raw_status": "COMPLETE_NUMERICAL",
+    "returncode": 0,
+    "role": "diagnostic-current-upstream",
+    "seconds": 28800,
+    "source_change_note": "New upstream source/data/default numerical policy; not attributable to time alone",
+    "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136",
+    "source_data_identity": "4bec566ec18eb164f787a806484043b59cca750797cd9d64efa6ee9377f01321",
+    "source_key": "upstream",
+    "source_unchanged": true,
+    "spectrum_archive_path": "native-attempts/d6-a94fa52da97edec3e1dfd7f5/attempt-v1/model/spectrum.txt",
+    "spectrum_path": "d6-a94fa52da97edec3e1dfd7f5/attempt-v1/model/spectrum.txt",
+    "spectrum_sha256": "6a8d28f7b0066d2e9e05749b22c715cfb2651fbd94e128c292ca64029ac28a2d",
+    "status": "COMPLETE_NUMERICAL",
+    "wall_cap_seconds": 28800,
+    "wall_seconds": 15795.944926426
+  }
+]

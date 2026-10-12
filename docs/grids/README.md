@@ -1,6 +1,6 @@
 # Precomputed model grids
 
-The selected grid table contains **2,366 numerical completions from 2,499 requests**.
+The selected grid table contains **2,367 numerical completions from 2,499 requests**.
 DAB/DBA has **637 accepted coordinates from 656 requests**. The latest update
 adds 32 newly calculated knots and eight reused centers in eight selected
 patches. It also adds 32 independent test spectra, which remain outside the
@@ -32,7 +32,8 @@ gravity, so symbols can overlap. Blank regions were not requested.
 | DQ | 2 | 2 | October 8 |
 
 The eight-family figure covers 2,495 requests. The full table retains 2,499,
-including four D6, DAH and PG1159 cases omitted from the figure. The production
+including four D6, DAH and PG1159 cases omitted from the figure. D6 now has
+one accepted coordinate from one request; the eight plotted families are unchanged. The production
 DAB bank replaces the five earlier standard-quality DAB examples in these counts.
 Four repeated DB comparison models are counted once at their original coordinates.
 All previous selections remain in [dated snapshots](history/README.md).
@@ -66,6 +67,8 @@ the releases are published. The original archives remain unchanged.
   60,000 K control has an identical native spectrum.
 - [Four new DO/DAO spectra and four six-hour timeouts](hot-2026-10-12/README.md)
   retain native structures, full inputs and source-check scope.
+- [Accepted D6 spectrum and three eight-hour diagnostic timeouts](diagnostics-2026-10-12/README.md)
+  retain the matched source controls and unresolved DB cases.
 - [Cold DB and Montreal comparison](db-cold-2026-10-09/README.md) preserve the
   earlier four-model demonstration and its unresolved spectral disagreement.
 
@@ -84,6 +87,7 @@ The production DAB grids and their matching interpolation tests use
 preserves its `0a74fdbe` and `54e401e2` records. The new DB, DA and hot pilots
 use merged source `c8329d86c98f956617ec1bb3746181350492ce66`. The latest
 DO continuation uses `70bca78e82e7b7dd5860ca3e337bd1f83919e09a`.
+The D6 diagnostic uses `14e206729d06f0989e03a0d2f1744a9cc518a136`.
 [Dataset records](dataset.json) and the full request tables identify each source.
 Updating OpenWD does not recompute a saved archive.
 
@@ -95,8 +99,9 @@ and acceptance tolerances were unchanged.
 
 DB has 24 nonconvergence cases, five depth-grid errors, five material-domain
 stops and 12 six-hour timeouts. DA has 44 numerical failures. DZ has four
-numerical failures and one SIGSEGV crash. The selected D6 example retains its earlier timeout. Its updated-source
-diagnostic now reports numerical completion and awaits final tier verification.
+numerical failures and one SIGSEGV crash. The selected D6 example now passes the native checks under source 14e2067.
+Its original-source control and both DB diagnostic attempts reached eight-hour
+limits; [all four diagnostic outcomes](diagnostics-2026-10-12/README.md) remain archived.
 All nine DAB timeouts passed; its 19 remaining gaps are 17 unsupported
 configurations and two earlier SIGSEGV crashes. The first DAO passed after 261.24 minutes.
 The [latest hot batch](hot-2026-10-12/README.md) adds two DO and two DAO spectra.

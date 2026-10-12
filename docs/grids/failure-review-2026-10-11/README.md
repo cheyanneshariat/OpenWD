@@ -41,25 +41,30 @@ Two cases merit an uncertain, bounded diagnostic:
 | DB | 7,000 | 6.0 | Changed phase and reduced energy residual from about 1 to 0.254; the last 20 updates worsen |
 | D6 | 15,680 | 6.3 | Only 18 preconditioner updates fit six hours; flux improves, but local energy ends at 0.0403 and grows |
 
-Job **59699007** started on October 12 with four fresh cold attempts: an original-source
-control and a current-upstream run at each coordinate. Each has an eight-hour
-resource cap. [Full requests and resource limits](diagnostic-requests.json) preserve
-the physical inputs, native tolerances and iteration limits. The controls test
-extra wall time; updated source/data is a separate comparison. Required
-fixed-spectrum checks passed for all three source branches. The current-source
-D6 worker now reports numerical completion; its final archive verification is
-pending while the other three attempts run. A failed source check would withhold its dependent requests.
+Job **59699007** finished with one native numerical completion and three
+eight-hour timeouts. [Verified outcomes and the D6 spectrum](../diagnostics-2026-10-12/README.md)
+retain all four fresh cold attempts. Updated-source D6 passed in 4.388 hours;
+both DB attempts and the original-source D6 control remain unfinished.
+Required fixed-spectrum checks passed for all three source branches. The late
+original-source D6 energy drop merits investigation, but no final certificate
+was available. Full requests preserve the physical inputs and native limits.
 
 Original sources are c8329d86 for DB and cfe2d2ff for D6. Updated source is
 14e2067. The complete source changes include D6 Rosseland-probe reuse and
 updated shipped data; a result cannot be attributed solely to the newest thermal
 change. No old attempt or accepted product was modified.
 
-A conservative reservation bound of 4.25 node-hours gives a total phase bound
-of **10.755**, below the authorized 13. Models must pass their native checks
-before acceptance. A timeout, queued job or worker crash is not a converged
-spectrum. Numerical completion remains distinct from physical accuracy and
-independent depth convergence.
+The completed diagnostic allocation used 29,518 seconds. Retaining the conservative
+half-node fraction charges at most 4.09972 node-hours. With the completed DAB/hot
+and two-DO work plus the running DO/DAO extension ceiling, the conservative phase
+bound is 12.62194 of the authorized 13 node-hours. No larger continuation is
+justified by this accounting alone. Numerical completion remains separate from
+physical accuracy and independent depth convergence.
+
+The saved 118-flag snapshot remains unchanged. Its earlier D6 timeout is now
+superseded in the current selection by a checked updated-source product; the
+original timeout attempt is retained. Diagnostic attempts are recorded separately
+and do not increase the coordinate denominator.
 
 The later [hot batch](../hot-2026-10-12/README.md) adds four six-hour timeout
 records outside the earlier 118-flag snapshot. Its other four models passed.
