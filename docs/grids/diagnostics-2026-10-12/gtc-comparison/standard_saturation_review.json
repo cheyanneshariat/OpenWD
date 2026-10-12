@@ -1,0 +1,20 @@
+{
+  "blue": {
+    "maximum_ADU": 40931,
+    "rows_at_or_above_0_95_of_65535": 0,
+    "rows_at_65535": 0,
+    "n_rows": 2051
+  },
+  "green": {
+    "maximum_ADU": 41189,
+    "rows_at_or_above_0_95_of_65535": 0,
+    "rows_at_65535": 0,
+    "n_rows": 2051
+  },
+  "red": {
+    "maximum_ADU": 37608,
+    "rows_at_or_above_0_95_of_65535": 0,
+    "rows_at_65535": 0,
+    "n_rows": 2051
+  }
+}

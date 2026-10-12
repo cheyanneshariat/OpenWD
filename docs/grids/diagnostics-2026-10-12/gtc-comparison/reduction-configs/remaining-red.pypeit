@@ -1,0 +1,48 @@
+# Auto-generated PypeIt input file using PypeIt version: 2.0.1
+# UTC 2026-10-12T18:29:06.584+00:00
+
+# User-defined execution parameters
+[rdx]
+    spectrograph = gtc_osiris
+    detnum = 2
+
+[reduce]
+    [[findobj]]
+        maxnumber_sci = 1
+
+# Setup
+setup read
+Setup G:
+  binning: 2,2
+  decker: LongSlits0.6Arcsec
+  dispname: R2500R
+setup end
+
+# Data block
+data read
+ path raw
+                                                     filename |                 frametype |                 ra |                 dec |       target | dispname |             decker | binning |              mjd |          airmass | exptime |                     idname | calib
+     0002119467-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz |                  arc,tilt |  308.6819958333333 |  0.3936266666666667 | ArcLamp_HgAr |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2461063797 | 1.19968013829524 |    25.2 |      OsirisCalibrationLamp |     6
+     0002119468-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz |                  arc,tilt |  308.9702958333333 | 0.39322361111111115 |   ArcLamp_Ne |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2469049908 | 1.19968013829524 |     1.5 |      OsirisCalibrationLamp |     6
+                0002119501-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 231.54069166666665 |   43.27128277777778 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8387363713 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119502-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 231.63686249999998 |   43.27115888888889 |         BIAS |     OPEN |             NOMASK |     2,2 |  58643.839002575 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119503-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 231.73302916666663 |          43.2710375 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8392687788 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119504-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 231.82919166666662 |  43.270915555555554 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8395349825 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119505-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 231.92536249999995 |   43.27079111111111 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8398011862 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119506-20190609-OSIRIS-OsirisBias.fits.gz |                      bias |  232.0215333333333 |  43.270668888888885 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8400673899 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119507-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 232.11770416666664 |   43.27054388888889 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8403335936 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119508-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 232.21386249999998 |   43.27042111111111 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8405997973 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119509-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 232.30584999999996 |   43.27030138888889 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8408544267 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119510-20190609-OSIRIS-OsirisBias.fits.gz |                      bias |  232.4061958333333 |   43.27017222222222 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8411322043 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+                0002119511-20190609-OSIRIS-OsirisBias.fits.gz |                      bias | 232.50236249999998 |   43.27004861111111 |         BIAS |     OPEN |             NOMASK |     2,2 | 58643.8413984084 | 1.34850776399257 |     0.0 |                 OsirisBias |     6
+        0002119469-20190608-OSIRIS-OsirisSpectralFlat.fits.gz | pixelflat,illumflat,trace |  309.1583166666667 | 0.39295861111111113 | SpectralFlat |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2474258242 | 1.19968013829524 |    19.2 |         OsirisSpectralFlat |     6
+        0002119470-20190608-OSIRIS-OsirisSpectralFlat.fits.gz | pixelflat,illumflat,trace |  309.3338083333333 |  0.3927158333333334 | SpectralFlat |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2479119352 | 1.19968013829524 |    19.2 |         OsirisSpectralFlat |     6
+        0002119471-20190608-OSIRIS-OsirisSpectralFlat.fits.gz | pixelflat,illumflat,trace |  309.5134708333333 | 0.39246222222222227 | SpectralFlat |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2484096202 | 1.19968013829524 |    19.2 |         OsirisSpectralFlat |     6
+        0002119472-20190608-OSIRIS-OsirisSpectralFlat.fits.gz | pixelflat,illumflat,trace |  309.6931333333333 | 0.39221194444444446 | SpectralFlat |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2488957315 | 1.19968013829524 |    19.2 |         OsirisSpectralFlat |     6
+        0002119473-20190608-OSIRIS-OsirisSpectralFlat.fits.gz | pixelflat,illumflat,trace |  309.8686208333333 | 0.39196861111111114 | SpectralFlat |   R2500R | LongSlits0.6Arcsec |     2,2 | 58643.2493934167 | 1.19968013829524 |    19.2 |         OsirisSpectralFlat |     6
+0002119415-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz | science | 249.300875 | 36.5321944444 | J1637+3631 | R2500R | LongSlits0.6Arcsec | 2,2 | 58643.0617545275 | 1.02457129908792 | 1200.0 | OsirisLongSlitSpectroscopy | 6
+0002119416-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz | science | 249.300875 | 36.5321944444 | J1637+3631 | R2500R | LongSlits0.6Arcsec | 2,2 | 58643.0759096204 | 1.04110864038179 | 1200.0 | OsirisLongSlitSpectroscopy | 6
+0002119417-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz | science | 249.300875 | 36.5321944444 | J1637+3631 | R2500R | LongSlits0.6Arcsec | 2,2 | 58643.0900762871 | 1.06422362140412 | 1200.0 | OsirisLongSlitSpectroscopy | 6
+0002119418-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz | science | 249.300875 | 36.5321944444 | J1637+3631 | R2500R | LongSlits0.6Arcsec | 2,2 | 58643.1042313796 | 1.09453385369907 | 1200.0 | OsirisLongSlitSpectroscopy | 6
+0002119419-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz | science | 249.300875 | 36.5321944444 | J1637+3631 | R2500R | LongSlits0.6Arcsec | 2,2 | 58643.1183980463 | 1.13299579854381 | 1200.0 | OsirisLongSlitSpectroscopy | 6
+data end

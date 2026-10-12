@@ -55,6 +55,14 @@ source check also passed. These checks apply to the declared equations on the
 structure grid. Independent depth convergence, external physical accuracy and
 release readiness remain unverified.
 
+## Comparison with observations
+
+The [comparison with actual GTC observations](gtc-comparison/README.md) uses a
+new reduction of all twelve J1637 exposures and the exact accepted D6 spectrum.
+It includes a clean model/data plot, observed arrays, measured line residuals
+and remaining calibration and physical limits. No stellar parameters are
+refitted, native products recalculated or mesh coordinates added.
+
 ## Archive
 
 The compact archive retains all four attempts, raw logs, exact settings, source

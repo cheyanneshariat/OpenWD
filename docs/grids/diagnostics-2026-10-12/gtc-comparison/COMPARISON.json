@@ -1,0 +1,100 @@
+{
+  "model_sha256": "6a8d28f7b0066d2e9e05749b22c715cfb2651fbd94e128c292ca64029ac28a2d",
+  "data_sha256": "d7f638b7393544a28a3c15230ba7aeb6b6b4076b99d826fa70b72097ed684757",
+  "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136",
+  "parameters_fitted": false,
+  "rv_fixed_kms": 384.0,
+  "resolution_R": 2500.0,
+  "continuum_fit": "Fifth-order data/model ratio fit separately per grism to 50-A median bins; 4-sigma clipping of continuum bins only.",
+  "metric": "Unweighted RMS (data-model)/smooth scaled-model continuum on all good unbinned coadd pixels in the stated windows after sky/telluric masks. No residual-based pixel clipping.",
+  "telluric_observer_vacuum_A": [
+    [
+      6860.0,
+      6960.0
+    ],
+    [
+      7160.0,
+      7400.0
+    ],
+    [
+      7580.0,
+      7700.0
+    ]
+  ],
+  "sky_observer_vacuum_A_plusminus4": [
+    5578.886770459,
+    5891.583,
+    5897.558,
+    6302.046463603,
+    6365.535508181
+  ],
+  "uncertainties": "Pipeline statistical diagonal variances; excludes calibration, continuum-fit, correlated-resampling and model uncertainties.",
+  "grisms": {
+    "blue": {
+      "window_rest_vacuum_A": [
+        3580.0,
+        4600.0
+      ],
+      "good_native_pixels": 1712,
+      "rms_continuum_fraction": 0.12736437007819704,
+      "nominal_noise_rms": 0.10264041958141891,
+      "resolution_sensitivity_rms": {
+        "2200": 0.127570601807107,
+        "2800": 0.12726635758895524
+      },
+      "continuum_coefficients": [
+        9.893442029544183e-09,
+        1.1763697066260956e-09,
+        7.207199729998622e-10,
+        -2.4255529187891684e-09,
+        -2.1311814443355583e-09,
+        3.65184775089155e-09
+      ],
+      "median_sn": 24.849417834280466
+    },
+    "green": {
+      "window_rest_vacuum_A": [
+        4600.0,
+        5600.0
+      ],
+      "good_native_pixels": 1231,
+      "rms_continuum_fraction": 0.04389597501439345,
+      "nominal_noise_rms": 0.024688756863447205,
+      "resolution_sensitivity_rms": {
+        "2200": 0.04356492826007264,
+        "2800": 0.04428325739363577
+      },
+      "continuum_coefficients": [
+        1.0828349356144166e-08,
+        4.050583446175296e-10,
+        -1.9900011612144374e-10,
+        -4.364306427111969e-11,
+        3.3389347036737875e-10,
+        -9.808852719354146e-11
+      ],
+      "median_sn": 40.756049362391664
+    },
+    "red": {
+      "window_rest_vacuum_A": [
+        5600.0,
+        7500.0
+      ],
+      "good_native_pixels": 1470,
+      "rms_continuum_fraction": 0.038967004207431544,
+      "nominal_noise_rms": 0.0209131201517363,
+      "resolution_sensitivity_rms": {
+        "2200": 0.03881454590069075,
+        "2800": 0.039203908015040916
+      },
+      "continuum_coefficients": [
+        1.0544862667797093e-08,
+        1.1172772630925759e-10,
+        -1.332286247964552e-10,
+        3.686249271066574e-11,
+        -1.689140595256407e-11,
+        3.41804249914795e-10
+      ],
+      "median_sn": 49.92144582191726
+    }
+  }
+}

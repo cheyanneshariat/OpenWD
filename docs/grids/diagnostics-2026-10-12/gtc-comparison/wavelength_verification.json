@@ -1,0 +1,23 @@
+{
+  "blue": {
+    "arc_rms_pixels": 0.11703872888481065,
+    "n_used_lines": 8,
+    "n_fitted_lines": 8,
+    "dispersion_A_pixel": 0.5809019451216955,
+    "central_wave_A": 3995.6487888711467
+  },
+  "green": {
+    "arc_rms_pixels": 0.08243541836064049,
+    "n_used_lines": 21,
+    "n_fitted_lines": 26,
+    "dispersion_A_pixel": 0.801986100137583,
+    "central_wave_A": 5218.208630164345
+  },
+  "red": {
+    "arc_rms_pixels": 0.13469799406671107,
+    "n_used_lines": 36,
+    "n_fitted_lines": 40,
+    "dispersion_A_pixel": 1.0373796457633944,
+    "central_wave_A": 6603.522229511463
+  }
+}

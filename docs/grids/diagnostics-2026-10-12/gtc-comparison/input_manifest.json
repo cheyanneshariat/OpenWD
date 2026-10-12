@@ -1,0 +1,1152 @@
+[
+  {
+    "file": "0002119392-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "5c617f91e4fdb313accf3893da618852e28459adbc413de48a5202e0a0295504",
+    "bytes": 4199286,
+    "object": "SPSTD_GD153",
+    "type": "OBJECT",
+    "date": "2019-06-08T21:53:19.639",
+    "exptime": 0.5,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119393-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "ed9553e2772e18f8081a7315a6e96fa3b1a0e9fc3e28a79c57f2f1ee11dee51c",
+    "bytes": 3291367,
+    "object": "SPSTD_GD153",
+    "type": "OBJECT",
+    "date": "2019-06-08T21:54:37.276",
+    "exptime": 0.5,
+    "grism": "OPEN",
+    "slit": 2.52,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119396-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "f7fbce244c5378c358782928296d39b81d63f8a9481ee6d56c75d4b81d5a29e5",
+    "bytes": 4058811,
+    "object": "SPSTD_GD153",
+    "type": "OBJECT",
+    "date": "2019-06-08T22:00:16.339",
+    "exptime": 300.0,
+    "grism": "R2500U",
+    "slit": 2.52,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119397-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "99af628b31ab26ca0dbfec28516c1def05255070d39d0bd8bc4d447261e144f8",
+    "bytes": 4450303,
+    "object": "SPSTD_GD153",
+    "type": "OBJECT",
+    "date": "2019-06-08T22:05:48.160",
+    "exptime": 180.0,
+    "grism": "R2500V",
+    "slit": 2.52,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119398-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "80e2f44faeba49850d98f7274c7b1380f67b561d830f1287a8f4f2c6c648c549",
+    "bytes": 4880416,
+    "object": "SPSTD_GD153",
+    "type": "OBJECT",
+    "date": "2019-06-08T22:09:28.475",
+    "exptime": 200.0,
+    "grism": "R2500R",
+    "slit": 2.52,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119409-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "929bd94fbb3cd178703bd62147aaa9d6d589ea857ba2bbe97163815272dca41a",
+    "bytes": 3888069,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-08T23:23:57.695",
+    "exptime": 1200.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119410-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "59413c1893b51cdde848ae7c60eceeae3742d379a23b7fb724b79a28296e753a",
+    "bytes": 3881080,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-08T23:44:21.105",
+    "exptime": 1200.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119411-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "fc61849e4ec8d358a9295fe62247583e72043941c547201c3eab76c445783f6d",
+    "bytes": 3826957,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T00:04:44.499",
+    "exptime": 1200.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119412-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "e923935076460c7e5ede2f1071b3741bbed69268f057bd03b09c88e8bddcb467",
+    "bytes": 4244526,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T00:25:15.995",
+    "exptime": 1200.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119413-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "dbd032e60eaf8316e955f2d187fda8629583e6f92337bf5bf6fbefde5d6ac312",
+    "bytes": 4175032,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T00:45:39.522",
+    "exptime": 1200.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119414-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "e49d7ac462f1da516c73d86886b3c01ac0a08931784dde05ff87ce99eafa7c26",
+    "bytes": 4110629,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T01:06:02.934",
+    "exptime": 1200.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119415-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "8cbc73631e6beab3306397b6f781ab862d784d8c1dbe2fa0a86eb009bea14224",
+    "bytes": 4688042,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T01:28:18.810",
+    "exptime": 1200.0,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119416-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "e4d29082cd68d69edf7cf98c997a1b54daf574684b4724f9309040a387370fb9",
+    "bytes": 4670460,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T01:48:42.205",
+    "exptime": 1200.0,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119417-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "b15883663f2810d092303831d6954f4bac50cf0ca73b697a506d211175fdcabf",
+    "bytes": 4735408,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T02:09:05.731",
+    "exptime": 1200.0,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119418-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "c28a6169dda609f95bcce5a329397262f11cc98d4d637d080c9a5065050f4d7c",
+    "bytes": 4731385,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T02:29:29.323",
+    "exptime": 1200.0,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119419-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "0dcbcbbd63a61986a277da72d2ad3f22de805146f86d6a1ad3f98522e84b3007",
+    "bytes": 4730969,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T02:49:52.918",
+    "exptime": 1200.0,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119420-20190608-OSIRIS-OsirisLongSlitSpectroscopy.fits.gz",
+    "sha256": "612a89ec0b137cb966b048f69f165d5665266db72fed537c462581db06c57f03",
+    "bytes": 4761000,
+    "object": "J1637+3631",
+    "type": "OBJECT",
+    "date": "2019-06-09T03:10:16.325",
+    "exptime": 1200.0,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisLongSlitSpectroscopy",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119467-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "557d7a59e6925afab58f726b90feba833550a5a691a6bb99c789ca14a1413d8c",
+    "bytes": 4029436,
+    "object": "ArcLamp_HgAr",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:53:46.909",
+    "exptime": 25.2,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119468-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "7f73554320981c6bbefbd56f953f4a2fe20b088b528632bb12ca914c45a9e1d0",
+    "bytes": 4302672,
+    "object": "ArcLamp_Ne",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:54:55.745",
+    "exptime": 1.5,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119469-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "cf1da8c34f4a14fd0990224267a30803f22c72a32b1ddb08c660448c0c348411",
+    "bytes": 7487015,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:55:40.677",
+    "exptime": 19.2,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119470-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "81bdf3f6d7d5f6d5aa33c617938ac7d120de4640cef9b7d2b357815bd548e6bc",
+    "bytes": 7482031,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:56:23.277",
+    "exptime": 19.2,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119471-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "d3c19b8758e2cfea64b3c3ae86c1a4b68bb81d93ca86ffb3f37475302c4b7e8f",
+    "bytes": 7480012,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:57:05.876",
+    "exptime": 19.2,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119472-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "136eff13581737e57c7238f52b1042ee76430831ab4f975704f495f5fcfa1768",
+    "bytes": 7478928,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:57:48.475",
+    "exptime": 19.2,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119473-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "c72f3de66d87e1f6055fbc0e401fccaf9490c488435b3a27a7041463c234c7be",
+    "bytes": 7478709,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T05:58:31.074",
+    "exptime": 19.2,
+    "grism": "R2500R",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119475-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "5eacefcc08dbf0fd0261bb34465facd50e1b03116d47ccf0b136d7c37a1876fa",
+    "bytes": 3694843,
+    "object": "ArcLamp_HgAr",
+    "type": "OBJECT",
+    "date": "2019-06-09T06:06:18.432",
+    "exptime": 12.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119476-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "5afb0781427591e09bd57879a71241287cb8f0d654d3738ca4bdc58a01290ae1",
+    "bytes": 3901755,
+    "object": "ArcLamp_Xe",
+    "type": "OBJECT",
+    "date": "2019-06-09T06:07:13.848",
+    "exptime": 840.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119477-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "33b7e651b831a8348f0cc11f262034407b343d71adc6cfc6fce5e4e93ff3b37a",
+    "bytes": 6581549,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T06:21:57.286",
+    "exptime": 800.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119478-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "ef09ab47e36a3dbae79aec623ecae37f098a517e5c989c2d7bb1939c243f31ed",
+    "bytes": 6572794,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T06:35:41.115",
+    "exptime": 800.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119479-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "cfb2777d52a159778990f915a26346668ffad4579240bccdfea37379c81de244",
+    "bytes": 6577843,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T06:49:24.518",
+    "exptime": 800.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119480-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "68f4090854511e2535e62103a0c2c12278923e0789a0d6b2391b133bf3af87f7",
+    "bytes": 6577409,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:03:07.906",
+    "exptime": 800.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119481-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "aefe5dc17f0b4e474d1f2c73a93fb7f6ec172ea62d44c2cea11b0712fd8668f7",
+    "bytes": 6570357,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:16:51.314",
+    "exptime": 800.0,
+    "grism": "R2500U",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119482-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "e487c331303cd89f04bae1eeb982ae3aea3d27f8ca580f4586b56eb57e247e78",
+    "bytes": 3638417,
+    "object": "ArcLamp_HgAr",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:32:23.209",
+    "exptime": 5.4,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119483-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "f930a8abdad9bb5c6e62245419f0c242d6c0db04c3432e258252dfbc92a7b6a3",
+    "bytes": 4054712,
+    "object": "ArcLamp_Ne",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:33:12.340",
+    "exptime": 15.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119484-20190608-OSIRIS-OsirisCalibrationLamp.fits.gz",
+    "sha256": "2623e9d31dbf44f30346dc354bed9890e2fd9777653658a191dfacb35e899002",
+    "bytes": 4383373,
+    "object": "ArcLamp_Xe",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:34:10.756",
+    "exptime": 720.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisCalibrationLamp",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119485-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "a649c334487bdc1ec60ae9198a7d31d976a60020f27f93e10771595d6cd7b896",
+    "bytes": 7229047,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:46:54.177",
+    "exptime": 72.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119486-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "5990438873efe45d2444c70fa59db9fad533f2b26e70f496db276f18ccd86390",
+    "bytes": 7221689,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:48:29.579",
+    "exptime": 72.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119487-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "4d434e7959bec2d42cbede157d765510d42429cfa87b4ce23487b0d5d0f229a3",
+    "bytes": 7220502,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:50:04.982",
+    "exptime": 72.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119488-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "5619951c557c246981e24c252086cbc66d626b997e56674d132fa3d021351d42",
+    "bytes": 7221258,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:51:40.385",
+    "exptime": 72.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119489-20190608-OSIRIS-OsirisSpectralFlat.fits.gz",
+    "sha256": "4365cbc7a72dbecb17059a000a52b84197babd81dc4358dfb70fb2a1b9fed90e",
+    "bytes": 7219921,
+    "object": "SpectralFlat",
+    "type": "OBJECT",
+    "date": "2019-06-09T07:53:16.002",
+    "exptime": 72.0,
+    "grism": "R2500V",
+    "slit": 0.6,
+    "binning": "2 2",
+    "mode": "OsirisSpectralFlat",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119501-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "e1af96ce4e69b6c273e75279398bbdea6800cb1ba450cfaffad911e68fbd13f9",
+    "bytes": 3362922,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:07:17.966",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119502-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "b024133d79c0206ff50abebf44641cd3f7c5ab7d9ea6f59883c293620be82571",
+    "bytes": 3362027,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:07:40.884",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119503-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "0f54eabfd525eabcd107784c1296b1a83cd07bd407b45cd0232817605f4559fb",
+    "bytes": 3360191,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:08:03.802",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119504-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "b833e749687ffff6f1c6e8ce407a4e63e7771277b11d2bb4940f17d15e0337d5",
+    "bytes": 3359717,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:08:26.903",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119505-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "e5b21289784bb190010c8bbf08fa8c79a44e97eadfbb4e4083214c629c57eb59",
+    "bytes": 3359306,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:08:49.819",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119506-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "ff901e12489e4a64cb2575844241e2a86e2ab2eef5b15a7b20a80bb4f02d9a60",
+    "bytes": 3358962,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:09:12.736",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119507-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "9722d2dd93e2d999e253e031a4537a40e313212137137c46dd9a303a941229c9",
+    "bytes": 3359870,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:09:35.853",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119508-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "7819e8e5ef7da01cc2ca27db8699d0bf23b22ad82c61d705c4c1afab1f3c53af",
+    "bytes": 3359858,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:09:58.769",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119509-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "c954904c5bdea7363ee6871d7c5247d9d6a796d9f7cba10ac935cdf23b88b465",
+    "bytes": 3358837,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:10:21.669",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119510-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "9116ccf7db91479de9261c464b1c0b3b2ff149611fc860c010d9a8082ded1149",
+    "bytes": 3359352,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:10:44.787",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  },
+  {
+    "file": "0002119511-20190609-OSIRIS-OsirisBias.fits.gz",
+    "sha256": "1aca75ccb9c9652f9265585da516976a661a5e108d1fa29e81c2985903085220",
+    "bytes": 3359083,
+    "object": "BIAS",
+    "type": "OBJECT",
+    "date": "2019-06-09T20:11:07.702",
+    "exptime": 0.0,
+    "grism": "OPEN",
+    "slit": 0.0,
+    "binning": "2 2",
+    "mode": "OsirisBias",
+    "shapes": [
+      [
+        2051,
+        1049
+      ],
+      [
+        2051,
+        1049
+      ]
+    ]
+  }
+]

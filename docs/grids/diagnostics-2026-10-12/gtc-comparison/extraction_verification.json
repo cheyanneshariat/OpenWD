@@ -1,0 +1,194 @@
+[
+  {
+    "filename": "spec1d_0002119409-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190608T232434.591.fits",
+    "unfluxed_sha256": "076822ca24e330f1b7c854abfe0482d02c09674729c3bcfbbcf8a17d598cbfd9",
+    "object_id": "SPAT0327-SLIT0467-DET02",
+    "grism": "blue",
+    "trace": 328.1910315383482,
+    "fwhm": 3.1305376667973004,
+    "good_pixels": 2051,
+    "median_sn": 12.314857028072094,
+    "velocity_factor": 0.9999830742133954,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      3436.9699903669566,
+      4614.247976129277
+    ]
+  },
+  {
+    "filename": "spec1d_0002119410-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190608T234457.591.fits",
+    "unfluxed_sha256": "4a8031b7d9f5c0aad04e00e225ab217b2466f7d09fc528031efe83abfea7df80",
+    "object_id": "SPAT0327-SLIT0467-DET02",
+    "grism": "blue",
+    "trace": 328.0836800839635,
+    "fwhm": 3.130085239806866,
+    "good_pixels": 2051,
+    "median_sn": 12.586213141856193,
+    "velocity_factor": 0.9999829688952908,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      3436.9829815822723,
+      4614.2481424231855
+    ]
+  },
+  {
+    "filename": "spec1d_0002119411-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T000520.591.fits",
+    "unfluxed_sha256": "f011c7c574f5b49bde45996725a0aff8a7c8e9b42339e0275f96c15e64151147",
+    "object_id": "SPAT0327-SLIT0467-DET02",
+    "grism": "blue",
+    "trace": 328.12865207527983,
+    "fwhm": 3.101027464702573,
+    "good_pixels": 2051,
+    "median_sn": 12.80002227530955,
+    "velocity_factor": 0.9999828614666746,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      3436.982669820001,
+      4614.248254564311
+    ]
+  },
+  {
+    "filename": "spec1d_0002119412-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T002552.591.fits",
+    "unfluxed_sha256": "0878f99d2df7ecab80404c6689625a1a8c9e9075eb7fc0a223a2503ca67f6cd8",
+    "object_id": "SPAT0326-SLIT0467-DET02",
+    "grism": "green",
+    "trace": 326.1472745559753,
+    "fwhm": 3.052903939224446,
+    "good_pixels": 2051,
+    "median_sn": 22.5804707514098,
+    "velocity_factor": 0.9999827518840365,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      4437.211091212047,
+      6061.567315408912
+    ]
+  },
+  {
+    "filename": "spec1d_0002119413-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T004615.591.fits",
+    "unfluxed_sha256": "3a6cf71d666dff9f6338afcc0649ac58fec921f9cb8887c99370ce7f2c4e9b75",
+    "object_id": "SPAT0326-SLIT0467-DET02",
+    "grism": "green",
+    "trace": 326.1429477994849,
+    "fwhm": 3.0783634467302865,
+    "good_pixels": 2051,
+    "median_sn": 22.409586572755618,
+    "velocity_factor": 0.9999826425239986,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      4437.212344902115,
+      6061.53997469071
+    ]
+  },
+  {
+    "filename": "spec1d_0002119414-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T010639.591.fits",
+    "unfluxed_sha256": "a305a0688c0715ab4fb451478016a406c7f46aaf12f22cce4920d07f8d65404f",
+    "object_id": "SPAT0326-SLIT0467-DET02",
+    "grism": "green",
+    "trace": 326.0985113009293,
+    "fwhm": 3.169603568989793,
+    "good_pixels": 2049,
+    "median_sn": 22.056877378206824,
+    "velocity_factor": 0.9999825332765365,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      4437.211561361363,
+      6061.539965916623
+    ]
+  },
+  {
+    "filename": "spec1d_0002119420-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T031052.591.fits",
+    "unfluxed_sha256": "8996b187a6a2a6641f8882040b7cfbab3cc7c905bbbb481acf5a97ee848b3e18",
+    "object_id": "SPAT0324-SLIT0467-DET02",
+    "grism": "red",
+    "trace": 324.82510345727,
+    "fwhm": 3.2000260330898627,
+    "good_pixels": 2051,
+    "median_sn": 17.843222891151637,
+    "velocity_factor": 0.9999819166231052,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      5591.335069163765,
+      7688.758560505615
+    ]
+  },
+  {
+    "filename": "spec1d_0002119415-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T012855.591.fits",
+    "unfluxed_sha256": "786bcba645527fe456060c8198f80db4a8aa067a18dd1fb01e9f5260010ed4b6",
+    "object_id": "SPAT0324-SLIT0467-DET02",
+    "grism": "red",
+    "trace": 324.6858216356876,
+    "fwhm": 3.164669709014073,
+    "good_pixels": 2049,
+    "median_sn": 20.173374543700362,
+    "velocity_factor": 0.9999824151753103,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      5591.338065750443,
+      7688.751812916684
+    ]
+  },
+  {
+    "filename": "spec1d_0002119416-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T014918.591.fits",
+    "unfluxed_sha256": "a5c1709c080ccd62a5602eb2631cf5609574b697e4f2547437de32d2bbf159e9",
+    "object_id": "SPAT0324-SLIT0467-DET02",
+    "grism": "red",
+    "trace": 324.95881186983956,
+    "fwhm": 2.978393876471702,
+    "good_pixels": 2051,
+    "median_sn": 20.72916518901984,
+    "velocity_factor": 0.9999823089346476,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      5591.337756900506,
+      7688.752347019871
+    ]
+  },
+  {
+    "filename": "spec1d_0002119417-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T020942.591.fits",
+    "unfluxed_sha256": "424c49ebef57988a9ddf1eb4f94dacc82e87baff5d017140bd285db041f20f79",
+    "object_id": "SPAT0324-SLIT0467-DET02",
+    "grism": "red",
+    "trace": 324.8509420430401,
+    "fwhm": 2.8524616581401987,
+    "good_pixels": 2049,
+    "median_sn": 20.294377091189755,
+    "velocity_factor": 0.9999822051734685,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      5591.337582363884,
+      7688.742554140092
+    ]
+  },
+  {
+    "filename": "spec1d_0002119418-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T023005.591.fits",
+    "unfluxed_sha256": "b867f708de335902a21bb4f358e377cd2d423ee8561e7d656636078a9088e904",
+    "object_id": "SPAT0324-SLIT0467-DET02",
+    "grism": "red",
+    "trace": 324.8871916434511,
+    "fwhm": 2.8988824521803824,
+    "good_pixels": 2050,
+    "median_sn": 19.8579990599316,
+    "velocity_factor": 0.9999821047921321,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      5591.33651844326,
+      7688.729147075702
+    ]
+  },
+  {
+    "filename": "spec1d_0002119419-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T025029.591.fits",
+    "unfluxed_sha256": "45fec6e155f5d4071675ce382308790217e01de2aa45e1fbceb84f75956fba1e",
+    "object_id": "SPAT0324-SLIT0467-DET02",
+    "grism": "red",
+    "trace": 324.92691121076393,
+    "fwhm": 3.056822454000973,
+    "good_pixels": 2051,
+    "median_sn": 18.621501618999847,
+    "velocity_factor": 0.9999820083318667,
+    "flexure_total": 0.0,
+    "wavelength_range": [
+      5591.336520483485,
+      7688.728866485689
+    ]
+  }
+]

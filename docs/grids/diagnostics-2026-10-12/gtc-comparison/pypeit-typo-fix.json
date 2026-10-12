@@ -1,0 +1,8 @@
+{
+  "package": "pypeit 2.0.1",
+  "file": "pypeit/spectrographs/gtc_osiris.py",
+  "original_sha256": "c5117118d2e702c7897ad67656d21f6f5de7ac8793551bbfac061f3edc6111dd",
+  "patched_sha256": "c7b0d943c1a33f1f191b013e9b75540f3df6d5bd4cd9d5c6d719a91b3abbb01e",
+  "change": "Two OSIRIS R2500U defaults reference nonexistent nsippet; corrected spelling to declared wavelength parameter nsnippet. Value 1 unchanged.",
+  "scope": "Isolated new reduction environment only. OpenWD and existing environments untouched."
+}

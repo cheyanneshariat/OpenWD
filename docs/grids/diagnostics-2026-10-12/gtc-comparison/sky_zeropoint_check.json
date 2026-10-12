@@ -1,0 +1,107 @@
+[
+  {
+    "file": "spec2d_0002119412-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T002552.591.fits",
+    "line_vacuum_A": 5578.886770459009,
+    "offset_A": -0.25129222695250064,
+    "nominal_centroid_sigma_A": 0.010252826867168852,
+    "sigma_A": 0.7985878907168112
+  },
+  {
+    "file": "spec2d_0002119413-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T004615.591.fits",
+    "line_vacuum_A": 5578.886770459009,
+    "offset_A": -0.17185364910073986,
+    "nominal_centroid_sigma_A": 0.006437964680512193,
+    "sigma_A": 0.7920163609984294
+  },
+  {
+    "file": "spec2d_0002119414-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T010639.591.fits",
+    "line_vacuum_A": 5578.886770459009,
+    "offset_A": -0.04333089504871168,
+    "nominal_centroid_sigma_A": 0.002982368284159188,
+    "sigma_A": 0.7823736670619962
+  },
+  {
+    "file": "spec2d_0002119420-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T031052.591.fits",
+    "line_vacuum_A": 6302.046463602668,
+    "offset_A": 0.171670925552462,
+    "nominal_centroid_sigma_A": 0.09086166720256236,
+    "sigma_A": 0.9471842835208892
+  },
+  {
+    "file": "spec2d_0002119420-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T031052.591.fits",
+    "line_vacuum_A": 6365.535508181061,
+    "offset_A": 0.49885943032131763,
+    "nominal_centroid_sigma_A": 0.12030525668642138,
+    "sigma_A": 0.8918125660844446
+  },
+  {
+    "file": "spec2d_0002119415-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T012855.591.fits",
+    "line_vacuum_A": 6302.046463602668,
+    "offset_A": 0.2170598804132169,
+    "nominal_centroid_sigma_A": 0.09974009796440482,
+    "sigma_A": 0.9478742635470896
+  },
+  {
+    "file": "spec2d_0002119415-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T012855.591.fits",
+    "line_vacuum_A": 6365.535508181061,
+    "offset_A": 0.5091813774006368,
+    "nominal_centroid_sigma_A": 0.13606563332449412,
+    "sigma_A": 0.878530070741306
+  },
+  {
+    "file": "spec2d_0002119416-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T014918.591.fits",
+    "line_vacuum_A": 6302.046463602668,
+    "offset_A": 0.27890641955582396,
+    "nominal_centroid_sigma_A": 0.07071391572299901,
+    "sigma_A": 0.9651396242807624
+  },
+  {
+    "file": "spec2d_0002119416-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T014918.591.fits",
+    "line_vacuum_A": 6365.535508181061,
+    "offset_A": 0.5397619385048529,
+    "nominal_centroid_sigma_A": 0.09417020746058719,
+    "sigma_A": 0.9117628220380406
+  },
+  {
+    "file": "spec2d_0002119417-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T020942.591.fits",
+    "line_vacuum_A": 6302.046463602668,
+    "offset_A": 0.20765210614899843,
+    "nominal_centroid_sigma_A": 0.055896530043705206,
+    "sigma_A": 0.9633145709411857
+  },
+  {
+    "file": "spec2d_0002119417-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T020942.591.fits",
+    "line_vacuum_A": 6365.535508181061,
+    "offset_A": 0.4933467458249652,
+    "nominal_centroid_sigma_A": 0.07988413093320411,
+    "sigma_A": 0.9110096495155972
+  },
+  {
+    "file": "spec2d_0002119418-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T023005.591.fits",
+    "line_vacuum_A": 6302.046463602668,
+    "offset_A": 0.2140579908473228,
+    "nominal_centroid_sigma_A": 0.06637924963273821,
+    "sigma_A": 0.9689657035842798
+  },
+  {
+    "file": "spec2d_0002119418-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T023005.591.fits",
+    "line_vacuum_A": 6365.535508181061,
+    "offset_A": 0.4483396350269686,
+    "nominal_centroid_sigma_A": 0.09394357176686824,
+    "sigma_A": 0.9369948638918006
+  },
+  {
+    "file": "spec2d_0002119419-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T025029.591.fits",
+    "line_vacuum_A": 6302.046463602668,
+    "offset_A": 0.22333243094180943,
+    "nominal_centroid_sigma_A": 0.08125944771056805,
+    "sigma_A": 0.9620095807264171
+  },
+  {
+    "file": "spec2d_0002119419-20190608-OSIRIS-OsirisLongSlitSpectroscopy-J1637+3631_OSIRIS_20190609T025029.591.fits",
+    "line_vacuum_A": 6365.535508181061,
+    "offset_A": 0.44989583520691667,
+    "nominal_centroid_sigma_A": 0.10833081562016078,
+    "sigma_A": 0.8996778772667067
+  }
+]

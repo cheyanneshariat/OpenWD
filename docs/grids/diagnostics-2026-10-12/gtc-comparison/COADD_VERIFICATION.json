@@ -1,0 +1,17 @@
+{
+  "blue": {
+    "good_pixels": 1978,
+    "median_sn": 22.433549700556156,
+    "coadd_sha256": "3ba5baac6d7a0d164d6eb623f18f7df71e089a416ee543acd726a3335ee98df2"
+  },
+  "green": {
+    "good_pixels": 1988,
+    "median_sn": 39.008074819698535,
+    "coadd_sha256": "da6cdda2c736d28a9504578580d8f8fd0883608fcfc4d1664e7a041658c9b9ff"
+  },
+  "red": {
+    "good_pixels": 2002,
+    "median_sn": 47.925452514852594,
+    "coadd_sha256": "33b0021b57ea77114fa506f1e02ff1902ae2321faf2fb70903c1562024f0cf64"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "input_science_exposures": 12,
+  "input_total_files": 50,
+  "science_grism_counts": {
+    "R2500U": 3,
+    "R2500V": 3,
+    "R2500R": 6
+  },
+  "model_recalculated": false,
+  "native_model_unchanged": true,
+  "new_hpc_allocation": false,
+  "actual_data_not_digitization": true,
+  "authors_original_coadd": false,
+  "source_commit": "14e206729d06f0989e03a0d2f1744a9cc518a136",
+  "comparison_model_sha256": "6a8d28f7b0066d2e9e05749b22c715cfb2651fbd94e128c292ca64029ac28a2d",
+  "coadd_array_counts": 12,
+  "plot_png_inspected": true,
+  "plot_rendered_pdf_inspected": true,
+  "science_rows_changed": 0,
+  "numerical_selection_count": 2367,
+  "mesh_requests": 2499,
+  "note": "New independent PypeIt reduction of public raw GTC data. Per-grism coadds retained without stitching. Full data arrays are saved, including excluded grism edges.",
+  "portable_plot_reproduction_metrics_byte_identical": true,
+  "raw_input_hashes_rechecked": 50
+}

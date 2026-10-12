@@ -1,0 +1,20 @@
+--- a/pypeit/spectrographs/gtc_osiris.py
++++ b/pypeit/spectrographs/gtc_osiris.py
+@@ -412,7 +412,7 @@
+             case 'R2500U':
+                 par['calibrations']['wavelengths']['lamps'] = ['XeI','HgI']
+                 par['calibrations']['wavelengths']['reid_arxiv'] = 'gtc_osiris_R2500U.fits'
+-                par['calibrations']['wavelengths']['nsippet'] = 1
++                par['calibrations']['wavelengths']['nsnippet'] = 1
+             case 'R2500V':
+                 par['calibrations']['wavelengths']['lamps'] = ['HgI','NeI','XeI']
+                 par['calibrations']['wavelengths']['reid_arxiv'] = 'gtc_osiris_R2500V.fits'
+@@ -1126,7 +1126,7 @@
+             case 'R2500U':
+                 par['calibrations']['wavelengths']['lamps'] = ['XeI','HgI']
+                 par['calibrations']['wavelengths']['reid_arxiv'] = 'gtc_osiris_R2500U.fits'
+-                par['calibrations']['wavelengths']['nsippet'] = 1
++                par['calibrations']['wavelengths']['nsnippet'] = 1
+             case 'R2500V':
+                 par['calibrations']['wavelengths']['lamps'] = ['HgI','NeI','XeI']
+                 par['calibrations']['wavelengths']['reid_arxiv'] = 'gtc_osiris_R2500V.fits'
