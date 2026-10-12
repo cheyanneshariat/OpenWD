@@ -1,0 +1,230 @@
+{
+  "dispatch_heuristic": "At least 0.1 percent sampled UV change in one case with all fixed/restoration/source gates passing; exploratory usefulness threshold, not physical qualification",
+  "flux_normalization": "none",
+  "independent_depth_convergence_verified": false,
+  "native_wavelengths_identical": true,
+  "observational_comparison": false,
+  "parameter_fit": false,
+  "physical_accuracy_verified": false,
+  "records": [
+    {
+      "bands": {
+        "Si1260": {
+          "bounds_vacuum_A": [
+            1258,
+            1269
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 8.622310861838947,
+          "integrated_signed_percent": -8.622310861838626,
+          "maximum_absolute_relative_percent": 14.48378983099512,
+          "pixels": 239
+        },
+        "Si1309": {
+          "bounds_vacuum_A": [
+            1300,
+            1315
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.736900245295768,
+          "integrated_signed_percent": -0.736900245295768,
+          "maximum_absolute_relative_percent": 51.214989348363574,
+          "pixels": 325
+        },
+        "UV": {
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.5451461415880104,
+          "integrated_signed_percent": -0.5451268331104377,
+          "maximum_absolute_relative_percent": 51.214989348363574,
+          "pixels": 7578
+        },
+        "full": {
+          "bounds_vacuum_A": [
+            1000,
+            10000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.008623422408121783,
+          "integrated_signed_percent": 0.005737437465432432,
+          "maximum_absolute_relative_percent": 51.214989348363574,
+          "pixels": 14376
+        },
+        "optical": {
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.004602472962140121,
+          "integrated_signed_percent": 0.004602472962140119,
+          "maximum_absolute_relative_percent": 5.522101012942504,
+          "pixels": 4760
+        }
+      },
+      "collaborator_model_comparison": {
+        "UV": {
+          "baseline_fixed_RMS_percent": 93.16869874227845,
+          "bin_width_A": 10,
+          "bins": 35,
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 3.656e-13,
+            "Cl": 3.634e-07,
+            "K": 2.48e-07,
+            "Li": 1.598e-07
+          },
+          "updated_RMS_percent": 93.24743852335328,
+          "updated_fixed_RMS_percent": 93.24743852335328
+        },
+        "optical": {
+          "baseline_fixed_RMS_percent": 7.9893975463408085,
+          "bin_width_A": 10,
+          "bins": 600,
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 3.656e-13,
+            "Cl": 3.634e-07,
+            "K": 2.48e-07,
+            "Li": 1.598e-07
+          },
+          "updated_RMS_percent": 7.988223308992275,
+          "updated_fixed_RMS_percent": 7.988223308992275
+        }
+      },
+      "comparison_scope": "Frozen original structures; no new equilibrium claim",
+      "id": "cool",
+      "logg": 8.38524868240322,
+      "new_sha256": "74b33fa4c888766db067c893a8d0597765a3c42f582bda46126f7c7a4c29d7af",
+      "old_sha256": "e2310936573a7a41aa3d806c88490fd0cd4cfd15b2220d06de8eed2721fb5ffb",
+      "old_source": "70bca78",
+      "teff_K": 10935.02,
+      "updated_source": "1386029"
+    },
+    {
+      "bands": {
+        "Si1260": {
+          "bounds_vacuum_A": [
+            1258,
+            1269
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.059602078034386705,
+          "integrated_signed_percent": -0.05958066568916588,
+          "maximum_absolute_relative_percent": 14.874393516257523,
+          "pixels": 239
+        },
+        "Si1309": {
+          "bounds_vacuum_A": [
+            1300,
+            1315
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.004950370475569145,
+          "integrated_signed_percent": -0.004597944671740171,
+          "maximum_absolute_relative_percent": 1.4195216168214175,
+          "pixels": 325
+        },
+        "UV": {
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.0025847760788310454,
+          "integrated_signed_percent": -0.001864170990588824,
+          "maximum_absolute_relative_percent": 14.874393516257523,
+          "pixels": 7578
+        },
+        "full": {
+          "bounds_vacuum_A": [
+            1000,
+            10000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.0006200481752945124,
+          "integrated_signed_percent": -0.0004304170300677897,
+          "maximum_absolute_relative_percent": 14.874393516257523,
+          "pixels": 14376
+        },
+        "optical": {
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 1.341757928050417e-06,
+          "integrated_signed_percent": -2.2795655765345258e-07,
+          "maximum_absolute_relative_percent": 0.0008492739048682196,
+          "pixels": 4760
+        }
+      },
+      "collaborator_model_comparison": {
+        "UV": {
+          "baseline_fixed_RMS_percent": 1.2313004998517862,
+          "bin_width_A": 10,
+          "bins": 35,
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 2.426e-15,
+            "Cl": 2.412e-09,
+            "K": 1.646e-09,
+            "Li": 1.061e-09
+          },
+          "updated_RMS_percent": 1.2338700673005183,
+          "updated_fixed_RMS_percent": 1.2338700673005183
+        },
+        "optical": {
+          "baseline_fixed_RMS_percent": 1.6558723182401414,
+          "bin_width_A": 10,
+          "bins": 600,
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 2.426e-15,
+            "Cl": 2.412e-09,
+            "K": 1.646e-09,
+            "Li": 1.061e-09
+          },
+          "updated_RMS_percent": 1.6558723867619245,
+          "updated_fixed_RMS_percent": 1.6558723867619245
+        }
+      },
+      "comparison_scope": "Frozen original structures; no new equilibrium claim",
+      "id": "warm",
+      "logg": 8.210050849875138,
+      "new_sha256": "a8398c7317b2d6c81dfe094070df9803de9c627d614ef324a2487300199107dc",
+      "old_sha256": "060db3c9dbb4ed40cb87fd1588d96c948d19857c5418b0b47ad91245e9e5d90a",
+      "old_source": "70bca78",
+      "teff_K": 21939.0,
+      "updated_source": "1386029"
+    }
+  ],
+  "useful_spectral_change_for_cold_pilot": true
+}

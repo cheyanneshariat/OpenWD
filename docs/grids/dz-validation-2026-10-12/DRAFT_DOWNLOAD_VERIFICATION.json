@@ -1,0 +1,12 @@
+{
+  "NPZ_files_read": 14,
+  "archive_bytes": 3937266,
+  "archive_member_hashes_verified": 127,
+  "arrays_read": 104,
+  "cold_native_spectra_read": 2,
+  "depth_convergence_verified": false,
+  "downloaded_archive_sha256": "e1809bde8c0c0cdcd8dcc8c9ae8b3b3f982d5bd8000c1f8d7e67e90ad3c4d7bd",
+  "fixed_spectra": 4,
+  "is_draft": true,
+  "physical_accuracy_verified": false
+}

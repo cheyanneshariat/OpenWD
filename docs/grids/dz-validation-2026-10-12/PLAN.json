@@ -1,0 +1,165 @@
+{
+  "budget": {
+    "execution": "Local single-thread calculations; no HPC allocation or additional charged node-hours",
+    "phase_cap_charged_CPU_node_hours": 13,
+    "remaining_charged_CPU_node_hours": 5.979292534722222,
+    "settled_prior_charged_CPU_node_hours": 7.020707465277778
+  },
+  "caps": {
+    "cold": {
+      "RSS_bytes": 3221225472,
+      "seconds": 3600
+    },
+    "fixed": {
+      "RSS_bytes": 3221225472,
+      "seconds": 900
+    }
+  },
+  "models": [
+    {
+      "case": "mdl_123876_standard_v1",
+      "composition_match": "Approximate: unsupported Li, Be, Cl and K omitted, not proven spectrally negligible",
+      "config": {
+        "abundances": {
+          "Al": -5.130826972678317,
+          "Ar": -12.215240105335996,
+          "C": -4.160773425986565,
+          "Ca": -5.382894769497622,
+          "Co": -6.807153884811158,
+          "Cr": -5.930701987884471,
+          "Cu": -7.436875039661955,
+          "Fe": -4.1108103879529265,
+          "Mg": -4.030817140767739,
+          "Mn": -6.090818524022147,
+          "N": -5.4156687756324695,
+          "Na": -5.290814870449754,
+          "Ni": -5.370794342897696,
+          "O": -3.170824926082912,
+          "P": -6.160773425986565,
+          "S": -4.400772137226204,
+          "Sc": -8.62470226178266,
+          "Si": -4.0508052257620175,
+          "Ti": -6.670805584911549,
+          "V": -7.698752911363789
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 10935.02,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -5.742096402303244,
+        "logg": 8.38524868240322,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "standard",
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "id": "cool",
+      "omitted_unsupported_metals": {
+        "Be": 3.656e-13,
+        "Cl": 3.634e-07,
+        "K": 2.48e-07,
+        "Li": 1.598e-07
+      },
+      "original_source": "33176c81226f2e2084f8765b52ff09547b9d2857",
+      "original_spectrum_sha256": "14d4068b1772189d8b9e9fc1c98c5ca5e1a1392ca70d3c9b318e7d7ebb0b2a21",
+      "parameter_fit": false,
+      "reference_physics_match": "Unestablished: collaborator code/version and prescriptions unknown",
+      "saved_structure_sha256": "90c1f6b573a0bf8e97b866b1a61a23b470e625765ecd6575dc937921aa632677",
+      "wavelength_file": "cool-wavelength.npy"
+    },
+    {
+      "case": "mdl_167862_standard_v1",
+      "composition_match": "Approximate: unsupported Li, Be, Cl and K omitted, not proven spectrally negligible",
+      "config": {
+        "abundances": {
+          "Al": -9.362310180881598,
+          "Ar": -14.393296258666325,
+          "C": -8.392330563311758,
+          "Ca": -7.560825260156531,
+          "Co": -8.985059650207063,
+          "Cr": -10.162285331715088,
+          "Cu": -9.614930223668065,
+          "Fe": -8.342275045794892,
+          "Mg": -8.262330372643358,
+          "Mn": -10.322301818525489,
+          "N": -7.593630164530732,
+          "Na": -9.52230007166787,
+          "Ni": -9.60223374387355,
+          "O": -7.402304814074488,
+          "P": -10.392330563311758,
+          "S": -8.632271453913024,
+          "Sc": -10.80271944187438,
+          "Si": -8.282329496997738,
+          "Ti": -10.90239567112559,
+          "V": -9.876801924968001
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 21939.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -6.4838724542226736,
+        "logg": 8.210050849875138,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "standard",
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "id": "warm",
+      "omitted_unsupported_metals": {
+        "Be": 2.426e-15,
+        "Cl": 2.412e-09,
+        "K": 1.646e-09,
+        "Li": 1.061e-09
+      },
+      "original_source": "33176c81226f2e2084f8765b52ff09547b9d2857",
+      "original_spectrum_sha256": "67a60a741cc619fa418c7e94d03c0bd32196b7d1cb8d5a3d41089fb31d22fe04",
+      "parameter_fit": false,
+      "reference_physics_match": "Unestablished: collaborator code/version and prescriptions unknown",
+      "saved_structure_sha256": "c1bd2e90aa2b92c7a06bf7443aa86ca160779ea4cc08fc57057d384b3e4896be",
+      "wavelength_file": "warm-wavelength.npy"
+    }
+  ],
+  "runtime_data": "Locked shared ModelData runtime; full manifest retained in archive",
+  "scientific_scope": "Fixed saved structures first; no new equilibrium claim. Two public cold starts only after useful differences and fixed-spectrum native gates; all source/data/input locks retained.",
+  "source_preflight_requirement": "Both exact DZ frozen-spectrum tests must pass without changing tolerances before any cold start",
+  "sources": {
+    "baseline": {
+      "commit": "70bca78e82e7b7dd5860ca3e337bd1f83919e09a",
+      "path": "source-70bca78-native-v2"
+    },
+    "updated": {
+      "commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+      "path": "source-1386029-native-v2"
+    }
+  }
+}

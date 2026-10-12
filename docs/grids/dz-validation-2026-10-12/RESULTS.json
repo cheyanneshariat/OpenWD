@@ -1,0 +1,278 @@
+{
+  "dispatch_heuristic": "At least 0.1 percent sampled UV change in one case with all fixed/restoration/source gates passing; exploratory usefulness threshold, not physical qualification",
+  "flux_normalization": "none",
+  "independent_depth_convergence_verified": false,
+  "native_wavelengths_identical": true,
+  "observational_comparison": false,
+  "parameter_fit": false,
+  "physical_accuracy_verified": false,
+  "records": [
+    {
+      "bands": {
+        "Si1260": {
+          "bounds_vacuum_A": [
+            1258,
+            1269
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 3.412134927859674,
+          "integrated_signed_percent": -1.3618647996861,
+          "maximum_absolute_relative_percent": 23.035470417558468,
+          "pixels": 239
+        },
+        "Si1309": {
+          "bounds_vacuum_A": [
+            1300,
+            1315
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 8.538404703670881,
+          "integrated_signed_percent": 8.224898261684238,
+          "maximum_absolute_relative_percent": 48.66337001690147,
+          "pixels": 325
+        },
+        "UV": {
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 8.966857926512324,
+          "integrated_signed_percent": 8.790424103626247,
+          "maximum_absolute_relative_percent": 48.66337001690147,
+          "pixels": 7578
+        },
+        "full": {
+          "bounds_vacuum_A": [
+            1000,
+            10000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 3.7590362192092015,
+          "integrated_signed_percent": 3.7588757173934417,
+          "maximum_absolute_relative_percent": 48.66337001690147,
+          "pixels": 14376
+        },
+        "optical": {
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 2.953089975795481,
+          "integrated_signed_percent": 2.953089975795481,
+          "maximum_absolute_relative_percent": 13.129572637038844,
+          "pixels": 4760
+        }
+      },
+      "cold_vs_updated_fixed": {
+        "UV": {
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 9.386738302647611,
+          "integrated_signed_percent": 9.38672046876097,
+          "maximum_absolute_relative_percent": 23.035547074267072,
+          "pixels": 7578
+        },
+        "optical": {
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 2.948351805738654,
+          "integrated_signed_percent": 2.948351805738654,
+          "maximum_absolute_relative_percent": 13.12943634173882,
+          "pixels": 4760
+        }
+      },
+      "collaborator_model_comparison": {
+        "UV": {
+          "baseline_fixed_RMS_percent": 93.16869874227845,
+          "bin_width_A": 10,
+          "bins": 35,
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 3.656e-13,
+            "Cl": 3.634e-07,
+            "K": 2.48e-07,
+            "Li": 1.598e-07
+          },
+          "updated_RMS_percent": 92.6428032753981,
+          "updated_fixed_RMS_percent": 93.24743852335328
+        },
+        "optical": {
+          "baseline_fixed_RMS_percent": 7.9893975463408085,
+          "bin_width_A": 10,
+          "bins": 600,
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 3.656e-13,
+            "Cl": 3.634e-07,
+            "K": 2.48e-07,
+            "Li": 1.598e-07
+          },
+          "updated_RMS_percent": 7.819173648379237,
+          "updated_fixed_RMS_percent": 7.988223308992275
+        }
+      },
+      "comparison_scope": "Baseline fixed synthesis on historical structure versus updated cold model; structure and opacity both can change",
+      "id": "cool",
+      "logg": 8.38524868240322,
+      "new_sha256": "734dae935b0f5f33ed723824a471a71f54ab87cf4002a24d7713d2f5b053d694",
+      "old_sha256": "e2310936573a7a41aa3d806c88490fd0cd4cfd15b2220d06de8eed2721fb5ffb",
+      "old_source": "70bca78",
+      "teff_K": 10935.02,
+      "updated_source": "1386029"
+    },
+    {
+      "bands": {
+        "Si1260": {
+          "bounds_vacuum_A": [
+            1258,
+            1269
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.05761996389709729,
+          "integrated_signed_percent": -0.056185161367675485,
+          "maximum_absolute_relative_percent": 14.869494270631357,
+          "pixels": 239
+        },
+        "Si1309": {
+          "bounds_vacuum_A": [
+            1300,
+            1315
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.007892852387421434,
+          "integrated_signed_percent": -0.0013784723677666816,
+          "maximum_absolute_relative_percent": 1.4162707893594528,
+          "pixels": 325
+        },
+        "UV": {
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.005556943664950594,
+          "integrated_signed_percent": 0.0013549787537839983,
+          "maximum_absolute_relative_percent": 14.869494270631357,
+          "pixels": 7578
+        },
+        "full": {
+          "bounds_vacuum_A": [
+            1000,
+            10000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.002809128343869947,
+          "integrated_signed_percent": 0.0018223645131485607,
+          "maximum_absolute_relative_percent": 14.869494270631357,
+          "pixels": 14376
+        },
+        "optical": {
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.0008404597956017054,
+          "integrated_signed_percent": 0.0008404584754523805,
+          "maximum_absolute_relative_percent": 0.0028824451768549864,
+          "pixels": 4760
+        }
+      },
+      "cold_vs_updated_fixed": {
+        "UV": {
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.0032192097559472182,
+          "integrated_signed_percent": 0.0032192097559472182,
+          "maximum_absolute_relative_percent": 0.012590003532619853,
+          "pixels": 7578
+        },
+        "optical": {
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Earlier absolute surface F_lambda, no normalization or extrapolation",
+          "integrated_absolute_percent": 0.0008406864339264337,
+          "integrated_signed_percent": 0.0008406864339264337,
+          "maximum_absolute_relative_percent": 0.0027855471520288333,
+          "pixels": 4760
+        }
+      },
+      "collaborator_model_comparison": {
+        "UV": {
+          "baseline_fixed_RMS_percent": 1.2313004998517862,
+          "bin_width_A": 10,
+          "bins": 35,
+          "bounds_vacuum_A": [
+            1150,
+            1500
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 2.426e-15,
+            "Cl": 2.412e-09,
+            "K": 1.646e-09,
+            "Li": 1.061e-09
+          },
+          "updated_RMS_percent": 1.2307893957493121,
+          "updated_fixed_RMS_percent": 1.2338700673005183
+        },
+        "optical": {
+          "baseline_fixed_RMS_percent": 1.6558723182401414,
+          "bin_width_A": 10,
+          "bins": 600,
+          "bounds_vacuum_A": [
+            3000,
+            9000
+          ],
+          "denominator": "Collaborator absolute model F_lambda averaged per bin; no fitted normalization",
+          "physical_prescriptions_matched": false,
+          "reference_is_observation": false,
+          "unsupported_composition_omissions": {
+            "Be": 2.426e-15,
+            "Cl": 2.412e-09,
+            "K": 1.646e-09,
+            "Li": 1.061e-09
+          },
+          "updated_RMS_percent": 1.6554946350142767,
+          "updated_fixed_RMS_percent": 1.6558723867619245
+        }
+      },
+      "comparison_scope": "Baseline fixed synthesis on historical structure versus updated cold model; structure and opacity both can change",
+      "id": "warm",
+      "logg": 8.210050849875138,
+      "new_sha256": "0d1451e1e5ce662d63214b3edfb038cf354373c9ced7ec71b0151667061c6fbb",
+      "old_sha256": "060db3c9dbb4ed40cb87fd1588d96c948d19857c5418b0b47ad91245e9e5d90a",
+      "old_source": "70bca78",
+      "teff_K": 21939.0,
+      "updated_source": "1386029"
+    }
+  ],
+  "useful_spectral_change_for_cold_pilot": true
+}

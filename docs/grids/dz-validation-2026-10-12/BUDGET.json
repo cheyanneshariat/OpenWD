@@ -1,0 +1,12 @@
+{
+  "authorized_phase_cap_CPU_node_hours": 13,
+  "verified_prior_charged_CPU_node_hours": 7.020707465277778,
+  "remaining_CPU_node_hours": 5.979292534722222,
+  "this_tier_HPC_allocations": 0,
+  "this_tier_charged_CPU_node_hours": 0,
+  "execution": "Local sequential single-thread jobs under existing compatible validation venv",
+  "per_child_RSS_cap_GiB": 3,
+  "fixed_child_wall_cap_minutes": 15,
+  "cold_child_wall_cap_minutes": 60,
+  "local_CPU_time_is_not_zero_and_not_counted_as_HPC_charged_node_hours": true
+}

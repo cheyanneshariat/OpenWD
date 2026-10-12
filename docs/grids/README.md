@@ -76,6 +76,9 @@ the releases are published. The original archives remain unchanged.
   retain native structures, full inputs and source-check scope.
 - [Accepted D6 spectrum and three eight-hour diagnostic timeouts](diagnostics-2026-10-12/README.md)
   retain the matched source controls and unresolved DB cases.
+- [Two DZ benchmarks after the October 12 physics update](dz-validation-2026-10-12/README.md)
+  separate matched fixed-structure spectra from two fresh cold starts. The cool
+  UV disagreement remains unresolved; selected grid counts are unchanged.
 - [Cold DB and Montreal comparison](db-cold-2026-10-09/README.md) preserve the
   earlier four-model demonstration and its unresolved spectral disagreement.
 

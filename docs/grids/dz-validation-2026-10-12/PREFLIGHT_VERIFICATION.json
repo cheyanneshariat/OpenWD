@@ -1,0 +1,16 @@
+{
+  "status": "PASSED",
+  "cases": [
+    "dz-j0738",
+    "dz-pg1225"
+  ],
+  "tests": 2,
+  "seconds": 258.23,
+  "native_extension_sha256": "660633e79bbfd32691ef47511a73113b62dbaae5c443906dcab12d1d6e0e3234",
+  "tolerances_unchanged": true,
+  "first_runtime_failure_preserved": "../validation-v1/PREFLIGHT_DIRECT.log",
+  "tool_wrapper_failure": "Archive snapshot lacks git HEAD; exact underlying public tests used",
+  "cold_start_not_yet_dispatched": false,
+  "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+  "matched_fixed_stage_passed": true
+}

@@ -1,0 +1,8 @@
+{
+  "first_results_retained": "../validation-v1",
+  "reason": "Initial native library omitted seven interfaces present in the matching C source; its fixed-spectrum controls failed. Isolated v2 copies use the existing validation native extension after exact C/header/setup checks.",
+  "code_physics_changed": false,
+  "tolerances_changed": false,
+  "older_results_not_delivered_as_qualified": true,
+  "required_preflight": "PREFLIGHT_NATIVE_V2.log"
+}
