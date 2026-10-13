@@ -7,7 +7,7 @@ The stages below are planned calculations. They have not passed grid validation.
 ## Work started
 
 The [DZ rerun](../dz-rerun-2026-10-12/README.md) has eight verified production
-pilot models. Job 59725915 is queued for 310 requests; four more are deferred
+pilot models. Job 59725915 is running a batch of 310 requests; four more are deferred
 by the budget. All 322 coordinates already existed. The DZ calculation keeps
 its tested `1386029` source.
 
@@ -37,13 +37,13 @@ and native checks prevent a guaranteed completion time.
 
 [All three required DAZ replacements](../daz-replacements-2026-10-12/README.md)
 are now verified and archived. Their matched old/new plots and remaining
-limits are recorded. The separate DZ replacement remains queued.
+limits are recorded. The separate DZ replacement is running.
 
 ## Staged scope
 
 | Stage | Coordinates and requests | Purpose |
 | --- | --- | --- |
-| DZ replacement | 322 existing requests: 8 verified, 310 queued, 4 deferred | Update the existing metal-pattern grid while preserving old attempts. |
+| DZ replacement | 322 existing requests: 8 verified, 310 in the running batch, 4 deferred | Update the existing metal-pattern grid while preserving old attempts. |
 | DAZ replacements | 3 existing anchors, 3 cold requests | Replace spectra affected by the updated metal physics. |
 | DA H2 UV supplement | 15 grid nodes + 2 independent tests; 34 paired cold requests | Test H2-off/on spectra across the cool hydrogen regime. |
 | DAZ first patches | 27 grid nodes + 6 independent tests; 55 cold requests | Test T/g interpolation at three fixed abundance patterns; pair H2 off/on for the cool patterns. |
@@ -91,7 +91,7 @@ depth convergence or unbiased parameter recovery.
 
 ## Spending and acceptance
 
-Settled use is **7.1720941840 charged CPU node-hours**. The queued DZ bulk
+Settled use is **7.1720941840 charged CPU node-hours**. The running DZ bulk
 reserves **5.75** more, giving a conservative **12.9220941840/13** ceiling and
 **0.0779058160** unreserved. This ceiling is not the final bill. No extra
 cluster grid is submitted now. Reconcile terminal elapsed time, allocated

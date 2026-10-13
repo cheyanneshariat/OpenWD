@@ -177,7 +177,7 @@ The [DO temperature script](plot_do_temperature.py) reproduces the new
 fixed-gravity sequence from its checked archive.
 
 [The updated DZ rerun](dz-rerun-2026-10-12/README.md) has eight verified pilot
-completions. A bounded batch of 310 requests is queued; four await a fresh budget
+completions. The bounded 310-request batch is running; four await a fresh budget
 check after settlement. The selected DZ counts above are unchanged.
 
 [The grid update plan](update-plan-2026-10-12/README.md) separates required

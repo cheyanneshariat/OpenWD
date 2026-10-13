@@ -38,8 +38,9 @@ establish independent depth convergence, physical accuracy or an abundance fit.
 
 ## Bounded continuation
 
-Bulk job **59725915** is queued in the ordinary CPU queue for **310 remaining
-requests**. Four requests are deferred because their full recorded time limits
+Bulk job **59725915** started at **01:29:39 Pacific on October 13** on
+`nid006992`, in ordinary CPU QOS `regular_1`. It covers **310 remaining
+requests**. The allocation has 256 logical CPUs, 448 GiB and billing256/256. Four requests are deferred because their full recorded time limits
 do not fit the conservative planning window. They are unattempted, not numerical
 failures. A fresh accounting check after bulk settlement will determine whether
 a small completion batch can cover them. No extra allocation is submitted now.
@@ -55,7 +56,12 @@ explicitly not started. There is no automatic retry loop.
 The bulk uses 128 physical workers, one thread each, a 448 GiB allocation and
 3 GiB memory limits per worker. Recorded model time limits range from one to
 three hours. Native tolerances and iteration limits remain unchanged. Required
-fixed-spectrum checks run again before dispatch. Numerical failures, unsupported
+fixed-spectrum checks passed again before dispatch. Scientific cold starts began
+at **01:37:34 Pacific**. The first owned read verified 128 exact requests
+running on distinct physical cores with one numerical thread each; 182 planned
+requests await worker slots. The four deferred records are separate unattempted
+requests and are not counted as scientific attempts. The allocation cap ends
+at **07:14:39 Pacific**; that is a resource limit, not a completion estimate. Numerical failures, unsupported
 cases, timeouts, memory stops and requests that could not start remain separate.
 
 Both stages use source **1386029e9a911d9d6f7977cfb30af2f24e5f7545**, which includes

@@ -86,7 +86,7 @@ Local and private persistent copies match. Downloaded draft bytes, all 115 membe
 remains unpublished and requires contributor access.
 
 These calculations used the local computer. **Added charged NERSC node-hours
-are zero.** The separate DZ batch remains queued. Its reserved hours must not
+are zero.** The separate DZ batch is running. Its reserved hours must not
 be reported as actual charges.
 
 To reproduce the figures from the checked arrays, without running a model:
