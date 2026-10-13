@@ -11,19 +11,29 @@ pilot models. Job 59725915 is queued for 310 requests; four more are deferred
 by the budget. All 322 coordinates already existed. The DZ calculation keeps
 its tested `1386029` source.
 
-A six-request cold pilot has started on the local computer under current
-main `e09e7daeaa0695d34e14b55c557ca770fad326af`: a 12,000 K/logg 8 DA pair with
-H2 off/on, the same pair for G29-38, and updated G149-28 and GALEX J1931 DAZ
-anchors. DA uses production resolution. DAZ retains the old standard resolution
-and full abundance patterns, with the new default metal profiles. Nine H2 and
-DA/DB fixed-spectrum checks passed before dispatch. The cold outcomes remain
-pending. Fixed-spectrum checks do not certify an atmosphere.
+A six-request local pilot used current main
+`e09e7daeaa0695d34e14b55c557ca770fad326af`. Its first production DA at
+12,000 K/logg 8, with H2 off, hit the 4 GiB RSS guard after 935.24 seconds.
+The sampled peak was 5.546 GiB. No verified spectrum was adopted. Five
+follow-on requests were never started. The DA resource stop is retained;
+the model is not retried automatically. Nine H2 and DA/DB fixed-spectrum
+checks passed before dispatch. Fixed-spectrum checks do not certify an atmosphere.
 
-One thread runs at a time, with a one-hour wall cap and 4 GiB RSS cap per request.
-Local work adds zero charged NERSC node-hours. An initial Python environment
+The user then authorized all required replacements overnight. An independent
+three-request DAZ tier has started to replace G29-38, G149-28 and GALEX J1931 using the same
+checked source. It preserves the old standard resolution, temperatures,
+gravities, full abundance patterns and alpha, with the new default metal
+profiles. Its wavelength array exactly matches the three old selected spectra.
+Two additional DAZ fixed-spectrum checks passed before dispatch, bringing the
+preliminary total to eleven. One numerical thread runs
+at a time, with two-hour wall and 6 GiB RSS guards per request. Case-specific
+failures remain explicit; source or runtime identity failures stop the branch.
+
+Local work adds zero charged NERSC node-hours. An earlier Python environment
 import failure stopped before any model calculation; its logs are retained.
-The corrected launcher uses the checked validation environment. Any failed cold
-request stops the dependent local tier without an automatic retry.
+The corrected launcher uses the checked validation environment. The morning
+handoff will report verified replacements and any unfinished cases. Queue delays
+and native checks prevent a guaranteed completion time.
 
 ## Staged scope
 
