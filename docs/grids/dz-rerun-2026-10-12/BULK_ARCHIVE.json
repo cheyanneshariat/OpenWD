@@ -1,0 +1,30 @@
+{
+  "status": "VERIFIED_LOCAL_ARCHIVE",
+  "checked_utc": "2026-10-13T13:06:24.928075+00:00",
+  "bytes": 375865625,
+  "sha256": "254a92783745016cb855f29d2d26af691e0dd9f6b0e71aef75f533c16426908f",
+  "hashed_members": 3727,
+  "total_members": 3729,
+  "NPZ_files_read": 606,
+  "arrays_read": 3630,
+  "bulk_counts": {
+    "COMPLETE_NUMERICAL": 300,
+    "INFRASTRUCTURE_INTERRUPTION": 1,
+    "NOT_STARTED_PLANNING_BUDGET": 4,
+    "NUMERICAL_NONCONVERGENCE": 2,
+    "TIMEOUT": 7
+  },
+  "accepted_bulk_native_spectra": 300,
+  "exact_native_comparisons": 304,
+  "pilot_archive_reused_without_recollection": true,
+  "source_bundle_verified": {
+    "status": "VERIFIED",
+    "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+    "locked_source_files": 2191,
+    "native_extension_files": 1,
+    "bytes": 183899618,
+    "sha256": "612621066242155e11c0b9f413976e2fa8db7052fee5d73421b9b308ff0d0225"
+  },
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

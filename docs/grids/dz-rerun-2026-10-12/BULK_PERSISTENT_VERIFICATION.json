@@ -1,0 +1,9 @@
+{
+  "status": "VERIFIED_PRIVATE_PERSISTENT_ARCHIVE",
+  "bytes": 375865625,
+  "sha256": "254a92783745016cb855f29d2d26af691e0dd9f6b0e71aef75f533c16426908f",
+  "verified_member_count": 3729,
+  "verified_native_and_comparison_NPZ": 606,
+  "verified_arrays": 3630,
+  "method": "Exact whole-archive byte match to independently member/array-verified local archive"
+}

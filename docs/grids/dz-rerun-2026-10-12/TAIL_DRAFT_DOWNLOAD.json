@@ -1,0 +1,30 @@
+{
+  "status": "VERIFIED_ACTUAL_DRAFT_DOWNLOAD",
+  "checked_utc": "2026-10-13T14:45:24.304148+00:00",
+  "records": [
+    {
+      "stage": "pilot",
+      "archive": "OpenWD-DZ-pilot-20261012.tar.gz",
+      "actual_downloaded_bytes": 2648677,
+      "sha256": "63c02f1374d9451259a1b78cd9f5b26ea2146c737f7f019d807679c8dd7cdf35",
+      "members_verified": 96,
+      "NPZ_files_read": 8,
+      "arrays_read": 72,
+      "native_spectrum_files_verified": 8,
+      "native_array_locks_verified": 72
+    },
+    {
+      "stage": "tail",
+      "archive": "OpenWD-DZ-tail-replacements-20261013.tar.gz",
+      "actual_downloaded_bytes": 4106701,
+      "sha256": "72a0f7b000821bb7449b0f5b98a4de5457ec1255053b9cfc8324f61b2cb419bf",
+      "members_verified": 94,
+      "NPZ_files_read": 8,
+      "arrays_read": 48,
+      "native_spectrum_files_verified": 4,
+      "native_array_locks_verified": 36
+    }
+  ],
+  "pilot_original_archive_reused": true,
+  "no_model_rerun": true
+}

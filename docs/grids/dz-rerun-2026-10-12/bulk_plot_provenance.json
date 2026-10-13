@@ -1,0 +1,17 @@
+{
+  "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+  "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+  "cases": [
+    "dz-3288eba8649721c5fdac2cd8",
+    "dz-7164b4a3c759a332ba3e999d",
+    "dz-2ae44817c30a18cebedf070b"
+  ],
+  "comparison_sha256": "e5c752f499c21dd1ebcc47fb9ac48e1adbcfcd0e6e957dd3baca5c01f9d6633b",
+  "flux_normalization": "none; physical axis unit scaling only",
+  "wavelength_resampling": "none",
+  "metrics_rechecked": 9,
+  "selection": "Largest integrated absolute UV change in each of three fixed metal patterns; these are diagnostic comparisons, not observational fits",
+  "plot_text": "titles, axes and ticks only",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

@@ -1,0 +1,16 @@
+{
+  "status": "VERIFIED",
+  "PNG_inspected": 2,
+  "rendered_PDF_inspected": 2,
+  "metrics_rechecked": 12,
+  "text": "titles axes ticks only",
+  "files": {
+    "dz_UV.png": "bf70b0df41a716bc5ed28f088cdc59d8eab3ce15e6b66ddc4a1e84f9d2d07785",
+    "dz_UV.pdf": "f55d4e4aa2691cf535b7afb15083a6b1283401bd7d3e0fd1272dc153f0e9f432",
+    "dz_optical.png": "589f4319e1baaf0a70e2e0b599ec5fd6f581f4fe5da2e2572aa9b78e0726ce97",
+    "dz_optical.pdf": "ed5ac75b1451668f1ffb4b5986bbe7d48d556a2aef48d4e4099b7bf3faf14b84",
+    "plot_provenance.json": "54786fae1d141ef6a8991af620dd62f4865a8994daff9fbdbef31721a9487f2c"
+  },
+  "normalization": "none",
+  "resampling": "none"
+}

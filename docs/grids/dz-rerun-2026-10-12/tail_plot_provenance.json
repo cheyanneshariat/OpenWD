@@ -1,0 +1,18 @@
+{
+  "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+  "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+  "cases": [
+    "dz-b5a50e9dd160317824150502",
+    "dz-c750ad546e71eb21e9caf0b1",
+    "dz-84ddbb3ddd5b6bce7fa247cc",
+    "dz-2e6f8cf54f612bbbd2e886c2"
+  ],
+  "comparison_sha256": "4569f0ef67f3fbb137e7ce29c631cf00d58088503d27508df28f7b0f22beafe9",
+  "flux_normalization": "none; physical axis unit scaling only",
+  "wavelength_resampling": "none",
+  "metrics_rechecked": 12,
+  "selection": "All four previously deferred GD40 requests, ordered by temperature; these are diagnostic comparisons, not observational fits",
+  "plot_text": "titles, axes and ticks only",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

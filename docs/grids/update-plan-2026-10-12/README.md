@@ -2,14 +2,16 @@
 
 The recent updates call for a DZ rerun, three DAZ replacements, and a small
 optional H2 UV grid. They do not require rerunning the whole pure DA grid.
-The stages below are planned calculations. They have not passed grid validation.
+The required existing-coordinate replacements are verified below. Optional grid
+expansions remain proposed and have not passed grid validation.
 
 ## Work started
 
-The [DZ rerun](../dz-rerun-2026-10-12/README.md) has eight verified production
-pilot models. Job 59725915 is running a batch of 310 requests; four more are deferred
-by the budget. All 322 coordinates already existed. The DZ calculation keeps
-its tested `1386029` source.
+The [DZ rerun](../dz-rerun-2026-10-12/README.md) finished all 322 existing
+production requests under tested source `1386029`. Native checks passed for 312;
+seven timed out, two failed convergence checks and one worker crashed. Selected
+coverage is 321/322 because nine accepted older spectra remain where fresh
+attempts failed. Old attempts and the four earlier planning deferrals are preserved.
 
 A six-request local pilot used current main
 `e09e7daeaa0695d34e14b55c557ca770fad326af`. Its first production DA at
@@ -26,24 +28,23 @@ gravities, full abundance patterns and alpha, with the new default metal
 profiles. Its wavelength array exactly matches the three old selected spectra.
 Two additional DAZ fixed-spectrum checks passed before dispatch, bringing the
 preliminary total to eleven. One numerical thread runs
-at a time, with two-hour wall and 6 GiB RSS guards per request. Case-specific
+at a time during that completed tier, with two-hour wall and 6 GiB RSS guards per request. Case-specific
 failures remain explicit; source or runtime identity failures stop the branch.
 
 Local work adds zero charged NERSC node-hours. An earlier Python environment
 import failure stopped before any model calculation; its logs are retained.
 The corrected launcher uses the checked validation environment. The morning
-handoff will report verified replacements and any unfinished cases. Queue delays
-and native checks prevent a guaranteed completion time.
+handoff reported unfinished work honestly; the last DZ allocation settled later.
 
 [All three required DAZ replacements](../daz-replacements-2026-10-12/README.md)
 are now verified and archived. Their matched old/new plots and remaining
-limits are recorded. The separate DZ replacement is running.
+limits are recorded. The DZ allocations are also terminal.
 
 ## Staged scope
 
 | Stage | Coordinates and requests | Purpose |
 | --- | --- | --- |
-| DZ replacement | 322 existing requests: 8 verified, 310 in the running batch, 4 deferred | Update the existing metal-pattern grid while preserving old attempts. |
+| DZ replacement | 322 existing requests: 312 passed, 7 timeouts, 2 nonconvergences, 1 interruption | Update the existing metal-pattern grid while preserving old attempts. |
 | DAZ replacements | 3 existing anchors, 3 cold requests | Replace spectra affected by the updated metal physics. |
 | DA H2 UV supplement | 15 grid nodes + 2 independent tests; 34 paired cold requests | Test H2-off/on spectra across the cool hydrogen regime. |
 | DAZ first patches | 27 grid nodes + 6 independent tests; 55 cold requests | Test T/g interpolation at three fixed abundance patterns; pair H2 off/on for the cool patterns. |
@@ -91,12 +92,11 @@ depth convergence or unbiased parameter recovery.
 
 ## Spending and acceptance
 
-Settled use is **7.1720941840 charged CPU node-hours**. The running DZ bulk
-reserves **5.75** more, giving a conservative **12.9220941840/13** ceiling and
-**0.0779058160** unreserved. This ceiling is not the final bill. No extra
-cluster grid is submitted now. Reconcile terminal elapsed time, allocated
-billing and QOS after DZ settles. Any further batch must fit the remaining
-allowance or receive a new spending limit.
+Final inclusive use is **11.2247981771 charged CPU node-hours out of 13**,
+from all nine registered allocations, including the cancelled pending job at zero
+charge. Full elapsed time, allocated billing and actual QOS factors are reconciled.
+No live reservation remains. No optional cluster grid is submitted. Further
+expansion requires a measured resource plan and an approved spending scope.
 
 Before scaling, measure production runtimes and RSS across representative
 temperature, gravity and composition extremes. Require unchanged inputs,

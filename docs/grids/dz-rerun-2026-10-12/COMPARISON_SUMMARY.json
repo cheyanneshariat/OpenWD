@@ -1,0 +1,39 @@
+{
+  "status": "VERIFIED_COMBINED_NATIVE_COMPARISONS",
+  "scientific_attempts": 322,
+  "accepted_native_results": 312,
+  "exact_native_comparisons": 308,
+  "no_accepted_old_spectrum": 4,
+  "outcome_counts": {
+    "COMPLETE_NUMERICAL": 312,
+    "TIMEOUT": 7,
+    "NUMERICAL_NONCONVERGENCE": 2,
+    "INFRASTRUCTURE_INTERRUPTION": 1
+  },
+  "component_receipt_hashes": {
+    "comparison-v1/COMPARISON.json": "e5c752f499c21dd1ebcc47fb9ac48e1adbcfcd0e6e957dd3baca5c01f9d6633b",
+    "comparison-tail-v1/COMPARISON.json": "4569f0ef67f3fbb137e7ce29c631cf00d58088503d27508df28f7b0f22beafe9"
+  },
+  "bands": {
+    "UV": {
+      "matched": 308,
+      "median_percent": 0.6163818937549769,
+      "maximum_percent": 17.592553853436733
+    },
+    "optical": {
+      "matched": 308,
+      "median_percent": 0.13788876628890379,
+      "maximum_percent": 8.880420292700704
+    },
+    "full_native": {
+      "matched": 308,
+      "median_percent": 0.34798205651369574,
+      "maximum_percent": 12.67785844032604
+    }
+  },
+  "normalization": "none",
+  "resampling": "none",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false,
+  "interpolation_accuracy_verified": false
+}

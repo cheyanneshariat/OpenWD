@@ -1,0 +1,13 @@
+{
+  "status": "VERIFIED_LOCAL_ARCHIVE",
+  "bytes": 4106701,
+  "sha256": "72a0f7b000821bb7449b0f5b98a4de5457ec1255053b9cfc8324f61b2cb419bf",
+  "total_members": 94,
+  "hashed_members": 92,
+  "NPZ_files_read": 8,
+  "arrays_read": 48,
+  "accepted_native_spectra": 4,
+  "exact_native_comparisons": 4,
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

@@ -1,0 +1,92 @@
+{
+  "checked_utc": "2026-10-13T14:17:44.696459+00:00",
+  "all_registrations_settled": true,
+  "scheduler": "59686815|COMPLETED|11718|billing=256,cpu=256,energy=4020567,mem=487802M,node=1|regular_1|cshariat|109576|m1266|2026-10-11T21:44:23|2026-10-12T00:59:41\n59686816|COMPLETED|22093|billing=104,cpu=104,energy=12546138,mem=192G,node=1|shared|cshariat|109576|m1266|2026-10-12T01:39:03|2026-10-12T07:47:16\n59699007|COMPLETED|29518|billing=22,cpu=22,energy=18901552,mem=40G,node=1|shared|cshariat|109576|m1266|2026-10-12T07:23:51|2026-10-12T15:35:49\n59702899|COMPLETED|5648|billing=22,cpu=22,energy=2517009,mem=40G,node=1|shared|cshariat|109576|m1266|2026-10-12T10:33:47|2026-10-12T12:07:55\n59705250|COMPLETED|15352|billing=26,cpu=26,energy=8345546,mem=48G,node=1|shared|cshariat|109576|m1266|2026-10-12T15:18:35|2026-10-12T19:34:27\n59720137|COMPLETED|7751|billing=18,cpu=18,energy=5419858,mem=32G,node=1|shared|cshariat|109576|m1266|2026-10-13T00:14:36|2026-10-13T02:23:47\n59725915|COMPLETED|14398|billing=256,cpu=256,energy=8752424,mem=448G,node=1|regular_1|cshariat|109576|m1266|2026-10-13T08:29:39|2026-10-13T12:29:37\n59733708|CANCELLED by 109576|0||shared|cshariat|109576|m1266|None|2026-10-13T12:48:45\n59733756|COMPLETED|3506|billing=14,cpu=14,energy=2508031,mem=24G,node=1|shared|cshariat|109576|m1266|2026-10-13T13:08:13|2026-10-13T14:06:39\n",
+  "QOS_factors": "regular_1|1.000000\nshared|1.000000\n",
+  "allocations": [
+    {
+      "job_id": "59686815",
+      "state": "COMPLETED",
+      "elapsed_seconds": 11718,
+      "billing": 256.0,
+      "QOS": "regular_1",
+      "usage_factor": 1.0,
+      "charged_node_hours": 3.255
+    },
+    {
+      "job_id": "59686816",
+      "state": "COMPLETED",
+      "elapsed_seconds": 22093,
+      "billing": 104.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 2.4931336805555557
+    },
+    {
+      "job_id": "59699007",
+      "state": "COMPLETED",
+      "elapsed_seconds": 29518,
+      "billing": 22.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 0.7046397569444445
+    },
+    {
+      "job_id": "59702899",
+      "state": "COMPLETED",
+      "elapsed_seconds": 5648,
+      "billing": 22.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 0.1348263888888889
+    },
+    {
+      "job_id": "59705250",
+      "state": "COMPLETED",
+      "elapsed_seconds": 15352,
+      "billing": 26.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 0.43310763888888887
+    },
+    {
+      "job_id": "59720137",
+      "state": "COMPLETED",
+      "elapsed_seconds": 7751,
+      "billing": 18.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 0.15138671875
+    },
+    {
+      "job_id": "59725915",
+      "state": "COMPLETED",
+      "elapsed_seconds": 14398,
+      "billing": 256.0,
+      "QOS": "regular_1",
+      "usage_factor": 1.0,
+      "charged_node_hours": 3.9994444444444444
+    },
+    {
+      "job_id": "59733708",
+      "state": "CANCELLED by 109576",
+      "elapsed_seconds": 0,
+      "billing": 0.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 0.0
+    },
+    {
+      "job_id": "59733756",
+      "state": "COMPLETED",
+      "elapsed_seconds": 3506,
+      "billing": 14.0,
+      "QOS": "shared",
+      "usage_factor": 1.0,
+      "charged_node_hours": 0.05325954861111111
+    }
+  ],
+  "final_charged_node_hours": 11.224798177083334,
+  "cap": 13,
+  "live_reservation": 0
+}

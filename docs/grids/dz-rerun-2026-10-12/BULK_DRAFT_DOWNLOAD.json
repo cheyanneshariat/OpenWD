@@ -1,0 +1,15 @@
+{
+  "status": "VERIFIED_ACTUAL_DRAFT_DOWNLOAD_STREAM",
+  "checked_utc": "2026-10-13T13:13:58.270764+00:00",
+  "isDraft": true,
+  "actual_downloaded_bytes": 375865625,
+  "actual_downloaded_sha256": "254a92783745016cb855f29d2d26af691e0dd9f6b0e71aef75f533c16426908f",
+  "members_verified": 3729,
+  "NPZ_files_read": 606,
+  "arrays_read": 3630,
+  "bulk_native_spectrum_files_byte_verified": 302,
+  "partial_local_download_preserved": true,
+  "no_cleanup_performed": true,
+  "streaming_reason": "Local disk filled during retained partial file download; full asset independently streamed without a second disk copy",
+  "release_url": "https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-5d7ab766bb9dadfbc6dd"
+}

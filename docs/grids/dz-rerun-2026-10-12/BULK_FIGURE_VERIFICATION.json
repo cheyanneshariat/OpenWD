@@ -1,0 +1,42 @@
+{
+  "PNG_files_inspected": [
+    "dz_UV.png",
+    "dz_optical.png"
+  ],
+  "PDF_rendered_and_inspected": [
+    "dz_UV.pdf",
+    "dz_optical.pdf"
+  ],
+  "labels_units_ticks_readable": true,
+  "no_clipping_or_annotation_overlap": true,
+  "only_titles_axes_ticks": true,
+  "stored_nine_integrated_metrics_rechecked": true,
+  "file_sha256": {
+    "dz_optical_pdf-render.png": "a58dbe3720dbd82d911c90c55b1fd47a558902e4303be026b3f115b6ed1513f6",
+    "dz_optical.png": "2c78a81ca5e8ad6ca201b4716d0992e36885158817d2f2909caf2e6ecc744d1a",
+    "dz_optical.pdf": "7b2674b29ba0bca18a4912bd525bdfdb92e28d488b87de35261663a4baf605a2",
+    "dz_UV.png": "90488d6053e31efc3ea6bab86127fbc99244a99836b39c83493e1113ae6908b5",
+    "dz_UV_pdf-render.png": "29f2aaa8a4de11b9c72e91649c412aff4b8e3fd8c8a5d10ec70c952a63f84f69",
+    "dz_UV.pdf": "2e5142953a629a491d0a3a6379962eeb313a548030d2a2937d27abef410a923b"
+  },
+  "quality_subgroups": {
+    "production": {
+      "accepted": 308,
+      "matched": 304,
+      "bands": {
+        "UV": {
+          "median_percent": 0.6204622188194934,
+          "maximum_percent": 17.592553853436733
+        },
+        "optical": {
+          "median_percent": 0.13988416691362357,
+          "maximum_percent": 8.880420292700704
+        },
+        "full_native": {
+          "median_percent": 0.35020891749132704,
+          "maximum_percent": 12.67785844032604
+        }
+      }
+    }
+  }
+}

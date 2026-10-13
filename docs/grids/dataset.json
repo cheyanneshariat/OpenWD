@@ -6,8 +6,8 @@
     "numerical_completions": 73,
     "timeouts": 7
   },
-  "current_index_sha256": "e3b17de08421a15bc37370caace3537f76b11f85ca1bab41ea8268646098d2fe",
-  "current_snapshot_utc": "2026-10-12T19:42:49.807278+00:00",
+  "current_index_sha256": "4a0dc93690e2a52dc228b8c1ea144156cde5d59c0af7c372488af18ae1bb0b6c",
+  "current_snapshot_utc": "2026-10-13T14:40:40.008517+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
@@ -99,20 +99,23 @@
     "DZ": {
       "archive": "OpenWD-DZ-initial-20261008.tar.gz",
       "bytes": 78661500,
-      "current_selected_grid_points": 317,
-      "models": 317,
-      "raw_spectrum_bytes": 276916937
+      "current_selected_grid_points": 321,
+      "models": 321,
+      "raw_spectrum_bytes": 276916937,
+      "updated_source_selected": 312,
+      "retained_earlier_source_selected": 9,
+      "requests": 322
     }
   },
   "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
-  "history": "history/2026-10-12-before-hot-extension/dataset.json",
+  "history": "history/2026-10-13-before-DZ-replacements/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2368,
+  "qualified_spectra": 2372,
   "requests": 2499,
-  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json.",
+  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json. Updated DZ rows preserve the original request model_id and use the actual native model-request fingerprint in scientific_identity; SOURCE_INDEX.json maps the accepted new attempt, exact configuration and spectrum hash.",
   "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
   "snapshots": {
     "DAB-1dex-2026-10-10": {
@@ -451,6 +454,124 @@
           "NUMERICAL_NONCONVERGENCE": 2
         }
       }
+    },
+    "DZ-replacements-2026-10-13": {
+      "requests": 322,
+      "scientific_attempts": 322,
+      "numerical_completions": 312,
+      "outcome_counts": {
+        "COMPLETE_NUMERICAL": 312,
+        "TIMEOUT": 7,
+        "NUMERICAL_NONCONVERGENCE": 2,
+        "INFRASTRUCTURE_INTERRUPTION": 1
+      },
+      "selected_completions": 321,
+      "current_source_selected": 312,
+      "retained_old_selected": 9,
+      "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+      "source_index": "dz-rerun-2026-10-12/SOURCE_INDEX.json",
+      "source_index_sha256": "4f0b3f30e2177666f25d0c82876f665174d56846188dd8321b1e1a3ce76bfec7",
+      "comparison": {
+        "status": "VERIFIED_COMBINED_NATIVE_COMPARISONS",
+        "scientific_attempts": 322,
+        "accepted_native_results": 312,
+        "exact_native_comparisons": 308,
+        "no_accepted_old_spectrum": 4,
+        "outcome_counts": {
+          "COMPLETE_NUMERICAL": 312,
+          "TIMEOUT": 7,
+          "NUMERICAL_NONCONVERGENCE": 2,
+          "INFRASTRUCTURE_INTERRUPTION": 1
+        },
+        "component_receipt_hashes": {
+          "comparison-v1/COMPARISON.json": "e5c752f499c21dd1ebcc47fb9ac48e1adbcfcd0e6e957dd3baca5c01f9d6633b",
+          "comparison-tail-v1/COMPARISON.json": "4569f0ef67f3fbb137e7ce29c631cf00d58088503d27508df28f7b0f22beafe9"
+        },
+        "bands": {
+          "UV": {
+            "matched": 308,
+            "median_percent": 0.6163818937549769,
+            "maximum_percent": 17.592553853436733
+          },
+          "optical": {
+            "matched": 308,
+            "median_percent": 0.13788876628890379,
+            "maximum_percent": 8.880420292700704
+          },
+          "full_native": {
+            "matched": 308,
+            "median_percent": 0.34798205651369574,
+            "maximum_percent": 12.67785844032604
+          }
+        },
+        "normalization": "none",
+        "resampling": "none",
+        "physical_accuracy_verified": false,
+        "independent_depth_convergence_verified": false,
+        "interpolation_accuracy_verified": false
+      },
+      "archives": {
+        "bulk": {
+          "status": "VERIFIED_LOCAL_ARCHIVE",
+          "checked_utc": "2026-10-13T13:06:24.928075+00:00",
+          "bytes": 375865625,
+          "sha256": "254a92783745016cb855f29d2d26af691e0dd9f6b0e71aef75f533c16426908f",
+          "hashed_members": 3727,
+          "total_members": 3729,
+          "NPZ_files_read": 606,
+          "arrays_read": 3630,
+          "bulk_counts": {
+            "COMPLETE_NUMERICAL": 300,
+            "INFRASTRUCTURE_INTERRUPTION": 1,
+            "NOT_STARTED_PLANNING_BUDGET": 4,
+            "NUMERICAL_NONCONVERGENCE": 2,
+            "TIMEOUT": 7
+          },
+          "accepted_bulk_native_spectra": 300,
+          "exact_native_comparisons": 304,
+          "pilot_archive_reused_without_recollection": true,
+          "source_bundle_verified": {
+            "status": "VERIFIED",
+            "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+            "locked_source_files": 2191,
+            "native_extension_files": 1,
+            "bytes": 183899618,
+            "sha256": "612621066242155e11c0b9f413976e2fa8db7052fee5d73421b9b308ff0d0225"
+          },
+          "physical_accuracy_verified": false,
+          "independent_depth_convergence_verified": false
+        },
+        "tail": {
+          "status": "VERIFIED_LOCAL_ARCHIVE",
+          "bytes": 4106701,
+          "sha256": "72a0f7b000821bb7449b0f5b98a4de5457ec1255053b9cfc8324f61b2cb419bf",
+          "total_members": 94,
+          "hashed_members": 92,
+          "NPZ_files_read": 8,
+          "arrays_read": 48,
+          "accepted_native_spectra": 4,
+          "exact_native_comparisons": 4,
+          "physical_accuracy_verified": false,
+          "independent_depth_convergence_verified": false
+        },
+        "pilot": {
+          "archive_bytes": 2648677,
+          "archive_sha256": "63c02f1374d9451259a1b78cd9f5b26ea2146c737f7f019d807679c8dd7cdf35",
+          "members": 96,
+          "native_models": 8,
+          "native_arrays": 72,
+          "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+          "file_hashes_verified": 96,
+          "persistent_copy_verified": true,
+          "persistent_path": "/global/u2/c/cshariat/OpenWD_release_20261007/dz-rerun-20261012-v1/pilot-archive-v1/OpenWD-DZ-pilot-20261012.tar.gz"
+        }
+      },
+      "is_draft": true,
+      "all_registered_allocations_terminal": true,
+      "charged_CPU_node_hours": 11.224798177083334,
+      "physical_accuracy_verified": false,
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false
     }
   },
   "source_commits": {
@@ -473,7 +594,8 @@
       "dab-matched": "0a74fdbe06596fc145f5169a3b239ddd67053141",
       "legacy": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
       "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
-    }
+    },
+    "DZ-replacements-2026-10-13": "1386029e9a911d9d6f7977cfb30af2f24e5f7545"
   },
   "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece",
   "spectra_only": false,
@@ -516,9 +638,8 @@
       "COMPLETE_NUMERICAL": 2
     },
     "DZ": {
-      "COMPLETE_NUMERICAL": 317,
-      "INFRASTRUCTURE_INTERRUPTION": 1,
-      "NUMERICAL_NONCONVERGENCE": 4
+      "COMPLETE_NUMERICAL": 321,
+      "NUMERICAL_NONCONVERGENCE": 1
     },
     "PG1159": {
       "NUMERICAL_NONCONVERGENCE": 1

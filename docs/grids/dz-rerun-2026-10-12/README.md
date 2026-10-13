@@ -1,105 +1,138 @@
-# DZ grid rerun with updated physics
+# DZ source replacements
 
-The first **eight production-quality DZ reruns passed** their native atmosphere
-and independent spectrum checks. Their downloaded products passed source,
-configuration, cold-start, array and file-hash verification. The selected grid
-still has **317 numerical completions, four nonconvergences and one infrastructure
-interruption from 322 requests**. These pilot spectra are separate from that
-saved selection; original products and unsuccessful attempts remain intact.
+**312 of 322 fresh production requests passed** the native atmosphere certificate
+and independent final-spectrum checks. Seven reached their time limits, two
+failed numerical convergence checks, and one worker crashed. Every coordinate
+ran once; failed models were not retried. Earlier attempts and products remain intact.
 
-## Verified pilot
+The selected DZ grid now has **321 numerical completions from 322 coordinates**:
+312 updated-source results and nine retained accepted older spectra. Four
+previously unsuccessful coordinates now pass. An older accepted spectrum remains
+selected wherever its fresh attempt failed. The selection is therefore mixed-source,
+with one remaining numerical failure. Overall coverage is **2,372/2,499**.
 
-Pilot **59720137** completed successfully after 7,751 allocated seconds.
-Required fixed-spectrum checks for DA 5,000 K, DB 22,000 K, DZ J0738 and DZ PG1225
-passed before model dispatch. All eight requests used their original production
-settings and physics-selection policy, public cold starts, one numerical thread,
-unchanged native tolerances and iteration limits, a three-hour time limit and a
-3 GiB memory limit. All 96 remote/local file hashes and 72 arrays in eight native
-NPZ files were verified. The compact 2,648,677-byte pilot archive matches its local
-and private persistent copies. The final combined draft download is still pending.
+[All outcomes, settings and certificates](RESULTS.json) ·
+[Source and selected-product index](SOURCE_INDEX.json) ·
+[Dated selection before replacement](../history/2026-10-13-before-DZ-replacements/README.md)
 
-| Metal pattern | Temperature (K) | log g | Runtime (minutes) | Peak RSS (GiB) |
-|---|---:|---:|---:|---:|
-| PG1225 | 6,000 | 8.0 | 46.61 | 0.875 |
-| PG1225 | 10,000 | 8.0 | 109.44 | 0.858 |
-| PG1225 | 60,000 | 8.0 | 28.61 | 0.844 |
-| J0738 | 20,000 | 8.0 | 58.12 | 0.887 |
-| J0738 | 40,000 | 8.0 | 38.18 | 1.046 |
-| J0738 | 7,000 | 7.25 | 85.02 | 0.921 |
-| GD40 | 10,000 | 8.0 | 87.08 | 0.845 |
-| GD40 | 25,000 | 8.5 | 119.81 | 1.000 |
+## Runs and verification
 
-[Full inputs and native certificates](PILOT_RESULTS.json) ·
-[Archive verification](PILOT_ARCHIVE_RECEIPT.json)
+| Stage | Scientific attempts | Numerical completions | Timeouts | Nonconvergences | Interruptions |
+|---|---:|---:|---:|---:|---:|
+| Pilot, 59720137 | 8 | 8 | 0 | 0 | 0 |
+| Bulk, 59725915 | 310 | 300 | 7 | 2 | 1 |
+| Final four, 59733756 | 4 | 4 | 0 | 0 | 0 |
+| Total | **322** | **312** | **7** | **2** | **1** |
 
-One J0738 request retains its original held-out role. These are eight existing
-coordinates, not eight new grid points. Passing their numerical checks does not
-establish independent depth convergence, physical accuracy or an abundance fit.
+The bulk retains four planning records marked not started. Those coordinates
+ran in the final tier; the records are not four additional scientific attempts.
+Registration 59733708 was cancelled while pending, before allocation or model
+dispatch. Its scheduler receipt correction did not retry a model.
 
-## Bounded continuation
+Every stage used source **1386029e9a911d9d6f7977cfb30af2f24e5f7545**, public cold
+starts, the original temperatures, gravities, full abundances, alpha and production
+quality, and unchanged native iteration limits and tolerances. New defaults include
+Kurucz electron Stark broadening, unified Si II–He profiles and additional Si II
+Kurucz transitions. DA 5,000 K, DB 22,000 K, DZ J0738 and DZ PG1225 fixed-spectrum
+checks passed before dispatch in each job. Workers used one numerical thread,
+distinct physical cores and 3 GiB RSS guards. Model limits were one to three
+hours in the bulk and three hours in the pilot and final tier.
 
-Bulk job **59725915** started at **01:29:39 Pacific on October 13** on
-`nid006992`, in ordinary CPU QOS `regular_1`. It covers **310 remaining
-requests**. The allocation has 256 logical CPUs, 448 GiB and billing256/256. Four requests are deferred because their full recorded time limits
-do not fit the conservative planning window. They are unattempted, not numerical
-failures. A fresh accounting check after bulk settlement will determine whether
-a small completion batch can cover them. No extra allocation is submitted now.
+Independent collection verified source/native hashes, exact requests, cold starts,
+selection policies, native certificates, saved arrays, independent final-spectrum
+sources, and matching remote/local bytes. The pilot verified 96 files and 72 arrays
+in eight NPZs; the bulk verified 3,389 files and 2,718 arrays in 302 NPZs, including
+two exploratory failed outputs; the final tier verified 52 files and 36 arrays
+in four NPZs. Failed outputs are retained and not adopted. The full source bundle
+verifies 2,191 locked source/data/test files and the actual Linux native extension.
 
-The original five-hour plan failed its timing check. The revised forecast uses
-measured pilot ratios separately for each metal pattern, never credits speedups,
-and retains padding for runtime and resource caps. It predicts about 5.05 hours
-for the selected batch and reserves **5.75 hours**. Eight pilot cases do not
-cover every abundance, gravity or packing effect, so this is not a completion
-guarantee. Late requests without enough time for their full cap will remain
-explicitly not started. There is no automatic retry loop.
+The final four took 41.01–49.16 minutes, with peak RSS 0.831–0.877 GiB. Machine,
+packing and source changes prevent a source-only speedup claim. The two numerical
+failures retain failed stationarity or solver checks. The SIGSEGV cause remains
+unresolved. Timeouts are unfinished calculations.
 
-The bulk uses 128 physical workers, one thread each, a 448 GiB allocation and
-3 GiB memory limits per worker. Recorded model time limits range from one to
-three hours. Native tolerances and iteration limits remain unchanged. Required
-fixed-spectrum checks passed again before dispatch. Scientific cold starts began
-at **01:37:34 Pacific**. The first owned read verified 128 exact requests
-running on distinct physical cores with one numerical thread each; 182 planned
-requests await worker slots. The four deferred records are separate unattempted
-requests and are not counted as scientific attempts. The allocation cap ends
-at **07:14:39 Pacific**; that is a resource limit, not a completion estimate. Numerical failures, unsupported
-cases, timeouts, memory stops and requests that could not start remain separate.
+## Exact old/new spectra
 
-Both stages use source **1386029e9a911d9d6f7977cfb30af2f24e5f7545**, which includes
-[PR25](https://github.com/kareemelbadry/OpenWD/pull/25). Every explicit old request
-value is retained. Three added source options are recorded: Kurucz electron
-Stark broadening, unified Si II–He profiles and additional Si II Kurucz
-transitions. Comparisons with the original spectra span several source updates
-and cannot identify one cause. Accepted final products and old/new comparisons
-will be added after collection; the rerun does not expand the grid.
+**308 accepted spectra have an accepted predecessor at identical native
+wavelengths.** Four recovered cases have no accepted old spectrum. Comparisons
+use absolute surface flux without normalization, resampling or extrapolation.
+Earlier selected products passed unchanged file-hash checks.
 
-## Cost and remaining limits
+The metric divides the integral of the absolute new-minus-old flux difference
+by the integral of the old flux. It measures model change, not observational error.
 
-The prior five-job phase cost **7.0207074653 CPU node-hours**. The pilot adds
-**0.15138671875**, from 7,751 seconds and an allocated billing fraction of 18/256.
-The actual settled total is **7.1720941840**. Adding the full bulk reservation gives
-an upper bound of **12.9220941840 / 13**, leaving **0.077905816** unreserved.
-The bulk's actual charge is not yet known. Accounting includes allocated setup,
-source checks and idle time. [NERSC charging policy](https://docs.nersc.gov/jobs/policy/)
-describes fractional shared-node charges.
+| Band (vacuum Å) | Matched spectra | Median integrated absolute change | Maximum |
+|---|---:|---:|---:|
+| UV, 1150–3000 | 308 | 0.616382% | 17.592554% |
+| Optical, 3000–10000 | 308 | 0.137889% | 8.880420% |
+| Full native band, 900–30000 | 308 | 0.347982% | 12.677858% |
 
-The earlier two collaborator benchmarks used standard quality and took about
-9.5 minutes. Production models are more expensive. The original first 293 accepted
-production cases had a median runtime of 65.09 minutes, a 90th percentile of
-106.59 minutes and a total of 346.08 core-hours. Current pilot runtimes span
-28.61–119.81 minutes. A full 322-model completion within this budget is not promised.
+[Combined metrics](COMPARISON_SUMMARY.json) ·
+[304 pilot/bulk comparisons](BULK_COMPARISON.json) ·
+[Four final comparisons](TAIL_COMPARISON.json)
 
-The [separate two-model comparison](../dz-validation-2026-10-12/README.md) still
-has a large cool-model UV disagreement with the collaborator's synthetic
-reference. Rerunning the grid does not resolve that disagreement by itself.
+![Representative DZ UV changes](bulk_UV.png)
 
-## Recent upstream work
+Black dashed curves are accepted older spectra; blue curves are updated models.
+Right panels show 100 × (new − old)/old at identical native wavelengths. Each
+metal pattern shows its largest integrated UV change among the 304 pilot/bulk
+matches. Titles give temperature and gravity. Flux is surface Fλ in the stated
+physical units; 10⁸ is axis scaling only. These are synthetic comparisons, not
+observational abundance fits. The [optical figure](bulk_optical.png) covers
+3500–7000 Å; integrated optical metrics use 3000–10000 Å.
+[UV PDF](bulk_UV.pdf) · [Optical PDF](bulk_optical.pdf).
 
-[PR26](https://github.com/kareemelbadry/OpenWD/pull/26) is merged. It adds optional,
-off-by-default H₂ Lyman/Werner fluorescence for DA and DAZ. Inspection of the
-patch found no DZ-specific physics changes, so this rerun keeps its tested source.
-[Draft PR27](https://github.com/kareemelbadry/OpenWD/pull/27) adds nine HST/COS
-comparisons at fixed published parameters, with continuum, velocity and kernel
-choices recorded. It still shows strong Si II wing residuals in GD40/G241−6.
-Those reported checks have not been independently reproduced here and do not
-establish physical accuracy across this grid. PR18 remains unmerged and all
-model releases remain unpublished drafts.
+![Four final DZ UV comparisons](tail_UV.png)
+
+The four final GD40 cases are ordered by temperature. Curves and differences use
+the definitions above. Their maximum integrated UV change is 2.476025%.
+[Optical figure](tail_optical.png) · [UV PDF](tail_UV.pdf) ·
+[Optical PDF](tail_optical.pdf). Both PNGs and rendered PDFs were inspected;
+all twelve integrated metrics were rechecked.
+
+Full-source cold-model differences cannot isolate one fix. Numerical certificates
+do not establish physical accuracy, independent depth convergence, interpolation
+accuracy or unbiased abundance recovery. The earlier cool-DZ synthetic UV
+disagreement remains unresolved; it is not an observational benchmark.
+
+## Archives and cost
+
+The [bulk development draft](https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-5d7ab766bb9dadfbc6dd)
+holds the 375,865,625-byte archive, SHA256
+254a92783745016cb855f29d2d26af691e0dd9f6b0e71aef75f533c16426908f.
+All 3,729 members, 606 NPZs and 3,630 arrays passed verification. Its source bundle
+contains locked source/data files and the actual Linux extension. Local and
+private persistent copies match. Full downloaded draft bytes passed member,
+array and native-spectrum checks through a stream after a partial download filled
+the disk. That incomplete download remains preserved.
+
+The [final-tier development draft](https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-d40ef95c6da2bbadffa5)
+holds the 4,106,701-byte archive, SHA256
+72a0f7b000821bb7449b0f5b98a4de5457ec1255053b9cfc8324f61b2cb419bf,
+with 94 members, eight NPZs and 48 arrays. It also carries the unchanged
+2,648,677-byte pilot archive, SHA256
+63c02f1374d9451259a1b78cd9f5b26ea2146c737f7f019d807679c8dd7cdf35.
+The pilot and bulk were not recalculated, recollected or archived again.
+Draft assets require contributor access and remain unpublished.
+
+[Bulk archive checks](BULK_ARCHIVE.json) · [Actual bulk draft download](BULK_DRAFT_DOWNLOAD.json) ·
+[Final archive checks](TAIL_ARCHIVE.json) · [Final and pilot draft downloads](TAIL_DRAFT_DOWNLOAD.json)
+
+All nine registered allocations are terminal. **Final inclusive charge is
+11.2247981771 CPU node-hours, within the 13-hour cap.** The original five-job
+phase used 7.0207074653, the pilot 0.15138671875, the bulk 3.9994444444, and
+the final tier 0.05325954861. The cancelled pending registration adds zero.
+[Accounting](FINAL_ACCOUNTING.json) uses full elapsed allocation time, billing/256
+and actual QOS factors of one, including setup, checks and idle time.
+No live reservation remains. Optional grid expansion has not been submitted.
+
+## Reproduce the plots
+
+The compact inputs reproduce displayed curves without a model calculation:
+
+    python plot_bulk.py --inputs bulk-comparisons --output reproduced-bulk --style ../grid-style.mplstyle
+    python plot_tail.py --inputs tail-comparisons --output reproduced-tail --style ../grid-style.mplstyle
+
+Each script verifies input hashes and integrated metrics. Full matched arrays,
+attempts, settings and source locks remain in the archives. Plot text contains
+only titles, axes and ticks; curve definitions belong in these captions.

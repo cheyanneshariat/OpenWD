@@ -2,7 +2,7 @@
 
 OpenWD calculates an atmosphere and spectrum for a chosen temperature, gravity
 and composition. These saved grids let users reuse those calculations. The
-selected grid table contains **2,368 numerical completions from 2,499 requests**.
+selected grid table contains **2,372 numerical completions from 2,499 requests**.
 Each completion passed the atmosphere and spectrum checks recorded for its
 source version. Numerical completion alone does not establish physical accuracy
 or accurate interpolation between grid points.
@@ -30,7 +30,7 @@ gravity, so symbols can overlap. Blank regions were not requested.
 |---|---:|---:|---|
 | DA | 808 | 852 | October 8 + native validation supplement |
 | DB | 592 | 638 | October 8 + cold, validation and retry supplements |
-| DZ | 317 | 322 | October 8 + October 11 retries |
+| DZ | 321 | 322 | October 13 replacements + nine retained older spectra |
 | DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
 | DO | 5 | 7 | Five verified spectra; two timeouts retained |
 | DAB/DBA | 637 | 656 | October 9/10 + October 11 retries and refinement |
@@ -84,7 +84,7 @@ the releases are published. The original archives remain unchanged.
   retain the matched source controls and unresolved DB cases.
 - [Two DZ benchmarks after the October 12 physics update](dz-validation-2026-10-12/README.md)
   separate matched fixed-structure spectra from two fresh cold starts. The cool
-  UV disagreement remains unresolved; selected grid counts are unchanged.
+  UV disagreement remains unresolved; that separate benchmark did not alter the grid.
 - [Cold DB and Montreal comparison](db-cold-2026-10-09/README.md) preserve the
   earlier four-model demonstration and its unresolved spectral disagreement.
 
@@ -114,8 +114,9 @@ failed default-mesh attempt remains recorded. Native physics, iteration limits
 and acceptance tolerances were unchanged.
 
 DB has 24 nonconvergence cases, five depth-grid errors, five material-domain
-stops and 12 six-hour timeouts. DA has 44 numerical failures. DZ has four
-numerical failures and one SIGSEGV crash. The selected D6 example now passes the native checks under source 14e2067.
+stops and 12 six-hour timeouts. DA has 44 numerical failures. DZ has one remaining numerical failure in the selected grid. Its fresh rerun
+retains seven timeouts, two nonconvergences and one crash; nine older accepted
+spectra remain selected. The selected D6 example now passes the native checks under source 14e2067.
 Its original-source control and both DB diagnostic attempts reached eight-hour
 limits; [all four diagnostic outcomes](diagnostics-2026-10-12/README.md) remain archived.
 All nine DAB timeouts passed; its 19 remaining gaps are 17 unsupported
@@ -176,9 +177,11 @@ spectra from their checked archive.
 The [DO temperature script](plot_do_temperature.py) reproduces the new
 fixed-gravity sequence from its checked archive.
 
-[The updated DZ rerun](dz-rerun-2026-10-12/README.md) has eight verified pilot
-completions. The bounded 310-request batch is running; four await a fresh budget
-check after settlement. The selected DZ counts above are unchanged.
+[The updated DZ rerun](dz-rerun-2026-10-12/README.md) has 312 verified numerical
+completions from 322 fresh attempts. Four previously unsuccessful coordinates
+now pass, giving selected DZ coverage 321/322. Nine older accepted spectra remain
+selected wherever a fresh attempt failed. Across all nine registered allocations,
+final inclusive charge is 11.2247981771 CPU node-hours; no jobs remain live.
 
 [The grid update plan](update-plan-2026-10-12/README.md) separates required
 replacements from optional H2 and DAZ parameter grids. The optional DA pilot
