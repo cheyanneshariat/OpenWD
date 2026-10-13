@@ -1,0 +1,102 @@
+# Planned grid updates
+
+The recent updates call for a DZ rerun, three DAZ replacements, and a small
+optional H2 UV grid. They do not require rerunning the whole pure DA grid.
+The stages below are planned calculations. They have not passed grid validation.
+
+## Work started
+
+The [DZ rerun](../dz-rerun-2026-10-12/README.md) has eight verified production
+pilot models. Job 59725915 is queued for 310 requests; four more are deferred
+by the budget. All 322 coordinates already existed. The DZ calculation keeps
+its tested `1386029` source.
+
+A six-request cold pilot has started on the local computer under current
+main `e09e7daeaa0695d34e14b55c557ca770fad326af`: a 12,000 K/logg 8 DA pair with
+H2 off/on, the same pair for G29-38, and updated G149-28 and GALEX J1931 DAZ
+anchors. DA uses production resolution. DAZ retains the old standard resolution
+and full abundance patterns, with the new default metal profiles. Nine H2 and
+DA/DB fixed-spectrum checks passed before dispatch. The cold outcomes remain
+pending. Fixed-spectrum checks do not certify an atmosphere.
+
+One thread runs at a time, with a one-hour wall cap and 4 GiB RSS cap per request.
+Local work adds zero charged NERSC node-hours. An initial Python environment
+import failure stopped before any model calculation; its logs are retained.
+The corrected launcher uses the checked validation environment. Any failed cold
+request stops the dependent local tier without an automatic retry.
+
+## Staged scope
+
+| Stage | Coordinates and requests | Purpose |
+| --- | --- | --- |
+| DZ replacement | 322 existing requests: 8 verified, 310 queued, 4 deferred | Update the existing metal-pattern grid while preserving old attempts. |
+| DAZ replacements | 3 existing anchors, 3 cold requests | Replace spectra affected by the updated metal physics. |
+| DA H2 UV supplement | 15 grid nodes + 2 independent tests; 34 paired cold requests | Test H2-off/on spectra across the cool hydrogen regime. |
+| DAZ first patches | 27 grid nodes + 6 independent tests; 55 cold requests | Test T/g interpolation at three fixed abundance patterns; pair H2 off/on for the cool patterns. |
+| Conditional DAZ metal-scale extension | 81 nodes + 12 independent tests in total; 100 additional cold requests after reusing the first patches | Test interpolation in a shared metal scale at fixed relative abundances. |
+
+The three DAZ replacements and the first DA/DAZ grid stages total 92 cold
+requests. G29-38's standard H2-on pilot adds one diagnostic request. These
+counts describe a proposed scope, not an approved resource estimate. Reuse
+requires identical source, configurations, wavelength arrays and verified
+native products. Standard DAZ pilot results cannot be counted as production
+grid nodes.
+
+The DA H2 temperatures are 10,000–14,000 K in 1,000 K steps, with logg 7.5,
+8.0 and 8.5. Independent tests are 11,500 K/logg 7.75 and 13,500 K/logg 8.25.
+Alpha remains 0.7. Above 12,000 K, H2 can also enable molecular chemistry in
+the structure; compare that change explicitly. Use the native 900–30,000 Å
+grid plus 1150–1800 Å sampled every 0.05 Å. Check a representative at 0.025 Å.
+
+Each DAZ patch uses the anchor temperature plus/minus 1,000 K and gravity
+plus/minus 0.25 dex. The anchors are G149-28 (8600 K/logg 8.1), G29-38
+(11,820 K/8.4), and GALEX J1931 (20,890 K/7.9). Two fresh interior tests per
+pattern check interpolation. The conditional abundance stage adds shared
+metal scales of −0.5, 0 and +0.5 dex and tests nonzero interior scales. A
+shared scale cannot recover arbitrary element-by-element abundances.
+
+## Other families and limits
+
+Retain accepted pure DA, DB, DAB and DQ products. Diagnose their numerical
+failures before retries. DAB needs targeted interpolation work: ten of 32 fresh
+tests miss at least one optical target for each refined method. Abundance
+interpolation remains a separate test.
+
+PG1159 needs a fixed-spectrum check of the host-ion microfield update and a
+supported cold benchmark before a grid. Its one existing request failed
+numerically. DAH needs full-Stokes qualification after the dispersion update;
+its two existing cases have structure certificates but lack independent
+final-spectrum checks. DO/DAO needs diagnosis of the four hot timeouts and
+small supported tiers for the ten unattempted DAO requests. None of these
+branches has a measured full-grid cost yet.
+
+D6 remains one accepted J1637 coordinate with a conditional GTC comparison.
+A broader D6 grid requires a defined composition and parameter range. The
+observed comparison does not establish absolute SED accuracy, independent
+depth convergence or unbiased parameter recovery.
+
+## Spending and acceptance
+
+Settled use is **7.1720941840 charged CPU node-hours**. The queued DZ bulk
+reserves **5.75** more, giving a conservative **12.9220941840/13** ceiling and
+**0.0779058160** unreserved. This ceiling is not the final bill. No extra
+cluster grid is submitted now. Reconcile terminal elapsed time, allocated
+billing and QOS after DZ settles. Any further batch must fit the remaining
+allowance or receive a new spending limit.
+
+Before scaling, measure production runtimes and RSS across representative
+temperature, gravity and composition extremes. Require unchanged inputs,
+public cold starts, native atmosphere certificates and independent spectrum
+checks. Compare old/new absolute spectra on identical wavelengths, and label
+any resampling. Test depth and wavelength resolution separately. Fresh
+interior targets test interpolation; observations test physical applicability.
+Archive all outcomes, including numerical failures and resource stops, before
+updating mapped selections.
+
+Source evidence: [PR23](https://github.com/kareemelbadry/OpenWD/pull/23),
+[PR24](https://github.com/kareemelbadry/OpenWD/pull/24),
+[PR25](https://github.com/kareemelbadry/OpenWD/pull/25), and
+[PR26](https://github.com/kareemelbadry/OpenWD/pull/26).
+[Draft PR27](https://github.com/kareemelbadry/OpenWD/pull/27) contains the
+authors' COS comparisons, including remaining metal-wing residuals and
+unsupported elements. Those comparisons have not been independently reproduced here.

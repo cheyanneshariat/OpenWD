@@ -179,3 +179,7 @@ fixed-gravity sequence from its checked archive.
 [The updated DZ rerun](dz-rerun-2026-10-12/README.md) has eight verified pilot
 completions. A bounded batch of 310 requests is queued; four await a fresh budget
 check after settlement. The selected DZ counts above are unchanged.
+
+[The grid update plan](update-plan-2026-10-12/README.md) separates required
+replacements from optional H2 and DAZ parameter grids. A small local cold pilot
+has started; further cluster work depends on measured costs and the budget.
