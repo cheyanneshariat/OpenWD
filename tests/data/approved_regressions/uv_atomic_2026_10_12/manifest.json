@@ -475,6 +475,8 @@
   "numpy_version": "1.26.4",
   "python_version": "3.9.16",
   "scipy_version": "1.11.1",
+  "source_commit_at_capture": "943c146e10a02826083495df527326bcb5c74bcc",
+  "source_hashes_are_capture_snapshot": true,
   "source_sha256": {
     "research/capture_uv_atomic_controls.py": "b1fee76e694d3ab9585cfbfb1172b17de4e59274c8e4b26366e2c2fb0186aedd",
     "research/uv_atomic_control_legacy.py": "d2f364534a0b6f2b76a0f37709d94a13d4ba2de8741c510a6faf62fdf9fc8093",
