@@ -20,7 +20,7 @@ the model is not retried automatically. Nine H2 and DA/DB fixed-spectrum
 checks passed before dispatch. Fixed-spectrum checks do not certify an atmosphere.
 
 The user then authorized all required replacements overnight. An independent
-three-request DAZ tier has started to replace G29-38, G149-28 and GALEX J1931 using the same
+three-request DAZ tier has verified replacements for G29-38, G149-28 and GALEX J1931 using the same
 checked source. It preserves the old standard resolution, temperatures,
 gravities, full abundance patterns and alpha, with the new default metal
 profiles. Its wavelength array exactly matches the three old selected spectra.
@@ -34,6 +34,10 @@ import failure stopped before any model calculation; its logs are retained.
 The corrected launcher uses the checked validation environment. The morning
 handoff will report verified replacements and any unfinished cases. Queue delays
 and native checks prevent a guaranteed completion time.
+
+[All three required DAZ replacements](../daz-replacements-2026-10-12/README.md)
+are now verified and archived. Their matched old/new plots and remaining
+limits are recorded. The separate DZ replacement remains queued.
 
 ## Staged scope
 

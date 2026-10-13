@@ -1,0 +1,16 @@
+{
+  "source_commit": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+  "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+  "cases": [
+    "daz-2631feedf0f5a77efd998dde",
+    "daz-1c6a66bd7910c50c7475efad",
+    "daz-8fc37fca59764de87be3fffd"
+  ],
+  "comparison_sha256": "ad55e4c737f8aaf311cff30cfbec372d8d36e9c5ddff7848884665cdce02046e",
+  "flux_normalization": "none; physical axis unit scaling only",
+  "wavelength_resampling": "none",
+  "metrics_rechecked": 9,
+  "plot_text": "titles, axes and ticks only",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false
+}

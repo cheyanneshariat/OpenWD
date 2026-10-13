@@ -34,7 +34,7 @@ gravity, so symbols can overlap. Blank regions were not requested.
 | DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
 | DO | 5 | 7 | Five verified spectra; two timeouts retained |
 | DAB/DBA | 637 | 656 | October 9/10 + October 11 retries and refinement |
-| DAZ | 3 | 3 | October 8 |
+| DAZ | 3 | 3 | October 12 verified source replacements |
 | DQ | 2 | 2 | October 8 |
 
 The eight-family figure covers 2,495 requests. The full table retains 2,499,
@@ -182,5 +182,6 @@ check after settlement. The selected DZ counts above are unchanged.
 
 [The grid update plan](update-plan-2026-10-12/README.md) separates required
 replacements from optional H2 and DAZ parameter grids. The optional DA pilot
-hit its memory guard. Three independent DAZ replacements have started for the
-overnight run; further cluster work depends on measured costs and the budget.
+hit its memory guard. [All three DAZ replacements](daz-replacements-2026-10-12/README.md)
+are verified, with matched old/new spectra and their limitations recorded.
+Further cluster work depends on measured costs and the budget.

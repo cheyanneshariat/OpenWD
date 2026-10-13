@@ -1,0 +1,13 @@
+{
+  "status": "VERIFIED",
+  "tag": "grid-preview-2026-10-12-daz-replacements",
+  "isDraft": true,
+  "actual_release_url": "https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-7ff525d5458bd6c8caf8",
+  "archive_bytes": 5316451,
+  "archive_sha256": "a92037ec121eb86b46314511f941b87eaeeb9da3d087a005a429df925537c4c7",
+  "member_hashes_verified": 115,
+  "NPZ_files_read": 12,
+  "arrays_read": 69,
+  "native_spectra_verified": 3,
+  "targetCommitish": "e09e7daeaa0695d34e14b55c557ca770fad326af"
+}

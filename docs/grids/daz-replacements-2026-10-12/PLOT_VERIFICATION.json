@@ -1,0 +1,13 @@
+{
+  "actual_PNGs_inspected": 2,
+  "actual_rendered_PDFs_inspected": 2,
+  "only_titles_axes_ticks": true,
+  "portable_PNG_byte_match": {
+    "daz_UV.png": "9ebc796616534338e8ff1dea0bdc70b48acb39ddc063952b70553ed31c45572c",
+    "daz_optical.png": "e733f275f786131877d2c8538db5e65157bdce2e892d4f4e32b0ceab3876f635"
+  },
+  "portable_provenance_exact_match": true,
+  "integrated_metrics_rechecked": 9,
+  "normalization": "none",
+  "resampling": "none"
+}

@@ -1,0 +1,509 @@
+{
+  "HPC_charged_node_hours": 0,
+  "NPZ_files_read": 9,
+  "arrays_read": 60,
+  "checked_utc": "2026-10-13T05:28:34.301042+00:00",
+  "counts": {
+    "COMPLETE_NUMERICAL": 3
+  },
+  "native_spectra_verified": 3,
+  "normalization": "none",
+  "old_products_unchanged": true,
+  "old_spectra_verified": 3,
+  "requests": 3,
+  "resampling": "none",
+  "runtime_data_files_verified": 1514,
+  "scientific_identity": "8d748a437026ce4164990417f3cc331f897faf8045c1bfcdfbb01a370d2aeaf4",
+  "source_commit": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+  "source_files_verified": 2457,
+  "status": "VERIFIED",
+  "records": [
+    {
+      "attempt_id": "daz-1c6a66bd7910c50c7475efad-h2-off",
+      "bands": {
+        "UV": {
+          "hi_angstrom": 3000,
+          "integrated_absolute_relative_change": 0.0037926431310343844,
+          "lo_angstrom": 1150,
+          "maximum_relative_change": 0.3013382856287704,
+          "maximum_relative_change_significant_flux": 0.3013382856287704,
+          "points": 684,
+          "relative_RMS": 0.019386651748295926,
+          "signed_integrated_relative_change": -3.773091561016883e-05,
+          "significant_points": 651
+        },
+        "full_native": {
+          "hi_angstrom": 30000,
+          "integrated_absolute_relative_change": 0.0021444849942817697,
+          "lo_angstrom": 900,
+          "maximum_relative_change": 0.3013382856287704,
+          "maximum_relative_change_significant_flux": 0.3013382856287704,
+          "points": 18901,
+          "relative_RMS": 0.0040646594188635185,
+          "signed_integrated_relative_change": 0.00032696555252286006,
+          "significant_points": 18739
+        },
+        "optical": {
+          "hi_angstrom": 10000,
+          "integrated_absolute_relative_change": 0.0007314789466775165,
+          "lo_angstrom": 3000,
+          "maximum_relative_change": 0.08555508335531829,
+          "maximum_relative_change_significant_flux": 0.08555508335531829,
+          "points": 17259,
+          "relative_RMS": 0.001049204890197768,
+          "signed_integrated_relative_change": 0.0006641019014579775,
+          "significant_points": 17259
+        }
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 1.0984998521923472e-07
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 1.1436473895695716e-98
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 1.6277547611076504e-05
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.002,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.2002664657120037e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.002,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0002,
+            "value": 1.7364583566603642e-06
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "comparison_file": "daz-1c6a66bd7910c50c7475efad.npz",
+      "comparison_sha256": "89727959199b193e4e83beeabbbcf99721e9309c2730b6ca10b332ce50275dbe",
+      "config": {
+        "abundances": {
+          "C": -6.9,
+          "Ca": -6.58,
+          "Cr": -7.51,
+          "Fe": -5.9,
+          "Mg": -5.77,
+          "O": -5.0,
+          "Si": -5.6,
+          "Ti": -7.9
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "effective_temperature": 11820.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "kurucz_electron_stark": true,
+        "logg": 8.4,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 3,
+        "metal_neutral_h_broadening": "barklem",
+        "mixing_length_alpha": 0.7,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "standard",
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "family": "DAZ",
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false,
+      "native_cold_request_verified": true,
+      "normalization": "none",
+      "old_case_id": "daz-1c6a66bd7910c50c7475efad",
+      "old_product_hashes_unchanged": true,
+      "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "peak_RSS_bytes": 1006469120,
+      "physical_accuracy_verified": false,
+      "quality": "standard",
+      "release_ready": false,
+      "resampling": "none",
+      "runtime_data_unchanged": true,
+      "scientific_identity": "8d748a437026ce4164990417f3cc331f897faf8045c1bfcdfbb01a370d2aeaf4",
+      "selection_policy": {
+        "dense_density_fraction": 0.05,
+        "molecular_electron_fraction": 0.001,
+        "molecular_nuclei_fraction": 0.0001
+      },
+      "source_commit": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+      "source_unchanged": true,
+      "spectrum_sha256": "afd4dd094eeb17440000a752cf207f6e571ec1429e8811033f1e21a834c78660",
+      "spectrum_source_error": 4.664566941370722e-16,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 260.09154887500335,
+      "wavelength_identical": true,
+      "spectrum_archive_path": "attempts-v1/daz-1c6a66bd7910c50c7475efad-h2-off/model/spectrum.txt"
+    },
+    {
+      "attempt_id": "daz-2631feedf0f5a77efd998dde-h2-off",
+      "bands": {
+        "UV": {
+          "hi_angstrom": 3000,
+          "integrated_absolute_relative_change": 0.0011955099334393098,
+          "lo_angstrom": 1150,
+          "maximum_relative_change": 0.33731839694844873,
+          "maximum_relative_change_significant_flux": 0.33731839694844873,
+          "points": 684,
+          "relative_RMS": 0.013013494109243143,
+          "signed_integrated_relative_change": -0.0007621305777407896,
+          "significant_points": 428
+        },
+        "full_native": {
+          "hi_angstrom": 30000,
+          "integrated_absolute_relative_change": 0.00044603008276237967,
+          "lo_angstrom": 900,
+          "maximum_relative_change": 0.33731839694844873,
+          "maximum_relative_change_significant_flux": 0.33731839694844873,
+          "points": 18901,
+          "relative_RMS": 0.003089007429402876,
+          "signed_integrated_relative_change": -0.0001265692505907969,
+          "significant_points": 18469
+        },
+        "optical": {
+          "hi_angstrom": 10000,
+          "integrated_absolute_relative_change": 0.00023901859412508322,
+          "lo_angstrom": 3000,
+          "maximum_relative_change": 0.11946970592270385,
+          "maximum_relative_change_significant_flux": 0.11946970592270385,
+          "points": 17259,
+          "relative_RMS": 0.0019055818512814001,
+          "signed_integrated_relative_change": 7.634369263534408e-05,
+          "significant_points": 17259
+        }
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 7.481568631284574e-08
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 1.6054071472097033e-09
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 2.8327390310261574e-05
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.002,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.1551415374866318e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.002,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0002,
+            "value": 3.1600756695837617e-06
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "comparison_file": "daz-2631feedf0f5a77efd998dde.npz",
+      "comparison_sha256": "09e5f6a532c472c19339f50b4e3fc14058bc908f8f67547e688ffe8621fc2f71",
+      "config": {
+        "abundances": {
+          "Al": -8.17,
+          "Ca": -8.04,
+          "Fe": -7.41,
+          "Mg": -7.24,
+          "Ni": -8.33,
+          "Ti": -9.48
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "effective_temperature": 8600,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "kurucz_electron_stark": true,
+        "logg": 8.1,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 3,
+        "metal_neutral_h_broadening": "barklem",
+        "mixing_length_alpha": 0.7,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "standard",
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "family": "DAZ",
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false,
+      "native_cold_request_verified": true,
+      "normalization": "none",
+      "old_case_id": "daz-2631feedf0f5a77efd998dde",
+      "old_product_hashes_unchanged": true,
+      "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "peak_RSS_bytes": 989872128,
+      "physical_accuracy_verified": false,
+      "quality": "standard",
+      "release_ready": false,
+      "resampling": "none",
+      "runtime_data_unchanged": true,
+      "scientific_identity": "8d748a437026ce4164990417f3cc331f897faf8045c1bfcdfbb01a370d2aeaf4",
+      "selection_policy": {
+        "dense_density_fraction": 0.05,
+        "molecular_electron_fraction": 0.001,
+        "molecular_nuclei_fraction": 0.0001
+      },
+      "source_commit": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+      "source_unchanged": true,
+      "spectrum_sha256": "e9ff5371c81dcfad8bd8d5fdc014aeadd160a3e2f459c541368d966409348a99",
+      "spectrum_source_error": 1.6057214584891104e-15,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 235.57995191699592,
+      "wavelength_identical": true,
+      "spectrum_archive_path": "attempts-v1/daz-2631feedf0f5a77efd998dde-h2-off/model/spectrum.txt"
+    },
+    {
+      "attempt_id": "daz-8fc37fca59764de87be3fffd-h2-off",
+      "bands": {
+        "UV": {
+          "hi_angstrom": 3000,
+          "integrated_absolute_relative_change": 0.022981160566479638,
+          "lo_angstrom": 1150,
+          "maximum_relative_change": 0.8150734934390931,
+          "maximum_relative_change_significant_flux": 0.8150734934390931,
+          "points": 684,
+          "relative_RMS": 0.06470448288530498,
+          "signed_integrated_relative_change": 0.0005040936673347759,
+          "significant_points": 684
+        },
+        "full_native": {
+          "hi_angstrom": 30000,
+          "integrated_absolute_relative_change": 0.02062197002319112,
+          "lo_angstrom": 900,
+          "maximum_relative_change": 0.8150734934390931,
+          "maximum_relative_change_significant_flux": 0.8150734934390931,
+          "points": 18901,
+          "relative_RMS": 0.014399617915325704,
+          "signed_integrated_relative_change": 0.002245998163353785,
+          "significant_points": 18121
+        },
+        "optical": {
+          "hi_angstrom": 10000,
+          "integrated_absolute_relative_change": 0.005378199708578429,
+          "lo_angstrom": 3000,
+          "maximum_relative_change": 0.18631021777502116,
+          "maximum_relative_change_significant_flux": 0.18631021777502116,
+          "points": 17259,
+          "relative_RMS": 0.005901096089997254,
+          "signed_integrated_relative_change": 0.005190178664119569,
+          "significant_points": 17259
+        }
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 9.089551333829604e-11
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 1.0487840500085881e-20
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.002,
+            "value": 0.00014767932697192553
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.002,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 7.560364744812391e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.002,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0002,
+            "value": 7.198083656589915e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "comparison_file": "daz-8fc37fca59764de87be3fffd.npz",
+      "comparison_sha256": "0d79dba19051ecfb06987a384857be3d4d612d13a4eb43a3a44676efcc6278e0",
+      "config": {
+        "abundances": {
+          "Ca": -6.11,
+          "Fe": -4.43,
+          "Mg": -4.42,
+          "O": -3.62,
+          "Si": -4.24
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "effective_temperature": 20890,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "kurucz_electron_stark": true,
+        "logg": 7.9,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 3,
+        "metal_neutral_h_broadening": "barklem",
+        "mixing_length_alpha": 0.7,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "standard",
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "family": "DAZ",
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false,
+      "native_cold_request_verified": true,
+      "normalization": "none",
+      "old_case_id": "daz-8fc37fca59764de87be3fffd",
+      "old_product_hashes_unchanged": true,
+      "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "peak_RSS_bytes": 1102282752,
+      "physical_accuracy_verified": false,
+      "quality": "standard",
+      "release_ready": false,
+      "resampling": "none",
+      "runtime_data_unchanged": true,
+      "scientific_identity": "8d748a437026ce4164990417f3cc331f897faf8045c1bfcdfbb01a370d2aeaf4",
+      "selection_policy": {
+        "dense_density_fraction": 0.05,
+        "molecular_electron_fraction": 0.001,
+        "molecular_nuclei_fraction": 0.0001
+      },
+      "source_commit": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+      "source_unchanged": true,
+      "spectrum_sha256": "29efc396f442a6eb9f8b3888e3a3013329a92a5dd6ee3d0dc2f920c885371b2e",
+      "spectrum_source_error": 8.495050577438993e-16,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 152.6942670409917,
+      "wavelength_identical": true,
+      "spectrum_archive_path": "attempts-v1/daz-8fc37fca59764de87be3fffd-h2-off/model/spectrum.txt"
+    }
+  ]
+}
