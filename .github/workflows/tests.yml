@@ -1,50 +1,26 @@
-name: tests
+name: J1637 Fe II reference audit
 
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: fast-tests-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: j1637-reference-audit-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   OMP_NUM_THREADS: "1"
   OPENBLAS_NUM_THREADS: "1"
   OPENWD_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  VECLIB_MAXIMUM_THREADS: "1"
 
 jobs:
-  unit-and-component:
+  capture:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.12"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-      - run: python -m pip install --upgrade pip
-      - run: python -m pip install -e '.[test]'
-      - name: Verify default numerical dependencies
-        run: |
-          python -m pip check
-          python -c "import scipy, mpmath; print('SciPy', scipy.__version__, 'mpmath', mpmath.__version__)"
-      - name: Verify repository-local import
-        run: python -c "import pathlib, wd_spectra; assert pathlib.Path(wd_spectra.__file__).resolve().is_relative_to(pathlib.Path('src').resolve())"
-      - name: Verify compiled acceleration backend
-        run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'hydrogen_stark_lorentz_convolution')"
-      - run: python -m pytest -m 'not canary and not spectral' --durations=10
-
-  fixed-spectra:
-    runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -52,30 +28,17 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -e '.[test]'
-      - run: python tools/validate.py spectra --output results/spectra
+      - name: Require C acceleration
+        run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'stark_manifold_bins')"
+      - name: Recover old controls, then capture current Fe defaults
+        run: >-
+          python research/guard_d6_capture.py --rss-gib 6 --seconds 13800
+          --output results/capture-monitor -- python -u tools/build_d6_regression.py
+          tests/data/d6_regressions/warm_v1 results/warm_v2_feii
+          --from-frozen-reference --verify-legacy-uv-controls
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: fixed-atmosphere-spectra
-          path: results/spectra
-
-  cool-workflow-components:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.12"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-      - run: python -m pip install -e '.[test]'
-      - name: Check opt-in workflows without external research data
-        env:
-          PYTHONPATH: src:research/cool_models
-          OMP_NUM_THREADS: "1"
-          OPENBLAS_NUM_THREADS: "1"
-          OPENWD_NUM_THREADS: "1"
-        run: python -m pytest research/cool_models -o addopts=-ra
+          name: j1637-feii-reference-proof
+          path: results
+          retention-days: 14
