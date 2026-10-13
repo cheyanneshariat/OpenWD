@@ -6,7 +6,9 @@
 abundances. Metals contribute electrons, bound-free opacity, sampled line
 blanketing, and therefore feed back on the relaxed structure. The default
 metal database uses Stout v3.00b4, adding the bundled Kurucz Cr II
-missing-transition supplement when chromium is present. The GD 40 preset
+missing-transition supplement and a selected Fe II ultraviolet supplement
+when those ions are present; see the [atomic-data notes](../../src/wd_spectra/data/atomic/README.md).
+The GD 40 preset
 includes levels through charge 3, dense-helium ionization shifts, and
 available unified Mg I--He and Ca I--He profiles.
 Observable helium and trace-hydrogen lines use the same policies as DB and
@@ -57,8 +59,20 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
 - The `strong_line_atomic_data="nist-asd"` option replaces every exactly
   matched Stout transition down to f = 1e-4 with evaluated NIST ASD values
   (accuracy C or better), including 115--300 nm (Mg I 2852, Mg II h/k, Si II,
-  C II, Al II, Fe I/II). The default retains Stout oscillator strengths and
-  adds missing Cr II transitions from Kurucz.
+  C II, Al II, Fe I/II). The default retains existing Stout transition data
+  and adds missing Cr II transitions plus 145 selected Fe II ultraviolet
+  transitions from Kurucz, covering 1189--1198 Å and the 1357.8/1361.37-Å
+  features. The Fe II subset adds one upper level, with an ideal partition
+  increase of 6.93e-6 fractionally at 15300 K. Existing oscillator strengths and damping
+  records are retained; adding radiative branches can change a level's
+  total natural width. Selection and provenance are recorded in the
+  [atomic-data notes](../../src/wd_spectra/data/atomic/README.md).
+- Neutral trace H now contributes its impact broadening to ordinary metal
+  lines using the neutral-H density from the same metal/H charge closure.
+  For the Si II--He unified profile, this H width joins radiative and
+  electron widths in `gamma_other`; the unified profile supplies the He
+  contribution. Pure-He and fully ionized trace-H cases receive no added
+  neutral-H width. No abundance or damping multiplier is fitted.
 - Most Stout transitions carry no electron-impact (Stark) width, and the
   classical SYNSPEC fallback stays off. By default (`kurucz_electron_stark=True`,
   since 2026-10-11) OpenWD attaches Kurucz's tabulated `log Gamma_4/n_e` at 10^4 K, scaled as (T/10^4 K)^(1/6), to every

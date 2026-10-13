@@ -57,8 +57,49 @@ functions are unchanged. Kurucz-only levels are not imported; most lie far
 above the first ionization limit, and lines to them (for example Si II
 1399.94/1400.27 A) are not observed in hot DAZ COS spectra.
 
+## Kurucz Fe II ultraviolet missing transitions
+
+`gf2601_uv_missing.all.xz` contains 145 otherwise unmodified rows from
+Kurucz's Fe II `gf2601.all` (K13):
+
+- Source: <http://kurucz.harvard.edu/atoms/2601/gf2601.all>.
+- Full source SHA-256:
+  `5a7d9d26eef58a2a32da523f8221f50cb08d3316cff20b45e22c8913e5390892`.
+- Decompressed subset SHA-256:
+  `0574e40ca8cae74f68f1b49488de6453841299dd0bdadc8cfc9a68a1a1e75242`
+  (23,345 bytes).
+- Selection: 142 missing transitions in 1189--1198 Å connecting existing
+  Stout levels, plus 1357.761, 1357.796 and 1361.374 Å. All level-energy
+  signs are positive; this indicates observed levels in Kurucz's convention,
+  while the oscillator strengths remain calculated atomic data.
+
+`read_stout_atomic_database` applies the subset by default whenever Fe II
+is present. `augment_iron_ii_kurucz_uv_transitions` uses missing-transition
+mode and leaves every existing Stout line, oscillator strength and damping
+constant unchanged, including Fe II 1360.858 Å. Other ions are unchanged;
+line-selection and width caches are rebuilt. Reapplication is idempotent.
+`include_default_supplements=False` retains the original Stout database.
+
+For the bundled Fe II atom, 1008 levels / 6724 transitions become 1009
+levels / 6869 transitions. The sole added upper level, at 106524.400 cm⁻¹
+with statistical weight 16, belongs to 1357.796 Å. It increases the ideal
+Fe II partition function by 6.93e-6 fractionally at 15300 K. The level has
+Kurucz observed-energy provenance; it is absent from the bundled Stout/NIST
+laboratory-confirmed level set. The normal oscillator-strength and population
+cuts still apply: 65 of the 142 added 1190-Å transitions exceed `f=1e-4`.
+
+The missing 1361.374-Å component has the 1.671-eV lower excitation listed
+for Fe II 1361.37 by [Jura et al. (2012), Table 1](https://arxiv.org/abs/1203.2885).
+[Williams et al. (2025), Table A1](https://arxiv.org/abs/2506.19931) lists both
+1361.363 and 1361.374 Å. Independent UV identifications include 1357.796 Å
+in [Eaton (2008), Table 1](https://journalofastronomicaldata.be/JAD14/jad14_3/jad14_3.pdf)
+and 1190.883/1193.575 Å in [Smith (2010), Fig. 2](https://arxiv.org/abs/0911.4747).
+These identifications support filling missing opacity; no abundance, damping
+or oscillator-strength factor is fitted to the white dwarfs. The selection
+and provenance are also recorded in `gf2601_uv_missing.provenance.json`.
+
 ## Fe II oscillator strengths
 
 `feii_melendez_barbuy_2009.dat` contains the separately selected
 Melendez--Barbuy (2009) optical Fe II oscillator strengths. It is not part of
-the default Cr II supplementation policy.
+the default missing-transition supplementation policy.
