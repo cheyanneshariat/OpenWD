@@ -331,3 +331,224 @@ python examples/one_shot_dz.py --teff 14752 --logg 7.97 --log-h-he -6.32 \
   --wavelength-min 3200 --wavelength-max 8000 --wavelength-step 0.02 \
   --quality standard --require-convergence --output results/wd2207-xu2019
 ```
+
+## Ultraviolet comparisons
+
+These comparisons extend the HIRES examples to public HST/COS spectra of
+seven helium-dominated DZ/DBZ stars and two hydrogen-dominated
+[DAZ stars](DAZ.md). Each model uses the effective temperature, gravity and
+detected abundances adopted in the corresponding abundance paper. Reported
+upper limits are omitted. The two host compositions use different abundance
+denominators: `log10[N(element)/N(He)]` for DZ/DBZ and
+`log10[N(element)/N(H)]` for DAZ. Trace hydrogen in helium atmospheres is
+specified separately as `log_hydrogen_abundance`.
+
+The bundled configurations record source revision `221dc9c`, which combines
+the `1386029` main-branch revision with the
+[H₂ Lyman/Werner implementation](https://github.com/kareemelbadry/OpenWD/pull/26).
+
+The [figure provenance](../assets/uv-validation-provenance.json) records the
+calibrated observation products, instrumental kernels, velocity choices,
+continuum fits, actual atmosphere grids and figure checksums. All nine
+plotted atmospheres pass OpenWD's required equilibrium checks on their
+adopted structure grids.
+
+The predictions use the current default metal physics described above,
+without fitted damping multipliers. G29−38 and GD 133 additionally enable
+photospheric H₂ Lyman and Werner lines and molecular equilibrium. The
+compiled C opacity and transfer routines accelerate the calculation without
+changing the requested composition or profile prescription.
+The runs use one numerical thread; the
+[performance guide](../development/performance.md) describes the thread controls.
+WD 1425+540 uses `quality="production"`, starting with 80 atmosphere layers
+and 600 continuum sampling points; the other entries use standard resolution.
+The solver can extend the lower boundary when its screening check requires a
+deeper atmosphere. These numerical choices retain the published physical inputs.
+
+For display, the intrinsic spectra are convolved with the wavelength-dependent
+COS line-spread function appropriate to each observation's grating, central
+wavelength and lifetime position, then integrated over detector pixels. The
+black curves show calibrated observations binned over three contiguous
+quality-valid native pixels; detector gaps remain gaps. Photospheric velocity
+shifts align the observations and model, without adjusting individual line
+wavelengths. Matched local continuum masks and weights normalize the data and
+model independently. For the DAZ figures, continuum bands on both sides of
+each displayed interval determine the normalization; the interval itself is
+excluded from the continuum fit. The H₂ absorption forest is retained as
+line opacity. The faint near-UV comparisons use a quadratic fit over each
+separate detector strip. Marked interstellar absorption
+and airglow features are excluded from photospheric comparison where needed.
+
+These figures compare line patterns and normalized profiles at a published
+composition. They do not refit the abundances or establish an absolute-flux
+match. The model commands below generate intrinsic surface flux; instrumental
+convolution, pixel integration and continuum normalization are display steps.
+
+| Object | Model | Teff (K) | log g | log N(H)/N(He) | COS mode | Parameter and abundance source | Configuration key |
+| --- | --- | ---: | ---: | ---: | --- | --- | --- |
+| GD 40 | DZ/DBZ | 15300 | 8.00 | −5.10 | G130M | [Jura et al. (2012), Table 3](https://arxiv.org/abs/1203.2885) | `gd40` |
+| G241−6 | DZ/DBZ | 15300 | 8.00 | −5.90 | G130M | [Jura et al. (2012), Table 4](https://arxiv.org/abs/1203.2885) | `g241minus6` |
+| PG 1225−079 | DZ/DBZ | 10800 | 8.00 | −4.05 | G185M | [Xu et al. (2013), Table 5](https://arxiv.org/abs/1302.4799) | `pg1225` |
+| GD 61 | DZ/DBZ | 17280 | 8.20 | −3.89 | G130M | [Farihi et al. (2013), Supplement Table 2](https://arxiv.org/abs/1310.3269) | `gd61` |
+| GD 378 | DZ/DBZ | 15620 | 7.93 | −4.48 | G130M | [Klein et al. (2021), Table 5](https://faculty.epss.ucla.edu/~eyoung/reprints/Klein_2021.pdf) | `gd378` |
+| WD 1425+540 | DZ/DBZ | 14490 | 7.95 | −4.20 | G130M | [Xu et al. (2017), Table 1, Model I](https://arxiv.org/abs/1702.02868) | `wd1425` |
+| G29−38 | DAZ | 11820 | 8.40 | — | G130M | [Xu et al. (2014), Table 3](https://arxiv.org/abs/1401.4252) | `g29_38` |
+| GD 133 | DAZ | 12600 | 8.10 | — | G130M | [Xu et al. (2014), Table 3](https://arxiv.org/abs/1401.4252) | `gd133` |
+| GD 362 | DZ/DBZ | 10540 | 8.24 | −1.14 | G185M | [Xu et al. (2013), Table 4](https://arxiv.org/abs/1302.4799) | `gd362` |
+
+The complete detected mixtures and model configurations are in
+[uv-validation-configs.json](../assets/uv-validation-configs.json).
+The published Be detection in GD 378 and Sr detection in GD 362 are recorded
+there but omitted from synthesis because the current model does not support
+those elements; every other detected abundance is held at its published value.
+From the root of a source checkout with OpenWD installed, choose a configuration
+key from the table and run this Python example. It computes **one** spectrum and saves
+`spectrum.txt` (vacuum Å, erg s^-1 cm^-2 Å^-1), the atmosphere and provenance.
+Choose a fresh output directory for every run. `require_convergence=True`
+rejects an output that fails the model's convergence certificate.
+Saved structures initialize some of the figure calculations and are
+reconverged under the current physics. This example starts a new atmosphere
+with the same physical configuration.
+
+```python
+import json
+from pathlib import Path
+import numpy as np
+from wd_spectra import DAZConfig, DZConfig, compiled_backend_available, run_model
+
+assert compiled_backend_available(), "Install OpenWD with its compiled C backend"
+targets = json.loads(Path("docs/assets/uv-validation-configs.json").read_text())["targets"]
+slug = "gd40"  # Replace with any configuration key in the table above.
+entry = targets[slug]
+config_type = {"DZConfig": DZConfig, "DAZConfig": DAZConfig}[entry["config_class"]]
+config = config_type(**entry["config"])
+wavelength = np.arange(
+    entry["wavelength_min_A"],
+    entry["wavelength_max_A"] + 0.5 * entry["wavelength_step_A"],
+    entry["wavelength_step_A"],
+)
+run = run_model(
+    config,
+    Path("results") / f"{slug}-uv",
+    wavelength=wavelength,
+    require_convergence=True,
+)
+```
+
+The DAZ entries explicitly set `include_molecules=True` and
+`h2_lyman_werner_lines=True`, ensuring molecular equilibrium is retained for
+GD 133 above 12000 K. DZ/DBZ configurations use ML2/alpha = 1.25 convection, and DAZ
+configurations use the ML2/alpha = 0.8 prescription of Xu et al. (2014).
+The fine model grid covers the displayed
+UV regions; it does not generate or normalize the figures.
+
+### GD 40 and G241−6
+
+The G130M comparisons use the final detected abundance columns of
+Jura et al. (2012), with oxygen for G241−6 from its UV measurement.
+Their similar temperatures and gravities provide a comparison of different
+metal mixtures in helium atmospheres. The strong Si II 1260–1265 Å region
+is shown together with weaker Si II and lines of O, Mg, Fe and other detected
+elements.
+The predicted strong Si II wings remain shallower than the observations at
+these fixed compositions; that discrepancy is retained in the comparisons.
+
+[![GD 40 COS spectra and OpenWD at the Jura et al. composition](../assets/uv-gd40.png)](../assets/uv-gd40.pdf)
+
+[![G241−6 COS spectra and OpenWD at the Jura et al. composition](../assets/uv-g241minus6.png)](../assets/uv-g241minus6.pdf)
+
+### PG 1225−079
+
+The G185M data cover three separate near-UV wavelength strips rather than a
+continuous spectrum. The model uses the detected composition in Xu et al.
+(2013), including the carbon detection and the optical metal abundances.
+Si II, C I, Mg I and the Fe-group line forest test the same composition in
+the near UV.
+Continuum support is sparse near two strip edges: the Si II 1808 Å and
+Fe II 2019–2021 Å panels have approximately 6–7% formal normalization
+uncertainty. Those panels are marked; calibration and rebinning covariance
+are not included in that estimate.
+
+[![PG 1225−079 COS spectra and OpenWD at the Xu et al. composition](../assets/uv-pg1225.png)](../assets/uv-pg1225.pdf)
+
+### GD 61
+
+The G130M comparison uses the adopted abundance column in Farihi et al.
+(2013), with trace hydrogen and the detected O, Mg, Si, S, Ca and Fe
+abundances. Upper limits from the individual instruments are not included
+as detections. The figure includes the strong Si II multiplet and weaker
+metal features at the higher temperature of this DBZ.
+Foreground N I, Si II and C II features are marked at the approximately
+40 km/s blueward offset reported in the paper's Figure 2 caption.
+
+[![GD 61 COS spectra and OpenWD at the Farihi et al. composition](../assets/uv-gd61.png)](../assets/uv-gd61.pdf)
+
+### GD 378
+
+The G130M comparison uses Klein et al. (2021), Table 5, including the
+nitrogen detection reported in its footnote. The paper's beryllium abundance
+is `log N(Be)/N(He) = −11.44`; beryllium is omitted because it is not
+supported by this model's bundled metal database. The figure therefore
+compares the remaining detected elements.
+N I and C II components consistent with the reported foreground cloud are
+marked separately from the photospheric lines.
+
+[![GD 378 COS spectra and OpenWD at the Klein et al. composition](../assets/uv-gd378.png)](../assets/uv-gd378.pdf)
+
+### WD 1425+540
+
+This comparison consistently uses **Model I** of Xu et al. (2017):
+`log N(H)/N(He) = −4.20` and the corresponding metal abundances. It does not
+combine that metal column with the different hydrogen abundance of Model II.
+The G130M panels include volatile-element features alongside Si and Fe lines.
+The all-time coadd has a localized positive excess at the strong daytime
+[N I airglow wavelengths](https://www.stsci.edu/hst/instrumentation/cos/calibration/airglow).
+The observed-frame interval 1199.0–1201.2 Å is marked as possible airglow and
+excluded from comparison and continuum anchors; N I 1134 Å remains the
+nitrogen comparison. Xu et al. also report a mismatch in the asymmetric
+Lyα wing for these adopted parameters, motivating local continuum normalization.
+
+[![WD 1425+540 COS spectra and OpenWD at the Xu et al. Model I composition](../assets/uv-wd1425.png)](../assets/uv-wd1425.pdf)
+
+### G29−38
+
+The hydrogen-host model uses the detected abundances of Xu et al. (2014).
+The observations combine the usable 1999 s first-visit exposure with the
+7035 s second visit; exposures affected by the reported gyro malfunction
+are excluded.
+The G130M panels include both metal features and the photospheric H₂ Lyman
+and Werner forest. Molecular absorption is calculated with the model's
+hydrogen molecular density and fluorescent line source functions. Interstellar components
+are treated separately from the photospheric comparison.
+The unscaled prediction leaves extra observed absorption in parts of the
+metal/H₂ regions, especially the C I complex around 1273–1282 Å; these
+residuals are retained in the figure.
+
+[![G29−38 COS spectra and OpenWD with photospheric H2 at the Xu et al. composition](../assets/uv-g29_38.png)](../assets/uv-g29_38.pdf)
+
+### GD 133
+
+The DAZ model uses the four detected metal abundances O, Mg, Si and Ca from
+Xu et al. (2014), with H₂ Lyman and Werner lines enabled. The all-time COS
+coadd contains O I airglow near 1302–1306 Å; that region is excluded from
+photospheric comparison. The published oxygen abundance used night-only
+data. The displayed H₂ regions remain useful independently of that airglow
+contamination.
+
+[![GD 133 COS spectra and OpenWD with photospheric H2 at the Xu et al. composition](../assets/uv-gd133.png)](../assets/uv-gd133.pdf)
+
+### GD 362
+
+The G185M comparison uses the detected mixture in Xu et al.
+(2013), Table 4, apart from the unsupported Sr detection
+(`log N(Sr)/N(He) = −10.42`). It includes the relatively high hydrogen
+abundance in this helium-dominated atmosphere. The three near-UV strips contain
+Si II, C I, Mg I and Fe-group lines. These observations have lower signal-to-noise than
+the PG 1225−079 spectra; O, N and S are reported upper limits and are omitted.
+The NUVA and NUVC strips retain the published apparent velocity of 48 km/s:
+NUVA does not constrain the template shift, and the NUVC fit reaches its
+calibration search boundary. The NUVB carbon strip gives 46.3 km/s.
+The two Si II panels carry approximately 7% formal continuum uncertainty;
+the figure marks those estimates and the velocity choices.
+
+[![GD 362 COS spectra and OpenWD at the Xu et al. composition](../assets/uv-gd362.png)](../assets/uv-gd362.pdf)
