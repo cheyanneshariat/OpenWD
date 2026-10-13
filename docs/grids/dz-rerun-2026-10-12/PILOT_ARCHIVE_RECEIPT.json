@@ -1,0 +1,10 @@
+{
+  "archive_bytes": 2648677,
+  "archive_sha256": "63c02f1374d9451259a1b78cd9f5b26ea2146c737f7f019d807679c8dd7cdf35",
+  "members": 96,
+  "native_models": 8,
+  "native_arrays": 72,
+  "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+  "file_hashes_verified": 96,
+  "persistent_copy_verified": true
+}

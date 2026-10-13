@@ -1,0 +1,931 @@
+{
+  "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+  "numerical_passes": 8,
+  "requests": 8,
+  "native_arrays_verified": 72,
+  "remote_local_file_hashes_verified": 96,
+  "pilot_elapsed_seconds": 7751,
+  "pilot_billing_fraction": 0.0703125,
+  "pilot_charge_node_hours": 0.15138671875,
+  "prior_plus_pilot_actual_node_hours": 7.172094184027777,
+  "bulk_job_id": "59725915",
+  "bulk_selected_requests": 310,
+  "deferred_requests": 4,
+  "bulk_reserved_node_hours": 5.75,
+  "combined_reservation_bound": 12.922094184027777,
+  "observational_accuracy_verified": false,
+  "independent_depth_convergence_verified": false,
+  "records": [
+    {
+      "case_id": "dz-de69f4b7f2b8431caf2e11c2",
+      "attempt_id": "dz-fe1472ba2d41f8b170e7661d",
+      "composition_pattern": "PG1225",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 6000.0,
+      "logg": 8.0,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 2796.3154232300003,
+      "peak_RSS_bytes": 939253760,
+      "config": {
+        "abundances": {
+          "Ca": -8.06,
+          "Cr": -9.27,
+          "Fe": -7.42,
+          "Mg": -7.27,
+          "Mn": -9.79,
+          "Ni": -8.76,
+          "Sc": -11.29,
+          "Ti": -9.45,
+          "V": -10.41
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 6000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -4.05,
+        "logg": 8.0,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 3.796700731584224e-09
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 6.124063922456372e-08
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 0.00019167502494189464
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.9266432064977754e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 3.6717422986498605e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-2855bccc41d6ed9e5e6d5843",
+      "attempt_id": "dz-be48dfeac9c326559b85a415",
+      "composition_pattern": "PG1225",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 10000.0,
+      "logg": 8.0,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 6566.218593664002,
+      "peak_RSS_bytes": 921337856,
+      "config": {
+        "abundances": {
+          "Ca": -8.06,
+          "Cr": -9.27,
+          "Fe": -7.42,
+          "Mg": -7.27,
+          "Mn": -9.79,
+          "Ni": -8.76,
+          "Sc": -11.29,
+          "Ti": -9.45,
+          "V": -10.41
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 10000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -4.05,
+        "logg": 8.0,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.2226080148280971e-09
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 0.00020388422904457957
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.8147790670895966e-06
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.7063848093079558e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 7.536502899085917e-06
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-ba9f3db29b4ea4aad9249193",
+      "attempt_id": "dz-5a4f09b06d4433762d9564c8",
+      "composition_pattern": "PG1225",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 60000.0,
+      "logg": 8.0,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 1716.3157959019954,
+      "peak_RSS_bytes": 905863168,
+      "config": {
+        "abundances": {
+          "Ca": -8.06,
+          "Cr": -9.27,
+          "Fe": -7.42,
+          "Mg": -7.27,
+          "Mn": -9.79,
+          "Ni": -8.76,
+          "Sc": -11.29,
+          "Ti": -9.45,
+          "V": -10.41
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 60000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -4.05,
+        "logg": 8.0,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.0060130506417408e-10
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.7552769392314664e-12
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 3.7512579300649466e-05
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.8145065093851865e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 4.657148419223679e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-b9a86766e2ad997fb6c76499",
+      "attempt_id": "dz-88e7e14cd98e93ce98e04511",
+      "composition_pattern": "J0738",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 20000.0,
+      "logg": 8.0,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 3487.0855850330045,
+      "peak_RSS_bytes": 952311808,
+      "config": {
+        "abundances": {
+          "Al": -6.39,
+          "Ca": -6.23,
+          "Co": -7.76,
+          "Cr": -6.76,
+          "Fe": -4.98,
+          "Mg": -4.68,
+          "Mn": -7.11,
+          "Na": -6.36,
+          "Ni": -6.31,
+          "O": -3.81,
+          "Sc": -9.55,
+          "Si": -4.9,
+          "Ti": -7.95,
+          "V": -8.5
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 20000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -5.73,
+        "logg": 8.0,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.1094347662776727e-10
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 8.575842839127075e-23
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 0.0006347110830443661
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.5773564858308487e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 8.332945257630698e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-63ce1ed2704a494f70602512",
+      "attempt_id": "dz-1fde01178a2c717b01cf761f",
+      "composition_pattern": "J0738",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 40000.0,
+      "logg": 8.0,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 2290.6241465480052,
+      "peak_RSS_bytes": 1122598912,
+      "config": {
+        "abundances": {
+          "Al": -6.39,
+          "Ca": -6.23,
+          "Co": -7.76,
+          "Cr": -6.76,
+          "Fe": -4.98,
+          "Mg": -4.68,
+          "Mn": -7.11,
+          "Na": -6.36,
+          "Ni": -6.31,
+          "O": -3.81,
+          "Sc": -9.55,
+          "Si": -4.9,
+          "Ti": -7.95,
+          "V": -8.5
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 40000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -5.73,
+        "logg": 8.0,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.603989940868189e-09
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 6.89770238426938e-58
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.0619082911566433e-05
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.7721440206208977e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 7.103909384476026e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-482fe68e99e875fffce56a76",
+      "attempt_id": "dz-01c0bda3195c36f2fa5d764c",
+      "composition_pattern": "J0738",
+      "role": "heldout",
+      "effective_temperature_K": 7000.0,
+      "logg": 7.25,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 5101.258464457998,
+      "peak_RSS_bytes": 989147136,
+      "config": {
+        "abundances": {
+          "Al": -6.64,
+          "Ca": -6.48,
+          "Co": -8.01,
+          "Cr": -7.01,
+          "Fe": -5.23,
+          "Mg": -4.93,
+          "Mn": -7.36,
+          "Na": -6.61,
+          "Ni": -6.56,
+          "O": -4.0600000000000005,
+          "Sc": -9.8,
+          "Si": -5.15,
+          "Ti": -8.2,
+          "V": -8.75
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 7000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -5.73,
+        "logg": 7.25,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.9835419973190938e-08
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.2637305452752843e-105
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.3859239926493447e-06
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.2884376844342003e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 5.537258616072904e-07
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-88cc4093721109a7b0df915f",
+      "attempt_id": "dz-e7e2269bd894638e63b718a7",
+      "composition_pattern": "GD40",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 10000.0,
+      "logg": 8.0,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 5224.631182732999,
+      "peak_RSS_bytes": 907173888,
+      "config": {
+        "abundances": {
+          "C": -7.2,
+          "Ca": -6.88,
+          "Cr": -8.31,
+          "Fe": -6.48,
+          "Mg": -6.24,
+          "Mn": -8.62,
+          "O": -5.61,
+          "Si": -6.76,
+          "Ti": -8.61
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 10000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -6.16,
+        "logg": 8.0,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 7.640010306619871e-07
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 1.1575300632190051e-16
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 6.775831857389958e-05
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.72673313996488e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 1.1660738310936836e-05
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    },
+    {
+      "case_id": "dz-79ae813f96a671b1d5853925",
+      "attempt_id": "dz-24dfcde6cc4a94a769b06b9d",
+      "composition_pattern": "GD40",
+      "role": "pattern-grid-node",
+      "effective_temperature_K": 25000.0,
+      "logg": 8.5,
+      "status": "COMPLETE_NUMERICAL",
+      "wall_seconds": 7188.537913705004,
+      "peak_RSS_bytes": 1073598464,
+      "config": {
+        "abundances": {
+          "C": -7.2,
+          "Ca": -6.88,
+          "Cr": -8.31,
+          "Fe": -6.48,
+          "Mg": -6.24,
+          "Mn": -8.62,
+          "O": -5.61,
+          "Si": -6.76,
+          "Ti": -8.61
+        },
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "dense_helium_eos": "ideal",
+        "effective_temperature": 25000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "kurucz_electron_stark": true,
+        "level_resolved_photoionization": true,
+        "log_hydrogen_abundance": -6.16,
+        "logg": 8.5,
+        "lyman_profile_source": "stark",
+        "maximum_metal_charge": 3,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "occupation_probability_metal_partitions": true,
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true,
+        "strong_line_atomic_data": "stout",
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "unified_metal_helium_profiles": "production"
+      },
+      "certificate": {
+        "checks": {
+          "all_depth_flux": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 2.054897363379382e-10
+          },
+          "boundary_screening": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 5.658865705568986e-18
+          },
+          "local_energy": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.003,
+            "value": 3.8355599288515464e-06
+          },
+          "photospheric_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "source_closure": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 1e-06,
+            "value": 1.5699765955094258e-15
+          },
+          "surface_flux": {
+            "measured": false,
+            "passed": false,
+            "tolerance": 0.003,
+            "value": null
+          },
+          "temperature_stationarity": {
+            "measured": true,
+            "passed": true,
+            "tolerance": 0.0003,
+            "value": 1.3607825426475983e-06
+          }
+        },
+        "failures": [],
+        "full_physics_validation": false,
+        "independent_grid_validation": false,
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": true
+      },
+      "spectrum_points": 18901
+    }
+  ]
+}

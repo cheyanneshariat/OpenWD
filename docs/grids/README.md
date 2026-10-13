@@ -176,6 +176,6 @@ spectra from their checked archive.
 The [DO temperature script](plot_do_temperature.py) reproduces the new
 fixed-gravity sequence from its checked archive.
 
-[The updated DZ rerun](dz-rerun-2026-10-12/README.md) is queued for an eight-model
-pilot. The remaining 314 requests await verified pilot results and resource
-measurements. The selected DZ counts above are unchanged.
+[The updated DZ rerun](dz-rerun-2026-10-12/README.md) has eight verified pilot
+completions. A bounded batch of 310 requests is queued; four await a fresh budget
+check after settlement. The selected DZ counts above are unchanged.
