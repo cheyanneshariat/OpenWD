@@ -140,3 +140,51 @@ sigma Teff^4. The bare-grid formal solution partly cancelled this, so the
 totals looked right while the structure was not. Standard-quality totals
 are now within about 0.75% (see the [DZ guide](DZ.md) for the method). Setting
 both to 0 and 1 restores the previous numerics.
+
+## H2 Lyman and Werner lines (opt-in)
+
+Cool hydrogen white dwarfs show far-UV H2 Lyman (B-X) and Werner (C-X) lines
+from vibrationally excited ground-state levels (Xu et al. 2013). Set
+`DAConfig(h2_lyman_werner_lines=True)` to add them to the final spectrum.
+The H2 lines enter only the final spectrum, but they require molecular
+chemistry. The option therefore enables molecules above 12,000 K, where they
+are otherwise off by default, and raises an error if `include_molecules=False`.
+At or below 12,000 K the atmosphere is unchanged. Above it, the molecular EOS
+changes the structure: by up to about 2% in temperature for the 12,300-12,800 K
+stars below.
+
+- Line data: Kurucz's `h2bx`/`h2cx` lists, bundled and checksum-verified (see
+  `src/wd_spectra/data/molecular/README.md`). Only transitions between
+  measured levels contribute opacity; every transition enters the upper-level
+  decay and branch sums.
+- Lower levels: LTE, from the EOS H2 density and the same Barklem & Collet
+  partition function. Collisional dissociation and formation keep the
+  molecule close to LTE where the lines form; photodissociation is negligible
+  there.
+- Source functions: not LTE. The B and C upper levels decay in about 1 ns, so
+  each line has the fluorescent source function from upper-level statistical
+  equilibrium:
+  `S/B = [sum A_branch (J/B)_branch + A_c + C_u] / [A_u + A_c + C_u]`.
+  Radiative dissociation `A_c` comes from Abgrall, Roueff & Drira (2000) and
+  electron de-excitation `C_u` from van Regemorter. The mean-intensity ratio
+  `J/B` comes from a separate metal-free transfer solution on a 1 Å grid over
+  845-1850 Å. The branch lines are treated as optically thin.
+- Profiles: Voigt, with thermal Doppler width and damping from the bound plus
+  dissociative decay rates.
+
+With LTE source functions the predicted lines are much too strong. With the
+fluorescent source function, the line strengths fitted to HST/COS G130M spectra
+at fixed published parameters are as follows. `k` scales the model H2
+absorption depth; `k = 1` means the predicted depth matches.
+
+| Star | Type | chi^2 off -> on | fitted `k` |
+|---|---|---|---|
+| WD 2341+322 | DA, 12,787 K | 1.15 -> 0.99 | 0.94 +- 0.03 |
+| GD 31 | DA, 12,265 K | 0.67 -> 0.68 | 0.43 +- 0.03 |
+| GD 133 | DAZ | 2.37 -> 1.47 | 1.14 +- 0.01 |
+| G29-38 | DAZ | 3.26 -> 2.71 | 0.78 +- 0.01 |
+
+These chi^2 values are over 1153-1437 Å, with ISM and airglow masked. GD 31's
+published temperatures disagree, which may explain its weak observed lines.
+Runtime increases by up to about 15% in these models. The option is off by
+default, so all existing regression controls are unchanged.

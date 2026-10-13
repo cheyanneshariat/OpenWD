@@ -66,6 +66,23 @@ covered by OpenWD's BSD source-code license. Credit Robert L. Kurucz in
 scientific uses. The selection and checksum are recorded in the
 [atomic-data notes](src/wd_spectra/data/atomic/README.md).
 
+## Kurucz H2 Lyman and Werner lines
+
+`src/wd_spectra/data/molecular/h2_lyman_werner_kurucz.asc.xz` is the
+xz-compressed concatenation of Robert L. Kurucz's `h2bx.asc` (B-X, Lyman) and
+`h2cx.asc` (C-X, Werner) lists from <http://kurucz.harvard.edu/linelists/linesmol/>
+(original SHA-256 `dd6b957650ed7fd9272b6ebdfe14d8c3ea196e31623701487d4269b3099fcb07`
+and `29213618a2b127fdfb1113e88708b6dce58a89771aa6ad37d7bc9eec9e37244d`),
+otherwise unmodified. These independently authored data are not covered by
+OpenWD's BSD source-code license. Credit Robert L. Kurucz in scientific uses.
+
+## H2 radiative dissociation probabilities
+
+`src/wd_spectra/data/molecular/h2_abgrall2000_table{1,2,3}.dat` are tables 1-3
+(B, C+ and C- states) of Abgrall, Roueff & Drira (2000, A&AS 141, 297), from
+the CDS catalogue J/A+AS/141/297, unmodified. Cite that paper in scientific
+uses.
+
 ## Kurucz electron Stark constants
 
 `src/wd_spectra/data/stark/kurucz_stark_constants.csv.xz` lists Robert L.

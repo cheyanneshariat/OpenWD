@@ -294,6 +294,8 @@ def synthesize_balmer_spectrum(
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip"] = "formal-linear",
     transfer_depth_refinement: int = 1,
+    h2_line_data=None,
+    _return_radiation_field: bool = False,
 ) -> Spectrum:
     """Synthesize hydrogen lines on a supplied pure-H atmosphere structure.
 
@@ -579,6 +581,54 @@ def synthesize_balmer_spectrum(
                     )
                     absorption -= metal_line_scattering
     scattering = scattering + metal_line_scattering
+    h2_kappa = h2_weighted = None
+    if h2_line_data is not None:
+        # Fluorescent H2 Lyman/Werner lines (see h2_lines): J/B at the branch
+        # wavelengths from a metal-free, H2-free transfer on the same structure.
+        from .h2_lines import (
+            H2_RADIATION_GRID_ANGSTROM,
+            h2_line_mass_absorption,
+            h2_source_function_ratio,
+        )
+
+        state = atmosphere.hydrogen_lte_state
+        if (
+            state is not None
+            and state.molecular_hydrogen_density is not None
+            and wavelength.min() < H2_RADIATION_GRID_ANGSTROM[-1]
+        ):
+            mean_intensity, grid_planck = synthesize_balmer_spectrum(
+                atmosphere, H2_RADIATION_GRID_ANGSTROM,
+                continuum_opacity=continuum_opacity,
+                include_molecular_absorption=include_molecular_absorption,
+                h2_h2_cia_table=h2_h2_cia_table,
+                include_balmer_self_broadening=include_balmer_self_broadening,
+                balmer_self_broadening_impact_validity_fraction=(
+                    balmer_self_broadening_impact_validity_fraction
+                ),
+                balmer_self_broadening_prescription=balmer_self_broadening_prescription,
+                balmer_self_broadening_truncation_closure=(
+                    balmer_self_broadening_truncation_closure
+                ),
+                barklem_self_table=barklem_self_table,
+                include_lyman=include_lyman,
+                include_series_pseudocontinuum=include_series_pseudocontinuum,
+                include_neutral_lyman_alpha_wing=include_neutral_lyman_alpha_wing,
+                unified_allard_table=unified_allard_table,
+                jackson_lyman_table=jackson_lyman_table,
+                n_angle=n_angle,
+                backend=backend,
+                _return_radiation_field=True,
+            )
+            ratio = h2_source_function_ratio(
+                h2_line_data, H2_RADIATION_GRID_ANGSTROM,
+                mean_intensity / np.maximum(grid_planck, np.finfo(np.float64).tiny),
+                atmosphere.temperature, atmosphere.electron_density,
+            )
+            h2_kappa, h2_weighted = h2_line_mass_absorption(
+                h2_line_data, atmosphere, wavelength, ratio
+            )
+            absorption = absorption + h2_kappa
     total_opacity = absorption + scattering
     optical_depth = optical_depth_from_mass_opacity(
         atmosphere.column_mass, total_opacity
@@ -594,6 +644,14 @@ def synthesize_balmer_spectrum(
         ca_ii_line_extinction if ca_ii_probabilities is not None else None,
         n_angle,
     )
+    if h2_kappa is not None:
+        # The H2 lines are pure extinction with source S = (S/B) B, folded into
+        # the effective thermal emission like the CRD Ca II lines.
+        emission_source = np.ascontiguousarray(
+            emission_source
+            + (h2_weighted - h2_kappa) * planck
+            / np.maximum(absorption, np.finfo(np.float64).tiny)
+        )
     if int(transfer_depth_refinement) != transfer_depth_refinement or transfer_depth_refinement < 1:
         raise ValueError("transfer_depth_refinement must be a positive integer")
     if transfer_depth_refinement > 1:
@@ -613,6 +671,10 @@ def synthesize_balmer_spectrum(
         optical_depth, emission_source, absorption, scattering,
         wavelength=wavelength, n_angle=n_angle, discretization=transfer_discretization,
     )
+    if _return_radiation_field:
+        if transfer_depth_refinement != 1:
+            raise ValueError("the radiation field is returned on the structure depths only")
+        return np.asarray(coupled.mean_intensity), planck
     transfer_metadata["transfer_depth_refinement"] = int(transfer_depth_refinement)
     if transfer_discretization == "formal-pchip":
         from ._monotone_formal import CubicFormal
@@ -654,6 +716,11 @@ def synthesize_balmer_spectrum(
             ),
             "continuum": continuum_description,
             "lines": ", ".join(line_series),
+            "h2_lyman_werner_lines": (
+                "fluorescent source functions; " + h2_line_data.source
+                if h2_kappa is not None
+                else "disabled"
+            ),
             "balmer_opacity_source": (
                 "package LTE Balmer opacity"
                 if precomputed_balmer_opacity is None
@@ -824,8 +891,13 @@ def synthesize_hydrogen_spectrum(
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip"] = "formal-linear",
     transfer_depth_refinement: int = 1,
+    h2_line_data=None,
 ) -> Spectrum:
-    """Synthesize the Lyman through Brackett series on a pure-H atmosphere."""
+    """Synthesize the Lyman through Brackett series on a pure-H atmosphere.
+
+    ``h2_line_data`` (``h2_lines.read_h2_lyman_werner_data()``) adds H2 Lyman
+    and Werner lines with fluorescent source functions.
+    """
 
     return synthesize_balmer_spectrum(
         atmosphere,
@@ -877,6 +949,7 @@ def synthesize_hydrogen_spectrum(
         backend=backend,
         transfer_discretization=transfer_discretization,
         transfer_depth_refinement=transfer_depth_refinement,
+        h2_line_data=h2_line_data,
     )
 
 
