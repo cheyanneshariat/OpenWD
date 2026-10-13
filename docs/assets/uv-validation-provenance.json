@@ -1,20 +1,19 @@
 {
-  "schema": 1,
-  "source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+  "schema": 2,
   "targets": {
     "gd40": {
       "target": "GD 40",
-      "source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39",
-      "model_spectrum_sha256": "82251d4b6b8555fe1ee277b55ad5478b0eb0859ce42c24bcfb7deec3f15de654",
-      "atmosphere_sha256": "e436494a0b7141151e45638518a3d385f1d5b520dd2986f2fe93dbf7bab08b4b",
+      "source_commit": "943c146e10a02826083495df527326bcb5c74bcc",
+      "model_spectrum_sha256": "731e71ff4020f78720e7c91b2d448fe3e668d18e0f8c604dcc333913e4624f56",
+      "atmosphere_sha256": "e6eb0a7aeb481ffcf2919f748a68620532dbfc2a582cd79a37b8c13fb3cf17e1",
       "structure_numerics": {
         "quality": "standard",
         "adaptive_domain_segments": [
           {
             "n_depth": 40,
-            "iterations": 5,
-            "thermal_sweeps": 2,
-            "absorption_escape_bound": 0.0003845034381522995
+            "iterations": 1,
+            "thermal_sweeps": 0,
+            "absorption_escape_bound": 0.00038449565728302835
           }
         ],
         "adaptive_domain_expansions": 0,
@@ -37,7 +36,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 4.466201639918843e-05,
+            "value": 3.625111529270697e-05,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -55,25 +54,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 0.00015472548921898,
+            "value": 0.0004777879874551396,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 2.7869370763156098e-05,
+            "value": 0.000245290109854614,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.3951954119264503e-15,
+            "value": 1.790235580263479e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 0.0003845034381522995,
+            "value": 0.00038449565728302835,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -90,8 +89,8 @@
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
-      "initialization_kind": "saved structure",
-      "initialization_checkpoint_sha256": null,
+      "initialization_kind": "Completed original UV atmosphere; equilibrium rechecked with Fe II/H update",
+      "initialization_checkpoint_sha256": "e436494a0b7141151e45638518a3d385f1d5b520dd2986f2fe93dbf7bab08b4b",
       "observations": [
         {
           "TARGNAME": "GD-40",
@@ -279,9 +278,77 @@
       "foreground_annotations": "Candidate locations only; no foreground absorber added to the stellar spectrum or abundance mixture",
       "foreground_annotation_basis": null,
       "airglow_annotation_basis": null,
-      "normalization_prescription": "local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed local quadratic; common80anchor/5per-side/3%formal-uncertainty rule; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2132,
+          "masked_bins": 0
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2718,
+          "masked_bins": 903
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2291,
+          "masked_bins": 184
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2494,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-gd40.png",
+          "sha256": "db7e618504d795a9b18a561c123c1d60a6883bc9d20e645c26389134fd9189e6"
+        },
+        "pdf": {
+          "filename": "uv-gd40.pdf",
+          "sha256": "44061b1479036477fcbb68f1becf8f88f5a6cb54d85e93aff2ad0b48156a93b9"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 2,
           "title": "O I / P II / Fe II / Ni II",
@@ -1130,57 +1197,340 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.005055433137937068
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {},
-      "visual_review": {
-        "reviewed": true,
-        "style": "HIRES layout; OpenWD linewidth1",
-        "checks": [
-          "panels visually inspected",
-          "accepted stripe velocities",
-          "continuum support criteria pass",
-          "foreground features annotated; titles distinguish included mixtures and possible ISM"
-        ],
-        "remaining_discrepancies": [
-          "Strong Si II wings remain too shallow."
-        ]
-      },
-      "figures": {
-        "png": {
-          "filename": "uv-gd40.png",
-          "sha256": "88c490abddf1ce47aeb17669f2ed5caa04b2274db7b06fb0081e3a59874b975b"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 1975,
+          "anchor_range_A": [
+            1298.284115659808,
+            1441.3663366221206
+          ],
+          "knots_A": [
+            1310.284115659808,
+            1322.284115659808,
+            1334.284115659808,
+            1346.284115659808,
+            1358.284115659808,
+            1370.284115659808,
+            1382.284115659808,
+            1394.284115659808,
+            1406.284115659808,
+            1418.284115659808
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1298.284115659808,
+            1310.284115659808,
+            1322.284115659808,
+            1334.284115659808,
+            1346.284115659808,
+            1358.284115659808,
+            1370.284115659808,
+            1382.284115659808,
+            1394.284115659808,
+            1406.284115659808,
+            1418.284115659808,
+            1441.3663366221206
+          ],
+          "data_spline_coefficients": [
+            -52.864942592946,
+            -53.07118229802254,
+            -52.759797268699344,
+            -52.80321475822198,
+            -52.799595172119474,
+            -52.76499251071538,
+            -52.783382860768,
+            -52.802527065841,
+            -52.8017871576377,
+            -52.75140350084973,
+            -52.78511297765153,
+            -52.80299189450504,
+            -52.700437024601484,
+            -52.82312166440892
+          ],
+          "model_spline_knots": [
+            1298.284115659808,
+            1310.284115659808,
+            1322.284115659808,
+            1334.284115659808,
+            1346.284115659808,
+            1358.284115659808,
+            1370.284115659808,
+            1382.284115659808,
+            1394.284115659808,
+            1406.284115659808,
+            1418.284115659808,
+            1441.3663366221206
+          ],
+          "model_spline_coefficients": [
+            -0.011258653959971787,
+            -0.030704436607408674,
+            -0.004479485201568509,
+            -0.008695762097875648,
+            0.0030567504564633203,
+            -0.00702152620199196,
+            -0.0069389964591956305,
+            -0.012587758110592224,
+            -0.011715340668334372,
+            -0.00030587319680396534,
+            -0.008188661751584407,
+            -0.010004385412207653,
+            -0.009728899639315633,
+            -0.010559422503041585
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 7,
+              "range_A": [
+                1327,
+                1338
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1346,
+                1354.5
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1357,
+                1362
+              ]
+            },
+            {
+              "old_panel": 10,
+              "range_A": [
+                1423,
+                1434
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4785
         },
-        "pdf": {
-          "filename": "uv-gd40.pdf",
-          "sha256": "27950157b9441682c96da0fafb1a00ef4bf3a75f567dc60dd9759ea033ff47f2"
+        "FUVB": {
+          "anchor_count": 848,
+          "anchor_range_A": [
+            1141.3184868026835,
+            1286.2099555993395
+          ],
+          "knots_A": [
+            1153.3184868026835,
+            1165.3184868026835,
+            1177.3184868026835,
+            1189.3184868026835,
+            1237.3184868026835,
+            1249.3184868026835
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1141.3184868026835,
+            1153.3184868026835,
+            1165.3184868026835,
+            1177.3184868026835,
+            1189.3184868026835,
+            1237.3184868026835,
+            1249.3184868026835,
+            1286.2099555993395
+          ],
+          "data_spline_coefficients": [
+            -52.928915616785986,
+            -52.924233935012005,
+            -52.81980627050246,
+            -52.91760341366088,
+            -52.85582329281348,
+            -53.148404146336915,
+            -52.858342250008405,
+            -52.81152577201959,
+            -52.92053868292185,
+            -52.82050894210184
+          ],
+          "model_spline_knots": [
+            1141.3184868026835,
+            1153.3184868026835,
+            1165.3184868026835,
+            1177.3184868026835,
+            1189.3184868026835,
+            1237.3184868026835,
+            1249.3184868026835,
+            1286.2099555993395
+          ],
+          "model_spline_coefficients": [
+            -0.007468906232025412,
+            -0.017856323281695646,
+            -0.005076860338477049,
+            -0.008968813652398834,
+            -0.004526077262122602,
+            -0.0206346848142887,
+            -0.002133957817523394,
+            -0.011780469789372399,
+            -0.02945880054539051,
+            -0.008723942960302104
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 2,
+              "range_A": [
+                1149,
+                1155.5
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1189,
+                1197.7
+              ]
+            },
+            {
+              "old_panel": 4,
+              "range_A": [
+                1198.3,
+                1206
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1237.5,
+                1243
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1258,
+                1269
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4850
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1149,
+            1155.5
+          ],
+          "bins": 218,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1189,
+            1197.7
+          ],
+          "bins": 291,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1198.3,
+            1206
+          ],
+          "bins": 257,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1237.5,
+            1243
+          ],
+          "bins": 184,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 4.440892098500626e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 368,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1327,
+            1338
+          ],
+          "bins": 368,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1346,
+            1354.5
+          ],
+          "bins": 284,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1357,
+            1362
+          ],
+          "bins": 167,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 10,
+          "preserved_range_A": [
+            1423,
+            1434
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false,
+      "source_file_sha256": {
+        "src/wd_spectra/metals.py": "d3db6e4b99642e69fc8f83d7ec3e500de79d8e95750914bfee22e165ac216cb4",
+        "src/wd_spectra/models/stellar.py": "aa9eadbff86c4ad808e31f282095482b52fbe58a6d89bde47c801e825806e5b9"
+      },
+      "Fe_II_supplement_SHA256": "0574e40ca8cae74f68f1b49488de6453841299dd0bdadc8cfc9a68a1a1e75242"
     },
     "g241minus6": {
       "target": "G241-6",
-      "source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39",
-      "model_spectrum_sha256": "cad85d88c48169fab23774a95cd9484bc4d147daae2a124ed2bf09319d8863bb",
-      "atmosphere_sha256": "1e460fba04006511522025ff79040da3e893c59d74063b5c36cef2e25e6e8d33",
+      "source_commit": "943c146e10a02826083495df527326bcb5c74bcc",
+      "model_spectrum_sha256": "afb0aa25c8fe59b8586e3a9e4b4f86ab1823518d3136d367f0b3cadf78df8f3d",
+      "atmosphere_sha256": "7218db769010a23737132ed014db3704af1370092c32132ab6ab7ec998a71e02",
       "structure_numerics": {
         "quality": "standard",
         "adaptive_domain_segments": [
           {
             "n_depth": 40,
-            "iterations": 2,
+            "iterations": 1,
             "thermal_sweeps": 0,
-            "absorption_escape_bound": 0.0021895017971324073
+            "absorption_escape_bound": 0.002189466681771477
           }
         ],
         "adaptive_domain_expansions": 0,
@@ -1203,7 +1553,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 0.00016751181942331606,
+            "value": 0.00014070933843046696,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -1221,25 +1571,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 0.000418446245374607,
+            "value": 0.0005453372137863169,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 5.213096561940159e-05,
+            "value": 0.0002336745000569151,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.3235500761293184e-15,
+            "value": 1.2914594800450268e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 0.0021895017971324073,
+            "value": 0.002189466681771477,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -1256,8 +1606,8 @@
         "independent_grid_validation": false,
         "full_physics_validation": false
       },
-      "initialization_kind": "saved structure",
-      "initialization_checkpoint_sha256": null,
+      "initialization_kind": "Completed original UV atmosphere; equilibrium rechecked with Fe II/H update",
+      "initialization_checkpoint_sha256": "1e460fba04006511522025ff79040da3e893c59d74063b5c36cef2e25e6e8d33",
       "observations": [
         {
           "TARGNAME": "G241-6",
@@ -1445,9 +1795,77 @@
       "foreground_annotations": "Candidate locations only; no foreground absorber added to the stellar spectrum or abundance mixture",
       "foreground_annotation_basis": null,
       "airglow_annotation_basis": null,
-      "normalization_prescription": "local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed local quadratic; common80anchor/5per-side/3%formal-uncertainty rule; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2126,
+          "masked_bins": 0
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2723,
+          "masked_bins": 903
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2285,
+          "masked_bins": 184
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2500,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-g241minus6.png",
+          "sha256": "9db755924b49820c488b6826bfc1f7b29f4f7a4676a51d4f4892145df8bcaad0"
+        },
+        "pdf": {
+          "filename": "uv-g241minus6.pdf",
+          "sha256": "2baea7750d40077c4243ec7f5699ad76055e5780137e413686b8924355ba36d4"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 2,
           "title": "O I / P II / Fe II / Ni II",
@@ -2307,43 +2725,331 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.004301406878279542
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {},
-      "visual_review": {
-        "reviewed": true,
-        "style": "HIRES layout; OpenWD linewidth1",
-        "checks": [
-          "panels visually inspected",
-          "accepted stripe velocities",
-          "continuum support criteria pass",
-          "foreground features annotated; titles distinguish included mixtures and possible ISM"
-        ],
-        "remaining_discrepancies": [
-          "Strong Si II wings remain too shallow."
-        ]
-      },
-      "figures": {
-        "png": {
-          "filename": "uv-g241minus6.png",
-          "sha256": "538071baaa0b788bd971fbd339e2e8b8115379ce6c7c16e7f207ad50c8583855"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 2243,
+          "anchor_range_A": [
+            1298.4208861046263,
+            1441.4449496845511
+          ],
+          "knots_A": [
+            1310.4208861046263,
+            1322.4208861046263,
+            1334.4208861046263,
+            1346.4208861046263,
+            1358.4208861046263,
+            1370.4208861046263,
+            1382.4208861046263,
+            1394.4208861046263,
+            1406.4208861046263,
+            1418.4208861046263
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1298.4208861046263,
+            1310.4208861046263,
+            1322.4208861046263,
+            1334.4208861046263,
+            1346.4208861046263,
+            1358.4208861046263,
+            1370.4208861046263,
+            1382.4208861046263,
+            1394.4208861046263,
+            1406.4208861046263,
+            1418.4208861046263,
+            1441.4449496845511
+          ],
+          "data_spline_coefficients": [
+            -52.841149467575995,
+            -52.832852126936785,
+            -52.73501300948517,
+            -52.76959302881773,
+            -52.75982078872595,
+            -52.75365674903369,
+            -52.77459223620579,
+            -52.7605781189285,
+            -52.77268024520175,
+            -52.75150341241749,
+            -52.77327505532115,
+            -52.7783267538225,
+            -52.69442715083987,
+            -52.8032405697001
+          ],
+          "model_spline_knots": [
+            1298.4208861046263,
+            1310.4208861046263,
+            1322.4208861046263,
+            1334.4208861046263,
+            1346.4208861046263,
+            1358.4208861046263,
+            1370.4208861046263,
+            1382.4208861046263,
+            1394.4208861046263,
+            1406.4208861046263,
+            1418.4208861046263,
+            1441.4449496845511
+          ],
+          "model_spline_coefficients": [
+            -0.005847945542951659,
+            -0.026627098687584647,
+            -0.00430424582222563,
+            -0.006122654888028483,
+            0.00043393604047298065,
+            -0.003926385271977901,
+            -0.005534872859856773,
+            -0.012327858797703099,
+            -0.007306447091945993,
+            -0.001106535811319745,
+            -0.0068756185885323964,
+            -0.007217930608160724,
+            -0.00802635123466665,
+            -0.008316922076533033
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 7,
+              "range_A": [
+                1327,
+                1338
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1346,
+                1354.5
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1357,
+                1362
+              ]
+            },
+            {
+              "old_panel": 10,
+              "range_A": [
+                1423,
+                1434
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4785
         },
-        "pdf": {
-          "filename": "uv-g241minus6.pdf",
-          "sha256": "160d488eea158ae76b34fb623d2bc9db7d76a2ad81f9e16e43de9cca8731729b"
+        "FUVB": {
+          "anchor_count": 1045,
+          "anchor_range_A": [
+            1141.4510164545923,
+            1286.2548949171944
+          ],
+          "knots_A": [
+            1153.4510164545923,
+            1165.4510164545923,
+            1177.4510164545923,
+            1189.4510164545923,
+            1237.4510164545923,
+            1249.4510164545923,
+            1273.4510164545923
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1141.4510164545923,
+            1153.4510164545923,
+            1165.4510164545923,
+            1177.4510164545923,
+            1189.4510164545923,
+            1237.4510164545923,
+            1249.4510164545923,
+            1273.4510164545923,
+            1286.2548949171944
+          ],
+          "data_spline_coefficients": [
+            -52.81357230160324,
+            -52.82264382303737,
+            -52.78047154611009,
+            -52.80070322453419,
+            -52.78715875792128,
+            -52.88903095584222,
+            -52.83506130089607,
+            -52.7366222267646,
+            -52.89060429311567,
+            -52.764889376183326,
+            -52.800539364720656
+          ],
+          "model_spline_knots": [
+            1141.4510164545923,
+            1153.4510164545923,
+            1165.4510164545923,
+            1177.4510164545923,
+            1189.4510164545923,
+            1237.4510164545923,
+            1249.4510164545923,
+            1273.4510164545923,
+            1286.2548949171944
+          ],
+          "model_spline_coefficients": [
+            -0.006504732636222754,
+            -0.008790155738930496,
+            -0.010426066552415273,
+            -0.00919860136071869,
+            -0.003670846535822888,
+            -0.020699068961979216,
+            -0.001961367806048878,
+            -0.008357989063769763,
+            -0.041304849976578524,
+            -0.00601269691340582,
+            -0.009834334421677993
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 2,
+              "range_A": [
+                1149,
+                1155.5
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1189,
+                1197.7
+              ]
+            },
+            {
+              "old_panel": 4,
+              "range_A": [
+                1198.3,
+                1206
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1237.5,
+                1243
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1258,
+                1269
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4849
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1149,
+            1155.5
+          ],
+          "bins": 217,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1189,
+            1197.7
+          ],
+          "bins": 291,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1198.3,
+            1206
+          ],
+          "bins": 257,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1237.5,
+            1243
+          ],
+          "bins": 184,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 367,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1327,
+            1338
+          ],
+          "bins": 368,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 4.440892098500626e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1346,
+            1354.5
+          ],
+          "bins": 284,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 4.440892098500626e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1357,
+            1362
+          ],
+          "bins": 168,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 10,
+          "preserved_range_A": [
+            1423,
+            1434
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false,
+      "source_file_sha256": {
+        "src/wd_spectra/metals.py": "d3db6e4b99642e69fc8f83d7ec3e500de79d8e95750914bfee22e165ac216cb4",
+        "src/wd_spectra/models/stellar.py": "aa9eadbff86c4ad808e31f282095482b52fbe58a6d89bde47c801e825806e5b9"
+      },
+      "Fe_II_supplement_SHA256": "0574e40ca8cae74f68f1b49488de6453841299dd0bdadc8cfc9a68a1a1e75242"
     },
     "pg1225": {
       "target": "PG 1225-079",
@@ -2602,9 +3308,89 @@
       "foreground_annotations": "Candidate locations only; no foreground absorber added to the stellar spectrum or abundance mixture",
       "foreground_annotation_basis": null,
       "airglow_annotation_basis": null,
-      "normalization_prescription": "whole-stripe",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed whole-stripe quadratic; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "segment": "NUVA",
+          "displayed_range_A": [
+            1806.1137043647102,
+            1837.8455903599215
+          ],
+          "title": "Si II 1808 / Si II 1817",
+          "anchor_range_A": [
+            1806.1137043647102,
+            1827.5985457676297
+          ],
+          "maximum_formal_continuum_relative_uncertainty": 0.16111645781816444,
+          "extrapolated_display_bins": 92,
+          "continuum_refitted": false
+        },
+        {
+          "number": 2,
+          "segment": "NUVB",
+          "displayed_range_A": [
+            1909.1757269562754,
+            1940.0949618439956
+          ],
+          "title": "Fe II / C I 1931 / Mn II",
+          "anchor_range_A": [
+            1909.1757269562754,
+            1940.0949618439956
+          ],
+          "maximum_formal_continuum_relative_uncertainty": 0.030640874137814612,
+          "extrapolated_display_bins": 0,
+          "continuum_refitted": false
+        },
+        {
+          "number": 3,
+          "segment": "NUVC",
+          "displayed_range_A": [
+            2013.9660308894638,
+            2043.7980192676675
+          ],
+          "title": "Fe II / Mg I 2026",
+          "anchor_range_A": [
+            2022.6392304757496,
+            2043.7980192676675
+          ],
+          "maximum_formal_continuum_relative_uncertainty": 0.10875449014674947,
+          "extrapolated_display_bins": 82,
+          "continuum_refitted": false
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-pg1225.png",
+          "sha256": "98398349b273133189fcfe38e9f2a2ca3cca01fdc8f3a8fc549da046d2f9de1d"
+        },
+        "pdf": {
+          "filename": "uv-pg1225.pdf",
+          "sha256": "b9c7977a0c8328182bc4518b1170957e45f1e0f89f6b225183ca0b752e228634"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 1,
           "title": "Si II 1808",
@@ -3040,31 +3826,11 @@
           }
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {},
-      "visual_review": "Root inspected final PNG after generic continuum-note wording: sparse-edge uncertainties visible, gaps retained, model/data and CI blue-wing residual unchanged; lw1 OpenWD label and footer readable.",
-      "figures": {
-        "png": {
-          "filename": "uv-pg1225.png",
-          "sha256": "fb366bebfb6e843998f08b3e2bacc0d3ac6c7601f4618e2cdb698ee09650a0c4"
-        },
-        "pdf": {
-          "filename": "uv-pg1225.pdf",
-          "sha256": "aaacdda3b814ea82df832ffb01d50d17dde6db18443bd9250f3c500b60fdfabb"
-        }
-      }
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {},
+      "accepted_feature_preservation_checks": [],
+      "Lyman_alpha_comparison_excluded_A": null,
+      "velocities_refitted_for_layout": false
     },
     "gd61": {
       "target": "GD 61",
@@ -3311,9 +4077,77 @@
         "interpretation": "Three minima consistent with the published40km/s blueward proxy within0.065A annotation half-width; nitrogen remains an omitted upper limit"
       },
       "airglow_annotation_basis": null,
-      "normalization_prescription": "local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed local quadratic; common80anchor/5per-side/3%formal-uncertainty rule; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2443,
+          "masked_bins": 0
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2497,
+          "masked_bins": 903
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2602,
+          "masked_bins": 184
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2252,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-gd61.png",
+          "sha256": "74eae318b466881d0fe32c0a24ebe2292b72855eebacb5aa2bdd72398eb61a5a"
+        },
+        "pdf": {
+          "filename": "uv-gd61.pdf",
+          "sha256": "a23195ec31fdfe19829ba7ef889dc8c88cca762152ac8e0cf3af4f0076282dc1"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 2,
           "title": "O I / Fe II",
@@ -4153,43 +4987,336 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.012075499048257582
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {},
-      "visual_review": {
-        "reviewed": true,
-        "style": "HIRES layout; OpenWD linewidth1",
-        "checks": [
-          "panels visually inspected",
-          "accepted stripe velocities",
-          "continuum support criteria pass",
-          "foreground features annotated; titles distinguish included mixtures and possible ISM"
-        ],
-        "remaining_discrepancies": [
-          "O I1152 line is deeper in the prediction; published inputs retained."
-        ]
-      },
-      "figures": {
-        "png": {
-          "filename": "uv-gd61.png",
-          "sha256": "c401bfc057ba6a5e1fb735d477b77fe67344cdd5a27cfeb2b76a9a73c2d60908"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 3406,
+          "anchor_range_A": [
+            1288.5141785554845,
+            1434.3071396515008
+          ],
+          "knots_A": [
+            1300.5141785554845,
+            1312.5141785554845,
+            1324.5141785554845,
+            1336.5141785554845,
+            1348.5141785554845,
+            1360.5141785554845,
+            1372.5141785554845,
+            1384.5141785554845,
+            1396.5141785554845,
+            1408.5141785554845,
+            1420.5141785554845
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1288.5141785554845,
+            1300.5141785554845,
+            1312.5141785554845,
+            1324.5141785554845,
+            1336.5141785554845,
+            1348.5141785554845,
+            1360.5141785554845,
+            1372.5141785554845,
+            1384.5141785554845,
+            1396.5141785554845,
+            1408.5141785554845,
+            1420.5141785554845,
+            1434.3071396515008
+          ],
+          "data_spline_coefficients": [
+            -52.06323514104317,
+            -52.047037566583704,
+            -52.13983269938428,
+            -52.07536432714629,
+            -52.082755802690286,
+            -52.069443656109485,
+            -52.099075812591906,
+            -52.094411837590684,
+            -52.08580716091434,
+            -52.098761400550416,
+            -52.0716004767707,
+            -52.110835908836705,
+            -52.109081020419254,
+            -52.03279327842432,
+            -52.066597000448326
+          ],
+          "model_spline_knots": [
+            1288.5141785554845,
+            1300.5141785554845,
+            1312.5141785554845,
+            1324.5141785554845,
+            1336.5141785554845,
+            1348.5141785554845,
+            1360.5141785554845,
+            1372.5141785554845,
+            1384.5141785554845,
+            1396.5141785554845,
+            1408.5141785554845,
+            1420.5141785554845,
+            1434.3071396515008
+          ],
+          "model_spline_coefficients": [
+            -0.0010649308950292583,
+            -0.0012722722125229782,
+            -0.005871251563596737,
+            -0.000641861015722451,
+            9.557956731093112e-05,
+            -0.002007793319527852,
+            0.0022033916347003325,
+            -0.0032777337839251385,
+            -0.0043022857392284765,
+            -0.00022866259469529667,
+            0.00010827400693824922,
+            -0.0033527263775356094,
+            -0.0013483230308201798,
+            0.0012698316916144956,
+            -0.0037701666762235066
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 7,
+              "range_A": [
+                1327,
+                1338
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1346,
+                1354.5
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1357,
+                1362
+              ]
+            },
+            {
+              "old_panel": 10,
+              "range_A": [
+                1423,
+                1434
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4871
         },
-        "pdf": {
-          "filename": "uv-gd61.pdf",
-          "sha256": "35b1b057856eaeb2431142cc8f4ab4b4017544a4b536a0c19ca74b3b40aa5171"
+        "FUVB": {
+          "anchor_count": 2497,
+          "anchor_range_A": [
+            1131.588918553951,
+            1279.0813051754055
+          ],
+          "knots_A": [
+            1143.588918553951,
+            1155.588918553951,
+            1167.588918553951,
+            1179.588918553951,
+            1191.588918553951,
+            1203.588918553951,
+            1239.588918553951,
+            1251.588918553951
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1131.588918553951,
+            1143.588918553951,
+            1155.588918553951,
+            1167.588918553951,
+            1179.588918553951,
+            1191.588918553951,
+            1203.588918553951,
+            1239.588918553951,
+            1251.588918553951,
+            1279.0813051754055
+          ],
+          "data_spline_coefficients": [
+            -52.07360446131704,
+            -52.03491744972934,
+            -52.05030924242155,
+            -52.03797194458757,
+            -52.07166514487759,
+            -52.049941123863185,
+            -52.08536742138921,
+            -52.352080503245425,
+            -52.06453244379754,
+            -52.06877655523185,
+            -52.07851371840722,
+            -52.081915176143546
+          ],
+          "model_spline_knots": [
+            1131.588918553951,
+            1143.588918553951,
+            1155.588918553951,
+            1167.588918553951,
+            1179.588918553951,
+            1191.588918553951,
+            1203.588918553951,
+            1239.588918553951,
+            1251.588918553951,
+            1279.0813051754055
+          ],
+          "model_spline_coefficients": [
+            -0.006905516893028167,
+            0.005252422472718742,
+            -0.009821384965094637,
+            -0.0005336336075473653,
+            -0.0016445241465488749,
+            -0.00045564116036469164,
+            -0.0020783529650702155,
+            -0.014002394396196825,
+            0.0069872582496251084,
+            -0.010068321407091164,
+            -0.00792385168857222,
+            -0.001325235349968624
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 2,
+              "range_A": [
+                1149,
+                1155.5
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1189,
+                1197.7
+              ]
+            },
+            {
+              "old_panel": 4,
+              "range_A": [
+                1198.3,
+                1206
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1237.5,
+                1243
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1258,
+                1269
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4937
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1149,
+            1155.5
+          ],
+          "bins": 218,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1189,
+            1197.7
+          ],
+          "bins": 291,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1198.3,
+            1206
+          ],
+          "bins": 258,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1237.5,
+            1243
+          ],
+          "bins": 184,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 368,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1327,
+            1338
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1346,
+            1354.5
+          ],
+          "bins": 284,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1357,
+            1362
+          ],
+          "bins": 167,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 10,
+          "preserved_range_A": [
+            1423,
+            1434
+          ],
+          "bins": 368,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 2.220446049250313e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false
     },
     "gd378": {
       "target": "GD 378",
@@ -4476,9 +5603,79 @@
         "interpretation": "Additional blue minima match the same known foreground cloud within0.015A, well inside the0.065A annotation half-width; stellarN/C abundances unchanged"
       },
       "airglow_annotation_basis": null,
-      "normalization_prescription": "local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed local quadratic; common80anchor/5per-side/3%formal-uncertainty rule; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2443,
+          "masked_bins": 0
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2497,
+          "masked_bins": 904
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2601,
+          "masked_bins": 184
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2261,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {
+        "Be": -11.44
+      },
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-gd378.png",
+          "sha256": "10af28ee569002c697acae40759bb1438e08abf6aa31e435a0845d0dab788905"
+        },
+        "pdf": {
+          "filename": "uv-gd378.pdf",
+          "sha256": "a9f63fa48f51bad1a70ba7876898868a1273746bc96308c0fa8bf44e2cef7e5a"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 1,
           "title": "N I",
@@ -5419,45 +6616,353 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.010552361827210577
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {
-        "Be": -11.44
-      },
-      "visual_review": {
-        "reviewed": true,
-        "style": "HIRES layout; OpenWD linewidth1",
-        "checks": [
-          "all10panels visually inspected",
-          "accepted stripe velocities",
-          "same continuum support criteria pass afterblueedge displaytrim",
-          "NI/CIIforeground annotations agreewithreportedcloudandobservedcentroids"
-        ],
-        "remaining_discrepancies": [
-          "O I1152 prediction is deeper than observed; published inputs retained."
-        ]
-      },
-      "figures": {
-        "png": {
-          "filename": "uv-gd378.png",
-          "sha256": "f3a60b89a910c9cf005ef7aaaa93c73b1f20a8c227c83bcb38ff3d26c43ced1b"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 3234,
+          "anchor_range_A": [
+            1288.702256473357,
+            1434.583050141245
+          ],
+          "knots_A": [
+            1300.702256473357,
+            1312.702256473357,
+            1324.702256473357,
+            1336.702256473357,
+            1348.702256473357,
+            1360.702256473357,
+            1372.702256473357,
+            1384.702256473357,
+            1396.702256473357,
+            1408.702256473357,
+            1420.702256473357
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1288.702256473357,
+            1300.702256473357,
+            1312.702256473357,
+            1324.702256473357,
+            1336.702256473357,
+            1348.702256473357,
+            1360.702256473357,
+            1372.702256473357,
+            1384.702256473357,
+            1396.702256473357,
+            1408.702256473357,
+            1420.702256473357,
+            1434.583050141245
+          ],
+          "data_spline_coefficients": [
+            -51.093593791571045,
+            -51.075764788823086,
+            -51.16617904987093,
+            -51.1143675788263,
+            -51.08839872316279,
+            -51.121623769622985,
+            -51.126125711391026,
+            -51.128797513707184,
+            -51.13880176196831,
+            -51.136886654744025,
+            -51.15685229213355,
+            -51.139216241954635,
+            -51.18618628731162,
+            -51.05137988268949,
+            -51.175668282214154
+          ],
+          "model_spline_knots": [
+            1288.702256473357,
+            1300.702256473357,
+            1312.702256473357,
+            1324.702256473357,
+            1336.702256473357,
+            1348.702256473357,
+            1360.702256473357,
+            1372.702256473357,
+            1384.702256473357,
+            1396.702256473357,
+            1408.702256473357,
+            1420.702256473357,
+            1434.583050141245
+          ],
+          "model_spline_coefficients": [
+            -0.005588683190936533,
+            0.0007025024870830472,
+            -0.010576498664723917,
+            -0.0013126752037093557,
+            -0.002663528535032493,
+            0.00013862545462977268,
+            -0.0005091224165787362,
+            -0.004656423888176418,
+            -0.00528302877048964,
+            -0.0017815857680509378,
+            -0.0007686914545707097,
+            -0.003233069734502363,
+            -0.002399375035525657,
+            -0.00290566144606379,
+            -0.0018537480168151054
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 7,
+              "range_A": [
+                1327,
+                1338
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1346,
+                1354.5
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1357,
+                1362
+              ]
+            },
+            {
+              "old_panel": 10,
+              "range_A": [
+                1423,
+                1434
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4872
         },
-        "pdf": {
-          "filename": "uv-gd378.pdf",
-          "sha256": "39b249669d30ea09f8d566a46e24b5ec948086b6b09a0a6d4e34d50931b1766c"
+        "FUVB": {
+          "anchor_count": 2045,
+          "anchor_range_A": [
+            1131.767293497171,
+            1279.3167119516015
+          ],
+          "knots_A": [
+            1143.767293497171,
+            1155.767293497171,
+            1167.767293497171,
+            1179.767293497171,
+            1191.767293497171,
+            1203.767293497171,
+            1239.767293497171,
+            1251.767293497171
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1131.767293497171,
+            1143.767293497171,
+            1155.767293497171,
+            1167.767293497171,
+            1179.767293497171,
+            1191.767293497171,
+            1203.767293497171,
+            1239.767293497171,
+            1251.767293497171,
+            1279.3167119516015
+          ],
+          "data_spline_coefficients": [
+            -51.07933674154899,
+            -51.05435831282831,
+            -51.01996541810075,
+            -51.056690531568066,
+            -51.06445296007044,
+            -51.06601278380237,
+            -51.08201629002319,
+            -51.457999023290675,
+            -51.04102496459828,
+            -51.09993178129001,
+            -51.08112412815302,
+            -51.12068434247448
+          ],
+          "model_spline_knots": [
+            1131.767293497171,
+            1143.767293497171,
+            1155.767293497171,
+            1167.767293497171,
+            1179.767293497171,
+            1191.767293497171,
+            1203.767293497171,
+            1239.767293497171,
+            1251.767293497171,
+            1279.3167119516015
+          ],
+          "model_spline_coefficients": [
+            -0.006561584919929782,
+            -0.002401467413494744,
+            -0.009762703776189563,
+            -0.009978990125154543,
+            -0.00296347244716052,
+            -0.0016581367028736702,
+            -0.00661685993971007,
+            -0.004807016097425645,
+            0.0037323547234888615,
+            -0.008983368802698557,
+            -0.010979070324871224,
+            -0.005066094769785037
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 1,
+              "range_A": [
+                1132.3,
+                1136.5
+              ]
+            },
+            {
+              "old_panel": 2,
+              "range_A": [
+                1149,
+                1155.5
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1189,
+                1197.7
+              ]
+            },
+            {
+              "old_panel": 4,
+              "range_A": [
+                1198.3,
+                1206
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1237.5,
+                1243
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1258,
+                1269
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4938
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 1,
+          "preserved_range_A": [
+            1132.3,
+            1136.5
+          ],
+          "bins": 141,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1149,
+            1155.5
+          ],
+          "bins": 218,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1189,
+            1197.7
+          ],
+          "bins": 291,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1198.3,
+            1206
+          ],
+          "bins": 257,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1237.5,
+            1243
+          ],
+          "bins": 184,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1327,
+            1338
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1346,
+            1354.5
+          ],
+          "bins": 285,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1357,
+            1362
+          ],
+          "bins": 167,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 10,
+          "preserved_range_A": [
+            1423,
+            1434
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false
     },
     "wd1425": {
       "target": "WD 1425+540",
@@ -5730,9 +7235,77 @@
           1136.5
         ]
       },
-      "normalization_prescription": "local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed local quadratic; common80anchor/5per-side/3%formal-uncertainty rule; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2442,
+          "masked_bins": 73
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2507,
+          "masked_bins": 903
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2601,
+          "masked_bins": 184
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2265,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison; possible N I airglow1199.0-1201.2A (observed frame) excluded",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-wd1425.png",
+          "sha256": "bf92bbe40ac95711155baaab00aa66f5ea63ae6b61025e68dd84232c43ce8a23"
+        },
+        "pdf": {
+          "filename": "uv-wd1425.pdf",
+          "sha256": "1ef13241e77320b3df426ec026c9e3dcf2f35c6748a938affbc0e564fabfef26"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 1,
           "title": "N I",
@@ -6651,31 +8224,353 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.008978372367244674
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison; possible N I airglow1199.0-1201.2A (observed frame) excluded",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {},
-      "visual_review": "Root inspected final PNG: default lw1 OpenWD and data visible; all support rules and velocity fits pass. Possible N I1200 airglow is masked/marked using raw excess and STScI basis; clean N I1134, Si II and C II comparisons retained. Model I inputs unchanged; production atmosphere has one automatic extension to87layers and verified certificate.",
-      "figures": {
-        "png": {
-          "filename": "uv-wd1425.png",
-          "sha256": "756e3f0b951160e6a88188a8c0add2e38afb58aabea3f76e96bde0c19a5a65ee"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 3320,
+          "anchor_range_A": [
+            1288.4418715792708,
+            1434.7128605171692
+          ],
+          "knots_A": [
+            1300.4418715792708,
+            1312.4418715792708,
+            1324.4418715792708,
+            1336.4418715792708,
+            1348.4418715792708,
+            1360.4418715792708,
+            1372.4418715792708,
+            1384.4418715792708,
+            1396.4418715792708,
+            1408.4418715792708,
+            1420.4418715792708
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1288.4418715792708,
+            1300.4418715792708,
+            1312.4418715792708,
+            1324.4418715792708,
+            1336.4418715792708,
+            1348.4418715792708,
+            1360.4418715792708,
+            1372.4418715792708,
+            1384.4418715792708,
+            1396.4418715792708,
+            1408.4418715792708,
+            1420.4418715792708,
+            1434.7128605171692
+          ],
+          "data_spline_coefficients": [
+            -51.87740577191554,
+            -51.85829032305184,
+            -51.917406144377125,
+            -51.834041907509324,
+            -51.84751653558242,
+            -51.83908442998968,
+            -51.83548396347845,
+            -51.82366831133101,
+            -51.8320917696449,
+            -51.82044622310501,
+            -51.81892896284239,
+            -51.822962228974504,
+            -51.81278359007259,
+            -51.835327986062026,
+            -51.82841443128636
+          ],
+          "model_spline_knots": [
+            1288.4418715792708,
+            1300.4418715792708,
+            1312.4418715792708,
+            1324.4418715792708,
+            1336.4418715792708,
+            1348.4418715792708,
+            1360.4418715792708,
+            1372.4418715792708,
+            1384.4418715792708,
+            1396.4418715792708,
+            1408.4418715792708,
+            1420.4418715792708,
+            1434.7128605171692
+          ],
+          "model_spline_coefficients": [
+            -0.003942366375446388,
+            0.0009108120623239474,
+            -0.008632727875446044,
+            -0.003435830241896259,
+            -0.0018127714620323413,
+            0.0016855064029067462,
+            -0.0024282767034042208,
+            -0.004713687321728154,
+            -0.004542163119824791,
+            -0.001487324480288987,
+            -0.00036225822493323037,
+            -0.0027293510126817936,
+            -0.0018850797018813068,
+            0.0012574055069462724,
+            -0.0011659057514186938
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 7,
+              "range_A": [
+                1327,
+                1338
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1346,
+                1354.5
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1357,
+                1362
+              ]
+            },
+            {
+              "old_panel": 10,
+              "range_A": [
+                1423,
+                1434
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4885
         },
-        "pdf": {
-          "filename": "uv-wd1425.pdf",
-          "sha256": "5ec5e4639828b9e14fc2889b306bf7b742641389ee292147b872093f8023c905"
+        "FUVB": {
+          "anchor_count": 2072,
+          "anchor_range_A": [
+            1131.4526937508554,
+            1278.980812752577
+          ],
+          "knots_A": [
+            1143.4526937508554,
+            1155.4526937508554,
+            1167.4526937508554,
+            1179.4526937508554,
+            1191.4526937508554,
+            1203.4526937508554,
+            1239.4526937508554,
+            1251.4526937508554
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1131.4526937508554,
+            1143.4526937508554,
+            1155.4526937508554,
+            1167.4526937508554,
+            1179.4526937508554,
+            1191.4526937508554,
+            1203.4526937508554,
+            1239.4526937508554,
+            1251.4526937508554,
+            1278.980812752577
+          ],
+          "data_spline_coefficients": [
+            -52.09174187869937,
+            -51.82544631999864,
+            -52.00171050192911,
+            -52.553497499697464,
+            -52.546991148884885,
+            -52.73882432755357,
+            -53.13142536933382,
+            -56.26541357856252,
+            -52.38173361056117,
+            -52.12491715806544,
+            -51.92239492313486,
+            -51.962620977349914
+          ],
+          "model_spline_knots": [
+            1131.4526937508554,
+            1143.4526937508554,
+            1155.4526937508554,
+            1167.4526937508554,
+            1179.4526937508554,
+            1191.4526937508554,
+            1203.4526937508554,
+            1239.4526937508554,
+            1251.4526937508554,
+            1278.980812752577
+          ],
+          "model_spline_coefficients": [
+            -0.005091095584337727,
+            -0.0055641954498093305,
+            -0.00781663781451004,
+            -0.011613445682700157,
+            -0.0024225914546084585,
+            -0.003101156834815477,
+            -0.0031704370622053155,
+            -0.020935830899301306,
+            0.008940566689647851,
+            -0.011033191681231319,
+            -0.011018165617452457,
+            -0.0060058557394611425
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 1,
+              "range_A": [
+                1131.9,
+                1136.5
+              ]
+            },
+            {
+              "old_panel": 2,
+              "range_A": [
+                1149,
+                1155.5
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1189,
+                1197.7
+              ]
+            },
+            {
+              "old_panel": 4,
+              "range_A": [
+                1198.3,
+                1206
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1237.5,
+                1243
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1258,
+                1269
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4949
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 1,
+          "preserved_range_A": [
+            1131.9,
+            1136.5
+          ],
+          "bins": 154,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1149,
+            1155.5
+          ],
+          "bins": 218,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1189,
+            1197.7
+          ],
+          "bins": 291,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1198.3,
+            1206
+          ],
+          "bins": 257,
+          "max_data_difference": 6.661338147750939e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1237.5,
+            1243
+          ],
+          "bins": 184,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 368,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1327,
+            1338
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1346,
+            1354.5
+          ],
+          "bins": 284,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1357,
+            1362
+          ],
+          "bins": 168,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 10,
+          "preserved_range_A": [
+            1423,
+            1434
+          ],
+          "bins": 368,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false
     },
     "g29_38": {
       "target": "G29-38",
@@ -7153,9 +9048,77 @@
       "foreground_annotations": "Candidate locations only; no foreground absorber added to the stellar spectrum or abundance mixture",
       "foreground_annotation_basis": null,
       "airglow_annotation_basis": null,
-      "normalization_prescription": "protected-local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed quadratic;0.98<model/background<1.02 supporting anchors on both sides; displayed DAZ interval excluded; common80anchor/5per-side/3%formal-uncertainty rule; independent data/model coefficients and commonweights",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2056,
+          "masked_bins": 0
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2796,
+          "masked_bins": 903
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2215,
+          "masked_bins": 175
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2571,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Independent visit/stripe velocity alignment; conservative rebin and shared inverse-variance weights",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": true,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-g29_38.png",
+          "sha256": "2917ccc5988e35e9dfc17e8bbb5bd4588e707f98ce447471419a8b9311febb26"
+        },
+        "pdf": {
+          "filename": "uv-g29_38.pdf",
+          "sha256": "d493ae681d5c93e2474adb413290c4f723ec9a3164cd2300c10079ab32a9d61c"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 1,
           "title": "O I / H2",
@@ -8015,44 +9978,316 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.006409521963052921
         }
       ],
-      "coaddition": "Independent visit/stripe velocity alignment; conservative rebin and shared inverse-variance weights",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": true,
-      "unsupported_detected_abundances": {},
-      "visual_review": {
-        "reviewed": true,
-        "style": "HIRES layout; OpenWD linewidth1",
-        "checks": [
-          "all9panels visually inspected",
-          "accepted velocities pervisit/stripe",
-          "same protected-local continuum recipe forbothDAZ",
-          "displayedregions excludedfromcontinuumanchors; supportsoneachsidepass",
-          "H2unscaled; publishedML2alpha0.8"
-        ],
-        "remaining_discrepancies": [
-          "Extraobserved absorption remains inmetal/H2regions; no fittedstellarinputs orline scales."
-        ]
-      },
-      "figures": {
-        "png": {
-          "filename": "uv-g29_38.png",
-          "sha256": "7e2cd4949f702f443744287b34e581c54053d83b7fa31c41eb435409662e70ea"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 822,
+          "anchor_range_A": [
+            1300.5330846229176,
+            1443.8420412351074
+          ],
+          "knots_A": [
+            1312.5330846229176,
+            1324.5330846229176,
+            1336.5330846229176,
+            1348.5330846229176,
+            1360.5330846229176,
+            1384.5330846229176,
+            1408.5330846229176
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1300.5330846229176,
+            1312.5330846229176,
+            1324.5330846229176,
+            1336.5330846229176,
+            1348.5330846229176,
+            1360.5330846229176,
+            1384.5330846229176,
+            1408.5330846229176,
+            1443.8420412351074
+          ],
+          "data_spline_coefficients": [
+            -49.79800714332254,
+            -49.56525513495422,
+            -49.58215527513116,
+            -49.772457541357184,
+            -49.66931062646924,
+            -49.567303448776066,
+            -49.71159125059174,
+            -49.41900542636082,
+            -49.80785611393728,
+            -49.752353227288914,
+            -49.632035036636765
+          ],
+          "model_spline_knots": [
+            1300.5330846229176,
+            1312.5330846229176,
+            1324.5330846229176,
+            1336.5330846229176,
+            1348.5330846229176,
+            1360.5330846229176,
+            1384.5330846229176,
+            1408.5330846229176,
+            1443.8420412351074
+          ],
+          "model_spline_coefficients": [
+            -0.008867785086668705,
+            -0.012162206983096611,
+            -0.004252869942075306,
+            -0.007198099461009044,
+            -0.002637224801251212,
+            -0.008642435607216944,
+            -0.012165291968090958,
+            -0.009943718389820458,
+            -0.003248651400507716,
+            -0.02487427105481909,
+            -0.007582426912832223
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 4,
+              "range_A": [
+                1307,
+                1314
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1326,
+                1338
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1345,
+                1358
+              ]
+            },
+            {
+              "old_panel": 7,
+              "range_A": [
+                1360,
+                1377
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1387,
+                1404
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1410,
+                1429
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4786
         },
-        "pdf": {
-          "filename": "uv-g29_38.pdf",
-          "sha256": "304460c870a04a5fe9dfbfac85ae5282a2b252a436fd97cad23a4e97be777239"
+        "FUVB": {
+          "anchor_count": 2137,
+          "anchor_range_A": [
+            1143.5678374663164,
+            1288.5646526435887
+          ],
+          "knots_A": [
+            1155.5678374663164,
+            1167.5678374663164,
+            1179.5678374663164,
+            1191.5678374663164,
+            1203.5678374663164,
+            1239.5678374663164,
+            1251.5678374663164,
+            1275.5678374663164
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1143.5678374663164,
+            1155.5678374663164,
+            1167.5678374663164,
+            1179.5678374663164,
+            1191.5678374663164,
+            1203.5678374663164,
+            1239.5678374663164,
+            1251.5678374663164,
+            1275.5678374663164,
+            1288.5646526435887
+          ],
+          "data_spline_coefficients": [
+            -49.98951256156277,
+            -49.86108971079113,
+            -49.943100566849104,
+            -49.72470649581417,
+            -49.80556987475975,
+            -49.74085940577945,
+            -50.02805817260229,
+            -49.840958473838505,
+            -49.58316726388426,
+            -49.409014836453366,
+            -49.80543123118272,
+            -49.53261920350744
+          ],
+          "model_spline_knots": [
+            1143.5678374663164,
+            1155.5678374663164,
+            1167.5678374663164,
+            1179.5678374663164,
+            1191.5678374663164,
+            1203.5678374663164,
+            1239.5678374663164,
+            1251.5678374663164,
+            1275.5678374663164,
+            1288.5646526435887
+          ],
+          "model_spline_coefficients": [
+            -0.00709880287160571,
+            -0.020348404181415966,
+            -0.010434020978390359,
+            -0.011540665906418585,
+            -0.00177826697268289,
+            0.002345715074965481,
+            0.004819227513547476,
+            0.0084661726217231,
+            -0.005638624049628045,
+            -0.012658882267874167,
+            -0.002068423071710773,
+            -0.011451234541024933
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 1,
+              "range_A": [
+                1149,
+                1156
+              ]
+            },
+            {
+              "old_panel": 2,
+              "range_A": [
+                1258,
+                1269
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1273,
+                1282
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4852
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 1,
+          "preserved_range_A": [
+            1149,
+            1156
+          ],
+          "bins": 234,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 368,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1273,
+            1282
+          ],
+          "bins": 301,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1307,
+            1314
+          ],
+          "bins": 234,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1326,
+            1338
+          ],
+          "bins": 402,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1345,
+            1358
+          ],
+          "bins": 435,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1360,
+            1377
+          ],
+          "bins": 568,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1387,
+            1404
+          ],
+          "bins": 569,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1410,
+            1429
+          ],
+          "bins": 636,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false
     },
     "gd133": {
       "target": "GD 133",
@@ -8300,9 +10535,77 @@
       "foreground_annotations": "Candidate locations only; no foreground absorber added to the stellar spectrum or abundance mixture",
       "foreground_annotation_basis": null,
       "airglow_annotation_basis": null,
-      "normalization_prescription": "protected-local",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed quadratic;0.98<model/background<1.02 supporting anchors on both sides; displayed DAZ interval excluded; common80anchor/5per-side/3%formal-uncertainty rule; independent data/model coefficients and commonweights",
       "panels": [
+        {
+          "number": 1,
+          "displayed_range_A": [
+            1132,
+            1205
+          ],
+          "detector_bins": 2137,
+          "masked_bins": 0
+        },
+        {
+          "number": 2,
+          "displayed_range_A": [
+            1205,
+            1289
+          ],
+          "detector_bins": 2801,
+          "masked_bins": 903
+        },
+        {
+          "number": 3,
+          "displayed_range_A": [
+            1289,
+            1367
+          ],
+          "detector_bins": 2296,
+          "masked_bins": 184
+        },
+        {
+          "number": 4,
+          "displayed_range_A": [
+            1367,
+            1444
+          ],
+          "detector_bins": 2575,
+          "masked_bins": 0
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "one apparent wavelength velocity per visit/stripe",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": true,
+      "unsupported_detected_abundances": {},
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-gd133.png",
+          "sha256": "962053c284368538e3740994e7a0e1ac2b7e9d74ed0b8c160e581be0147ea2b5"
+        },
+        "pdf": {
+          "filename": "uv-gd133.pdf",
+          "sha256": "3f5bc92fc3da8eadf18279c21a91657e74f9f89c3bd53244eccbb66faa23af4b"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 1,
           "title": "O I / H2",
@@ -9162,44 +11465,326 @@
           "maximum_displayed_formal_continuum_relative_uncertainty": 0.006170953866751037
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "one apparent wavelength velocity per visit/stripe",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": true,
-      "unsupported_detected_abundances": {},
-      "visual_review": {
-        "reviewed": true,
-        "style": "HIRES layout; OpenWD linewidth1",
-        "checks": [
-          "all9panels visually inspected",
-          "accepted velocities pervisit/stripe",
-          "same protected-local continuum recipe forbothDAZ",
-          "displayedregions excludedfromcontinuumanchors; supportsoneachsidepass",
-          "H2unscaled; publishedML2alpha0.8"
-        ],
-        "remaining_discrepancies": [
-          "Extraobserved absorption remains inmetal/H2regions; no fittedstellarinputs orline scales."
-        ]
-      },
-      "figures": {
-        "png": {
-          "filename": "uv-gd133.png",
-          "sha256": "adeb5f1576cd64018fb3635f8720fb940050365839b145113dd35860d40e1ede"
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {
+        "FUVA": {
+          "anchor_count": 1424,
+          "anchor_range_A": [
+            1298.253189910633,
+            1443.946012591814
+          ],
+          "knots_A": [
+            1310.253189910633,
+            1322.253189910633,
+            1334.253189910633,
+            1346.253189910633,
+            1358.253189910633,
+            1382.253189910633,
+            1406.253189910633,
+            1430.253189910633
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1298.253189910633,
+            1310.253189910633,
+            1322.253189910633,
+            1334.253189910633,
+            1346.253189910633,
+            1358.253189910633,
+            1382.253189910633,
+            1406.253189910633,
+            1430.253189910633,
+            1443.946012591814
+          ],
+          "data_spline_coefficients": [
+            -51.65400971448205,
+            -51.37951865666392,
+            -51.49632023246823,
+            -51.57010535536259,
+            -51.52890341386407,
+            -51.330946658677604,
+            -51.573018181592154,
+            -51.15337881974525,
+            -51.51663761349906,
+            -51.4644996130427,
+            -51.42044015977278,
+            -51.475112786173646
+          ],
+          "model_spline_knots": [
+            1298.253189910633,
+            1310.253189910633,
+            1322.253189910633,
+            1334.253189910633,
+            1346.253189910633,
+            1358.253189910633,
+            1382.253189910633,
+            1406.253189910633,
+            1430.253189910633,
+            1443.946012591814
+          ],
+          "model_spline_coefficients": [
+            -0.008257620284220788,
+            -0.0078092391073654385,
+            -0.0013095896052646061,
+            -0.005210595354297613,
+            -0.003734291521599443,
+            -0.0027543584110988613,
+            -0.01020607942640409,
+            -0.0033416335257096157,
+            -0.00606370849599287,
+            -0.0044903208133026395,
+            -0.008408902255212515,
+            -0.005128561406691699
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 4,
+              "range_A": [
+                1307,
+                1314
+              ]
+            },
+            {
+              "old_panel": 5,
+              "range_A": [
+                1326,
+                1338
+              ]
+            },
+            {
+              "old_panel": 6,
+              "range_A": [
+                1345,
+                1358
+              ]
+            },
+            {
+              "old_panel": 7,
+              "range_A": [
+                1360,
+                1377
+              ]
+            },
+            {
+              "old_panel": 8,
+              "range_A": [
+                1387,
+                1404
+              ]
+            },
+            {
+              "old_panel": 9,
+              "range_A": [
+                1410,
+                1429
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4871
         },
-        "pdf": {
-          "filename": "uv-gd133.pdf",
-          "sha256": "8d7a0120c9f9a088d2b278dac943ff851a12b84fef505cf70ad6fca1f7e756be"
+        "FUVB": {
+          "anchor_count": 2791,
+          "anchor_range_A": [
+            1141.1354461032818,
+            1288.6936184387237
+          ],
+          "knots_A": [
+            1153.1354461032818,
+            1165.1354461032818,
+            1177.1354461032818,
+            1189.1354461032818,
+            1201.1354461032818,
+            1237.1354461032818,
+            1249.1354461032818,
+            1261.1354461032818,
+            1273.1354461032818
+          ],
+          "degree": 3,
+          "nominal_knot_spacing_A": 12,
+          "fit_space": "Log flux/background; shared model-clean anchors and error weights",
+          "data_spline_knots": [
+            1141.1354461032818,
+            1153.1354461032818,
+            1165.1354461032818,
+            1177.1354461032818,
+            1189.1354461032818,
+            1201.1354461032818,
+            1237.1354461032818,
+            1249.1354461032818,
+            1261.1354461032818,
+            1273.1354461032818,
+            1288.6936184387237
+          ],
+          "data_spline_coefficients": [
+            -52.0051263581043,
+            -52.12560518297014,
+            -52.13038800570982,
+            -51.77016441917599,
+            -51.85336819266257,
+            -51.64603449418327,
+            -51.191853818256845,
+            -51.42561908159784,
+            -51.596311167964615,
+            -51.641141383819104,
+            -51.585091628889714,
+            -51.78953676474307,
+            -51.67199484606754
+          ],
+          "model_spline_knots": [
+            1141.1354461032818,
+            1153.1354461032818,
+            1165.1354461032818,
+            1177.1354461032818,
+            1189.1354461032818,
+            1201.1354461032818,
+            1237.1354461032818,
+            1249.1354461032818,
+            1261.1354461032818,
+            1273.1354461032818,
+            1288.6936184387237
+          ],
+          "model_spline_coefficients": [
+            -0.0020679418138668734,
+            -0.00855881833225916,
+            -0.0007637532086108504,
+            -0.008076742133521345,
+            -0.0009742435120393527,
+            0.0029876524673383077,
+            0.001569192295576343,
+            0.010018438381918758,
+            -0.0019903673335699167,
+            -0.002201943143644957,
+            -0.005482814324615202,
+            -0.010706005459519548,
+            -0.0019987265363961768
+          ],
+          "accepted_feature_plateaus": [
+            {
+              "old_panel": 1,
+              "range_A": [
+                1149,
+                1156
+              ]
+            },
+            {
+              "old_panel": 2,
+              "range_A": [
+                1258,
+                1269
+              ]
+            },
+            {
+              "old_panel": 3,
+              "range_A": [
+                1273,
+                1282
+              ]
+            }
+          ],
+          "blend": "Sine-squared tapers; an accepted feature plateau suppresses all other continua",
+          "detector_bins": 4938
         }
-      }
+      },
+      "accepted_feature_preservation_checks": [
+        {
+          "old_panel": 1,
+          "preserved_range_A": [
+            1149,
+            1156
+          ],
+          "bins": 234,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 2,
+          "preserved_range_A": [
+            1258,
+            1269
+          ],
+          "bins": 368,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 3,
+          "preserved_range_A": [
+            1273,
+            1282
+          ],
+          "bins": 302,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 4,
+          "preserved_range_A": [
+            1307,
+            1314
+          ],
+          "bins": 234,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 5,
+          "preserved_range_A": [
+            1326,
+            1338
+          ],
+          "bins": 401,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 6,
+          "preserved_range_A": [
+            1345,
+            1358
+          ],
+          "bins": 435,
+          "max_data_difference": 3.3306690738754696e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 7,
+          "preserved_range_A": [
+            1360,
+            1377
+          ],
+          "bins": 569,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 3.3306690738754696e-16
+        },
+        {
+          "old_panel": 8,
+          "preserved_range_A": [
+            1387,
+            1404
+          ],
+          "bins": 569,
+          "max_data_difference": 2.220446049250313e-16,
+          "max_model_difference": 2.220446049250313e-16
+        },
+        {
+          "old_panel": 9,
+          "preserved_range_A": [
+            1410,
+            1429
+          ],
+          "bins": 635,
+          "max_data_difference": 4.440892098500626e-16,
+          "max_model_difference": 4.440892098500626e-16
+        }
+      ],
+      "Lyman_alpha_comparison_excluded_A": [
+        1208,
+        1235
+      ],
+      "velocities_refitted_for_layout": false
     },
     "gd362": {
       "target": "GD 362",
@@ -9448,9 +12033,91 @@
       "foreground_annotations": "Candidate locations only; no foreground absorber added to the stellar spectrum or abundance mixture",
       "foreground_annotation_basis": null,
       "airglow_annotation_basis": null,
-      "normalization_prescription": "whole-stripe",
+      "normalization_prescription": "NUV: existing full-stripe fits; FUV: accepted feature continua preserved, matched local log-splines extend the intervening display",
       "continuum": "Fixed whole-stripe quadratic; shared clean0.98<model/background<1.02 anchors/weights, independent data/model coefficients",
       "panels": [
+        {
+          "number": 1,
+          "segment": "NUVA",
+          "displayed_range_A": [
+            1799.7770732989309,
+            1841.3779083792433
+          ],
+          "title": "Si II 1808 / Si II 1817",
+          "anchor_range_A": [
+            1799.7770732989309,
+            1834.332605664029
+          ],
+          "maximum_formal_continuum_relative_uncertainty": 0.15374729579413168,
+          "extrapolated_display_bins": 63,
+          "continuum_refitted": false
+        },
+        {
+          "number": 2,
+          "segment": "NUVB",
+          "displayed_range_A": [
+            1902.8752826406567,
+            1943.4079689456216
+          ],
+          "title": "Fe II / C I 1931 / Mn II",
+          "anchor_range_A": [
+            1905.5992534944849,
+            1943.4079689456216
+          ],
+          "maximum_formal_continuum_relative_uncertainty": 0.10876731679676142,
+          "extrapolated_display_bins": 25,
+          "continuum_refitted": false
+        },
+        {
+          "number": 3,
+          "segment": "NUVC",
+          "displayed_range_A": [
+            2007.9494866569205,
+            2047.1982119508841
+          ],
+          "title": "Fe II / Mg I 2026",
+          "anchor_range_A": [
+            2009.0045599175112,
+            2047.1982119508841
+          ],
+          "maximum_formal_continuum_relative_uncertainty": 0.08596839896297488,
+          "extrapolated_display_bins": 10,
+          "continuum_refitted": false
+        }
+      ],
+      "coaddition": "Single calibrated visit, separate detector stripes",
+      "data_bins_native_pixels": 3,
+      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
+      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
+      "nuisance_parameters_fitted": [
+        "apparent wavelength velocity on accepted strips: NUVB",
+        "continuum coefficients"
+      ],
+      "parameters_fitted": false,
+      "abundances_fitted": false,
+      "damping_factors_fitted": false,
+      "upper_limits_included": false,
+      "h2_enabled": false,
+      "unsupported_detected_abundances": {
+        "Sr": -10.42
+      },
+      "visual_review": {
+        "status": "reviewed",
+        "layout": "Single column with four broad FUV intervals or three full NUV strips",
+        "normalization_checks": "Accepted FUV feature continua preserved to machine precision; NUV stripe continua unchanged",
+        "annotation_checks": "Detector/airglow gaps, foreground markers, continuum extrapolation and major Si II wing residuals retained"
+      },
+      "figures": {
+        "png": {
+          "filename": "uv-gd362.png",
+          "sha256": "538e817f277b7fafa38085ccf8cf913d4037d014948e18abbedfd31f640ed4c4"
+        },
+        "pdf": {
+          "filename": "uv-gd362.pdf",
+          "sha256": "2decaa3a787073edcdae4a40c5e2b13311e3bac31153360afb3f8a646c5032be"
+        }
+      },
+      "original_local_panels": [
         {
           "number": 1,
           "title": "Si II 1808",
@@ -9886,37 +12553,30 @@
           }
         }
       ],
-      "coaddition": "Single calibrated visit, separate detector stripes",
-      "data_bins_native_pixels": 3,
-      "airglow": "All-time observations; Ly-alpha and O I1302-1306 excluded from photospheric comparison",
-      "error_caveat": "Formal CALCOS uncertainties; covariance from calibration/rebinning omitted",
-      "nuisance_parameters_fitted": [
-        "apparent wavelength velocity on accepted strips: NUVB",
-        "continuum coefficients"
-      ],
-      "parameters_fitted": false,
-      "abundances_fitted": false,
-      "damping_factors_fitted": false,
-      "upper_limits_included": false,
-      "h2_enabled": false,
-      "unsupported_detected_abundances": {
-        "Sr": -10.42
-      },
-      "visual_review": "Root inspected final PNG: low-SNR data remain visible; 7% formal continuum notes shown on both SiII panels. NUVA has insufficient velocity information and NUVC reaches search boundary; published48km/s is retained and explicitly shown. NUVB carbon fit46.3km/s accepted. Broad line residuals remain; physical inputs unchanged.",
-      "figures": {
-        "png": {
-          "filename": "uv-gd362.png",
-          "sha256": "15971007314f75b23f3c74e26da76cb8f6d4f17d344735d93483a5a3849a173a"
-        },
-        "pdf": {
-          "filename": "uv-gd362.pdf",
-          "sha256": "d3469e4e67b4af39d2c99951fd00ee111e5cb8d194ed9c303b98c1f16236c16d"
-        }
-      }
+      "layout_columns": 1,
+      "wide_continuum_diagnostics": {},
+      "accepted_feature_preservation_checks": [],
+      "Lyman_alpha_comparison_excluded_A": null,
+      "velocities_refitted_for_layout": false
     }
   },
   "scope": "Normalized UV comparisons at fixed literature parameters and detected abundances",
   "configurations": "uv-validation-configs.json",
   "openwd_linewidth": 1,
-  "convergence_scope": "Declared structure-grid equations; no independent grid or full-physics validation claimed"
+  "convergence_scope": "Declared structure-grid equations; no independent grid or full-physics validation claimed",
+  "configuration_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+  "layout_columns": 1,
+  "model_source_commits": {
+    "gd40": "943c146e10a02826083495df527326bcb5c74bcc",
+    "g241minus6": "943c146e10a02826083495df527326bcb5c74bcc",
+    "pg1225": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd61": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd378": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "wd1425": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "g29_38": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd133": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd362": "221dc9ca6952dc7fca47b99227174e3aea161e39"
+  },
+  "new_atmospheres_for_layout_change": false,
+  "normalization_scope": "Accepted local feature continua retained; matched log-splines and smooth tapers extend FUV display. Existing full-stripe quadratic NUV continua remain fixed."
 }

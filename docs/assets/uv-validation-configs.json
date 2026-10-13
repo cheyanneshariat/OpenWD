@@ -1,6 +1,5 @@
 {
-  "schema": 1,
-  "source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+  "schema": 2,
   "targets": {
     "gd40": {
       "config_class": "DZConfig",
@@ -61,7 +60,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "943c146e10a02826083495df527326bcb5c74bcc"
     },
     "g241minus6": {
       "config_class": "DZConfig",
@@ -120,7 +120,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "943c146e10a02826083495df527326bcb5c74bcc"
     },
     "pg1225": {
       "config_class": "DZConfig",
@@ -179,7 +180,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1785.0,
       "wavelength_max_A": 2055.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     },
     "gd61": {
       "config_class": "DZConfig",
@@ -233,7 +235,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     },
     "gd378": {
       "config_class": "DZConfig",
@@ -295,7 +298,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     },
     "wd1425": {
       "config_class": "DZConfig",
@@ -352,7 +356,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     },
     "g29_38": {
       "config_class": "DAZConfig",
@@ -405,7 +410,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     },
     "gd133": {
       "config_class": "DAZConfig",
@@ -454,7 +460,8 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1125.0,
       "wavelength_max_A": 1460.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     },
     "gd362": {
       "config_class": "DZConfig",
@@ -519,8 +526,23 @@
       "abundances_fitted": false,
       "wavelength_min_A": 1785.0,
       "wavelength_max_A": 2055.0,
-      "wavelength_step_A": 0.01
+      "wavelength_step_A": 0.01,
+      "model_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39"
     }
   },
-  "note": "Published inputs; no fitted abundances or damping factors. Unsupported optical Be/Sr detections are recorded separately."
+  "note": "Published inputs; no fitted abundances or damping factors. Unsupported optical Be/Sr detections are recorded separately.",
+  "configuration_source_commit": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+  "model_source_commits": {
+    "gd40": "943c146e10a02826083495df527326bcb5c74bcc",
+    "g241minus6": "943c146e10a02826083495df527326bcb5c74bcc",
+    "pg1225": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd61": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd378": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "wd1425": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "g29_38": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd133": "221dc9ca6952dc7fca47b99227174e3aea161e39",
+    "gd362": "221dc9ca6952dc7fca47b99227174e3aea161e39"
+  },
+  "model_command": "python examples/uv_validation_model.py TARGET --output results/TARGET-uv",
+  "source_note": "The command uses the source checkout's current defaults; model_source_commits identify the cached figure spectra. Physical input configurations are unchanged."
 }
