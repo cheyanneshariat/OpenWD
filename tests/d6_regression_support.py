@@ -1,7 +1,10 @@
 """Full-resolution D6 operations shared by frozen tests and their offline builder."""
 
+from contextlib import contextmanager, nullcontext
 from functools import lru_cache
 import json
+from pathlib import Path
+import sys
 import time
 
 import numpy as np
@@ -11,6 +14,9 @@ from wd_spectra.d6 import _bulk_atmosphere, radiative_equilibrium_d6_atmosphere
 from wd_spectra.models.common import ModelData, numerical_resolution
 from wd_spectra.models.d6 import _atomic_inputs, _N_DEPTH, _STRUCTURE_LINES
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
+from uv_atomic_control_legacy import legacy_uv_atomic_controls
+
 STEPS = 2
 ARRAYS = ("temperature", "gas_pressure", "mass_density", "electron_density")
 METRICS = (
@@ -19,11 +25,69 @@ METRICS = (
     "maximum_log_temperature_correction",
     "scattering_source_maximum_relative_residual",
 )
+TRAJECTORY_RTOL = dict(temperature=2e-5, gas_pressure=1e-12,
+                       mass_density=1e-4, electron_density=1e-4)
+METRIC_RTOL = 5e-3
+METRIC_ATOL = (1e-7, 1e-6, 1e-6, 1e-10)
 
 
 @lru_cache(maxsize=1)
 def atomic_inputs():
     return _atomic_inputs(ModelData.default(), tuple(D6Config().abundances))
+
+
+@contextmanager
+def atomic_input_scope(*, legacy=False):
+    """Keep cached atoms local to a current or historical regression scope.
+
+    The immutable pre-Fe controls need their original Fe II atom. A cache
+    populated before the patch, or retained after it, would silently mix
+    physics identities. Clear it on both boundaries, including exceptions.
+    """
+    atomic_inputs.cache_clear()
+    try:
+        with legacy_uv_atomic_controls() if legacy else nullcontext():
+            yield
+    finally:
+        atomic_inputs.cache_clear()
+
+
+def assert_trajectory_matches(records, saved):
+    """Apply the unchanged warm-v1 guards and return measured differences.
+
+    The explicit offline audit and the regression test use the same bounds;
+    this helper neither chooses a new reference nor claims convergence.
+    """
+    assert len(records) == STEPS
+    np.testing.assert_array_equal([r["iteration"] for r in records], saved["iterations"])
+    np.testing.assert_array_equal([r["phase"] for r in records], saved["phases"])
+    differences = {}
+
+    def measured_difference(actual, expected):
+        return {
+            "maximum_absolute_difference": float(np.max(np.abs(actual - expected))),
+            "maximum_relative_difference": float(np.max(
+                np.abs(actual - expected) / np.maximum(
+                    np.abs(expected), np.finfo(np.float64).tiny,
+                )
+            )),
+        }
+
+    # Complete profiles protect more than scalar maxima. These are the
+    # original cross-platform floating-point/linear-algebra tolerances.
+    for key in ARRAYS:
+        actual = np.stack([r[key] for r in records])
+        assert np.all(np.isfinite(actual)) and np.all(actual > 0)
+        np.testing.assert_allclose(actual, saved[key], rtol=TRAJECTORY_RTOL[key], atol=0)
+        differences[key] = measured_difference(actual, saved[key])
+    metrics = np.stack([r["metrics"] for r in records])
+    assert np.all(np.isfinite(metrics)) and np.all(metrics >= 0)
+    differences["metrics"] = {}
+    for index, absolute in enumerate(METRIC_ATOL):
+        actual, expected = metrics[:, index], saved["metrics"][:, index]
+        np.testing.assert_allclose(actual, expected, rtol=METRIC_RTOL, atol=absolute)
+        differences["metrics"][METRICS[index]] = measured_difference(actual, expected)
+    return differences
 
 
 def solve_structure(column_mass, optical_depth, temperature, callback=None):
