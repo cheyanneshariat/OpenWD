@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable, Literal, Mapping, TYPE_CHECKING
 
 import numpy as np
@@ -345,6 +345,107 @@ def gray_hydrogen_atmosphere(
     )
 
 
+_CONVECTIVE_SEED_LOG_PRESSURE_STEP = 0.02
+_CONVECTIVE_SEED_MAXIMUM_PRESSURE_FACTOR = 1.0e4
+_CONVECTIVE_SEED_FIXED_POINT_PASSES = 12
+
+
+def _convective_hydrogen_seed(gray, tau_max, eos_options, h2_h2_cia_table):
+    """Schwarzschild-limited replacement of a gray hydrogen seed below tau = 1.
+
+    Returns ``None`` when the gray seed is convectively stable at depth one.
+    """
+    from .eos import hummer_mihalas_hydrogen_thermodynamics
+    from .opacity import rosseland_mean_hydrogen_continuum_opacity
+
+    tau, pressure, temperature = (
+        gray.rosseland_optical_depth, gray.gas_pressure, gray.temperature
+    )
+    start = int(np.searchsorted(tau, 1.0))
+    new_layers = pressure.size - 1 - start
+    if new_layers < 2:
+        return None
+    log_pressure = np.log(pressure)
+    gray_gradient = np.gradient(np.log(temperature), log_pressure)
+
+    def adiabatic(temp, press):
+        state = hummer_mihalas_hydrogen_thermodynamics(
+            np.atleast_1d(temp), np.atleast_1d(press), **eos_options
+        )
+        return np.asarray(state.adiabatic_temperature_gradient, dtype=float).ravel()
+
+    if not gray_gradient[start] > adiabatic(temperature[start], pressure[start])[0]:
+        return None
+    steps = int(np.ceil(
+        np.log(_CONVECTIVE_SEED_MAXIMUM_PRESSURE_FACTOR)
+        / _CONVECTIVE_SEED_LOG_PRESSURE_STEP
+    ))
+    fine_log_p = log_pressure[start] + _CONVECTIVE_SEED_LOG_PRESSURE_STEP * np.arange(steps + 1)
+    # The gray gradient applies within the gray seed's pressure range only.
+    gray_limit = np.where(
+        fine_log_p < log_pressure[-1],
+        np.interp(fine_log_p, log_pressure, gray_gradient),
+        np.inf,
+    )
+    # Fixed point for dlnT/dlnP = min(gray, adiabatic(T, P)); the adiabatic
+    # gradient depends weakly on T, so a few vectorized passes converge.
+    fine_log_t = np.log(temperature[start]) + 0.0 * fine_log_p
+    for _ in range(_CONVECTIVE_SEED_FIXED_POINT_PASSES):
+        gradient = np.minimum(gray_limit, adiabatic(np.exp(fine_log_t), np.exp(fine_log_p)))
+        updated = np.log(temperature[start]) + np.r_[0.0, np.cumsum(
+            0.5 * (gradient[1:] + gradient[:-1]) * np.diff(fine_log_p)
+        )]
+        change = float(np.max(np.abs(updated - fine_log_t)))
+        fine_log_t = updated
+        if change < 1.0e-4:
+            break
+
+    def material(temp, press):
+        eos = hummer_mihalas_hydrogen_lte(temp, press, **eos_options)
+        return eos, Atmosphere(
+            effective_temperature=gray.effective_temperature,
+            logg=gray.logg,
+            rosseland_optical_depth=np.ones_like(press),
+            column_mass=press / gray.gravity,
+            temperature=temp,
+            gas_pressure=press,
+            mass_density=eos.mass_density,
+            neutral_h_density=eos.neutral_h_density,
+            proton_density=eos.proton_density,
+            electron_density=eos.electron_density,
+            metadata={},
+            hydrogen_lte_state=eos,
+        )
+
+    fine_p, fine_t = np.exp(fine_log_p), np.exp(fine_log_t)
+    _, fine = material(fine_t, fine_p)
+    kappa = rosseland_mean_hydrogen_continuum_opacity(fine, h2_h2_cia_table=h2_h2_cia_table)
+    fine_tau = tau[start] + np.r_[0.0, np.cumsum(
+        0.5 * (kappa[1:] + kappa[:-1]) * np.diff(fine_p) / gray.gravity
+    )]
+    bottom = (
+        float(np.interp(np.log(tau_max), np.log(fine_tau), fine_log_p))
+        if fine_tau[-1] >= tau_max else fine_log_p[-1]
+    )
+    # Never shallower in mass than the gray seed.
+    bottom = max(bottom, log_pressure[-1])
+    deep_log_p = np.linspace(log_pressure[start], bottom, new_layers + 1)[1:]
+    new_pressure = np.r_[pressure[: start + 1], np.exp(deep_log_p)]
+    new_temperature = np.r_[
+        temperature[: start + 1], np.exp(np.interp(deep_log_p, fine_log_p, fine_log_t))
+    ]
+    new_tau = np.r_[
+        tau[: start + 1],
+        np.exp(np.interp(deep_log_p, fine_log_p, np.log(fine_tau))),
+    ]
+    eos, provisional = material(new_temperature, new_pressure)
+    provisional = replace(provisional, rosseland_optical_depth=new_tau)
+    return (
+        new_tau, new_pressure / gray.gravity, new_temperature, new_pressure,
+        eos, provisional,
+    )
+
+
 def hydrogen_continuum_atmosphere(
     effective_temperature: float,
     logg: float,
@@ -359,6 +460,7 @@ def hydrogen_continuum_atmosphere(
     trihydrogen_ion_partition_model: str | None = None,
     h2_h2_cia_table: H2H2CollisionInducedAbsorptionTable | None = None,
     depth_concentration: float = 0.0,
+    convective_seed: bool = False,
 ) -> Atmosphere:
     r"""Construct a gray-temperature atmosphere with a physical pressure scale.
 
@@ -366,6 +468,16 @@ def hydrogen_continuum_atmosphere(
     integrated using a local Rosseland mean computed from the implemented LTE
     hydrogen continuum.  This removes the arbitrary constant opacity from the
     density structure while stopping short of non-gray radiative equilibrium.
+
+    With ``convective_seed=True``, a gray structure that is convectively
+    unstable at Rosseland depth one (gray gradient above the adiabatic one) is
+    replaced below that depth: the temperature follows the Schwarzschild-limited
+    gradient min(gray, adiabatic) in pressure until the seed's own Rosseland
+    depth reaches ``tau_max``, and the remaining layers are spaced uniformly in
+    log pressure.  In cool, dense hydrogen the gray law otherwise packs the
+    layers below depth one into a few per cent of the column mass at up to
+    three times the convective temperature, a start from which the solver
+    cannot recover.  Stable (radiative) gray seeds are returned unchanged.
     """
 
     # Reuse the gray constructor for input validation and the temperature grid.
@@ -465,6 +577,19 @@ def hydrogen_continuum_atmosphere(
         metadata={},
         hydrogen_lte_state=eos,
     )
+    eos_options = dict(
+        correlated_microfields=correlated_microfields,
+        include_molecules=include_molecules,
+        include_negative_hydrogen=include_negative_hydrogen,
+        trihydrogen_ion_partition_model=trihydrogen_ion_partition_model,
+    )
+    convective = (
+        _convective_hydrogen_seed(provisional, tau_max, eos_options, h2_h2_cia_table)
+        if convective_seed
+        else None
+    )
+    if convective is not None:
+        tau, column_mass, temperature, gas_pressure, eos, provisional = convective
     rosseland_opacity = rosseland_mean_hydrogen_continuum_opacity(
         provisional, h2_h2_cia_table=h2_h2_cia_table
     )
@@ -489,6 +614,7 @@ def hydrogen_continuum_atmosphere(
             ),
             "rosseland_opacity_cm2_g": rosseland_opacity,
             "hopf_constant": float(hopf_constant),
+            "convective_seed_applied": convective is not None,
             "includes_molecular_equilibrium": bool(include_molecules),
             "includes_h2_h2_collision_induced_absorption": bool(
                 include_molecules and h2_h2_cia_table is not None
@@ -1063,6 +1189,8 @@ def radiative_equilibrium_hydrogen_atmosphere(
     *,
     n_depth: int = 100,
     tau_min: float = 1.0e-10,
+    tau_max: float = 1.0e2,
+    convective_seed: bool = False,
     max_iterations: int = 500,
     temperature_tolerance: float = 2.0e-4,
     flux_tolerance: float = 2.0e-3,
@@ -1241,12 +1369,14 @@ def radiative_equilibrium_hydrogen_atmosphere(
             logg,
             n_depth=n_depth,
             tau_min=tau_min,
+            tau_max=tau_max,
             correlated_microfields=correlated_microfields,
             include_molecules=include_molecules,
             include_negative_hydrogen=include_negative_hydrogen,
             trihydrogen_ion_partition_model=trihydrogen_ion_partition_model,
             h2_h2_cia_table=h2_h2_cia_table,
             depth_concentration=depth_concentration,
+            convective_seed=convective_seed,
         )
     else:
         if initial_atmosphere.hydrogen_lte_state is None:

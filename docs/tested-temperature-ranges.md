@@ -23,7 +23,7 @@ experiments remain in the research record but are excluded from this table.
 
 | Composition / public workflow | Cold-start tested temperatures | Evidence |
 | --- | --- | --- |
-| DA, `compute_da` or `run_model` | 3000, 4000, 5000, 12000, 20000 K | All-depth flux, cell-local energy, measured unrestricted correction, scattering closure and bottom screening pass. The 12000-K default comparison also tests standard 40-layer resolution. |
+| DA, `compute_da` or `run_model` | 3000, 4000, 5000, 12000, 20000 K; convective seed and lower-boundary extension (2026-10-14): log g 8: 3000, 4000, 5000, 6000, 8000, 10000, 12000, 14000 K; 4250/6.0, 4500/7.0, 4750/7.75, 5000/7.25, 6500/6.0, 3000/9.5, 30000/5.0, 32000/6.0, 34000/6.25, 38000/6.0 (Teff/log g) | All-depth flux, cell-local energy, measured unrestricted correction, scattering closure and bottom screening pass. The 12000-K default comparison also tests standard 40-layer resolution. The 2026-10-14 points are fresh production cold starts; 2500 K/log g 9 still misses the all-depth flux gate. See the [DA guide](models/DA.md#cold-start-seed-and-lower-boundary-2026-10-14). |
 | Dense pure-He DB, `run_model` | 5000, 8000 K | Fresh 80-layer initialization, static convergence and independent wavelength/angular/source audits. Experimental dense physics. |
 | Established pure-He DB, `compute_db` or `run_model` | 10000, 22000 K | Strict structure-grid checks pass; 22000 K also tested at standard 40-layer resolution. The 10000 K calculation extends its own lower boundary from 80 to 84 nodes. |
 | Molecular DAB/DBA, `run_model`, log10(N_H/N_He) = -2 | 7500, 8000, 9000, 10000 K | Fresh initialization with the final molecular/line physics. Strict static checks and independent fixed-state wavelength/angular audits. |

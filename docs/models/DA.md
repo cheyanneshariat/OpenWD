@@ -141,6 +141,40 @@ totals looked right while the structure was not. Standard-quality totals
 are now within about 0.75% (see the [DZ guide](DZ.md) for the method). Setting
 both to 0 and 1 restores the previous numerics.
 
+## Cold-start seed and lower boundary (2026-10-14)
+
+Two defaults fix the 44 DA failures of the October 8 grid (PR 18), most of
+them between 4250 and 5000 K and in hot low-gravity models.
+
+- `convective_seed=True`. The gray Eddington seed sets the column-mass grid
+  that the solver keeps. In cool, dense hydrogen its steep Rosseland opacity
+  packs Rosseland depths 1-100 into a few per cent of the column mass at up
+  to three times the convective temperature (13,265 K at the bottom of the
+  4500 K, log g = 7 seed, where the converged model has 5,225 K). From there
+  the solver stalled at about 0.75 sigma Teff^4. Where the gray seed is
+  convectively unstable at Rosseland depth one (gray gradient above the
+  adiabatic one; 3000-14,000 K at log g = 8), the seed now follows the
+  Schwarzschild-limited gradient min(gray, adiabatic) below that depth, on
+  layers spaced in pressure, down to the seed's own `tau_max`. Radiative
+  seeds (20,000 K and hotter) are unchanged. `convective_seed=False` restores
+  the gray seed.
+- `lower_boundary_extensions=4`. The seed bottom was fixed at Rosseland
+  depth 100, which lets hot low-gravity models leak radiation (escape bound
+  0.002-0.005 against the 0.002 screen). A cold solve that fails the
+  lower-boundary screen, alone or with other checks, is re-solved cold with a
+  4x deeper bottom and proportionally more layers. 0 disables it.
+
+Production cold starts on the new defaults pass all five certificate gates at
+4250/6.0, 4500/7.0, 4750/7.75, 5000/7.25, 6500/6.0 and 3000/9.5 (Teff/log g;
+former failures), at the canary points 3000, 4000 and 5000 K (log g = 8), and
+at 6000, 8000, 10,000, 12,000 and 14,000 K (log g = 8), in 8-31 minutes. The
+former hot failures 30,000/5.0, 32,000/6.0, 34,000/6.25 and 38,000/6.0 pass
+after one extension, in 7-8 minutes. The canary spectra change by less than
+3e-5 of the peak; their column-mass grids change below depth one, and the
+cold references were recaptured. 2500 K, log g = 9 still misses the
+all-depth flux gate (0.0039) in its deep convection zone. LTE DA models above
+about 40,000 K are not a substitute for NLTE.
+
 ## H2 Lyman and Werner lines (opt-in)
 
 Cool hydrogen white dwarfs show far-UV H2 Lyman (B-X) and Werner (C-X) lines
