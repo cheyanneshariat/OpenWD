@@ -101,12 +101,21 @@ def test_explicit_linear_source_is_unchanged_and_does_not_enter_cubic(monkeypatc
     assert before[2] == after[2]
 
 
-def test_public_da_option_only_changes_synthesis(monkeypatch):
+@pytest.mark.parametrize('certificate_failures', [(), ('all_depth_flux',)],
+                         ids=['passed', 'flux-failed'])
+def test_public_da_option_only_changes_synthesis(monkeypatch, certificate_failures):
+    from dataclasses import replace
     from wd_spectra.models import stellar
     from wd_spectra import DAConfig, compute_da
     from wd_spectra.atmosphere import gray_hydrogen_atmosphere
     from wd_spectra.spectrum import Spectrum
     atmosphere = gray_hydrogen_atmosphere(20000., 8., n_depth=8)
+    # Model the certificate and work count returned by the structure solver.
+    atmosphere = replace(atmosphere, metadata={
+        **atmosphere.metadata,
+        'equilibrium_certificate': {'failures': list(certificate_failures)},
+        'radiative_equilibrium_iterations': 1,
+    })
     calls = []
     def atmosphere_solve(*args, **kwargs):
         calls.append(('atmosphere', kwargs))
@@ -120,6 +129,7 @@ def test_public_da_option_only_changes_synthesis(monkeypatch):
     config = DAConfig(effective_temperature=20000., lyman_profile_source='stark')
     compute_da(config, [4000., 5000.])
     compute_da(config, [4000., 5000.], synthesis_transfer='formal-linear')
+    assert len(calls) == 4
     assert calls[1][1]['transfer_discretization'] == 'formal-pchip'
     assert calls[3][1]['transfer_discretization'] == 'formal-linear'
     assert 'synthesis_transfer' not in calls[0][1]
