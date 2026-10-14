@@ -62,7 +62,7 @@ def fake_runner(workflow, qualified=True, *, empty_zoom=False):
                 }
             )
         )
-        experimental = workflow in ("dense-db", "molecular-dab")
+        experimental = workflow == "dense-db"
         if not experimental:
             (directory / "metadata.json").write_text(
                 json.dumps(
@@ -166,7 +166,7 @@ def test_failed_run_clears_previous_result_without_retry(notebook):
 
 
 @pytest.mark.parametrize(
-    "workflow", ["da", "db", "dab", "dz", "dense-db", "molecular-dab"]
+    "workflow", ["da", "db", "dab", "dz", "dense-db"]
 )
 @pytest.mark.parametrize("qualified", [False, True])
 def test_checks_and_plot_use_public_qualification(
@@ -188,7 +188,7 @@ def test_checks_and_plot_use_public_qualification(
     np.testing.assert_array_equal(
         notebook["axes"][0].lines[0].get_ydata(), notebook["wave"] * original
     )
-    if workflow in ("dense-db", "molecular-dab"):
+    if workflow == "dense-db":
         assert "dedicated worker checker" in capsys.readouterr().out
 
 

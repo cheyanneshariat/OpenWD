@@ -36,8 +36,9 @@ A high temperature in `DAConfig`, `DBConfig` or `DABConfig` does not switch to
 NLTE; request `DOConfig`, `DAOConfig` or `PG1159Config` explicitly.
 
 The individual guides also describe the `compute_*` functions and
-command-line scripts. The explicit `compute_db` and `compute_dab` presets do
-not switch to the cool dense/molecular workflows; use `run_model` (the
-[automatic interface](../getting-started.md)) for that. `compute_dq`,
+command-line scripts. The explicit `compute_db` preset does not switch to the
+dense-helium workflow, and `compute_dab` stays atomic unless
+`include_molecules=True`; `run_model` (the
+[automatic interface](../getting-started.md)) handles both. `compute_dq`,
 `compute_do`, `compute_dao` and `compute_pg1159` run the same calculation as
 `run_model` with the corresponding configuration.

@@ -36,6 +36,12 @@ def test_reviewed_baselines_and_historical_inputs_are_unchanged(mode, count):
             assert set(certificate.get("required_checks", required)) == required
             assert required <= set(certificate["checks"])
             assert all(certificate["checks"][name]["passed"] for name in required)
-        assert record["transfer_discretization"] == (
-            "formal-pchip" if record["case"].startswith("da-") else "formal-linear"
-        )
+        # Cold DB references were recaptured with the column-mass default
+        # (DB-production-v5, 2026-10-14); fixed DB controls keep v4.
+        if record["case"].startswith("da-"):
+            expected = "formal-pchip"
+        elif mode == "cold" and record["case"].startswith("db-"):
+            expected = "column-mass"
+        else:
+            expected = "formal-linear"
+        assert record["transfer_discretization"] == expected

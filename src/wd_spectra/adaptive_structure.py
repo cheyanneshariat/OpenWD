@@ -355,6 +355,7 @@ def solve_adaptive_lte_structure(
         "optical-depth", "column-mass"
     ] = "optical-depth",
     column_mass_radiation_backend: object | None = None,
+    early_lower_boundary_escape_limit: float | None = None,
     ml2_coefficient_function: ML2CoefficientFunction | None = None,
     iteration_callback: IterationCallback | None = None,
     metadata: Mapping[str, object] | None = None,
@@ -408,6 +409,10 @@ def solve_adaptive_lte_structure(
     unpenalized Newton tangent when its last temperature step is oversized.
     All physical and step checks remain active. The initial conditioning
     trajectory is unchanged; this option is not a temperature/composition split.
+    ``early_lower_boundary_escape_limit`` stops the calculation after its first
+    phase with ``LowerBoundaryTooShallow`` when the lower-boundary absorption
+    escape bound already exceeds this limit, so the caller can deepen the mesh
+    rather than finish a solve on a domain that cannot be certified.
     ``transfer_discretization="column-mass"`` explicitly selects physical
     mass control volumes for the field, independent source check, tangent,
     and local energy balance together. It changes no material physics and
@@ -423,6 +428,11 @@ def solve_adaptive_lte_structure(
 
     if transfer_discretization not in ("optical-depth", "column-mass"):
         raise ValueError("unknown transfer discretization")
+    if early_lower_boundary_escape_limit is not None and (
+        not np.isfinite(early_lower_boundary_escape_limit)
+        or early_lower_boundary_escape_limit <= 0.0
+    ):
+        raise ValueError("early lower-boundary escape limit must be None or finite and positive")
     mass_transfer = transfer_discretization == "column-mass"
     if column_mass_radiation_backend is not None and not mass_transfer:
         raise ValueError(
@@ -2205,6 +2215,18 @@ def solve_adaptive_lte_structure(
             **nonlinear_result_metadata(result),
         }
     )
+    if early_lower_boundary_escape_limit is not None:
+        first_phase_escape = float(
+            result.evaluation.payload.get("lower_boundary_absorption_escape_bound", 0.0)
+        )
+        if first_phase_escape > early_lower_boundary_escape_limit:
+            from ._domain import LowerBoundaryTooShallow
+
+            raise LowerBoundaryTooShallow(
+                result.evaluation.payload["atmosphere"],
+                first_phase_escape,
+                result.iterations,
+            )
     if preconditioner_handoff is not None:
         handoff_metadata.update(preconditioner_handoff.metadata())
     preconditioner_iterations = (

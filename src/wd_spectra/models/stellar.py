@@ -118,6 +118,16 @@ class DBConfig:
     # historical uniform depths and bare-grid formal solution.
     photospheric_depth_concentration: float = 1.0
     synthesis_transfer_depth_refinement: int = 4
+    # "column-mass" (default): mass control volumes for the structure transfer,
+    # local energy balance and final spectrum together; the cold-start grid top
+    # starts at Rosseland tau 1e-12; and whenever lower-boundary screening fails
+    # (also together with other failed checks) the mesh is deepened (x4 bottom
+    # pressure) and re-solved from the first phase. The optical-depth cell widths couple each
+    # cell to its neighbours' extinction, which in cool low-gravity helium
+    # (n_e ~ T^20) admits growing odd-even temperature modes that stall the
+    # solve. "optical-depth" restores the DB-production-v4 preset exactly.
+    # Both use the synthesis depth refinement above for the final spectrum.
+    transfer_discretization: Literal["column-mass", "optical-depth"] = "column-mass"
 
 
 @dataclass(frozen=True)
@@ -131,7 +141,11 @@ class DABConfig:
     mixing_length_alpha: float = 1.25
     atmosphere_solver: Literal["adaptive-newton"] = "adaptive-newton"
     lyman_profile_source: Literal["allard", "stark"] = "allard"
-    allard_minimum_effective_temperature: float = 9_000.0
+    # None: Allard profiles at every Teff; below the 9000-K table the local
+    # temperature is clamped to it, as already happens in the cool upper
+    # layers of hotter models.  A number restores a Teff cutoff below which
+    # the cool neutral-H wing treatment is used instead.
+    allard_minimum_effective_temperature: float | None = None
     balmer_self_broadening_prescription: str | None = None
     balmer_self_broadening_truncation_closure: str = "stark-core"
     neutral_broadening: Literal["unsold", "montreal", "none"] = "unsold"
@@ -317,7 +331,7 @@ def _allard_lyman_profiles_for_effective_temperature(
     effective_temperature: float,
     data: ModelData,
     *,
-    minimum_effective_temperature: float = (
+    minimum_effective_temperature: float | None = (
         _ALLARD_MINIMUM_EFFECTIVE_TEMPERATURE_K
     ),
     use_fixed_low_temperature_profile: bool = True,
@@ -339,17 +353,25 @@ def _allard_lyman_profiles_for_effective_temperature(
     their Warwick/Montreal reference grid uses the delivered Allard profiles,
     including the explicitly tabulated 9000-K Ly-alpha calculation. At and
     above 13,000 K, both presets use the temperature-dependent delivery.
+
+    ``minimum_effective_temperature=None`` (the DAB default) applies no Teff
+    cutoff: below 9000 K the delivered tables are evaluated with the local
+    temperature clamped to the 9000-K table. Against the Cukanovaite et al.
+    (2021) DBA grid at 8000 K, log g 8, log N(H)/N(He) = -2, this follows the
+    1150--1800 A Ly-alpha wing at the same level as at 9000 K, whereas the cool
+    neutral-H wing treatment over-predicts 1150--1300 A by a factor ~50.
     """
 
-    if (
-        not np.isfinite(minimum_effective_temperature)
-        or minimum_effective_temperature <= 0.0
-    ):
-        raise ValueError(
-            "allard_minimum_effective_temperature must be finite and positive"
-        )
-    if effective_temperature < minimum_effective_temperature:
-        return None
+    if minimum_effective_temperature is not None:
+        if (
+            not np.isfinite(minimum_effective_temperature)
+            or minimum_effective_temperature <= 0.0
+        ):
+            raise ValueError(
+                "allard_minimum_effective_temperature must be None or finite and positive"
+            )
+        if effective_temperature < minimum_effective_temperature:
+            return None
     if (
         use_fixed_low_temperature_profile
         and effective_temperature < _ALLARD_TEMPERATURE_DEPENDENT_CUTOFF_K
@@ -725,6 +747,10 @@ def compute_da(
     )
 
 
+_DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH = 1.0e-12
+_DB_DEEPENING_PRESSURE_FACTOR = 4.0
+
+
 def compute_db(
     config: DBConfig = DBConfig(),
     wavelength: ArrayLike | None = None,
@@ -739,6 +765,9 @@ def compute_db(
 ) -> ModelResult:
     """Calculate one DB atmosphere and spectrum with Beauchamp25-LD lines."""
 
+    if config.transfer_discretization not in ("column-mass", "optical-depth"):
+        raise ValueError("DB transfer_discretization must be 'column-mass' or 'optical-depth'")
+    column_mass = config.transfer_discretization == "column-mass"
     data = ModelData.default() if data is None else data
     request_fingerprint = model_request_fingerprint("DB", config, data)
     checkpoint_matches_request = atmosphere_matches_model_request(
@@ -785,6 +814,17 @@ def compute_db(
                 checkpoint_matches_request
             ),
             iteration_callback=iteration_callback,
+            **(
+                dict(
+                    transfer_discretization="column-mass",
+                    tau_min=_DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH,
+                    deepen_on_any_screen_failure=True,
+                    restart_after_deepening=True,
+                    deepening_pressure_factor=_DB_DEEPENING_PRESSURE_FACTOR,
+                )
+                if column_mass
+                else {}
+            ),
         )
     assert atmosphere is not None
     if relax_atmosphere:
@@ -802,6 +842,7 @@ def compute_db(
         neutral_broadening=config.neutral_broadening,
         n_angle=resolution.n_angle,
         transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
+        **(dict(transfer_discretization="column-mass") if column_mass else {}),
     )
     return ModelResult(
         "DB",
@@ -809,7 +850,8 @@ def compute_db(
         spectrum,
         config,
         {
-            "preset": "DB-production-v4",
+            "preset": "DB-production-v5" if column_mass else "DB-production-v4",
+            "transfer_discretization": config.transfer_discretization,
             "helium_i_profiles": "Beauchamp25-LD semi-analytical",
             "helium_ii_profiles": "Schoning/SYNSPEC table",
             "neutral_broadening": config.neutral_broadening,
@@ -1105,7 +1147,7 @@ def compute_dab(
         spectrum,
         config,
         {
-            "preset": "DAB-production-v5",
+            "preset": "DAB-production-v6",
             "composition": ("homogeneous molecular H/He LTE" if molecular is not None
                 else "homogeneous atomic H/He LTE"),
             "includes_molecular_equilibrium": molecular is not None,
@@ -1122,6 +1164,9 @@ def compute_dab(
             "allard_profile_policy": (
                 "delivered temperature-indexed Lyalpha--Lygamma at and above "
                 "the configured minimum temperature"
+                if config.allard_minimum_effective_temperature is not None
+                else "delivered temperature-indexed Lyalpha--Lygamma at every "
+                "Teff; local temperatures below 9000 K use the 9000-K table"
             ),
             "allard_minimum_effective_temperature_K": (
                 config.allard_minimum_effective_temperature

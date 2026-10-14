@@ -12,6 +12,23 @@ import numpy as np
 _LOGGER = logging.getLogger(__name__)
 
 
+class LowerBoundaryTooShallow(Exception):
+    """Raised by a solver whose first phase already shows a leaking bottom.
+
+    Carries the first-phase atmosphere, its absorption-escape bound and the
+    iterations spent, so the caller can deepen the mesh instead of finishing
+    a full solve on a domain that cannot be certified.
+    """
+
+    def __init__(self, atmosphere, escape_bound, iterations=0):
+        super().__init__(
+            f"lower-boundary absorption escape {escape_bound:.3g} after the first solver phase"
+        )
+        self.atmosphere = atmosphere
+        self.escape_bound = float(escape_bound)
+        self.iterations = int(iterations)
+
+
 def append_lower_domain(
     atmosphere, pressure_factor=2.0, *, maximum_new_cells=None
 ):
@@ -86,6 +103,10 @@ def solve_with_screened_boundary(
     *args,
     maximum_domain_expansions=4,
     lower_domain_extension=None,
+    deepen_on_any_screen_failure=False,
+    restart_after_deepening=False,
+    deepening_pressure_factor=2.0,
+    early_deepening_escape_limit=None,
     **options,
 ):
     """Complete a cold/requested solve with bounded same-run domain adaptation.
@@ -94,6 +115,20 @@ def solve_with_screened_boundary(
     bound at the relaxed lower boundary, not the original gray seed's depth.
     Re-solving an enlarged mesh is part of this calculation, not continuation
     from another model. Exhausting the bound returns an uncertified atmosphere.
+
+    By default the mesh is deepened only when lower-boundary screening is the
+    sole failed check, and the deeper solve resumes in the formal-flux phase.
+    ``deepen_on_any_screen_failure`` also deepens when other checks failed with
+    it: a bottom that leaks radiation can itself prevent equilibrium, as in
+    cool low-gravity helium, whose transparent windows reach far below a
+    Rosseland-scaled seed. ``restart_after_deepening`` re-runs the full phase
+    sequence on the deeper mesh, because the extrapolated new cells start far
+    from the convective gradient they need. ``deepening_pressure_factor`` sets
+    the bottom-pressure increase per extension of the default extension.
+    ``early_deepening_escape_limit`` asks the solver to stop after its first
+    phase when the escape bound already exceeds this limit (far above the
+    screening tolerance), and deepens immediately; it is not passed on the last
+    allowed extension, which always completes a full solve.
     """
     if (
         isinstance(maximum_domain_expansions, bool)
@@ -105,6 +140,12 @@ def solve_with_screened_boundary(
         )
     if lower_domain_extension is None:
         lower_domain_extension = append_lower_domain
+    if not np.isfinite(deepening_pressure_factor) or deepening_pressure_factor <= 1.0:
+        raise ValueError("deepening pressure factor must be finite and greater than one")
+    if early_deepening_escape_limit is not None and (
+        not np.isfinite(early_deepening_escape_limit) or early_deepening_escape_limit <= 0.0
+    ):
+        raise ValueError("early deepening escape limit must be None or finite and positive")
     if not callable(lower_domain_extension):
         raise ValueError("lower domain extension must be callable")
     callback = options.pop("iteration_callback", None)
@@ -121,7 +162,37 @@ def solve_with_screened_boundary(
                     {**diagnostics, "domain_expansion": expansion},
                 )
 
-        result = solver(*args, **options, iteration_callback=report)
+        call_options = dict(options)
+        if early_deepening_escape_limit is not None and expansion < maximum_domain_expansions:
+            call_options["early_lower_boundary_escape_limit"] = early_deepening_escape_limit
+        try:
+            result = solver(*args, **call_options, iteration_callback=report)
+        except LowerBoundaryTooShallow as shallow:
+            offset += shallow.iterations
+            segments.append(
+                dict(
+                    n_depth=shallow.atmosphere.n_depth,
+                    iterations=shallow.iterations,
+                    thermal_sweeps=0,
+                    absorption_escape_bound=shallow.escape_bound,
+                    early_deepening=True,
+                )
+            )
+            _LOGGER.info(
+                "Deepening below %d layers after the first solver phase: "
+                "lower-boundary absorption escape %.6g exceeds %.6g",
+                shallow.atmosphere.n_depth,
+                shallow.escape_bound,
+                early_deepening_escape_limit,
+            )
+            options.update(
+                lower_domain_extension(shallow.atmosphere)
+                if lower_domain_extension is not append_lower_domain
+                else append_lower_domain(shallow.atmosphere, deepening_pressure_factor)
+            )
+            if restart_after_deepening:
+                options["resume_supplied_structure_in_formal_flux_phase"] = False
+            continue
         meta = result.metadata
         iterations = int(meta.get("radiative_equilibrium_iterations", 0))
         offset += iterations
@@ -138,10 +209,14 @@ def solve_with_screened_boundary(
             )
         )
         failures = meta.get("equilibrium_certificate", {}).get("failures", [])
-        if (
-            failures != ["boundary_screening"]
-            or expansion == maximum_domain_expansions
-        ):
+        if deepen_on_any_screen_failure:
+            segments[-1]["failures"] = list(failures)
+        screen_failed = (
+            "boundary_screening" in failures
+            if deepen_on_any_screen_failure
+            else failures == ["boundary_screening"]
+        )
+        if not screen_failed or expansion == maximum_domain_expansions:
             break
         _LOGGER.info(
             "Extending the current calculation below %d layers: "
@@ -150,7 +225,13 @@ def solve_with_screened_boundary(
             meta["lower_boundary_absorption_escape_bound"],
             meta["lower_boundary_screening_tolerance"],
         )
-        options.update(lower_domain_extension(result))
+        options.update(
+            lower_domain_extension(result)
+            if lower_domain_extension is not append_lower_domain
+            else append_lower_domain(result, deepening_pressure_factor)
+        )
+        if restart_after_deepening:
+            options["resume_supplied_structure_in_formal_flux_phase"] = False
     return replace(
         result,
         metadata={

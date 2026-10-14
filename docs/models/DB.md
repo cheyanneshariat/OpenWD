@@ -67,6 +67,56 @@ and the dense workflow at 5000 and 8000 K. See [tested points](../tested-tempera
 [cool-model setup](../getting-started.md#cool-helium-and-mixed-atmospheres), and
 [physical limitations](../limitations.md#physical-approximations).
 
+## Column-mass default (DB-production-v5, 2026-10-13)
+
+`DBConfig(transfer_discretization="column-mass")` is the default. It uses mass
+control volumes for the structure's transfer, its cell-by-cell energy balance
+and the final spectrum together, starts the cold-start grid at Rosseland
+tau = 1e-12, and whenever the lower-boundary screen fails (also together with
+other failed checks) deepens the mesh by a factor 4 in bottom pressure and
+re-solves it from the first phase. `transfer_discretization="optical-depth"`
+restores DB-production-v4 exactly.
+
+Why: the optical-depth cell width averages the two adjacent optical-depth
+steps, so a cell's heating weight follows its neighbours' extinction. In cool,
+low-gravity helium that extinction is He- free-free, proportional to the
+electron density, which rises roughly as T^20. The linearized energy equations
+then have growing odd-even temperature modes in the outer layers
+(tau_R ~ 1e-8 to 1e-6); the solver stalls on a saw-tooth outer atmosphere.
+PR18's grid failed or timed out at 36 DB points between 7000 and 11000 K,
+mostly log g 6-7.5. Column-mass volumes take every factor of a cell's balance
+from its own node. A thin top (tau_R = 1e-12) keeps the top cell optically thin
+when it heats; with 1e-8 or 1e-10 the top node of hot DBs (20000-22000 K) could
+become opaque in the He I continuum and run away. Low-gravity helium is
+transparent far below a Rosseland-scaled bottom, so the bottom can leak more
+than half the flux; deepening on any screen failure and restarting the solve
+handles it.
+
+Production cold starts with this structure recipe pass all five certificate
+gates at 7000/6.0, 7500/6.5, 8000/6.5, 9000/7.0, 9500/6.0, 12000/9.5,
+14000/7.0, 18000/8.0, 20000/7.5, 24000/8.5, 25000/7.0, 25000/9.0, 26000/8.0,
+28000/7.5, 32000/9.0, 35000/8.0 and 40000/7.5 (Teff/log g), and at the canary
+configurations 10000/8.0 and 22000/8.0 (production) and 22000/8.0 (standard).
+The other former failures (7500/6.0, 8500/7.0, 8500/7.25, 9000/7.75, 9500/7.0,
+10000/6.25) converged with intermediate versions of the recipe. The coolest
+low-gravity points are the slowest: 7000/6.0 takes about 2.5 h and 7500/6.5
+about 2 h, most of it a full solve on the first, too-shallow mesh before it
+is deepened. Deepening right after the first solver phase (the opt-in
+`early_deepening_escape_limit` of `solve_with_screened_boundary`) cut
+7500/6.5 to 14 minutes but stalled 7000/6.0, so it is not used by default.
+
+The final spectrum uses the same 4x depth refinement as the other modules.
+Its shape is insensitive to the structure resolution, but its total flux runs
+above sigma Teff^4 by 0.5-1.3% at the coolest low-gravity points (production:
+1.0134 at 8000/6.5, 1.0078 at 9000/7.0, 1.0065 at 9500/6.0, 1.0051 at
+10000/8.0). The same structures synthesized on the solved column-mass grid
+(refinement 1) conserve it to 0.05%, but their spectral shape changes by about
+1.25% in the optical between 40 and 80 layers.
+Spectra differ from v4 by up to about 0.4% in the optical and infrared at
+production resolution (0.04% integrated in the optical at 22000/8.0). The DB
+cold-start canary references were recaptured with v5 (2026-10-14); the
+fixed-atmosphere spectral controls keep v4's optical-depth synthesis.
+
 ## Flux conservation (2026-10-01)
 
 Two numerics settings are on by default:

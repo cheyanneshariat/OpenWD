@@ -25,8 +25,9 @@ experiments remain in the research record but are excluded from this table.
 | --- | --- | --- |
 | DA, `compute_da` or `run_model` | 3000, 4000, 5000, 12000, 20000 K | All-depth flux, cell-local energy, measured unrestricted correction, scattering closure and bottom screening pass. The 12000-K default comparison also tests standard 40-layer resolution. |
 | Dense pure-He DB, `run_model` | 5000, 8000 K | Fresh 80-layer initialization, static convergence and independent wavelength/angular/source audits. Experimental dense physics. |
-| Established pure-He DB, `compute_db` or `run_model` | 10000, 22000 K | Strict structure-grid checks pass; 22000 K also tested at standard 40-layer resolution. The 10000 K calculation extends its own lower boundary from 80 to 84 nodes. |
-| Molecular DAB/DBA, `run_model`, log10(N_H/N_He) = -2 | 7500, 8000, 9000, 10000 K | Fresh initialization with the final molecular/line physics. Strict static checks and independent fixed-state wavelength/angular audits. |
+| Pure-He DB, `compute_db` or `run_model`, column-mass default (DB-production-v5) | log g 6.0: 7000, 9500 K; 6.5: 7500, 8000 K; 7.0: 9000, 14000, 25000 K; 7.5: 20000, 28000, 40000 K; 8.0: 10000, 18000, 22000, 26000, 35000 K; 8.5: 24000 K; 9.0: 25000, 32000 K; 9.5: 12000 K | Production cold starts (2026-10-13) pass all five structure-grid gates; 22000 K/log g 8 also at standard 40-layer resolution. Several low-gravity points deepen their lower boundary once and restart. With the default 4x synthesis refinement, total flux exceeds sigma Teff^4 by 0.5-1.3% at the coolest low-gravity points. See the [DB guide](models/DB.md#column-mass-default-db-production-v5-2026-10-13). |
+| Pure-He DB, `transfer_discretization="optical-depth"` (DB-production-v4) | 10000, 22000 K | Strict structure-grid checks pass; 22000 K also tested at standard 40-layer resolution. The 10000 K calculation extends its own lower boundary from 80 to 84 nodes. |
+| Molecular DAB/DBA, `run_model` (in-process molecular closure, every metal-free DAB) | log g 8, log10(N_H/N_He) = -2: 7500, 8000, 9000, 10000 K; log10(N_H/N_He) = 0: 12000 K at log g 8 and 9, 15000 K at log g 9 | Production cold starts (2026-10-13) pass all five structure-grid gates; 7500, 10000 and 12000 K/log g 9 ran end to end through `run_model`. Allard Lyman profiles at every Teff. No independent wavelength/angular audit yet. |
 | Atomic DAB, `compute_dab` or automatically selected at 20000 K | 20000 K | Strict cold-start convergence and reviewed corrected-spectrum checks. The undoubled critical field intentionally changes high-series features relative to the old paper control. |
 | DZ, PG 1225 composition, `compute_dz` | 10800 K | Strict production cold-start convergence. This is not exact reproduction of the 40-node paper spectrum. |
 | DAZ, `compute_daz` or `run_model`, standard 40-layer resolution | G149-28: 8600 K, log g = 8.10; G29-38: 11820 K, log g = 8.40; GALEX J1931+0117: 20890 K, log g = 7.90 | Fresh public cold starts with each object's metal composition pass all five structure-grid certificate gates. These are individual points, not a temperature/abundance grid. |
@@ -66,16 +67,18 @@ dab = run_model(DABConfig(effective_temperature=7500, quality="production"),
                 "results/dab-7500-fresh", require_convergence=True)
 ```
 
-Use a new output directory for each calculation. Cool workers require a source
-checkout with the normal installation and, for DAB, the
-[declared molecular data](../research/cool_models/README.md).
+Use a new output directory for each calculation. The dense DB worker requires a
+source checkout with the normal installation; DAB needs the checksum-pinned
+H2-He table from the [declared molecular data](../research/cool_models/README.md).
 Missing data or invalid material domains fail explicitly; there is no alternate
 physics retry. `run_model` rejects checkpoint inputs.
 
 `compute_*` functions remain explicit physics presets. In particular,
-`compute_db` at 5000 K does not select dense helium, and merely enabling
-`DABConfig(include_molecules=True)` does not select the qualified conservative
-molecular transport workflow. Use `run_model` for that automatic selection.
+`compute_db` at 5000 K does not select dense helium, and `compute_dab` stays
+atomic unless `include_molecules=True`, which `run_model` sets for every
+metal-free DAB. The earlier isolated molecular transport worker
+(`wd_spectra._cool.run_molecular_dab_mass_experiment`) is retained for research
+but is no longer selected by `run_model`.
 
 ### DQ release qualification
 
@@ -162,10 +165,17 @@ full static solve must independently pass every physical gate.
 | Atomic DAB 20000 | 8.53e-8 | 1.59e-3 | Structure grid only |
 | Dense DB 5000 | 1.26e-4 | 1.24e-5 | Independent local error 0.00126 |
 | Dense DB 8000 | 6.76e-6 | 1.04e-5 | Independent local error 0.000955 |
-| Molecular DAB 7500 | 3.74e-10 | 2.90e-6 | Independent flux 8.01e-5, local 7.69e-5 |
-| Molecular DAB 8000 | 1.91e-10 | 1.75e-6 | Independent flux 1.53e-4, local 6.39e-5 |
-| Molecular DAB 9000 | 1.16e-10 | 2.53e-7 | Independent flux 3.16e-4, local 5.98e-5 |
-| Molecular DAB 10000 | 2.23e-10 | 4.85e-8 | Independent flux 4.63e-4, local 8.66e-5 |
+| Molecular DAB 7500 (former worker) | 3.74e-10 | 2.90e-6 | Independent flux 8.01e-5, local 7.69e-5 |
+| Molecular DAB 8000 (former worker) | 1.91e-10 | 1.75e-6 | Independent flux 1.53e-4, local 6.39e-5 |
+| Molecular DAB 9000 (former worker) | 1.16e-10 | 2.53e-7 | Independent flux 3.16e-4, local 5.98e-5 |
+| Molecular DAB 10000 (former worker) | 2.23e-10 | 4.85e-8 | Independent flux 4.63e-4, local 8.66e-5 |
+| In-process molecular DAB 7500, H/He -2 | 3.56e-10 | 2.30e-8 | Structure grid only; 46 iterations |
+| In-process molecular DAB 8000, H/He -2 | 3.46e-10 | 4.35e-8 | Structure grid only; 36 iterations |
+| In-process molecular DAB 9000, H/He -2 | 1.51e-10 | 1.38e-7 | Structure grid only; 63 iterations |
+| In-process molecular DAB 10000, H/He -2 | 2.62e-10 | 1.54e-6 | Structure grid only; 65 iterations |
+| In-process molecular DAB 12000, log g 8, H/He 0 | 4.04e-10 | 1.15e-5 | Structure grid only; 34 iterations |
+| In-process molecular DAB 12000, log g 9, H/He 0 | 3.29e-10 | 3.10e-7 | Structure grid only; 30 iterations |
+| In-process molecular DAB 15000, log g 9, H/He 0 | 1.63e-9 | 6.05e-5 | Structure grid only; 26 iterations |
 | DAZ G149-28, standard | 4.10e-6 | 2.54e-6 | Structure grid only; 32 iterations |
 | DAZ G29-38, standard | 6.12e-5 | 4.05e-6 | Structure grid only; 58 iterations |
 | DAZ GALEX J1931+0117, standard | 7.92e-6 | 8.88e-4 | Structure grid only; 97 iterations |
@@ -192,9 +202,9 @@ depth grids; neither comparison establishes universal depth independence.
 ## Limits and preservation of established results
 
 - No DA below 3000 K or pure-He DB below 5000 K is qualified here.
-- Molecular DAB 7250 K remains unqualified under the measured correction gate;
-  5000 K experiments remain far from equilibrium. There is no claim of a
-  reliable 5000–10000 K DAB grid.
+- Molecular DAB 7250 K remained unqualified with the former worker and has not
+  been retried in-process; 5000 K experiments remain far from equilibrium.
+  There is no claim of a reliable 5000–10000 K DAB grid.
 - The old 7750 K continuation is not a cold-start qualification.
 - No abundance or gravity grid has been demonstrated. The cool DAB points
   mean the homogeneous 1% hydrogen-by-number mixture above.

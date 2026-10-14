@@ -211,8 +211,11 @@ def main():
                 settings.experimental_initializer_description=predictor.description
             return original_run(settings)
         stack.enter_context(patch.object(runner,'run',labeled_run))
+        # Pass the worker's choice through the public helium entry point;
+        # its default must not conflict with the scoped mass-transfer guard.
         stack.enter_context(patch.object(runner,'radiative_equilibrium_helium_atmosphere',
-            partial(runner.radiative_equilibrium_helium_atmosphere,n_angle=args.structure_angles)))
+            partial(runner.radiative_equilibrium_helium_atmosphere,n_angle=args.structure_angles,
+                transfer_discretization=('column-mass' if args.mass_conservative_transfer else 'optical-depth'))))
         from . import dense_helium_molecular_experiment as experiment
         sys.argv=[sys.argv[0]]+remaining
         experiment.main()

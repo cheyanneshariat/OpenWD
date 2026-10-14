@@ -88,9 +88,14 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     path = CONTROLS / (case + ".npz")
     with np.load(path) as saved:
         kind = str(saved["spectral_type"])
+        saved_config = json.loads(str(saved["config_json"]))
+        if kind == "DB":
+            # These controls were approved for the DB-production-v4 optical-depth
+            # synthesis; DBConfig now defaults to the column-mass preset.
+            saved_config.setdefault("transfer_discretization", "optical-depth")
         config = {"DA": DAConfig, "DB": DBConfig, "DAB": DABConfig, "DZ": DZConfig}[
             kind
-        ](**json.loads(str(saved["config_json"])))
+        ](**saved_config)
         wave = saved["wavelength"]
     # Explicitly reviewed density-edge outputs are versioned separately.
     # Historical structures, earlier approved spectra and tolerances stay intact.

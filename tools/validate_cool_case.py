@@ -26,7 +26,10 @@ def main():
         args.output,
         require_convergence=True,
     )
-    assert result.selection.workflow == workflow
+    expected_workflow = "dense-db" if workflow == "dense-db" else "dab"
+    assert result.selection.workflow == expected_workflow
+    if workflow == "molecular-dab":
+        assert result.selection.diagnostics.get("include_molecules") is True
     assert result.convergence_verified
 
 

@@ -1967,6 +1967,8 @@ def radiative_equilibrium_helium_atmosphere(
     homogeneous_metal_host: bool = False,
     metal_classical_electron_stark: bool = False,
     resume_supplied_structure_in_formal_flux_phase: bool = True,
+    transfer_discretization: Literal["optical-depth", "column-mass"] = "optical-depth",
+    early_lower_boundary_escape_limit: float | None = None,
     iteration_callback: Callable[
         [int, Atmosphere, Mapping[str, object]], None
     ]
@@ -2859,6 +2861,8 @@ def radiative_equilibrium_helium_atmosphere(
             initial_temperature is not None
             and resume_supplied_structure_in_formal_flux_phase
         ),
+        transfer_discretization=transfer_discretization,
+        early_lower_boundary_escape_limit=early_lower_boundary_escape_limit,
         iteration_callback=iteration_callback,
         metadata={
             **{

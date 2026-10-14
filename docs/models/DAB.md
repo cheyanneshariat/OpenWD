@@ -41,20 +41,42 @@ observational abundance fit or a test of a stratified H/He layer. The archived
 paper spectra and the current molecular cold-start checks below answer
 different questions; the six plotted points do not validate cooler mixtures.
 
-## Cool mixtures
+## Cool mixtures and the molecular closure
 
-Use `run_model(DABConfig(...), output_directory)` for automatic molecular
-workflow selection. That workflow includes H2, H2+, H-, H3+, H/He ionization,
-H2-He/H2-H2 collision-induced absorption, and neutral Ly-alpha wings. The command-line example uses the same automatic selection as `run_model`.
-The lower-level `compute_dab` preset remains an explicit atomic-physics interface.
+`run_model(DABConfig(...), output_directory)` runs every metal-free DAB with the
+in-process molecular H/He closure: H2, H2+, H-, H3+, HeH+, H/He ionization,
+H2-He/H2-H2 collision-induced absorption and neutral Ly-alpha wings, at any
+temperature and gravity. The molecular terms vanish where molecules are absent,
+so neighbouring grid models share one set of physics; there is no switch at a
+molecular threshold or at log g = 8. The H2 screen is recorded in the run
+manifest for provenance only. DABs with trace metals keep the atomic mixture
+and are refused where the screen indicates molecular chemistry.
+`compute_dab` stays atomic unless `include_molecules=True`.
 
-Fresh molecular calculations have been qualified at 7500, 8000, 9000, and
-10000 K for log g = 8 and log10 N(H)/N(He) = -2. These are cold-start points,
-not a guaranteed interval; 7250 and 5000 K remain unqualified. Setup requires
-production quality, the normal package installation, and additional public data. See
+Even where molecules are rare, the closure changes the far UV: at 12000 K,
+log10 N(H)/N(He) = 0, the molecular and atomic spectra differ by up to 17%
+(log g 8) and 32% (log g 9) near 1083 A, mainly from H2 Lyman/Werner
+absorption, but by at most 0.1-0.3% in the optical and 0.001% in total flux.
+
+Production cold starts pass all five certificate gates at 7500, 8000, 9000 and
+10000 K (log g 8, log10 N(H)/N(He) = -2) and at 12000 K (log g 8 and 9) and
+15000 K (log g 9) for log10 N(H)/N(He) = 0. These are individual points, not a
+guaranteed interval; 7250 and 5000 K remain unqualified. The pinned HITRAN
+`H2-He_2011.cia` table is required. See
 [cool-model setup](../getting-started.md#cool-helium-and-mixed-atmospheres),
 [tested points](../tested-temperature-ranges.md), and
 [physical limitations](../limitations.md#physical-approximations).
+
+## Lyman-alpha profiles below 9000 K (2026-10-13)
+
+`DABConfig(allard_minimum_effective_temperature=None)` is the default: the
+delivered Allard Lyman profiles are used at every Teff. The tables start at
+9000 K, so cooler local gas uses the 9000-K table, as the cool upper layers of
+9000-K models already did. At 8000 K, log g = 8 and log10 N(H)/N(He) = -2 this
+follows the Cukanovaite et al. (2021) DBA model to +25-30% over 1150-1500 A,
+as at 9000 K; the previous cool neutral-H wing treatment over-predicted
+1150-1300 A by a factor of ~50. The optical continuum changes by about 1%.
+Pass a number to restore a Teff cutoff. This has not been checked below 8000 K.
 
 ## Flux conservation (2026-10-01)
 
