@@ -34,8 +34,9 @@ of temperatures, compositions, settings, and convergence evidence. In particular
 declared equations and numerical checks. Established presets require actual
 all-depth flux conservation, local energy balance, a measured unrestricted
 temperature correction, scattering-source closure, and lower-boundary screening.
-Experimental dense/molecular workflows have dedicated checkers and retained
-audit records. A solver's terminal success flag alone is insufficient.
+The experimental dense-helium workflow has a dedicated checker and retained
+audit records; metal-free DABs use the in-process molecular closure and the
+standard certificate. A solver's terminal success flag alone is insufficient.
 
 For established presets, unqualified completed spectra remain available with
 a warning for exploration; use `require_convergence=True` to require numerical

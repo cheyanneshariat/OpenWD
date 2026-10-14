@@ -81,7 +81,9 @@ def test_mixed_chemistry_never_uses_pure_helium_eos(monkeypatch):
             maximum_h2_nuclei_fraction=0.01, maximum_electron_fractional_change=0.02
         ),
     )
-    assert select_physics(DABConfig()).workflow == "molecular-dab"
+    chosen = select_physics(DABConfig())
+    assert chosen.workflow == "dab" and chosen.diagnostics["include_molecules"]
+    assert chosen.diagnostics["molecular_screen_indicated"]
     assert select_physics(DZConfig()).workflow == "dz"
     monkeypatch.setattr(
         selection,
@@ -90,7 +92,29 @@ def test_mixed_chemistry_never_uses_pure_helium_eos(monkeypatch):
             maximum_h2_nuclei_fraction=1e-12, maximum_electron_fractional_change=1e-10
         ),
     )
-    assert select_physics(DABConfig()).workflow == "dab"
+    # One route on both sides of the screen: no physics switch between neighbours.
+    chosen = select_physics(DABConfig())
+    assert chosen.workflow == "dab" and chosen.diagnostics["include_molecules"]
+    assert not chosen.diagnostics["molecular_screen_indicated"]
+
+
+@pytest.mark.parametrize("indicated", [False, True])
+def test_metal_bearing_dab_keeps_atomic_route_or_refuses(monkeypatch, indicated):
+    value = 0.1 if indicated else 1e-12
+    monkeypatch.setattr(
+        selection,
+        "_molecular_probe",
+        lambda *a: dict(
+            maximum_h2_nuclei_fraction=value, maximum_electron_fractional_change=value
+        ),
+    )
+    config = DABConfig(abundances={"Ca": -8.0})
+    if indicated:
+        with pytest.raises(ValueError, match="no trace metals"):
+            select_physics(config)
+    else:
+        chosen = select_physics(config)
+        assert chosen.workflow == "dab" and "include_molecules" not in chosen.diagnostics
 
 
 def test_unqualified_parameter_points_are_not_called_tested(monkeypatch):
@@ -149,11 +173,60 @@ def test_dispatch_preserves_dense_gravity_and_refuses_overwrite(monkeypatch, tmp
         automatic.run_model(DBConfig(), tmp_path)
 
 
-def test_other_cool_drivers_keep_explicit_gravity_restriction(tmp_path):
-    with pytest.raises(ValueError, match='logg=8'):
+def test_only_dense_db_has_an_isolated_cool_worker(tmp_path):
+    with pytest.raises(ValueError, match="no isolated cool worker"):
         automatic._cool_commands(
             DABConfig(effective_temperature=7500., logg=7.5, quality='production'),
-            PhysicsSelection('molecular-dab', 'test', {}, False, True), tmp_path/'new')
+            PhysicsSelection('dab', 'test', {}, False, False), tmp_path/'new')
+
+
+def _fake_cia(tmp_path, monkeypatch, *, pinned):
+    import hashlib
+    from wd_spectra._cool import check_data
+    path = tmp_path / "H2-He_2011.cia"
+    path.write_bytes(b"stub table")
+    digest = hashlib.sha256(b"stub table").hexdigest() if pinned else "0" * 64
+    monkeypatch.setitem(check_data.SHA256, "H2-He_2011.cia", digest)
+    return path
+
+
+@pytest.mark.parametrize("logg", [7.0, 8.0, 9.5])
+def test_dab_dispatch_enables_pinned_molecules_at_any_gravity(monkeypatch, tmp_path, logg):
+    cia = _fake_cia(tmp_path, monkeypatch, pinned=True)
+    choice = PhysicsSelection("dab", "test", {"include_molecules": True}, False, False)
+    monkeypatch.setattr(automatic, "select_physics", lambda *a, **k: choice)
+    seen = {}
+
+    def compute(config, **kwargs):
+        seen["config"] = config
+        raise RuntimeError("stop after dispatch")
+
+    monkeypatch.setattr(automatic, "compute_dab", compute)
+    request = DABConfig(effective_temperature=12_000.0, logg=logg, quality="production")
+    with pytest.raises(RuntimeError, match="stop after dispatch"):
+        automatic.run_model(request, tmp_path / "run", research_data=tmp_path)
+    assert seen["config"].include_molecules
+    assert seen["config"].h2_he_cia_path == str(cia.resolve())
+    assert seen["config"].logg == logg
+    record = json.loads((tmp_path / "run/model-run.json").read_text())
+    assert record["request"]["include_molecules"] is False
+    assert record["effective_config"]["include_molecules"] is True
+
+
+def test_dab_dispatch_reads_research_data_environment(monkeypatch, tmp_path):
+    cia = _fake_cia(tmp_path, monkeypatch, pinned=True)
+    monkeypatch.setenv("OPENWD_RESEARCH_DATA", str(tmp_path))
+    config = automatic._molecular_dab_config(DABConfig(), automatic.ModelData.default(), None)
+    assert config.h2_he_cia_path == str(cia.resolve()) and config.include_molecules
+
+
+def test_dab_dispatch_refuses_unpinned_cia(monkeypatch, tmp_path):
+    _fake_cia(tmp_path, monkeypatch, pinned=False)
+    choice = PhysicsSelection("dab", "test", {"include_molecules": True}, False, False)
+    monkeypatch.setattr(automatic, "select_physics", lambda *a, **k: choice)
+    with pytest.raises(ValueError, match="checksum-pinned"):
+        automatic.run_model(DABConfig(quality="production"), tmp_path / "run", research_data=tmp_path)
+    assert not (tmp_path / "run").exists()
 
 
 def test_cool_worker_environment_cannot_replace_parent_callbacks(monkeypatch, tmp_path):

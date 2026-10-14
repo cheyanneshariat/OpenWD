@@ -17,6 +17,14 @@ from .hot import DOConfig, DAOConfig, validate_config
 from .common import ModelData
 
 
+# Production cold starts of the in-process molecular DAB closure that passed the
+# native certificate (2026-10-13). Provenance only; never selects equations.
+_MOLECULAR_DAB_TESTED_POINTS = frozenset({
+    (7500, 8.0, -2.0), (8000, 8.0, -2.0), (9000, 8.0, -2.0), (10000, 8.0, -2.0),
+    (12000, 8.0, 0.0), (12000, 9.0, 0.0), (15000, 9.0, 0.0),
+})
+
+
 @dataclass(frozen=True)
 class PhysicsSelectionPolicy:
     """Explicit screening accuracy scales, not star-specific Teff cutoffs."""
@@ -244,29 +252,39 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
             raise ValueError(
                 "Invalid molecular diagnostic; no atomic substitute is selected"
             )
-        molecular = (
+        indicated = (
             config.include_molecules
             or d["maximum_h2_nuclei_fraction"] >= policy.molecular_nuclei_fraction
             or d["maximum_electron_fractional_change"]
             >= policy.molecular_electron_fraction
         )
-        if molecular and config.abundances is not None:
-            raise ValueError(
-                "Molecular H/He chemistry is indicated, but the molecular "
-                "workflow has no trace metals; no atomic substitute is selected"
-            )
         d["selection_policy"] = asdict(policy)
+        d["molecular_screen_indicated"] = bool(indicated)
+        if config.abundances is not None:
+            # The molecular closure has no trace metals; metal-bearing DABs keep
+            # the atomic mixture where the screen allows it.
+            if indicated:
+                raise ValueError(
+                    "Molecular H/He chemistry is indicated, but the molecular "
+                    "workflow has no trace metals; no atomic substitute is selected"
+                )
+            return PhysicsSelection(
+                "dab",
+                "Trace metals: atomic H/He mixture (molecular chemistry negligible)",
+                d,
+                False,
+                False,
+            )
+        # Metal-free DABs always use the molecular closure, at every Teff and
+        # gravity, so neighbouring grid models share one set of physics. Its
+        # molecular terms vanish smoothly where molecules are absent; the screen
+        # is recorded for provenance only.
+        d["include_molecules"] = True
         return PhysicsSelection(
-            "molecular-dab" if molecular else "dab",
-            (
-                "Molecular species/electron donation require the mixed molecular workflow"
-                if molecular
-                else "Molecular chemistry is negligible in the provisional line-forming region"
-            ),
+            "dab",
+            "Molecular H/He closure for every metal-free DAB (one route at all Teff/logg)",
             d,
-            g == 8
-            and config.log_hydrogen_to_helium == -2
-            and t in ((7500, 8000, 9000, 10000) if molecular else (20000,)),
-            bool(molecular),
+            (t, g, config.log_hydrogen_to_helium) in _MOLECULAR_DAB_TESTED_POINTS,
+            False,
         )
     raise AssertionError('unhandled supported model configuration')

@@ -8,7 +8,7 @@ automatically, and no flux is scaled.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, replace
 import json
 import os
 from pathlib import Path
@@ -73,13 +73,10 @@ class ModelRun:
 
 def _cool_commands(config, selection, directory):
     # Dense DB threads the requested gravity through its seed, solve and audit.
-    # Other preserved cool drivers still have fixed-gravity recipes.
+    if selection.workflow != "dense-db":
+        raise ValueError(f"no isolated cool worker for workflow {selection.workflow!r}")
     if config.quality != "production":
         raise ValueError('The automatic cool workflow currently requires quality="production"; no different resolution is substituted')
-    if selection.workflow != "dense-db" and config.logg != 8.0:
-        raise ValueError(
-            'The automatic cool workflow currently requires logg=8 and quality="production"; no different gravity/resolution is substituted'
-        )
     defaults = type(config)()
     for key in (
         "mixing_length_alpha",
@@ -96,59 +93,49 @@ def _cool_commands(config, selection, directory):
             "Preserved cool drivers currently require integer-K input; no temperature rounding is applied"
         )
     worker = directory / "worker"
-    if selection.workflow == "dense-db":
-        # Importing this command factory is unnecessary: keep the recipe in
-        # one canonical script and execute that script in its isolated worker.
-        return [
-            [
-                sys.executable,
-                "-m", "wd_spectra._cool.run_cool_db",
-                temperature,
-                "--logg", str(config.logg),
-                "--output-root",
-                str(worker),
-                "--allow-unqualified",
-            ]
-        ], worker / temperature / "experimental-spectrum.txt"
+    # Importing this command factory is unnecessary: keep the recipe in
+    # one canonical script and execute that script in its isolated worker.
+    return [
+        [
+            sys.executable,
+            "-m", "wd_spectra._cool.run_cool_db",
+            temperature,
+            "--logg", str(config.logg),
+            "--output-root",
+            str(worker),
+            "--allow-unqualified",
+        ]
+    ], worker / temperature / "experimental-spectrum.txt"
+
+
+def _molecular_dab_config(config, data, research_data):
+    """Enable the in-process molecular closure with the checksum-pinned CIA table."""
+    from .._cool.check_data import SHA256
+    import hashlib
+
     if config.h2_he_cia_path is not None:
-        raise ValueError(
-            "Automatic molecular recipe uses checksum-pinned research data; supply its directory through research_data, not an unverified CIA override"
+        path = Path(config.h2_he_cia_path).expanduser().resolve()
+    else:
+        if research_data is None:
+            research_data = os.environ.get("OPENWD_RESEARCH_DATA")
+        root = (
+            Path(research_data).expanduser().resolve()
+            if research_data is not None
+            else data.cache / "molecular-opacity"
         )
-    for key in (
-        "lyman_profile_source",
-        "allard_minimum_effective_temperature",
-        "balmer_self_broadening_prescription",
-        "balmer_self_broadening_truncation_closure",
-    ):
-        if getattr(config, key) != getattr(defaults, key):
-            raise ValueError(
-                f"Automatic molecular workflow cannot ignore an explicit {key} override"
-            )
-    command = [
-        sys.executable,
-        "-m", "wd_spectra._cool.run_molecular_dab_mass_experiment",
-        "--physical-detuning-lyman",
-        "--consistent-stark-edge",
-        temperature,
-        "--log-h-he",
-        str(config.log_hydrogen_to_helium),
-        "--physical-only",
-        "--stable-transfer",
-        "--step-method",
-        "nonlinear-convection-current-energy",
-        "--inner-scaling",
-        "svd",
-        "--inner-max-evaluations",
-        "1000",
-        "--max-iterations",
-        "35",
-        "--no-continuations",
-        "--state-sum-h2",
-        "--output-root",
-        str(worker),
-    ]
-    command.extend(["--pseudo-sweeps", "40", "--relax-bottom"])
-    return [command], worker / temperature / "spectrum.txt"
+        path = root / "H2-He_2011.cia"
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"Molecular DAB requires HITRAN H2-He_2011.cia at {path}; "
+            "see research/cool_models/README.md#additional-molecular-dab-data"
+        )
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    if digest.hexdigest() != SHA256["H2-He_2011.cia"]:
+        raise ValueError(f"{path}: differs from the checksum-pinned H2-He table; no replacement used")
+    return replace(config, include_molecules=True, h2_he_cia_path=str(path))
 
 
 def run_model(
@@ -164,8 +151,9 @@ def run_model(
 ):
     """Choose physics automatically and write a reproducible model run.
 
-    Cool recipes require production resolution. Dense DB preserves the requested
-    gravity; other cool recipes retain their logg=8 restriction. Public model
+    Dense DB requires production resolution and preserves the requested
+    gravity. Metal-free DABs run the in-process molecular H/He closure at every
+    Teff and gravity, with the checksum-pinned H2-He table. Public model
     runs are cold starts; saved atmospheres and neighboring stellar models are
     not accepted. Selection uses material diagnostics, not the list of tested Teff
     points. Failed/uncertified outputs are retained and warned about; optional
@@ -192,8 +180,11 @@ def run_model(
     print(json.dumps(_jsonable(asdict(selection)), sort_keys=True), flush=True)
     commands = []
     environment = os.environ.copy()
+    requested = config
+    if isinstance(config, DABConfig) and selection.diagnostics.get("include_molecules"):
+        config = _molecular_dab_config(config, data, research_data)
     # Every worker imports this installed package and runs in its own process.
-    isolated_worker = selection.workflow in ("dense-db", "molecular-dab")
+    isolated_worker = selection.workflow == "dense-db"
     if isolated_worker:
         if wave is not None or iteration_callback is not None:
             raise ValueError("Cool workers currently use their qualified output grid and stdout progress")
@@ -210,17 +201,11 @@ def run_model(
             "OPENWD_NUM_THREADS",
         ):
             environment[key] = "1"
-        if selection.workflow == "molecular-dab":
-            # Validation only; no download or alternate data lookup.
-            subprocess.run(
-                [sys.executable, "-m", "wd_spectra._cool.check_data"],
-                env=environment,
-                check=True,
-            )
     directory.mkdir(parents=True)
     manifest = dict(
         schema=1,
-        request=_jsonable(config),
+        request=_jsonable(requested),
+        effective_config=_jsonable(config),
         selection=_jsonable(asdict(selection)),
         initial_checkpoint=None,
         cold_start=True,
@@ -301,48 +286,17 @@ def run_model(
             for command in commands:
                 subprocess.run(command, env=environment, check=True)
             temperature = str(int(config.effective_temperature))
-            if selection.workflow == "dense-db":
-                qualified = (
-                    json.loads(
-                        (
-                            directory
-                            / "worker/audit"
-                            / temperature
-                            / "qualification.json"
-                        ).read_text()
-                    )["numerically_qualified_for_declared_experimental_physics"]
-                    is True
-                )
-            else:
-                check = subprocess.run(
-                    [
-                        sys.executable,
-                        "-m", "wd_spectra._cool.check_molecular_dab_result",
-                        str(directory / "worker" / temperature),
-                    ],
-                    env=environment,
-                    check=False,
-                    capture_output=True,
-                    text=True,
-                )
-                print(check.stdout, end="", flush=True)
-                if check.stderr:
-                    print(check.stderr, file=sys.stderr, end="", flush=True)
-                try:
-                    report = json.loads(check.stdout.strip().splitlines()[-1])
-                except (ValueError, IndexError) as exc:
-                    raise RuntimeError(
-                        "Molecular qualification checker did not return a result"
-                    ) from exc
-                if check.returncode not in (0, 1) or not isinstance(
-                    report.get("structure_grid_convergence_verified"), bool
-                ):
-                    raise RuntimeError(
-                        "Molecular qualification checker failed to execute"
-                    )
-                qualified = report["structure_grid_convergence_verified"]
-                if (check.returncode == 0) != qualified:
-                    raise RuntimeError("Inconsistent molecular qualification report")
+            qualified = (
+                json.loads(
+                    (
+                        directory
+                        / "worker/audit"
+                        / temperature
+                        / "qualification.json"
+                    ).read_text()
+                )["numerically_qualified_for_declared_experimental_physics"]
+                is True
+            )
         spectrum_values = np.loadtxt(spectrum_path)
         if (
             spectrum_values.ndim != 2

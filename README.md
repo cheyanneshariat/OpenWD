@@ -109,8 +109,9 @@ python -m pytest
 ## Data and license
 
 The atomic and constitutive data for all classes are bundled. The one
-exception is the molecular cool DAB/DBA workflow, which needs additional
-public tables described in the
+exception is the HITRAN H2-He collision-induced absorption table used by
+DAB/DBA models (`run_model` includes molecular H/He chemistry for every
+metal-free DAB), described in the
 [data instructions](research/cool_models/README.md#additional-molecular-dab-data).
 
 OpenWD source is BSD-3-Clause licensed. Scientific tables retain their own

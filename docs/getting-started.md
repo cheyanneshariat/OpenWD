@@ -170,18 +170,25 @@ See [DQ physics and limitations](models/DQ.md) and the
 
 ### Cool helium and mixed atmospheres
 
-The automatic interface screens local material conditions before solving and
-selects the dense-helium or molecular workflow when indicated. These workflows
-are included in the installed package and require `quality="production"`
-and integer-K temperatures. Dense DB preserves the requested gravity through
-the initializer, atmosphere calculation and independent spectrum audit.
-Molecular DAB retains its log g = 8 restriction. Their Python dependencies are included in the
-normal installation; there is no separate dependency extra to enable.
+The automatic interface screens local material conditions before solving. For
+pure-He DB it selects the dense-helium workflow when indicated; that workflow
+requires `quality="production"` and integer-K temperatures, and preserves the
+requested gravity through the initializer, atmosphere calculation and
+independent spectrum audit.
 
-Molecular DAB additionally needs the checksum-pinned public tables in the
+Every metal-free DAB/DBA request runs the in-process molecular H/He closure
+(H2, H2+, H-, H3+, HeH+, H2-He/H2-H2 CIA) at any temperature and gravity, so
+neighbouring models share one set of physics; the molecular terms vanish where
+molecules are absent. The H2 screen is recorded in the run manifest for
+provenance only. DABs with trace metals keep the atomic mixture and are refused
+where the screen indicates molecular chemistry. Python dependencies are
+included in the normal installation.
+
+Molecular DAB needs the checksum-pinned HITRAN `H2-He_2011.cia` table from the
 [data setup instructions](../research/cool_models/README.md#additional-molecular-dab-data).
-Supply their directory as `research_data=...` or set `OPENWD_RESEARCH_DATA`.
-OpenWD does not download those data during a model calculation.
+Supply its directory as `research_data=...` or set `OPENWD_RESEARCH_DATA`;
+otherwise it is read from the package data cache. OpenWD does not download it
+during a model calculation.
 
 ```python
 cool_db = run_model(
@@ -306,8 +313,9 @@ See [spectrum accuracy](limitations.md#spectrum-accuracy-and-reference-compariso
 The `compute_da`, `compute_daz`, `compute_db`, `compute_dab` and `compute_dz`
 interfaces return both an atmosphere and a spectrum in memory. They remain
 useful when you deliberately want a particular preset, but they do **not**
-provide the automatic dense/molecular workflow selection. Prefer `run_model`
-when changing parameters across regimes.
+provide the automatic workflow selection: `compute_dab` stays atomic unless you
+pass `DABConfig(include_molecules=True, ...)`, which is what `run_model` does
+for metal-free DABs. Prefer `run_model` when changing parameters across regimes.
 
 `compute_dq`, `compute_do`, `compute_dao` and `compute_pg1159` also return
 an atmosphere and spectrum in memory and run the same calculation as
