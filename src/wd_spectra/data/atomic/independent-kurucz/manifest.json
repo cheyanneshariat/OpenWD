@@ -1,0 +1,506 @@
+{
+  "version": 1,
+  "absorption_f_floor": 0.0001,
+  "screening_peak_ratio": 0.001,
+  "selection_uses_WD_observations": false,
+  "ions": {
+    "C_0": {
+      "element": "C",
+      "charge": 0,
+      "sha256": "93171325d6297000698dccab80098dbaecf8a570d610e5db4e8bc2a8e8abd680",
+      "strong_additions": 1,
+      "weak_rows": 0,
+      "legacy_level_extensions": [],
+      "evidence_sha256": "041fd06a88e27ccbafc1bf5752f24e964748e769d83e13e4427ae4c417ab16de"
+    },
+    "Si_0": {
+      "element": "Si",
+      "charge": 0,
+      "sha256": "2a1c0b50c625114d0f00ce3773a76c58c33dfbc7ba70a7566f1760b6fc5d8c14",
+      "strong_additions": 433,
+      "weak_rows": 26,
+      "legacy_level_extensions": [],
+      "evidence_sha256": "f1de74d20cbb0679e89c2ea013003998695a9aafe1385df96763b1bf0ca5fff5"
+    },
+    "Si_1": {
+      "element": "Si",
+      "charge": 1,
+      "sha256": "ed9130140a9f1259fc53fbd874d10e832fd45226b57d49d2b8695677c3752fb3",
+      "strong_additions": 17,
+      "weak_rows": 151,
+      "legacy_level_extensions": [],
+      "evidence_sha256": "8fdf59775666c2ff7c61ec45f051970fe1c1e6ff90f5d1a5188a48d5f08091e1"
+    },
+    "S_0": {
+      "element": "S",
+      "charge": 0,
+      "sha256": "3b8d914b3cea1a04a17d65182282338e163acf4117f757b3fb7522567f182948",
+      "strong_additions": 7,
+      "weak_rows": 0,
+      "legacy_level_extensions": [],
+      "evidence_sha256": "e12e3b10aa387bedd7a26e76db79a77bc0f0279bcf3974c50f0130ff18d5bbdd"
+    },
+    "Ti_0": {
+      "element": "Ti",
+      "charge": 0,
+      "sha256": "9de8a8b50c5e88d18d25274ac09e8e202edc76132f2249b243bc53562e3dc2e2",
+      "strong_additions": 4,
+      "weak_rows": 0,
+      "legacy_level_extensions": [],
+      "evidence_sha256": "d78dc14cf84e22192d0ed6d39661d6e667c3412b8a36faa0143f25fb4f0c7aa0"
+    },
+    "Cr_1": {
+      "element": "Cr",
+      "charge": 1,
+      "sha256": "d7989e97714a31354d6365a5fceac34788459db2ee40a6cecbb849a02e0bdc44",
+      "strong_additions": 14891,
+      "weak_rows": 5487,
+      "legacy_level_extensions": [
+        {
+          "index": 914,
+          "energy_wavenumber": 105682.267,
+          "statistical_weight": 16.0,
+          "label": "Kurucz 5D)4f 4[7]"
+        }
+      ],
+      "evidence_sha256": "e35bc4e3e57120e266038f01a4f9e2e57232e4dede7c3d75a1b0dfb32a055cfd"
+    },
+    "Fe_1": {
+      "element": "Fe",
+      "charge": 1,
+      "sha256": "7d58f99f51894d4f67e226975112eaf3d2f2601daf85332af0418073befb01be",
+      "strong_additions": 4613,
+      "weak_rows": 6339,
+      "legacy_level_extensions": [
+        {
+          "index": 1028,
+          "energy_wavenumber": 106524.4,
+          "statistical_weight": 16.0,
+          "label": "Kurucz 2Isp3P 2K"
+        }
+      ],
+      "evidence_sha256": "b3ce67b1ffbe59850b74c0ddfeaacb842facbcb959aeb2b7a3fe90464a9e6f3d"
+    }
+  },
+  "source_policy": {
+    "rule": "All Kurucz additions relative to original Stout: uniquely matched observed existing levels, both bound, and qualified independent strength agreeing within factor ten",
+    "strength_values_used": "Kurucz; no fitted oscillator strength or width adjustment",
+    "independent_source_priority": [
+      "reviewed NIST C-or-better",
+      "2024 MCDHF with reported gauge discrepancy <=0.25",
+      "independent observed-level calculation"
+    ],
+    "elements": [
+      "C",
+      "N",
+      "O",
+      "Na",
+      "Mg",
+      "Al",
+      "Si",
+      "P",
+      "S",
+      "Ca",
+      "Ti",
+      "Cr",
+      "Mn",
+      "Fe",
+      "Ni"
+    ],
+    "chromium_exception": false,
+    "previous_Kurucz_supplements_exempt": false,
+    "original_Stout_records_preserved": true,
+    "existing_level_set_preserved": true,
+    "WD_observations_used": false,
+    "f_floor": 0.0001,
+    "opacity_threshold": 0.001,
+    "report_by_ion": {
+      "C_0": {
+        "considered": 4615,
+        "qualified": 1,
+        "qualified_above_floor": 1,
+        "rejection_counts": {
+          "above_ionization_limit": 251,
+          "no_qualified_independent_strength": 4363
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 876,
+          "NIST-C_0:unmatched_or_invalid": 41,
+          "NIST-C_0:matched_pairs": 6
+        }
+      },
+      "C_1": {
+        "considered": 1307,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 1239,
+          "no_qualified_independent_strength": 68
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 1134,
+          "NIST-C_1:matched_pairs": 0
+        }
+      },
+      "N_0": {
+        "considered": 9348,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 3114,
+          "no_qualified_independent_strength": 6234
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 808,
+          "NIST-N_0:matched_pairs": 0
+        }
+      },
+      "N_1": {
+        "considered": 1,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 1
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 606,
+          "NIST-N_1:matched_pairs": 0
+        }
+      },
+      "O_0": {
+        "considered": 6088,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 4460,
+          "no_qualified_independent_strength": 1628
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 779,
+          "NIST-O_0:matched_pairs": 0
+        }
+      },
+      "O_1": {
+        "considered": 7211,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 1105,
+          "no_qualified_independent_strength": 6106
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 455,
+          "NIST-O_1:matched_pairs": 0
+        }
+      },
+      "Na_0": {
+        "considered": 263,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 197,
+          "no_qualified_independent_strength": 66
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 380,
+          "NIST-Na_0:matched_pairs": 0
+        }
+      },
+      "Na_1": {
+        "considered": 2318,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 2318
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 84,
+          "NIST-Na_1:matched_pairs": 0
+        }
+      },
+      "Mg_0": {
+        "considered": 3067,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 1529,
+          "no_qualified_independent_strength": 1538
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 648,
+          "NIST-Mg_0:matched_pairs": 0
+        }
+      },
+      "Mg_1": {
+        "considered": 259,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 252,
+          "no_qualified_independent_strength": 7
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 390,
+          "NIST-Mg_1:matched_pairs": 0
+        }
+      },
+      "Al_0": {
+        "considered": 832,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 657,
+          "no_qualified_independent_strength": 175
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 276,
+          "NIST-Al_0:matched_pairs": 0
+        }
+      },
+      "Al_1": {
+        "considered": 2192,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 2192
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 776,
+          "NIST-Al_1:matched_pairs": 0
+        }
+      },
+      "Si_0": {
+        "considered": 7357,
+        "qualified": 459,
+        "qualified_above_floor": 433,
+        "rejection_counts": {
+          "above_ionization_limit": 359,
+          "no_qualified_independent_strength": 6520,
+          "gross_strength_disagreement": 19
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 129,
+          "NIST-Si_0:unmatched_or_invalid": 15,
+          "NIST-Si_0:matched_pairs": 151,
+          "Pehlivan2024-Si_0:unmatched_or_invalid": 187,
+          "Pehlivan2024-Si_0:matched_pairs": 855,
+          "Pehlivan2024-BF-Si_0:matched_pairs": 15
+        }
+      },
+      "Si_1": {
+        "considered": 1809,
+        "qualified": 168,
+        "qualified_above_floor": 17,
+        "rejection_counts": {
+          "above_ionization_limit": 1324,
+          "no_qualified_independent_strength": 269,
+          "gross_strength_disagreement": 48
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 218,
+          "NIST-Si_1:matched_pairs": 0,
+          "Pehlivan2024-Si_1:matched_pairs": 368,
+          "Aggarwal2014:printed_nonzero_E1": 458,
+          "Aggarwal2014:mapped_levels": 50,
+          "AggarwalKeenan2014-Si_1:unmatched_or_invalid": 74,
+          "AggarwalKeenan2014-Si_1:matched_pairs": 384
+        }
+      },
+      "P_0": {
+        "considered": 10397,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 10397
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 17,
+          "NIST-P_0:matched_pairs": 0
+        }
+      },
+      "P_1": {
+        "considered": 2656,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 2656
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 8,
+          "NIST-P_1:matched_pairs": 0
+        }
+      },
+      "S_0": {
+        "considered": 7425,
+        "qualified": 7,
+        "qualified_above_floor": 7,
+        "rejection_counts": {
+          "above_ionization_limit": 6718,
+          "no_qualified_independent_strength": 700
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 246,
+          "NIST-S_0:unmatched_or_invalid": 3,
+          "NIST-S_0:matched_pairs": 20
+        }
+      },
+      "S_1": {
+        "considered": 5184,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 5184
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 145,
+          "NIST-S_1:matched_pairs": 0
+        }
+      },
+      "Ca_0": {
+        "considered": 7631,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 5071,
+          "no_qualified_independent_strength": 2560
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 45,
+          "NIST-Ca_0:matched_pairs": 0
+        }
+      },
+      "Ca_1": {
+        "considered": 41,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 41
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 76,
+          "NIST-Ca_1:matched_pairs": 0
+        }
+      },
+      "Ti_0": {
+        "considered": 7704,
+        "qualified": 4,
+        "qualified_above_floor": 4,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 7700
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 266,
+          "NIST-Ti_0:unmatched_or_invalid": 2,
+          "NIST-Ti_0:matched_pairs": 110
+        }
+      },
+      "Ti_1": {
+        "considered": 127,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 127
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 262,
+          "NIST-Ti_1:matched_pairs": 0
+        }
+      },
+      "Cr_0": {
+        "considered": 23836,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 9568,
+          "no_qualified_independent_strength": 14268
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 169,
+          "NIST-Cr_0:matched_pairs": 0
+        }
+      },
+      "Cr_1": {
+        "considered": 90236,
+        "qualified": 20378,
+        "qualified_above_floor": 14891,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 64470,
+          "gross_strength_disagreement": 5388
+        },
+        "source_matching_counts": {
+          "SRON:unknown_energy": 124912,
+          "SRON-Cr_1:unmatched_or_invalid": 8,
+          "SRON-Cr_1:matched_pairs": 25931,
+          "Ward2023-Cr_1:matched_pairs": 264,
+          "NIST:unreviewed_strength_provenance": 5,
+          "NIST-Cr_1:matched_pairs": 0
+        }
+      },
+      "Mn_0": {
+        "considered": 11568,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "above_ionization_limit": 5098,
+          "no_qualified_independent_strength": 6470
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 117,
+          "NIST-Mn_0:matched_pairs": 0
+        }
+      },
+      "Mn_1": {
+        "considered": 11390,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 11390
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 330,
+          "NIST-Mn_1:matched_pairs": 0
+        }
+      },
+      "Fe_0": {
+        "considered": 1148,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 1148
+        },
+        "source_matching_counts": {
+          "NIST:unreviewed_strength_provenance": 1765,
+          "NIST-Fe_0:matched_pairs": 0
+        }
+      },
+      "Fe_1": {
+        "considered": 96058,
+        "qualified": 10952,
+        "qualified_above_floor": 4613,
+        "rejection_counts": {
+          "no_qualified_independent_strength": 82795,
+          "gross_strength_disagreement": 2311
+        },
+        "source_matching_counts": {
+          "SRON:unknown_energy": 23346,
+          "SRON-Fe_1:unmatched_or_invalid": 588,
+          "SRON-Fe_1:matched_pairs": 17278
+        }
+      },
+      "Ni_0": {
+        "considered": 0,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {},
+        "source_matching_counts": {}
+      },
+      "Ni_1": {
+        "considered": 0,
+        "qualified": 0,
+        "qualified_above_floor": 0,
+        "rejection_counts": {},
+        "source_matching_counts": {}
+      }
+    }
+  }
+}

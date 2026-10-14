@@ -5,6 +5,7 @@ import sys
 from unittest.mock import patch
 
 import wd_spectra.metals as metals
+from independent_kurucz_control_legacy import previous_kurucz_defaults
 
 
 @contextmanager
@@ -42,6 +43,7 @@ def legacy_uv_atomic_controls():
                 bindings.append((module, name, without_trace_h_width))
     try:
         with ExitStack() as stack:
+            stack.enter_context(previous_kurucz_defaults())
             for module, name, replacement in bindings:
                 stack.enter_context(patch.object(module, name, replacement))
             yield

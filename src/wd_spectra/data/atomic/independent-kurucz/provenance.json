@@ -1,0 +1,389 @@
+{
+  "kurucz": {
+    "C_0": {
+      "url": "http://kurucz.harvard.edu/atoms/0600/gf0600.all",
+      "sha256": "8055d0db1e088b177b9fcaf8efc34530f62188555f470d92ad5c4471dbc00619",
+      "filename": "gf0600.all",
+      "bytes": 5319118
+    },
+    "C_1": {
+      "url": "http://kurucz.harvard.edu/atoms/0601/gf0601.all",
+      "sha256": "661f7ab1bc0b82abb1ac4fbe8308de0d6a3d7ec3762306c88037e3c8a5e72b4d",
+      "filename": "gf0601.all",
+      "bytes": 719619
+    },
+    "N_0": {
+      "url": "http://kurucz.harvard.edu/atoms/0700/gf0700.all",
+      "sha256": "2a42fdd5c9ed7406e0b18202802ca505587f0a1bddbde7b0409829c782a192d5",
+      "filename": "gf0700.all",
+      "bytes": 2331924
+    },
+    "N_1": {
+      "url": "http://kurucz.harvard.edu/atoms/0701/gf0701.lines",
+      "sha256": "8235ecd3d3c772fb653ea7068c0dc05d38835c1051212d6f699756674f607a9a",
+      "filename": "gf0701.lines",
+      "bytes": 27246352
+    },
+    "O_0": {
+      "url": "http://kurucz.harvard.edu/atoms/0800/gf0800.all",
+      "sha256": "aaf1d1e7b332f44158c69f0a1341f97fba466197d95c5a9fd1a819f439cbfb73",
+      "filename": "gf0800.all",
+      "bytes": 2170924
+    },
+    "O_1": {
+      "url": "http://kurucz.harvard.edu/atoms/0801/gf0801.all",
+      "sha256": "0f2bda660898a534518572072328bd2ecfd28495d9aa6c471c98ddd4cfa24439",
+      "filename": "gf0801.all",
+      "bytes": 1545598
+    },
+    "Na_0": {
+      "url": "http://kurucz.harvard.edu/atoms/1100/gf1100.all",
+      "sha256": "df3516b4c94fd98c81462019d914d8cd7bfa2a292fe569d9b47a4f9a9c031094",
+      "filename": "gf1100.all",
+      "bytes": 717416
+    },
+    "Na_1": {
+      "url": "http://kurucz.harvard.edu/atoms/1101/gf1101.all",
+      "sha256": "fd83ac88fa45bbf0004a363ada75316a80434a36e375567325aac8145607acbc",
+      "filename": "gf1101.all",
+      "bytes": 669921
+    },
+    "Mg_0": {
+      "url": "http://kurucz.harvard.edu/atoms/1200/gf1200.all",
+      "sha256": "8efc11d5545d2a2164983396adcc6e657606fa1fd606103f3f73d71e61401b34",
+      "filename": "gf1200.all",
+      "bytes": 1805896
+    },
+    "Mg_1": {
+      "url": "http://kurucz.harvard.edu/atoms/1201/gf1201.all",
+      "sha256": "61feb0e686c25f354fd7b8fa680471c5163695eef56767d8c43502b97a3c2e5c",
+      "filename": "gf1201.all",
+      "bytes": 455952
+    },
+    "Al_0": {
+      "url": "http://kurucz.harvard.edu/atoms/1300/gf1300.all",
+      "sha256": "c22d80418db369134bc5f56bcdc721f24a2e57a0bdfbeedaa98381d962973cef",
+      "filename": "gf1300.all",
+      "bytes": 575795
+    },
+    "Al_1": {
+      "url": "http://kurucz.harvard.edu/atoms/1301/gf1301.all",
+      "sha256": "f62a6cd6b54cd00f63536af7f152211842c551af9e6b111df4e4b387c77bfbba",
+      "filename": "gf1301.all",
+      "bytes": 780528
+    },
+    "Si_0": {
+      "url": "http://kurucz.harvard.edu/atoms/1400/gf1400.all",
+      "sha256": "1e19afe227cf138ce3bad912ea51ecd687db13994327633023b5e1e883faf3a3",
+      "filename": "gf1400.all",
+      "bytes": 1706310
+    },
+    "Si_1": {
+      "url": "http://kurucz.harvard.edu/atoms/1401/gf1401.all",
+      "sha256": "d18ba25a8496d777d4017039c1e0567533b250e4d14c2e2eb0c24e5295c12c19",
+      "filename": "gf1401.all",
+      "bytes": 484289
+    },
+    "P_0": {
+      "url": "http://kurucz.harvard.edu/atoms/1500/gf1500.lines",
+      "sha256": "9b218d7d956621a349e5499e36ed2713ac2a3ececa0681325c64e762290f8650",
+      "filename": "gf1500.lines",
+      "bytes": 32570300
+    },
+    "P_1": {
+      "url": "http://kurucz.harvard.edu/atoms/1501/gf1501.lines",
+      "sha256": "fc8630db904e5a5e80a88dd891e075413f0cfd000056328dcb1237b81a61f5af",
+      "filename": "gf1501.lines",
+      "bytes": 34943118
+    },
+    "S_0": {
+      "url": "http://kurucz.harvard.edu/atoms/1600/gf1600.all",
+      "sha256": "4ecc9423afb9e6855c31a2f4fdbf98e18c65220c95cffc6ffa477bd6546ae28f",
+      "filename": "gf1600.all",
+      "bytes": 3980242
+    },
+    "S_1": {
+      "url": "http://kurucz.harvard.edu/atoms/1601/gf1601.all",
+      "sha256": "e760841b5f85df79618a6a30da46dfa9e6d65cd89dcb70a16e2918b668df9fa3",
+      "filename": "gf1601.all",
+      "bytes": 1171275
+    },
+    "Ca_0": {
+      "url": "http://kurucz.harvard.edu/atoms/2000/gf2000.all",
+      "sha256": "4090001902987d979098a7af2025d17d2ff3d90e57937cf6cde8dce513d934d9",
+      "filename": "gf2000.all",
+      "bytes": 4040100
+    },
+    "Ca_1": {
+      "url": "http://kurucz.harvard.edu/atoms/2001/gf2001.lines",
+      "sha256": "b43a8b2a4fa1434d1d77cde8c11698becfa8a7fe25c88e3f958106939be13afd",
+      "filename": "gf2001.all",
+      "bytes": 8120196
+    },
+    "Ti_0": {
+      "url": "http://kurucz.harvard.edu/atoms/2200/gf2200.all",
+      "sha256": "0afdeb24cb48b10e89f528eb8c9336b11f23ffe6c6a57353018465ae5f4ae919",
+      "filename": "gf2200.all",
+      "bytes": 5648685
+    },
+    "Ti_1": {
+      "url": "http://kurucz.harvard.edu/atoms/2201/gf2201.all",
+      "sha256": "f5e6866e03f1f935276365392b2642695b33e8b9a230bc469093ccd15a30298d",
+      "filename": "gf2201.all",
+      "bytes": 1328089
+    },
+    "Cr_0": {
+      "url": "http://kurucz.harvard.edu/atoms/2400/gf2400.all",
+      "sha256": "18837387d52d1767ad6ae687e4fe246b3f84a6ec16eddd81372b4c934316ea44",
+      "filename": "gf2400.all",
+      "bytes": 5980668
+    },
+    "Cr_1": {
+      "url": "http://kurucz.harvard.edu/atoms/2401/gf2401.all",
+      "sha256": "6f0c4d0e01421fb0549ddbcf5649af391ca9b930e4e83e693e662d5874505205",
+      "filename": "gf2401.all",
+      "bytes": 14588693
+    },
+    "Mn_0": {
+      "url": "http://kurucz.harvard.edu/atoms/2500/gf2500.all",
+      "sha256": "283b9465a9a5c8e7c0295b0816b8e8d2a68db117c2f40470b4d5e4d19faba719",
+      "filename": "gf2500.all",
+      "bytes": 2704317
+    },
+    "Mn_1": {
+      "url": "http://kurucz.harvard.edu/atoms/2501/gf2501.all",
+      "sha256": "ee3df378d3a4a6cb56ed5d045cdf051745104837d3d7e6a4e05e3fa4469dd2be",
+      "filename": "gf2501.all",
+      "bytes": 6762000
+    },
+    "Fe_0": {
+      "url": "http://kurucz.harvard.edu/atoms/2600/gf2600.all",
+      "sha256": "a9abba11b782bd3c0369989b36701b7ecf586b4e9fb6f6c6b9aca1694df722dd",
+      "filename": "gf2600.all",
+      "bytes": 20332368
+    },
+    "Fe_1": {
+      "url": "http://kurucz.harvard.edu/atoms/2601/gf2601.all",
+      "sha256": "5a7d9d26eef58a2a32da523f8221f50cb08d3316cff20b45e22c8913e5390892",
+      "filename": "gf2601.all",
+      "bytes": 20069294
+    },
+    "Ni_0": {
+      "url": "http://kurucz.harvard.edu/atoms/2800/gf2800.lines",
+      "sha256": "047ca76709d05edb07a146266d6f1c91b3020765e5b672d908edce6e129f8404",
+      "filename": "gf2800.lines",
+      "bytes": 117877760
+    },
+    "Ni_1": {
+      "url": "http://kurucz.harvard.edu/atoms/2801/gf2801.all",
+      "sha256": "9851021fd68a8b4b73321aaae63e100b6a99539cd48a3f740e74e5ab53e62d08",
+      "filename": "gf2801.all",
+      "bytes": 9047073
+    }
+  },
+  "independent_sources": {
+    "CrII_2023.E1.loggf": {
+      "sha256": "42a32b765de060cee9c0fb2b3bf4f43ea6360abfce30b6b42374bfee58890a12",
+      "bytes": 12408693,
+      "url": "https://ftp.sron.nl/pub/tonr/orth/chromium/CrII.E1.loggf"
+    },
+    "nist/Cr_1.tsv": {
+      "sha256": "759a7aecd95c818c67117737643adc5b13bc4af2ade4f1e7efd2a37ae77eb3b1",
+      "bytes": 15750,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "aa682a184/ReadMe": {
+      "sha256": "0451799714ae3fb9fa972aef6309de281d83f9b702c30d731621dac8fe4be243",
+      "bytes": 13858,
+      "url": "https://cdsarc.cds.unistra.fr/ftp/J/A+A/682/A184/ReadMe"
+    },
+    "aa682a184/tableb1.dat": {
+      "sha256": "b0744a5bd33545fa631ff5088bfe4a0d488fc9d2226db9f6b5b78bf9bf91a685",
+      "bytes": 8702,
+      "url": "https://cdsarc.cds.unistra.fr/ftp/J/A+A/682/A184/tableb1.dat"
+    },
+    "aa682a184/tableb3.dat": {
+      "sha256": "ce6bb7d9a83ad5d8c229870c796d6ac3fe17babdfbb1241c9fbb6bc3d3650d61",
+      "bytes": 1700,
+      "url": "https://cdsarc.cds.unistra.fr/ftp/J/A+A/682/A184/tableb3.dat"
+    },
+    "aa682a184/tableb4.dat": {
+      "sha256": "b4b2041cb31c5460fcb91b7760b3890a3c5c988c93b868218db2a7fdc0de850f",
+      "bytes": 251412,
+      "url": "https://cdsarc.cds.unistra.fr/ftp/J/A+A/682/A184/tableb4.dat"
+    },
+    "aa682a184/tableb5.dat": {
+      "sha256": "76654e473716435e96a99562f2a05b9d1cc97a332d5676acc3b33a68f92bee48",
+      "bytes": 3018,
+      "url": "https://cdsarc.cds.unistra.fr/ftp/J/A+A/682/A184/tableb5.dat"
+    },
+    "aa682a184/tableb8.dat": {
+      "sha256": "9d4952c07398221ca58184a22da75296bf726e5151f6b66e236b1ea2357d4144",
+      "bytes": 51968,
+      "url": "https://cdsarc.cds.unistra.fr/ftp/J/A+A/682/A184/tableb8.dat"
+    },
+    "aggarwal2014.html": {
+      "sha256": "117a2753b3566fc0c3b8075843bdb5975450ce55fea818a4a917278b72217f6e",
+      "bytes": 417063,
+      "url": "https://doi.org/10.1093/mnras/stu883"
+    },
+    "aggarwal2014_tab2.pdf": {
+      "sha256": "764fcb40c3b4bae4cb80cb1829e3cb8bcceee48778eb21e13c34868307d1214c",
+      "bytes": 102009,
+      "url": "https://doi.org/10.1093/mnras/stu883"
+    },
+    "aggarwal2014_tab2.txt": {
+      "sha256": "30a619b23b2b517e3cc599c55ce699dc0234ff4b52dc431b3b16607c00e7d9d9",
+      "bytes": 186010,
+      "url": "https://doi.org/10.1093/mnras/stu883"
+    },
+    "ward2023/table5_mrt.txt": {
+      "sha256": "3c6ad94d2f9ef628bfec2f01497aef674ca4cf6ff1834b04cc6b8639c58c4c69",
+      "bytes": 36873,
+      "url": "https://content.cld.iop.org/journals/0004-637X/959/1/8/revision1/apjacfafet5_mrt.txt"
+    },
+    "nist/Al_0.tsv": {
+      "sha256": "1d7e906aa004ef2ca29bfec36531ad7e481885c2189832ba3e187b7b94f74dd9",
+      "bytes": 42799,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Al_1.tsv": {
+      "sha256": "aff269276215d87b744a5b7aa6ab51e0c46e8e806601ee6a5fae8ec422c7b61c",
+      "bytes": 127433,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/C_0.tsv": {
+      "sha256": "26ee7344af9cf3b74ab75d23837e3a7ce799b66a6e50045279ac0ec122d9d58a",
+      "bytes": 263847,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/C_1.tsv": {
+      "sha256": "bbb7040164a47795be9f2185697951450e872059329cf4671aa1e0e324ea873d",
+      "bytes": 229933,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Ca_0.tsv": {
+      "sha256": "927074c22d73b3565de0417b2819b9488b4d933df947e0e399b010c1af867635",
+      "bytes": 19262,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Ca_1.tsv": {
+      "sha256": "6f8bcc51e9ea0d419455bc4bf46c7dad75e4a837748f23b26f88be3634344593",
+      "bytes": 12953,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Cr_0.tsv": {
+      "sha256": "f521a849604776d05a743a5ae664a151750da459da754b7c5d03a47c1340396e",
+      "bytes": 93862,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Fe_0.tsv": {
+      "sha256": "9c7c2f701e93d7a33d2794428453e1eceda43de72d68d319a58e9a6d9429c412",
+      "bytes": 448083,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Mg_0.tsv": {
+      "sha256": "9e1997c0b05dbae66540e33ca30f6f86a7ff01b3f4f3a657cba617c48f44026c",
+      "bytes": 130163,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Mg_1.tsv": {
+      "sha256": "7d6e9dd45c3ea10f8485f1a6d8d5bcb8885f9926582997183b22a87d7700282c",
+      "bytes": 58045,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Mn_0.tsv": {
+      "sha256": "c4b816eb278f1d47944cce2646b03c59e0c522f18df1829c645bed6a1a89e393",
+      "bytes": 69945,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Mn_1.tsv": {
+      "sha256": "5e58e9945cb96499e8ef1beab66d4a2eba0eec4ff6e0eeaf49e94bfb6022a1db",
+      "bytes": 138760,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/N_0.tsv": {
+      "sha256": "9153be849a478ac0be08ef15d6b436bc0c7d0f4976ea320513fd861eff503f50",
+      "bytes": 184956,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/N_1.tsv": {
+      "sha256": "5155a366818fae1daf97b775d6468e5e9b12af5f2ebfc479a3a31d5166b5b07d",
+      "bytes": 99614,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Na_0.tsv": {
+      "sha256": "70171d212c4b02be38ed2f027fa8f54245c7bcd3d749d0adf8f48b6654b6ed00",
+      "bytes": 73393,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Na_1.tsv": {
+      "sha256": "61fab2e8a7c200d6819e2138b570050d2b2f5f7bf73fa750616bdf82d626adce",
+      "bytes": 25120,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/O_0.tsv": {
+      "sha256": "8c459008b0b98f513ae2c3b08392a057fa2d0f4d0bd022782f1a7fe47f381b3c",
+      "bytes": 124758,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/O_1.tsv": {
+      "sha256": "3c49c88f9d85dcc9474766266caae1ae5a358acf6e960198f1383252f0b81d40",
+      "bytes": 133418,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/P_0.tsv": {
+      "sha256": "49ad1cd6621251894eb4431ceac3076749285391c6e6181ec1023b47162ce087",
+      "bytes": 17123,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/P_1.tsv": {
+      "sha256": "ceb3db9cbfbcb84359a7b4da9adb14379b152b9140d814fd47c06b2433731c0a",
+      "bytes": 9524,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/S_0.tsv": {
+      "sha256": "c89e474238a32c765085530d4e34dc4b60b76a89ec711dfa1d68fb1a27118728",
+      "bytes": 178439,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/S_1.tsv": {
+      "sha256": "97c86ac7a07ee65bd6b7015072def6805c4d4562354bfea263f8f11e504a38a4",
+      "bytes": 114741,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Si_0.tsv": {
+      "sha256": "2f0518b64a1e79a3f2b32bc0d42b35b621fc0a879c0e2900339439fc85b4d9ed",
+      "bytes": 82608,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Si_1.tsv": {
+      "sha256": "bfaa5f7a91c86fb11db70ae00465df135507985f4a291a6496b66b6204c1657c",
+      "bytes": 57562,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Ti_0.tsv": {
+      "sha256": "c9c1619be0603cbdf77972c94efbe0f92ff420e43f732e9d483003c543e1a18e",
+      "bytes": 88399,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "nist/Ti_1.tsv": {
+      "sha256": "ad527651c6515b291b1d2bad7e2b710c99acbfb0c85c5d0e692bf84818350850",
+      "bytes": 77706,
+      "url": "https://physics.nist.gov/PhysRefData/ASD/lines_form.html"
+    },
+    "FeII_2021.E1.loggf": {
+      "sha256": "3564fdbc23fcff709054f84d07b6573b1a4f4c39ca184d61b451b81c9976b1d6",
+      "bytes": 3391052,
+      "url": "https://ftp.sron.nl/pub/tonr/orth/iron/FeII.E1.loggf"
+    }
+  },
+  "nist_reviewed_strength_references": [
+    "T10762",
+    "T3499",
+    "T4922",
+    "T6066",
+    "T7952",
+    "T9787"
+  ]
+}

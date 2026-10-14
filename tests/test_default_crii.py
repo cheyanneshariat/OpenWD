@@ -39,13 +39,13 @@ def test_default_crii_preserves_stout_and_other_ions(chromium_databases):
     assert len(original.levels) == 913
     assert len(original.transitions) == 138
     assert len(supplemented.levels) == 914
-    assert len(supplemented.transitions) == 90559
+    assert len(supplemented.transitions) == 138 + 14891
     assert supplemented.levels[:len(original.levels)] == original.levels
     assert supplemented.transitions[:len(original.transitions)] == original.transitions
     for key in raw.ions:
         if key != ("Cr", 1):
             assert default.ions[key] == raw.ions[key]
-    assert KURUCZ_CR_II_SHA256 in supplemented.source
+    assert "independently corroborated Kurucz" in supplemented.source
     fractional_change = (
         supplemented.partition_function(15000.0)
         / original.partition_function(15000.0) - 1.0
@@ -53,7 +53,7 @@ def test_default_crii_preserves_stout_and_other_ions(chromium_databases):
     assert 0.0 < fractional_change < 1.5e-5
 
 
-def test_default_crii_matches_the_full_explicit_kurucz_import(
+def test_default_crii_is_a_strict_subset_of_the_explicit_full_import(
     chromium_databases, tmp_path,
 ):
     raw, default = chromium_databases
@@ -68,7 +68,13 @@ def test_default_crii_matches_the_full_explicit_kurucz_import(
         supplement_missing_transitions=True,
     )
     assert explicit.ions["Cr", 1].levels == default.ions["Cr", 1].levels
-    assert explicit.ions["Cr", 1].transitions == default.ions["Cr", 1].transitions
+    full = explicit.ions["Cr", 1]
+    qualified = default.ions["Cr", 1]
+    assert len(qualified.transitions) < len(full.transitions)
+    full_pairs = {(t.lower_index, t.upper_index) for t in full.transitions}
+    pairs = [(t.lower_index, t.upper_index) for t in qualified.transitions]
+    assert len(pairs) == len(set(pairs))
+    assert set(pairs) <= full_pairs
 
 
 def test_default_crii_is_idempotent(chromium_databases):

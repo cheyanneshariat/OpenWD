@@ -14,7 +14,7 @@ def test_scoped_historical_atoms_restore_default_fe_even_after_exception(excepti
         # Populate the default cache before entering the historical scope.
         default = atomic_inputs()[0].ions[("Fe", 1)]
         default_keys = {(line.lower_index, line.upper_index) for line in default.transitions}
-        assert len(default.transitions) == 6869
+        assert len(default.transitions) == 6724 + 4613
         assert atomic_inputs.cache_info().currsize == 1
         try:
             with atomic_input_scope(legacy=True):
@@ -25,7 +25,7 @@ def test_scoped_historical_atoms_restore_default_fe_even_after_exception(excepti
                 }
                 assert len(historical.transitions) == 6724
                 assert old_keys < default_keys
-                assert len(default_keys - old_keys) == 145
+                assert len(default_keys - old_keys) == 4613
                 assert len(default.levels) == len(historical.levels) + 1
                 assert "Kurucz Fe II" not in historical.source
                 if exceptional_exit:

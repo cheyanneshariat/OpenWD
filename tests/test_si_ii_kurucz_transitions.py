@@ -11,7 +11,8 @@ from wd_spectra.models import DAZConfig, DZConfig, ModelData
 @pytest.fixture(scope="module")
 def stout():
     return read_stout_atomic_database(
-        ModelData.default().stout, elements=("Si", "Mg"), maximum_charge=2
+        ModelData.default().stout, elements=("Si", "Mg"), maximum_charge=2,
+        include_default_supplements=False,
     )
 
 

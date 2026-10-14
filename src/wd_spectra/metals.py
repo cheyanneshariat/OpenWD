@@ -851,6 +851,7 @@ class AtomicTransition:
     # Lorentzian He broadening of this line in helium atmospheres; see
     # atomic_database_with_si_ii_he_unified_profile.
     helium_unified_profile: "SiIIHeUnifiedProfile | None" = None
+    independently_validated_supplement: bool = False
 
 
 @dataclass(frozen=True)
@@ -864,6 +865,9 @@ class AtomicIon:
     levels: tuple[AtomicLevel, ...]
     transitions: tuple[AtomicTransition, ...]
     source: str = "Stout Atomic Line List"
+    # Qualified weak channels contribute to inferred natural widths, while
+    # the supplement absorption catalogue has a fixed f >= 1e-4 floor.
+    supplemental_downward_rates: tuple[tuple[int, float], ...] = ()
 
     def partition_function(
         self,
@@ -2730,8 +2734,9 @@ def read_stout_atomic_database(
     ``maximum_charge`` may be one common charge or an element-to-charge
     mapping.  Requesting charge ``Z`` appends a one-level bare nucleus, which
     closes the Saha ladder without requiring a non-existent Stout file.
-    By default the bundled Kurucz Cr II and Fe II missing-transition
-    supplements are applied when those ions are present.
+    By default the independently corroborated Kurucz supplement is applied.
+    It uses one observed-bound-level and independent-strength rule for every
+    ion, preserving original Stout records and the previous default levels.
     Set ``include_default_supplements=False``
     to read the unmodified Stout database for atomic-data comparisons.
     """
@@ -2764,8 +2769,8 @@ def read_stout_atomic_database(
             ions[(symbol, charge)] = ion
     database = AtomicDatabase(MappingProxyType(ions))
     if include_default_supplements:
-        database = augment_chromium_ii_kurucz_transitions(database)
-        database = augment_iron_ii_kurucz_uv_transitions(database)
+        from ._kurucz_supplements import augment
+        database = augment(database)
     return database
 
 
@@ -2788,7 +2793,8 @@ def augment_chromium_ii_kurucz_transitions(
 
     key = ("Cr", 1)
     ion = database.ions.get(key)
-    if ion is None or _KURUCZ_CR_II_SOURCE in ion.source:
+    from ._kurucz_supplements import SOURCE as validated_source
+    if ion is None or _KURUCZ_CR_II_SOURCE in ion.source or validated_source in ion.source:
         return database
     resource = files("wd_spectra").joinpath("data/atomic/gf2401.all.xz")
     content = lzma.decompress(resource.read_bytes())
@@ -2834,7 +2840,8 @@ def augment_iron_ii_kurucz_uv_transitions(
 
     key = ("Fe", 1)
     ion = database.ions.get(key)
-    if ion is None or _KURUCZ_FE_II_SOURCE in ion.source:
+    from ._kurucz_supplements import SOURCE as validated_source
+    if ion is None or _KURUCZ_FE_II_SOURCE in ion.source or validated_source in ion.source:
         return database
     resource = files("wd_spectra").joinpath("data/atomic/gf2601_uv_missing.all.xz")
     content = lzma.decompress(resource.read_bytes())
@@ -2879,7 +2886,8 @@ def augment_silicon_ii_kurucz_transitions(
 
     key = ("Si", 1)
     ion = database.ions.get(key)
-    if ion is None or _KURUCZ_SI_II_SOURCE in ion.source:
+    from ._kurucz_supplements import SOURCE as validated_source
+    if ion is None or _KURUCZ_SI_II_SOURCE in ion.source or validated_source in ion.source:
         return database
     resource = files("wd_spectra").joinpath("data/atomic/gf1401_observed.all.xz")
     content = lzma.decompress(resource.read_bytes())
@@ -8582,6 +8590,7 @@ def metal_line_mass_absorption_coefficient(
     rydberg_neutral_perturbers: bool = False,
     excluded_elements: Iterable[str] = (),
     transition_keys: Iterable[tuple[str, int, int, int]] | None = None,
+    supplement_background_absorption: ArrayLike | None = None,
     ion_departure_coefficient: Mapping[tuple[str, int], ArrayLike] | None = None,
     level_departure_coefficient: Mapping[tuple[str, int, int], ArrayLike] | None = None,
     profile_edge_optical_depth: float | None = None,
@@ -8646,6 +8655,12 @@ def metal_line_mass_absorption_coefficient(
     derive this mapping from the complete atmosphere, not the subset. Every
     eligible selected resonance requires an entry. Other callers retain the
     original optical-depth gate when this argument is None.
+    ``supplement_background_absorption`` enables a conservative all-depth
+    thermal-Doppler peak/background screen for independently corroborated
+    additions only. Original Stout lines, explicit ``transition_keys`` and
+    calculations with departure coefficients bypass this screen. Qualified
+    weak downward rates still enter natural widths even when their absorption
+    is below the catalogue floor or the opacity screen.
     """
 
     if linear_stark_profile not in ("two-level", "manifold"):
@@ -8832,6 +8847,11 @@ def metal_line_mass_absorption_coefficient(
                 for charge in range(populations.shape[0])
             },
         )
+    if (transition_keys is None and supplement_background_absorption is not None
+        and ion_departure_coefficient is None and level_departure_coefficient is None):
+        from ._kurucz_supplements import screen
+        selected = screen(atmosphere, wavelength, metal_state, selected,
+                          supplement_background_absorption)
     helium_density = (
         atmosphere.helium_lte_state.neutral_he_density
         if atmosphere.helium_lte_state is not None else np.zeros(atmosphere.n_depth)
@@ -8894,6 +8914,9 @@ def metal_line_mass_absorption_coefficient(
         for transition in ion.transitions:
             key = (ion.element, ion.charge, transition.upper_index)
             upper_rates[key] = upper_rates.get(key, 0.0) + transition.einstein_a
+        for upper_index, rate in ion.supplemental_downward_rates:
+            key = (ion.element, ion.charge, upper_index)
+            upper_rates[key] = upper_rates.get(key, 0.0) + rate
 
     lower_population_cache: dict[tuple[str, int, int], FloatArray] = {}
     level_survival_cache: dict[tuple[str, int, int], FloatArray] = {}

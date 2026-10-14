@@ -1,0 +1,250 @@
+{
+  "schema": 1,
+  "scope": "bounded warm trajectory and fixed-atmosphere spectrum",
+  "cold_start_qualification": false,
+  "steps": 2,
+  "config": {
+    "effective_temperature": 15680.0,
+    "logg": 6.3,
+    "abundances": {
+      "C": 0.0,
+      "O": 0.27,
+      "Ne": -1.86,
+      "Mg": -2.33,
+      "Al": -4.0,
+      "Si": -1.76,
+      "S": -2.84,
+      "Ca": -2.85,
+      "Fe": -3.0
+    },
+    "reference_element": "C",
+    "quality": "standard",
+    "mixing_length_alpha": 1.25,
+    "structure_maximum_metal_lines": null,
+    "formal_maximum_metal_lines": null,
+    "include_rydberg_dissolution": true,
+    "include_metal_series_pseudocontinuum": true,
+    "metal_series_pseudocontinuum_elements": [
+      "O",
+      "Mg",
+      "C"
+    ],
+    "include_linear_stark_quasistatic": true,
+    "linear_stark_profile": "manifold",
+    "include_oxygen_i_series_stark": true,
+    "microturbulent_velocity_kms": 0.0,
+    "line_profile_edge_optical_depth": 0.001
+  },
+  "source_name": "d6-j1637-openwd-v5-coldstart/atmosphere.npz",
+  "source_sha256": "86e963f5ab7178065264fa18a43d6e2a29a132fd1659e317f7b0d80868ddb932",
+  "source_cold_certificate": {
+    "schema": 1,
+    "scope": "declared equations on the structure grid",
+    "verified": true,
+    "checks": {
+      "all_depth_flux": {
+        "value": 4.423480692850035e-09,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "surface_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "photospheric_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "local_energy": {
+        "value": 0.00014367091560790876,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "temperature_stationarity": {
+        "value": 0.00015934034866658134,
+        "tolerance": 0.0003,
+        "passed": true,
+        "measured": true
+      },
+      "source_closure": {
+        "value": 1.911806824396143e-15,
+        "tolerance": 1e-06,
+        "passed": true,
+        "measured": true
+      },
+      "boundary_screening": {
+        "value": 4.4220126337291185e-16,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      }
+    },
+    "required_checks": [
+      "all_depth_flux",
+      "local_energy",
+      "temperature_stationarity",
+      "source_closure",
+      "boundary_screening"
+    ],
+    "failures": [],
+    "independent_grid_validation": false,
+    "full_physics_validation": false
+  },
+  "source_request": {
+    "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+    "code_sha256": "02d4d7a088743db2efd2b317dfa2121b3dae30a33f9238b4554c0d40909042a6",
+    "data_sha256": "026dc590d5d7fa8f035c5fed5f1847010d101e096dbe378af5900bc2a716b985",
+    "config": {
+      "effective_temperature": 15680.0,
+      "logg": 6.3,
+      "abundances": {
+        "C": 0.0,
+        "O": 0.27,
+        "Ne": -1.86,
+        "Mg": -2.33,
+        "Al": -4.0,
+        "Si": -1.76,
+        "S": -2.84,
+        "Ca": -2.85,
+        "Fe": -3.0
+      },
+      "reference_element": "C",
+      "quality": "standard",
+      "mixing_length_alpha": 1.25,
+      "structure_maximum_metal_lines": null,
+      "formal_maximum_metal_lines": null,
+      "include_rydberg_dissolution": true,
+      "include_metal_series_pseudocontinuum": true,
+      "metal_series_pseudocontinuum_elements": [
+        "O",
+        "Mg",
+        "C"
+      ],
+      "include_linear_stark_quasistatic": true,
+      "linear_stark_profile": "manifold",
+      "include_oxygen_i_series_stark": true,
+      "microturbulent_velocity_kms": 0.0,
+      "line_profile_edge_optical_depth": 0.001
+    }
+  },
+  "reference_commit": "6e5074ea8ffc3feba9f04bd621796a60b27f4ae6",
+  "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving:metal-audit-2026-09-30:default-feii-kurucz-uv-2026-10-12",
+  "data_sha256": "69ba82976c577f3c02af01a00cbc730b08350f6de6baa4a08edd38b6edc58dad",
+  "code_sha256": "14e2273a9ac39cd91f9c889d91404b2124ef7e0bb0aad39ee8befd28ba8e35a7",
+  "python": "3.9.16 | packaged by conda-forge | (main, Feb  1 2023, 21:38:11) \n[Clang 14.0.6 ]",
+  "numpy": "1.26.4",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "perturbation": "T * exp(0.015 * exp(-((log10(tau) + 2) / 1)**2))",
+  "metrics": [
+    "maximum_all_depth_total_flux_residual",
+    "maximum_relative_cell_energy_balance_residual",
+    "maximum_log_temperature_correction",
+    "scattering_source_maximum_relative_residual"
+  ],
+  "output_sha256": "4a082d47ea1ece82eab887b0c85be42f068f28d2fa7debc850c9061b740005cf",
+  "seed_sha256": "b97a305d5b27b19f5c1974f4a936565b47660521ff1f3249ac551d781eccaac5",
+  "timings_seconds": {
+    "trajectory": 2432.315073875,
+    "fixed_spectrum": 120.600996542
+  },
+  "independent_kurucz_manifest_sha256": "f0efa3b6012e25c4888722a154455e519e9a4857575e583e70004739b112226e",
+  "archived_reference": {
+    "name": "warm_v2_feii",
+    "manifest_sha256": "a68f8e9821e7d09ce1d90c0774765de4c8c7d115133db4f1955ce6206a967dbd",
+    "output_sha256": "5995096e7a79b7f66d6815bb878a48e8c0aa378203604c27bf0d6d38206d9289",
+    "seed_sha256": "70574a3c78a74f55e4c6c75c2b4f2b0d16b7d61a1ef398891de93a1aac8cb338",
+    "reference_commit": "1b7a61c68ba1ed02ff76b40dfb88cb4508efd43b"
+  },
+  "difference_from_previous": {
+    "profiles": {
+      "temperature": {
+        "maximum_absolute": 285.24854524587863,
+        "maximum_relative": 0.007553219947405987,
+        "maximum_relative_by_step": [
+          0.007053869998294493,
+          0.007553219947405987
+        ],
+        "maximum_relative_location": [
+          1,
+          44
+        ]
+      },
+      "gas_pressure": {
+        "maximum_absolute": 0.0,
+        "maximum_relative": 0.0,
+        "maximum_relative_by_step": [
+          0.0,
+          0.0
+        ],
+        "maximum_relative_location": [
+          0,
+          0
+        ]
+      },
+      "mass_density": {
+        "maximum_absolute": 2.2693752453162632e-08,
+        "maximum_relative": 0.01333604067995564,
+        "maximum_relative_by_step": [
+          0.012856662243420969,
+          0.01333604067995564
+        ],
+        "maximum_relative_location": [
+          1,
+          43
+        ]
+      },
+      "electron_density": {
+        "maximum_absolute": 772389720071872.0,
+        "maximum_relative": 0.005548185206458056,
+        "maximum_relative_by_step": [
+          0.005126702696979901,
+          0.005548185206458056
+        ],
+        "maximum_relative_location": [
+          1,
+          44
+        ]
+      }
+    },
+    "metrics": [
+      "maximum_all_depth_total_flux_residual",
+      "maximum_relative_cell_energy_balance_residual",
+      "maximum_log_temperature_correction",
+      "scattering_source_maximum_relative_residual"
+    ],
+    "previous_metrics": [
+      [
+        0.0014898377088827797,
+        1.460065003918907e-05,
+        0.01550688538071654,
+        1.5536085233319576e-15
+      ],
+      [
+        2.8981151678486583e-06,
+        5.579078060492068e-08,
+        0.0004022599096131785,
+        1.7045224143707904e-15
+      ]
+    ],
+    "current_metrics": [
+      [
+        0.00653202494158478,
+        3.0717518265813224e-05,
+        0.014033549434932624,
+        1.611723216566948e-15
+      ],
+      [
+        2.41851261517656e-05,
+        1.104350881175943e-07,
+        0.0007573268993166238,
+        1.5971100726711988e-15
+      ]
+    ]
+  }
+}

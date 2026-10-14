@@ -16,6 +16,7 @@ from wd_spectra.models.d6 import _atomic_inputs, _N_DEPTH, _STRUCTURE_LINES
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
 from uv_atomic_control_legacy import legacy_uv_atomic_controls
+from independent_kurucz_control_legacy import previous_kurucz_defaults
 
 STEPS = 2
 ARRAYS = ("temperature", "gas_pressure", "mass_density", "electron_density")
@@ -37,7 +38,7 @@ def atomic_inputs():
 
 
 @contextmanager
-def atomic_input_scope(*, legacy=False):
+def atomic_input_scope(*, legacy=False, previous=False):
     """Keep cached atoms local to a current or historical regression scope.
 
     The immutable pre-Fe controls need their original Fe II atom. A cache
@@ -45,8 +46,12 @@ def atomic_input_scope(*, legacy=False):
     physics identities. Clear it on both boundaries, including exceptions.
     """
     atomic_inputs.cache_clear()
+    if legacy and previous:
+        raise ValueError("Choose one historical atomic policy")
     try:
-        with legacy_uv_atomic_controls() if legacy else nullcontext():
+        context = (legacy_uv_atomic_controls() if legacy else
+                   previous_kurucz_defaults() if previous else nullcontext())
+        with context:
             yield
     finally:
         atomic_inputs.cache_clear()

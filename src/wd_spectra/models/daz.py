@@ -98,8 +98,8 @@ class DAZConfig:
     # tabulated Stark width, as DZConfig.kurucz_electron_stark.  False
     # restores the previous default without electron broadening for them.
     kurucz_electron_stark: bool = True
-    # Kurucz Si II transitions between existing Stout levels, as
-    # DZConfig.si_ii_kurucz_transitions.
+    # Legacy bare/custom-atom import switch, as DZConfig.si_ii_kurucz_transitions.
+    # The qualified default atom already includes its selected Si II lines.
     si_ii_kurucz_transitions: bool = True
 
 

@@ -26,6 +26,7 @@ from wd_spectra.models import (
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
 from uv_atomic_control_legacy import legacy_uv_atomic_controls
+from independent_kurucz_control_legacy import previous_kurucz_defaults
 
 CONTROLS = Path(__file__).parent / "data/spectral_regressions"
 APPROVED = Path(__file__).parent / "data/approved_regressions/fixed"
@@ -56,6 +57,10 @@ APPROVED_UV_ATOMIC = (
 APPROVED_MICROFIELD_HOSTS = (
     Path(__file__).parent
     / "data/approved_regressions/microfield_hosts_2026_10_12/fixed"
+)
+APPROVED_INDEPENDENT_KURUCZ = (
+    Path(__file__).parent
+    / "data/approved_regressions/independent_kurucz_2026_10_14/fixed"
 )
 
 
@@ -101,7 +106,7 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        approved_directory = APPROVED_UV_ATOMIC
+        approved_directory = APPROVED_INDEPENDENT_KURUCZ
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -146,6 +151,14 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
+        # Retain the exact predecessor and its tolerances as a separate check.
+        with previous_kurucz_defaults(), pytest.warns(AtmosphereConvergenceWarning):
+            predecessor = compute_dz(config, wave, initial_atmosphere=atmosphere,
+                                     relax_atmosphere=False)
+        with np.load(APPROVED_UV_ATOMIC / (case + ".npz")) as control:
+            previous_default_flux = control["surface_flux"]
+        np.testing.assert_allclose(predecessor.spectrum.surface_flux_lambda,
+            previous_default_flux, rtol=2e-6, atol=1e-12 * np.max(previous_default_flux))
         with legacy_uv_atomic_controls():
             # First recover the immediate predecessor without altering the
             # historical structure, EOS, metal populations or host microfields.
@@ -226,13 +239,14 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
             # Keep the historical control as an independent check: disabling the
             # Cr II supplement as well recovers the pre-Cr II spectrum.
             from wd_spectra.models import stellar
-            from wd_spectra.metals import KURUCZ_CR_II_SHA256
+            from wd_spectra._kurucz_supplements import SOURCE
 
-            assert KURUCZ_CR_II_SHA256 in result.metadata["atomic_lines"]
+            assert SOURCE in result.metadata["atomic_lines"]
             reader = stellar.read_stout_atomic_database
 
             def raw_stout(*args, **kwargs):
-                return reader(*args, **kwargs, include_default_supplements=False)
+                kwargs["include_default_supplements"] = False
+                return reader(*args, **kwargs)
 
             monkeypatch.setattr(stellar, "read_stout_atomic_database", raw_stout)
             with pytest.warns(AtmosphereConvergenceWarning):

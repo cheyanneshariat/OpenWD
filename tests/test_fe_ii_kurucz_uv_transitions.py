@@ -139,7 +139,7 @@ def test_default_reader_opt_out_and_idempotence(original):
     updated = read_stout_atomic_database(
         ModelData.default().stout, elements=("Fe", "Mg"), maximum_charge=2,
     )
-    assert len(updated.ions["Fe", 1].transitions) == len(original.ions["Fe", 1].transitions) + 145
+    assert len(updated.ions["Fe", 1].transitions) == len(original.ions["Fe", 1].transitions) + 4613
     assert augment_iron_ii_kurucz_uv_transitions(updated) is updated
 
 
