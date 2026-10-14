@@ -150,6 +150,9 @@ the same validity range for arbitrary metal abundances.
 
 ## H2 Lyman and Werner lines (opt-in)
 
+HST/COS comparisons for G29−38 and GD 133 at fixed published inputs are
+included in the [UV validation examples](DZ.md#ultraviolet-comparisons).
+
 `DAZConfig(h2_lyman_werner_lines=True)` adds photospheric H2 Lyman and
 Werner lines with fluorescent source functions to the final spectrum. The
 physics and data are the same as for DA; see the [DA guide](DA.md). In the
