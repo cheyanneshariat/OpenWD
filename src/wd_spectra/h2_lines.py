@@ -7,9 +7,11 @@ opacity and line source functions for the formal solution of a hydrogen atmosphe
 Line data are Robert L. Kurucz's ``h2bx.asc`` and ``h2cx.asc`` lists.  Only transitions whose two levels have
 measured (not calculated) energies contribute opacity: Kurucz flags calculated levels with negative energies, and
 their wavelengths are not reliable at COS resolution.  Every listed transition (measured or not) enters the
-radiative decay rates and fluorescent branch sums of its upper level, because the level decays through all of
-them.  Kurucz's gf includes the nuclear-spin weight divided by four,
-``gf = g_ns (2J''+1) f / 4`` (verified: it makes the radiative lifetimes of each upper level independent of J').
+fluorescent branch sums of its upper level, because the level decays through all of them.  Kurucz's gf includes
+the nuclear-spin weight divided by four, ``gf = g_ns (2J''+1) f / 4``, with g_ns set by the lower level (even J''
+para, odd J'' ortho).  Summed over each upper level, the Kurucz rates reproduce the bound emission rates of
+Abgrall, Roueff & Drira (2000) to about 1 per cent away from perturbed levels.  For every level they tabulate,
+the bound and dissociative decay rates are theirs, with the Kurucz branches rescaled to that bound total.
 
 Lower (X-state) levels are in LTE: collisional dissociation and three-body formation by H atoms (Glover & Abel
 2008) are far faster than photodissociation wherever the lines form.  Level populations follow from the EOS H2
@@ -81,7 +83,7 @@ class H2LymanWernerData:
     branch_wavelength_angstrom: np.ndarray  # every listed line
     branch_upper_index: np.ndarray
     branch_einstein_a: np.ndarray           # A_ul, s^-1
-    upper_bound_decay_rate: np.ndarray    # sum of all listed bound A per upper level
+    upper_bound_decay_rate: np.ndarray    # bound A per upper level (Abgrall et al. 2000 where tabulated)
     upper_dissociation_rate: np.ndarray   # A_c per upper level (Abgrall et al. 2000)
     source: str
 
@@ -99,8 +101,26 @@ def _verified(resource: str, sha256: str) -> bytes:
     return content
 
 
-def _abgrall_dissociation_fractions() -> dict[tuple[str, int, int], float]:
-    fractions: dict[tuple[str, int, int], float] = {}
+def _kurucz_einstein_a(wavelength_angstrom, gf, lower_j, upper_j) -> np.ndarray:
+    """Einstein A from Kurucz's gf = g_ns (2J''+1) f / 4.
+
+    Ortho/para is conserved, so the nuclear-spin weight follows the lower X level: even J'' para
+    (g_ns = 1), odd J'' ortho (g_ns = 3). J' parity gives the same answer only for P and R lines.
+    """
+    nuclear_spin = np.where(np.round(np.asarray(lower_j)) % 2 == 0, 1.0, 3.0)
+    return (
+        _EINSTEIN_A_FACTOR * (1.0e8 / np.asarray(wavelength_angstrom)) ** 2 * 4.0 * np.asarray(gf)
+        / (nuclear_spin * (2.0 * np.asarray(upper_j) + 1.0))
+    )
+
+
+def _abgrall_rates() -> dict[tuple[str, int, int], tuple[float, float]]:
+    """Abgrall, Roueff & Drira (2000) per (state, v, J): total decay rate A_t and its dissociative part A_c.
+
+    A_t includes radiative dissociation (A_c <= A_t, and A_c -> A_t near the dissociation limit), so
+    the bound emission rate into X is A_t - A_c.
+    """
+    rates: dict[tuple[str, int, int], tuple[float, float]] = {}
     for state, (resource, sha256) in H2_ABGRALL_RESOURCES.items():
         for line in _verified(resource, sha256).decode("ascii").splitlines():
             if not line.strip():
@@ -110,17 +130,25 @@ def _abgrall_dissociation_fractions() -> dict[tuple[str, int, int], float]:
                 total, continuum = float(line[46:55]), float(line[58:67])
             else:
                 total, continuum = float(line[70:79]), float(line[82:91])
-            fractions[(state, v, j)] = continuum / total
-    return fractions
+            rates[(state, v, j)] = (total, continuum)
+    return rates
 
 
 @lru_cache(maxsize=1)
 def read_h2_lyman_werner_data() -> H2LymanWernerData:
-    """Load the bundled measured-level line list and dissociation fractions (checksums verified)."""
+    """Load the bundled line list and the Abgrall et al. (2000) level rates (checksums verified).
+
+    Kurucz's lines give the wavelengths, oscillator strengths and branching ratios. For every upper
+    level tabulated by Abgrall et al. (J <= 10), the bound decay rate is their A_t - A_c, with the
+    Kurucz branches rescaled to that total, and the dissociation rate is their A_c. Where rounding of
+    the tabulated values exceeds 1 per cent of A_t - A_c (levels that almost always dissociate), the
+    Kurucz bound sum is kept. Untabulated levels keep the Kurucz bound sum, with the dissociation
+    fraction of the highest tabulated J of the same (state, v).
+    """
 
     pattern = re.compile(r"101X\s*(\d+)\s+([BC])\s*(\d+)([CD]?)")
-    wavelength, gf, lower_energy, upper_j, upper_energy, state, upper_v, measured = (
-        [], [], [], [], [], [], [], []
+    wavelength, gf, lower_energy, lower_j, upper_j, upper_energy, state, upper_v, measured = (
+        [], [], [], [], [], [], [], [], []
     )
     for line in _verified(H2_LINE_RESOURCE, H2_LINE_SHA256).decode("latin-1").splitlines():
         if not line.strip():
@@ -132,6 +160,7 @@ def read_h2_lyman_werner_data() -> H2LymanWernerData:
         upper = float(line[37:48])
         measured.append(lower >= 0.0 and upper >= 0.0)
         lower_energy.append(abs(lower))
+        lower_j.append(float(line[17:22]))
         upper_j.append(float(line[32:37]))
         upper_energy.append(abs(upper))
         state.append("B" if match.group(2) == "B" else ("C-" if match.group(4) == "D" else "C+"))
@@ -139,26 +168,36 @@ def read_h2_lyman_werner_data() -> H2LymanWernerData:
     wavelength = np.asarray(wavelength)
     gf = np.asarray(gf)
     upper_j = np.asarray(upper_j)
-    # Upper B and C (u) states: odd J' para (g_ns = 1), even J' ortho (g_ns = 3).
-    upper_spin = np.where(upper_j % 2 == 1, 1.0, 3.0)
-    einstein_a = (
-        _EINSTEIN_A_FACTOR * (1.0e8 / wavelength) ** 2 * 4.0 * gf / (upper_spin * (2.0 * upper_j + 1.0))
-    )
-    keys = np.round(np.asarray(upper_energy), 2) * 100.0 + upper_j
+    einstein_a = _kurucz_einstein_a(wavelength, gf, np.asarray(lower_j), upper_j)
+    # Integer key: energy in 0.01 cm^-1 and J' in separate digits, so distinct levels cannot collide.
+    keys = np.round(np.asarray(upper_energy) * 100.0).astype(np.int64) * 1000 + np.round(upper_j).astype(np.int64)
     _, upper_index = np.unique(keys, return_inverse=True)
     n_upper = int(upper_index.max()) + 1
-    bound = np.bincount(upper_index, weights=einstein_a, minlength=n_upper)
-    fractions = _abgrall_dissociation_fractions()
-    p_upper = np.zeros(n_upper)
-    for i, (s, v, j) in enumerate(zip(state, upper_v, upper_j.astype(int))):
-        p = 0.0
-        for jj in range(min(j, 10), -1, -1):  # tabulated to J = 10; hold the J = 10 value above
-            if (s, v, jj) in fractions:
-                p = fractions[(s, v, jj)]
-                break
-        p_upper[upper_index[i]] = p
-    p_upper = np.minimum(p_upper, 0.99)
-    dissociation = bound * p_upper / (1.0 - p_upper)
+    label: dict[int, tuple[str, int, int]] = {}
+    for i, (s, v, j) in enumerate(zip(state, upper_v, np.round(upper_j).astype(int))):
+        label[int(upper_index[i])] = (s, v, int(j))
+    kurucz_bound = np.bincount(upper_index, weights=einstein_a, minlength=n_upper)
+
+    rates = _abgrall_rates()
+    bound = kurucz_bound.copy()
+    dissociation = np.zeros(n_upper)
+    for u, (s, v, j) in label.items():
+        if (s, v, j) in rates:
+            total, continuum = rates[(s, v, j)]
+            emission = total - continuum
+            rounding = 0.005 * (10.0 ** np.floor(np.log10(total)) + 10.0 ** np.floor(np.log10(max(continuum, 1e-300))))
+            if emission > 0.0 and rounding < 0.01 * emission:
+                bound[u] = emission
+            dissociation[u] = continuum
+        else:
+            fraction = 0.0
+            for jj in range(min(j, 10), -1, -1):  # untabulated J: hold the highest tabulated J
+                if (s, v, jj) in rates:
+                    total, continuum = rates[(s, v, jj)]
+                    fraction = min(continuum / total, 0.99)
+                    break
+            dissociation[u] = kurucz_bound[u] * fraction / (1.0 - fraction)
+    einstein_a = einstein_a * (bound / kurucz_bound)[upper_index]
     measured = np.asarray(measured)
     return H2LymanWernerData(
         wavelength_angstrom=wavelength[measured],
@@ -172,7 +211,8 @@ def read_h2_lyman_werner_data() -> H2LymanWernerData:
         upper_dissociation_rate=dissociation,
         source=(
             "Kurucz h2bx/h2cx H2 Lyman and Werner lines, opacity from transitions between measured "
-            f"levels (SHA256 {H2_LINE_SHA256}); radiative dissociation from Abgrall, Roueff & Drira (2000)"
+            f"levels (SHA256 {H2_LINE_SHA256}); level decay and radiative dissociation rates from "
+            "Abgrall, Roueff & Drira (2000)"
         ),
     )
 

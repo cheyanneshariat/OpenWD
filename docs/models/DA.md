@@ -155,8 +155,9 @@ stars below.
 
 - Line data: Kurucz's `h2bx`/`h2cx` lists, bundled and checksum-verified (see
   `src/wd_spectra/data/molecular/README.md`). Only transitions between
-  measured levels contribute opacity; every transition enters the upper-level
-  decay and branch sums.
+  measured levels contribute opacity; every transition sets the upper-level
+  branching ratios. Bound and dissociative decay rates of the levels
+  tabulated by Abgrall, Roueff & Drira (2000) are theirs.
 - Lower levels: LTE, from the EOS H2 density and the same Barklem & Collet
   partition function. Collisional dissociation and formation keep the
   molecule close to LTE where the lines form; photodissociation is negligible

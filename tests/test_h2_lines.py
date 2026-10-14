@@ -3,8 +3,15 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
+import re
+
 from wd_spectra.h2_lines import (
+    H2_LINE_RESOURCE,
+    H2_LINE_SHA256,
     H2_RADIATION_GRID_ANGSTROM,
+    _abgrall_rates,
+    _kurucz_einstein_a,
+    _verified,
     h2_line_mass_absorption,
     h2_partition_function,
     h2_source_function_ratio,
@@ -46,6 +53,56 @@ def test_kurucz_gf_convention_gives_j_independent_lifetimes(data):
     lifetimes = np.array(lifetimes)
     assert np.ptp(lifetimes) / lifetimes.mean() < 0.05
     assert lifetimes.mean() == pytest.approx(1.0 / 1.87e9, rel=0.1)
+
+
+def _kurucz_levels():
+    """(state, v', J') of every listed line, with its Kurucz Einstein A."""
+    pattern = re.compile(r"101X\s*(\d+)\s+([BC])\s*(\d+)([CD]?)")
+    labels, a = [], []
+    for line in _verified(H2_LINE_RESOURCE, H2_LINE_SHA256).decode("latin-1").splitlines():
+        if not line.strip():
+            continue
+        m = pattern.search(line)
+        state = "B" if m.group(2) == "B" else ("C-" if m.group(4) == "D" else "C+")
+        labels.append((state, int(m.group(3)), int(round(float(line[32:37])))))
+        a.append(_kurucz_einstein_a(float(line[0:10]) * 10.0, 10.0 ** float(line[10:17]),
+                                    float(line[17:22]), float(line[32:37])))
+    return labels, np.asarray(a)
+
+
+def test_nuclear_spin_weight_follows_the_lower_level():
+    # A Q line (J'' = J' = 1, ortho) and an R line (J'' = 0 para -> J' = 1) of equal gf and wavelength:
+    # g_ns is 3 for the first and 1 for the second, whatever the parity of J'.
+    q, r = _kurucz_einstein_a(1100.0, 0.1, [1.0, 0.0], [1.0, 1.0])
+    assert r == pytest.approx(3.0 * q)
+
+
+def test_kurucz_werner_q_branch_rates_match_abgrall():
+    # The C- (Pi-) levels decay only through Q lines; their summed Kurucz rates must reproduce the
+    # bound emission rates A_t - A_c of Abgrall, Roueff & Drira (2000) for every J'.
+    labels, a = _kurucz_levels()
+    rates = _abgrall_rates()
+    for j in (1, 2, 3, 4):
+        total = sum(ai for li, ai in zip(labels, a) if li == ("C-", 0, j))
+        at, ac = rates[("C-", 0, j)]
+        assert total == pytest.approx(at - ac, rel=0.03)
+
+
+def test_tabulated_levels_take_abgrall_rates_and_levels_are_distinct(data):
+    labels, _ = _kurucz_levels()
+    assert data.upper_bound_decay_rate.size == len(set(labels))
+    rates = _abgrall_rates()
+    branch_sum = np.bincount(data.branch_upper_index, weights=data.branch_einstein_a,
+                             minlength=data.upper_bound_decay_rate.size)
+    np.testing.assert_allclose(branch_sum, data.upper_bound_decay_rate, rtol=1e-12)
+    level = {}
+    for i, key in enumerate(labels):
+        level[key] = data.branch_upper_index[i]
+    for key in (("B", 0, 1), ("C+", 0, 2), ("C-", 0, 3)):
+        at, ac = rates[key]
+        u = level[key]
+        assert data.upper_bound_decay_rate[u] == pytest.approx(at - ac, rel=1e-9)
+        assert data.upper_dissociation_rate[u] == pytest.approx(ac, rel=1e-9)
 
 
 def test_source_ratio_is_one_in_a_thermal_radiation_field(data):
