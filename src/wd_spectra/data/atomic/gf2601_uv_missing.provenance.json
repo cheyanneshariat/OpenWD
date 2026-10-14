@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "description": "Unmodified Kurucz K13 observed-level Fe II rows absent from the bundled Stout transitions.",
+  "source_url": "http://kurucz.harvard.edu/atoms/2601/gf2601.all",
+  "source_full_sha256": "5a7d9d26eef58a2a32da523f8221f50cb08d3316cff20b45e22c8913e5390892",
+  "source_full_size_bytes": 20069294,
+  "resource": "gf2601_uv_missing.all.xz",
+  "decompressed_sha256": "0574e40ca8cae74f68f1b49488de6453841299dd0bdadc8cfc9a68a1a1e75242",
+  "decompressed_size_bytes": 23345,
+  "rows": 145,
+  "selection": {
+    "si_ii_1190_region": {
+      "vacuum_wavelength_interval_A": [
+        1189,
+        1198
+      ],
+      "rows": 142,
+      "criterion": "Missing E1 transitions with both energy and statistical weight matching existing Stout Fe II levels within 0.1 cm^-1 and equal weight; positive Kurucz level-energy signs."
+    },
+    "fe_ii_1357_1361_region": {
+      "vacuum_wavelengths_A": [
+        1357.7608449009015,
+        1357.796130685651,
+        1361.3736924907594
+      ],
+      "rows": 3,
+      "criterion": "Missing transitions at the observed 1357.8 feature and the 1361.37 blend; positive Kurucz level-energy signs."
+    }
+  },
+  "baseline_atom": {
+    "levels": 1008,
+    "transitions": 6724
+  },
+  "supplemented_atom": {
+    "levels": 1009,
+    "transitions": 6869
+  },
+  "new_level": {
+    "energy_cm1": 106524.4,
+    "statistical_weight": 16,
+    "label": "Kurucz 2Isp3P 2K",
+    "wavelength_A": 1357.796130685651,
+    "ideal_partition_fractional_increase_at_15300K": 6.929726558801974e-06
+  },
+  "unchanged": "All pre-existing Stout levels, transitions, oscillator strengths and damping data; all other ions.",
+  "references": [
+    {
+      "citation": "Jura et al. (2012)",
+      "url": "https://arxiv.org/abs/1203.2885",
+      "location": "Table 1",
+      "supports": "Fe II 1361.37 lower excitation 1.671 eV identifies the missing 1361.374 component."
+    },
+    {
+      "citation": "Williams et al. (2025)",
+      "url": "https://arxiv.org/abs/2506.19931",
+      "location": "Table A1",
+      "supports": "Lists both Fe II 1361.363 and 1361.374 in the COS line inventory."
+    },
+    {
+      "citation": "Smith (2010)",
+      "url": "https://arxiv.org/abs/0911.4747",
+      "location": "Fig. 2",
+      "supports": "Identifies Fe II 1190.883 and 1193.575 in the observed B-star UV atlas."
+    },
+    {
+      "citation": "van Noort et al. (1998)",
+      "url": "https://arxiv.org/abs/astro-ph/9803127",
+      "location": "Table 2",
+      "supports": "Identifies Fe II 1191.356 and 1195.055 with compatible energy/gf data."
+    },
+    {
+      "citation": "Eaton (2008)",
+      "url": "https://journalofastronomicaldata.be/JAD14/jad14_3/jad14_3.pdf",
+      "location": "Table 1",
+      "supports": "Identifies Fe II 1357.796 and 1361.373."
+    }
+  ],
+  "cautions": [
+    "Positive Kurucz energy signs indicate observed rather than predicted levels; the oscillator strengths are Kurucz calculations, not laboratory measurements.",
+    "The 1357.796 upper level is absent from the bundled Stout/NIST laboratory-confirmed level set; its Kurucz observed energy is retained with this explicit provenance.",
+    "Existing Fe II 1360.858 uses the NIST-evaluated Raassen/Uylings (1998) f; it is not replaced by the larger Kurucz value.",
+    "No abundance, profile scale or transition-strength adjustment is fitted to the white dwarfs."
+  ]
+}

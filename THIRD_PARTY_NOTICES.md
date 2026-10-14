@@ -54,6 +54,17 @@ source-code license. Credit Robert L. Kurucz and the
 in scientific uses. The decompressed checksum and default supplementation
 policy are recorded in the [atomic-data notes](src/wd_spectra/data/atomic/README.md).
 
+## Kurucz Fe II atomic line data
+
+`src/wd_spectra/data/atomic/gf2601_uv_missing.all.xz` contains 145 unmodified
+rows from Robert L. Kurucz's Fe II `gf2601.all` (K13), selected to add missing
+ultraviolet transitions. These independently authored scientific data are not
+covered by OpenWD's BSD source-code license. Credit Robert L. Kurucz and the
+[original source](http://kurucz.harvard.edu/atoms/2601/gf2601.all) in scientific
+uses. The selection, source/subset checksums and added-level provenance are
+recorded in the [atomic-data notes](src/wd_spectra/data/atomic/README.md) and
+`gf2601_uv_missing.provenance.json` beside the resource.
+
 ## Kurucz Si II atomic line data
 
 `src/wd_spectra/data/atomic/gf1401_observed.all.xz` contains the lines of

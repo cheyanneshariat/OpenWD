@@ -74,6 +74,10 @@ STOUT_ARCHIVE_SHA256 = "6be3a8ee145aa9364e06eec25348a3ac65cdcaf68951c52203b9bd7a
 KURUCZ_CR_II_URL = "http://kurucz.harvard.edu/atoms/2401/gf2401.all"
 KURUCZ_CR_II_SHA256 = "6f0c4d0e01421fb0549ddbcf5649af391ca9b930e4e83e693e662d5874505205"
 _KURUCZ_CR_II_SOURCE = "Kurucz Cr II gf2401.all missing-transition supplement"
+# Unmodified, observed-level UV rows from the checksum-pinned gf2601.all;
+# selection and full-source checksum are recorded in data/atomic/README.md.
+KURUCZ_FE_II_SHA256 = "0574e40ca8cae74f68f1b49488de6453841299dd0bdadc8cfc9a68a1a1e75242"
+_KURUCZ_FE_II_SOURCE = "Kurucz Fe II gf2601.all UV missing-transition supplement"
 # Observed-level subset of Kurucz's gf1401.all (see data/atomic/README.md).
 KURUCZ_SI_II_SHA256 = "8dc64ef88de44a91d59ec431b631149a87afca70f7a805a5b0537db4af1e0b39"
 _KURUCZ_SI_II_SOURCE = (
@@ -2726,8 +2730,9 @@ def read_stout_atomic_database(
     ``maximum_charge`` may be one common charge or an element-to-charge
     mapping.  Requesting charge ``Z`` appends a one-level bare nucleus, which
     closes the Saha ladder without requiring a non-existent Stout file.
-    By default the bundled Kurucz Cr II missing-transition supplement is
-    applied when Cr II is present. Set ``include_default_supplements=False``
+    By default the bundled Kurucz Cr II and Fe II missing-transition
+    supplements are applied when those ions are present.
+    Set ``include_default_supplements=False``
     to read the unmodified Stout database for atomic-data comparisons.
     """
 
@@ -2760,6 +2765,7 @@ def read_stout_atomic_database(
     database = AtomicDatabase(MappingProxyType(ions))
     if include_default_supplements:
         database = augment_chromium_ii_kurucz_transitions(database)
+        database = augment_iron_ii_kurucz_uv_transitions(database)
     return database
 
 
@@ -2798,6 +2804,53 @@ def augment_chromium_ii_kurucz_transitions(
     ions = dict(merged.ions)
     provenance = f"{_KURUCZ_CR_II_SOURCE} (SHA256 {KURUCZ_CR_II_SHA256})"
     ions[key] = replace(ions[key], source=f"{ion.source}; {provenance}")
+    return AtomicDatabase(
+        MappingProxyType(ions), source=f"{database.source}; {provenance}",
+    )
+
+
+def augment_iron_ii_kurucz_uv_transitions(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Add the bundled missing Fe II UV transitions without replacing data.
+
+    The 145 unmodified Kurucz K13 rows include 142 transitions between
+    existing Stout levels in 1189--1198 A and the missing 1357.761, 1357.796
+    and 1361.374-A components. All source level-energy signs are positive
+    (Kurucz's observed-level convention). Only 1357.796 requires a new
+    upper level: E=106524.400 cm^-1, g=16. Its contribution changes the
+    ideal Fe II partition function by 6.93e-6 at 15300 K.
+
+    Preserve all existing levels, transitions, oscillator strengths and
+    damping data; retain Kurucz damping constants on added lines. Match
+    levels by energy and statistical weight and calculate vacuum wavelengths
+    from their differences. No abundance or width factor is fitted. The
+    checksum is verified, no download is needed, and repeated calls are
+    idempotent. New databases have fresh line-selection and width caches.
+    """
+
+    import lzma
+    import tempfile
+
+    key = ("Fe", 1)
+    ion = database.ions.get(key)
+    if ion is None or _KURUCZ_FE_II_SOURCE in ion.source:
+        return database
+    resource = files("wd_spectra").joinpath("data/atomic/gf2601_uv_missing.all.xz")
+    content = lzma.decompress(resource.read_bytes())
+    if hashlib.sha256(content).hexdigest() != KURUCZ_FE_II_SHA256:
+        raise ValueError("Kurucz Fe II checksum mismatch: gf2601_uv_missing.all")
+    subset = AtomicDatabase(MappingProxyType({key: ion}), source=database.source)
+    with tempfile.TemporaryDirectory(prefix="openwd-feii-") as scratch:
+        path = Path(scratch) / "gf2601.all"
+        path.write_bytes(content)
+        merged = read_kurucz_gf100_atomic_database(
+            [path], subset, elements=("Fe",), replace_transitions=False,
+            supplement_missing_transitions=True,
+        )
+    provenance = f"{_KURUCZ_FE_II_SOURCE} (SHA256 {KURUCZ_FE_II_SHA256})"
+    ions = dict(database.ions)
+    ions[key] = replace(merged.ions[key], source=f"{ion.source}; {provenance}")
     return AtomicDatabase(
         MappingProxyType(ions), source=f"{database.source}; {provenance}",
     )
@@ -8783,10 +8836,18 @@ def metal_line_mass_absorption_coefficient(
         atmosphere.helium_lte_state.neutral_he_density
         if atmosphere.helium_lte_state is not None else np.zeros(atmosphere.n_depth)
     )
-    hydrogen_density = (
-        atmosphere.neutral_h_density
-        if metal_state.reference_species == "H" else np.zeros(atmosphere.n_depth)
-    )
+    if metal_state.reference_species == "H":
+        hydrogen_density = atmosphere.neutral_h_density
+    elif (
+        metal_state.reference_species == "He"
+        and metal_state.trace_hydrogen_state is not None
+    ):
+        # Trace H participates in the same charge closure as the metals.
+        # Its neutral atoms also broaden metal lines; the proton or total
+        # H-nucleus density must not be used for neutral collisions.
+        hydrogen_density = metal_state.trace_hydrogen_state.neutral_h_density
+    else:
+        hydrogen_density = np.zeros(atmosphere.n_depth)
     bulk_neutral_perturber_density = (
         {
             element: metal_state.ion_number_density[element][0]
@@ -9265,12 +9326,13 @@ def metal_line_mass_absorption_coefficient(
             )
         helium_collision_rate = np.array(collision_rate, dtype=np.float64)
         if hydrogen_impact_rate is not None:
-            collision_rate += hydrogen_impact_rate * hydrogen_density
+            hydrogen_collision_rate = hydrogen_impact_rate * hydrogen_density
         else:
-            collision_rate += (
+            hydrogen_collision_rate = (
                 hydrogen_impact_rate_coefficient * hydrogen_density
                 * (atmosphere.temperature / 10_000.0) ** 0.3
             )
+        collision_rate += hydrogen_collision_rate
         for element, density in bulk_neutral_perturber_density.items():
             rate = bulk_metal_impact_rates[element]
             if rate is not None:
@@ -9579,14 +9641,15 @@ def metal_line_mass_absorption_coefficient(
             if len(batch["center"]) >= 2_048:
                 flush_profile_batch(batch_key)
             if replacement_key == "HeUnified":
-                # Electron and radiative damping enter the unified profile as
-                # impact widths; neutral He is supplied by the profile itself.
+                # Electron, radiative and neutral-H damping remain impact
+                # widths; neutral He is supplied by the profile itself.
                 unified_he_lines.append((
                     center,
                     line.absorption_oscillator_strength,
                     population_factor,
                     np.broadcast_to(
-                        natural_rate + electron_stark_rate, (atmosphere.n_depth,)
+                        natural_rate + electron_stark_rate + hydrogen_collision_rate,
+                        (atmosphere.n_depth,),
                     ).astype(np.float64),
                     line.helium_unified_profile,
                 ))

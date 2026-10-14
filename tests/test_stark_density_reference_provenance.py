@@ -22,8 +22,16 @@ def digest(path):
 def test_density_edge_reference_provenance_and_preserved_old_controls():
     manifest = json.loads((DIRECTORY / "manifest.json").read_text())
     assert manifest["physics_revision"] == _MODEL_PHYSICS_REVISION
-    assert manifest["density_policy_revision"] == _MODEL_FAMILY_PHYSICS_REVISIONS["DA"]
-    assert manifest["density_policy_revision"] == _MODEL_FAMILY_PHYSICS_REVISIONS["DAB"]
+    # These controls pin the hydrogen density guard, not unrelated metal
+    # revisions also recorded in the family's composite physics identity.
+    # Require exactly one matching component, so a changed or duplicate
+    # density-policy revision still invalidates this provenance check.
+    for family in ("DA", "DAB"):
+        density_revisions = [
+            revision for revision in _MODEL_FAMILY_PHYSICS_REVISIONS[family].split(":")
+            if revision.startswith("hydrogen-stark-density-floor-")
+        ]
+        assert density_revisions == [manifest["density_policy_revision"]]
     assert manifest["approval"]["scope"] == "three versioned fixed-atmosphere references"
     records = manifest["records"]
     assert {record["case"] for record in records} == {"da-4000", "da-5000", "dab-9000"}
