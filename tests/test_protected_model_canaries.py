@@ -171,6 +171,7 @@ def _progress_callback(label, capsys):
     # Work guards, not physical tolerances. The flux-conserving
     # photosphere-concentrated depths (2026-10-01) took 82 and 55 iterations;
     # with uniform depths the 10 kK model needed 158 and did not certify.
+    # The column-mass default (DB-production-v5) took 66 and 63.
     [(10_000.0, 90), (22_000.0, 90)],
 )
 def test_protected_db_cold_starts_converge_without_fallback(
@@ -215,8 +216,10 @@ def test_standard_db_22000_enters_exact_flux_verification(capsys):
     assert result.atmosphere.n_depth == 40
     _assert_solver_control(result, "db-22000-standard", 3e-4, caught)
     assert metadata["maximum_all_depth_total_flux_residual"] < 3.0e-3
+    # Work guard, not a physical tolerance: the column-mass default
+    # (DB-production-v5, 2026-10-13) took 66 iterations here.
     assert (
-        metadata["radiative_equilibrium_iterations_including_domain_adaptation"] <= 60
+        metadata["radiative_equilibrium_iterations_including_domain_adaptation"] <= 80
     )
     assert metadata["nonlinear_solver_segments"][-1]["phase"] in (
         "formal-radiative-flux-completion",

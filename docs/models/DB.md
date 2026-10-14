@@ -113,8 +113,9 @@ above sigma Teff^4 by 0.5-1.3% at the coolest low-gravity points (production:
 (refinement 1) conserve it to 0.05%, but their spectral shape changes by about
 1.25% in the optical between 40 and 80 layers.
 Spectra differ from v4 by up to about 0.4% in the optical and infrared at
-production resolution (0.04% integrated in the optical at 22000/8.0); the DB
-cold-start regression references were captured with v4.
+production resolution (0.04% integrated in the optical at 22000/8.0). The DB
+cold-start canary references were recaptured with v5 (2026-10-14); the
+fixed-atmosphere spectral controls keep v4's optical-depth synthesis.
 
 ## Flux conservation (2026-10-01)
 

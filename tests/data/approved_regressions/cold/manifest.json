@@ -2217,19 +2217,20 @@
       "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/db-10000.npz",
       "historical_sha256": "9dc94bff2f6fa2e7c78c72980894c7a2dcbfa28cc218099d7ba82c0ae28ad430",
-      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/db-10000/atmosphere.npz",
-      "structure_sha256": "4f0f235dff432144fb85c666bbb2377b0db422ef8a033dc6adcbbdfadcdad159",
+      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-dab-allard/output/impl-check/canary-artifacts/db-10000/atmosphere.npz",
+      "structure_sha256": "b88650002514e364f75f392874d0dff81c38dacd42047d8b3606adf1d91e0ee9",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
-        "effective_temperature": 10000,
+        "effective_temperature": 10000.0,
         "logg": 8.0,
         "quality": "production",
         "mixing_length_alpha": 1.25,
         "atmosphere_solver": "adaptive-newton",
         "neutral_broadening": "unsold",
         "photospheric_depth_concentration": 1.0,
-        "synthesis_transfer_depth_refinement": 4
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -2237,7 +2238,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 0.0003199395346049627,
+            "value": 6.360473281397105e-08,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -2255,25 +2256,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 1.8128723986455994e-08,
+            "value": 3.633045875845737e-05,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 3.1298930665002445e-06,
+            "value": 9.849503131320603e-06,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.2604871097716865e-15,
+            "value": 1.5023552803919352e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 1.687326959035414e-24,
+            "value": 0.0,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -2291,10 +2292,10 @@
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "681d1f9041692fbc10e1fc837c318fc9277c3276f5ca360633b3c58a929eeecd",
-      "transfer_discretization": "formal-linear",
-      "source_error": 3.2416799222655622e-15,
-      "output_sha256": "7a3e88a83b0616c87dc9eada0a962421491310fc3ef2a07f8acb65cb984c182d"
+      "source_metadata_sha256": "3675949b7d76b17b7aa4a222bb27ae2ba6b3924027e21d345ad29e961de96d0f",
+      "transfer_discretization": "column-mass",
+      "source_error": 2.423290442410105e-16,
+      "output_sha256": "787c09435c3d9d440f965076b5a8bacc9b3735480581eb2076dfca9031d05dde"
     },
     {
       "case": "db-22000",
@@ -2302,19 +2303,20 @@
       "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/db-22000.npz",
       "historical_sha256": "5a173fdad17b118be448b80ad2add1004302db80b7a4de46891311395bc570f9",
-      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/db-22000/atmosphere.npz",
-      "structure_sha256": "ce8f6a458e6770ed4364147e3fa06c43fedb25affe9e60a64713a9193986204f",
+      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-dab-allard/output/impl-check/canary-artifacts/db-22000/atmosphere.npz",
+      "structure_sha256": "4262331594f48b6500e6ed6d8b2b8a26639a009bdd83b9c04fc43d706ca43a75",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
-        "effective_temperature": 22000,
+        "effective_temperature": 22000.0,
         "logg": 8.0,
         "quality": "production",
         "mixing_length_alpha": 1.25,
         "atmosphere_solver": "adaptive-newton",
         "neutral_broadening": "unsold",
         "photospheric_depth_concentration": 1.0,
-        "synthesis_transfer_depth_refinement": 4
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -2322,7 +2324,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 1.836983587466534e-07,
+            "value": 5.098687672067115e-08,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -2340,25 +2342,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 4.4219013160221615e-05,
+            "value": 0.0003631522868723148,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 5.283285669221982e-05,
+            "value": 2.940746568746988e-05,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.377219580025386e-15,
+            "value": 1.9792049070931527e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 6.106034891984727e-16,
+            "value": 4.661563715607799e-16,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -2376,10 +2378,10 @@
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "160254ac9002672b71fe3360d4e74b483b29fc94a78fae4b88d709805765b4c5",
-      "transfer_discretization": "formal-linear",
-      "source_error": 7.3413116485806e-16,
-      "output_sha256": "5796b62501d18ac19548a770e840b465715f8fd6dcd89890a49af3bf984e4586"
+      "source_metadata_sha256": "a0c84e1f8010f844808506f4c4835974a2f5b27bf66ffa2e6d3203960fd327b6",
+      "transfer_discretization": "column-mass",
+      "source_error": 2.4560013889702786e-16,
+      "output_sha256": "2126b6431cda0e4a2f865b2129f8bddc8c7f2dc4b554500d31e3a194972da933"
     },
     {
       "case": "db-22000-standard",
@@ -2387,19 +2389,20 @@
       "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/db-22000-standard.npz",
       "historical_sha256": "d603badf6456c6b3e039ae44b68fdafeefb6711112f4039e5c90a2a283356cd4",
-      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/db-22000-standard/atmosphere.npz",
-      "structure_sha256": "5caeb359f4dfb48df12969ce61de01e82d0ba2106a461475a84a932db38e0a40",
+      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-dab-allard/output/impl-check/canary-artifacts/db-22000-standard/atmosphere.npz",
+      "structure_sha256": "1575cef4a9f33168163fe95d5f0c6c6d4ac6efabfbd5dfdbbc4aff66bbe66fbd",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
-        "effective_temperature": 22000,
+        "effective_temperature": 22000.0,
         "logg": 8.0,
         "quality": "standard",
         "mixing_length_alpha": 1.25,
         "atmosphere_solver": "adaptive-newton",
         "neutral_broadening": "unsold",
         "photospheric_depth_concentration": 1.0,
-        "synthesis_transfer_depth_refinement": 4
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -2407,7 +2410,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 5.170743611060402e-09,
+            "value": 6.719858003378931e-11,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -2425,25 +2428,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 2.3065017134240113e-05,
+            "value": 0.0026619263367950404,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 4.310342435799141e-06,
+            "value": 0.00014700686575785937,
             "tolerance": 0.0003,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.0868972621445967e-15,
+            "value": 1.2685265674956616e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 2.579390932559562e-16,
+            "value": 2.3638682973950453e-16,
             "tolerance": 0.003,
             "passed": true,
             "measured": true
@@ -2461,10 +2464,10 @@
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "8bb27161bdc5db5f16d24b43774ef04548e8cdf0dc66c7e64d7b8b83e51e27e9",
-      "transfer_discretization": "formal-linear",
-      "source_error": 3.810562401803157e-16,
-      "output_sha256": "b78d4de5cfdfa36f259e8e8fc59a3978bb087af6375ff92e751b2ceda29c0103"
+      "source_metadata_sha256": "edabe012d0df36c5fc6d77bdf69d4396e5a300d3b4ee65f68b3b01f93eb80771",
+      "transfer_discretization": "column-mass",
+      "source_error": 2.3160342146743036e-16,
+      "output_sha256": "6a1452cf9536fb486a465dbb39567bfd4bdbe9e7e612e23d07e0b7d9dbcfbd42"
     }
   ]
 }
