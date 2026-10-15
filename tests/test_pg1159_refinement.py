@@ -9,8 +9,8 @@ from wd_spectra._pg1159_ali_temperature import REFINEMENT_LINE_VELOCITY_SAMPLES_
 from wd_spectra.models.pg1159 import PG1159Config, validate_config
 
 
-def test_refinement_is_opt_in():
-    assert PG1159Config().refine_upper_atmosphere is False
+def test_refinement_is_the_default():
+    assert PG1159Config().refine_upper_atmosphere is True
 
 
 def test_refinement_flag_must_be_boolean():

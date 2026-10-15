@@ -140,8 +140,8 @@ def one_shot_main(spectral_type: str) -> None:
         parser.add_argument("--mass-fraction", action="append", type=_assignment)
         parser.add_argument("--target-name", default="PG 1424+535")
         parser.add_argument("--oxygen-atom", choices=("compact14", "extended54-complete"), default="extended54-complete")
-        parser.add_argument("--refine-upper-atmosphere", action="store_true",
-                            help="converge tau_Ross < 1e-2 to local radiative equilibrium and re-certify")
+        parser.add_argument("--refine-upper-atmosphere", action=argparse.BooleanOptionalAction, default=True,
+                            help="converge tau_Ross < 1e-2 to local radiative equilibrium and re-certify (default)")
         parser.add_argument("--radiative-acceleration", action="store_true",
                             help="include radiation pressure in hydrostatic equilibrium")
     args = parser.parse_args()

@@ -31,7 +31,10 @@ def test_bad_input_fails_before_reading_data(changes,tmp_path):
 
 
 @pytest.mark.parametrize("trace_failure", [False, True])
-def test_public_result_has_flux_metadata_and_saves(tmp_path,monkeypatch,trace_failure):
+@pytest.mark.parametrize("refine_upper_atmosphere", [True, False])
+def test_public_result_has_flux_metadata_and_saves(
+    tmp_path,monkeypatch,trace_failure,refine_upper_atmosphere
+):
     data=ModelData(tmp_path/'data')
     for p in public.required_atomic_files(data,'extended54-complete'):
         p.parent.mkdir(parents=True,exist_ok=True);p.write_text('fixture')
@@ -52,6 +55,7 @@ def test_public_result_has_flux_metadata_and_saves(tmp_path,monkeypatch,trace_fa
         metal_population_damping:float=.25
         helium_population_damping:float=.4
         metal_population_relative_tolerance:float=1e-4
+        metal_rate_line_velocity_samples_kms:object=None
         carbon_levels_per_charge:object=None
         oxygen_levels_per_charge:object=None
         def rebuild_atmosphere(self,a,t,p):return a
@@ -69,7 +73,9 @@ def test_public_result_has_flux_metadata_and_saves(tmp_path,monkeypatch,trace_fa
             teff=a.effective_temperature,
             logg=a.logg,
             structure_acceleration_depth=m.coupled_population_acceleration_depth,
+            refinement=kwargs['refinement'],
         )
+        assert m.metal_rate_line_velocity_samples_kms is None
         return SimpleNamespace(atmosphere=replace(a,metadata={'radiative_equilibrium_converged':False}),population_state=SimpleNamespace(converged=trace_failure))
     monkeypatch.setattr(public,'solve_pg1159_atmosphere',solve)
     fractions={'He':.52,'C':.45,'O':.03}
@@ -88,11 +94,21 @@ def test_public_result_has_flux_metadata_and_saves(tmp_path,monkeypatch,trace_fa
         monkeypatch.setattr(public,'PG1159Equations',FormalEquations)
         fractions['N']=.01
     config=PG1159Config(quality='quick',mass_fractions=fractions)
+    if not refine_upper_atmosphere:
+        config=replace(config,refine_upper_atmosphere=False)
     with pytest.warns(RuntimeWarning,match='equilibrium certificate'):
         result=compute_pg1159(config,np.linspace(3800.,6800.,40),data=data)
     assert seen['teff'] == 110000.
     assert seen['logg'] == 7.
     assert seen['structure_acceleration_depth'] == 80
+    if refine_upper_atmosphere:
+        from wd_spectra._pg1159_ali_temperature import REFINEMENT_LINE_VELOCITY_SAMPLES_KMS
+        refinement_model,refinement_wave,refinement_options=seen['refinement']
+        assert refinement_model.metal_rate_line_velocity_samples_kms == REFINEMENT_LINE_VELOCITY_SAMPLES_KMS
+        np.testing.assert_array_equal(refinement_wave,np.geomspace(50.,10000.,60))
+        assert refinement_options == {'include_radiative_acceleration':False}
+    else:
+        assert seen['refinement'] is None
     assert result.metadata['cold_start'] is True
     assert result.metadata['ccc_maximum_shell']==8
     assert result.metadata['helium_ii_collision_model']=='ccc-scaled'

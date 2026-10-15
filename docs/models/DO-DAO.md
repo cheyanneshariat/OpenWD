@@ -312,6 +312,43 @@ H8 (130.88 min), with unchanged parameters and resolution. These timings
 also include concurrent workloads. Their [certificates and comparisons](../development/history/do-dao-transfer-cancellation-evidence.json)
 are separate from the historical seven-point matrix above.
 
+### Thin-layer thermal roots (2026-10-14)
+
+Four standard grid points of the October 8 grid (PR 18) reached the six-hour
+limit with flux and local-energy residuals already inside tolerance: DO
+90,000 and 120,000 K, and DAO 40,000 K (log H/He = 0) and 100,000 K
+(log H/He = 2), all at log g = 8. In each, one optically thin layer
+(`tau_Ross ~ 1e-6`) sat on a local extremum of its own energy residual, a
+runaway hot spike between cooler neighbours. The Jacobian then has a single
+near-null mode in that layer, the unrestricted temperature correction stays
+large, and the stationarity test never passes.
+
+- In DO, the spike forms when the continuation jumps from 80% to full NLTE.
+  Full NLTE is now approached through 0.9 and 0.95; DAO adds 0.95 to its
+  tenths.
+- In DAO 40,000 K it forms already in the Planck (0% NLTE) stage. There the
+  layer's energy residual is non-monotonic in its temperature: its only root
+  lies at 26.4 kK, but the solver settled on the negative maximum at 31.2 kK.
+  After two rejected Newton directions, the Planck stage now brackets the
+  root of that layer's full-transfer energy equation nearest its current
+  temperature and relaxes the other temperatures around it, as the full-NLTE
+  stage already did for its thin layers. The common driver still requires
+  merit reduction and the final certificate.
+
+Fresh standard cold starts on this source pass all five certificate gates:
+
+| Preset | Parameters | Time |
+| --- | --- | ---: |
+| DO standard | 60,000 K, log g=8 | 0.94 h |
+| DO standard | 90,000 K, log g=8 | 0.96 h |
+| DO standard | 120,000 K, log g=8 | 0.96 h |
+| DAO standard | 40,000 K, log g=8, log H/He=0 | 3.35 h |
+| DAO standard | 100,000 K, log g=8, log H/He=2 | 1.79 h |
+
+The DO and DAO 100,000 K runs never rejected a Newton direction, so the new
+Planck-stage bracket stayed dormant; the DO 60,000 K run took 4.55 h on the
+October 8 source.
+
 For details see the [release evidence](../development/history/do-dao-release-2026-09-20.md)
 and its [machine-readable measurements](../development/history/do-dao-cold-evidence.json).
 The release also includes successful public DO/DAO adapter tests, typed trial

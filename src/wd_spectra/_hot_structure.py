@@ -441,10 +441,15 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
     recovery = None
     recovery_hooks = {}
     proposal_builder = direction
-    if nlte_fraction == 1. and not fixed_temperature:
-        from ._hot_recovery import CoupledBracketedThermalPopulationCorrection
+    if nlte_fraction in (0., 1.) and not fixed_temperature:
+        from ._hot_recovery import (CoupledBracketedThermalPopulationCorrection,
+                                    PlanckBracketedThermalCorrection)
         from ._hot_recovery_fresh import FreshTangentFallback
-        proposals = CoupledBracketedThermalPopulationCorrection(
+        # The Planck stage has temperatures only; it gets the thermal root
+        # bracket without population restoration. Intermediate continuation
+        # stages keep the plain Newton driver.
+        proposals = (CoupledBracketedThermalPopulationCorrection if nlte_fraction == 1. else
+                     PlanckBracketedThermalCorrection)(
             evaluate, direction, temperature_tolerance, equations)
         recovery = FreshTangentFallback(proposals, equations)
         proposal_builder = recovery.direction
@@ -494,7 +499,7 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
     metadata['hot_nlte_recovery'] = dict(
         eligible=recovery is not None,
         activated=recovery.active if recovery is not None else False,
-        activation_rule='two rejected Newton directions at full NLTE',
+        activation_rule='two rejected Newton directions at the Planck or full NLTE stage',
         rejected_directions_observed=recovery.rejected_directions if recovery is not None else 0,
         extra_jacobian_evaluations=recovery.extra_jacobian_evaluations if recovery is not None else 0,
         extra_residual_evaluations=proposals.extra_residual_evaluations if recovery is not None else 0,

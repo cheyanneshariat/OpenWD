@@ -308,6 +308,9 @@ class HotAtmosphereResult:
     nonlinear_result: object
 
 
+_FINAL_NLTE_CONTINUATION_FRACTIONS = (0.9, 0.95)
+
+
 def solve_hot_nlte_atmosphere(seed, model, wavelength, *, maximum_iterations=120,
                               flux_tolerance=3e-3, temperature_tolerance=3e-4,
                               iteration_callback=None):
@@ -322,8 +325,15 @@ def solve_hot_nlte_atmosphere(seed, model, wavelength, *, maximum_iterations=120
             not isinstance(maximum_iterations, (int, np.integer)) or maximum_iterations<1):
         raise ValueError('maximum_iterations must be a positive integer')
     budget=min(maximum_iterations,model.population_maximum_iterations)
+    # Reaching full NLTE from 80% NLTE in one step can place one optically
+    # thin layer (tau_R ~ 1e-6) on a runaway hot branch: there the integral
+    # radiative-equilibrium equation hardly depends on temperature, the
+    # Jacobian has a near-null mode in that layer, and the stationarity test
+    # never passes (DO 90-120 kK six-hour timeouts). Approaching full NLTE
+    # through 0.9 and 0.95 stays on the smooth, certifiable branch.
     fractions=([1.] if maximum_iterations<=2 else
-               np.linspace(0.,1.,6 if model.log_hydrogen_to_helium is None else 11))
+               np.unique(np.r_[np.linspace(0.,1.,6 if model.log_hydrogen_to_helium is None else 11),
+                               _FINAL_NLTE_CONTINUATION_FRACTIONS]))
     state=None
     stages=[]
     offset=0
