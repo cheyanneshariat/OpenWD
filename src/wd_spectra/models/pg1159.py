@@ -40,7 +40,10 @@ class PG1159Config:
     population_tolerance: float = 1e-2
     # Converge the upper atmosphere (tau_Ross < 1e-2) to local radiative
     # equilibrium after certification and certify the refined structure.
-    refine_upper_atmosphere: bool = False
+    # Default since 2026-10-14: without it the layers above tau_Ross ~ 1e-3
+    # stay near the gray seed, whose heating barely depends on temperature,
+    # and a cold start cannot certify full equilibrium (PR 18, 110 kK/7.0).
+    refine_upper_atmosphere: bool = True
 
 
 @dataclass(frozen=True)

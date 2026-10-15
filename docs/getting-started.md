@@ -254,9 +254,9 @@ run = run_model(
 )
 ```
 
-`refine_upper_atmosphere=True` converges the layers above `tau_Ross = 1e-2`
-to local radiative equilibrium after the main solve and certifies the refined
-structure again; the tested cold starts use it. For the hottest stars add
+`refine_upper_atmosphere=True` (the default) converges the layers above
+`tau_Ross = 1e-2` to local radiative equilibrium after the main solve and
+certifies the refined structure again; the tested cold starts use it. For the hottest stars add
 `include_radiative_acceleration=True` (used for PG 1159-035 at 140000 K).
 Single-threaded cold starts of the three tested stars take 55–90 minutes.
 
@@ -276,7 +276,7 @@ print(status["model_metadata"]["atmosphere_convergence_status"])
 The CLI equivalent is:
 
 ```bash
-python examples/one_shot_pg1159.py --refine-upper-atmosphere --output results/pg1159-110000
+python examples/one_shot_pg1159.py --output results/pg1159-110000
 ```
 
 See the [PG 1159 guide](models/PG1159.md) for the physics and the
