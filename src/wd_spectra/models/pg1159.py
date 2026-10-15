@@ -41,8 +41,9 @@ class PG1159Config:
     # Converge the upper atmosphere (tau_Ross < 1e-2) to local radiative
     # equilibrium after certification and certify the refined structure.
     # Default since 2026-10-14: without it the layers above tau_Ross ~ 1e-3
-    # stay near the gray seed, whose heating barely depends on temperature,
-    # and a cold start cannot certify full equilibrium (PR 18, 110 kK/7.0).
+    # stay near the gray seed. Their heating residual passes the gate but
+    # barely depends on temperature, so they are not in local radiative
+    # equilibrium. Either way the certificate scope is spectrum-qualified.
     refine_upper_atmosphere: bool = True
 
 
