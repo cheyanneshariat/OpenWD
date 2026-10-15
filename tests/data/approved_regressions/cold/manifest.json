@@ -1849,17 +1849,18 @@
       "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-3000.npz",
       "historical_sha256": "eb3393a6ef5ce609ea09acad869502390f5df20ba50c1bbc96418cca0e2dbddb",
-      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-3000/atmosphere.npz",
-      "structure_sha256": "5212e5755524f3d71731cc63b89ca962327c7b52d5d9ecf2ee62af6c6a0a0886",
+      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-da-boundary/output/da-impl/da3000_g8.0/model/atmosphere.npz",
+      "structure_sha256": "416268664fae6cf92eb1aa6ad480ed3d358d4a9f6bdc36688321a6ce5b432954",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
-        "effective_temperature": 3000,
+        "effective_temperature": 3000.0,
         "logg": 8.0,
         "quality": "production",
         "lyman_profile_source": "allard",
         "allard_minimum_effective_temperature": 9000.0,
         "include_molecules": null,
+        "h2_lyman_werner_lines": false,
         "h3plus_partition_model": "neale-tennyson-1995",
         "mixing_length_alpha": 0.7,
         "use_cool_mean_3d_temperature_differential": false,
@@ -1867,8 +1868,10 @@
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
         "multigrid_initialization": false,
-        "photospheric_depth_concentration": 1.0,
-        "synthesis_transfer_depth_refinement": 4
+        "photospheric_depth_concentration": null,
+        "synthesis_transfer_depth_refinement": 4,
+        "lower_boundary_extensions": 4,
+        "convective_seed": true
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1876,7 +1879,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 0.0008630668700586597,
+            "value": 0.0011033697945950216,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
@@ -1894,25 +1897,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 0.00017876325176387792,
+            "value": 0.00013066813736130757,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 4.592096951228086e-05,
+            "value": 3.2969650685998886e-05,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.569042335022781e-15,
+            "value": 1.8179240227484997e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 4.0641985744810075e-211,
+            "value": 0.0,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
@@ -1930,10 +1933,10 @@
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "30ae8e93ba15e1fa135b7846675b6718e98f823385a25db19344da0b5749619f",
+      "source_metadata_sha256": "f528c5ac443dc0d8f7945b97115c9484e1339537c54a8a3b109bd8673cdd1630",
       "transfer_discretization": "formal-pchip",
-      "source_error": 1.2990324341140104e-12,
-      "output_sha256": "64a7e8133edcf105f5a45bc3089e25b84fe8c8a51f34c18bfda03a35f1aecb77"
+      "source_error": 8.68724881296348e-12,
+      "output_sha256": "39e58da249492f146c8cc02198fb328ff80cb872d8ad0a1426d596c7279537de"
     },
     {
       "case": "da-4000",
@@ -1941,17 +1944,18 @@
       "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-4000.npz",
       "historical_sha256": "7edd9babda32b1ddd06844508f96940a676680af060794e28446c40c26bb25bb",
-      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-4000/atmosphere.npz",
-      "structure_sha256": "b688a0a1724f1371ff72ef9d8cbdf98709cfcbc499a4a3c52f1839f8d1f4da9e",
+      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-da-boundary/output/da-impl/da4000_g8.0/model/atmosphere.npz",
+      "structure_sha256": "4ae29c4ae8c4da539f65a3ad12e1df331c74ad01728efb5c200f52771139730d",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
-        "effective_temperature": 4000,
+        "effective_temperature": 4000.0,
         "logg": 8.0,
         "quality": "production",
         "lyman_profile_source": "allard",
         "allard_minimum_effective_temperature": 9000.0,
         "include_molecules": null,
+        "h2_lyman_werner_lines": false,
         "h3plus_partition_model": "neale-tennyson-1995",
         "mixing_length_alpha": 0.7,
         "use_cool_mean_3d_temperature_differential": false,
@@ -1959,8 +1963,10 @@
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
         "multigrid_initialization": false,
-        "photospheric_depth_concentration": 1.0,
-        "synthesis_transfer_depth_refinement": 4
+        "photospheric_depth_concentration": null,
+        "synthesis_transfer_depth_refinement": 4,
+        "lower_boundary_extensions": 4,
+        "convective_seed": true
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -1968,7 +1974,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 7.139426862812215e-06,
+            "value": 7.80401793243346e-06,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
@@ -1986,25 +1992,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 0.00020439037144473937,
+            "value": 3.972048319567674e-06,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 7.667048015136402e-05,
+            "value": 2.1631335123117879e-07,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 2.218835976730803e-15,
+            "value": 1.825112946842639e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 5.553614004665993e-36,
+            "value": 0.0,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
@@ -2022,10 +2028,10 @@
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "03bd55ec617643339cfb34410d101b5f769bbfe75d2b013315bcceeb828a2144",
+      "source_metadata_sha256": "e5ebb957936905755a1531281415ea839dfc39472f5fc7fea814408c177774d3",
       "transfer_discretization": "formal-pchip",
-      "source_error": 6.924774351187161e-12,
-      "output_sha256": "f4e63a92938fa28f2a0944312e1bd6ce90c987a403bdcef63399f8e5e5edc091"
+      "source_error": 2.839405544791884e-12,
+      "output_sha256": "18bb967cfae460852e7afa20dca686cc94c08d331abac8826e95b8be8be97ca4"
     },
     {
       "case": "da-5000",
@@ -2033,17 +2039,18 @@
       "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving",
       "historical_input": "tests/data/spectral_regressions/da-5000.npz",
       "historical_sha256": "d4b82f6f7036898ad2282eb0b36779b77028290f4a708402429a6cf1e5258777",
-      "structure_input": "/private/tmp/claude-501/-Users-kareem-Proposals-gaia-wd-tools-spectral-model/56a7138d-9703-4030-be6a-be6c8e1a82b9/scratchpad/controls/artifacts/da-5000/atmosphere.npz",
-      "structure_sha256": "8efd5239658f3270d7971fc5ec2408e00dec96731ab1402999d6b79d9a764df8",
+      "structure_input": "/Users/kareem/Proposals/gaia/wd_tools/spectral_model/release/OpenWD-da-boundary/output/da-impl/da5000_g8.0/model/atmosphere.npz",
+      "structure_sha256": "03cced4028ce4aceec3635d43a40016dfa3916ca0f68f2a8a0ba1940ad385e58",
       "fixed_state_only": true,
       "fresh_equilibrium_not_claimed": true,
       "config": {
-        "effective_temperature": 5000,
+        "effective_temperature": 5000.0,
         "logg": 8.0,
         "quality": "production",
         "lyman_profile_source": "allard",
         "allard_minimum_effective_temperature": 9000.0,
         "include_molecules": null,
+        "h2_lyman_werner_lines": false,
         "h3plus_partition_model": "neale-tennyson-1995",
         "mixing_length_alpha": 0.7,
         "use_cool_mean_3d_temperature_differential": false,
@@ -2051,8 +2058,10 @@
         "balmer_self_broadening_truncation_closure": "stark-core",
         "atmosphere_solver": "adaptive-newton",
         "multigrid_initialization": false,
-        "photospheric_depth_concentration": 1.0,
-        "synthesis_transfer_depth_refinement": 4
+        "photospheric_depth_concentration": null,
+        "synthesis_transfer_depth_refinement": 4,
+        "lower_boundary_extensions": 4,
+        "convective_seed": true
       },
       "source_equilibrium_certificate": {
         "schema": 1,
@@ -2060,7 +2069,7 @@
         "verified": true,
         "checks": {
           "all_depth_flux": {
-            "value": 3.276749146241542e-06,
+            "value": 8.739218070430432e-06,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
@@ -2078,25 +2087,25 @@
             "measured": false
           },
           "local_energy": {
-            "value": 9.01740200614852e-06,
+            "value": 9.360571351571186e-05,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
           },
           "temperature_stationarity": {
-            "value": 1.961302139363852e-06,
+            "value": 2.1013013119741686e-05,
             "tolerance": 0.0002,
             "passed": true,
             "measured": true
           },
           "source_closure": {
-            "value": 1.2342019764229412e-15,
+            "value": 1.3541875232375328e-15,
             "tolerance": 1e-06,
             "passed": true,
             "measured": true
           },
           "boundary_screening": {
-            "value": 0.0007971626696856104,
+            "value": 4.606761751966533e-75,
             "tolerance": 0.002,
             "passed": true,
             "measured": true
@@ -2114,10 +2123,10 @@
         "full_physics_validation": false
       },
       "source_public_cold_start": true,
-      "source_metadata_sha256": "4ca04aa334fcd1033e4e70fc79ab360aa504bbcefee51b1e24ecb7cda278eea7",
+      "source_metadata_sha256": "ebb8a60d54b5486100cee58a881baee8943d1cd6d2128e1b37378b9bc832fad0",
       "transfer_discretization": "formal-pchip",
-      "source_error": 5.6201260296124035e-12,
-      "output_sha256": "4167d98c50a50bf01f82a1dd46cab45fec62e55b18d6890201f2030fbc1c9297"
+      "source_error": 2.0878065431752658e-12,
+      "output_sha256": "a370352266d13202ebfef6cb4119279e74c6aee32ec83129ea2dc58bd602df2f"
     },
     {
       "case": "dab-20000",

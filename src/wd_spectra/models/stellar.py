@@ -101,6 +101,18 @@ class DAConfig:
     # resolve it and the stronger setting only added solver iterations.
     photospheric_depth_concentration: float | None = None
     synthesis_transfer_depth_refinement: int = 4
+    # Cold solves whose lower boundary fails the absorption screen (alone or
+    # with other checks) are re-run cold with a 4x deeper Rosseland bottom and
+    # proportionally more layers, up to this many times.  The gray seed's
+    # tau = 100 bottom leaks in hot low-gravity hydrogen.  0 disables it.
+    lower_boundary_extensions: int = 4
+    # Cold seeds that are convectively unstable at Rosseland depth one take the
+    # Schwarzschild-limited (adiabatic) temperature below it, on layers spaced
+    # in pressure down to the seed's own tau_max.  The gray law put those
+    # layers in a few per cent of the column mass at up to three times the
+    # convective temperature; 4250-5000 K models then stalled at ~0.75
+    # sigma Teff^4.  Radiative seeds are unchanged.  False restores the gray seed.
+    convective_seed: bool = True
 
 
 @dataclass(frozen=True)
@@ -267,6 +279,11 @@ class DZConfig:
 _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0
 _ALLARD_MINIMUM_EFFECTIVE_TEMPERATURE_K = 9_000.0
 _ALLARD_TEMPERATURE_DEPENDENT_CUTOFF_K = 13_000.0
+# DA cold-start seed span (the hydrogen solver's defaults) and the bottom
+# optical-depth increase per lower-boundary extension.
+_DA_SEED_ROSSELAND_DEPTH_MINIMUM = 1.0e-10
+_DA_SEED_ROSSELAND_DEPTH_MAXIMUM = 1.0e2
+_DA_DEEPENING_FACTOR = 4.0
 
 
 def _metal_structure_line_budget(
@@ -450,6 +467,12 @@ def compute_da(
     )
     if config.h2_lyman_werner_lines and not molecules:
         raise ValueError("h2_lyman_werner_lines requires include_molecules")
+    if (
+        isinstance(config.lower_boundary_extensions, bool)
+        or not isinstance(config.lower_boundary_extensions, int)
+        or config.lower_boundary_extensions < 0
+    ):
+        raise ValueError("lower_boundary_extensions must be a nonnegative integer")
     self_broadening_prescription = _da_self_broadening_prescription(
         config.effective_temperature, config.balmer_self_broadening_prescription
     )
@@ -488,6 +511,7 @@ def compute_da(
                 config.balmer_self_broadening_truncation_closure
             ),
             structure_solver=config.atmosphere_solver,
+            convective_seed=config.convective_seed,
         )
         full_depth = (
             100 if config.quality == "production" else resolution.n_depth
@@ -570,28 +594,74 @@ def compute_da(
             record["coarse_grid"] = False
             record["depth_points"] = current_atmosphere.n_depth
             record["radiative_depth_refinements"] = depth_refinements
+            record["domain_expansion"] = len(domain_segments)
             iteration_callback(iteration + iteration_offset, current_atmosphere, record)
 
-        atmosphere = radiative_equilibrium_hydrogen_atmosphere(
-            config.effective_temperature,
-            config.logg,
-            n_depth=full_depth,
-            n_continuum_wavelength=resolution.n_continuum,
-            max_iterations=(
-                min(40, resolution.maximum_iterations)
-                if refine_radiative_grid and full_depth == 100
-                else resolution.maximum_iterations
-            ),
-            n_angle=min(resolution.n_angle, 3),
-            initial_temperature=(
-                None if atmosphere is None else atmosphere.temperature
-            ),
-            initial_column_mass=(
-                None if atmosphere is None else atmosphere.column_mass
-            ),
-            iteration_callback=full_callback,
-            **relaxation_kwargs,
-        )
+        cold_full_solve = initial_atmosphere is None
+        seed = atmosphere
+        tau_max = _DA_SEED_ROSSELAND_DEPTH_MAXIMUM
+        solve_depth = full_depth
+        domain_segments = []
+        for expansion in range(config.lower_boundary_extensions + 1):
+            atmosphere = radiative_equilibrium_hydrogen_atmosphere(
+                config.effective_temperature,
+                config.logg,
+                n_depth=solve_depth,
+                tau_max=tau_max,
+                n_continuum_wavelength=resolution.n_continuum,
+                max_iterations=(
+                    min(40, resolution.maximum_iterations)
+                    if refine_radiative_grid and solve_depth == 100
+                    else resolution.maximum_iterations
+                ),
+                n_angle=min(resolution.n_angle, 3),
+                initial_temperature=(
+                    None if seed is None else seed.temperature
+                ),
+                initial_column_mass=(
+                    None if seed is None else seed.column_mass
+                ),
+                iteration_callback=full_callback,
+                **relaxation_kwargs,
+            )
+            failures = atmosphere.metadata["equilibrium_certificate"]["failures"]
+            iterations = int(atmosphere.metadata["radiative_equilibrium_iterations"])
+            domain_segments.append(dict(
+                n_depth=atmosphere.n_depth,
+                seed_rosseland_depth_maximum=tau_max,
+                iterations=iterations,
+                absorption_escape_bound=atmosphere.metadata.get(
+                    "lower_boundary_absorption_escape_bound"
+                ),
+                failures=list(failures),
+            ))
+            if (
+                not cold_full_solve
+                or "boundary_screening" not in failures
+                or expansion == config.lower_boundary_extensions
+            ):
+                break
+            # The bottom leaks radiation. Re-solve the same request cold on a
+            # deeper seed: the warmer extrapolated cells of a supplied
+            # structure would be clamped to its old bottom temperature.
+            # Layers grow with the log-tau span to keep the depth spacing.
+            iteration_offset += iterations
+            tau_max *= _DA_DEEPENING_FACTOR
+            solve_depth = int(np.ceil(full_depth * (
+                np.log(tau_max / _DA_SEED_ROSSELAND_DEPTH_MINIMUM)
+                / np.log(_DA_SEED_ROSSELAND_DEPTH_MAXIMUM / _DA_SEED_ROSSELAND_DEPTH_MINIMUM)
+            )))
+            seed = None
+        domain_iterations = iteration_offset + iterations
+        if len(domain_segments) > 1:
+            atmosphere = replace(atmosphere, metadata={
+                **atmosphere.metadata,
+                "adaptive_domain_segments": domain_segments,
+                "adaptive_domain_expansions": len(domain_segments) - 1,
+                "radiative_equilibrium_iterations_including_domain_adaptation": (
+                    domain_iterations
+                ),
+            })
         if (
             refine_radiative_grid
             and full_depth == 100
@@ -602,12 +672,13 @@ def compute_da(
             # the unfinished 100-layer state is only an interpolated seed.
             # The fine solve must earn its own complete equilibrium certificate.
             coarse = atmosphere
-            iteration_offset = int(coarse.metadata["radiative_equilibrium_iterations"])
+            iteration_offset = domain_iterations
             depth_refinements = 1
             atmosphere = radiative_equilibrium_hydrogen_atmosphere(
                 config.effective_temperature,
                 config.logg,
-                n_depth=2 * full_depth,
+                n_depth=2 * coarse.n_depth,
+                tau_max=tau_max,
                 n_continuum_wavelength=resolution.n_continuum,
                 max_iterations=resolution.maximum_iterations,
                 n_angle=min(resolution.n_angle, 3),
