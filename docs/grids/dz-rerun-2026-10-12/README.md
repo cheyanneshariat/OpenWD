@@ -9,7 +9,7 @@ The selected DZ grid now has **321 numerical completions from 322 coordinates**:
 312 updated-source results and nine retained accepted older spectra. Four
 previously unsuccessful coordinates now pass. An older accepted spectrum remains
 selected wherever its fresh attempt failed. The selection is therefore mixed-source,
-with one remaining numerical failure. Overall coverage is **2,372/2,499**.
+with one remaining numerical failure. The later [DA/DB/DAB replacements](../da-db-dab-replacements-2026-10-15/README.md) bring overall selected coverage to **2,396/2,499**; the DZ selection and products are unchanged.
 
 [All outcomes, settings and certificates](RESULTS.json) ·
 [Source and selected-product index](SOURCE_INDEX.json) ·

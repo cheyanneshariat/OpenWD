@@ -92,7 +92,7 @@ depth convergence or unbiased parameter recovery.
 
 ## Spending and acceptance
 
-Final inclusive use is **11.2247981771 charged CPU node-hours out of 13**,
+The completed DZ replacement campaign used **11.2247981771 charged CPU node-hours out of 13**,
 from all nine registered allocations, including the cancelled pending job at zero
 charge. Full elapsed time, allocated billing and actual QOS factors are reconciled.
 No live reservation remains. No optional cluster grid is submitted. Further
@@ -114,3 +114,5 @@ Source evidence: [PR23](https://github.com/kareemelbadry/OpenWD/pull/23),
 [Draft PR27](https://github.com/kareemelbadry/OpenWD/pull/27) contains the
 authors' COS comparisons, including remaining metal-wing residuals and
 unsupported elements. Those comparisons have not been independently reproduced here.
+
+The separately authorized [October 15 DA/DB/DAB campaign](../da-db-dab-replacements-2026-10-15/README.md) finished its registered work with 4.6108680556 charged CPU node-hours. DAB has 653 fresh accepted results plus three retained older spectra; DA and DB bulk are held after failed required pilots. This charge is separate from the earlier 13-hour campaign. Optional grids remain unsubmitted.
