@@ -40,8 +40,9 @@ jobs:
     needs: plan
     if: needs.plan.outputs.requested == 'true'
     runs-on: ubuntu-latest
-    # The fast and fixed-spectrum suites run sequentially and can exceed 30 minutes.
-    timeout-minutes: 60
+    # Sequential fast (~26 min) and fixed-spectrum (~34 min) suites plus setup
+    # exceed one hour on hosted runners. Leave room for runner-speed variation.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

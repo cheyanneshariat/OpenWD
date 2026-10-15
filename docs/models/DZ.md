@@ -5,8 +5,8 @@
 `compute_dz` solves a helium-dominated polluted LTE atmosphere at fixed input
 abundances. Metals contribute electrons, bound-free opacity, sampled line
 blanketing, and therefore feed back on the relaxed structure. The default
-metal database uses Stout v3.00b4, adding the bundled Kurucz Cr II
-missing-transition supplement and a selected Fe II ultraviolet supplement
+metal database uses Stout v3.00b4, adding bundled Kurucz transitions with
+independent atomic-data corroboration under a common selection rule
 when those ions are present; see the [atomic-data notes](../../src/wd_spectra/data/atomic/README.md).
 The GD 40 preset
 includes levels through charge 3, dense-helium ionization shifts, and
@@ -60,12 +60,15 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   matched Stout transition down to f = 1e-4 with evaluated NIST ASD values
   (accuracy C or better), including 115--300 nm (Mg I 2852, Mg II h/k, Si II,
   C II, Al II, Fe I/II). The default retains existing Stout transition data
-  and adds missing Cr II transitions plus 145 selected Fe II ultraviolet
-  transitions from Kurucz, covering 1189--1198 Å and the 1357.8/1361.37-Å
-  features. The Fe II subset adds one upper level, with an ideal partition
-  increase of 6.93e-6 fractionally at 15300 K. Existing oscillator strengths and damping
-  records are retained; adding radiative branches can change a level's
-  total natural width. Selection and provenance are recorded in the
+  and uses the [independently corroborated Kurucz catalogue](../validation/independent-kurucz.md)
+  for missing transitions. The same rule covers 30 neutral/singly ionized
+  catalogues of 15 elements, admitting 19,966 absorption additions in seven
+  ions, including 14,891 Cr II and 4,613 Fe II transitions. Original Stout
+  oscillator strengths and damping records are retained; qualified weaker
+  radiative branches also contribute to inferred natural widths. The two
+  previously added Cr II/Fe II levels are retained; no further levels are
+  imported. This replaces the earlier unfiltered Cr II and selected Fe II/Si II
+  supplements. Selection and provenance are recorded in the
   [atomic-data notes](../../src/wd_spectra/data/atomic/README.md).
 - Neutral trace H now contributes its impact broadening to ordinary metal
   lines using the neutral-H density from the same metal/H charge closure.
@@ -116,22 +119,15 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   stay weaker than observed. Known approximations: LS potentials (no fine
   structure), no 3s² 3d–3s 3p² mixing, a constant transition dipole, and
   independent ab initio Si⁺–He potentials that give a smaller improvement.
-- `si_ii_kurucz_transitions=True` (the default since 2026-10-12; `False` keeps
-  Stout's Si II lines) adds Kurucz Si II transitions between
-  levels that Stout already contains but does not connect. Stout lists the
-  3s3p(³P°)3d ²F° levels (131677.1 and 131918.8 cm⁻¹) with no transitions, so
-  the strong 3s3p² ²D–²F° lines at 1305.59, 1309.45 and 1309.73 Å
-  (log gf +0.47, +0.32, −0.86) are missing. The bundled observed-level subset
-  of Kurucz's `gf1401.all` adds 1471 transitions and no levels; Kurucz-only
-  levels, mostly autoionizing states far above the first limit, are not
-  imported. In COS spectra of 11 polluted white dwarfs (v2 comparison with
-  airglow and interstellar lines masked, published parameters, fixed
-  structures) the whole-spectrum χ² per pixel falls by 25% for GALEX
-  J1931+0117, 24% for WD 1226+110, 6% for PG 0843+516 and 2% for PG 1015+161;
-  the five DBZs and the two 12000 K DAZs change by less than 0.5%. All 68
-  optical DZ/DAZ windows are unchanged (mean ratio 0.9999). The ²D level lies
-  6.86 eV above the ground, so the lines matter only in hot atmospheres. New regression
-  controls are in `tests/data/approved_regressions/si_kurucz_2026_10_12`.
+- The common catalogue admits 17 Si II absorption additions, including
+  1309.45/1309.73 Å. It holds out 1305.59 Å because its upper level is slightly
+  above the ground ionization limit. This calls for an autoionization/profile
+  treatment beyond the present bound-bound rule; it does not establish that
+  the observed resonance is spurious. The broad Si II 1260/1265 Å wings remain
+  weaker than observed. `si_ii_kurucz_transitions` is retained for configuration
+  compatibility with the earlier 1471-line import; it cannot broaden the
+  independently selected default atom. For a bare-Stout diagnostic, supply an
+  atom read with `include_default_supplements=False` and disable that legacy flag.
 - Verner's phfit2 fits supply ground-state edges for iron-group ions absent
   from `photo.dat` (Ti, Cr, Mn, Ni, ...). Bautista (1997) Fe I and NORAD Cr I
   level-resolved cross sections are bundled (xz-compressed, checksummed) and
@@ -245,10 +241,11 @@ The black curves are public Keck/HIRES spectra retrieved from the
 OpenWD predictions at the paper's fixed parameters and detected abundances
 (Tables 1 and 4). No atmospheric parameters or abundances were fitted.
 
-The default metal line list now includes the complete Kurucz Cr II
-`gf2401.all` missing-transition supplement. It preserves existing Stout
-levels, transitions and oscillator strengths, while adding absent transitions
-and their Kurucz damping constants. The file is bundled and checksum-verified,
+The default metal line list includes the independently corroborated Kurucz
+supplements, including the three Cr II HIRES recoveries at air 3368.05,
+3433.31 and 3585.29 Å. It preserves original Stout transitions and oscillator
+strengths while adding qualified absent transitions and their Kurucz damping
+constants. The data are bundled and checksum-verified,
 so these examples require no separate line-list download or custom atomic
 database. It is used in both atmospheric line blanketing and the final
 synthesis, subject to their normal line-selection budgets. See the
@@ -256,7 +253,7 @@ synthesis, subject to their normal line-selection budgets. See the
 
 The plotted spectra were computed with OpenWD commit
 [`57f95fc`](https://github.com/kareemelbadry/OpenWD/commit/57f95fc), plus this
-same Cr II supplement, using standard-quality relaxed atmospheres and
+earlier full Cr II supplement, using standard-quality relaxed atmospheres and
 ML2/alpha = 1.25 convection. They predate the metal-physics audit described
 above. The commands below generate new spectra with the current defaults at
 the same stellar parameters; they do not exactly reproduce these archived

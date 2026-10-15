@@ -11,6 +11,7 @@ from wd_spectra.models import load_atmosphere_checkpoint, AtmosphereConvergenceW
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
 from uv_atomic_control_legacy import legacy_uv_atomic_controls
+from independent_kurucz_control_legacy import previous_kurucz_defaults
 
 pytestmark = pytest.mark.spectral
 CONTROLS = Path(__file__).parent / "data/daz_regressions"
@@ -24,6 +25,9 @@ APPROVED_UV_ATOMIC = (
 APPROVED_SI_KURUCZ = (
     Path(__file__).parent / "data/approved_regressions/si_kurucz_2026_10_12/fixed"
 )
+APPROVED_INDEPENDENT_KURUCZ = (
+    Path(__file__).parent / "data/approved_regressions/independent_kurucz_2026_10_14/fixed"
+)
 
 
 @pytest.mark.parametrize("case", ["g149_28", "galex1931"])
@@ -32,7 +36,7 @@ def test_daz_paper_spectrum(case, monkeypatch):
     with np.load(path) as saved:
         config = DAZConfig(**json.loads(str(saved["config_json"])))
         wave = saved["wavelength"]
-    with np.load(APPROVED_UV_ATOMIC / ("daz-" + case + ".npz")) as approved:
+    with np.load(APPROVED_INDEPENDENT_KURUCZ / ("daz-" + case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
     with np.load(APPROVED_KURUCZ_STARK / ("daz-" + case + ".npz")) as stark_control:
@@ -73,6 +77,14 @@ def test_daz_paper_spectrum(case, monkeypatch):
     np.testing.assert_allclose(
         actual[significant], expected[significant], rtol=1e-3, atol=0
     )
+    with previous_kurucz_defaults(), pytest.warns(AtmosphereConvergenceWarning):
+        predecessor = compute_daz(config, wave, initial_atmosphere=atmosphere,
+                                  relax_atmosphere=False)
+    with np.load(APPROVED_UV_ATOMIC / ("daz-" + case + ".npz")) as control:
+        previous_default_flux = control["surface_flux"]
+    previous_significant = wave * previous_default_flux > 0.01 * np.max(wave * previous_default_flux)
+    np.testing.assert_allclose(predecessor.spectrum.surface_flux_lambda[previous_significant],
+                              previous_default_flux[previous_significant], rtol=1e-3, atol=0)
     with legacy_uv_atomic_controls():
         # Recover the immediate Si-Kurucz predecessor before the older chain.
         with pytest.warns(AtmosphereConvergenceWarning):

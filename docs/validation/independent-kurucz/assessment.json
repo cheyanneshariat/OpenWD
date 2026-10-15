@@ -1,0 +1,3593 @@
+{
+  "generated_UTC": "2026-10-14T19:30:12.583792+00:00",
+  "expected_pairs": 22,
+  "completed_pairs": 22,
+  "all_required_calculations_complete": true,
+  "all_completed_pair_controls_verified": true,
+  "object_fit_review_flags": [
+    {
+      "label": "relaxed-budget",
+      "slug": "wd1232",
+      "change": 0.05075294916876705
+    }
+  ],
+  "eligible_AC_cold_pairs": [
+    {
+      "status": "completed",
+      "label": "cold-budget",
+      "slug": "g29_38",
+      "paired_controls_identical": true,
+      "atomic_provenance_verified": true,
+      "arms": {
+        "baseline": {
+          "total_seconds": 300.444876292,
+          "model_seconds": [
+            300.38052362499997
+          ],
+          "peak_RSS_GiB": 1.667022705078125,
+          "reused_scientific_baseline": false,
+          "power_samples": 12,
+          "all_recorded_samples_AC": true,
+          "recorded_power_sources": [
+            "AC"
+          ],
+          "host_load_before": [
+            6.650390625,
+            7.22900390625,
+            8.72119140625
+          ],
+          "host_load_after": [
+            5.9775390625,
+            6.47265625,
+            7.9189453125
+          ],
+          "spectrum_sha256": "81c0c20cdaaa74c03b9d206d2c08c1cacfecae3d74cbb4bf6300673c3f69516b",
+          "equilibrium_certificate": {
+            "schema": 1,
+            "scope": "declared equations on the structure grid",
+            "verified": true,
+            "checks": {
+              "all_depth_flux": {
+                "value": 7.578354654924624e-08,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "surface_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "photospheric_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "local_energy": {
+                "value": 1.5437716473133482e-05,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "temperature_stationarity": {
+                "value": 1.6461305190063058e-06,
+                "tolerance": 0.0002,
+                "passed": true,
+                "measured": true
+              },
+              "source_closure": {
+                "value": 1.2669621988033516e-15,
+                "tolerance": 1e-06,
+                "passed": true,
+                "measured": true
+              },
+              "boundary_screening": {
+                "value": 7.058502642803415e-105,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              }
+            },
+            "required_checks": [
+              "all_depth_flux",
+              "local_energy",
+              "temperature_stationarity",
+              "source_closure",
+              "boundary_screening"
+            ],
+            "failures": [],
+            "independent_grid_validation": false,
+            "full_physics_validation": false
+          },
+          "solver_counts": {
+            "nonlinear_solver_residual_evaluations": 49,
+            "nonlinear_solver_jacobian_evaluations": 7,
+            "nonlinear_solver_accepted_iterations": 18,
+            "nonlinear_solver_rejected_trial_evaluations": 21
+          },
+          "physical_background_status": "verified",
+          "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-budget/g29_38/baseline",
+          "physical_background_spectrum_sha256": "1d2dadf299395dd10b0468c86bcaa9b621faf3d727542566b8daaaaa4f832b7d",
+          "physical_background_seconds": 97.2935505
+        },
+        "candidate": {
+          "total_seconds": 280.421935167,
+          "model_seconds": [
+            280.32398479200003
+          ],
+          "peak_RSS_GiB": 1.693572998046875,
+          "reused_scientific_baseline": false,
+          "power_samples": 12,
+          "all_recorded_samples_AC": true,
+          "recorded_power_sources": [
+            "AC"
+          ],
+          "host_load_before": [
+            5.9775390625,
+            6.47265625,
+            7.9189453125
+          ],
+          "host_load_after": [
+            3.8544921875,
+            5.45849609375,
+            7.10986328125
+          ],
+          "spectrum_sha256": "470dd9d6c8580126f7d9df14679ee9ab2f3964156361e49e2ff995ecd02ea9eb",
+          "equilibrium_certificate": {
+            "schema": 1,
+            "scope": "declared equations on the structure grid",
+            "verified": true,
+            "checks": {
+              "all_depth_flux": {
+                "value": 1.812559147218451e-07,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "surface_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "photospheric_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "local_energy": {
+                "value": 3.0052386818593446e-05,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "temperature_stationarity": {
+                "value": 3.23421715542338e-06,
+                "tolerance": 0.0002,
+                "passed": true,
+                "measured": true
+              },
+              "source_closure": {
+                "value": 1.2301537852026696e-15,
+                "tolerance": 1e-06,
+                "passed": true,
+                "measured": true
+              },
+              "boundary_screening": {
+                "value": 7.398189756025778e-105,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              }
+            },
+            "required_checks": [
+              "all_depth_flux",
+              "local_energy",
+              "temperature_stationarity",
+              "source_closure",
+              "boundary_screening"
+            ],
+            "failures": [],
+            "independent_grid_validation": false,
+            "full_physics_validation": false
+          },
+          "solver_counts": {
+            "nonlinear_solver_residual_evaluations": 48,
+            "nonlinear_solver_jacobian_evaluations": 7,
+            "nonlinear_solver_accepted_iterations": 17,
+            "nonlinear_solver_rejected_trial_evaluations": 21
+          },
+          "physical_background_status": "verified",
+          "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-budget/g29_38/candidate",
+          "physical_background_spectrum_sha256": "4255824fc82aca565595b104e99dd69ddb95b3b4b8702d08420a72f8054492bc",
+          "physical_background_seconds": 97.147705125
+        }
+      },
+      "raw_total_runtime_ratio": 0.9333556911599988,
+      "eligible_AC_cold_pair": true,
+      "measured_20_percent_limit_met": true,
+      "runtime_limit_evidence": "consecutive AC gray-start solves",
+      "observation_scores_available": true,
+      "score_kind": "chi-square with frozen observational processing",
+      "relative_fit_score_change": 0.0036457926780870675,
+      "object_fit_review_flag": false,
+      "local_fit_review_flags": [],
+      "physical_continuum_fit_score_change": 0.0001623834700579252,
+      "physical_continuum_object_review_flag": false,
+      "physical_continuum_local_review_flags": []
+    },
+    {
+      "status": "completed",
+      "label": "cold-other",
+      "slug": "gd61",
+      "paired_controls_identical": true,
+      "atomic_provenance_verified": true,
+      "arms": {
+        "baseline": {
+          "total_seconds": 769.8000259170001,
+          "model_seconds": [
+            769.733070542
+          ],
+          "peak_RSS_GiB": 2.964202880859375,
+          "reused_scientific_baseline": false,
+          "power_samples": 28,
+          "all_recorded_samples_AC": true,
+          "recorded_power_sources": [
+            "AC"
+          ],
+          "host_load_before": [
+            6.1904296875,
+            5.181640625,
+            5.7216796875
+          ],
+          "host_load_after": [
+            3.744140625,
+            4.34130859375,
+            5.0302734375
+          ],
+          "spectrum_sha256": "0403d739a2345c6613c6cb8ac2d9cfc00bcc0e6ca06a6d4da40cb72ada83e17c",
+          "equilibrium_certificate": {
+            "schema": 1,
+            "scope": "declared equations on the structure grid",
+            "verified": true,
+            "checks": {
+              "all_depth_flux": {
+                "value": 7.590339491270193e-06,
+                "tolerance": 0.003,
+                "passed": true,
+                "measured": true
+              },
+              "surface_flux": {
+                "value": null,
+                "tolerance": 0.003,
+                "passed": false,
+                "measured": false
+              },
+              "photospheric_flux": {
+                "value": null,
+                "tolerance": 0.003,
+                "passed": false,
+                "measured": false
+              },
+              "local_energy": {
+                "value": 4.3015525367746425e-05,
+                "tolerance": 0.003,
+                "passed": true,
+                "measured": true
+              },
+              "temperature_stationarity": {
+                "value": 2.3956596113094974e-05,
+                "tolerance": 0.0003,
+                "passed": true,
+                "measured": true
+              },
+              "source_closure": {
+                "value": 1.3116294727578158e-15,
+                "tolerance": 1e-06,
+                "passed": true,
+                "measured": true
+              },
+              "boundary_screening": {
+                "value": 7.23324069966491e-08,
+                "tolerance": 0.003,
+                "passed": true,
+                "measured": true
+              }
+            },
+            "required_checks": [
+              "all_depth_flux",
+              "local_energy",
+              "temperature_stationarity",
+              "source_closure",
+              "boundary_screening"
+            ],
+            "failures": [],
+            "independent_grid_validation": false,
+            "full_physics_validation": false
+          },
+          "solver_counts": {
+            "nonlinear_solver_residual_evaluations": 35,
+            "nonlinear_solver_jacobian_evaluations": 5,
+            "nonlinear_solver_accepted_iterations": 13,
+            "nonlinear_solver_rejected_trial_evaluations": 14
+          },
+          "physical_background_status": "verified",
+          "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/gd61/baseline",
+          "physical_background_spectrum_sha256": "3f47087438840f4c98f12617c65d9bb5b04a4cbc39a0cc1cc1e8521173ca4655",
+          "physical_background_seconds": 104.631354417
+        },
+        "candidate": {
+          "total_seconds": 730.9904037499999,
+          "model_seconds": [
+            730.8897574169999
+          ],
+          "peak_RSS_GiB": 2.8296661376953125,
+          "reused_scientific_baseline": false,
+          "power_samples": 27,
+          "all_recorded_samples_AC": true,
+          "recorded_power_sources": [
+            "AC"
+          ],
+          "host_load_before": [
+            3.744140625,
+            4.34130859375,
+            5.0302734375
+          ],
+          "host_load_after": [
+            5.0556640625,
+            5.33740234375,
+            5.26513671875
+          ],
+          "spectrum_sha256": "b07dfb245595872352f838642905f008401f19795c8eb22437c9130541879d2a",
+          "equilibrium_certificate": {
+            "schema": 1,
+            "scope": "declared equations on the structure grid",
+            "verified": true,
+            "checks": {
+              "all_depth_flux": {
+                "value": 8.582413213442663e-06,
+                "tolerance": 0.003,
+                "passed": true,
+                "measured": true
+              },
+              "surface_flux": {
+                "value": null,
+                "tolerance": 0.003,
+                "passed": false,
+                "measured": false
+              },
+              "photospheric_flux": {
+                "value": null,
+                "tolerance": 0.003,
+                "passed": false,
+                "measured": false
+              },
+              "local_energy": {
+                "value": 5.316687130570449e-05,
+                "tolerance": 0.003,
+                "passed": true,
+                "measured": true
+              },
+              "temperature_stationarity": {
+                "value": 2.0920289028225625e-05,
+                "tolerance": 0.0003,
+                "passed": true,
+                "measured": true
+              },
+              "source_closure": {
+                "value": 1.0825176043982586e-15,
+                "tolerance": 1e-06,
+                "passed": true,
+                "measured": true
+              },
+              "boundary_screening": {
+                "value": 7.199558441853105e-08,
+                "tolerance": 0.003,
+                "passed": true,
+                "measured": true
+              }
+            },
+            "required_checks": [
+              "all_depth_flux",
+              "local_energy",
+              "temperature_stationarity",
+              "source_closure",
+              "boundary_screening"
+            ],
+            "failures": [],
+            "independent_grid_validation": false,
+            "full_physics_validation": false
+          },
+          "solver_counts": {
+            "nonlinear_solver_residual_evaluations": 31,
+            "nonlinear_solver_jacobian_evaluations": 5,
+            "nonlinear_solver_accepted_iterations": 13,
+            "nonlinear_solver_rejected_trial_evaluations": 10
+          },
+          "physical_background_status": "verified",
+          "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/gd61/candidate",
+          "physical_background_spectrum_sha256": "b4a77a5f4283dc73a1345f7270c5f3625d41ea85388846e2f2057f42f486852a",
+          "physical_background_seconds": 109.110299833
+        }
+      },
+      "raw_total_runtime_ratio": 0.949584800129398,
+      "eligible_AC_cold_pair": true,
+      "measured_20_percent_limit_met": true,
+      "runtime_limit_evidence": "consecutive AC gray-start solves",
+      "observation_scores_available": true,
+      "score_kind": "chi-square with frozen observational processing",
+      "relative_fit_score_change": 0.0009131707301377467,
+      "object_fit_review_flag": false,
+      "local_fit_review_flags": [],
+      "physical_continuum_fit_score_change": 0.0005215304465269188,
+      "physical_continuum_object_review_flag": false,
+      "physical_continuum_local_review_flags": []
+    },
+    {
+      "status": "completed",
+      "label": "cold-other",
+      "slug": "g149_28",
+      "paired_controls_identical": true,
+      "atomic_provenance_verified": true,
+      "arms": {
+        "baseline": {
+          "total_seconds": 702.78327675,
+          "model_seconds": [
+            702.752521625
+          ],
+          "peak_RSS_GiB": 2.7647247314453125,
+          "reused_scientific_baseline": false,
+          "power_samples": 26,
+          "all_recorded_samples_AC": true,
+          "recorded_power_sources": [
+            "AC"
+          ],
+          "host_load_before": [
+            5.0556640625,
+            5.33740234375,
+            5.26513671875
+          ],
+          "host_load_after": [
+            16.94091796875,
+            7.78857421875,
+            6.1708984375
+          ],
+          "spectrum_sha256": "0d96b91c001b632847ec6546fabc70afe7d285b6de28076e50bbe75c1536f8ff",
+          "equilibrium_certificate": {
+            "schema": 1,
+            "scope": "declared equations on the structure grid",
+            "verified": true,
+            "checks": {
+              "all_depth_flux": {
+                "value": 4.128754305110505e-08,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "surface_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "photospheric_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "local_energy": {
+                "value": 5.6040687893820335e-05,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "temperature_stationarity": {
+                "value": 6.056270732912594e-06,
+                "tolerance": 0.0002,
+                "passed": true,
+                "measured": true
+              },
+              "source_closure": {
+                "value": 1.600693704509045e-15,
+                "tolerance": 1e-06,
+                "passed": true,
+                "measured": true
+              },
+              "boundary_screening": {
+                "value": 2.1101200317811817e-09,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              }
+            },
+            "required_checks": [
+              "all_depth_flux",
+              "local_energy",
+              "temperature_stationarity",
+              "source_closure",
+              "boundary_screening"
+            ],
+            "failures": [],
+            "independent_grid_validation": false,
+            "full_physics_validation": false
+          },
+          "solver_counts": {
+            "nonlinear_solver_residual_evaluations": 60,
+            "nonlinear_solver_jacobian_evaluations": 11,
+            "nonlinear_solver_accepted_iterations": 24,
+            "nonlinear_solver_rejected_trial_evaluations": 22
+          },
+          "physical_background_status": "verified",
+          "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/g149_28/baseline",
+          "physical_background_spectrum_sha256": "9d9a49c89c8aaef8b5ec8888846e85ed1e7421e40fe50f094734c15295676705",
+          "physical_background_seconds": 73.53632879199999
+        },
+        "candidate": {
+          "total_seconds": 746.2196620420001,
+          "model_seconds": [
+            746.146166584
+          ],
+          "peak_RSS_GiB": 2.5788726806640625,
+          "reused_scientific_baseline": false,
+          "power_samples": 27,
+          "all_recorded_samples_AC": true,
+          "recorded_power_sources": [
+            "AC"
+          ],
+          "host_load_before": [
+            16.94091796875,
+            7.78857421875,
+            6.1708984375
+          ],
+          "host_load_after": [
+            5.67822265625,
+            6.15771484375,
+            6.138671875
+          ],
+          "spectrum_sha256": "c988729601ca9792cdfa417c69bbd537e83cac31311236a5d06c3777a928e7f9",
+          "equilibrium_certificate": {
+            "schema": 1,
+            "scope": "declared equations on the structure grid",
+            "verified": true,
+            "checks": {
+              "all_depth_flux": {
+                "value": 5.998322771816333e-08,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "surface_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "photospheric_flux": {
+                "value": null,
+                "tolerance": 0.002,
+                "passed": false,
+                "measured": false
+              },
+              "local_energy": {
+                "value": 0.00011591649551699997,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              },
+              "temperature_stationarity": {
+                "value": 1.2468140823784779e-05,
+                "tolerance": 0.0002,
+                "passed": true,
+                "measured": true
+              },
+              "source_closure": {
+                "value": 1.906718094011947e-15,
+                "tolerance": 1e-06,
+                "passed": true,
+                "measured": true
+              },
+              "boundary_screening": {
+                "value": 2.107050856197276e-09,
+                "tolerance": 0.002,
+                "passed": true,
+                "measured": true
+              }
+            },
+            "required_checks": [
+              "all_depth_flux",
+              "local_energy",
+              "temperature_stationarity",
+              "source_closure",
+              "boundary_screening"
+            ],
+            "failures": [],
+            "independent_grid_validation": false,
+            "full_physics_validation": false
+          },
+          "solver_counts": {
+            "nonlinear_solver_residual_evaluations": 68,
+            "nonlinear_solver_jacobian_evaluations": 12,
+            "nonlinear_solver_accepted_iterations": 27,
+            "nonlinear_solver_rejected_trial_evaluations": 26
+          },
+          "physical_background_status": "verified",
+          "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/g149_28/candidate",
+          "physical_background_spectrum_sha256": "af0975ea822cae9f1c15a54ddf66021cbb2be5850e1cb350b3c4fed22cf141d0",
+          "physical_background_seconds": 74.661050875
+        }
+      },
+      "raw_total_runtime_ratio": 1.0618062306389393,
+      "eligible_AC_cold_pair": true,
+      "measured_20_percent_limit_met": true,
+      "runtime_limit_evidence": "consecutive AC gray-start solves",
+      "observation_scores_available": true,
+      "score_kind": "unweighted squared residual, not chi-square",
+      "relative_fit_score_change": 0.00029388415292430636,
+      "object_fit_review_flag": false,
+      "local_fit_review_flags": [],
+      "physical_continuum_fit_score_change": 1.252113714045322e-06,
+      "physical_continuum_object_review_flag": false,
+      "physical_continuum_local_review_flags": []
+    }
+  ],
+  "universal_runtime_bound_established": false,
+  "records": {
+    "fixed-budget": {
+      "wd1232": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "wd1232",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 344.740580333,
+            "model_seconds": [
+              344.69501708300004
+            ],
+            "peak_RSS_GiB": 3.3991546630859375,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              6.88818359375,
+              6.4658203125,
+              5.29150390625
+            ],
+            "host_load_after": [
+              8.5283203125,
+              7.724609375,
+              6.27978515625
+            ],
+            "spectrum_sha256": "0324ac415a5f73d1a3b18c2bd7e0135eb32cf989188cca62ba79b46cb6811ce4",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd1232/baseline",
+            "physical_background_spectrum_sha256": "990a09461ba03618202376727aa62bdcbbc380ff2731388fc9233719a4126511",
+            "physical_background_seconds": 56.983728625
+          },
+          "candidate": {
+            "total_seconds": 492.42901629200003,
+            "model_seconds": [
+              492.317899916
+            ],
+            "peak_RSS_GiB": 3.369842529296875,
+            "reused_scientific_baseline": false,
+            "power_samples": 19,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [
+              "Battery"
+            ],
+            "host_load_before": [
+              7.2841796875,
+              6.16943359375,
+              5.7138671875
+            ],
+            "host_load_after": [
+              5.298828125,
+              5.36572265625,
+              5.4814453125
+            ],
+            "spectrum_sha256": "7f521308ae01a5420042dc4f9abacd94659043e69ef2687d2b79b5fc34432f8e",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd1232/baseline",
+            "physical_background_spectrum_sha256": "990a09461ba03618202376727aa62bdcbbc380ff2731388fc9233719a4126511",
+            "physical_background_seconds": 56.983728625
+          }
+        },
+        "raw_total_runtime_ratio": 1.4284045580486675,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.0042700745817716435,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -0.0015465050634343447,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "gd40": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "gd40",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 231.23514229100002,
+            "model_seconds": [
+              118.426190333,
+              112.73251149999999
+            ],
+            "peak_RSS_GiB": 2.44451904296875,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": null,
+            "host_load_after": null,
+            "spectrum_sha256": "b734dc13f4745e9a10d223d5c486cef77f2ccced28b3aca34c065a4a54c64622",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd40/baseline",
+            "physical_background_spectrum_sha256": "66974b6bbf3415600a4256f309868a931b450a21f186ed1cb99ed486660c8a8d",
+            "physical_background_seconds": 105.218822208
+          },
+          "candidate": {
+            "total_seconds": 178.732241292,
+            "model_seconds": [
+              178.646361958
+            ],
+            "peak_RSS_GiB": 2.3321380615234375,
+            "reused_scientific_baseline": false,
+            "power_samples": 8,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [
+              "Battery"
+            ],
+            "host_load_before": [
+              5.298828125,
+              5.36572265625,
+              5.4814453125
+            ],
+            "host_load_after": [
+              7.09912109375,
+              6.2353515625,
+              5.822265625
+            ],
+            "spectrum_sha256": "2cb982741ebbbfd5954618d0fdfc4a204c822e004eb9c39d626fd101f87f7058",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd40/baseline",
+            "physical_background_spectrum_sha256": "66974b6bbf3415600a4256f309868a931b450a21f186ed1cb99ed486660c8a8d",
+            "physical_background_seconds": 105.218822208
+          }
+        },
+        "raw_total_runtime_ratio": 0.7729458399842735,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.030803045043307442,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [
+          {
+            "range_A": [
+              1166.0,
+              1168.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 139.753471640507,
+            "trial_chi2": 170.54952215107048,
+            "delta_chi2": 30.796050510563475,
+            "relative_chi2_change": 0.2203598246903038,
+            "chi2_ratio": 1.2203598246903038
+          },
+          {
+            "range_A": [
+              1190.0,
+              1192.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 232.56004924779833,
+            "trial_chi2": 336.93698481710294,
+            "delta_chi2": 104.3769355693046,
+            "relative_chi2_change": 0.44881713736691053,
+            "chi2_ratio": 1.4488171373669105
+          },
+          {
+            "range_A": [
+              1402.0,
+              1404.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 80.10352376647917,
+            "trial_chi2": 100.93883666633272,
+            "delta_chi2": 20.835312899853548,
+            "relative_chi2_change": 0.26010482336074814,
+            "chi2_ratio": 1.2601048233607481
+          }
+        ],
+        "physical_continuum_fit_score_change": -0.030803045030723175,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": [
+          {
+            "range_A": [
+              1166.0,
+              1168.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 139.75347169556835,
+            "trial_chi2": 170.54952221204564,
+            "delta_chi2": 30.796050516477294,
+            "relative_chi2_change": 0.2203598246458005,
+            "chi2_ratio": 1.2203598246458005
+          },
+          {
+            "range_A": [
+              1190.0,
+              1192.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 232.560049175859,
+            "trial_chi2": 336.9369847184816,
+            "delta_chi2": 104.37693554262259,
+            "relative_chi2_change": 0.44881713739101436,
+            "chi2_ratio": 1.4488171373910144
+          },
+          {
+            "range_A": [
+              1402.0,
+              1404.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 80.1035237880156,
+            "trial_chi2": 100.93883669481866,
+            "delta_chi2": 20.83531290680307,
+            "relative_chi2_change": 0.2601048233775738,
+            "chi2_ratio": 1.2601048233775738
+          }
+        ]
+      },
+      "g29_38": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "g29_38",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 106.591438875,
+            "model_seconds": [
+              106.568271541
+            ],
+            "peak_RSS_GiB": 1.485443115234375,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              2.50927734375,
+              2.8720703125,
+              3.1337890625
+            ],
+            "host_load_after": [
+              5.02880859375,
+              3.6357421875,
+              3.39697265625
+            ],
+            "spectrum_sha256": "21f714f0387100a2ac2dc2c52b63719f36d5b1812c00e368f84f830bff609194",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/g29_38/baseline",
+            "physical_background_spectrum_sha256": "ce70ebb5321ab22098b685f24ea236c3e9598df1c870ecda0cbcd03605da991d",
+            "physical_background_seconds": 93.4712185
+          },
+          "candidate": {
+            "total_seconds": 111.903424583,
+            "model_seconds": [
+              111.831881042
+            ],
+            "peak_RSS_GiB": 1.4493408203125,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [
+              "AC",
+              "Battery"
+            ],
+            "host_load_before": [
+              7.09912109375,
+              6.2353515625,
+              5.822265625
+            ],
+            "host_load_after": [
+              6.58544921875,
+              6.42236328125,
+              5.9501953125
+            ],
+            "spectrum_sha256": "9e38e8a9f34dcc3e0ca20d7c84dc41da8794594e75cfdc4d851082a355bf57a9",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/g29_38/baseline",
+            "physical_background_spectrum_sha256": "ce70ebb5321ab22098b685f24ea236c3e9598df1c870ecda0cbcd03605da991d",
+            "physical_background_seconds": 93.4712185
+          }
+        },
+        "raw_total_runtime_ratio": 1.049835012680797,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.0001876551766548662,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 0.00018765517724395053,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "g241minus6": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "g241minus6",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 111.20707974999999,
+            "model_seconds": [
+              111.183272375
+            ],
+            "peak_RSS_GiB": 2.3702545166015625,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              5.65087890625,
+              4.61572265625,
+              4.697265625
+            ],
+            "host_load_after": [
+              3.52734375,
+              4.19921875,
+              4.52392578125
+            ],
+            "spectrum_sha256": "37ec21106da55dd955dd7932dbf4d0d06055acc75ef88b1a590e5b04013a3062",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/g241minus6/baseline",
+            "physical_background_spectrum_sha256": "5b3754165a6b8449aaa2206172b90216d35e30d33ecab39c501d028f3d58e630",
+            "physical_background_seconds": 109.735874958
+          },
+          "candidate": {
+            "total_seconds": 119.64019200000001,
+            "model_seconds": [
+              119.58206104099999
+            ],
+            "peak_RSS_GiB": 2.29132080078125,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.58544921875,
+              6.42236328125,
+              5.9501953125
+            ],
+            "host_load_after": [
+              6.93115234375,
+              6.64892578125,
+              6.10400390625
+            ],
+            "spectrum_sha256": "31c601ff97507d13275d953218eb2efb85b48afa4dea6391053a7f98e2e87fa1",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/g241minus6/baseline",
+            "physical_background_spectrum_sha256": "5b3754165a6b8449aaa2206172b90216d35e30d33ecab39c501d028f3d58e630",
+            "physical_background_seconds": 109.735874958
+          }
+        },
+        "raw_total_runtime_ratio": 1.0758325123630452,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.018475743286445523,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [
+          {
+            "range_A": [
+              1166.0,
+              1168.0
+            ],
+            "pixels": 66,
+            "baseline_chi2": 110.91912254390303,
+            "trial_chi2": 135.75477374332877,
+            "delta_chi2": 24.83565119942574,
+            "relative_chi2_change": 0.22390775034841726,
+            "chi2_ratio": 1.2239077503484173
+          }
+        ],
+        "physical_continuum_fit_score_change": -0.018475743282766466,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": [
+          {
+            "range_A": [
+              1166.0,
+              1168.0
+            ],
+            "pixels": 66,
+            "baseline_chi2": 110.91912255835817,
+            "trial_chi2": 135.7547737593893,
+            "delta_chi2": 24.83565120103114,
+            "relative_chi2_change": 0.2239077503337108,
+            "chi2_ratio": 1.2239077503337108
+          }
+        ]
+      },
+      "gd61": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "gd61",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 105.88412820799999,
+            "model_seconds": [
+              105.85906125
+            ],
+            "peak_RSS_GiB": 2.268890380859375,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              2.67138671875,
+              3.63720703125,
+              4.2548828125
+            ],
+            "host_load_after": [
+              2.61669921875,
+              3.318359375,
+              4.0556640625
+            ],
+            "spectrum_sha256": "a310a56b532a6c5577f5714a0c9ca491758cffd7c5338e846945981f0347e03e",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/gd61/baseline",
+            "physical_background_spectrum_sha256": "cdc4bc16df605b1fcb6e31c20a4682e865bd370a069a68e3323cbe81eebf454f",
+            "physical_background_seconds": 108.746853916
+          },
+          "candidate": {
+            "total_seconds": 118.792339208,
+            "model_seconds": [
+              118.73275520899999
+            ],
+            "peak_RSS_GiB": 2.2329864501953125,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.1767578125,
+              6.7041015625,
+              6.12646484375
+            ],
+            "host_load_after": [
+              7.4150390625,
+              6.83544921875,
+              6.2412109375
+            ],
+            "spectrum_sha256": "2d523ccaa075ebb51bad19ee469036c1c39517c675f8f2a854fc31d13925705e",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/gd61/baseline",
+            "physical_background_spectrum_sha256": "cdc4bc16df605b1fcb6e31c20a4682e865bd370a069a68e3323cbe81eebf454f",
+            "physical_background_seconds": 108.746853916
+          }
+        },
+        "raw_total_runtime_ratio": 1.121908837693247,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.00027154811667307044,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 0.0002715481309583101,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "gd378": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "gd378",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 108.728799625,
+            "model_seconds": [
+              108.70402091700001
+            ],
+            "peak_RSS_GiB": 2.3091888427734375,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              2.24462890625,
+              2.966796875,
+              3.828125
+            ],
+            "host_load_after": [
+              1.98193359375,
+              2.650390625,
+              3.59619140625
+            ],
+            "spectrum_sha256": "a8900df754122b7a4ae070abf5a1a4c23f5b22feaa8d21f553e4079ed9275fbc",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/gd378/baseline",
+            "physical_background_spectrum_sha256": "337b22de4a36cbe93a35613b08b7ac21694e980138b1287dfa4a1822197220bc",
+            "physical_background_seconds": 107.779622125
+          },
+          "candidate": {
+            "total_seconds": 118.03027420800001,
+            "model_seconds": [
+              117.97232483299999
+            ],
+            "peak_RSS_GiB": 2.2546234130859375,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.4150390625,
+              6.83544921875,
+              6.2412109375
+            ],
+            "host_load_after": [
+              6.7041015625,
+              6.8017578125,
+              6.30615234375
+            ],
+            "spectrum_sha256": "f029af3a3feb0eb6270f09d951250e5baca6f7239e62062142845b364d3ecc47",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/gd378/baseline",
+            "physical_background_spectrum_sha256": "337b22de4a36cbe93a35613b08b7ac21694e980138b1287dfa4a1822197220bc",
+            "physical_background_seconds": 107.779622125
+          }
+        },
+        "raw_total_runtime_ratio": 1.0855474778998786,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -7.819854650559233e-05,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -7.819842639522623e-05,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "wd1425": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "wd1425",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 340.688748542,
+            "model_seconds": [
+              340.664624916
+            ],
+            "peak_RSS_GiB": 2.9745330810546875,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              1.95068359375,
+              2.43017578125,
+              3.392578125
+            ],
+            "host_load_after": [
+              2.3603515625,
+              2.638671875,
+              3.19921875
+            ],
+            "spectrum_sha256": "f8f0590282d7de18de59e21159bc746d74a10cd754f33e59ea4ddb273d307ac4",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd1425/baseline",
+            "physical_background_spectrum_sha256": "dc8269c95983a03997024a0c9999c783132dd2e67f99abc28ce7c93cb42b8c94",
+            "physical_background_seconds": 304.024963167
+          },
+          "candidate": {
+            "total_seconds": 373.204930375,
+            "model_seconds": [
+              373.14845454199997
+            ],
+            "peak_RSS_GiB": 2.9609222412109375,
+            "reused_scientific_baseline": false,
+            "power_samples": 15,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.7041015625,
+              6.8017578125,
+              6.30615234375
+            ],
+            "host_load_after": [
+              6.1865234375,
+              6.4716796875,
+              6.3369140625
+            ],
+            "spectrum_sha256": "41caa7b6156e35f89f7c9fce571956bb99075edde13100689b01fb15969395c9",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd1425/baseline",
+            "physical_background_spectrum_sha256": "dc8269c95983a03997024a0c9999c783132dd2e67f99abc28ce7c93cb42b8c94",
+            "physical_background_seconds": 304.024963167
+          }
+        },
+        "raw_total_runtime_ratio": 1.095442488113139,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.00034463212157831435,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -0.0003446321020915688,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "gd133": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "gd133",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 98.709917542,
+            "model_seconds": [
+              98.685871959
+            ],
+            "peak_RSS_GiB": 1.3055877685546875,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              6.986328125,
+              4.82666015625,
+              3.89404296875
+            ],
+            "host_load_after": [
+              6.41357421875,
+              5.2763671875,
+              4.17236328125
+            ],
+            "spectrum_sha256": "57324894983fad81a0a711e72bf9f9c4434b18e25703bf9a30e4e7d1df6aea2e",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd133/baseline",
+            "physical_background_spectrum_sha256": "6fc6a2d48d3e98976aa62fb0176d2d599d30e31d9a8eda1cee2e9b07416ca853",
+            "physical_background_seconds": 85.89069987500001
+          },
+          "candidate": {
+            "total_seconds": 94.253292667,
+            "model_seconds": [
+              94.19418287500001
+            ],
+            "peak_RSS_GiB": 1.304473876953125,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.1865234375,
+              6.4716796875,
+              6.3369140625
+            ],
+            "host_load_after": [
+              7.1826171875,
+              6.70556640625,
+              6.43603515625
+            ],
+            "spectrum_sha256": "99f51a88beff0ae42a3e9cd9d77805b9c8c48b4759f79e376b209040fcc7ddf6",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd133/baseline",
+            "physical_background_spectrum_sha256": "6fc6a2d48d3e98976aa62fb0176d2d599d30e31d9a8eda1cee2e9b07416ca853",
+            "physical_background_seconds": 85.89069987500001
+          }
+        },
+        "raw_total_runtime_ratio": 0.9548512957362794,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -5.2766350159272335e-06,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -5.276635016149278e-06,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "pg1225": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "pg1225",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 102.44425575,
+            "model_seconds": [
+              102.424363959
+            ],
+            "peak_RSS_GiB": 1.996856689453125,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              5.94921875,
+              5.42333984375,
+              4.34326171875
+            ],
+            "host_load_after": [
+              7.0341796875,
+              5.89892578125,
+              4.6474609375
+            ],
+            "spectrum_sha256": "d33c9113aaa707e9fcd31435cbba27bee5297c615d4754a495d1de2cd81c4e69",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/pg1225/baseline",
+            "physical_background_spectrum_sha256": "01ccceafd952443289b19aff82f781dc6b5aadf01c2a215bc13ee8117c466c5c",
+            "physical_background_seconds": 92.47529525
+          },
+          "candidate": {
+            "total_seconds": 103.989892292,
+            "model_seconds": [
+              103.937752625
+            ],
+            "peak_RSS_GiB": 1.9416656494140625,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.1826171875,
+              6.70556640625,
+              6.43603515625
+            ],
+            "host_load_after": [
+              6.0576171875,
+              6.4560546875,
+              6.36767578125
+            ],
+            "spectrum_sha256": "70bceb01479be1dd9d41d33ede1ee0a7a6514094b57ca774e010563d1de4141c",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/pg1225/baseline",
+            "physical_background_spectrum_sha256": "01ccceafd952443289b19aff82f781dc6b5aadf01c2a215bc13ee8117c466c5c",
+            "physical_background_seconds": 92.47529525
+          }
+        },
+        "raw_total_runtime_ratio": 1.0150875862261315,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.007829289966370334,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -0.007829289954329854,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "gd362": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "gd362",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 105.383466208,
+            "model_seconds": [
+              105.3629345
+            ],
+            "peak_RSS_GiB": 2.066253662109375,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              7.0380859375,
+              6.23291015625,
+              4.91455078125
+            ],
+            "host_load_after": [
+              6.6904296875,
+              6.25048828125,
+              5.06689453125
+            ],
+            "spectrum_sha256": "f16e635db7edb7ecd0f2c992b1ca25bf2b244f66ff6f6d198c422fc6f65e2b8b",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/gd362/baseline",
+            "physical_background_spectrum_sha256": "9c1894c717d38a5f07a322b31197cb723186b4c797b234f70d502d42b51dfc2d",
+            "physical_background_seconds": 95.040267834
+          },
+          "candidate": {
+            "total_seconds": 105.810311292,
+            "model_seconds": [
+              105.753798042
+            ],
+            "peak_RSS_GiB": 1.9913787841796875,
+            "reused_scientific_baseline": false,
+            "power_samples": 6,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.0576171875,
+              6.4560546875,
+              6.36767578125
+            ],
+            "host_load_after": [
+              7.3466796875,
+              6.740234375,
+              6.482421875
+            ],
+            "spectrum_sha256": "8594a7e01f516c92775acdcf6393f2b16049a58b3a8a0d269c1004ce3b797a52",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/gd362/baseline",
+            "physical_background_spectrum_sha256": "9c1894c717d38a5f07a322b31197cb723186b4c797b234f70d502d42b51dfc2d",
+            "physical_background_seconds": 95.040267834
+          }
+        },
+        "raw_total_runtime_ratio": 1.0040503989796417,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.0028453187488592935,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 0.00284531905673302,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "wd1551": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "wd1551",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 342.953430458,
+            "model_seconds": [
+              342.90146325
+            ],
+            "peak_RSS_GiB": 3.2943878173828125,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              8.4150390625,
+              8.380859375,
+              7.1513671875
+            ],
+            "host_load_after": [
+              8.294921875,
+              8.2265625,
+              7.48291015625
+            ],
+            "spectrum_sha256": "475754d217f7a7e2dbd5d61e7be73e626f421acfd8924aff53c05bcf66307190",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd1551/baseline",
+            "physical_background_spectrum_sha256": "f675ed187ae716409903041f8c8d1a745158d9aeead02de78704a7463b2572c6",
+            "physical_background_seconds": 66.506047625
+          },
+          "candidate": {
+            "total_seconds": 332.159188208,
+            "model_seconds": [
+              332.077127875
+            ],
+            "peak_RSS_GiB": 3.2617034912109375,
+            "reused_scientific_baseline": false,
+            "power_samples": 13,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.3466796875,
+              6.740234375,
+              6.482421875
+            ],
+            "host_load_after": [
+              6.33935546875,
+              6.63818359375,
+              6.5302734375
+            ],
+            "spectrum_sha256": "adda0b3977606dcd64e58658ccb7b47886284cdbae4bf436cf07b7ae4f015f1d",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd1551/baseline",
+            "physical_background_spectrum_sha256": "f675ed187ae716409903041f8c8d1a745158d9aeead02de78704a7463b2572c6",
+            "physical_background_seconds": 66.506047625
+          }
+        },
+        "raw_total_runtime_ratio": 0.9685256326621817,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.0020780688531952807,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -0.0010912870158742427,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "wd2207": {
+        "status": "completed",
+        "label": "fixed-budget",
+        "slug": "wd2207",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 327.752301208,
+            "model_seconds": [
+              327.69993912499996
+            ],
+            "peak_RSS_GiB": 3.34576416015625,
+            "reused_scientific_baseline": true,
+            "power_samples": 0,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [],
+            "host_load_before": [
+              5.740234375,
+              6.81689453125,
+              7.107421875
+            ],
+            "host_load_after": [
+              5.01904296875,
+              5.74462890625,
+              6.52392578125
+            ],
+            "spectrum_sha256": "911d2207d0be2af7b27b8e92a002f650d0ff00322fc73fe09ff9c1386036bf88",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd2207/baseline",
+            "physical_background_spectrum_sha256": "160a880e9d270d0df80c27076ef952f9517db230840ed31c411006ae557eb9ee",
+            "physical_background_seconds": 68.600810542
+          },
+          "candidate": {
+            "total_seconds": 330.84855383300004,
+            "model_seconds": [
+              330.76441245899997
+            ],
+            "peak_RSS_GiB": 3.31103515625,
+            "reused_scientific_baseline": false,
+            "power_samples": 13,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.33935546875,
+              6.63818359375,
+              6.5302734375
+            ],
+            "host_load_after": [
+              6.3076171875,
+              6.46923828125,
+              6.478515625
+            ],
+            "spectrum_sha256": "4b84ce79f6cccf7f3defc5b889118be694b7e2687ab269799ba014894c330237",
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/fixed-budget/wd2207/baseline",
+            "physical_background_spectrum_sha256": "160a880e9d270d0df80c27076ef952f9517db230840ed31c411006ae557eb9ee",
+            "physical_background_seconds": 68.600810542
+          }
+        },
+        "raw_total_runtime_ratio": 1.0094469287128973,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -0.002845148713238266,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -0.0024683468629179695,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      }
+    },
+    "relaxed-budget": {
+      "gd40": {
+        "status": "completed",
+        "label": "relaxed-budget",
+        "slug": "gd40",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 414.442605125,
+            "model_seconds": [
+              414.38018816700003
+            ],
+            "peak_RSS_GiB": 2.858154296875,
+            "reused_scientific_baseline": false,
+            "power_samples": 16,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.3076171875,
+              6.46923828125,
+              6.478515625
+            ],
+            "host_load_after": [
+              5.40576171875,
+              5.470703125,
+              5.966796875
+            ],
+            "spectrum_sha256": "731e71ff4020f78720e7c91b2d448fe3e668d18e0f8c604dcc333913e4624f56",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 3.625111529270697e-05,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.0004777879874551396,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 0.000245290109854614,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.790235580263479e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 0.00038449565728302835,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 3,
+              "nonlinear_solver_jacobian_evaluations": 1,
+              "nonlinear_solver_accepted_iterations": 0,
+              "nonlinear_solver_rejected_trial_evaluations": 0
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd40/baseline",
+            "physical_background_spectrum_sha256": "66974b6bbf3415600a4256f309868a931b450a21f186ed1cb99ed486660c8a8d",
+            "physical_background_seconds": 105.218822208
+          },
+          "candidate": {
+            "total_seconds": 423.721170083,
+            "model_seconds": [
+              423.621869916
+            ],
+            "peak_RSS_GiB": 2.7759552001953125,
+            "reused_scientific_baseline": false,
+            "power_samples": 16,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              5.40576171875,
+              5.470703125,
+              5.966796875
+            ],
+            "host_load_after": [
+              4.98486328125,
+              4.7138671875,
+              5.29541015625
+            ],
+            "spectrum_sha256": "20771c6aa2e4744b1ad1c61533b6a426b815dc34b5e71cc366850ea8b626791c",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 2.595058781640347e-06,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.00017187121939092332,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 4.05061849590993e-05,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.6264806759263732e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 0.00034694040925431675,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 5,
+              "nonlinear_solver_jacobian_evaluations": 1,
+              "nonlinear_solver_accepted_iterations": 2,
+              "nonlinear_solver_rejected_trial_evaluations": 0
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd40/candidate",
+            "physical_background_spectrum_sha256": "831309957959120fd14c6c1807223dc9e4e56ba833b3775c7445c8c4bd422585",
+            "physical_background_seconds": 108.397134625
+          }
+        },
+        "raw_total_runtime_ratio": 1.02238805770271,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.0034084712487612023,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [
+          {
+            "range_A": [
+              1190.0,
+              1192.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 232.56007580006494,
+            "trial_chi2": 364.9705977505493,
+            "delta_chi2": 132.41052195048437,
+            "relative_chi2_change": 0.5693605039255298,
+            "chi2_ratio": 1.5693605039255298
+          },
+          {
+            "range_A": [
+              1192.0,
+              1194.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 398.2277296630933,
+            "trial_chi2": 482.06767455852554,
+            "delta_chi2": 83.83994489543221,
+            "relative_chi2_change": 0.21053266422798345,
+            "chi2_ratio": 1.2105326642279834
+          }
+        ],
+        "physical_continuum_fit_score_change": -0.008590664418753002,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": [
+          {
+            "range_A": [
+              1166.0,
+              1168.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 139.75344998494455,
+            "trial_chi2": 168.8870938344628,
+            "delta_chi2": 29.13364384951825,
+            "relative_chi2_change": 0.2084645771010074,
+            "chi2_ratio": 1.2084645771010074
+          },
+          {
+            "range_A": [
+              1190.0,
+              1192.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 232.56007572812558,
+            "trial_chi2": 355.5174325652972,
+            "delta_chi2": 122.95735683717163,
+            "relative_chi2_change": 0.5287122325369165,
+            "chi2_ratio": 1.5287122325369165
+          },
+          {
+            "range_A": [
+              1402.0,
+              1404.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 80.10351822658441,
+            "trial_chi2": 100.31210565372032,
+            "delta_chi2": 20.20858742713591,
+            "relative_chi2_change": 0.2522808969510302,
+            "chi2_ratio": 1.2522808969510302
+          }
+        ]
+      },
+      "g29_38": {
+        "status": "completed",
+        "label": "relaxed-budget",
+        "slug": "g29_38",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 140.459006292,
+            "model_seconds": [
+              140.397269959
+            ],
+            "peak_RSS_GiB": 1.553680419921875,
+            "reused_scientific_baseline": false,
+            "power_samples": 7,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              4.98486328125,
+              4.7138671875,
+              5.29541015625
+            ],
+            "host_load_after": [
+              4.3505859375,
+              4.521484375,
+              5.125
+            ],
+            "spectrum_sha256": "1658a951d63223c5e48cd1ecb2b4a9865c61794e7247de26e1d5f3d6f8bf2d92",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 9.23705141264719e-08,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 1.566994936772153e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 2.3407561947930395e-06,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.1617863688701376e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 7.058490950090944e-105,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 3,
+              "nonlinear_solver_jacobian_evaluations": 1,
+              "nonlinear_solver_accepted_iterations": 0,
+              "nonlinear_solver_rejected_trial_evaluations": 0
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/g29_38/baseline",
+            "physical_background_spectrum_sha256": "ce70ebb5321ab22098b685f24ea236c3e9598df1c870ecda0cbcd03605da991d",
+            "physical_background_seconds": 93.4712185
+          },
+          "candidate": {
+            "total_seconds": 140.91719774999999,
+            "model_seconds": [
+              140.823812084
+            ],
+            "peak_RSS_GiB": 1.5953216552734375,
+            "reused_scientific_baseline": false,
+            "power_samples": 7,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              4.3505859375,
+              4.521484375,
+              5.125
+            ],
+            "host_load_after": [
+              5.09716796875,
+              4.6953125,
+              5.095703125
+            ],
+            "spectrum_sha256": "d0e31dfe1a2ab409b210782217b12cc80891da02d5b52f96bd38d3f4cd0889de",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 4.75242008635135e-07,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.00014026109846115202,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 1.1898219552719524e-05,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.293023123145018e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 7.398488659422956e-105,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 4,
+              "nonlinear_solver_jacobian_evaluations": 1,
+              "nonlinear_solver_accepted_iterations": 1,
+              "nonlinear_solver_rejected_trial_evaluations": 0
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/g29_38/candidate",
+            "physical_background_spectrum_sha256": "a7b3e1fb0fbc34e9c7616798d1fc9c191c2344b00801c028639913bdc91247ee",
+            "physical_background_seconds": 94.800723917
+          }
+        },
+        "raw_total_runtime_ratio": 1.0032621009509881,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.003650214042308253,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 0.0001623713747549438,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "wd1232": {
+        "status": "completed",
+        "label": "relaxed-budget",
+        "slug": "wd1232",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 788.8579752090001,
+            "model_seconds": [
+              788.716814583
+            ],
+            "peak_RSS_GiB": 3.7479400634765625,
+            "reused_scientific_baseline": false,
+            "power_samples": 28,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              5.09716796875,
+              4.6953125,
+              5.095703125
+            ],
+            "host_load_after": [
+              7.029296875,
+              6.2861328125,
+              5.67333984375
+            ],
+            "spectrum_sha256": "4490d323f2cc901a9413fbeb9a8a294f39cb4d132b699aad61a524c4eb0a8285",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 1.664454352123812e-09,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.0012322139661386598,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 0.00014925185975523699,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.2729712471474946e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 1.0385672674978508e-07,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 21,
+              "nonlinear_solver_jacobian_evaluations": 4,
+              "nonlinear_solver_accepted_iterations": 12,
+              "nonlinear_solver_rejected_trial_evaluations": 3
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/wd1232/baseline",
+            "physical_background_spectrum_sha256": "de398cc01dca2eb27f04086d928e43a7bf829fbc7a6dded4ee283bf55fd196e4",
+            "physical_background_seconds": 58.690253208
+          },
+          "candidate": {
+            "total_seconds": 792.962088667,
+            "model_seconds": [
+              792.7917645
+            ],
+            "peak_RSS_GiB": 3.7320709228515625,
+            "reused_scientific_baseline": false,
+            "power_samples": 29,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.029296875,
+              6.2861328125,
+              5.67333984375
+            ],
+            "host_load_after": [
+              7.14794921875,
+              7.111328125,
+              6.5439453125
+            ],
+            "spectrum_sha256": "e9e4b238542576ff3310802a79b23d87a0432615b7620ccfebcf646383d134f0",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 2.115363439969542e-09,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.0018689504545012523,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 0.00019764604122940455,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.2616959526404026e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 6.703735303475946e-08,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 21,
+              "nonlinear_solver_jacobian_evaluations": 4,
+              "nonlinear_solver_accepted_iterations": 12,
+              "nonlinear_solver_rejected_trial_evaluations": 3
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/wd1232/candidate",
+            "physical_background_spectrum_sha256": "f210555e267fdff30241d7224551c553c471ed5b77ccc26d2dd7b79c0a97a6bf",
+            "physical_background_seconds": 60.464160291
+          }
+        },
+        "raw_total_runtime_ratio": 1.0052026012121036,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.05075294916876705,
+        "object_fit_review_flag": true,
+        "local_fit_review_flags": [
+          {
+            "range_A": [
+              3966.0,
+              3969.0
+            ],
+            "pixels": 113,
+            "baseline_chi2": 403.89331555628365,
+            "trial_chi2": 502.5866859570936,
+            "delta_chi2": 98.69337040080995,
+            "relative_chi2_change": 0.24435504773056027,
+            "chi2_ratio": 1.2443550477305603
+          },
+          {
+            "range_A": [
+              3969.0,
+              3972.0
+            ],
+            "pixels": 113,
+            "baseline_chi2": 481.43574818577036,
+            "trial_chi2": 583.3834850524099,
+            "delta_chi2": 101.94773686663956,
+            "relative_chi2_change": 0.2117577210475472,
+            "chi2_ratio": 1.2117577210475472
+          }
+        ],
+        "physical_continuum_fit_score_change": -0.018082516663526005,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "gd133": {
+        "status": "completed",
+        "label": "relaxed-budget",
+        "slug": "gd133",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 129.910430292,
+            "model_seconds": [
+              129.84786858400003
+            ],
+            "peak_RSS_GiB": 1.462493896484375,
+            "reused_scientific_baseline": false,
+            "power_samples": 7,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.14794921875,
+              7.111328125,
+              6.5439453125
+            ],
+            "host_load_after": [
+              7.638671875,
+              7.14892578125,
+              6.623046875
+            ],
+            "spectrum_sha256": "c7457a0b1db29b15a2cd3189d93d7e139ac018efe12358819e33f8113c2eff84",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 7.995229478474641e-09,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 3.1338989173764326e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 1.190663895650955e-05,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.211846299956733e-14,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 1.196137003483564e-19,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 3,
+              "nonlinear_solver_jacobian_evaluations": 1,
+              "nonlinear_solver_accepted_iterations": 0,
+              "nonlinear_solver_rejected_trial_evaluations": 0
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd133/baseline",
+            "physical_background_spectrum_sha256": "6fc6a2d48d3e98976aa62fb0176d2d599d30e31d9a8eda1cee2e9b07416ca853",
+            "physical_background_seconds": 85.89069987500001
+          },
+          "candidate": {
+            "total_seconds": 125.05194212500001,
+            "model_seconds": [
+              124.952943916
+            ],
+            "peak_RSS_GiB": 1.455169677734375,
+            "reused_scientific_baseline": false,
+            "power_samples": 7,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.638671875,
+              7.14892578125,
+              6.623046875
+            ],
+            "host_load_after": [
+              5.8212890625,
+              6.650390625,
+              6.49365234375
+            ],
+            "spectrum_sha256": "902337434b5e10dfeaaa8c261b7e22e6410d0674121c06c0c86e1d5caae04ff3",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 1.230571023214111e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 3.124798019001981e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 1.198266334812753e-05,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.6559483952090056e-14,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 1.196216472646892e-19,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 3,
+              "nonlinear_solver_jacobian_evaluations": 1,
+              "nonlinear_solver_accepted_iterations": 0,
+              "nonlinear_solver_rejected_trial_evaluations": 0
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/relaxed-budget/gd133/baseline",
+            "physical_background_spectrum_sha256": "6fc6a2d48d3e98976aa62fb0176d2d599d30e31d9a8eda1cee2e9b07416ca853",
+            "physical_background_seconds": 85.89069987500001
+          }
+        },
+        "raw_total_runtime_ratio": 0.9626012464428025,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": -5.276635033024668e-06,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": -5.276635033024668e-06,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      }
+    },
+    "cold-budget": {
+      "gd40": {
+        "status": "completed",
+        "label": "cold-budget",
+        "slug": "gd40",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 1074.6342838330002,
+            "model_seconds": [
+              1074.5686866249998
+            ],
+            "peak_RSS_GiB": 2.9022064208984375,
+            "reused_scientific_baseline": false,
+            "power_samples": 38,
+            "all_recorded_samples_AC": false,
+            "recorded_power_sources": [
+              "AC",
+              "Battery"
+            ],
+            "host_load_before": [
+              5.8212890625,
+              6.650390625,
+              6.49365234375
+            ],
+            "host_load_after": [
+              7.0986328125,
+              9.0732421875,
+              11.44189453125
+            ],
+            "spectrum_sha256": "146549787a82baa12f98f37c704abd17247a735c548008f053f7de737064c8f9",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 1.5903745809175973e-07,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.00013600548069359758,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 2.7258338629820855e-05,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.2815677930913777e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 0.0003841609122348521,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 40,
+              "nonlinear_solver_jacobian_evaluations": 6,
+              "nonlinear_solver_accepted_iterations": 14,
+              "nonlinear_solver_rejected_trial_evaluations": 17
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-budget/gd40/baseline",
+            "physical_background_spectrum_sha256": "ed39655580a365fbfd5e7a1d13226a72b48f0959df9611d18c0831638a298b8f",
+            "physical_background_seconds": 110.84591866699999
+          },
+          "candidate": {
+            "total_seconds": 948.8065172500001,
+            "model_seconds": [
+              948.70453275
+            ],
+            "peak_RSS_GiB": 2.8964080810546875,
+            "reused_scientific_baseline": false,
+            "power_samples": 34,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              7.0986328125,
+              9.0732421875,
+              11.44189453125
+            ],
+            "host_load_after": [
+              6.650390625,
+              7.22900390625,
+              8.72119140625
+            ],
+            "spectrum_sha256": "196455b5091e4ebc594d05a55b79dfb9a8db93b2ddbc0d4b72b816133e64af8e",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 2.3971549945045467e-07,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.00012487921423544644,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 2.5003082052776904e-05,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.3682284935605998e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 0.00034694644200300597,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 40,
+              "nonlinear_solver_jacobian_evaluations": 6,
+              "nonlinear_solver_accepted_iterations": 14,
+              "nonlinear_solver_rejected_trial_evaluations": 17
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-budget/gd40/candidate",
+            "physical_background_spectrum_sha256": "2448c47289211f2680e564acf9cee96cb6c6b3b27769c44c9c5f72d39a488b59",
+            "physical_background_seconds": 111.187036166
+          }
+        },
+        "raw_total_runtime_ratio": 0.8829110810291682,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.003092211379902121,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [
+          {
+            "range_A": [
+              1190.0,
+              1192.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 232.74381033036082,
+            "trial_chi2": 364.96664168501854,
+            "delta_chi2": 132.22283135465773,
+            "relative_chi2_change": 0.5681046089559942,
+            "chi2_ratio": 1.5681046089559942
+          },
+          {
+            "range_A": [
+              1192.0,
+              1194.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 398.5394862273473,
+            "trial_chi2": 482.0627901365473,
+            "delta_chi2": 83.52330390919997,
+            "relative_chi2_change": 0.20957347212906785,
+            "chi2_ratio": 1.2095734721290679
+          }
+        ],
+        "physical_continuum_fit_score_change": -0.008762916124854692,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": [
+          {
+            "range_A": [
+              1166.0,
+              1168.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 139.74171012212668,
+            "trial_chi2": 168.887280951995,
+            "delta_chi2": 29.14557082986832,
+            "relative_chi2_change": 0.20856744063312704,
+            "chi2_ratio": 1.208567440633127
+          },
+          {
+            "range_A": [
+              1190.0,
+              1192.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 232.67453094972157,
+            "trial_chi2": 355.51573203364296,
+            "delta_chi2": 122.84120108392139,
+            "relative_chi2_change": 0.5279529331487769,
+            "chi2_ratio": 1.527952933148777
+          },
+          {
+            "range_A": [
+              1402.0,
+              1404.0
+            ],
+            "pixels": 67,
+            "baseline_chi2": 80.10161628325109,
+            "trial_chi2": 100.31210139017254,
+            "delta_chi2": 20.210485106921453,
+            "relative_chi2_change": 0.25231057804694235,
+            "chi2_ratio": 1.2523105780469423
+          }
+        ]
+      },
+      "g29_38": {
+        "status": "completed",
+        "label": "cold-budget",
+        "slug": "g29_38",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 300.444876292,
+            "model_seconds": [
+              300.38052362499997
+            ],
+            "peak_RSS_GiB": 1.667022705078125,
+            "reused_scientific_baseline": false,
+            "power_samples": 12,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.650390625,
+              7.22900390625,
+              8.72119140625
+            ],
+            "host_load_after": [
+              5.9775390625,
+              6.47265625,
+              7.9189453125
+            ],
+            "spectrum_sha256": "81c0c20cdaaa74c03b9d206d2c08c1cacfecae3d74cbb4bf6300673c3f69516b",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 7.578354654924624e-08,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 1.5437716473133482e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 1.6461305190063058e-06,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.2669621988033516e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 7.058502642803415e-105,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 49,
+              "nonlinear_solver_jacobian_evaluations": 7,
+              "nonlinear_solver_accepted_iterations": 18,
+              "nonlinear_solver_rejected_trial_evaluations": 21
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-budget/g29_38/baseline",
+            "physical_background_spectrum_sha256": "1d2dadf299395dd10b0468c86bcaa9b621faf3d727542566b8daaaaa4f832b7d",
+            "physical_background_seconds": 97.2935505
+          },
+          "candidate": {
+            "total_seconds": 280.421935167,
+            "model_seconds": [
+              280.32398479200003
+            ],
+            "peak_RSS_GiB": 1.693572998046875,
+            "reused_scientific_baseline": false,
+            "power_samples": 12,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              5.9775390625,
+              6.47265625,
+              7.9189453125
+            ],
+            "host_load_after": [
+              3.8544921875,
+              5.45849609375,
+              7.10986328125
+            ],
+            "spectrum_sha256": "470dd9d6c8580126f7d9df14679ee9ab2f3964156361e49e2ff995ecd02ea9eb",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 1.812559147218451e-07,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 3.0052386818593446e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 3.23421715542338e-06,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.2301537852026696e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 7.398189756025778e-105,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 48,
+              "nonlinear_solver_jacobian_evaluations": 7,
+              "nonlinear_solver_accepted_iterations": 17,
+              "nonlinear_solver_rejected_trial_evaluations": 21
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-budget/g29_38/candidate",
+            "physical_background_spectrum_sha256": "4255824fc82aca565595b104e99dd69ddb95b3b4b8702d08420a72f8054492bc",
+            "physical_background_seconds": 97.147705125
+          }
+        },
+        "raw_total_runtime_ratio": 0.9333556911599988,
+        "eligible_AC_cold_pair": true,
+        "measured_20_percent_limit_met": true,
+        "runtime_limit_evidence": "consecutive AC gray-start solves",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.0036457926780870675,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 0.0001623834700579252,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      }
+    },
+    "cold-other": {
+      "gd61": {
+        "status": "completed",
+        "label": "cold-other",
+        "slug": "gd61",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 769.8000259170001,
+            "model_seconds": [
+              769.733070542
+            ],
+            "peak_RSS_GiB": 2.964202880859375,
+            "reused_scientific_baseline": false,
+            "power_samples": 28,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              6.1904296875,
+              5.181640625,
+              5.7216796875
+            ],
+            "host_load_after": [
+              3.744140625,
+              4.34130859375,
+              5.0302734375
+            ],
+            "spectrum_sha256": "0403d739a2345c6613c6cb8ac2d9cfc00bcc0e6ca06a6d4da40cb72ada83e17c",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 7.590339491270193e-06,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 4.3015525367746425e-05,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 2.3956596113094974e-05,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.3116294727578158e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 7.23324069966491e-08,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 35,
+              "nonlinear_solver_jacobian_evaluations": 5,
+              "nonlinear_solver_accepted_iterations": 13,
+              "nonlinear_solver_rejected_trial_evaluations": 14
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/gd61/baseline",
+            "physical_background_spectrum_sha256": "3f47087438840f4c98f12617c65d9bb5b04a4cbc39a0cc1cc1e8521173ca4655",
+            "physical_background_seconds": 104.631354417
+          },
+          "candidate": {
+            "total_seconds": 730.9904037499999,
+            "model_seconds": [
+              730.8897574169999
+            ],
+            "peak_RSS_GiB": 2.8296661376953125,
+            "reused_scientific_baseline": false,
+            "power_samples": 27,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              3.744140625,
+              4.34130859375,
+              5.0302734375
+            ],
+            "host_load_after": [
+              5.0556640625,
+              5.33740234375,
+              5.26513671875
+            ],
+            "spectrum_sha256": "b07dfb245595872352f838642905f008401f19795c8eb22437c9130541879d2a",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 8.582413213442663e-06,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.003,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 5.316687130570449e-05,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 2.0920289028225625e-05,
+                  "tolerance": 0.0003,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.0825176043982586e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 7.199558441853105e-08,
+                  "tolerance": 0.003,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 31,
+              "nonlinear_solver_jacobian_evaluations": 5,
+              "nonlinear_solver_accepted_iterations": 13,
+              "nonlinear_solver_rejected_trial_evaluations": 10
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/gd61/candidate",
+            "physical_background_spectrum_sha256": "b4a77a5f4283dc73a1345f7270c5f3625d41ea85388846e2f2057f42f486852a",
+            "physical_background_seconds": 109.110299833
+          }
+        },
+        "raw_total_runtime_ratio": 0.949584800129398,
+        "eligible_AC_cold_pair": true,
+        "measured_20_percent_limit_met": true,
+        "runtime_limit_evidence": "consecutive AC gray-start solves",
+        "observation_scores_available": true,
+        "score_kind": "chi-square with frozen observational processing",
+        "relative_fit_score_change": 0.0009131707301377467,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 0.0005215304465269188,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      },
+      "g149_28": {
+        "status": "completed",
+        "label": "cold-other",
+        "slug": "g149_28",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 702.78327675,
+            "model_seconds": [
+              702.752521625
+            ],
+            "peak_RSS_GiB": 2.7647247314453125,
+            "reused_scientific_baseline": false,
+            "power_samples": 26,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              5.0556640625,
+              5.33740234375,
+              5.26513671875
+            ],
+            "host_load_after": [
+              16.94091796875,
+              7.78857421875,
+              6.1708984375
+            ],
+            "spectrum_sha256": "0d96b91c001b632847ec6546fabc70afe7d285b6de28076e50bbe75c1536f8ff",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 4.128754305110505e-08,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 5.6040687893820335e-05,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 6.056270732912594e-06,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.600693704509045e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 2.1101200317811817e-09,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 60,
+              "nonlinear_solver_jacobian_evaluations": 11,
+              "nonlinear_solver_accepted_iterations": 24,
+              "nonlinear_solver_rejected_trial_evaluations": 22
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/g149_28/baseline",
+            "physical_background_spectrum_sha256": "9d9a49c89c8aaef8b5ec8888846e85ed1e7421e40fe50f094734c15295676705",
+            "physical_background_seconds": 73.53632879199999
+          },
+          "candidate": {
+            "total_seconds": 746.2196620420001,
+            "model_seconds": [
+              746.146166584
+            ],
+            "peak_RSS_GiB": 2.5788726806640625,
+            "reused_scientific_baseline": false,
+            "power_samples": 27,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              16.94091796875,
+              7.78857421875,
+              6.1708984375
+            ],
+            "host_load_after": [
+              5.67822265625,
+              6.15771484375,
+              6.138671875
+            ],
+            "spectrum_sha256": "c988729601ca9792cdfa417c69bbd537e83cac31311236a5d06c3777a928e7f9",
+            "equilibrium_certificate": {
+              "schema": 1,
+              "scope": "declared equations on the structure grid",
+              "verified": true,
+              "checks": {
+                "all_depth_flux": {
+                  "value": 5.998322771816333e-08,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "surface_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "photospheric_flux": {
+                  "value": null,
+                  "tolerance": 0.002,
+                  "passed": false,
+                  "measured": false
+                },
+                "local_energy": {
+                  "value": 0.00011591649551699997,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                },
+                "temperature_stationarity": {
+                  "value": 1.2468140823784779e-05,
+                  "tolerance": 0.0002,
+                  "passed": true,
+                  "measured": true
+                },
+                "source_closure": {
+                  "value": 1.906718094011947e-15,
+                  "tolerance": 1e-06,
+                  "passed": true,
+                  "measured": true
+                },
+                "boundary_screening": {
+                  "value": 2.107050856197276e-09,
+                  "tolerance": 0.002,
+                  "passed": true,
+                  "measured": true
+                }
+              },
+              "required_checks": [
+                "all_depth_flux",
+                "local_energy",
+                "temperature_stationarity",
+                "source_closure",
+                "boundary_screening"
+              ],
+              "failures": [],
+              "independent_grid_validation": false,
+              "full_physics_validation": false
+            },
+            "solver_counts": {
+              "nonlinear_solver_residual_evaluations": 68,
+              "nonlinear_solver_jacobian_evaluations": 12,
+              "nonlinear_solver_accepted_iterations": 27,
+              "nonlinear_solver_rejected_trial_evaluations": 26
+            },
+            "physical_background_status": "verified",
+            "physical_background_scientific_source": "experiments/kurucz-independent-20261014/results/cold-other/g149_28/candidate",
+            "physical_background_spectrum_sha256": "af0975ea822cae9f1c15a54ddf66021cbb2be5850e1cb350b3c4fed22cf141d0",
+            "physical_background_seconds": 74.661050875
+          }
+        },
+        "raw_total_runtime_ratio": 1.0618062306389393,
+        "eligible_AC_cold_pair": true,
+        "measured_20_percent_limit_met": true,
+        "runtime_limit_evidence": "consecutive AC gray-start solves",
+        "observation_scores_available": true,
+        "score_kind": "unweighted squared residual, not chi-square",
+        "relative_fit_score_change": 0.00029388415292430636,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": [],
+        "physical_continuum_fit_score_change": 1.252113714045322e-06,
+        "physical_continuum_object_review_flag": false,
+        "physical_continuum_local_review_flags": []
+      }
+    },
+    "optical-budget": {
+      "g149_28": {
+        "status": "completed",
+        "label": "optical-budget",
+        "slug": "g149_28",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 55.914719291,
+            "model_seconds": [
+              55.905789625
+            ],
+            "peak_RSS_GiB": 0.9824066162109375,
+            "reused_scientific_baseline": false,
+            "power_samples": 4,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              3.3740234375,
+              4.92626953125,
+              6.712890625
+            ],
+            "host_load_after": [
+              4.3369140625,
+              4.89990234375,
+              6.5869140625
+            ],
+            "spectrum_sha256": "5d52ba45810c22b638291265d136f21b063b3a166b9073c0443c5bd4c61671c4",
+            "physical_background_status": "pending"
+          },
+          "candidate": {
+            "total_seconds": 56.620978209,
+            "model_seconds": [
+              56.580428500000004
+            ],
+            "peak_RSS_GiB": 0.9615325927734375,
+            "reused_scientific_baseline": false,
+            "power_samples": 4,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              4.3369140625,
+              4.89990234375,
+              6.5869140625
+            ],
+            "host_load_after": [
+              3.74853515625,
+              4.65234375,
+              6.3876953125
+            ],
+            "spectrum_sha256": "b4ddcd3cbd2a1d9a55bdcdd9758ee5b138c5e87f007b6755f8fd3e1c8a0a3059",
+            "physical_background_status": "pending"
+          }
+        },
+        "raw_total_runtime_ratio": 1.0126310017640325,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "unweighted squared residual, not chi-square",
+        "relative_fit_score_change": 4.132875680573633e-06,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": []
+      },
+      "galex1931": {
+        "status": "completed",
+        "label": "optical-budget",
+        "slug": "galex1931",
+        "paired_controls_identical": true,
+        "atomic_provenance_verified": true,
+        "arms": {
+          "baseline": {
+            "total_seconds": 34.212698334,
+            "model_seconds": [
+              34.203040375
+            ],
+            "peak_RSS_GiB": 1.049835205078125,
+            "reused_scientific_baseline": false,
+            "power_samples": 4,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              3.74853515625,
+              4.65234375,
+              6.3876953125
+            ],
+            "host_load_after": [
+              3.90576171875,
+              4.59375,
+              6.2958984375
+            ],
+            "spectrum_sha256": "dd9fc6378c5547b35c90ff58cd2a687fa88d4e362152c706d5bd4c339b356760",
+            "physical_background_status": "pending"
+          },
+          "candidate": {
+            "total_seconds": 36.252145875,
+            "model_seconds": [
+              36.213167666000004
+            ],
+            "peak_RSS_GiB": 1.083038330078125,
+            "reused_scientific_baseline": false,
+            "power_samples": 4,
+            "all_recorded_samples_AC": true,
+            "recorded_power_sources": [
+              "AC"
+            ],
+            "host_load_before": [
+              3.90576171875,
+              4.59375,
+              6.2958984375
+            ],
+            "host_load_after": [
+              4.1318359375,
+              4.564453125,
+              6.20556640625
+            ],
+            "spectrum_sha256": "80ff6cd0fe5219ad55360582fd070341c8fc240b39c299443ebdf5b808e543d6",
+            "physical_background_status": "pending"
+          }
+        },
+        "raw_total_runtime_ratio": 1.0596108357513918,
+        "eligible_AC_cold_pair": false,
+        "measured_20_percent_limit_met": null,
+        "runtime_limit_evidence": "not eligible for full cold AC timing conclusion",
+        "observation_scores_available": true,
+        "score_kind": "unweighted squared residual, not chi-square",
+        "relative_fit_score_change": -0.0001539886465449225,
+        "object_fit_review_flag": false,
+        "local_fit_review_flags": []
+      }
+    }
+  },
+  "expected_physical_backgrounds": 16,
+  "verified_physical_backgrounds": 16,
+  "expected_fixed_background_arm_products": 24,
+  "verified_fixed_background_arm_products": 24,
+  "all_required_observation_scores_complete": true,
+  "physical_continuum_object_review_flags": [],
+  "all_required_calculations_and_backgrounds_complete": true
+}

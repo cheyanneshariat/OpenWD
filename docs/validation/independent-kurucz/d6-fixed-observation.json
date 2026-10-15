@@ -1,0 +1,132 @@
+{
+  "scope": "fixed historical atmosphere, R=2500, baseline continuum transfer reused",
+  "score_kind": "unweighted squared residual, not chi-square",
+  "candidate_continuum_refitted": false,
+  "parameters_or_abundances_changed": false,
+  "inputs": {
+    "baseline": {
+      "name": "j1637.npz",
+      "sha256": "5995096e7a79b7f66d6815bb878a48e8c0aa378203604c27bf0d6d38206d9289"
+    },
+    "candidate": {
+      "name": "j1637.npz",
+      "sha256": "4a082d47ea1ece82eab887b0c85be42f068f28d2fa7debc850c9061b740005cf"
+    },
+    "digitization": {
+      "name": "hollands2025_j1637_figure1.npz",
+      "sha256": "0d73b36c40d96105249d3f39e09c039f99874a45e45b78a4dc13dcfa9d896c96"
+    }
+  },
+  "scores": {
+    "observed": {
+      "panels": [
+        {
+          "panel": 1,
+          "pixels": 3485,
+          "baseline_squared_residual": 37.54854792510226,
+          "candidate_squared_residual": 37.49814013972757,
+          "relative_change": -0.0013424696335858632,
+          "baseline_continuum_coefficients": [
+            -19.884159731100926,
+            0.3766988962485995,
+            -0.018499585103197064
+          ]
+        },
+        {
+          "panel": 2,
+          "pixels": 2790,
+          "baseline_squared_residual": 4.73036801109849,
+          "candidate_squared_residual": 4.718588383998659,
+          "relative_change": -0.002490213673057351,
+          "baseline_continuum_coefficients": [
+            -19.190324588722277,
+            0.3453392196989351,
+            -0.024435452777054875
+          ]
+        },
+        {
+          "panel": 3,
+          "pixels": 2338,
+          "baseline_squared_residual": 3.735043289116085,
+          "candidate_squared_residual": 3.6921715563417656,
+          "relative_change": -0.011478242541190231,
+          "baseline_continuum_coefficients": [
+            -18.573857095525522,
+            0.31294539419852907,
+            0.0010585069917506177
+          ]
+        },
+        {
+          "panel": 4,
+          "pixels": 1899,
+          "baseline_squared_residual": 2.5761632451247283,
+          "candidate_squared_residual": 2.5160074011498113,
+          "relative_change": -0.023350944117675465,
+          "baseline_continuum_coefficients": [
+            -17.996764388262346,
+            0.27583483673694065,
+            -0.00944499692803688
+          ]
+        }
+      ],
+      "baseline_squared_residual": 48.590122470441564,
+      "candidate_squared_residual": 48.42490748121781,
+      "relative_change": -0.0034001764314189886
+    },
+    "koester": {
+      "panels": [
+        {
+          "panel": 1,
+          "pixels": 1613,
+          "baseline_squared_residual": 1.9961279810903576,
+          "candidate_squared_residual": 1.9885450656900419,
+          "relative_change": -0.0037988122365649746,
+          "baseline_continuum_coefficients": [
+            -19.88938199187643,
+            0.3770171051054851,
+            -0.013102731633387321
+          ]
+        },
+        {
+          "panel": 2,
+          "pixels": 1439,
+          "baseline_squared_residual": 2.2574899931848815,
+          "candidate_squared_residual": 2.2586335628207017,
+          "relative_change": 0.0005065668681909496,
+          "baseline_continuum_coefficients": [
+            -19.191555399423276,
+            0.34958543905766426,
+            -0.024679122206452495
+          ]
+        },
+        {
+          "panel": 3,
+          "pixels": 1060,
+          "baseline_squared_residual": 1.0496090046029731,
+          "candidate_squared_residual": 1.0210702144137538,
+          "relative_change": -0.02718992507120732,
+          "baseline_continuum_coefficients": [
+            -18.577552077056204,
+            0.3137097192385524,
+            0.006833826024694162
+          ]
+        },
+        {
+          "panel": 4,
+          "pixels": 816,
+          "baseline_squared_residual": 0.6420168047734531,
+          "candidate_squared_residual": 0.6290517143847352,
+          "relative_change": -0.0201943162426923,
+          "baseline_continuum_coefficients": [
+            -17.99824385651683,
+            0.27999304751200527,
+            -0.005216565166350823
+          ]
+        }
+      ],
+      "baseline_squared_residual": 5.945243783651666,
+      "candidate_squared_residual": 5.897300557309233,
+      "relative_change": -0.008064131276545483
+    }
+  }
+}

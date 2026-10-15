@@ -1,6 +1,24 @@
 # Bundled atomic supplements
 
-## Kurucz Cr II
+## Default: independently corroborated Kurucz lines
+
+`read_stout_atomic_database` applies the checksum-pinned
+[common selection](independent-kurucz/README.md) to all loaded eligible ions.
+It admits 19,966 absorption additions in C I, Si I/II, S I, Ti I, Cr II and
+Fe II, with independent source evidence and the same rule for every element.
+Original Stout records and the two previously added levels are retained.
+Qualified weaker branches contribute to natural widths. Runtime ranking,
+line budgets and a conservative addition-only peak-opacity screen control cost.
+
+This replaces the former default full Cr II and selected Fe II/Si II imports
+described below. Those files and explicit augmentation functions remain for
+historical controls and bare/custom-atom experiments. Calling them on an
+already qualified default atom leaves that atom unchanged. Set
+`include_default_supplements=False` to read original Stout alone; the legacy
+Si II configuration flag does not remove qualified lines already in the reader.
+See the [observational and timing validation](../../../../docs/validation/independent-kurucz.md).
+
+## Historical full Kurucz Cr II import
 
 `gf2401.all.xz` is an xz-compressed, otherwise unmodified copy of Robert L.
 Kurucz's full Cr II list:
@@ -10,7 +28,7 @@ Kurucz's full Cr II list:
   `6f0c4d0e01421fb0549ddbcf5649af391ca9b930e4e83e693e662d5874505205`
 - Uncompressed size: 14,588,693 bytes.
 
-`read_stout_atomic_database` applies it by default whenever Cr II is present,
+`augment_chromium_ii_kurucz_transitions` applies it to a bare/custom atom,
 using `read_kurucz_gf100_atomic_database` in missing-transition mode with no
 wavelength restriction. Existing Stout levels and transitions are retained
 unchanged. Levels match within 0.1 cm^-1 and equal statistical weight;
@@ -33,7 +51,7 @@ database for diagnostic comparisons. Reapplying
 These are independently authored atomic data; credit Robert L. Kurucz and
 the original source in scientific uses. See [third-party notices](../../../../THIRD_PARTY_NOTICES.md).
 
-## Kurucz Si II
+## Historical Kurucz Si II import
 
 `gf1401_observed.all.xz` is an xz-compressed subset of Kurucz's Si II list:
 
@@ -57,7 +75,7 @@ functions are unchanged. Kurucz-only levels are not imported; most lie far
 above the first ionization limit, and lines to them (for example Si II
 1399.94/1400.27 A) are not observed in hot DAZ COS spectra.
 
-## Kurucz Fe II ultraviolet missing transitions
+## Historical Kurucz Fe II ultraviolet missing transitions
 
 `gf2601_uv_missing.all.xz` contains 145 otherwise unmodified rows from
 Kurucz's Fe II `gf2601.all` (K13):
@@ -73,8 +91,8 @@ Kurucz's Fe II `gf2601.all` (K13):
   signs are positive; this indicates observed levels in Kurucz's convention,
   while the oscillator strengths remain calculated atomic data.
 
-`read_stout_atomic_database` applies the subset by default whenever Fe II
-is present. `augment_iron_ii_kurucz_uv_transitions` uses missing-transition
+`augment_iron_ii_kurucz_uv_transitions` applies the subset to a bare/custom
+atom using missing-transition
 mode and leaves every existing Stout line, oscillator strength and damping
 constant unchanged, including Fe II 1360.858 Å. Other ions are unchanged;
 line-selection and width caches are rebuilt. Reapplication is idempotent.

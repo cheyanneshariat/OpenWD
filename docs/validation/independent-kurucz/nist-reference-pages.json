@@ -1,0 +1,32 @@
+{
+  "T9787": {
+    "url": "https://physics.nist.gov/cgi-bin/ASBib1/get_ASBib_ref.cgi?db=tp&db_id=9787&comment_code=&element=C&spectr_charge=1&type=T",
+    "bytes": 5818,
+    "sha256": "470080a153e4267933f3043ba01c1f7a4f948f8b364de82ef3f95eff49cb8c0d"
+  },
+  "T6066": {
+    "url": "https://physics.nist.gov/cgi-bin/ASBib1/get_ASBib_ref.cgi?db=tp&db_id=6066&comment_code=LS%27&element=Si&spectr_charge=1&type=T",
+    "bytes": 5694,
+    "sha256": "0c1c8371f31d163ee0c36fc822e2ff48f79acaca6787eef8bfab8daf2dcc90f0"
+  },
+  "T10762": {
+    "url": "https://physics.nist.gov/cgi-bin/ASBib1/get_ASBib_ref.cgi?db=tp&db_id=10762&comment_code=&element=S&spectr_charge=1&type=T",
+    "bytes": 6808,
+    "sha256": "50e3e98e3e082a212b66cef774898a184a82844b30156f380121af58a621ac01"
+  },
+  "T7952": {
+    "url": "https://physics.nist.gov/cgi-bin/ASBib1/get_ASBib_ref.cgi?db=tp&db_id=7952&comment_code=&element=S&spectr_charge=1&type=T",
+    "bytes": 5581,
+    "sha256": "c0d440089c2bd2e46467ff83d180b5a2c6b04a98c089fe6adce12919d77d8b9a"
+  },
+  "T3499": {
+    "url": "https://physics.nist.gov/cgi-bin/ASBib1/get_ASBib_ref.cgi?db=tp&db_id=3499&comment_code=n&element=Ti&spectr_charge=1&type=T",
+    "bytes": 5703,
+    "sha256": "d15d682aa76c3edb8bf561335c137c5081a660222f94693a8532e1a87e2f99ed"
+  },
+  "T4922": {
+    "url": "https://physics.nist.gov/cgi-bin/ASBib1/get_ASBib_ref.cgi?db=tp&db_id=4922&comment_code=&element=Ti&spectr_charge=1&type=T",
+    "bytes": 5718,
+    "sha256": "49efcff1ec1f6616188deb88de14f46a6e5b829fae0c83477e173c2f72e638c2"
+  }
+}

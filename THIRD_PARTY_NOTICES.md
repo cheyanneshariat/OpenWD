@@ -44,6 +44,24 @@ Observatory of Belgium, and licensed under CC BY 4.0. The original license is
 retained beside the tables in
 `src/wd_spectra/data/runtime/cache/metal-opacity/atomic-line-list/stout`.
 
+## Independently corroborated Kurucz supplements
+
+`src/wd_spectra/data/atomic/independent-kurucz/` contains selected Kurucz
+atomic values and derived per-transition evidence for the default Stout
+supplements. These independently authored atomic data are not covered by
+OpenWD's BSD source-code license. Credit Robert L. Kurucz and the original
+atomic-data authors in scientific use. Public availability is not represented
+as a new license grant.
+
+Independent corroboration uses the SRON Fe II/Cr II orthogonal-operator
+calculations, Ward et al. (2023, DOI 10.3847/1538-4357/acfafe), Pehlivan Rhodin
+et al. (2024, DOI 10.1051/0004-6361/202245686), Aggarwal & Keenan (2014,
+DOI 10.1093/mnras/stu883), and reviewed NIST ASD original references. Evidence
+metadata includes selected independent oscillator strengths and source-row
+associations, not copies of the papers. Source URLs and checksums are in
+the bundle's `provenance.json`; selection and limitations are in its README
+and `docs/validation/independent-kurucz.md`.
+
 ## Kurucz Cr II atomic line data
 
 `src/wd_spectra/data/atomic/gf2401.all.xz` contains Robert L. Kurucz's full

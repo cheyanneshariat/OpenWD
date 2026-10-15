@@ -98,9 +98,13 @@ def main():
         help="Reuse a checksum-verified versioned seed and its historical cold certificate")
     parser.add_argument("--verify-legacy-uv-controls", action="store_true",
         help="First reproduce the frozen pre-Fe-supplement trajectory at unchanged tolerances")
+    parser.add_argument("--spectrum-first", action="store_true",
+        help="Save the current fixed spectrum and its changes before the slower warm trajectory")
     args = parser.parse_args()
     if args.verify_legacy_uv_controls and not args.from_frozen_reference:
         parser.error("legacy verification requires --from-frozen-reference")
+    if args.spectrum_first and not args.from_frozen_reference:
+        parser.error("spectrum-first requires --from-frozen-reference")
     seed_path = args.output.with_name(args.output.name + "-seed.npz")
     if args.output.exists() or seed_path.exists():
         parser.error("output already exists; choose a new versioned directory")
@@ -172,6 +176,32 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(seed_path, column_mass=column_mass, optical_depth=optical_depth,
         base_temperature=temperature, initial_temperature=initial_temperature)
+    wavelength = default_d6_wavelength_grid(config.quality)
+    spectrum = None
+    spectrum_seconds = None
+    if args.spectrum_first:
+        args.output.mkdir(parents=True)
+        started = time.monotonic()
+        with atomic_input_scope(), warnings.catch_warnings():
+            warnings.simplefilter("ignore", AtmosphereConvergenceWarning)
+            spectrum = fixed_spectrum(column_mass, optical_depth, temperature, wavelength)
+        spectrum_seconds = time.monotonic() - started
+        assert spectrum.metadata["source_converged"]
+        assert spectrum.metadata["independent_radiation_scaled_source_error"] < 1e-10
+        np.savez_compressed(args.output / "spectrum.partial.npz", wavelength=wavelength,
+                            surface_flux=spectrum.surface_flux_lambda)
+        with np.load(args.source / "j1637.npz", allow_pickle=False) as old:
+            np.testing.assert_array_equal(wavelength, old["wavelength"])
+            relative = spectrum.surface_flux_lambda / old["surface_flux"] - 1
+            worst = np.argsort(np.abs(relative))[-20:][::-1]
+            from wd_spectra._compat import trapezoid
+            difference = dict(maximum_relative_difference=float(np.max(np.abs(relative))),
+                integrated_flux_change=float(trapezoid(spectrum.surface_flux_lambda - old["surface_flux"], wavelength)
+                    / trapezoid(old["surface_flux"], wavelength)),
+                strongest_changes=[dict(wavelength_A=float(wavelength[i]),
+                    relative_change=float(relative[i])) for i in worst])
+        (args.output / "spectrum-difference.json").write_text(json.dumps(difference, indent=2) + "\n")
+        print(json.dumps(dict(fixed_spectrum_difference=difference)), flush=True)
     print(f"Building {STEPS} perturbed warm updates with full-resolution physics", flush=True)
     started = time.monotonic()
     with atomic_input_scope():
@@ -186,7 +216,7 @@ def main():
     assert any(np.max(np.abs(record["temperature"] / initial_temperature - 1.0)) > 1e-4
                for record in records)
     # Preserve expensive trajectory evidence if the subsequent spectrum fails.
-    args.output.mkdir(parents=True)
+    args.output.mkdir(parents=True, exist_ok=args.spectrum_first)
     partial = args.output / "trajectory.partial.npz"
     np.savez_compressed(partial, column_mass=column_mass, optical_depth=optical_depth,
         base_temperature=temperature, initial_temperature=initial_temperature,
@@ -194,12 +224,12 @@ def main():
         phases=np.array([r["phase"] for r in records]),
         metrics=np.stack([r["metrics"] for r in records]),
         **{key: np.stack([r[key] for r in records]) for key in ARRAYS})
-    wavelength = default_d6_wavelength_grid(config.quality)
-    started = time.monotonic()
-    with atomic_input_scope(), warnings.catch_warnings():
-        warnings.simplefilter("ignore", AtmosphereConvergenceWarning)
-        spectrum = fixed_spectrum(column_mass, optical_depth, temperature, wavelength)
-    spectrum_seconds = time.monotonic() - started
+    if spectrum is None:
+        started = time.monotonic()
+        with atomic_input_scope(), warnings.catch_warnings():
+            warnings.simplefilter("ignore", AtmosphereConvergenceWarning)
+            spectrum = fixed_spectrum(column_mass, optical_depth, temperature, wavelength)
+        spectrum_seconds = time.monotonic() - started
     assert spectrum.metadata["source_converged"]
     assert spectrum.metadata["independent_radiation_scaled_source_error"] < 1e-10
 
@@ -224,6 +254,8 @@ def main():
         perturbation="T * exp(0.015 * exp(-((log10(tau) + 2) / 1)**2))",
         metrics=list(METRICS), output_sha256=digest(path), seed_sha256=digest(seed_path),
         timings_seconds=dict(trajectory=trajectory_seconds, fixed_spectrum=spectrum_seconds))
+    from wd_spectra._kurucz_supplements import MANIFEST_SHA256
+    manifest["independent_kurucz_manifest_sha256"] = MANIFEST_SHA256
     if archived_reference is not None:
         manifest["archived_reference"] = archived_reference
         with np.load(args.source / "j1637.npz", allow_pickle=False) as previous:
@@ -234,6 +266,9 @@ def main():
         manifest["legacy_recovery"] = legacy_recovery
     (args.output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     partial.unlink()
+    spectrum_partial = args.output / "spectrum.partial.npz"
+    if spectrum_partial.exists():
+        spectrum_partial.unlink()
     print(json.dumps(manifest["timings_seconds"]), flush=True)
 
 

@@ -478,6 +478,10 @@ def synthesize_balmer_spectrum(
     absorption = line_opacity + continuum_absorption
     metal_line_scattering = np.zeros_like(absorption)
     ca_ii_probabilities = None
+    excluded_metal_line_elements = tuple(excluded_metal_line_elements)
+    calcium_lines_enabled = not any(
+        str(element).strip().casefold() == "ca" for element in excluded_metal_line_elements
+    )
     if metal_database is not None and metal_state is not None:
         from .metals import (
             metal_bound_free_mass_absorption_coefficient,
@@ -520,9 +524,10 @@ def synthesize_balmer_spectrum(
             minimum_oscillator_strength=minimum_metal_oscillator_strength,
             maximum_lines=maximum_metal_lines,
             excluded_elements=excluded_metal_line_elements,
+            supplement_background_absorption=continuum_absorption,
         )
         absorption += metal_lines
-        if ca_ii_resonance_collision_strengths is not None:
+        if ca_ii_resonance_collision_strengths is not None and calcium_lines_enabled:
             from .cool_metal_nlte import (
                 ca_ii_resonance_scattering_probabilities,
             )
@@ -551,7 +556,7 @@ def synthesize_balmer_spectrum(
                     )
                     for lower_index, upper_index in ca_ii_probabilities
                 }
-        elif ca_ii_resonance_scattering_fraction > 0.0:
+        elif ca_ii_resonance_scattering_fraction > 0.0 and calcium_lines_enabled:
             ca_ii = metal_database.ions.get(("Ca", 1))
             if ca_ii is not None:
                 resonance_keys = tuple(
@@ -1113,6 +1118,10 @@ def synthesize_helium_spectrum(
             )
     metal_line_scattering = np.zeros_like(absorption)
     ca_ii_probabilities = None
+    excluded_metal_line_elements = tuple(excluded_metal_line_elements)
+    calcium_lines_enabled = not any(
+        str(element).strip().casefold() == "ca" for element in excluded_metal_line_elements
+    )
     if metal_database is not None and metal_state is not None:
         from .metals import (
             metal_bound_free_mass_absorption_coefficient,
@@ -1156,9 +1165,10 @@ def synthesize_helium_spectrum(
             maximum_lines=maximum_metal_lines,
             excluded_elements=excluded_metal_line_elements,
             include_classical_electron_stark=metal_classical_electron_stark,
+            supplement_background_absorption=absorption,
         )
         absorption += metal_lines
-        if ca_ii_resonance_collision_strengths is not None:
+        if ca_ii_resonance_collision_strengths is not None and calcium_lines_enabled:
             from .cool_metal_nlte import (
                 ca_ii_resonance_scattering_probabilities,
             )
@@ -1203,7 +1213,7 @@ def synthesize_helium_spectrum(
                     )
                 absorption -= metal_line_scattering
                 ca_ii_probabilities = None
-        elif ca_ii_resonance_scattering_fraction > 0.0:
+        elif ca_ii_resonance_scattering_fraction > 0.0 and calcium_lines_enabled:
             ca_ii = metal_database.ions.get(("Ca", 1))
             if ca_ii is not None:
                 resonance_keys = tuple(

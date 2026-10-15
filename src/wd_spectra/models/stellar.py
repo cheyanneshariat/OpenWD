@@ -270,9 +270,9 @@ class DZConfig:
     # Lorentzian neutral-He broadening.  No stellar fitting.  False restores
     # the previous Unsold neutral-He Lorentzian for these lines.
     si_ii_he_unified_profile: bool = True
-    # Kurucz Si II transitions between levels Stout already contains but does
-    # not connect (e.g. 3s3p2 2D - 3s3p(3Po)3d 2Fo at 1305.59/1309.45 A);
-    # Kurucz-only levels are not imported.  False keeps Stout's Si II lines.
+    # Legacy import switch for bare/custom atoms. Independently corroborated
+    # Si II additions are already in the default reader; this switch neither
+    # removes them nor appends the former unfiltered supplement to that atom.
     si_ii_kurucz_transitions: bool = True
 
 
