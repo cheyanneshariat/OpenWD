@@ -6,25 +6,32 @@
     "numerical_completions": 73,
     "timeouts": 7
   },
-  "current_index_sha256": "4a0dc93690e2a52dc228b8c1ea144156cde5d59c0af7c372488af18ae1bb0b6c",
-  "current_snapshot_utc": "2026-10-13T14:40:40.008517+00:00",
+  "current_index_sha256": "4e42ef68f98ccccd48b0d6f6b25b2204a19c5a895df3b33058d648fb636690fd",
+  "current_snapshot_utc": "2026-10-15T15:29:40.934896+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
       "bytes": 215429900,
-      "current_selected_grid_points": 808,
+      "current_selected_grid_points": 811,
       "initial_archive_models": 807,
-      "models": 808,
-      "raw_spectrum_bytes": 762702963
+      "models": 811,
+      "raw_spectrum_bytes": 762702963,
+      "updated_source_selected": 5,
+      "retained_earlier_source_selected": 806,
+      "current_selected_source_commits": [
+        "c103b53f28f3f37707572dbbc83a898807c4b683",
+        "c8329d86c98f956617ec1bb3746181350492ce66",
+        "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+      ]
     },
     "DAB": {
       "additional_validation_points_outside_current_grid": 35,
       "additional_validation_points_outside_original_grid": 11,
       "archive": "OpenWD-DAB-production-20261009.tar.gz",
       "bytes": 88273096,
-      "current_selected_grid_points": 637,
+      "current_selected_grid_points": 656,
       "initial_archive_models": 326,
-      "models": 637,
+      "models": 656,
       "one_dex_abundance_planes": [
         -6,
         -5,
@@ -42,7 +49,13 @@
       "qualification_scope": "Native atmosphere equilibrium certificate plus independent native final-source checks",
       "release_tag": "grid-preview-2026-10-09-dab",
       "requests": 656,
-      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141"
+      "source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "updated_source_selected": 653,
+      "retained_earlier_source_selected": 3,
+      "current_selected_source_commits": [
+        "0a74fdbe06596fc145f5169a3b239ddd67053141",
+        "c103b53f28f3f37707572dbbc83a898807c4b683"
+      ]
     },
     "DAO": {
       "current_selected_grid_points": 3,
@@ -77,11 +90,19 @@
           ]
         }
       ],
-      "current_selected_grid_points": 592,
+      "current_selected_grid_points": 594,
       "duplicate_policy": "Do not count the new log g 8 control as another requested parameter point",
-      "models": 592,
+      "models": 594,
       "new_accepted_original_coordinates": 96,
-      "requests": 638
+      "requests": 638,
+      "updated_source_selected": 5,
+      "retained_earlier_source_selected": 589,
+      "current_selected_source_commits": [
+        "54e401e20936119d707bb3623e0a13e29373b6e8",
+        "c103b53f28f3f37707572dbbc83a898807c4b683",
+        "c8329d86c98f956617ec1bb3746181350492ce66",
+        "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
+      ]
     },
     "DO": {
       "current_selected_grid_points": 5,
@@ -108,14 +129,14 @@
     }
   },
   "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
-  "history": "history/2026-10-13-before-DZ-replacements/dataset.json",
+  "history": "history/2026-10-15-before-DA-DB-DAB-replacements/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2372,
+  "qualified_spectra": 2396,
   "requests": 2499,
-  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json. Updated DZ rows preserve the original request model_id and use the actual native model-request fingerprint in scientific_identity; SOURCE_INDEX.json maps the accepted new attempt, exact configuration and spectrum hash.",
+  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json. Updated DZ rows preserve the original request model_id and use the actual native model-request fingerprint in scientific_identity; SOURCE_INDEX.json maps the accepted new attempt, exact configuration and spectrum hash. October15 DA/DB/DAB rows retain model_id and role; the new source index defines ordinary actual native fingerprints and the one experimental dense DB delivery identity separately. The DAB molecular closure uses the effective configuration, with table SHA retained.",
   "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
   "snapshots": {
     "DAB-1dex-2026-10-10": {
@@ -563,7 +584,7 @@
           "source_commit": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
           "file_hashes_verified": 96,
           "persistent_copy_verified": true,
-          "persistent_path": "/global/u2/c/cshariat/OpenWD_release_20261007/dz-rerun-20261012-v1/pilot-archive-v1/OpenWD-DZ-pilot-20261012.tar.gz"
+          "persistent_path": "<private-runtime>/OpenWD-DZ-pilot-20261012.tar.gz"
         }
       },
       "is_draft": true,
@@ -572,6 +593,40 @@
       "physical_accuracy_verified": false,
       "independent_depth_convergence_verified": false,
       "interpolation_accuracy_verified": false
+    },
+    "DA-DB-DAB-replacements-2026-10-15": {
+      "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "scientific_attempts": 668,
+      "numerical_completions": 663,
+      "family_attempts": {
+        "DA": 6,
+        "DB": 6,
+        "DAB": 656
+      },
+      "family_accepted": {
+        "DA": 5,
+        "DB": 5,
+        "DAB": 653
+      },
+      "outcome_counts": {
+        "TIMEOUT": 1,
+        "COMPLETE_NUMERICAL": 663,
+        "NUMERICAL_NONCONVERGENCE": 3,
+        "INFRASTRUCTURE_INTERRUPTION": 1
+      },
+      "held_unattempted": {
+        "DA": 846,
+        "DB": 632
+      },
+      "selected_total": 2396,
+      "source_index": "da-db-dab-replacements-2026-10-15/SOURCE_INDEX.json",
+      "source_index_sha256": "d8e0fa2fbb81139caea00c33d6286489b0fb81e464a900e721ea1655ab86180c",
+      "interpolation_validation_of_updated_selection": false,
+      "original_interpolation_tests": "Historical original-source comparisons remain unchanged and do not qualify these source replacements",
+      "is_draft": true,
+      "permanent_HPSS_copy_verified": false,
+      "all_registered_allocations_terminal": true,
+      "charged_CPU_node_hours": 4.610868055555556
     }
   },
   "source_commits": {
@@ -595,7 +650,8 @@
       "legacy": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
       "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
     },
-    "DZ-replacements-2026-10-13": "1386029e9a911d9d6f7977cfb30af2f24e5f7545"
+    "DZ-replacements-2026-10-13": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+    "DA-DB-DAB-replacements-2026-10-15": "c103b53f28f3f37707572dbbc83a898807c4b683"
   },
   "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece",
   "spectra_only": false,
@@ -604,13 +660,11 @@
       "COMPLETE_NUMERICAL": 1
     },
     "DA": {
-      "COMPLETE_NUMERICAL": 808,
-      "NUMERICAL_NONCONVERGENCE": 44
+      "COMPLETE_NUMERICAL": 811,
+      "NUMERICAL_NONCONVERGENCE": 41
     },
     "DAB": {
-      "COMPLETE_NUMERICAL": 637,
-      "DOMAIN_OR_UNSUPPORTED_CONFIG": 17,
-      "INFRASTRUCTURE_INTERRUPTION": 2
+      "COMPLETE_NUMERICAL": 656
     },
     "DAH": {
       "STRUCTURE_CERTIFIED_SPECTRUM_UNVERIFIED": 2
@@ -624,11 +678,11 @@
       "COMPLETE_NUMERICAL": 3
     },
     "DB": {
-      "COMPLETE_NUMERICAL": 592,
-      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+      "COMPLETE_NUMERICAL": 594,
+      "NUMERICAL_NONCONVERGENCE": 22,
+      "TIMEOUT": 12,
       "NUMERICAL_GRID_FAILURE": 5,
-      "NUMERICAL_NONCONVERGENCE": 24,
-      "TIMEOUT": 12
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5
     },
     "DO": {
       "COMPLETE_NUMERICAL": 5,

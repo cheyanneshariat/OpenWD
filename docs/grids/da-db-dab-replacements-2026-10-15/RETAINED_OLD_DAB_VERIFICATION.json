@@ -1,0 +1,121 @@
+{
+  "status": "VERIFIED_THREE_ACCEPTED_OLD_DAB_PREDECESSORS",
+  "checked_utc": "2026-10-15T15:22:23.115176+00:00",
+  "old_products_unchanged": true,
+  "old_selected_rows_unchanged": true,
+  "progress_sha256": "4a0dc93690e2a52dc228b8c1ea144156cde5d59c0af7c372488af18ae1bb0b6c",
+  "records": [
+    {
+      "case_id": "dab-6785af6bf2d3a46e0bfb0e96",
+      "old_source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 30000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": -2,
+        "logg": 6,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "fresh_failure": "NUMERICAL_NONCONVERGENCE",
+      "retained_old_selected_status": "COMPLETE_NUMERICAL",
+      "spectrum_sha256": "2cd10a98876002cd31684dcb0f8aa117a805a9f653c69e3af387234a2b9ecc78",
+      "files": {
+        "dab-6785af6bf2d3a46e0bfb0e96/request.json": "5411fad55c90b76c82322b7392dcb00e9a1b26b2108f6512cd43d4ab79484910",
+        "dab-6785af6bf2d3a46e0bfb0e96/numerical-checks.json": "210ff511e0c19728cc120fff51693e805154714d65f07b5298418e066d935a17",
+        "dab-6785af6bf2d3a46e0bfb0e96/spectrum.txt": "2cd10a98876002cd31684dcb0f8aa117a805a9f653c69e3af387234a2b9ecc78"
+      }
+    },
+    {
+      "case_id": "dab-600af571b9b8a65f6d4bf822",
+      "old_source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 40000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": -3,
+        "logg": 7,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "fresh_failure": "NUMERICAL_NONCONVERGENCE",
+      "retained_old_selected_status": "COMPLETE_NUMERICAL",
+      "spectrum_sha256": "73e0223cad1fb9724e391428b32971154a631a999d8033bbf40eea0f20acc665",
+      "files": {
+        "dab-600af571b9b8a65f6d4bf822/request.json": "04ea5a0a86a911c8ce9fdf0bbb576ef1fbb4d826dc78701f51b5d3b4cef1e341",
+        "dab-600af571b9b8a65f6d4bf822/metadata.json": "974476528727b8b85b4ea9af47a75080eb5d823d8ac075c861d828c4a653aab0",
+        "dab-600af571b9b8a65f6d4bf822/structure.npz": "80f33f1d9fe726c2a5b54741a5f8d99b249ffd2958753be1d2a35ecedda1ad9d",
+        "dab-600af571b9b8a65f6d4bf822/numerical-checks.json": "87753fcb626d8926148ed07837e2915f9ddbe757d8b6458ab0adf81045e36663",
+        "dab-600af571b9b8a65f6d4bf822/spectrum.txt": "73e0223cad1fb9724e391428b32971154a631a999d8033bbf40eea0f20acc665"
+      }
+    },
+    {
+      "case_id": "dab-975c44f2be086a2fa3d7b98b",
+      "old_source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 12000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": -3,
+        "logg": 8,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "fresh_failure": "INFRASTRUCTURE_INTERRUPTION",
+      "retained_old_selected_status": "COMPLETE_NUMERICAL",
+      "spectrum_sha256": "ff429e57955b4d07c2b577073edbec116f0cbde17c06e6e0fd2a65d94adb8bee",
+      "files": {
+        "dab-975c44f2be086a2fa3d7b98b/request.json": "eb5f25257628cf5101f3f09151e57706fe022e6294ffd272a2ee407c1a15097b",
+        "dab-975c44f2be086a2fa3d7b98b/metadata.json": "1cbc94d5e1ea852696d898120f50df28973815ab87255f06aaba2e35d58d5de5",
+        "dab-975c44f2be086a2fa3d7b98b/structure.npz": "cf23b92927cb22c3f1bb32b9e08fe686684c068ca15f8ef2db9186b29783af16",
+        "dab-975c44f2be086a2fa3d7b98b/numerical-checks.json": "9d13f8faf2d3b79bade27215fe35c55c85c9819c88fef936c04baf80bc00e8a9",
+        "dab-975c44f2be086a2fa3d7b98b/spectrum.txt": "ff429e57955b4d07c2b577073edbec116f0cbde17c06e6e0fd2a65d94adb8bee"
+      }
+    }
+  ]
+}

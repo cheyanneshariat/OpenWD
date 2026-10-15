@@ -1,0 +1,24 @@
+{
+  "scientific_archive": {
+    "archive": "OpenWD-DA-DB-DAB-bounded-replacements-20261015.tar.gz",
+    "bytes": 413698636,
+    "sha256": "7d5e0b17ef381175cde6b8530a0330744786e5b1c7f4408fc0daa4a8adb51dfe",
+    "members": 7439,
+    "NPZ_files": 1309,
+    "array_count": 7939,
+    "native_spectrum_files": 666
+  },
+  "source_archive": {
+    "bytes": 239853561,
+    "sha256": "7394762e7ac90b8268d4c60c658f7903f9346e102e7a64d4a0962eceed068a9f",
+    "members": 2503,
+    "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+    "tracked_source_files": 2500,
+    "native_sha256": "9854bcc9b4c6c2eb49ff80944b2586b6e4f3df00e40afcc0d917e16b2361b054",
+    "CIA_sha256": "4f0eb9cd69a1c383f53a1431495bae0c01a30a41cc1b8433c2d726763ff45431"
+  },
+  "local_copy_verified": true,
+  "actual_downloaded_draft_bytes_verified": true,
+  "isDraft": true,
+  "private_permanent_HPSS_verified": false
+}

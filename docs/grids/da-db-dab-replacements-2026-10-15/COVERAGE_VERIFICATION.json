@@ -1,0 +1,16 @@
+{
+  "status": "VERIFIED_COVERAGE_PNG_AND_RENDERED_PDF",
+  "selected_total": 2396,
+  "displayed_requests": 2495,
+  "full_table_requests": 2499,
+  "family_selected": {
+    "DA": 811,
+    "DB": 594,
+    "DAB": 656
+  },
+  "visual_labels_units_clipping_overlap": "none found",
+  "PNG_sha256": "ab858fb5666389b6d1fbcaac0d6bab287936e31b371c3aa203fab9af36a80930",
+  "PDF_sha256": "bb2d62db1f190226e0515da38fb2525f1ad02d172022f3a9ab277b043727b4d5",
+  "table_sha256": "4e42ef68f98ccccd48b0d6f6b25b2204a19c5a895df3b33058d648fb636690fd",
+  "all_plot_text": "titles,axes,ticks only"
+}

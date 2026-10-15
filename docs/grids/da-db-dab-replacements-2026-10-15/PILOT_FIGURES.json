@@ -1,0 +1,63 @@
+{
+  "status": "VERIFIED_PILOT_FIGURE_EXPORTS",
+  "checked_utc": "2026-10-15T08:26:04.397334+00:00",
+  "PNG_exports_visually_inspected": [
+    "pilot_UV.png",
+    "pilot_optical.png"
+  ],
+  "PDF_exports_rendered_and_visually_inspected": [
+    "pilot_UV.pdf",
+    "pilot_optical.pdf"
+  ],
+  "rendered_PDF_images": [
+    "pilot_UV_pdf_render.png",
+    "pilot_optical_pdf_render.png"
+  ],
+  "physical_units_verified_from_actual_spectrum_headers": true,
+  "wavelength_convention": "vacuum",
+  "normalization": "none",
+  "resampling": "none",
+  "extrapolation": "none",
+  "plot_text": "titles,axes,ticks only",
+  "cases": [
+    "da-e6ca40f29bf0d730faa381d6",
+    "db-da24290f1cb3fb24fbf1618b",
+    "dab-5cdb46c2d489c43e85ca3805"
+  ],
+  "comparison_sha256": "d32c6cbf93c79dce0be5e7481484257d0fe8bbe6554675609ebb97e8ed1cb8f6",
+  "integrated_metrics_rechecked": 9,
+  "files": {
+    "CAPTIONS.md": {
+      "bytes": 1742,
+      "sha256": "66aa5110304d47ef33fdfb53a76cdb55deac8981f29ff547d735da70962b99d6"
+    },
+    "pilot_optical_pdf_render.png": {
+      "bytes": 246693,
+      "sha256": "dd87c9e8b02d9b13cd3a64e13e72c826720ef82c9d9832ff5904b377a84f1281"
+    },
+    "pilot_UV.png": {
+      "bytes": 417541,
+      "sha256": "8b53de3efe63f9183da2e552ed38db3f3a430965fbefccd95f65048323c2aa63"
+    },
+    "pilot_UV.pdf": {
+      "bytes": 44352,
+      "sha256": "95d1d7b09182beb2ebe66dfcad4a2cd8cb90aad127b2c0a1b0df240271ddc417"
+    },
+    "plot_provenance.json": {
+      "bytes": 1058,
+      "sha256": "762eaeddbf457290c5a847ad6c21403bf3b8155753ee7397c594c42338025e37"
+    },
+    "pilot_UV_pdf_render.png": {
+      "bytes": 224677,
+      "sha256": "f15f0c6f1e9a6ce2e38d7f1678e7bbf23cb8b32df1b4c5b85cd779d22e7039ec"
+    },
+    "pilot_optical.png": {
+      "bytes": 471758,
+      "sha256": "fccf8d611590fb339e32280da0a48595a91a1f176b2df8351b5fe1543d933af1"
+    },
+    "pilot_optical.pdf": {
+      "bytes": 59158,
+      "sha256": "3413443380001c2cbdfe580dc09a132e0efbdf2e822f5f15666cdd552ed0ed7a"
+    }
+  }
+}

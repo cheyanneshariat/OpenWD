@@ -1,0 +1,32 @@
+{
+  "status": "VERIFIED_ACTUAL_DOWNLOADED_UNPUBLISHED_DRAFT_BYTES",
+  "checked_utc": "2026-10-15T15:23:20.144992+00:00",
+  "release_url": "https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-07e708e00cdc81a345a2",
+  "tag": "grid-preview-2026-10-15-dab-bounded",
+  "isDraft": true,
+  "archives": [
+    {
+      "name": "OpenWD-DA-DB-DAB-bounded-replacements-20261015.tar.gz",
+      "bytes": 413698636,
+      "sha256": "7d5e0b17ef381175cde6b8530a0330744786e5b1c7f4408fc0daa4a8adb51dfe",
+      "members_verified": 7439,
+      "NPZ_files_verified": 1309,
+      "arrays_verified": 7939,
+      "native_spectra_verified": 666,
+      "asset_api_url": "https://api.github.com/repos/cheyanneshariat/OpenWD/releases/assets/644274675",
+      "local_verification_sha256": "46d4680dd76efbeedd9397098739f8786d91e74ba65ed6c4a1ecbbc0b86779c3"
+    },
+    {
+      "name": "OpenWD-source-c103b53-20261015.tar.gz",
+      "bytes": 239853561,
+      "sha256": "7394762e7ac90b8268d4c60c658f7903f9346e102e7a64d4a0962eceed068a9f",
+      "members_verified": 2503,
+      "NPZ_files_verified": 0,
+      "arrays_verified": 0,
+      "native_spectra_verified": 0,
+      "asset_api_url": "https://api.github.com/repos/cheyanneshariat/OpenWD/releases/assets/644274679",
+      "local_verification_sha256": "1887da941bf8b63a0ce7eb364cd6f49ba445cf5d96aeb04f6d5bc1db21e4e610"
+    }
+  ],
+  "private_permanent_HPSS_verified": false
+}

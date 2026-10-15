@@ -1,0 +1,24 @@
+{
+  "checked_utc": "2026-10-15T15:18:25.338509+00:00",
+  "status": "VERIFIED_PNG_AND_ACTUAL_RENDERED_PDF",
+  "files": {
+    "dab_bulk_UV_pdf_render.png": "d61aaed724777e9cd9f25002b1ad6b2902643f287b187c91ad774bea0d83b27d",
+    "dab_bulk_optical.pdf": "188d7fa73682e6412412803f5120398e1db56e383b812a1df03e916fef82dcab",
+    "dab_bulk_optical.png": "e7381716df2702e08953b71630e9830f0678f06659062edd9b38996d211a4a4c",
+    "dab_bulk_UV.pdf": "20715ab56e29b3781cc805819948ae6066fafc7328ee4f5c2883ad96ff171cf5",
+    "dab_bulk_UV.png": "19561cebc28d8507a24d87ea4e3298bb98d99412c73e789483bfe8cb02840d74",
+    "dab_bulk_optical_pdf_render.png": "ce0e888625bc0b483689c369b51f2c22d993c65de39101bad0b80cd840b06cd3"
+  },
+  "inspected": [
+    "dab_bulk_UV.png",
+    "dab_bulk_UV_pdf_render.png",
+    "dab_bulk_optical.png",
+    "dab_bulk_optical_pdf_render.png"
+  ],
+  "metrics_rechecked": 9,
+  "units": "vacuum Angstrom; surface erg s^-1 cm^-2 Angstrom^-1; displayedfluxunit1e8",
+  "plot_text": "titles, axes, ticks only",
+  "style": "Existing DejaVuSerif/ComputerModernmathtext approximation preserved",
+  "labels_clipping_overlap": "none found",
+  "provenance_sha256": "96e67d73bd088bf7cce264edbbe6bdcbda6de99e7371c147f1cfb2abee6bc7c5"
+}

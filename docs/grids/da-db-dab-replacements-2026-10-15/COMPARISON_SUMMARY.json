@@ -1,0 +1,41 @@
+{
+  "status": "VERIFIED_COMBINED_NATIVE_COMPARISONS",
+  "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+  "accepted_results": 663,
+  "DAB_accepted_results": 653,
+  "DAB_matched_pairs": 634,
+  "DAB_without_accepted_predecessor": 19,
+  "total_matched_pairs": 639,
+  "total_without_accepted_predecessor": 24,
+  "receipts": [
+    {
+      "path": "pilot-comparison-v1/COMPARISON.json",
+      "sha256": "d32c6cbf93c79dce0be5e7481484257d0fe8bbe6554675609ebb97e8ed1cb8f6"
+    },
+    {
+      "path": "bulk-comparison-v1/COMPARISON.json",
+      "sha256": "1ce47542dde0600846e3fcf904a379a847a30511555d3628f29525178622467d"
+    }
+  ],
+  "DAB_bands": {
+    "UV": {
+      "matched_DAB_pairs": 634,
+      "median_percent": 0.0002793274171721302,
+      "maximum_percent": 0.4365596807545954
+    },
+    "optical": {
+      "matched_DAB_pairs": 634,
+      "median_percent": 0.0001759839633256017,
+      "maximum_percent": 0.19660343815340128
+    },
+    "full_native": {
+      "matched_DAB_pairs": 634,
+      "median_percent": 0.0003871139671709364,
+      "maximum_percent": 0.31576739703692336
+    }
+  },
+  "normalization": "none",
+  "resampling": "none",
+  "extrapolation": "none",
+  "limitations": "Full-source cold-model differences cannot isolate one merged fix or establish observational, physical, depth or interpolation accuracy. DA and DB bulk are held after failed required pilots. DAB bulk is terminal; three failed fresh products remain unadopted."
+}

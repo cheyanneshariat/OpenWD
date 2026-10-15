@@ -1,0 +1,1341 @@
+{
+  "status": "VERIFIED_PILOT_NATIVE_COMPARISONS",
+  "checked_utc": "2026-10-15T08:21:54.840832+00:00",
+  "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+  "pilot_scientific_attempts": 18,
+  "accepted_native_results": 16,
+  "comparison_counts": {
+    "NO_ACCEPTED_OLD_SPECTRUM": 6,
+    "EXACT_NATIVE_COMPARISON": 10
+  },
+  "old_product_hashes_verified": 105,
+  "old_arrays_inventory": [
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_temperature",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_pressure",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_electron_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_column_mass",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_tau",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_molecular_ion_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "experimental_atomic_ion_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U40540",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        100
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U45938",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U19319",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U43261",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "column_mass",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "temperature",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "gas_pressure",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "mass_density",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "electron_density",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/structure.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U19893",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U31343",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U30874",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        88
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U20317",
+      "finite": null
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "effective_temperature",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "logg",
+      "shape": [],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "rosseland_optical_depth",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "column_mass",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "temperature",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "gas_pressure",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "mass_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "electron_density",
+      "shape": [
+        80
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    {
+      "file": "<private-local-product>/atmosphere.npz",
+      "key": "atmosphere_metadata_json",
+      "shape": [],
+      "dtype": "<U37957",
+      "finite": null
+    }
+  ],
+  "normalization": "none",
+  "resampling": "none",
+  "extrapolation": "none",
+  "progress_snapshot_sha256": "4a0dc93690e2a52dc228b8c1ea144156cde5d59c0af7c372488af18ae1bb0b6c",
+  "records": [
+    {
+      "case_id": "da-e6ca40f29bf0d730faa381d6",
+      "family": "DA",
+      "role": "grid-node",
+      "config": {
+        "effective_temperature": 12000.0,
+        "logg": 8.0,
+        "quality": "production",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": 9000.0,
+        "include_molecules": null,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "mixing_length_alpha": 0.7,
+        "use_cool_mean_3d_temperature_differential": false,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "atmosphere_solver": "adaptive-newton",
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "synthesis_transfer_depth_refinement": 4,
+        "lower_boundary_extensions": 4,
+        "convective_seed": true
+      },
+      "old_config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 12000.0,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 8.0,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "old_selected_status": "COMPLETE_NUMERICAL",
+      "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "new_source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "old_snapshot": "2026-10-08",
+      "new_spectrum_path": "<private-local-product>/spectrum.txt",
+      "new_spectrum_sha256": "a4db8457cbeaa2189c582ffd6d54d7a1836b48e08855f205a0a613a63bcdc9c9",
+      "new_native_points": 18901,
+      "new_audit": {
+        "certificate": {
+          "checks": {
+            "all_depth_flux": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.002,
+              "value": 8.214588342880802e-09
+            },
+            "boundary_screening": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.002,
+              "value": 1.392127842320064e-21
+            },
+            "local_energy": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.002,
+              "value": 7.024490842624528e-05
+            },
+            "photospheric_flux": {
+              "measured": false,
+              "passed": false,
+              "tolerance": 0.002,
+              "value": null
+            },
+            "source_closure": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 1e-06,
+              "value": 3.659793784429738e-15
+            },
+            "surface_flux": {
+              "measured": false,
+              "passed": false,
+              "tolerance": 0.002,
+              "value": null
+            },
+            "temperature_stationarity": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.0002,
+              "value": 8.341432632619217e-06
+            }
+          },
+          "failures": [],
+          "full_physics_validation": false,
+          "independent_grid_validation": false,
+          "required_checks": [
+            "all_depth_flux",
+            "local_energy",
+            "temperature_stationarity",
+            "source_closure",
+            "boundary_screening"
+          ],
+          "schema": 1,
+          "scope": "declared equations on the structure grid",
+          "verified": true
+        },
+        "completion_status": "COMPLETE_NUMERICAL",
+        "depth_resolution_verified": false,
+        "experimental": false,
+        "heldout_accuracy_verified": false,
+        "independent_final_spectrum_source_verified": true,
+        "native_spectrum_finite_verified": true,
+        "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+        "release_ready": false,
+        "selected_physics": {
+          "diagnostics": {},
+          "experimental": false,
+          "reason": "Established hydrogen EOS/opacity policy",
+          "tested_point": false,
+          "workflow": "da"
+        },
+        "spectrum": {
+          "maximum_angstrom": 30000.0,
+          "minimum_angstrom": 900.0,
+          "normalization": "none",
+          "path": "spectrum.txt",
+          "points": 18901,
+          "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+        },
+        "spectrum_audit_scope": "independent native source equation",
+        "spectrum_source_verified": true
+      },
+      "normalization": "none",
+      "resampling": "none",
+      "extrapolation": "none",
+      "physical_accuracy_verified": false,
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false,
+      "old_spectrum_path": "<private-local-product>/spectrum.txt",
+      "old_spectrum_sha256": "d32cddd0d811644d6e69b752bb1370ac5a59f214758ce2bcfcdd77fd89750edd",
+      "old_native_points": 18901,
+      "wavelength_identical": true,
+      "comparison_status": "EXACT_NATIVE_COMPARISON",
+      "bands": {
+        "UV": {
+          "lo_angstrom": 1150,
+          "hi_angstrom": 3000,
+          "points": 684,
+          "integrated_absolute_relative_change": 0.00029352951677396233,
+          "signed_integrated_relative_change": -9.690400578482186e-05,
+          "maximum_relative_change_positive_reference": 0.0010152317680650138,
+          "maximum_relative_change_significant_flux": 0.0010152317680650138,
+          "zero_reference_points": 0
+        },
+        "optical": {
+          "lo_angstrom": 3000,
+          "hi_angstrom": 10000,
+          "points": 17259,
+          "integrated_absolute_relative_change": 0.00014302043222680653,
+          "signed_integrated_relative_change": -0.00014302001700528203,
+          "maximum_relative_change_positive_reference": 0.00020421163033155088,
+          "maximum_relative_change_significant_flux": 0.00020421163033155088,
+          "zero_reference_points": 0
+        },
+        "full_native": {
+          "lo_angstrom": 900,
+          "hi_angstrom": 30000,
+          "points": 18901,
+          "integrated_absolute_relative_change": 0.00021599915678751602,
+          "signed_integrated_relative_change": -0.00011892823740737818,
+          "maximum_relative_change_positive_reference": 0.001175028004062854,
+          "maximum_relative_change_significant_flux": 0.001175028004062854,
+          "zero_reference_points": 0
+        }
+      },
+      "comparison_file": "da-e6ca40f29bf0d730faa381d6.npz",
+      "comparison_sha256": "8ff73eefb2866d06f8d7523a3852c19ea1b7efb930e323005e82e71151cba153"
+    },
+    {
+      "case_id": "db-da24290f1cb3fb24fbf1618b",
+      "family": "DB",
+      "role": "grid-node",
+      "config": {
+        "effective_temperature": 10000.0,
+        "logg": 8.0,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "old_config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 10000.0,
+        "logg": 8.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "old_selected_status": "COMPLETE_NUMERICAL",
+      "old_source_commit": "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5",
+      "new_source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "old_snapshot": "2026-10-08",
+      "new_spectrum_path": "<private-local-product>/spectrum.txt",
+      "new_spectrum_sha256": "0f5df4e1a38f21e6690c289015bd4decb51741d5385db0d7c05dc71dcfbe956c",
+      "new_native_points": 18901,
+      "new_audit": {
+        "certificate": {
+          "checks": {
+            "all_depth_flux": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.003,
+              "value": 6.37988570861836e-08
+            },
+            "boundary_screening": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.003,
+              "value": 0.0
+            },
+            "local_energy": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.003,
+              "value": 3.633047812572118e-05
+            },
+            "photospheric_flux": {
+              "measured": false,
+              "passed": false,
+              "tolerance": 0.003,
+              "value": null
+            },
+            "source_closure": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 1e-06,
+              "value": 1.5934761355486239e-15
+            },
+            "surface_flux": {
+              "measured": false,
+              "passed": false,
+              "tolerance": 0.003,
+              "value": null
+            },
+            "temperature_stationarity": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.0003,
+              "value": 9.8494252913639e-06
+            }
+          },
+          "failures": [],
+          "full_physics_validation": false,
+          "independent_grid_validation": false,
+          "required_checks": [
+            "all_depth_flux",
+            "local_energy",
+            "temperature_stationarity",
+            "source_closure",
+            "boundary_screening"
+          ],
+          "schema": 1,
+          "scope": "declared equations on the structure grid",
+          "verified": true
+        },
+        "completion_status": "COMPLETE_NUMERICAL",
+        "depth_resolution_verified": false,
+        "experimental": false,
+        "heldout_accuracy_verified": false,
+        "independent_final_spectrum_source_verified": true,
+        "native_spectrum_finite_verified": true,
+        "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+        "release_ready": false,
+        "selected_physics": {
+          "diagnostics": {
+            "density_fractional_change": 0.011617901408172537,
+            "electron_fraction": 1.7218951761323091e-06,
+            "gas_pressure": 2141463292.00344,
+            "mass_density": 0.010256115625645643,
+            "probe": "continuum hydrostatic seed at Rosseland tau=2/3",
+            "reos_in_domain": true,
+            "selection_policy": {
+              "dense_density_fraction": 0.05,
+              "molecular_electron_fraction": 0.001,
+              "molecular_nuclei_fraction": 0.0001
+            },
+            "temperature": 10051.600076635019
+          },
+          "experimental": false,
+          "reason": "Dense neutral trace-ion treatment is not indicated by the photospheric screen",
+          "tested_point": true,
+          "workflow": "db"
+        },
+        "spectrum": {
+          "maximum_angstrom": 30000.0,
+          "minimum_angstrom": 900.0,
+          "normalization": "none",
+          "path": "spectrum.txt",
+          "points": 18901,
+          "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+        },
+        "spectrum_audit_scope": "independent native source equation",
+        "spectrum_source_verified": true
+      },
+      "normalization": "none",
+      "resampling": "none",
+      "extrapolation": "none",
+      "physical_accuracy_verified": false,
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false,
+      "old_spectrum_path": "<private-local-product>/spectrum.txt",
+      "old_spectrum_sha256": "f7b3825a41eb745990d83ac10c1f5124a96874cf6c3b4c3fbba831369485b705",
+      "old_native_points": 18901,
+      "wavelength_identical": true,
+      "comparison_status": "EXACT_NATIVE_COMPARISON",
+      "bands": {
+        "UV": {
+          "lo_angstrom": 1150,
+          "hi_angstrom": 3000,
+          "points": 684,
+          "integrated_absolute_relative_change": 0.006171711255017956,
+          "signed_integrated_relative_change": 0.006171711255017956,
+          "maximum_relative_change_positive_reference": 0.011792718556153867,
+          "maximum_relative_change_significant_flux": 0.011792718556153867,
+          "zero_reference_points": 0
+        },
+        "optical": {
+          "lo_angstrom": 3000,
+          "hi_angstrom": 10000,
+          "points": 17259,
+          "integrated_absolute_relative_change": 0.0028945075338336667,
+          "signed_integrated_relative_change": 0.0028945075338336667,
+          "maximum_relative_change_positive_reference": 0.004395035453835575,
+          "maximum_relative_change_significant_flux": 0.004395035453835575,
+          "zero_reference_points": 0
+        },
+        "full_native": {
+          "lo_angstrom": 900,
+          "hi_angstrom": 30000,
+          "points": 18901,
+          "integrated_absolute_relative_change": 0.003868034875845022,
+          "signed_integrated_relative_change": 0.003868034875845022,
+          "maximum_relative_change_positive_reference": 0.014992562324430699,
+          "maximum_relative_change_significant_flux": 0.01410388948646984,
+          "zero_reference_points": 0
+        }
+      },
+      "comparison_file": "db-da24290f1cb3fb24fbf1618b.npz",
+      "comparison_sha256": "58dc6aa712806ca5042bb78cffd2b6e2a3d17ec8cc5a2a883912f47995a30819"
+    },
+    {
+      "case_id": "dab-5cdb46c2d489c43e85ca3805",
+      "family": "DAB",
+      "role": "initial-production-grid",
+      "config": {
+        "effective_temperature": 12000,
+        "logg": 8,
+        "log_hydrogen_to_helium": 0,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 12000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": 0,
+        "logg": 8,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "old_selected_status": "COMPLETE_NUMERICAL",
+      "old_source_commit": "0a74fdbe06596fc145f5169a3b239ddd67053141",
+      "new_source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "old_snapshot": "2026-10-09",
+      "new_spectrum_path": "<private-local-product>/spectrum.txt",
+      "new_spectrum_sha256": "341f049ec76c7cd67445ad33b546730e06d89f3872b415335a5a5bef9a2e0860",
+      "new_native_points": 18901,
+      "new_audit": {
+        "certificate": {
+          "checks": {
+            "all_depth_flux": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.003,
+              "value": 1.0197598321326495e-10
+            },
+            "boundary_screening": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.003,
+              "value": 3.1544891161983784e-47
+            },
+            "local_energy": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.003,
+              "value": 8.820264757609959e-07
+            },
+            "photospheric_flux": {
+              "measured": false,
+              "passed": false,
+              "tolerance": 0.003,
+              "value": null
+            },
+            "source_closure": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 1e-06,
+              "value": 1.3083350792582682e-15
+            },
+            "surface_flux": {
+              "measured": false,
+              "passed": false,
+              "tolerance": 0.003,
+              "value": null
+            },
+            "temperature_stationarity": {
+              "measured": true,
+              "passed": true,
+              "tolerance": 0.0003,
+              "value": 1.884922818362611e-05
+            }
+          },
+          "failures": [],
+          "full_physics_validation": false,
+          "independent_grid_validation": false,
+          "required_checks": [
+            "all_depth_flux",
+            "local_energy",
+            "temperature_stationarity",
+            "source_closure",
+            "boundary_screening"
+          ],
+          "schema": 1,
+          "scope": "declared equations on the structure grid",
+          "verified": true
+        },
+        "completion_status": "COMPLETE_NUMERICAL",
+        "depth_resolution_verified": false,
+        "experimental": false,
+        "heldout_accuracy_verified": false,
+        "independent_final_spectrum_source_verified": true,
+        "native_spectrum_finite_verified": true,
+        "numerical_scope": "native all-depth atmosphere certificate; depth convergence is separate",
+        "release_ready": false,
+        "selected_physics": {
+          "diagnostics": {
+            "include_molecules": true,
+            "maximum_electron_fractional_change": 4.3829490550595374e-05,
+            "maximum_h2_nuclei_fraction": 4.8646571614569664e-05,
+            "molecular_screen_indicated": false,
+            "probe": "continuum hydrostatic seed, 0.01<=Rosseland tau<=3",
+            "selection_policy": {
+              "dense_density_fraction": 0.05,
+              "molecular_electron_fraction": 0.001,
+              "molecular_nuclei_fraction": 0.0001
+            }
+          },
+          "experimental": false,
+          "reason": "Molecular H/He closure for every metal-free DAB (one route at all Teff/logg)",
+          "tested_point": true,
+          "workflow": "dab"
+        },
+        "spectrum": {
+          "maximum_angstrom": 30000.0,
+          "minimum_angstrom": 900.0,
+          "normalization": "none",
+          "path": "spectrum.txt",
+          "points": 18901,
+          "wavelength_sha256": "9ff7537d03e0be143e553be2e739f975aad6cb3b763c20e805fb01c57031f569"
+        },
+        "spectrum_audit_scope": "independent native source equation",
+        "spectrum_source_verified": true
+      },
+      "normalization": "none",
+      "resampling": "none",
+      "extrapolation": "none",
+      "physical_accuracy_verified": false,
+      "independent_depth_convergence_verified": false,
+      "interpolation_accuracy_verified": false,
+      "old_spectrum_path": "<private-local-product>/spectrum.txt",
+      "old_spectrum_sha256": "2571a9ddf3c744d593ca02ef6908ad4a483910516b990775a657b48e15faa9e8",
+      "old_native_points": 18901,
+      "wavelength_identical": true,
+      "comparison_status": "EXACT_NATIVE_COMPARISON",
+      "bands": {
+        "UV": {
+          "lo_angstrom": 1150,
+          "hi_angstrom": 3000,
+          "points": 684,
+          "integrated_absolute_relative_change": 0.003709760650768214,
+          "signed_integrated_relative_change": -0.0014649223202481004,
+          "maximum_relative_change_positive_reference": 0.016584517376815287,
+          "maximum_relative_change_significant_flux": 0.016584517376815287,
+          "zero_reference_points": 0
+        },
+        "optical": {
+          "lo_angstrom": 3000,
+          "hi_angstrom": 10000,
+          "points": 17259,
+          "integrated_absolute_relative_change": 0.0016506218218046128,
+          "signed_integrated_relative_change": 0.0015770688637272061,
+          "maximum_relative_change_positive_reference": 0.0030082267048469782,
+          "maximum_relative_change_significant_flux": 0.0030082267048469782,
+          "zero_reference_points": 0
+        },
+        "full_native": {
+          "lo_angstrom": 900,
+          "hi_angstrom": 30000,
+          "points": 18901,
+          "integrated_absolute_relative_change": 0.0026534810240237813,
+          "signed_integrated_relative_change": 8.974680901206226e-06,
+          "maximum_relative_change_positive_reference": 0.16648992621404016,
+          "maximum_relative_change_significant_flux": 0.16648992621404016,
+          "zero_reference_points": 0
+        }
+      },
+      "comparison_file": "dab-5cdb46c2d489c43e85ca3805.npz",
+      "comparison_sha256": "9448715ce5184ee3b58d8e3af934c962843200c8e8a1bdd151d8bca7d0df1b9c"
+    }
+  ],
+  "limitations": "Full-source cold-model differences cannot isolate one merged fix or establish observational, physical, depth or interpolation accuracy. DA and DB bulk are held after failed required pilots. DAB bulk remains separate and live/queued."
+}

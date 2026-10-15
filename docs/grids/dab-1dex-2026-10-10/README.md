@@ -132,3 +132,5 @@ python docs/grids/plot_dab_refinement.py \
 The script verifies saved input and displayed-spectrum hashes and performs no
 atmosphere calculation. It exports coverage, the eleven-spectrum abundance
 sequence and interpolation residuals as PNG/PDF.
+
+The [current selected table](../README.md) includes the [October 15 source replacements](../da-db-dab-replacements-2026-10-15/README.md). DAB now has 656/656 selected numerical completions, including three retained older spectra. The comparisons and interpolation statistics on this dated page remain tied to their original source and do not validate the updated-source selection.

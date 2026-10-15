@@ -1,0 +1,256 @@
+{
+  "checked_utc": "2026-10-15T15:15:51.437503+00:00",
+  "bulk_scientific_attempts": 650,
+  "bulk_accepted": 647,
+  "DAB_total_fresh_attempts": 656,
+  "DAB_total_accepted": 653,
+  "all_new_campaign_scientific_attempts": 668,
+  "all_new_campaign_accepted": 663,
+  "bulk_failed_counts": {
+    "NUMERICAL_NONCONVERGENCE": 2,
+    "INFRASTRUCTURE_INTERRUPTION": 1
+  },
+  "all_bulk_requests_exact_metadata_verified": 650,
+  "fixed_controls_per_allocation": 5,
+  "failures": [
+    {
+      "stage": "fast",
+      "case_id": "dab-6785af6bf2d3a46e0bfb0e96",
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": null,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 30000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": -2,
+        "logg": 6,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "old_selected_status": "COMPLETE_NUMERICAL",
+      "status": "NUMERICAL_NONCONVERGENCE",
+      "returncode": 2,
+      "wall_seconds": 1848.2500527680022,
+      "wall_cap_seconds": 5400,
+      "RSS_bytes": 773697536,
+      "RSS_cap_bytes": 3221225472,
+      "products_adopted": false,
+      "scientific_retry": false,
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 4.77761163963919e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.000643578315532504,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.00029128555857382095,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.4606849553474536e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 6.31317722252255e-63,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "failure_reason": "Required temperature_stationarity check was not measured/passed; reported restricted correction below tolerance does not establish the missing stationarity check."
+    },
+    {
+      "stage": "fast",
+      "case_id": "dab-600af571b9b8a65f6d4bf822",
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": null,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 40000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": -3,
+        "logg": 7,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "old_selected_status": "COMPLETE_NUMERICAL",
+      "status": "NUMERICAL_NONCONVERGENCE",
+      "returncode": 2,
+      "wall_seconds": 1787.4504674690033,
+      "wall_cap_seconds": 5400,
+      "RSS_bytes": 772767744,
+      "RSS_cap_bytes": 3221225472,
+      "products_adopted": false,
+      "scientific_retry": false,
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.939155585579556e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 4.433647447473151e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.0001587615416105786,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.959474976995404e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 7.086511036780909e-47,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "failure_reason": "Required temperature_stationarity check was not measured/passed; reported restricted correction below tolerance does not establish the missing stationarity check."
+    },
+    {
+      "stage": "slow",
+      "case_id": "dab-975c44f2be086a2fa3d7b98b",
+      "config": {
+        "abundances": null,
+        "allard_minimum_effective_temperature": null,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "effective_temperature": 12000,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "h2_he_cia_path": null,
+        "include_molecules": false,
+        "log_hydrogen_to_helium": -3,
+        "logg": 8,
+        "lyman_profile_source": "allard",
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "metal_line_supplements": [],
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "structure_opacity_sampling_resolution": 1000.0,
+        "synthesis_transfer_depth_refinement": 4
+      },
+      "old_selected_status": "COMPLETE_NUMERICAL",
+      "status": "INFRASTRUCTURE_INTERRUPTION",
+      "returncode": -11,
+      "wall_seconds": 4204.586045283999,
+      "wall_cap_seconds": 10800,
+      "RSS_bytes": 449916928,
+      "RSS_cap_bytes": 3221225472,
+      "products_adopted": false,
+      "scientific_retry": false,
+      "failure_reason": "Owned worker exited with signal11 (SIGSEGV) below wall/RSS caps, without a worker result or accepted final native certificate. Root cause unresolved; retain infrastructure-interruption category."
+    }
+  ],
+  "DA_bulk_held": true,
+  "DB_bulk_held": true,
+  "physical_depth_interpolation_observational_accuracy_verified": false
+}

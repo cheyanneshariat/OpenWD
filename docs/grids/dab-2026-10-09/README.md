@@ -4,7 +4,7 @@ The latest [one-dex abundance mesh](../dab-1dex-2026-10-10/README.md) has
 588/616 accepted coordinates and an eleven-spectrum abundance sequence.
 This page preserves the original six-plane archive and its plots.
 
-The current selection contains **327 accepted points from 336 requested
+The selection at this dated stage contained **327 accepted points from 336 requested
 homogeneous H/He models**. All requests were attempted. Nine requests selected a
 molecular workflow that does not support their gravities. The original archive
 contains 326 spectra; the native validation supplement supplies the repaired point.
@@ -139,3 +139,5 @@ spectrum. It performs no atmosphere calculations. It exports coverage and
 three spectrum sequences as PNG/PDF, plus
 [the exact figure inputs](dab_plot_provenance.json). A separate table retains
 the original outcomes and full settings for all requests.
+
+The [current selected table](../README.md) includes the [October 15 source replacements](../da-db-dab-replacements-2026-10-15/README.md). DAB now has 656/656 selected numerical completions, including three retained older spectra. The comparisons and interpolation statistics on this dated page remain tied to their original source and do not validate the updated-source selection.

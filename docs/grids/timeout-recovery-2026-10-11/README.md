@@ -41,7 +41,7 @@ steps. Each panel holds abundance fixed and gives accepted models divided by
 final-spectrum source checks. Grey triangles mark unsupported configurations;
 dark crosses mark worker crashes. Blank regions were not requested.
 
-All nine DAB timeouts passed. The 19 remaining gaps are **17 unsupported
+All nine DAB timeouts passed. At this dated stage the 19 remaining gaps were **17 unsupported
 configurations and two earlier SIGSEGV crashes**. The unsupported points select
 the native cool molecular workflow outside its supported gravity; that workflow
 currently requires log g 8 and production quality. No atomic fallback or modified
@@ -133,3 +133,5 @@ The script checks the saved input and displayed-spectrum hashes and performs no
 atmosphere calculation. It exports the DAB coverage, interpolation residuals and
 DAO spectrum as PNG/PDF. The [overview script](../plot_grid_progress.py) reproduces
 the current family figure from the saved selection table.
+
+The [current selected table](../README.md) includes the [October 15 source replacements](../da-db-dab-replacements-2026-10-15/README.md). DAB now has 656/656 selected numerical completions, including three retained older spectra. The comparisons and interpolation statistics on this dated page remain tied to their original source and do not validate the updated-source selection.

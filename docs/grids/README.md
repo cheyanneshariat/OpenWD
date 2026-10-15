@@ -2,12 +2,12 @@
 
 OpenWD calculates an atmosphere and spectrum for a chosen temperature, gravity
 and composition. These saved grids let users reuse those calculations. The
-selected grid table contains **2,372 numerical completions from 2,499 requests**.
+selected grid table contains **2,396 numerical completions from 2,499 requests**.
 Each completion passed the atmosphere and spectrum checks recorded for its
 source version. Numerical completion alone does not establish physical accuracy
 or accurate interpolation between grid points.
 
-DAB/DBA has **637 accepted coordinates from 656 requests**. The October 11
+DAB/DBA has **656 accepted coordinates from 656 requests**: 653 fresh spectra and three retained older spectra. The [October 15 replacements](da-db-dab-replacements-2026-10-15/README.md) also add five DA and five DB pilot spectra. DA and DB bulk remain held after failed required pilot checks. The October 11
 refinement adds 32 newly calculated knots and eight reused centers in eight
 selected patches. Its 32 independent test spectra remain outside the predictor
 mesh. Together with three earlier validation coordinates, there are
@@ -28,12 +28,12 @@ gravity, so symbols can overlap. Blank regions were not requested.
 
 | Family | Numerical completions | Requests | Latest selected source |
 |---|---:|---:|---|
-| DA | 808 | 852 | October 8 + native validation supplement |
-| DB | 592 | 638 | October 8 + cold, validation and retry supplements |
+| DA | 811 | 852 | Five October 15 replacements + retained older spectra |
+| DB | 594 | 638 | Five October 15 replacements + retained older spectra |
 | DZ | 321 | 322 | October 13 replacements + nine retained older spectra |
 | DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
 | DO | 5 | 7 | Five verified spectra; two timeouts retained |
-| DAB/DBA | 637 | 656 | October 9/10 + October 11 retries and refinement |
+| DAB/DBA | 656 | 656 | 653 October 15 replacements + three retained older spectra |
 | DAZ | 3 | 3 | October 12 verified source replacements |
 | DQ | 2 | 2 | October 8 |
 
@@ -65,7 +65,7 @@ the releases are published. The original archives remain unchanged.
 
 - [DAB/DBA coverage and spectrum sequences](dab-2026-10-09/README.md) vary
   abundance, temperature and gravity separately. The current selection has
-  637/656 accepted points after the [temperature and gravity refinement](refinement-2026-10-11/README.md);
+  656/656 accepted points after the [source replacements](da-db-dab-replacements-2026-10-15/README.md);
   the original archive contains 326.
 - [New DAB knots and 32 independent refinement tests](refinement-2026-10-11/README.md)
   show how halving temperature and gravity spacing changes the errors.
@@ -105,7 +105,7 @@ use merged source `c8329d86c98f956617ec1bb3746181350492ce66`. The latest
 DO continuation and DO/DAO extension use `70bca78e82e7b7dd5860ca3e337bd1f83919e09a`.
 The D6 diagnostic uses `14e206729d06f0989e03a0d2f1744a9cc518a136`.
 [Dataset records](dataset.json) and the full request tables identify each source.
-Updating OpenWD does not recompute a saved archive.
+The October 15 DA/DB/DAB replacements use `c103b53f28f3f37707572dbbc83a898807c4b683`; the selected table preserves older accepted sources elsewhere. Updating OpenWD does not recompute a saved archive.
 
 Accepted models passed the required native atmosphere and spectrum checks.
 The new DA point uses the existing `multigrid_initialization=True` option.
@@ -113,14 +113,13 @@ The repaired DAB point uses `photospheric_depth_concentration=2`; its earlier
 failed default-mesh attempt remains recorded. Native physics, iteration limits
 and acceptance tolerances were unchanged.
 
-DB has 24 nonconvergence cases, five depth-grid errors, five material-domain
-stops and 12 six-hour timeouts. DA has 44 numerical failures. DZ has one remaining numerical failure in the selected grid. Its fresh rerun
+DB has 22 selected nonconvergence cases, five depth-grid errors, five material-domain
+stops and 12 timeouts. DA has 41 selected numerical failures. The latest DA/DB pilots did not qualify dependent bulk dispatch. DZ has one remaining numerical failure in the selected grid. Its fresh rerun
 retains seven timeouts, two nonconvergences and one crash; nine older accepted
 spectra remain selected. The selected D6 example now passes the native checks under source 14e2067.
 Its original-source control and both DB diagnostic attempts reached eight-hour
 limits; [all four diagnostic outcomes](diagnostics-2026-10-12/README.md) remain archived.
-All nine DAB timeouts passed; its 19 remaining gaps are 17 unsupported
-configurations and two earlier SIGSEGV crashes. The first DAO passed after 261.24 minutes.
+The October 15 DAB source replacements recover the 19 earlier gaps. Three fresh failures retain older accepted spectra; DAB selected coverage is 656/656. The first DAO passed after 261.24 minutes.
 The [latest hot batch](hot-2026-10-12/README.md) adds two DO and two DAO spectra.
 Its other four cases reached their six-hour caps; these remain unfinished.
 
@@ -130,7 +129,7 @@ temperature spacing falls from 5,000 to 2,500 K and gravity spacing from 0.5 to
 10/32 to 22/32 passing both optical error targets. Ten still miss at least one
 target. [The full comparisons](refinement-2026-10-11/README.md) retain these limits.
 H/He is fixed within each patch; abundance interpolation and the full grid
-remain unqualified for precision fitting.
+remain unqualified for precision fitting. Those interpolation statistics describe the original source; the October 15 source-replaced selection has not been retested for interpolation accuracy.
 DB uses the merged gravity repair in the retry, so its improvement cannot be
 attributed to a longer time limit alone. The cold DB/Montreal discrepancy remains
 unresolved. DZ expansion remains paused for matched external validation models.
@@ -188,3 +187,5 @@ replacements from optional H2 and DAZ parameter grids. The optional DA pilot
 hit its memory guard. [All three DAZ replacements](daz-replacements-2026-10-12/README.md)
 are verified, with matched old/new spectra and their limitations recorded.
 Further cluster work depends on measured costs and the budget.
+
+[The October 15 DA/DB/DAB campaign](da-db-dab-replacements-2026-10-15/README.md) records 663 accepted results from 668 fresh attempts, held DA/DB branches, retained older spectra and final 4.6108680556 CPU node-hours. Local and actual downloaded unpublished draft archive bytes are verified; a private permanent HPSS copy remains pending account setup.

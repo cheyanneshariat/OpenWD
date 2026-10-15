@@ -3,7 +3,7 @@
 This update adds **40 grid coordinates** in eight selected patches: 32 new
 calculations and eight reused center models. Temperature spacing falls from
 5,000 to 2,500 K and log g spacing from 0.5 to 0.25. H/He stays fixed within each
-patch. The selected DAB/DBA mesh now has **637 accepted models from 656 requests**.
+patch. The selected DAB/DBA mesh at this stage had **637 accepted models from 656 requests**.
 Its 17 unsupported configurations and two earlier worker crashes remain recorded.
 The one-dex abundance planes still span log10[N(H)/N(He)] = −6 to +4.
 
@@ -110,3 +110,5 @@ completions and four six-hour timeouts. Those models are separate from the DAB
 results here. The cold DB/Montreal discrepancy remains
 unresolved. Use the [current grid page](../README.md) for the full selection and
 [dated history](../history/README.md) for the earlier counts.
+
+The [current selected table](../README.md) includes the [October 15 source replacements](../da-db-dab-replacements-2026-10-15/README.md). DAB now has 656/656 selected numerical completions, including three retained older spectra. The comparisons and interpolation statistics on this dated page remain tied to their original source and do not validate the updated-source selection.

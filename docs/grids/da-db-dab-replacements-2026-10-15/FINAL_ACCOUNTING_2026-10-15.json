@@ -1,0 +1,57 @@
+{
+  "status": "FINAL_REGISTERED_ALLOCATION_ACCOUNTING",
+  "checked_utc": "2026-10-15T15:14:04.332004+00:00",
+  "allocations": [
+    {
+      "job_id": "59793762",
+      "state": "FAILED",
+      "elapsed_seconds": 29,
+      "billing": 32.0,
+      "QOS": "shared",
+      "UsageFactor": 1.0,
+      "charge_node_hours": 0.0010069444444444444,
+      "start_utc": "2026-10-15T04:08:43",
+      "end_utc": "2026-10-15T04:09:12"
+    },
+    {
+      "job_id": "59796431",
+      "state": "COMPLETED",
+      "elapsed_seconds": 11044,
+      "billing": 32.0,
+      "QOS": "shared",
+      "UsageFactor": 1.0,
+      "charge_node_hours": 0.3834722222222222,
+      "start_utc": "2026-10-15T04:46:00",
+      "end_utc": "2026-10-15T07:50:04"
+    },
+    {
+      "job_id": "59802718",
+      "state": "COMPLETED",
+      "elapsed_seconds": 9736,
+      "billing": 256.0,
+      "QOS": "regular_1",
+      "UsageFactor": 1.0,
+      "charge_node_hours": 2.7044444444444444,
+      "start_utc": "2026-10-15T09:42:58",
+      "end_utc": "2026-10-15T12:25:14"
+    },
+    {
+      "job_id": "59802739",
+      "state": "COMPLETED",
+      "elapsed_seconds": 10958,
+      "billing": 128.0,
+      "QOS": "shared",
+      "UsageFactor": 1.0,
+      "charge_node_hours": 1.5219444444444445,
+      "start_utc": "2026-10-15T08:56:53",
+      "end_utc": "2026-10-15T11:59:31"
+    }
+  ],
+  "total_charged_CPU_node_hours": 4.610868055555556,
+  "operational_ceiling": 24,
+  "live_or_pending_reservation": 0,
+  "scheduler_raw": "59793762|cshariat|109576|m1266|FAILED|29|billing=32,cpu=32,mem=56G,node=1|shared|2026-10-15T04:08:43|2026-10-15T04:09:12\n59796431|cshariat|109576|m1266|COMPLETED|11044|billing=32,cpu=32,energy=6523598,mem=56G,node=1|shared|2026-10-15T04:46:00|2026-10-15T07:50:04\n59802718|cshariat|109576|m1266|COMPLETED|9736|billing=256,cpu=256,energy=5727705,mem=416G,node=1|regular_1|2026-10-15T09:42:58|2026-10-15T12:25:14\n59802739|cshariat|109576|m1266|COMPLETED|10958|billing=128,cpu=128,energy=8186935,mem=208G,node=1|shared|2026-10-15T08:56:53|2026-10-15T11:59:31\n",
+  "QOS_raw": "regular_1|1.000000\nshared|1.000000\n",
+  "previous_DZ_DAZ_campaign_charged_node_hours_separate": 11.224798177083334,
+  "all_elapsed_including_setup_preflight_idle": true
+}
