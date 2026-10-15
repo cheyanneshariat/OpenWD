@@ -286,6 +286,107 @@ class BracketedThermalPopulationCorrection(ProjectedThermalPopulationCorrection)
         return NonlinearCorrection(trial_state)
 
 
+class PlanckBracketedThermalCorrection(ProjectedThermalPopulationCorrection):
+    """Bracket an optically thin thermal root in the Planck (0% NLTE) stage.
+
+    With LTE populations the temperatures are the only unknowns. A thin
+    cell's relative energy residual can be non-monotonic in its own
+    temperature, and the least-squares Newton driver can settle on a local
+    extremum that is not a root (DAO 40 kK, log H/He = 0: a 31 kK layer
+    between 27 kK neighbours, whose root lies at 26.4 kK). Take the layer
+    whose unrestricted Newton correction is largest and bracket the root of
+    its own full-transfer energy equation nearest its current temperature,
+    with all other temperatures held. A node-local frozen-radiation balance
+    is not used: it differs from the cell equation the driver solves and can
+    place a spurious root at the extremum itself. At this stage one full
+    residual costs about one radiative transfer solve.
+    """
+
+    def __init__(self, evaluate, step_builder, step_tolerance, equations):
+        super().__init__(evaluate, step_builder, step_tolerance)
+        self.equations = equations
+        self.thermal_probes = 0
+        self.neighbor_adjustments = 0
+
+    def correction(self, x, e):
+        eq = self.equations
+        if not eq.planck_temperature_only:
+            return None
+        a = e.payload[0]
+        nt = a.n_depth
+        anchor, _, _, _, proposal = self.anchor
+        if not np.array_equal(x, anchor):
+            raise ValueError('Thermal bracketing requires the current Newton anchor')
+        if np.max(abs(proposal.direction[:nt]), initial=0.) < .05:
+            return None
+        depth = int(np.argmax(abs(proposal.direction[:nt])))
+        if depth == nt - 1 or a.rosseland_optical_depth[depth] > .1:
+            return None
+        t0 = float(x[depth])
+        cache = {t0: e}
+
+        def full(log_temperature):
+            key = float(log_temperature)
+            if key not in cache:
+                z = x.copy()
+                z[depth] = key
+                self.thermal_probes += 1
+                self.extra_residual_evaluations += 1
+                cache[key] = self.evaluate(z, False)
+            return float(cache[key].residual[depth])
+
+        grid = t0 + np.array([-.35, -.2, -.1, 0., .1, .2, .35])
+        values = []
+        for point in grid:
+            try:
+                values.append(full(point))
+            except RecoverableEvaluationError:
+                values.append(np.nan)
+        # Thermal residual = (heating - emission)/emission falls with T at a root.
+        brackets = [i for i in range(len(grid) - 1) if values[i] > 0. and values[i + 1] < 0.]
+        if not brackets:
+            return None
+        i = min(brackets, key=lambda k: abs(.5 * (grid[k] + grid[k + 1]) - t0))
+        root = _bracket_root(full, grid[i], grid[i + 1], xtol=1e-6, rtol=1e-12, maxiter=30)
+        LOGGER.info('Planck-stage thermal root at depth %d: %.2f -> %.2f K',
+                    depth, np.exp(t0), np.exp(root))
+
+        _, _, j, _, _ = self.anchor
+        # Moving one layer to its root disturbs its neighbours' balances.
+        # Relax the other temperatures with Gauss-Newton steps on the current
+        # Jacobian, holding the bracketed layer, before the driver measures
+        # merit. Each step is bounded like the bracket itself (0.35 in ln T).
+        held = j.copy()
+        held[:, depth] = 0.
+        rows = np.maximum(abs(held).max(axis=1), np.finfo(float).tiny)
+
+        def relaxed(z):
+            current = self.evaluate(z, False)
+            self.extra_residual_evaluations += 1
+            for _ in range(4):
+                dt, *_ = np.linalg.lstsq(held / rows[:, None], -current.residual / rows, rcond=1e-10)
+                dt[depth] = 0.
+                if np.any(~np.isfinite(dt)) or np.max(abs(dt)) > .35:
+                    break
+                try:
+                    trial = self.evaluate(z + dt, False)
+                except RecoverableEvaluationError:
+                    break
+                self.extra_residual_evaluations += 1
+                if np.linalg.norm(trial.residual) >= np.linalg.norm(current.residual):
+                    break
+                z, current = z + dt, trial
+                self.neighbor_adjustments += 1
+            return z
+
+        def trial_state(fraction):
+            z = x.copy()
+            z[depth] = t0 + fraction * (root - t0)
+            return relaxed(z)
+
+        return NonlinearCorrection(trial_state)
+
+
 class CoupledBracketedThermalPopulationCorrection(BracketedThermalPopulationCorrection):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
