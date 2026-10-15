@@ -138,7 +138,7 @@ def test_fixed_temperature_continuation_cannot_certify_an_atmosphere(atom,monkey
     assert metadata['initial_atmosphere_metadata']['radiative_equilibrium_iterations']==987
 
 
-@pytest.mark.parametrize('fraction',[0.,.3,1.])
+@pytest.mark.parametrize('fraction',[0.,.3,.9,.95,1.])
 def test_independent_stationarity_jacobian_is_reserved_for_full_nlte(atom,monkeypatch,fraction):
     import wd_spectra._hot_structure as joint
     original=joint.HotEquations.evaluate
@@ -151,7 +151,10 @@ def test_independent_stationarity_jacobian_is_reserved_for_full_nlte(atom,monkey
     result=joint.solve(a,atom,np.geomspace(25,100000,80),nlte_fraction=fraction,maximum_iterations=1)
     assert requests[-1] == (fraction==1.)
     metadata=result.atmosphere.metadata
-    assert metadata['hot_nlte_recovery']['eligible'] == (fraction == 1.)
+    # The Planck stage now has its own thermal-root bracket. Intermediate
+    # continuation stages still use plain Newton, and only full NLTE gets
+    # the independent stationarity Jacobian and can earn a certificate.
+    assert metadata['hot_nlte_recovery']['eligible'] == (fraction in (0., 1.))
     # A single attempted direction cannot activate the two-rejection gate.
     assert not metadata['hot_nlte_recovery']['activated']
     assert metadata['hot_nlte_recovery']['extra_jacobian_evaluations'] == 0

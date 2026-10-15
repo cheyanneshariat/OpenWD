@@ -499,7 +499,7 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
     metadata['hot_nlte_recovery'] = dict(
         eligible=recovery is not None,
         activated=recovery.active if recovery is not None else False,
-        activation_rule='two rejected Newton directions at full NLTE',
+        activation_rule='two rejected Newton directions at the Planck or full NLTE stage',
         rejected_directions_observed=recovery.rejected_directions if recovery is not None else 0,
         extra_jacobian_evaluations=recovery.extra_jacobian_evaluations if recovery is not None else 0,
         extra_residual_evaluations=proposals.extra_residual_evaluations if recovery is not None else 0,
