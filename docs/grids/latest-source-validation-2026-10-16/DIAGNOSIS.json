@@ -1,0 +1,5113 @@
+{
+  "status": "SAVED_FAILURES_AND_CURRENT_DRIVER_CONTRACT_CHECKED",
+  "source_commit": "00503a0dd22a028e38741b90d53d9e18a8731545",
+  "prior_failure_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+  "native_failure_records": 51,
+  "by_family": {
+    "DA": 14,
+    "DB": 37
+  },
+  "measured_step_mismatches": 36,
+  "source_files_unchanged_since_failed_campaign": {
+    "src/wd_spectra/nonlinear.py": true,
+    "src/wd_spectra/adaptive_structure.py": true,
+    "src/wd_spectra/_convergence.py": true
+  },
+  "analytic_example": {
+    "equations": [
+      "r0=x0^2+1e-6",
+      "r1=x1"
+    ],
+    "has_real_root": false,
+    "purpose": "Constructed analytic test of the stopping contract; not an atmosphere or a proposed physical fix.",
+    "options": {
+      "maximum_iterations": 8,
+      "residual_tolerance": 0.003,
+      "step_tolerance": 0.0002,
+      "allow_initial_convergence": false,
+      "linear_regularization": 0.0,
+      "broyden_updates": false
+    },
+    "default_driver_converged": true,
+    "default_terminal_reason": "residual-and-step-converged",
+    "accepted_iteration": {
+      "iteration": 1,
+      "residual_rms": 7.094701336851911e-07,
+      "residual_maximum": 1.00334228515625e-06,
+      "maximum_step": 0.00015781249999999997,
+      "trust_radius": 0.02,
+      "line_search_factor": 0.03125,
+      "jacobian_recomputed": false,
+      "residual_merit": 9.603057049742536e-07,
+      "worst_residual_index": 0,
+      "rejected_trial_evaluations": 5,
+      "model_agreement": 0.21093749999999506,
+      "unrestricted_maximum_step": 0.005049999999999999,
+      "proposal_limited": false,
+      "step_kind": "newton"
+    },
+    "final_state": [
+      -5.781249999999996e-05,
+      0.0
+    ],
+    "exact_newton_step_at_accepted_state": 0.008677554898648654,
+    "existing_explicit_convergence_callback_rejects": true,
+    "guarded_terminal_reason": "maximum-iterations-exhausted"
+  },
+  "records": [
+    {
+      "case_id": "da-2b5115eb649e0124e183f85c",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4750,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 7.75,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "bdfa5c54d2797c2d8eee16363760c818c5edb9997138af06cb140bfc22e26a80",
+      "metadata_sha256": "3204c0bffbd4f6d25104925a0196705c4c8d589e365af51ad4e8c181593c5aa4",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 0.0008372367613697085,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0008423046432259958,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.0005976701447441002,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.545158319683827e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.2406576383149203e-69,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 1,
+        "residual_rms": 0.000247318905774268,
+        "residual_maximum": 0.0008439570391334324,
+        "residual_merit": 0.0004583081655576261,
+        "worst_residual_index": 34,
+        "maximum_step": 0.00014941753618558096,
+        "unrestricted_maximum_step": 0.0005976701447441002,
+        "trust_radius": 0.02,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.7829755919430544,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00014941753618558096,
+      "measured_unrestricted": 0.0005976701447441002,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-bed6631078524290b850b595",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4500.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 8.25,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "a08d9c7bb7ad2b70e598b80ea261d282de4b8fe70bebb29c445edf05c9eace42",
+      "metadata_sha256": "e0131d784aed31da8c3316cf83484119773ff748c2ca503f8759ecb26ee6d28c",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 5.9777297853225164e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.009068758109801242,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 158.2528468631023,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.4545796856429158e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.43054695723257e-134,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 24,
+        "residual_rms": 0.0009177757134693668,
+        "residual_maximum": 0.009068760167319398,
+        "residual_merit": 0.0031849657552992165,
+        "worst_residual_index": 17,
+        "maximum_step": 6.103515630684342e-07,
+        "unrestricted_maximum_step": 158.2528468631023,
+        "trust_radius": 1.953125e-05,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 106.6862155525962,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 6.103515630684342e-07,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-232c947d89046f6b61d81de5",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4750.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 9.5,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "38663e97c3d997c36e90aaf774f702af6996d9714a735562cfc18c9c5ac38e71",
+      "metadata_sha256": "099f01a8a69716fb0842fa9d26b91980eecbfad1b4e3c1e7c041540a6e5d20c2",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.605189633253513e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.07736338980332944,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 660.3648326553101,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.5954624131191582e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.858856358094604e-235,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 14,
+        "residual_rms": 0.00778701946342353,
+        "residual_maximum": 0.07736357336678554,
+        "residual_merit": 0.027127912805119912,
+        "worst_residual_index": 16,
+        "maximum_step": 4.5776367230132564e-07,
+        "unrestricted_maximum_step": 660.3648326553101,
+        "trust_radius": 1.46484375e-05,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.16390775390746945,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 4.5776367230132564e-07,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-b6a1f4e574c3aa48b020493a",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4500.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 7.5,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "0de43703153cfa94b7ad0a4d972d24445fe01497eb997a704bacdac2e219838f",
+      "metadata_sha256": "72148c525018f77df0cec7d5cd075b7226c196925be4fe82df4fa6e7b7d64e5e",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 0.003412517749974864,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.03490908392773009,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 1475.6796956121175,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.4717438066627228e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.9118027110256314e-76,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 64,
+        "residual_rms": 0.00607411702722423,
+        "residual_maximum": 0.03492103681396954,
+        "residual_merit": 0.014804376230716615,
+        "worst_residual_index": 23,
+        "maximum_step": 6.103515630684342e-07,
+        "unrestricted_maximum_step": 1475.6796956121175,
+        "trust_radius": 1.953125e-05,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 2045.7624421367466,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 6.103515630684342e-07,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-a859f1201f510fe672d9bc8e",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4250.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 6.0,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "9bd405fb7648cd45c436aba1831bafcba347bb7c0456a915e7a405742089bfca",
+      "metadata_sha256": "d2d86ca1a8c4c2b08b56575051c5539471c3151ce597be75e3884b5e07d4f226",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.8740616694046253e-06,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0019939475540565617,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.0015402396500263649,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.3557162449650688e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 3.648105702831877e-43,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 31,
+        "residual_rms": 0.0005935568762389568,
+        "residual_maximum": 0.001992503791037979,
+        "residual_merit": 0.0010916828239984516,
+        "worst_residual_index": 24,
+        "maximum_step": 4.882812499218403e-06,
+        "unrestricted_maximum_step": 0.0015402396500263649,
+        "trust_radius": 0.00015625,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.9972427860450449,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 4.882812499218403e-06,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-046d9260b090623a0c387e41",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4250.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 6.5,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "b34eb0f64aeac3f7f1a228bc1fa242c0d1b36f267baedb4b36a580453dbb112d",
+      "metadata_sha256": "5c4d4f23eee0430a7230e9d2f78352a6ae16fe8d22ca5ef8548e7ce6481c283a",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.7682805697472048e-06,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.011700246604168095,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 98.86517548157596,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.2951167736673094e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 4.919138066053561e-59,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 12,
+        "residual_rms": 0.0012190188499801634,
+        "residual_maximum": 0.01170073204043972,
+        "residual_merit": 0.004144201860090093,
+        "worst_residual_index": 20,
+        "maximum_step": 4.882812499218403e-06,
+        "unrestricted_maximum_step": 98.86517548157596,
+        "trust_radius": 7.8125e-05,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 1.1733903852092407,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 4.882812499218403e-06,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-e3ad96e8843c1e6f508e3667",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4750,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 9.25,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": true,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "deec80bcb92ad1aab583f96465311bbfd96f59ae309fcbe39d6e2992fd62b7ef",
+      "metadata_sha256": "eb28773b7fe7da1f5372ba0e8c2bd007dc991db55dbb25234d1025143a1222a0",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.006078022587232e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.26203834196050607,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 195.446757652327,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.371739750450385e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 6.8755409824691645e-189,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 10,
+        "residual_rms": 0.026844414167723953,
+        "residual_maximum": 0.2620387153706703,
+        "residual_merit": 0.09235409301039153,
+        "worst_residual_index": 14,
+        "maximum_step": 3.906249999996447e-05,
+        "unrestricted_maximum_step": 195.446757652327,
+        "trust_radius": 0.000625,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.43741705084949206,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 3.906249999996447e-05,
+      "measured_unrestricted": 195.446757652327,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-edfa789aefee2fa276efcc80",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4250.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 7.0,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "cd1d63a1763cd8556a7719f700df3d4421ec94f5e9df76320b053d15415643ee",
+      "metadata_sha256": "624776b3ea5d3c53f83a9699ef56f7cef12062707210a43624bf7da8fa40d3bc",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 7.41902467882305e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.035188803813783136,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 1859.128665865563,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.5850830309656949e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.5779174313940674e-86,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 16,
+        "residual_rms": 0.003528639084907775,
+        "residual_maximum": 0.03518880724430012,
+        "residual_merit": 0.012325840895982805,
+        "worst_residual_index": 15,
+        "maximum_step": 2.4414062496092015e-06,
+        "unrestricted_maximum_step": 1859.128665865563,
+        "trust_radius": 3.90625e-05,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 10.448365353553708,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 2.4414062496092015e-06,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-aeb577b1095c32b904728c9d",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4250,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 6.75,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": true,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "6d4893844589a0386f7a7316817431ad0ba1c37047b077c66a355730aa2c9660",
+      "metadata_sha256": "19cc66315301c3a6c20d4b532b9feec86429e39e7e7dacaa7a8aa80cb69e9246",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.0086883933133635e-06,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.15851145405791198,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.6038599860949825,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.5306423293134829e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 7.576709248152402e-71,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 22,
+        "residual_rms": 0.0172237429393035,
+        "residual_maximum": 0.15851213178290777,
+        "residual_merit": 0.056851775885030445,
+        "worst_residual_index": 15,
+        "maximum_step": 3.051757815342171e-07,
+        "unrestricted_maximum_step": 0.6038599860949825,
+        "trust_radius": 1e-05,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 1.0004262086023006,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 3.051757815342171e-07,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-17c0a267f8e5181305b3b065",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 2500.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 9.0,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "6f9e8bf6c936fa28afde109e0a752e49bcc534a7c67e3c709e8a81a648028972",
+      "metadata_sha256": "b9ddc1029fcdcc38e4e36842b89fd313a35e7ad5e0af0ffff69b80d8ab01617a",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 0.003771620515780949,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0002376831796008207,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 4.671144438361807e-06,
+            "tolerance": 0.0002,
+            "passed": true,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.8480130789358665e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 0.0,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "all_depth_flux"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 5,
+        "residual_rms": 0.0007526598053820864,
+        "residual_maximum": 0.0037716353187011178,
+        "residual_merit": 0.0016955686350573658,
+        "worst_residual_index": 89,
+        "maximum_step": 1.1677861095904518e-06,
+        "unrestricted_maximum_step": 4.671144438361807e-06,
+        "trust_radius": 0.0125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.2829182726795368,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": true,
+      "accepted_step": 1.1677861095904518e-06,
+      "measured_unrestricted": 4.671144438361807e-06,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-b27acfbc8924aec83a489d3d",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4500.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 8.75,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "17dfd238986758bd401303ddbe6c4355045bc51f33926127f9879e89ed800693",
+      "metadata_sha256": "c2fb5bd40cf86ac355348803e3d14a91f23637f1a1e99d8c72032c3de0e7d24e",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.506274762421491e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0017022551661873859,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.5686324298568604,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.830805719399989e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 8.657842536730091e-211,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 9,
+        "residual_rms": 0.00017031365852421607,
+        "residual_maximum": 0.0017022551758244548,
+        "residual_merit": 0.0005958774524803298,
+        "worst_residual_index": 12,
+        "maximum_step": 0.0001562499999998579,
+        "unrestricted_maximum_step": 0.5686324298568604,
+        "trust_radius": 0.005,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.16342273626505532,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001562499999998579,
+      "measured_unrestricted": 0.5686324298568604,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-606796ea1b8c4c153af3cf4b",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 4750.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 9.0,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "05baa0d4930b1889a9e0c50ba35bf90991c9fa56862798037590ee377d841ce6",
+      "metadata_sha256": "4b3320b770e8749dc489c36e1ce52225f6004bace18d3d16aef8aa4ecaf064fe",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.0478856404725363e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0006641939035201184,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.0010929499391636455,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.3980009906383335e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 4.7760895651312756e-154,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 2,
+        "residual_rms": 0.00010608496121234801,
+        "residual_maximum": 0.000666417783793163,
+        "residual_merit": 0.00027268940716063876,
+        "worst_residual_index": 41,
+        "maximum_step": 6.830937119772784e-05,
+        "unrestricted_maximum_step": 0.0010929499391636455,
+        "trust_radius": 0.01,
+        "line_search_factor": 0.0625,
+        "rejected_trial_evaluations": 4,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.03856564707499396,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 6.830937119772784e-05,
+      "measured_unrestricted": 0.0010929499391636455,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-cca311d7b71d0918b36f3aa3",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 5000.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 9.0,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "f2faad251dc85ebabe76e756754befefb24017f3dccd5708676dbe84c626b3c1",
+      "metadata_sha256": "a5d283f7fec1027a55e98d79d1771a08f21523bafaf44a5491e27350a0e3f9c3",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.4621005310799795e-05,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0002441972539041567,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.000504885770029162,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.2164032360360897e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 6.096927584817192e-119,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 7,
+        "residual_rms": 3.796234250388402e-05,
+        "residual_maximum": 0.00024938648733511447,
+        "residual_merit": 0.00010030896433766264,
+        "worst_residual_index": 33,
+        "maximum_step": 6.103515630684342e-07,
+        "unrestricted_maximum_step": 0.000504885770029162,
+        "trust_radius": 1.953125e-05,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.8499620989218312,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 6.103515630684342e-07,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "da-0ee2f78490d9fa6e10fe37d2",
+      "family": "DA",
+      "config": {
+        "allard_minimum_effective_temperature": 9000.0,
+        "atmosphere_solver": "adaptive-newton",
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "convective_seed": true,
+        "effective_temperature": 6000.0,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "include_molecules": null,
+        "logg": 8.25,
+        "lower_boundary_extensions": 4,
+        "lyman_profile_source": "allard",
+        "mixing_length_alpha": 0.7,
+        "multigrid_initialization": false,
+        "photospheric_depth_concentration": null,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "use_cool_mean_3d_temperature_differential": false
+      },
+      "outcome_sha256": "9d089babab4486df997d01173808535e1bdc96eaa6e8c602eb8632a6b1ae0037",
+      "metadata_sha256": "5ee91f171d09961cfb63e95e151f7a3269a286d72096cc91df11c977d2f7005a",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 0.16571676592127893,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.002,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0017219150787815983,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.0013945916077116038,
+            "tolerance": 0.0002,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.3328119070157225e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 6.80376014533554e-126,
+            "tolerance": 0.002,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "all_depth_flux",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 1,
+        "residual_rms": 0.02835664003733024,
+        "residual_maximum": 0.16571676592127893,
+        "residual_merit": 0.06978583151764997,
+        "worst_residual_index": 99,
+        "maximum_step": 2.179049386974441e-05,
+        "unrestricted_maximum_step": 0.0013945916077116038,
+        "trust_radius": 0.02,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 22.058992575071994,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 2.179049386974441e-05,
+      "measured_unrestricted": 0.0013945916077116038,
+      "temperature_tolerance": 0.0002,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-d62296a5d22a028d7c0c623d",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 6.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "8c26288a82acfde689db325700ea1e190493b830a0e3e283cc4988936f7eac5e",
+      "metadata_sha256": "155236b8ecc9d393ef0eb48d2efb34cf95434052362cf3c7e3007e7446843c4c",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.2870315924118358e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0001697712809853474,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.028262962660347668,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6776698601701947e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.7218841125736417e-61,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 59,
+        "residual_rms": 2.542812066749096e-05,
+        "residual_maximum": 0.00016977139483672016,
+        "residual_merit": 6.7870969376671e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.0001562499999998579,
+        "unrestricted_maximum_step": 0.028262962660347668,
+        "trust_radius": 0.0003125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.48333282147401435,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001562499999998579,
+      "measured_unrestricted": 0.028262962660347668,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-ab359d347342ba013ad62790",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 6.5,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "31a3d2519461f7f7e2f6853a341059032114df3de13ac482ebac07363a18e312",
+      "metadata_sha256": "eb46e9d5f1e965b2673f66c3e21596443a18de4b8023718b0fd26d5432bb1248",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.3963276635518014e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00046881044684785923,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 22.998205960716053,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.7115645312202017e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.3097975617832002e-66,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 82,
+        "residual_rms": 0.00011733137804080635,
+        "residual_maximum": 0.0004688107864806256,
+        "residual_merit": 0.00023453407466096274,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00022351741790771484,
+        "unrestricted_maximum_step": 22.998205960716053,
+        "trust_radius": 0.0004470348358154297,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.4927869746536003,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00022351741790771484,
+      "measured_unrestricted": 22.998205960716053,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-0b346ab5fe1a2b48fe206847",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 8.5,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "de645aa020b9985dcb55d952fa9459afdacbecaa2cc7f16c0ca0c97fdbdf1066",
+      "metadata_sha256": "caf1104cb11a3f68911909ea67243eb57bb49562519796d0ee74fae37d4fc838",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 4.0291880942788794e-11,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 2.152520521259047e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.3448218297820045,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.484912190658698e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 3.940222779200373e-54,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 63,
+        "residual_rms": 3.043953257541437e-06,
+        "residual_maximum": 2.152523059029041e-05,
+        "residual_merit": 8.42526090511404e-06,
+        "worst_residual_index": 0,
+        "maximum_step": 0.0002514570951461792,
+        "unrestricted_maximum_step": 0.3448218297820045,
+        "trust_radius": 0.0020116567611694336,
+        "line_search_factor": 0.0625,
+        "rejected_trial_evaluations": 4,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.4677628957553188,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0002514570951461792,
+      "measured_unrestricted": 0.3448218297820045,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-8cb85f4d300fed8f70b65400",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 36000.0,
+        "logg": 7.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "c7b39cd73e08177c78788eeae41905c5493341f0a89e44f933af79b8055077b2",
+      "metadata_sha256": "ed5668c17bded4f9572d6ee58a9540981df2b0b6565c3a13f9da09a81fd7f129",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 9.603784434375484e-11,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00032199943245627007,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 85.69044789685964,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5145475898028987e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.593061474267561e-63,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 5,
+        "residual_rms": 8.526048499603351e-05,
+        "residual_maximum": 0.00032199945470935833,
+        "residual_merit": 0.0001657603486733731,
+        "worst_residual_index": 0,
+        "maximum_step": 3.906250000085265e-05,
+        "unrestricted_maximum_step": 85.69044789685964,
+        "trust_radius": 0.00125,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.34900567629752827,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 3.906250000085265e-05,
+      "measured_unrestricted": 85.69044789685964,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-2f7c947651de74db44b692c8",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 18000.0,
+        "logg": 7.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "2ff5cf6fed86ab7b08ce8ab224d913a956212581c2e2de1a3fdd488105592465",
+      "metadata_sha256": "fdacb91194c598f345e78075a4ddf7e1cf0c648a92db5f9084afe0ea2eb21348",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.917125125316943e-09,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.001591240842119549,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 3.5222315915389526,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.974320090347885e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.535045123104411e-15,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 37,
+        "residual_rms": 0.00027655669576914305,
+        "residual_maximum": 0.0015912427592446744,
+        "residual_merit": 0.0006743673855803116,
+        "worst_residual_index": 13,
+        "maximum_step": 0.00019531250000071054,
+        "unrestricted_maximum_step": 3.5222315915389526,
+        "trust_radius": 0.000390625,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.47930705439941174,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00019531250000071054,
+      "measured_unrestricted": 3.5222315915389526,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-db92b50fa0e2b5b7a7b99f7b",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 34000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "828148813a87c38fe930d2ee69ba13f64199c2390fc197e64a029d59b4f0130f",
+      "metadata_sha256": "e0d71e2acc7dfc2d22192f1d57a80271ad42f2a69dce8103f09fafed03939c6f",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.9134915874019498e-11,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 2.119288292765144e-06,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 2.237833664014971,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6413003699208853e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 3.8692952574989437e-69,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 15,
+        "residual_rms": 2.573012939320797e-07,
+        "residual_maximum": 2.119307365619551e-06,
+        "residual_merit": 7.871281353369674e-07,
+        "worst_residual_index": 16,
+        "maximum_step": 0.0001171875000007816,
+        "unrestricted_maximum_step": 2.237833664014971,
+        "trust_radius": 0.00375,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.3658000049223724,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001171875000007816,
+      "measured_unrestricted": 2.237833664014971,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-b13051df49f0f1ccfdc8a795",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 17000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "e25a73779ca12f17ec33b9ee1cccf1d0340b4f01c325bcdc704a8d85b1173755",
+      "metadata_sha256": "16efcf4b4581d423a81324c176721e70c358a661184252378a50d5a522f8c130",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.650708860769569e-07,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.020253051524168345,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 32670.52813629742,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": false
+          },
+          "source_closure": {
+            "value": 1.53055006047377e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 7.449790567391137e-22,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "local_energy",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 34,
+        "residual_rms": 0.005073210124202682,
+        "residual_maximum": 0.02025268645351697,
+        "residual_merit": 0.010136381737581924,
+        "worst_residual_index": 8,
+        "maximum_step": 1.2207031243605115e-06,
+        "unrestricted_maximum_step": 32670.52813629742,
+        "trust_radius": 1.953125e-05,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.08681300544644331,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": 1.2207031243605115e-06,
+      "measured_unrestricted": null,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-9e78e0e286770be39fd9a6c2",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 34000.0,
+        "logg": 6.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "69f801af59e968f2b9951a25941382ed3d81463647f37018c40cb92a6cdd8a95",
+      "metadata_sha256": "b8168dc878a9f7097c21a5a91111509d8ab530534d9c0cc0cf524eac1ceb982f",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.5343748493990006e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.000712766667527875,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 15.90596961860623,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6122912952639522e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 5.9460880445388145e-68,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 10,
+        "residual_rms": 0.0001311391134335609,
+        "residual_maximum": 0.0007127667633739838,
+        "residual_merit": 0.00030933080427705687,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00018310546875,
+        "unrestricted_maximum_step": 15.90596961860623,
+        "trust_radius": 0.000732421875,
+        "line_search_factor": 0.125,
+        "rejected_trial_evaluations": 3,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.06491928168531991,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00018310546875,
+      "measured_unrestricted": 15.90596961860623,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-32f79fc9a0c5cc479bd142e2",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 32000.0,
+        "logg": 7.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "d588a38efb323afad7d5453b884e9761c792af232016f863e8fe15d55f1fe5e1",
+      "metadata_sha256": "1d162f03f6ddc9721c37d651eb075d58c6e5b4eb09dbf18d9c7c3004dc189bf2",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.616440314933243e-11,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.000862547699482472,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 2.8771485231735774,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.845460672318386e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.2346110925668543e-61,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "solver_completion",
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "trust-region-collapsed",
+      "last_iteration": {
+        "iteration": 28,
+        "residual_rms": 0.00010143149875492763,
+        "residual_maximum": 0.000862547713704873,
+        "residual_merit": 0.0003170684271811459,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00036834535421803594,
+        "unrestricted_maximum_step": 2.8771485231735774,
+        "trust_radius": 0.005893525667488575,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.49494871719305256,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": true,
+      "accepted_step": 0.00036834535421803594,
+      "measured_unrestricted": 2.8771485231735774,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-619ee69e81f00d239e87ecd1",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 4500.0,
+        "logg": 8.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "086db6da9c06c69c75f78090634fcb55e6ea3f6f8bdc9c0ba723dfb947693f07",
+      "metadata_sha256": null,
+      "certificate": {},
+      "terminal_phase": null,
+      "terminal_reason": null,
+      "last_iteration": {},
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": null,
+      "measured_unrestricted": null,
+      "temperature_tolerance": null,
+      "dense_workflow_generic_certificate_not_applicable": true
+    },
+    {
+      "case_id": "db-0d09d7075c5642ca107b56bf",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 40000.0,
+        "logg": 7.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "55d1cddf7858aa8b774ff2fc5e7d00a0cf05e0c372c0f77d01ba0c41a47ed55c",
+      "metadata_sha256": "a05500297365b1c6eac391995bab0d35a02db68e634899833b4a0ef092cb8769",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.9198173051293566e-09,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0001837180517833497,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 773.1820062687003,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.63023165669259e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 8.712258362139622e-59,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 43,
+        "residual_rms": 3.495354630174118e-05,
+        "residual_maximum": 0.00018371995787085975,
+        "residual_merit": 8.088353576945611e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 4.96308367523568e-05,
+        "unrestricted_maximum_step": 773.1820062687003,
+        "trust_radius": 0.0007940933880509066,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.28194276074934077,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 4.96308367523568e-05,
+      "measured_unrestricted": 773.1820062687003,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-4a4df7cce851a9b477221fd3",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 36000.0,
+        "logg": 6.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "cebb66d73c9d7b7be8f28ed48c289644abefcce28509db06f8582ecf6c6be335",
+      "metadata_sha256": "6130c21814d3c3f9dbdfd659d9dcaad820bf49178e40331aebd8cbbc022d253d",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.8463775780807055e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00018704018844893985,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 108.9679916326425,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.477313711100357e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.0932438049552264e-69,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 58,
+        "residual_rms": 4.577014206398808e-05,
+        "residual_maximum": 0.00018704047308669766,
+        "residual_merit": 9.253026033566249e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.0001985233470129799,
+        "unrestricted_maximum_step": 108.9679916326425,
+        "trust_radius": 0.0015881867761018131,
+        "line_search_factor": 0.0625,
+        "rejected_trial_evaluations": 4,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.041436797845345825,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001985233470129799,
+      "measured_unrestricted": 108.9679916326425,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-f081001bb371b984924f8a0f",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 4500.0,
+        "logg": 7.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "41b4ea2530ac8c217828383fba8f37e3b9e6d4cc2d9342b848dc75437d415030",
+      "metadata_sha256": null,
+      "certificate": {},
+      "terminal_phase": null,
+      "terminal_reason": null,
+      "last_iteration": {},
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": null,
+      "measured_unrestricted": null,
+      "temperature_tolerance": null,
+      "dense_workflow_generic_certificate_not_applicable": true
+    },
+    {
+      "case_id": "db-f92ae04f49420c9441bd4924",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 34000.0,
+        "logg": 6.5,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "805a6043a746fb04f5cb97d5462355bc60b1a760f9dd9d81db2c21d4d525ed2b",
+      "metadata_sha256": "c1abacb6f3ef264ce5017dcaa032787a50b3e6939ab65cb303f56d3e28f51dff",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.7168123306609004e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0013311552658332832,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 63.28017007498354,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6469787440243919e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.3175149149764165e-66,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 10,
+        "residual_rms": 0.00027098909681388733,
+        "residual_maximum": 0.0013311553539476879,
+        "residual_merit": 0.0006037779353008092,
+        "worst_residual_index": 0,
+        "maximum_step": 0.000152587890625,
+        "unrestricted_maximum_step": 63.28017007498354,
+        "trust_radius": 0.00244140625,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.4493811360752115,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.000152587890625,
+      "measured_unrestricted": 63.28017007498354,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-ba576bc31a53c14e1d203580",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "f6d53f5c2326cbd263bfe5d665c1577da9425ae3893a98189642a92f576524a1",
+      "metadata_sha256": "0de034f641bccee0ca0af95ab932523d2f57c303bca8537faa4346415abf76d7",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.790589898575945e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00016405998030876758,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.09881993907871234,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5833414175093586e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.1118095001029073e-56,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 59,
+        "residual_rms": 3.4513695568517856e-05,
+        "residual_maximum": 0.00016406015379277251,
+        "residual_merit": 7.552873401671099e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.000244140625,
+        "unrestricted_maximum_step": 0.09881993907871234,
+        "trust_radius": 0.00048828125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.497511938032964,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.000244140625,
+      "measured_unrestricted": 0.09881993907871234,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-29fd1ce3ee2d6ee4fdf33ed2",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 8000.0,
+        "logg": 7.5,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "a16be8a9820e493280fd335e28c9eeea96cf737fd87db377f99d26706ef3d658",
+      "metadata_sha256": null,
+      "certificate": {},
+      "terminal_phase": null,
+      "terminal_reason": null,
+      "last_iteration": {},
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": null,
+      "measured_unrestricted": null,
+      "temperature_tolerance": null,
+      "dense_workflow_generic_certificate_not_applicable": true
+    },
+    {
+      "case_id": "db-a0cd1f7dba2dc77bec2f5334",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 40000.0,
+        "logg": 8.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "cf0d7974be3ba8d995de2102b17095b31730911b6bea8247d3a0f59b2b129cb5",
+      "metadata_sha256": "ee2c7a9be3eb9a978a1b0134b6d98f2d7f61482533d6f0711f771f903dc8f743",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 7.597688034266525e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 9.311795622117038e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 34.00668689694845,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.53385070372785e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.4609537655696433e-56,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 19,
+        "residual_rms": 1.2630539834097166e-05,
+        "residual_maximum": 9.311869158727173e-05,
+        "residual_merit": 3.59102127309151e-05,
+        "worst_residual_index": 14,
+        "maximum_step": 0.000171661376953125,
+        "unrestricted_maximum_step": 34.00668689694845,
+        "trust_radius": 0.00274658203125,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.17149191406436415,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.000171661376953125,
+      "measured_unrestricted": 34.00668689694845,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-1f6a20ce6026905bd3041a00",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 30000.0,
+        "logg": 6.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "93308573f2e625856611d9c13cfae1aad7393c68ae7016d0753c7ec431d6cfcb",
+      "metadata_sha256": "e92af0a3796620cab1bdebe4f6857592fe6d15058fdb471d3e760c05886bc22c",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.2926994464332893e-12,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00047341909074395574,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 8.496222483545218,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6044774668854545e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.4405707209301296e-63,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 6,
+        "residual_rms": 0.00011368955205778367,
+        "residual_maximum": 0.0004734190887257923,
+        "residual_merit": 0.00023204432423923175,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00029296874999928946,
+        "unrestricted_maximum_step": 8.496222483545218,
+        "trust_radius": 0.009375,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.34155693045530905,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00029296874999928946,
+      "measured_unrestricted": 8.496222483545218,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-269085ec676736733133693d",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 32000.0,
+        "logg": 6.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "c04b790e1001b85beb246c4187bd71c985218a678591932c532c7c95839a569b",
+      "metadata_sha256": "acb2619bffa3d9cf87865d3934693390b3fb306cdcced6182252aa4f98a790d4",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.5683678234477156e-12,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00011911899189972409,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.6639607928999531,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6473868843753396e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.2799369690713651e-63,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 15,
+        "residual_rms": 1.634984230144113e-05,
+        "residual_maximum": 0.00011911899513757852,
+        "residual_merit": 4.612959108583576e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00023437499999978684,
+        "unrestricted_maximum_step": 0.6639607928999531,
+        "trust_radius": 0.00046875,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.26961498741063233,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00023437499999978684,
+      "measured_unrestricted": 0.6639607928999531,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-5021498e92a9a2d44932f30e",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 33000.0,
+        "logg": 7.125,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "068a12192c77dae7f9325281fc8ed638241ede35230a36a488528b30c6339fd6",
+      "metadata_sha256": "dec26fd7a7f4bbb31ebcf2a08a7c659c58dddb424aebadfa34dfb73b60512844",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 8.890888025803179e-12,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 8.400111896093507e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.3466979022840011,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.7755881339374993e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 4.782649345424898e-62,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 24,
+        "residual_rms": 1.024836937473523e-05,
+        "residual_maximum": 8.400112720789374e-05,
+        "residual_merit": 3.124865117670866e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00021457672119140625,
+        "unrestricted_maximum_step": 0.3466979022840011,
+        "trust_radius": 0.0004291534423828125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.3125237746108143,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00021457672119140625,
+      "measured_unrestricted": 0.3466979022840011,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-451f672bef5346a263707134",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 39000.0,
+        "logg": 8.125,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "3c001c3e5722eb45eea7b501f2de8dcc25ca2a1a06c64da2373ea4a1e65c5d6c",
+      "metadata_sha256": "7c86882da8afc96956a96f524288347df67f27f1566566e9bdf84dbe9a17f634",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.281812599453815e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 7.180494939303746e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 439.84974544231255,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.7317770308620625e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.848506547461106e-57,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 49,
+        "residual_rms": 8.140617719607775e-06,
+        "residual_maximum": 7.180527021696044e-05,
+        "residual_merit": 2.6091935273847885e-05,
+        "worst_residual_index": 14,
+        "maximum_step": 9.765625000213163e-06,
+        "unrestricted_maximum_step": 439.84974544231255,
+        "trust_radius": 0.0003125,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.09870246078303771,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 9.765625000213163e-06,
+      "measured_unrestricted": 439.84974544231255,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-3771c68ac39d9f3958fd6c7a",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 8.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "949374b330975c7df77c887eefd7a38df0a5ac0e3c2f7cb519858290184eabcb",
+      "metadata_sha256": "571afca20ddaf2fb5e79bcc48583193feba85786e79251090c41ba862d17e08f",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.9374835069640994e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0005133968883311846,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 12.900044310195947,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.680474570876599e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.3642906041570603e-58,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 48,
+        "residual_rms": 0.00010495406480208821,
+        "residual_maximum": 0.0005133969363400037,
+        "residual_merit": 0.00023330329888708915,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00018189894035458565,
+        "unrestricted_maximum_step": 12.900044310195947,
+        "trust_radius": 0.0003637978807091713,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.3200059788154409,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00018189894035458565,
+      "measured_unrestricted": 12.900044310195947,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-ef7e5d9512c78df2d8623f39",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 36000.0,
+        "logg": 6.5,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "f66400d542573fd66cfbffca1e16d21538782164282938e3af2265b44ef831ad",
+      "metadata_sha256": "3a748ab6258d59a4b94e05c7a38f8960e3a11092e57cccb271731625909090a5",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.226823087563389e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00021705080194406307,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 11.026293927484943,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.7127436689463858e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.672706456295334e-68,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 17,
+        "residual_rms": 4.721936301424236e-05,
+        "residual_maximum": 0.00021705092379170615,
+        "residual_merit": 0.0001014820939621689,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00011444091796875,
+        "unrestricted_maximum_step": 11.026293927484943,
+        "trust_radius": 0.00091552734375,
+        "line_search_factor": 0.0625,
+        "rejected_trial_evaluations": 4,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.1856524155094891,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00011444091796875,
+      "measured_unrestricted": 11.026293927484943,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-9ebe26b05e3c8fcb30bb6a03",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 40000.0,
+        "logg": 7.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "7c37f57286291014b45b7d878dd9587b939af3fd993b5c447da6c629afeeed98",
+      "metadata_sha256": "c825ca6a14bf38861ba43222dee68ab4d77fd5d36aa7a1e5b6e80379ac48ea10",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 6.498770410701127e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0005037738444306537,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 6.179621316909667,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5859233353953664e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.2533478963943074e-47,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 10,
+        "residual_rms": 0.00015444907819162616,
+        "residual_maximum": 0.000503774115441312,
+        "residual_merit": 0.00028039260705195414,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00019531250000071054,
+        "unrestricted_maximum_step": 6.179621316909667,
+        "trust_radius": 0.000390625,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.2989383412988156,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00019531250000071054,
+      "measured_unrestricted": 6.179621316909667,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-bd332c758f8bc050dfdbfa7b",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 32000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "f35435d667c1780e1234af5af5346eaef231490f98932d57fa0dbcdc7fb4c893",
+      "metadata_sha256": "81a19aef40a7402355e71cc9db083a2c6fa3af5dca47b480f266c2075aed4610",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 6.979966604703236e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00047858929527361325,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 15.817205373325814,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5744998540529156e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 9.330857513052501e-67,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 17,
+        "residual_rms": 6.531772870512509e-05,
+        "residual_maximum": 0.00047858994216903937,
+        "residual_merit": 0.00018496521424738493,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00022351741790771484,
+        "unrestricted_maximum_step": 15.817205373325814,
+        "trust_radius": 0.007152557373046875,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.22280252088036728,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00022351741790771484,
+      "measured_unrestricted": 15.817205373325814,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-1b2d1ab248d8cc831b8cfa6a",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 10000.0,
+        "logg": 9.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "3a1f960a1fb8dfef4e85156631ec7a8c6a6d54b2614a53f914ab1375e6430fd2",
+      "metadata_sha256": null,
+      "certificate": {},
+      "terminal_phase": null,
+      "terminal_reason": null,
+      "last_iteration": {},
+      "accepted_step_below_limit_but_measured_unrestricted_fails": false,
+      "stationarity_measured": false,
+      "accepted_step": null,
+      "measured_unrestricted": null,
+      "temperature_tolerance": null,
+      "dense_workflow_generic_certificate_not_applicable": true
+    },
+    {
+      "case_id": "db-9daf6229c4c401e06985e0bc",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 8.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "51317c7c7cad15d7f1310a683f7f82cddc692e7605a77cc90280a9b24ea23776",
+      "metadata_sha256": "b2b335887e28545f0c6d990104aef6d749eda2fc3769a401f7690c7000c108b5",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.7832602061673697e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00018201023018497912,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 7.343676135265849,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.7051225924707247e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 3.1561838448906864e-56,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 8,
+        "residual_rms": 4.45162986827194e-05,
+        "residual_maximum": 0.00018201011697120743,
+        "residual_merit": 9.001882792552125e-05,
+        "worst_residual_index": 9,
+        "maximum_step": 0.00023437499999978684,
+        "unrestricted_maximum_step": 7.343676135265849,
+        "trust_radius": 0.00046875,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.2168811694274035,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00023437499999978684,
+      "measured_unrestricted": 7.343676135265849,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-b69dd13fa974b0c2228654b8",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 36000.0,
+        "logg": 6.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "fb1505458b7715a8d6ddcf34f2fe787438ee48f9b56ce9596ce612c8e74d6734",
+      "metadata_sha256": "0b0d7cf187f52154534f792a2f99d6409054cdbbc1f27d3f98d0afa6857a3b18",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.269624405608738e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 8.296324469399898e-05,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 1.8660788634944883,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6303467996411412e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.0361536608770257e-66,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 12,
+        "residual_rms": 2.2189954722075062e-05,
+        "residual_maximum": 8.296337140330869e-05,
+        "residual_merit": 4.293079757290224e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.0001562499999998579,
+        "unrestricted_maximum_step": 1.8660788634944883,
+        "trust_radius": 0.0003125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.44894611823806635,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001562499999998579,
+      "measured_unrestricted": 1.8660788634944883,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-ad1219e19717ee32b6c5c4c9",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 38000.0,
+        "logg": 7.5,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "a640f18e88734c6bf7041ecd725e95f50f67ec97379961df718583544411586d",
+      "metadata_sha256": "d4f36128dbbe10a98f03134bc84c1ee3d14c87e481b7e07fd86192eee7ec95f3",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.053994834800733e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0005459027584762207,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 20.329171584435556,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5563104347300896e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 4.380013167227552e-62,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 32,
+        "residual_rms": 0.00012567059344142464,
+        "residual_maximum": 0.0005459026253880135,
+        "residual_merit": 0.000262146249788428,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00019531250000071054,
+        "unrestricted_maximum_step": 20.329171584435556,
+        "trust_radius": 0.000390625,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.15230775033759836,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00019531250000071054,
+      "measured_unrestricted": 20.329171584435556,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-24a510110673e7e89f6bada8",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 27500.0,
+        "logg": 8.125,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "158d916ff62b50de6ec39ac0ec3f7fd46d859d7276fbcaa082efbd8601220e13",
+      "metadata_sha256": "64ac1dc92757bacf5870c24815dfd1e18d852dcf67325851750f1fb722fc5702",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 6.8009616983610854e-06,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0003136209842604451,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 1.9556807268396277,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.7975288843977888e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 9.958227141581152e-35,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 22,
+        "residual_rms": 6.437723849501859e-05,
+        "residual_maximum": 0.0003204219459588062,
+        "residual_merit": 0.00014448272498472013,
+        "worst_residual_index": 13,
+        "maximum_step": 0.00023437499999978684,
+        "unrestricted_maximum_step": 1.9556807268396277,
+        "trust_radius": 0.00046875,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.49059821218820265,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00023437499999978684,
+      "measured_unrestricted": 1.9556807268396277,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-51bf7b48451ee0abcc6c0f08",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 32000.0,
+        "logg": 6.25,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "70d6f88204dd0d3409050bcb9f6ed71b00c2ebcfc3155385a12e98ce458ca8cf",
+      "metadata_sha256": "b40938a2f553648754f8abee355e4f71064751332cb2c945a62eb7f5fe64ac4d",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 7.239764343580646e-12,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00015894439999672913,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 8.408506672223925,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6959065970814099e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 9.713673918018679e-66,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 26,
+        "residual_rms": 3.766898382852323e-05,
+        "residual_maximum": 0.00015894440723649347,
+        "residual_merit": 7.74050856376466e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 9.655952453613281e-05,
+        "unrestricted_maximum_step": 8.408506672223925,
+        "trust_radius": 0.00308990478515625,
+        "line_search_factor": 0.015625,
+        "rejected_trial_evaluations": 6,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.2987612032500063,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 9.655952453613281e-05,
+      "measured_unrestricted": 8.408506672223925,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-d767217d6b4ecc15c4f2fc21",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 34000.0,
+        "logg": 7.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "b8341c49dc3fab5474f25f75ce8290c3d27bf1c0c268868bcab6f716e39aad88",
+      "metadata_sha256": "0faf546c3b21bb46ba5b53d76456c96169fbbfa66b6912831bb9a231b28f563b",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 3.111710888958896e-11,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.000879771135587574,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 7.20317215925751,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.660932156040601e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 2.4361041290023706e-57,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 11,
+        "residual_rms": 0.00014288200267069168,
+        "residual_maximum": 0.0008797711479557916,
+        "residual_merit": 0.0003628247896596396,
+        "worst_residual_index": 0,
+        "maximum_step": 0.00017578125000028422,
+        "unrestricted_maximum_step": 7.20317215925751,
+        "trust_radius": 0.0028125,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.4552630550142645,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00017578125000028422,
+      "measured_unrestricted": 7.20317215925751,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-9608b3168f3336a534861275",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 34000.0,
+        "logg": 6.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "73fb1b37dccd411f07ec7ff939b8635860c415f9ac361c811e36f1a7ac4b7732",
+      "metadata_sha256": "9117ca1ce616baa9c622611f1729d475bcf545444f7be726d02efe4b94e0e125",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.6694312598986016e-11,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0001537908260813558,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 2.2880201659985335,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5475787847511696e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 3.1459694458473638e-65,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 67,
+        "residual_rms": 3.061342439894204e-05,
+        "residual_maximum": 0.0001537908427756684,
+        "residual_merit": 6.906113509285914e-05,
+        "worst_residual_index": 0,
+        "maximum_step": 0.0001875616818836079,
+        "unrestricted_maximum_step": 2.2880201659985335,
+        "trust_radius": 0.003000986910145151,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.4582045645696135,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001875616818836079,
+      "measured_unrestricted": 2.2880201659985335,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-6528d0c3b71c60018e5b788b",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 40000.0,
+        "logg": 8.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "c2e15404f9186b3593a0e18db78f343d71e8e9f7e14f08f83dac9bfbbb4ee29e",
+      "metadata_sha256": "26e29819edb0929b6b5c2ad6357e6b8274e67e72f410a0511eba1c6a379de8d6",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 2.3689983308372575e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.0003947824063820113,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 13.546653274597396,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.5170144492589176e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.2169944174785779e-52,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 19,
+        "residual_rms": 9.801364002652342e-05,
+        "residual_maximum": 0.00039478257396462576,
+        "residual_merit": 0.00019670928351767986,
+        "worst_residual_index": 0,
+        "maximum_step": 0.0001562499999998579,
+        "unrestricted_maximum_step": 13.546653274597396,
+        "trust_radius": 0.0003125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.19122594074986257,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001562499999998579,
+      "measured_unrestricted": 13.546653274597396,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-fee543cd9c555a176199ed18",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 36000.0,
+        "logg": 6.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "0c366b07080a71889640f4ad83774b7118c7e9ccf8646d816a1cbed953dff639",
+      "metadata_sha256": "ce9b82e470a1e3722f4a81789221fa230404be63a6ff1f3be86f0b10e4fbf23f",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.2632705992388082e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00029051751810677494,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 40.95784171724932,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.8779835134591314e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 1.456535600342944e-70,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 28,
+        "residual_rms": 9.607501453351192e-05,
+        "residual_maximum": 0.0002905176444236208,
+        "residual_merit": 0.00016870442563941712,
+        "worst_residual_index": 6,
+        "maximum_step": 0.0001341104507446289,
+        "unrestricted_maximum_step": 40.95784171724932,
+        "trust_radius": 0.0010728836059570312,
+        "line_search_factor": 0.0625,
+        "rejected_trial_evaluations": 4,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.2903119192461374,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001341104507446289,
+      "measured_unrestricted": 40.95784171724932,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-1764b60068b516ece830d641",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 40000.0,
+        "logg": 6.75,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "68141041d24010274dc0b0c4bf1c8524455a1ed559f6fc30e24866a1e8e53fd8",
+      "metadata_sha256": "1ef5a3861d0077f84a997db660b677bc266672c77d7f424b97e610bd619a4bdf",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 1.8248413891086557e-10,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00023718341493579175,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 0.8477127574561241,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6365461145564735e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 6.744242378898552e-44,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 44,
+        "residual_rms": 8.532048312583105e-05,
+        "residual_maximum": 0.00023718355781883048,
+        "residual_merit": 0.00014461637258053866,
+        "worst_residual_index": 5,
+        "maximum_step": 0.0001562499999998579,
+        "unrestricted_maximum_step": 0.8477127574561241,
+        "trust_radius": 0.0003125,
+        "line_search_factor": 0.25,
+        "rejected_trial_evaluations": 2,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.5797623156094883,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.0001562499999998579,
+      "measured_unrestricted": 0.8477127574561241,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    },
+    {
+      "case_id": "db-5d165a9d3e72cc222fc512d8",
+      "family": "DB",
+      "config": {
+        "atmosphere_solver": "adaptive-newton",
+        "effective_temperature": 34000.0,
+        "logg": 7.0,
+        "mixing_length_alpha": 1.25,
+        "neutral_broadening": "unsold",
+        "photospheric_depth_concentration": 1.0,
+        "quality": "production",
+        "synthesis_transfer_depth_refinement": 4,
+        "transfer_discretization": "column-mass"
+      },
+      "outcome_sha256": "4c7e11a0e13a0b392b1429fa3b8ab9d329af73f32fd14d46d031fd8b960c2c17",
+      "metadata_sha256": "6e9de6d97c31785b0fb54c3e63e82b66e81016c104ef7c8668a003aa2f06e46f",
+      "certificate": {
+        "schema": 1,
+        "scope": "declared equations on the structure grid",
+        "verified": false,
+        "checks": {
+          "all_depth_flux": {
+            "value": 8.165579323815564e-12,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "surface_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "photospheric_flux": {
+            "value": null,
+            "tolerance": 0.003,
+            "passed": false,
+            "measured": false
+          },
+          "local_energy": {
+            "value": 0.00012307260534552103,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          },
+          "temperature_stationarity": {
+            "value": 4.735777562816018,
+            "tolerance": 0.0003,
+            "passed": false,
+            "measured": true
+          },
+          "source_closure": {
+            "value": 1.6336423255205642e-15,
+            "tolerance": 1e-06,
+            "passed": true,
+            "measured": true
+          },
+          "boundary_screening": {
+            "value": 7.377602857538177e-64,
+            "tolerance": 0.003,
+            "passed": true,
+            "measured": true
+          }
+        },
+        "required_checks": [
+          "all_depth_flux",
+          "local_energy",
+          "temperature_stationarity",
+          "source_closure",
+          "boundary_screening"
+        ],
+        "failures": [
+          "temperature_stationarity"
+        ],
+        "independent_grid_validation": false,
+        "full_physics_validation": false
+      },
+      "terminal_phase": "local-energy-completion",
+      "terminal_reason": "residual-and-step-converged",
+      "last_iteration": {
+        "iteration": 32,
+        "residual_rms": 2.9543527856026834e-05,
+        "residual_maximum": 0.00012307261351065626,
+        "residual_merit": 6.03116812336909e-05,
+        "worst_residual_index": 4,
+        "maximum_step": 0.00029976021664879227,
+        "unrestricted_maximum_step": 4.735777562816018,
+        "trust_radius": 0.004796163466380677,
+        "line_search_factor": 0.03125,
+        "rejected_trial_evaluations": 5,
+        "jacobian_recomputed": true,
+        "model_agreement": 0.24864458512994234,
+        "proposal_limited": false,
+        "step_kind": "newton"
+      },
+      "accepted_step_below_limit_but_measured_unrestricted_fails": true,
+      "stationarity_measured": true,
+      "accepted_step": 0.00029976021664879227,
+      "measured_unrestricted": 4.735777562816018,
+      "temperature_tolerance": 0.0003,
+      "dense_workflow_generic_certificate_not_applicable": false
+    }
+  ],
+  "physical_root_cause_established": false,
+  "scientific_retry_count": 0,
+  "production_source_changed": false,
+  "conclusion": "The accepted-step stopping predicate can stop before the recorded unrestricted correction meets the native certificate. The final native certificate correctly withholds these results. The analytic contract check does not prove that changing this predicate will converge the real atmospheres.",
+  "next_bounded_test": "Evaluate the unrestricted-temperature convergence predicate on a saved failed atmosphere under unchanged equations and tolerances before any cold scientific retry. Keep domain, grid-order and unfinished-timeout branches separate."
+}

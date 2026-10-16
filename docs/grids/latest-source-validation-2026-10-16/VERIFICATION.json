@@ -1,0 +1,44 @@
+{
+  "documentation_tests_passed": 15,
+  "selected_table_sha256_unchanged": "72426dc7b693bde55aab8c1119bb176d5e60104ea599295697042ba1e332f088",
+  "cold_model_acceptance_pending": true,
+  "local_work_fixed_metal": {
+    "status": "VERIFIED_SAVED_PAIRS_AND_INDEPENDENT_BAND_INTEGRALS",
+    "cases": 4,
+    "arrays": 12,
+    "band_metrics_checked": 18,
+    "all_unchanged_structure_hashes_rechecked": true,
+    "actual_figure_inspection_pending": false,
+    "actual_png_inspected": true,
+    "actual_pdf_render_inspected": true,
+    "inspection_utc": "2026-10-16T15:33:00.205804+00:00"
+  },
+  "local_work_failure_figure": {
+    "input_sha256": "4edc7a13a2207af82e7a5467a138d2500a932e66643d743a81b52f1d532b32dc",
+    "plotted": {
+      "DA": 6,
+      "DB": 32
+    },
+    "mismatch_cases": 36,
+    "files": {
+      "stopping_check.png": "61cef03fcb5664b67a88ccb1c7d38f8a2d611dceebaf32c3601a9a9fe8c846d8",
+      "stopping_check.pdf": "816043f76ae0b9eac029bfc30f7a4c96eeb1d79ec83e5fabe2f497390a7dba4b"
+    },
+    "actual_png_inspected": true,
+    "actual_pdf_render_inspected": true,
+    "inspection_utc": "2026-10-16T15:28:31.079417+00:00"
+  },
+  "public_input_and_figure_sha256": {
+    "dz-j0738.npz": "c007aa71a277282f66b109d3465cdd909457ddb082a3499516f57e1b14731227",
+    "dz-pg1225.npz": "49751e41263a0f39632a9eaf05fdea22098d9d6838bc57bf76baff03ea114109",
+    "COMPARISON.json": "5bb3a4b34a6494e04a0879c7d6d7381be374b59949bed09f016c1e7a39da5ec8",
+    "stopping_check.pdf": "816043f76ae0b9eac029bfc30f7a4c96eeb1d79ec83e5fabe2f497390a7dba4b",
+    "daz-galex1931.npz": "a48bdc2880137738404c2eb424d80043675f03cd12cee571edb026e69e6dcc0f",
+    "stopping_check.png": "61cef03fcb5664b67a88ccb1c7d38f8a2d611dceebaf32c3601a9a9fe8c846d8",
+    "REQUESTS.json": "5d1b025b96c525d54b0445719e8511af30cd27eed98dae5ed3ceca739783549a",
+    "line_policy_changes.pdf": "69782aa2dfe09796075e7ffd493e70a912a5443aac4d1567cf7a834a92d74343",
+    "DIAGNOSIS.json": "593f9bf52050c46bfa0bce9ec0d489a2a14d739acc292e4a20f288341f2f98c7",
+    "line_policy_changes.png": "6036ad974024b018990edeea4a44eeb1b8f1b78c7e14d2e8e29b718fb512ffb9",
+    "daz-g149_28.npz": "f1cc0cd2ec662928e014d968fc35bc0aee7f99800d0df4c624f4f717d7ea127e"
+  }
+}

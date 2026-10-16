@@ -189,3 +189,5 @@ are verified, with matched old/new spectra and their limitations recorded.
 Further cluster work depends on measured costs and the budget.
 
 [The full DA/DB/DAB campaign](da-db-continuation-2026-10-16/README.md) records 2,057 accepted results from 2,146 fresh attempts and 62 retained older spectra. All eight allocations are terminal, with 12.5616319444 charged CPU node-hours and no live reservation. Local and actual downloaded unpublished draft archive bytes are verified; private permanent HPSS storage remains pending account setup. The [earlier bounded delivery](da-db-dab-replacements-2026-10-15/README.md) is preserved.
+
+[Latest-source validation, October 16](latest-source-validation-2026-10-16/README.md) records the new bounded tests and the DA/DB stopping investigation. The selected table is unchanged.
