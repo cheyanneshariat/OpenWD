@@ -115,4 +115,4 @@ Source evidence: [PR23](https://github.com/kareemelbadry/OpenWD/pull/23),
 authors' COS comparisons, including remaining metal-wing residuals and
 unsupported elements. Those comparisons have not been independently reproduced here.
 
-The separately authorized [October 15 DA/DB/DAB campaign](../da-db-dab-replacements-2026-10-15/README.md) finished its registered work with 4.6108680556 charged CPU node-hours. DAB has 653 fresh accepted results plus three retained older spectra; DA and DB bulk are held after failed required pilots. This charge is separate from the earlier 13-hour campaign. Optional grids remain unsubmitted.
+The separately authorized [DA/DB/DAB campaign](../da-db-continuation-2026-10-16/README.md) has attempted all 2,146 original requests once, with 2,057 accepted fresh numerical results. All eight allocations are terminal, with 12.5616319444 charged CPU node-hours. Older accepted spectra remain selected where replacements failed. This charge is separate from the earlier 13-hour campaign. Optional grids remain unsubmitted.

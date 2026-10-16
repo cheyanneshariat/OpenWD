@@ -1,5 +1,7 @@
 # DA, DB and DAB source replacements
 
+This page preserves the earlier bounded delivery. The remaining DA and DB requests later completed; see the [current continuation](../da-db-continuation-2026-10-16/README.md) for the final campaign counts and selected coverage.
+
 The October 15 campaign used frozen source `c103b53f28f3f37707572dbbc83a898807c4b683`, which includes the merged DA, DB and DAB updates. It attempted 668 existing coordinates once and accepted 663 results under their recorded native numerical checks. All earlier products remain intact.
 
 | Family | Fresh attempts | Accepted | Other outcomes | Bulk held without dispatch |

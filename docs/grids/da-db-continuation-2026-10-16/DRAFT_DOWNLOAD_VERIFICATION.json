@@ -1,0 +1,21 @@
+{
+  "status": "VERIFIED_ACTUAL_DOWNLOADED_UNPUBLISHED_DRAFT_BYTES",
+  "checked_utc": "2026-10-16T04:41:36.282549+00:00",
+  "release_url": "https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-89d4d43d12f68d807af4",
+  "tag": "grid-preview-2026-10-16-da-db-continuation",
+  "isDraft": true,
+  "archives": [
+    {
+      "name": "OpenWD-DA-DB-continuation-20261016.tar.gz",
+      "bytes": 893567814,
+      "sha256": "e8fae8b76a9aaae3aee969b4b5a620e819e7c542aeb771bc6509c2f7d8333675",
+      "members_verified": 17786,
+      "NPZ_files_verified": 3245,
+      "arrays_verified": 20270,
+      "native_spectra_verified": 1449,
+      "asset_api_url": "https://api.github.com/repos/cheyanneshariat/OpenWD/releases/assets/646156166",
+      "local_verification_sha256": "b13832a7546f8ce01d8be21fdaf37699cef7ae31930a262570b4d9912f53727f"
+    }
+  ],
+  "private_permanent_HPSS_verified": false
+}

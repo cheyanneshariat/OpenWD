@@ -1,0 +1,49 @@
+{
+  "status": "EXPORTED_PNG_AND_RENDERED_PDF_VISUALLY_INSPECTED",
+  "checked_utc": "2026-10-16T04:36:42.384272+00:00",
+  "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+  "input_comparison_sha256": "61d459970b20917c1d6f9f5d65e1c7d224b789f26e7a310b986d733b846ed77a",
+  "metrics_rechecked": 9,
+  "matched_pairs": 536,
+  "accepted_without_old": 29,
+  "wavelength_mismatches_excluded": 1,
+  "failed_fresh": 72,
+  "files": {
+    "CAPTIONS.md": {
+      "bytes": 1775,
+      "sha256": "fd0d38749371dd485e58c42b693a58922d32136f3ae04b60b559f461a4adb50a"
+    },
+    "db_all_optical-rendered.png": {
+      "bytes": 235493,
+      "sha256": "6d8a89e6e259847ab4cc5d7a7c70530f260afd47f4cfe61db3ccf8d1b087ad29"
+    },
+    "db_all_UV-rendered.png": {
+      "bytes": 236409,
+      "sha256": "f2667a96064f0cc57055919b7e3964c7cb304961ed11e0934bd1756d253a70d6"
+    },
+    "plot_provenance.json": {
+      "bytes": 8451,
+      "sha256": "950f357a23e753ccab46b6b1de93dcc742f3d06d84bbe38d8f144fc6bf1dd62e"
+    },
+    "db_all_optical.png": {
+      "bytes": 419014,
+      "sha256": "126942546dbfdb82adebf9629141486c8e0dd729deb823896ee6244350fc514f"
+    },
+    "db_all_optical.pdf": {
+      "bytes": 61802,
+      "sha256": "43b0a3f746bd73108cf6a03817f3cff732c22e79660623b77c558252dc3be8b6"
+    },
+    "db_all_UV.pdf": {
+      "bytes": 40839,
+      "sha256": "4e502d688481c295bf796eb2c33c364382780c8a26698aaa32a577f118216648"
+    },
+    "db_all_UV.png": {
+      "bytes": 416067,
+      "sha256": "79a422d124cdd8430ebc62be6eedc53a3c66abcb6dd35b1dc33940a677329e79"
+    }
+  },
+  "visual_inspection": "Actual UV/optical PNG exports and both PDFs rendered with pdftoppm inspected. Labels/units/panel order/line styles/ticks finite ranges checked; no overlaps or clipping found.",
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false,
+  "interpolation_accuracy_verified": false
+}

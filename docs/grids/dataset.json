@@ -6,21 +6,20 @@
     "numerical_completions": 73,
     "timeouts": 7
   },
-  "current_index_sha256": "4e42ef68f98ccccd48b0d6f6b25b2204a19c5a895df3b33058d648fb636690fd",
-  "current_snapshot_utc": "2026-10-15T15:29:40.934896+00:00",
+  "current_index_sha256": "72426dc7b693bde55aab8c1119bb176d5e60104ea599295697042ba1e332f088",
+  "current_snapshot_utc": "2026-10-16T04:41:57.315618+00:00",
   "families": {
     "DA": {
       "archive": "OpenWD-DA-initial-20261008.tar.gz",
       "bytes": 215429900,
-      "current_selected_grid_points": 811,
+      "current_selected_grid_points": 842,
       "initial_archive_models": 807,
-      "models": 811,
+      "models": 842,
       "raw_spectrum_bytes": 762702963,
-      "updated_source_selected": 5,
-      "retained_earlier_source_selected": 806,
+      "updated_source_selected": 838,
+      "retained_earlier_source_selected": 4,
       "current_selected_source_commits": [
         "c103b53f28f3f37707572dbbc83a898807c4b683",
-        "c8329d86c98f956617ec1bb3746181350492ce66",
         "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
       ]
     },
@@ -90,17 +89,15 @@
           ]
         }
       ],
-      "current_selected_grid_points": 594,
+      "current_selected_grid_points": 621,
       "duplicate_policy": "Do not count the new log g 8 control as another requested parameter point",
-      "models": 594,
+      "models": 621,
       "new_accepted_original_coordinates": 96,
       "requests": 638,
-      "updated_source_selected": 5,
-      "retained_earlier_source_selected": 589,
+      "updated_source_selected": 566,
+      "retained_earlier_source_selected": 55,
       "current_selected_source_commits": [
-        "54e401e20936119d707bb3623e0a13e29373b6e8",
         "c103b53f28f3f37707572dbbc83a898807c4b683",
-        "c8329d86c98f956617ec1bb3746181350492ce66",
         "cfe2d2ff99a434cd502696c1eb7b2f5daf8d11c5"
       ]
     },
@@ -129,14 +126,14 @@
     }
   },
   "family_models_definition": "Current selected grid coordinates; per-archive model counts and independent tests remain separate",
-  "history": "history/2026-10-15-before-DA-DB-DAB-replacements/dataset.json",
+  "history": "history/2026-10-16-before-DA-DB-continuation/dataset.json",
   "kind": "Selected numerical-development grids with dated native supplements",
   "native_validation_supplement_contains_saved_structures": true,
   "original_archives_spectra_only": true,
   "qualification_scope": "Native numerical checks only; no full physical/depth/release qualification",
-  "qualified_spectra": 2396,
+  "qualified_spectra": 2454,
   "requests": 2499,
-  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json. Updated DZ rows preserve the original request model_id and use the actual native model-request fingerprint in scientific_identity; SOURCE_INDEX.json maps the accepted new attempt, exact configuration and spectrum hash. October15 DA/DB/DAB rows retain model_id and role; the new source index defines ordinary actual native fingerprints and the one experimental dense DB delivery identity separately. The DAB molecular closure uses the effective configuration, with table SHA retained.",
+  "selected_row_identity": "The progress.csv model_id is the stable original request identity. Retry requests.csv case_id joins to that identity; its model_id and source_data_identity identify the selected retry and its source/data digest. These digests are distinct from the old bank scientific_identity. New refinement rows use their native model_id and source/data digest; the full configurations and spectrum hashes are in refinement-2026-10-11/native-models.json. Updated DZ rows preserve the original request model_id and use the actual native model-request fingerprint in scientific_identity; SOURCE_INDEX.json maps the accepted new attempt, exact configuration and spectrum hash. October15 DA/DB/DAB rows retain model_id and role; the new source index defines ordinary actual native fingerprints and the one experimental dense DB delivery identity separately. The DAB molecular closure uses the effective configuration, with table SHA retained. October16 continuation preserves everymodel_id/role; actual native fingerprints and explicitly defined experimental denseDB delivery identities are recorded separately.",
   "selection": "Preserve the previous 2459 selected requests. Add 32 new DAB knots and eight reused centers in eight targeted patches. Keep 32 fresh independent targets and three older validation coordinates outside the predictor mesh.",
   "snapshots": {
     "DAB-1dex-2026-10-10": {
@@ -627,6 +624,33 @@
       "permanent_HPSS_copy_verified": false,
       "all_registered_allocations_terminal": true,
       "charged_CPU_node_hours": 4.610868055555556
+    },
+    "DA-DB-continuation-2026-10-16": {
+      "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "scientific_attempts": 1478,
+      "numerical_completions": 1394,
+      "family_attempts": {
+        "DA": 846,
+        "DB": 632
+      },
+      "family_accepted": {
+        "DA": 833,
+        "DB": 561
+      },
+      "outcome_counts": {
+        "COMPLETE_NUMERICAL": 1394,
+        "NUMERICAL_NONCONVERGENCE": 50,
+        "TIMEOUT": 24,
+        "ERROR_UNRESOLVED": 10
+      },
+      "selected_total": 2454,
+      "source_index": "da-db-continuation-2026-10-16/SOURCE_INDEX.json",
+      "source_index_sha256": "48c50cce1a9698d503f2b3d94f82b5f0ba07914cd8d4e7c78ebfa4fef896af95",
+      "interpolation_validation_of_updated_selection": false,
+      "is_draft": true,
+      "permanent_HPSS_copy_verified": false,
+      "all_registered_allocations_terminal": true,
+      "cumulative_charged_CPU_node_hours": 12.561631944444443
     }
   },
   "source_commits": {
@@ -651,7 +675,8 @@
       "merged": "c8329d86c98f956617ec1bb3746181350492ce66"
     },
     "DZ-replacements-2026-10-13": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
-    "DA-DB-DAB-replacements-2026-10-15": "c103b53f28f3f37707572dbbc83a898807c4b683"
+    "DA-DB-DAB-replacements-2026-10-15": "c103b53f28f3f37707572dbbc83a898807c4b683",
+    "DA-DB-continuation-2026-10-16": "c103b53f28f3f37707572dbbc83a898807c4b683"
   },
   "source_index_sha256_before_line_endings": "ded9bdee25da8bec8b692f3459dcadd2371fe161128ad98ac0131c93be631ece",
   "spectra_only": false,
@@ -660,8 +685,8 @@
       "COMPLETE_NUMERICAL": 1
     },
     "DA": {
-      "COMPLETE_NUMERICAL": 811,
-      "NUMERICAL_NONCONVERGENCE": 41
+      "COMPLETE_NUMERICAL": 842,
+      "NUMERICAL_NONCONVERGENCE": 10
     },
     "DAB": {
       "COMPLETE_NUMERICAL": 656
@@ -678,11 +703,11 @@
       "COMPLETE_NUMERICAL": 3
     },
     "DB": {
-      "COMPLETE_NUMERICAL": 594,
-      "NUMERICAL_NONCONVERGENCE": 22,
-      "TIMEOUT": 12,
+      "COMPLETE_NUMERICAL": 621,
+      "NUMERICAL_NONCONVERGENCE": 6,
       "NUMERICAL_GRID_FAILURE": 5,
-      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5
+      "DOMAIN_OR_UNSUPPORTED_CONFIG": 5,
+      "TIMEOUT": 1
     },
     "DO": {
       "COMPLETE_NUMERICAL": 5,

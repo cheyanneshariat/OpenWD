@@ -1,0 +1,20 @@
+{
+  "status": "SELECTED_COVERAGE_PNG_AND_RENDERED_PDF_INSPECTED",
+  "checked_utc": "2026-10-16T04:43:01.968824+00:00",
+  "progress_sha256": "72426dc7b693bde55aab8c1119bb176d5e60104ea599295697042ba1e332f088",
+  "selected_total": 2454,
+  "requests": 2499,
+  "family_selected": {
+    "DA": 842,
+    "DB": 621,
+    "DAB": 656,
+    "DZ": 321
+  },
+  "files": {
+    "grid_progress.png": "cd740c80fd4046164e59e27c7cd7ceceac5ca0f6d6d3d95551ce0682892b0d32",
+    "grid_progress.pdf": "9fde37024dc062a0404c97461e3465a7531596b842b614ea348d213251267658",
+    "grid_progress-rendered.png": "946255dd55ee5cd2c0dad27a09256faa3fef1fe6b01dedce0ab7762ebadd3c28"
+  },
+  "visual_inspection": "Actual PNG and PDF rendered with pdftoppm inspected; counts, physical labels, log axes, marker meanings and clipping checked. Previous coverage preserved in the dated pre-continuation snapshot.",
+  "fresh_success_counts_distinct_from_selected": true
+}

@@ -1,0 +1,24 @@
+{
+  "scientific_archive": {
+    "archive": "OpenWD-DA-DB-continuation-20261016.tar.gz",
+    "bytes": 893567814,
+    "sha256": "e8fae8b76a9aaae3aee969b4b5a620e819e7c542aeb771bc6509c2f7d8333675",
+    "members": 17786,
+    "NPZ_files": 3245,
+    "array_count": 20270,
+    "native_spectrum_files": 1449
+  },
+  "source_archive_reused": {
+    "bytes": 239853561,
+    "sha256": "7394762e7ac90b8268d4c60c658f7903f9346e102e7a64d4a0962eceed068a9f",
+    "members": 2503,
+    "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+    "tracked_source_files": 2500,
+    "native_sha256": "9854bcc9b4c6c2eb49ff80944b2586b6e4f3df00e40afcc0d917e16b2361b054",
+    "CIA_sha256": "4f0eb9cd69a1c383f53a1431495bae0c01a30a41cc1b8433c2d726763ff45431"
+  },
+  "local_copy_verified": true,
+  "actual_downloaded_draft_bytes_verified": true,
+  "isDraft": true,
+  "private_permanent_HPSS_verified": false
+}

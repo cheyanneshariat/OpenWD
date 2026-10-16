@@ -3,8 +3,8 @@
 All three existing DAZ requests passed new public cold starts under source
 `e09e7daeaa0695d34e14b55c557ca770fad326af`. They replace the selected G149-28,
 G29-38 and GALEX J1931 products from `cfe2d2ff`. The grid still contains
-**three DAZ completions from three requests** and **2,396 numerical completions
-from 2,499 total requests** after the later [DA/DB/DAB replacements](../da-db-dab-replacements-2026-10-15/README.md). No coordinate was added.
+**three DAZ completions from three requests** and **2,454 numerical completions
+from 2,499 total requests** after the later [DA/DB/DAB replacements](../da-db-continuation-2026-10-16/README.md). No coordinate was added.
 
 The calculations preserve the old temperatures, gravities, full N(Z)/N(H)
 patterns, alpha 0.7 and standard resolution. They adopt the updated Barklem

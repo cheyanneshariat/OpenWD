@@ -2,12 +2,12 @@
 
 OpenWD calculates an atmosphere and spectrum for a chosen temperature, gravity
 and composition. These saved grids let users reuse those calculations. The
-selected grid table contains **2,396 numerical completions from 2,499 requests**.
+selected grid table contains **2,454 numerical completions from 2,499 requests**.
 Each completion passed the atmosphere and spectrum checks recorded for its
 source version. Numerical completion alone does not establish physical accuracy
 or accurate interpolation between grid points.
 
-DAB/DBA has **656 accepted coordinates from 656 requests**: 653 fresh spectra and three retained older spectra. The [October 15 replacements](da-db-dab-replacements-2026-10-15/README.md) also add five DA and five DB pilot spectra. DA and DB bulk remain held after failed required pilot checks. The October 11
+DAB/DBA has **656 accepted coordinates from 656 requests**: 653 fresh spectra and three retained older spectra. The [completed DA/DB continuation](da-db-continuation-2026-10-16/README.md) brings DA to 842/852 selected coordinates and DB to 621/638. All 2,146 DA/DB/DAB requests ran once; 2,057 fresh results passed their recorded numerical checks. The October 11
 refinement adds 32 newly calculated knots and eight reused centers in eight
 selected patches. Its 32 independent test spectra remain outside the predictor
 mesh. Together with three earlier validation coordinates, there are
@@ -28,8 +28,8 @@ gravity, so symbols can overlap. Blank regions were not requested.
 
 | Family | Numerical completions | Requests | Latest selected source |
 |---|---:|---:|---|
-| DA | 811 | 852 | Five October 15 replacements + retained older spectra |
-| DB | 594 | 638 | Five October 15 replacements + retained older spectra |
+| DA | 842 | 852 | 838 fresh results + four retained older spectra |
+| DB | 621 | 638 | 566 fresh results + 55 retained older spectra |
 | DZ | 321 | 322 | October 13 replacements + nine retained older spectra |
 | DAO | 3 | 15 | Three verified spectra; remaining gaps retained |
 | DO | 5 | 7 | Five verified spectra; two timeouts retained |
@@ -113,8 +113,8 @@ The repaired DAB point uses `photospheric_depth_concentration=2`; its earlier
 failed default-mesh attempt remains recorded. Native physics, iteration limits
 and acceptance tolerances were unchanged.
 
-DB has 22 selected nonconvergence cases, five depth-grid errors, five material-domain
-stops and 12 timeouts. DA has 41 selected numerical failures. The latest DA/DB pilots did not qualify dependent bulk dispatch. DZ has one remaining numerical failure in the selected grid. Its fresh rerun
+DB has six selected numerical failures, five depth-grid errors, five material-domain
+stops and one timeout. DA has ten selected numerical failures. All original DA/DB requests have now been attempted; unsuccessful fresh replacements retain older accepted spectra where available. DZ has one remaining numerical failure in the selected grid. Its fresh rerun
 retains seven timeouts, two nonconvergences and one crash; nine older accepted
 spectra remain selected. The selected D6 example now passes the native checks under source 14e2067.
 Its original-source control and both DB diagnostic attempts reached eight-hour
@@ -188,4 +188,4 @@ hit its memory guard. [All three DAZ replacements](daz-replacements-2026-10-12/R
 are verified, with matched old/new spectra and their limitations recorded.
 Further cluster work depends on measured costs and the budget.
 
-[The October 15 DA/DB/DAB campaign](da-db-dab-replacements-2026-10-15/README.md) records 663 accepted results from 668 fresh attempts, held DA/DB branches, retained older spectra and final 4.6108680556 CPU node-hours. Local and actual downloaded unpublished draft archive bytes are verified; a private permanent HPSS copy remains pending account setup.
+[The full DA/DB/DAB campaign](da-db-continuation-2026-10-16/README.md) records 2,057 accepted results from 2,146 fresh attempts and 62 retained older spectra. All eight allocations are terminal, with 12.5616319444 charged CPU node-hours and no live reservation. Local and actual downloaded unpublished draft archive bytes are verified; private permanent HPSS storage remains pending account setup. The [earlier bounded delivery](da-db-dab-replacements-2026-10-15/README.md) is preserved.

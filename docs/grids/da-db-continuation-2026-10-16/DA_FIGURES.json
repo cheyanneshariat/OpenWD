@@ -1,0 +1,60 @@
+{
+  "status": "EXPORTED_PNG_AND_RENDERED_PDF_VISUALLY_INSPECTED",
+  "checked_utc": "2026-10-15T22:23:52.051579+00:00",
+  "source_commit": "c103b53f28f3f37707572dbbc83a898807c4b683",
+  "input_comparison_sha256": "29f3d28260519505865e214019c8042d69aaf0cb58d54d99aafc06dcd2259e84",
+  "metrics_rechecked": 9,
+  "matched_pairs": 804,
+  "accepted_without_old": 34,
+  "failed_fresh": 14,
+  "files": {
+    "da_all_optical.png": {
+      "bytes": 455938,
+      "sha256": "11424981ba4ca2f7f21b43e6d984dd5b7047abd26df3ee73052402c4cdce09bf"
+    },
+    "CAPTIONS.md": {
+      "bytes": 1735,
+      "sha256": "2cad8a6477cb58221df070fcaeae1db16326a68bc25d901917f1583b30cf499e"
+    },
+    "da_all_optical.pdf": {
+      "bytes": 51082,
+      "sha256": "204be3ebb5ad9d527f42b65ac3d95569459ebe8243c1d27add12b38654d1c1b2"
+    },
+    "da_all_UV.pdf": {
+      "bytes": 41463,
+      "sha256": "0fcb8dfb55e8d71d906ffa68ce64a66dc4f6903b5cc2ead887cc29c4b4ce6b3c"
+    },
+    "da_all_UV.png": {
+      "bytes": 407342,
+      "sha256": "926669da0ad04538e1f7d8eedc49b9e4c095b66e1ef783bebafe1f2eb816fcdc"
+    },
+    "da_all_UV_pdf_render.png": {
+      "bytes": 235669,
+      "sha256": "ca141ae20492913f09bcc2bfa8f70d6b608853f98db0212e3f02885e9e82cf02"
+    },
+    "plot_provenance.json": {
+      "bytes": 9618,
+      "sha256": "d2fc80e37b94d49632bd024b684af9d8d0d15f48bab65e351c19d25d476ef4fd"
+    },
+    "da_all_optical_pdf_render.png": {
+      "bytes": 254508,
+      "sha256": "24b6e5481c256913764b1d10217643b2ee84c3081533ea1ab3c99f82b646323a"
+    }
+  },
+  "pdf_info": {
+    "UV": "Creator:         Matplotlib v3.10.0, https://matplotlib.org\nProducer:        Matplotlib pdf backend v3.10.0\nCreationDate:    Thu Oct 15 15:23:13 2026 PDT\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           1\nEncrypted:       no\nPage size:       792 x 648 pts\nPage rot:        0\nFile size:       41463 bytes\nOptimized:       no\nPDF version:     1.4\n",
+    "optical": "Creator:         Matplotlib v3.10.0, https://matplotlib.org\nProducer:        Matplotlib pdf backend v3.10.0\nCreationDate:    Thu Oct 15 15:23:14 2026 PDT\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           1\nEncrypted:       no\nPage size:       792 x 648 pts\nPage rot:        0\nFile size:       51082 bytes\nOptimized:       no\nPDF version:     1.4\n"
+  },
+  "visual_inspection": {
+    "actual_exported_pngs": true,
+    "actual_pdf_renderings": true,
+    "all_panel_titles_coordinates_units_checked": true,
+    "all_axes_finite_ranges_and_difference_sign_checked": true,
+    "no_clipping_or_label_collisions_observed": true,
+    "old_black_dashed_new_blue_solid": true,
+    "temperature_groups_and_caption_checked": true
+  },
+  "physical_accuracy_verified": false,
+  "independent_depth_convergence_verified": false,
+  "interpolation_accuracy_verified": false
+}

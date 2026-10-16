@@ -1,0 +1,105 @@
+{
+  "QOS_factors": {
+    "regular_1": 1.0,
+    "shared": 1.0
+  },
+  "QOS_raw": "regular_1|1.000000\nshared|1.000000\n",
+  "allocations": [
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 0.0010069444444444444,
+      "billing": 32.0,
+      "elapsed_seconds": 29,
+      "full_reservation_node_hours": 0,
+      "job_id": "59793762",
+      "qos": "shared",
+      "stage": null,
+      "state": "FAILED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 0.3834722222222222,
+      "billing": 32.0,
+      "elapsed_seconds": 11044,
+      "full_reservation_node_hours": 0,
+      "job_id": "59796431",
+      "qos": "shared",
+      "stage": null,
+      "state": "COMPLETED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 2.7044444444444444,
+      "billing": 256.0,
+      "elapsed_seconds": 9736,
+      "full_reservation_node_hours": 0,
+      "job_id": "59802718",
+      "qos": "regular_1",
+      "stage": null,
+      "state": "COMPLETED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 1.5219444444444445,
+      "billing": 128.0,
+      "elapsed_seconds": 10958,
+      "full_reservation_node_hours": 0,
+      "job_id": "59802739",
+      "qos": "shared",
+      "stage": null,
+      "state": "COMPLETED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 1.2591666666666668,
+      "billing": 256.0,
+      "elapsed_seconds": 4533,
+      "full_reservation_node_hours": 0,
+      "job_id": "59818841",
+      "qos": "regular_1",
+      "stage": "da-wave1",
+      "state": "COMPLETED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 2.3447222222222224,
+      "billing": 256.0,
+      "elapsed_seconds": 8441,
+      "full_reservation_node_hours": 0,
+      "job_id": "59818892",
+      "qos": "regular_1",
+      "stage": "da-wave2",
+      "state": "COMPLETED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 3.9483333333333333,
+      "billing": 256.0,
+      "elapsed_seconds": 14214,
+      "full_reservation_node_hours": 0,
+      "job_id": "59829087",
+      "qos": "regular_1",
+      "stage": "db-main",
+      "state": "COMPLETED"
+    },
+    {
+      "QOS_UsageFactor": 1.0,
+      "actual_charge_node_hours": 0.3985416666666667,
+      "billing": 32.0,
+      "elapsed_seconds": 11478,
+      "full_reservation_node_hours": 0,
+      "job_id": "59818898",
+      "qos": "shared",
+      "stage": "db-tail",
+      "state": "COMPLETED"
+    }
+  ],
+  "checked_utc": "2026-10-16T04:32:18.943486+00:00",
+  "full_pending_live_reservation_node_hours": 0.0,
+  "live_elapsed_not_double_counted": true,
+  "operational_ceiling_node_hours": 24,
+  "previous_DZ_DAZ_separate_node_hours": 11.224798177083334,
+  "scheduler_raw": "59793762|cshariat|109576|m1266|FAILED|29|billing=32,cpu=32,mem=56G,node=1|shared|2026-10-15T04:08:43|2026-10-15T04:09:12\n59796431|cshariat|109576|m1266|COMPLETED|11044|billing=32,cpu=32,energy=6523598,mem=56G,node=1|shared|2026-10-15T04:46:00|2026-10-15T07:50:04\n59802718|cshariat|109576|m1266|COMPLETED|9736|billing=256,cpu=256,energy=5727705,mem=416G,node=1|regular_1|2026-10-15T09:42:58|2026-10-15T12:25:14\n59802739|cshariat|109576|m1266|COMPLETED|10958|billing=128,cpu=128,energy=8186935,mem=208G,node=1|shared|2026-10-15T08:56:53|2026-10-15T11:59:31\n59818841|cshariat|109576|m1266|COMPLETED|4533|billing=256,cpu=256,energy=2642957,mem=464G,node=1|regular_1|2026-10-15T19:49:46|2026-10-15T21:05:19\n59818892|cshariat|109576|m1266|COMPLETED|8441|billing=256,cpu=256,energy=5117526,mem=464G,node=1|regular_1|2026-10-15T19:50:50|2026-10-15T22:11:31\n59818898|cshariat|109576|m1266|COMPLETED|11478|billing=32,cpu=32,energy=8204741,mem=48G,node=1|shared|2026-10-15T18:55:47|2026-10-15T22:07:05\n59829087|cshariat|109576|m1266|COMPLETED|14214|billing=256,cpu=256,energy=9103616,mem=272G,node=1|regular_1|2026-10-16T00:21:52|2026-10-16T04:18:46\n",
+  "settled_node_hours": 12.561631944444443,
+  "settled_plus_reserved_node_hours": 12.561631944444443
+}

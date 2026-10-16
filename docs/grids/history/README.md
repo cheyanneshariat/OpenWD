@@ -25,3 +25,5 @@ updates. Their counts belong to the recorded snapshot. Use the
 - [2026 10 13 before DZ source replacements](2026-10-13-before-DZ-replacements/README.md)
 
 - [2026 10 15 before DA DB DAB replacements](2026-10-15-before-DA-DB-DAB-replacements/README.md)
+
+- [2026 10 16 before the DA and DB continuation](2026-10-16-before-DA-DB-continuation/README.md)

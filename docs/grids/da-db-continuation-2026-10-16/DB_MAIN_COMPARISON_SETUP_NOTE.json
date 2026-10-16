@@ -1,0 +1,5 @@
+{
+  "previous_sha256": "0f01a1bbabe1138df32749d6074f3b4159f9ff541bb8eec76842c085cc3e4547",
+  "corrected_sha256": "05929946e7738eb7502c5702ed1bf7c488c80f19aa383d96bdb4e4b3e9bb9814",
+  "metadata_only": "Corrected inherited DB_TAIL label to DB_MAIN; spectral records/arrays unchanged. Initial setup attempts wrote no output. Handles actual outcome spectrum paths, cold-supplement source identity, and preserves one wavelength mismatch separately."
+}
