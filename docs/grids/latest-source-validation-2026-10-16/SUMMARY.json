@@ -2,14 +2,14 @@
   "source_commit": "00503a0dd22a028e38741b90d53d9e18a8731545",
   "registered_job": "59857587",
   "cold_models_registered": 23,
-  "cold_models_independently_accepted": 0,
+  "cold_models_independently_accepted": 22,
   "scope": {
     "DO_DAO": 5,
     "DZ_DAZ": 5,
     "DAB_interpolation_inputs": 9,
     "DAB_independent_targets": 4
   },
-  "status": "QUEUED",
+  "status": "TERMINAL_VERIFIED",
   "focused_tests_local_passed": 14,
   "focused_tests_Linux_passed": 14,
   "fixed_spectrum_controls_passed": 6,
@@ -17,12 +17,25 @@
   "prior_native_failures_reviewed": 51,
   "measured_stopping_check_mismatches": 36,
   "selected_rows_changed": 0,
-  "full_pending_reservation_upper_bound_node_hours": 3.375,
+  "full_pending_reservation_upper_bound_node_hours": 0,
   "new_self_imposed_guard_node_hours": 4.0,
   "previous_campaign_charge_node_hours": 12.561631944444443,
   "previous_DZ_DAZ_campaign_charge_node_hours": 11.224798177083334,
   "accounting_separate": true,
   "monitoring_active": false,
   "permanent_archival_pending": true,
-  "merge_or_release_publication": false
+  "merge_or_release_publication": false,
+  "cold_outcomes": {
+    "COMPLETE_NUMERICAL": 22,
+    "TIMEOUT": 1
+  },
+  "inclusive_final_charge_CPU_node_hours": 2.1816514756944443,
+  "actual_billing_cpus": 70,
+  "allocation_elapsed_seconds": 28723,
+  "compute_node_fixed_controls_passed": 7,
+  "source_matched_DAB_targets": 4,
+  "DAB_targets_passing_both_accuracy_limits": 0,
+  "DAB_native_spectra_identical_to_c103": 9,
+  "terminal_verification": "terminal-2026-10-17/TERMINAL_VERIFICATION.json",
+  "source_still_matches_main_checked_utc": "2026-10-17T15:43:34.384815+00:00"
 }

@@ -1,6 +1,6 @@
 # Latest-source validation, October 16
 
-The 23 cold models below are queued under source `00503a0dd22a028e38741b90d53d9e18a8731545`. None has been independently accepted yet. The selected table is unchanged. The earlier DA/DB/DAB campaign remains tied to `c103b53`.
+The 23 cold models under source `00503a0dd22a028e38741b90d53d9e18a8731545` finished on October 16. Independent checks accepted 22 results; DAO at 40,000 K hit its six-hour limit. This source still matches upstream main on October 17. The selected table is unchanged, and the earlier DA/DB/DAB campaign remains tied to `c103b53`.
 
 | Check | Cold requests | Purpose |
 |---|---:|---|
@@ -30,11 +30,31 @@ Orange uses the previous Kurucz line defaults; blue uses latest main. Left panel
 
 Both line policies passed their native source checks for all four saved atmospheres. The previous policy recovered its immutable controls at their existing tolerances. [PDF](line_policy_changes.pdf), [comparison records](COMPARISON.json) and the four saved array pairs ([PG1225](dz-pg1225.npz), [J0738](dz-j0738.npz), [G149−28](daz-g149_28.npz), [GALEX J1931](daz-galex1931.npz)) preserve the inputs and outputs. These fixed-state checks do not establish atmosphere equilibrium, depth convergence or physical accuracy.
 
-## Independent interpolation and remaining checks
+## Cold-model results
 
-None of the 32 historical independent DAB targets was rerun in the completed replacement campaign. The old 22/32 result therefore cannot qualify the updated selection. This new tier calculates all nine inputs and four withheld targets under the same latest source, in the first targeted temperature/gravity patch. The targets stay outside the predictor mesh. A pass would apply to that patch only. Independent atmosphere-depth and observational checks remain separate work.
+The DO control at 60,000 K passed. DO at 90,000 and 120,000 K and DAO at 100,000 K also passed, including population convergence. These three coordinates previously timed out. The new experiment includes all intervening source changes and does not isolate one solver change. DAO at 40,000 K remains unfinished: it used 12.09 GiB below its 24 GiB cap, then received SIGTERM at the six-hour limit. It has no final certificate or spectrum, and was not retried.
 
-Job `59857587` has a nine-hour wall limit. The conservative full pending reservation is at most 3.375 CPU node-hours, below a new self-imposed four-hour guard; actual allocated billing and terminal charge remain unverified. The earlier 12.5616319444-hour DA/DB/DAB and 11.2247981771-hour DZ/DAZ charges remain separate. [Compact status](SUMMARY.json) records these denominators.
+![Completed hot spectra](terminal-2026-10-17/hot_spectra.png)
+
+All five metal anchors passed their native numerical checks. The matched cold DZ spectra change by 0.509% and 5.066% in integrated absolute UV flux difference. The three DAZ optical changes range from 0.000994% to 0.3605%. These differences include atmosphere and source changes; the fixed-atmosphere comparison above isolates the line policy more closely.
+
+![Cold metal comparisons](terminal-2026-10-17/cold_metal_changes.png)
+
+The [15 exact native pairs](terminal-2026-10-17/NATIVE_PAIRS.json) comprise nine DAB inputs, five metal anchors and the DO control. All nine DAB input spectra are identical to their `c103b53` predecessors on the native grid. These comparisons measure source differences, not physical accuracy.
+
+## Independent interpolation
+
+Nine inputs and four withheld targets passed their native numerical checks under the same source. The four targets lie outside the predictor mesh in one patch: 15,000–20,000 K, log g 7–7.5 and log H/He = −3.
+
+![DAB interpolation errors](terminal-2026-10-17/dab_interpolation.png)
+
+Refinement reduces errors, but **none of the four targets passes both accuracy limits** over 3000–10000 Å. Refined log-flux PCHIP has a 0.498% median integrated absolute error and an 8.06% worst pointwise error. The limits remain 1% and 3%, respectively. This patch is insufficient for the stated interpolation accuracy. The old 22/32 result does not qualify the updated selection.
+
+The [full metrics](terminal-2026-10-17/DAB_INTERPOLATION.json) retain all eight coarse/refined method variants. Spectra and predictions retain native wavelengths without normalization or extrapolation. Only the two band endpoints are evaluated linearly for the historical interval metric. Independent depth convergence and observed-spectrum accuracy remain untested.
+
+Job `59857587` finished at 17:13 Pacific on October 16. Its actual 70 billing CPUs and 28,723-second allocation give **2.1816514757 CPU node-hours**, including setup, controls and idle time. No live reservation remains. The earlier 12.5616319444-hour DA/DB/DAB and 11.2247981771-hour DZ/DAZ campaigns remain separate. [Terminal accounting](terminal-2026-10-17/ACCOUNTING.json) and [verification](terminal-2026-10-17/TERMINAL_VERIFICATION.json) preserve these records.
+
+All 242 output-file hashes, 26 NPZ files/245 arrays and 22 native spectra passed remote and actual local-copy checks. The three new PNGs and rendered PDFs were inspected. [PDFs, captions, saved arrays and the portable plotter](terminal-2026-10-17/README.md) are included.
 
 Monitoring was stopped at Cheyanne's request and remains off. Private permanent archival remains pending. No merge or release publication is included.
 

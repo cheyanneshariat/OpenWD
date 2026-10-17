@@ -1,0 +1,366 @@
+{
+  "source_commit": "00503a0dd22a028e38741b90d53d9e18a8731545",
+  "input_models": [
+    "dab-4c40bff379d82a190b72eeaa",
+    "dab-fb868fb95317e6ef7c3520c0",
+    "dab-acb80b6c857dc9187d385575",
+    "dab-615413989543f27bd35044f4",
+    "dab-87fee1290e8f8df60ad34999",
+    "dab-fc2fd47e443a33c03c35b085",
+    "dab-2ad36f026091c0c38468549a",
+    "dab-e1f85b153942be941edba256",
+    "dab-dea9e28094d9e56ee8b73cff"
+  ],
+  "independent_targets": 4,
+  "source_matched_inputs": 9,
+  "cell": "T15000-20000_g7-7.5_HHe-3",
+  "optical_interval_angstrom": [
+    3000,
+    10000
+  ],
+  "maximum_relative_error_target": 0.03,
+  "integrated_absolute_error_target": 0.01,
+  "native_wavelengths_identical": true,
+  "band_edges": "Only integration/error-interval endpoints are evaluated linearly, matching the historical metric; saved spectra use native samples.",
+  "normalization": "none",
+  "spectral_grid_resampling": "none",
+  "extrapolation": "none",
+  "method_summary": {
+    "coarse_linear_F_Tg": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.2972579290355356,
+      "median_integrated_absolute_fraction": 0.0333258340877344
+    },
+    "coarse_log_F_Tg": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.19460712267891064,
+      "median_integrated_absolute_fraction": 0.06520104327029105
+    },
+    "coarse_log_F_logTg": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.16576873615128843,
+      "median_integrated_absolute_fraction": 0.050205866674350834
+    },
+    "refined_linear_F_Tg": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.1432816640996546,
+      "median_integrated_absolute_fraction": 0.01053469774225861
+    },
+    "refined_log_F_Tg": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.09897426563968854,
+      "median_integrated_absolute_fraction": 0.02239309133661188
+    },
+    "refined_log_F_logTg": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.0888790401992304,
+      "median_integrated_absolute_fraction": 0.017021691924916937
+    },
+    "coarse_pchip_logF_local_T_then_g": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.19460712267891064,
+      "median_integrated_absolute_fraction": 0.06520104327029107
+    },
+    "refined_pchip_logF_local_T_then_g": {
+      "measured": 4,
+      "both_targets_pass": 0,
+      "worst_maximum_relative_fraction": 0.08064921155640425,
+      "median_integrated_absolute_fraction": 0.0049814634382003755
+    }
+  },
+  "records": [
+    {
+      "model_id": "dab-fb955b1799fb086768841d5c",
+      "config": {
+        "effective_temperature": 16250.0,
+        "logg": 7.125,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.2846912521935248,
+          "integrated_absolute_error_fraction": 0.03263419372256177,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.15328014293888664,
+          "integrated_absolute_error_fraction": 0.0660918336744065,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.15284165696300275,
+          "integrated_absolute_error_fraction": 0.05072365983961509,
+          "both_targets_pass": false
+        },
+        "refined_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.1332968532892909,
+          "integrated_absolute_error_fraction": 0.0043510501424166405,
+          "both_targets_pass": false
+        },
+        "refined_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.06060323412090325,
+          "integrated_absolute_error_fraction": 0.02203343001886831,
+          "both_targets_pass": false
+        },
+        "refined_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.06426355438467767,
+          "integrated_absolute_error_fraction": 0.014811612807597633,
+          "both_targets_pass": false
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.15328014293888664,
+          "integrated_absolute_error_fraction": 0.06609183367440649,
+          "both_targets_pass": false
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.06411635545876009,
+          "integrated_absolute_error_fraction": 0.004963014228537823,
+          "both_targets_pass": false
+        }
+      },
+      "arrays_file": "dab-fb955b1799fb086768841d5c.npz",
+      "arrays_sha256": "0eda4158292b7394feb5c8b54911ed5b28c6f85f7ea1d79ceff4aafd660386ba"
+    },
+    {
+      "model_id": "dab-dd216be882a7fe716d480b09",
+      "config": {
+        "effective_temperature": 16250.0,
+        "logg": 7.375,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.2972579290355356,
+          "integrated_absolute_error_fraction": 0.025739561136649197,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.13607105623849733,
+          "integrated_absolute_error_fraction": 0.06236536820971894,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.13587074057102086,
+          "integrated_absolute_error_fraction": 0.04625345933206107,
+          "both_targets_pass": false
+        },
+        "refined_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.1432816640996546,
+          "integrated_absolute_error_fraction": 0.003741847690183715,
+          "both_targets_pass": false
+        },
+        "refined_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.05096648795160925,
+          "integrated_absolute_error_fraction": 0.021441064003952966,
+          "both_targets_pass": false
+        },
+        "refined_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.06487821246552328,
+          "integrated_absolute_error_fraction": 0.014121438264468588,
+          "both_targets_pass": false
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.13607105623850033,
+          "integrated_absolute_error_fraction": 0.062365368209718955,
+          "both_targets_pass": false
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.07222697073604013,
+          "integrated_absolute_error_fraction": 0.003135185571612546,
+          "both_targets_pass": false
+        }
+      },
+      "arrays_file": "dab-dd216be882a7fe716d480b09.npz",
+      "arrays_sha256": "715a37beb5d188305b5869ed71f0cc816cf41304288738fa31d89d6596f008cb"
+    },
+    {
+      "model_id": "dab-d5c532806a541eeeb9e47efc",
+      "config": {
+        "effective_temperature": 18750.0,
+        "logg": 7.125,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.09997239599434214,
+          "integrated_absolute_error_fraction": 0.043236704484699524,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.19460712267891064,
+          "integrated_absolute_error_fraction": 0.07095280316379945,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.16576873615128843,
+          "integrated_absolute_error_fraction": 0.05708557101860264,
+          "both_targets_pass": false
+        },
+        "refined_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.05595431704937027,
+          "integrated_absolute_error_fraction": 0.021414781493829062,
+          "both_targets_pass": false
+        },
+        "refined_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.09897426563968854,
+          "integrated_absolute_error_fraction": 0.026387805436325074,
+          "both_targets_pass": false
+        },
+        "refined_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.0888790401992304,
+          "integrated_absolute_error_fraction": 0.0232099074681342,
+          "both_targets_pass": false
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.19460712267891064,
+          "integrated_absolute_error_fraction": 0.07095280316379941,
+          "both_targets_pass": false
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.08064921155640425,
+          "integrated_absolute_error_fraction": 0.007652097757848449,
+          "both_targets_pass": false
+        }
+      },
+      "arrays_file": "dab-d5c532806a541eeeb9e47efc.npz",
+      "arrays_sha256": "93b9e0f564596c7d7f760737830e8b70a4f8f158983f1a9dbeb0c7eba03b3e1a"
+    },
+    {
+      "model_id": "dab-50ac49ad126d17f177b54785",
+      "config": {
+        "effective_temperature": 18750.0,
+        "logg": 7.375,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "metrics": {
+        "coarse_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.10676886811048131,
+          "integrated_absolute_error_fraction": 0.03401747445290703,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.17567120649032048,
+          "integrated_absolute_error_fraction": 0.06431025286617559,
+          "both_targets_pass": false
+        },
+        "coarse_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.14729938527624117,
+          "integrated_absolute_error_fraction": 0.04968807350908658,
+          "both_targets_pass": false
+        },
+        "refined_linear_F_Tg": {
+          "maximum_relative_error_fraction": 0.04615034097381245,
+          "integrated_absolute_error_fraction": 0.01671834534210058,
+          "both_targets_pass": false
+        },
+        "refined_log_F_Tg": {
+          "maximum_relative_error_fraction": 0.09606740529761883,
+          "integrated_absolute_error_fraction": 0.022752752654355456,
+          "both_targets_pass": false
+        },
+        "refined_log_F_logTg": {
+          "maximum_relative_error_fraction": 0.0859433576817024,
+          "integrated_absolute_error_fraction": 0.01923177104223624,
+          "both_targets_pass": false
+        },
+        "coarse_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.17567120649032048,
+          "integrated_absolute_error_fraction": 0.06431025286617564,
+          "both_targets_pass": false
+        },
+        "refined_pchip_logF_local_T_then_g": {
+          "maximum_relative_error_fraction": 0.07679763669034094,
+          "integrated_absolute_error_fraction": 0.004999912647862927,
+          "both_targets_pass": false
+        }
+      },
+      "arrays_file": "dab-50ac49ad126d17f177b54785.npz",
+      "arrays_sha256": "9bd94c591aed04f8fb09090c6762860584273272e1a961e33693ffd14fc5a85d"
+    }
+  ],
+  "whole_grid_accuracy_verified": false,
+  "physical_accuracy_verified": false
+}

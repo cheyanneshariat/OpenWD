@@ -1,0 +1,99 @@
+{
+  "records": [
+    {
+      "model_id": "do-c3f30b37b09de5ce3223b056",
+      "family": "DO",
+      "config": {
+        "effective_temperature": 60000,
+        "logg": 8.0,
+        "quality": "standard",
+        "maximum_helium_ii_level": 32,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "checks": {
+        "nlte_populations_converged": true,
+        "maximum_population_change": 1.0879107034654319e-06,
+        "population_tolerance": 0.0001,
+        "source_closure_residual": 1.1885209991852921e-15
+      },
+      "arrays_file": "hot-do-c3f30b37b09de5ce3223b056.npz",
+      "arrays_sha256": "c665d2db654095382975b095f0b6f8f15dc19605104bbfe0177cf211e77edec5"
+    },
+    {
+      "model_id": "do-1d3042456f79c950adb6bf8c",
+      "family": "DO",
+      "config": {
+        "effective_temperature": 90000,
+        "logg": 8.0,
+        "quality": "standard",
+        "maximum_helium_ii_level": 32,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "checks": {
+        "nlte_populations_converged": true,
+        "maximum_population_change": 5.420475157748476e-06,
+        "population_tolerance": 0.0001,
+        "source_closure_residual": 1.087911300805974e-15
+      },
+      "arrays_file": "hot-do-1d3042456f79c950adb6bf8c.npz",
+      "arrays_sha256": "851f1d1c137b6aba21ec5d8546f9080b6a71ba235af6a462ffe71ef7cdbca33e"
+    },
+    {
+      "model_id": "do-59f3721719cfda8a019be8b9",
+      "family": "DO",
+      "config": {
+        "effective_temperature": 120000,
+        "logg": 8.0,
+        "quality": "standard",
+        "maximum_helium_ii_level": 32,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "checks": {
+        "nlte_populations_converged": true,
+        "maximum_population_change": 1.8388596649040342e-05,
+        "population_tolerance": 0.0001,
+        "source_closure_residual": 1.1024042770791119e-15
+      },
+      "arrays_file": "hot-do-59f3721719cfda8a019be8b9.npz",
+      "arrays_sha256": "ef8cd90d9b16970819bd9104a9a8b67fc0bf6c7261c10b6fded74c06da5998f7"
+    },
+    {
+      "model_id": "dao-91669f0b627a22abcb58af47",
+      "family": "DAO",
+      "config": {
+        "effective_temperature": 100000,
+        "logg": 8.0,
+        "log_hydrogen_to_helium": 2,
+        "quality": "standard",
+        "maximum_helium_ii_level": 32,
+        "maximum_hydrogen_level": 8,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "checks": {
+        "nlte_populations_converged": true,
+        "maximum_population_change": 2.6554038226535017e-06,
+        "population_tolerance": 0.0001,
+        "source_closure_residual": 1.2792793730051205e-15
+      },
+      "arrays_file": "hot-dao-91669f0b627a22abcb58af47.npz",
+      "arrays_sha256": "c2ce8313380931d37ebc1734cb2ce472a60ab36476e7d75c56dbbd59209b4390"
+    }
+  ],
+  "source_commit": "00503a0dd22a028e38741b90d53d9e18a8731545"
+}

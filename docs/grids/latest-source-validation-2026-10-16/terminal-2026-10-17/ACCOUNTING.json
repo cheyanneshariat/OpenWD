@@ -1,0 +1,17 @@
+{
+  "registered_job": "59857587",
+  "elapsed_seconds": 28723,
+  "actual_billing_cpus": 70,
+  "qos_usage_factor": 1,
+  "inclusive_charged_CPU_node_hours": 2.1816514756944443,
+  "start_utc": "2026-10-16T16:14:17",
+  "end_utc": "2026-10-17T00:13:00",
+  "scientific_attempts": 23,
+  "counts": {
+    "COMPLETE_NUMERICAL": 22,
+    "TIMEOUT": 1
+  },
+  "prior_campaigns_remain_separate": true,
+  "operational_guard_node_hours": 4.0,
+  "live_reserved_node_hours": 0
+}

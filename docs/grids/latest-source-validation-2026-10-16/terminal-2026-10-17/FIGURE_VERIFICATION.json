@@ -1,0 +1,28 @@
+{
+  "input_reports": {
+    "DAB_INTERPOLATION.json": "5e14e78327fba71c6d70d21dd3d04c613024c639d00a75311adff651addc2515",
+    "NATIVE_PAIRS.json": "b7d4e43ab9d6f53699512506f18f2e80c9e939bdac39430a6c47b895d3cc4953",
+    "HOT_SPECTRA.json": "61f389639cd47ec245e2c12c33aa1614cf1881c2a73bb2115f3d3af92249a278"
+  },
+  "figures": {
+    "dab_interpolation.png": "732592e2bd4612a5e5680a5ad267ade8a4e09faa67a9a3b0dbadba42793c955c",
+    "dab_interpolation.pdf": "7e5b2604ab94f6cff63a537081cb89933518da0e9fb89f8fd371129b738e6516",
+    "hot_spectra.png": "23473b8e1679ad5d9fe62e4d60d552045f2bf35bef7ec87a826739e07f1c17c1",
+    "hot_spectra.pdf": "26b9387821ed82810a2ac983932530299232e00569df2570c63952d3962951fd",
+    "cold_metal_changes.png": "4f92ba225b0676d9c8b07691ba34c0a0f8bdb9bd826d4ae8f833e71243277624",
+    "cold_metal_changes.pdf": "260ea14bcf707df4d9fa7acc494264bf69c1a84ab737ad3d867a954e559a2325"
+  },
+  "actual_png_inspection_pending": false,
+  "actual_pdf_inspection_pending": false,
+  "actual_pngs_inspected": [
+    "dab_interpolation.png",
+    "cold_metal_changes.png",
+    "hot_spectra.png"
+  ],
+  "actual_rendered_pdfs_inspected": [
+    "dab_interpolation.pdf",
+    "cold_metal_changes.pdf",
+    "hot_spectra.pdf"
+  ],
+  "inspection_utc": "2026-10-17T15:42:25.149898+00:00"
+}

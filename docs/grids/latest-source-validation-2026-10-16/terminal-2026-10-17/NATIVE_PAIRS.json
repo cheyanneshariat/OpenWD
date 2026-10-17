@@ -1,0 +1,1017 @@
+{
+  "records": [
+    {
+      "model_id": "do-c3f30b37b09de5ce3223b056",
+      "family": "DO",
+      "config": {
+        "effective_temperature": 60000,
+        "logg": 8.0,
+        "quality": "standard",
+        "maximum_helium_ii_level": 32,
+        "population_maximum_iterations": 120,
+        "population_tolerance": 0.0001,
+        "hydrogenic_collision_model": "tlusty-mihalas",
+        "helium_i_profile": "Tremblay26.txt",
+        "helium_ii_interpolation": "series-adaptive"
+      },
+      "old_source": "c8329d86c98f956617ec1bb3746181350492ce66",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/grid_refinement_2026-10-11/delivery-v1/retrieved/slow/do-8c33ac1dbc0c6fcf90346a1d/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "e0a3aa21a026b2e6906da654e3770836fd4ce26b7a3d5cbe341ca340f0658689",
+      "new_spectrum_sha256": "76f6ee43a40622107b75c497cc4f8458068e5798a9852bc10532405143705984",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 1.7458382215189943e-12,
+          "maximum_pointwise_fraction": 1.1059500676159925e-09
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 3.901638145886402e-12,
+          "maximum_pointwise_fraction": 1.707086462653857e-08
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 3.851857895907543e-12,
+          "maximum_pointwise_fraction": 5.472225801703627e-08
+        }
+      },
+      "arrays_file": "pair-do-c3f30b37b09de5ce3223b056.npz",
+      "arrays_sha256": "433b4f36c85f70a9e4c47882e9b6c67a62694b920cd38863b37b6c542ecb3c72"
+    },
+    {
+      "model_id": "daz-1d76b73034cd9eb89d8dd8ae",
+      "family": "DAZ",
+      "config": {
+        "effective_temperature": 11820.0,
+        "logg": 8.4,
+        "abundances": {
+          "C": -6.9,
+          "Ca": -6.58,
+          "Cr": -7.51,
+          "Fe": -5.9,
+          "Mg": -5.77,
+          "O": -5.0,
+          "Si": -5.6,
+          "Ti": -7.9
+        },
+        "quality": "standard",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": 9000.0,
+        "include_molecules": null,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "mixing_length_alpha": 0.7,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "atmosphere_solver": "adaptive-newton",
+        "maximum_metal_charge": 3,
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "photospheric_depth_concentration": 1.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "synthesis_transfer_depth_refinement": 4,
+        "ca_ii_resonance_source": "chianti-reduced",
+        "metal_neutral_h_broadening": "barklem",
+        "strong_line_atomic_data": "stout",
+        "kurucz_electron_stark": true,
+        "si_ii_kurucz_transitions": true
+      },
+      "old_source": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/grid_updates_2026-10-12/replacements-v3/attempts-v1/daz-1c6a66bd7910c50c7475efad-h2-off/model/spectrum.txt",
+      "old_spectrum_sha256": "afd4dd094eeb17440000a752cf207f6e571ec1429e8811033f1e21a834c78660",
+      "new_spectrum_sha256": "9b7f8b27e9d5becfff78291551bc85971a1529a2579744d5bbc95358afa635ba",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0006995239251916523,
+          "maximum_pointwise_fraction": 0.10302325339178217
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.00012802984346087676,
+          "maximum_pointwise_fraction": 0.004672270855428246
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.000393135457057668,
+          "maximum_pointwise_fraction": 0.10302325339178217
+        }
+      },
+      "arrays_file": "pair-daz-1d76b73034cd9eb89d8dd8ae.npz",
+      "arrays_sha256": "dc1041fcb5e5b6c48d604a4c491999c6fd8b660dd308dccfc2cb1587fed1a4b6"
+    },
+    {
+      "model_id": "daz-af775db753d80b084ee7f6bd",
+      "family": "DAZ",
+      "config": {
+        "effective_temperature": 8600,
+        "logg": 8.1,
+        "abundances": {
+          "Al": -8.17,
+          "Ca": -8.04,
+          "Fe": -7.41,
+          "Mg": -7.24,
+          "Ni": -8.33,
+          "Ti": -9.48
+        },
+        "quality": "standard",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": 9000.0,
+        "include_molecules": null,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "mixing_length_alpha": 0.7,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "atmosphere_solver": "adaptive-newton",
+        "maximum_metal_charge": 3,
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "photospheric_depth_concentration": 1.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "synthesis_transfer_depth_refinement": 4,
+        "ca_ii_resonance_source": "chianti-reduced",
+        "metal_neutral_h_broadening": "barklem",
+        "strong_line_atomic_data": "stout",
+        "kurucz_electron_stark": true,
+        "si_ii_kurucz_transitions": true
+      },
+      "old_source": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/grid_updates_2026-10-12/replacements-v3/attempts-v1/daz-2631feedf0f5a77efd998dde-h2-off/model/spectrum.txt",
+      "old_spectrum_sha256": "e9ff5371c81dcfad8bd8d5fdc014aeadd160a3e2f459c541368d966409348a99",
+      "new_spectrum_sha256": "6fb5f35a46f57b1e7011ba461388bf609139427981937f4134b032746775f801",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 6.52337756043508e-05,
+          "maximum_pointwise_fraction": 0.0046524514942282635
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 9.938269689976416e-06,
+          "maximum_pointwise_fraction": 0.00044330804951401675
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 2.2523510434722756e-05,
+          "maximum_pointwise_fraction": 0.007725124243051985
+        }
+      },
+      "arrays_file": "pair-daz-af775db753d80b084ee7f6bd.npz",
+      "arrays_sha256": "d345185ce02977b5b8b9ba19c428400c7e20db5e72832bf7d19e0453984723f1"
+    },
+    {
+      "model_id": "daz-084b770c90f0cd9bb90acdfe",
+      "family": "DAZ",
+      "config": {
+        "effective_temperature": 20890,
+        "logg": 7.9,
+        "abundances": {
+          "Ca": -6.11,
+          "Fe": -4.43,
+          "Mg": -4.42,
+          "O": -3.62,
+          "Si": -4.24
+        },
+        "quality": "standard",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": 9000.0,
+        "include_molecules": null,
+        "h2_lyman_werner_lines": false,
+        "h3plus_partition_model": "neale-tennyson-1995",
+        "mixing_length_alpha": 0.7,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "atmosphere_solver": "adaptive-newton",
+        "maximum_metal_charge": 3,
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "photospheric_depth_concentration": 1.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "synthesis_transfer_depth_refinement": 4,
+        "ca_ii_resonance_source": "chianti-reduced",
+        "metal_neutral_h_broadening": "barklem",
+        "strong_line_atomic_data": "stout",
+        "kurucz_electron_stark": true,
+        "si_ii_kurucz_transitions": true
+      },
+      "old_source": "e09e7daeaa0695d34e14b55c557ca770fad326af",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/grid_updates_2026-10-12/replacements-v3/attempts-v1/daz-8fc37fca59764de87be3fffd-h2-off/model/spectrum.txt",
+      "old_spectrum_sha256": "29efc396f442a6eb9f8b3888e3a3013329a92a5dd6ee3d0dc2f920c885371b2e",
+      "new_spectrum_sha256": "3d7eaf2b289f3ce3d8306f7f343ef529a4d332f2ccf8ea703e3c884a148a6189",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.005978768308214131,
+          "maximum_pointwise_fraction": 0.12907467713805207
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0036049428840374785,
+          "maximum_pointwise_fraction": 0.023514701744826283
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.005838404992324645,
+          "maximum_pointwise_fraction": 0.15801412696375056
+        }
+      },
+      "arrays_file": "pair-daz-084b770c90f0cd9bb90acdfe.npz",
+      "arrays_sha256": "35dc7e1ae3f495a040c4fd40b45681e982a5467d3b6b06fd30d824be73e2c551"
+    },
+    {
+      "model_id": "dz-e93e80894ad6d0e3aeeb463d",
+      "family": "DZ",
+      "config": {
+        "effective_temperature": 10800.0,
+        "logg": 8.0,
+        "abundances": {
+          "Ca": -8.06,
+          "Cr": -9.27,
+          "Fe": -7.42,
+          "Mg": -7.27,
+          "Mn": -9.79,
+          "Ni": -8.76,
+          "Sc": -11.29,
+          "Ti": -9.45,
+          "V": -10.41
+        },
+        "log_hydrogen_abundance": -4.05,
+        "quality": "production",
+        "neutral_broadening": "unsold",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "maximum_metal_charge": 3,
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "photospheric_depth_concentration": 1.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "synthesis_transfer_depth_refinement": 4,
+        "lyman_profile_source": "stark",
+        "allard_minimum_effective_temperature": 9000.0,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "unified_metal_helium_profiles": "production",
+        "dense_helium_eos": "ideal",
+        "strong_line_atomic_data": "stout",
+        "level_resolved_photoionization": true,
+        "occupation_probability_metal_partitions": true,
+        "kurucz_electron_stark": true,
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true
+      },
+      "old_source": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/dz_rerun_2026-10-12/bulk-delivery-v1/bulk/dz-ef1978cee3fc9cf84b222ec5/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "b463fa9446015c60809be8236ca1c6912111d9e9b12ab01c9784587eccc1163e",
+      "new_spectrum_sha256": "b635c733aca89d11f8d656c3415047f846c9debaf9a6c041b18d4acb9da86836",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.005086555844927425,
+          "maximum_pointwise_fraction": 0.32507375944247563
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0011677085789613133,
+          "maximum_pointwise_fraction": 0.09760848621468672
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.002867473413329002,
+          "maximum_pointwise_fraction": 0.7494737896881735
+        }
+      },
+      "arrays_file": "pair-dz-e93e80894ad6d0e3aeeb463d.npz",
+      "arrays_sha256": "c369a236678e546fc2fe1e540a1297672bad52265b5f15ed3d1c396f8159cf71"
+    },
+    {
+      "model_id": "dz-d18b8e1d32d9b6840a5d27bf",
+      "family": "DZ",
+      "config": {
+        "effective_temperature": 13950.0,
+        "logg": 8.4,
+        "abundances": {
+          "Al": -6.39,
+          "Ca": -6.23,
+          "Co": -7.76,
+          "Cr": -6.76,
+          "Fe": -4.98,
+          "Mg": -4.68,
+          "Mn": -7.11,
+          "Na": -6.36,
+          "Ni": -6.31,
+          "O": -3.81,
+          "Sc": -9.55,
+          "Si": -4.9,
+          "Ti": -7.95,
+          "V": -8.5
+        },
+        "log_hydrogen_abundance": -5.73,
+        "quality": "production",
+        "neutral_broadening": "unsold",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "maximum_metal_charge": 3,
+        "structure_maximum_metal_lines": null,
+        "structure_minimum_metal_oscillator_strength": null,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "photospheric_depth_concentration": 1.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "synthesis_transfer_depth_refinement": 4,
+        "lyman_profile_source": "stark",
+        "allard_minimum_effective_temperature": 9000.0,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "ca_ii_resonance_source": "chianti-reduced",
+        "unified_metal_helium_profiles": "production",
+        "dense_helium_eos": "ideal",
+        "strong_line_atomic_data": "stout",
+        "level_resolved_photoionization": true,
+        "occupation_probability_metal_partitions": true,
+        "kurucz_electron_stark": true,
+        "si_ii_he_unified_profile": true,
+        "si_ii_kurucz_transitions": true
+      },
+      "old_source": "1386029e9a911d9d6f7977cfb30af2f24e5f7545",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/dz_rerun_2026-10-12/bulk-delivery-v1/bulk/dz-1540b07dfef47e762d1938ba/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "e58666575add5588865a55f3bff83f162218976c2f3bb6c0d33a97024787383b",
+      "new_spectrum_sha256": "b9bed501f71ce307f15674ddc039392c35d87e55f1e73e92c1cba3a6ee6f43ef",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.05065740046021418,
+          "maximum_pointwise_fraction": 26.004306382618914
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.008688406757673945,
+          "maximum_pointwise_fraction": 0.19223617257658882
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.03078098993921357,
+          "maximum_pointwise_fraction": 26.004306382618914
+        }
+      },
+      "arrays_file": "pair-dz-d18b8e1d32d9b6840a5d27bf.npz",
+      "arrays_sha256": "55d3fc8f928e43c10adfadc463b56c309edc50efa14b8c350cd6481a7ccf61b4"
+    },
+    {
+      "model_id": "dab-4c40bff379d82a190b72eeaa",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 15000,
+        "logg": 7,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-a169ec7ebfa71d2add5791db/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "ecbc305804088da98533237208e8e538686026abda4a4bac7174ae9ea86a42cb",
+      "new_spectrum_sha256": "ecbc305804088da98533237208e8e538686026abda4a4bac7174ae9ea86a42cb",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-4c40bff379d82a190b72eeaa.npz",
+      "arrays_sha256": "ad59061308a32f8d3bb36552708a620c712e408aee3b875eb89e215dd96d3287"
+    },
+    {
+      "model_id": "dab-fb868fb95317e6ef7c3520c0",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 15000,
+        "logg": 7.25,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-eaff5f63081073f755625cb2/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "fc98afea0cc4f9abf97d0759d99e7e683fdef0a801239718d100e0e50e680f94",
+      "new_spectrum_sha256": "fc98afea0cc4f9abf97d0759d99e7e683fdef0a801239718d100e0e50e680f94",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-fb868fb95317e6ef7c3520c0.npz",
+      "arrays_sha256": "8bdc4e2478085637f2083b0689de5dba46d2ec73823cc7d16d3c45bb7c74e927"
+    },
+    {
+      "model_id": "dab-acb80b6c857dc9187d385575",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 15000,
+        "logg": 7.5,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-0e7924bc42fc3adb21175488/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "ece23f49f3ef2497b9735c2a1f08b52e968ded8fafa972cef0bd4340f6f6fe7b",
+      "new_spectrum_sha256": "ece23f49f3ef2497b9735c2a1f08b52e968ded8fafa972cef0bd4340f6f6fe7b",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-acb80b6c857dc9187d385575.npz",
+      "arrays_sha256": "c6cb916696a2c84156247ace754c1c11b002ef1cfa62e86fda2a89ad52158d07"
+    },
+    {
+      "model_id": "dab-615413989543f27bd35044f4",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 17500,
+        "logg": 7,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-3353665b3473c8d2dfd4f5fc/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "40a981d1b102383a06ca51dc48c33ee1de5d09c698e94bf64574935223191623",
+      "new_spectrum_sha256": "40a981d1b102383a06ca51dc48c33ee1de5d09c698e94bf64574935223191623",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-615413989543f27bd35044f4.npz",
+      "arrays_sha256": "ce09aae1c5a5cf91c285f550c55f4ba5a5770d4b86f2448829e2a69383773f1c"
+    },
+    {
+      "model_id": "dab-87fee1290e8f8df60ad34999",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 17500,
+        "logg": 7.25,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-374d033f304af774b62c246a/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "2c404102cf7edf727293178c36ab20299d34960bc47a548d19ce1950f642e88e",
+      "new_spectrum_sha256": "2c404102cf7edf727293178c36ab20299d34960bc47a548d19ce1950f642e88e",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-87fee1290e8f8df60ad34999.npz",
+      "arrays_sha256": "53a0d6aab4f8d24ad14216994872705a3c7b4ca263d856bdaad3333d84503fa1"
+    },
+    {
+      "model_id": "dab-fc2fd47e443a33c03c35b085",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 17500,
+        "logg": 7.5,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-c13e63ecb3b4b55345607d0e/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "975a4657cd5a32f7bd64e8ea45944efc293131389b98a1ff8a81da1e704073b2",
+      "new_spectrum_sha256": "975a4657cd5a32f7bd64e8ea45944efc293131389b98a1ff8a81da1e704073b2",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-fc2fd47e443a33c03c35b085.npz",
+      "arrays_sha256": "e9818387ab0a1bb88b554a6c1e82c6ecdb2ce443c015f0fd5582bfb936685cbe"
+    },
+    {
+      "model_id": "dab-2ad36f026091c0c38468549a",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 20000,
+        "logg": 7,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-fea3311f160118e57565730e/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "0ae201acd0ba00de9a15418b90e0f273b7d52b39534e36b78657473284ff2b0f",
+      "new_spectrum_sha256": "0ae201acd0ba00de9a15418b90e0f273b7d52b39534e36b78657473284ff2b0f",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-2ad36f026091c0c38468549a.npz",
+      "arrays_sha256": "8de46dd1419cc16d9e0200605d4c459a3fafafb874927a035f0d27c42b22392d"
+    },
+    {
+      "model_id": "dab-e1f85b153942be941edba256",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 20000,
+        "logg": 7.25,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-1c715a28a83ececf0eaf2094/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "310428595566853ddb462cf36e574130537d25a6722abf82dbea59c8aa41792f",
+      "new_spectrum_sha256": "310428595566853ddb462cf36e574130537d25a6722abf82dbea59c8aa41792f",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-e1f85b153942be941edba256.npz",
+      "arrays_sha256": "b1891fdb2f181e907c75bc20af390f804e22af915c6f170496d7524f5781876d"
+    },
+    {
+      "model_id": "dab-dea9e28094d9e56ee8b73cff",
+      "family": "DAB",
+      "config": {
+        "effective_temperature": 20000,
+        "logg": 7.5,
+        "log_hydrogen_to_helium": -3,
+        "quality": "production",
+        "mixing_length_alpha": 1.25,
+        "atmosphere_solver": "adaptive-newton",
+        "lyman_profile_source": "allard",
+        "allard_minimum_effective_temperature": null,
+        "balmer_self_broadening_prescription": null,
+        "balmer_self_broadening_truncation_closure": "stark-core",
+        "neutral_broadening": "unsold",
+        "include_molecules": false,
+        "h2_he_cia_path": null,
+        "photospheric_depth_concentration": 1.0,
+        "synthesis_transfer_depth_refinement": 4,
+        "abundances": null,
+        "maximum_metal_charge": 4,
+        "metal_classical_electron_stark": false,
+        "structure_opacity_sampling_resolution": 1000.0,
+        "formal_maximum_metal_lines": null,
+        "formal_minimum_metal_oscillator_strength": 0.0001,
+        "metal_line_supplements": []
+      },
+      "old_source": "c103b53f28f3f37707572dbbc83a898807c4b683",
+      "new_source": "00503a0dd22a028e38741b90d53d9e18a8731545",
+      "old_spectrum_path": "work/da_db_dab_rerun_2026-10-14/execution-dab-bulk-v3/slow-delivery-v1/slow/dab-d378e0a4dbc122bc247026aa/attempt-v1/model/spectrum.txt",
+      "old_spectrum_sha256": "158a336a0d5b48d91d0b2a0f5cf9b2dccd4f77aafb6ba93da4ad41de82c7ea2c",
+      "new_spectrum_sha256": "158a336a0d5b48d91d0b2a0f5cf9b2dccd4f77aafb6ba93da4ad41de82c7ea2c",
+      "configurations_identical": true,
+      "native_wavelengths_identical": true,
+      "bands": {
+        "UV": {
+          "sampled_interval_angstrom": [
+            1150.5001490721104,
+            2999.8783192625215
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "optical": {
+          "sampled_interval_angstrom": [
+            3004.090656471959,
+            9999.188811534814
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        },
+        "full_native": {
+          "sampled_interval_angstrom": [
+            900.0,
+            30000.0
+          ],
+          "integrated_absolute_fraction": 0.0,
+          "maximum_pointwise_fraction": 0.0
+        }
+      },
+      "arrays_file": "pair-dab-dea9e28094d9e56ee8b73cff.npz",
+      "arrays_sha256": "4865c1538a5ac2346915aaf4ca5eb7dd0d0716f2d1623c98f65a15d7e49dc0c4"
+    }
+  ],
+  "pairs": 15,
+  "exact_native_pairs": 15,
+  "recovered_hot_cases_without_accepted_predecessor": 3,
+  "normalization": "none",
+  "resampling": "none",
+  "scope": "Cold models with matched requested configurations; all source changes combined, without attributing differences to a single fix.",
+  "physical_accuracy_verified": false,
+  "independent_depth_validation": false
+}

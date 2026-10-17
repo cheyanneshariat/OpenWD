@@ -1,7 +1,7 @@
 {
   "documentation_tests_passed": 15,
   "selected_table_sha256_unchanged": "72426dc7b693bde55aab8c1119bb176d5e60104ea599295697042ba1e332f088",
-  "cold_model_acceptance_pending": true,
+  "cold_model_acceptance_pending": false,
   "local_work_fixed_metal": {
     "status": "VERIFIED_SAVED_PAIRS_AND_INDEPENDENT_BAND_INTEGRALS",
     "cases": 4,
@@ -40,5 +40,13 @@
     "DIAGNOSIS.json": "593f9bf52050c46bfa0bce9ec0d489a2a14d739acc292e4a20f288341f2f98c7",
     "line_policy_changes.png": "6036ad974024b018990edeea4a44eeb1b8f1b78c7e14d2e8e29b718fb512ffb9",
     "daz-g149_28.npz": "f1cc0cd2ec662928e014d968fc35bc0aee7f99800d0df4c624f4f717d7ea127e"
-  }
+  },
+  "terminal_models_verified": 23,
+  "terminal_models_accepted": 22,
+  "terminal_outcomes": {
+    "COMPLETE_NUMERICAL": 22,
+    "TIMEOUT": 1
+  },
+  "terminal_proof": "terminal-2026-10-17/TERMINAL_VERIFICATION.json",
+  "terminal_figures": "terminal-2026-10-17/FIGURE_VERIFICATION.json"
 }
