@@ -130,16 +130,21 @@ class DBConfig:
     # historical uniform depths and bare-grid formal solution.
     photospheric_depth_concentration: float = 1.0
     synthesis_transfer_depth_refinement: int = 4
-    # "column-mass" (default): mass control volumes for the structure transfer,
-    # local energy balance and final spectrum together; the cold-start grid top
-    # starts at Rosseland tau 1e-12; and whenever lower-boundary screening fails
-    # (also together with other failed checks) the mesh is deepened (x4 bottom
-    # pressure) and re-solved from the first phase. The optical-depth cell widths couple each
-    # cell to its neighbours' extinction, which in cool low-gravity helium
-    # (n_e ~ T^20) admits growing odd-even temperature modes that stall the
-    # solve. "optical-depth" restores the DB-production-v4 preset exactly.
-    # Both use the synthesis depth refinement above for the final spectrum.
-    transfer_discretization: Literal["column-mass", "optical-depth"] = "column-mass"
+    # "column-mass": mass control volumes for the structure transfer, local
+    # energy balance and final spectrum together; the cold-start grid top starts
+    # at Rosseland tau 1e-12; and whenever lower-boundary screening fails (also
+    # together with other failed checks) the mesh is deepened (x4 bottom
+    # pressure) and re-solved from the first phase (DB-production-v5). The
+    # optical-depth cell widths couple each cell to its neighbours' extinction;
+    # where He- free-free dominates (n_e ~ T^20) that admits growing odd-even
+    # temperature modes that stall the solve. "optical-depth" is the
+    # DB-production-v4 preset, which column mass cannot replace everywhere:
+    # hot DBs have a steep upper-atmosphere temperature front that the mass
+    # grid under-resolves. "auto" (default) uses column mass where He- free-free
+    # supplies more than half of the cold seed's Rosseland-mean continuum
+    # opacity somewhere in tau_R = 1e-6..1e-2, and optical depth elsewhere.
+    # All use the synthesis depth refinement above for the final spectrum.
+    transfer_discretization: Literal["auto", "column-mass", "optical-depth"] = "auto"
 
 
 @dataclass(frozen=True)
@@ -820,6 +825,49 @@ def compute_da(
 
 _DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH = 1.0e-12
 _DB_DEEPENING_PRESSURE_FACTOR = 4.0
+_DB_HELIUM_MINUS_SCREEN_DEPTHS = (1.0e-6, 1.0e-2)
+# On the optical-depth path, "auto" extends the top boundary like the lower
+# one: when a cold solve fails and its worst residual sits in the top layers,
+# the seed top (tau_R 1e-8) is moved up tenfold and the model re-solved cold, at
+# most twice. A top layer still opaque in He II Lyman alpha (32 kK, log g 6)
+# can otherwise hold a lone hot node whose temperature the equations barely fix.
+_DB_OPTICAL_DEPTH_TOP_ROSSELAND_DEPTH = 1.0e-8
+_DB_UPPER_BOUNDARY_EXTENSIONS = 2
+_DB_UPPER_BOUNDARY_FACTOR = 10.0
+_DB_UPPER_BOUNDARY_LAYERS = 3
+_DB_HELIUM_MINUS_SCREEN_WAVELENGTH = np.geomspace(300.0, 100_000.0, 600)
+
+
+def _db_helium_minus_share(config: DBConfig, n_depth: int) -> float:
+    """Largest He- free-free share of the cold seed's Rosseland-mean continuum.
+
+    Evaluated on the gray hydrostatic helium seed between Rosseland depths
+    1e-6 and 1e-2, the outer layers where the optical-depth discretization's
+    neighbour coupling becomes unstable when He- free-free dominates.
+    """
+    from ..atmosphere import helium_continuum_atmosphere
+    from ..constants import BOLTZMANN, LIGHT_SPEED, PLANCK
+    from ..helium import helium_continuum_mass_absorption_coefficient
+
+    seed = helium_continuum_atmosphere(
+        config.effective_temperature, config.logg, n_depth=n_depth,
+        depth_concentration=config.photospheric_depth_concentration,
+        correlated_microfields=True,
+    )
+    wave = _DB_HELIUM_MINUS_SCREEN_WAVELENGTH
+    full = helium_continuum_mass_absorption_coefficient(seed, wave)
+    # The He- factor must be positive; 1e-30 removes it to roundoff.
+    without = helium_continuum_mass_absorption_coefficient(
+        seed, wave, helium_minus_correction=np.full_like(full, 1.0e-30)
+    )
+    nu = LIGHT_SPEED / (wave * 1.0e-8)
+    x = PLANCK * nu[:, None] / (BOLTZMANN * seed.temperature[None, :])
+    weight = x**4 * np.exp(-x) / (-np.expm1(-x)) ** 2 * np.abs(np.gradient(nu))[:, None]
+    rosseland = lambda kappa: np.sum(weight, axis=0) / np.sum(weight / kappa, axis=0)
+    share = 1.0 - rosseland(without) / rosseland(full)
+    lo, hi = _DB_HELIUM_MINUS_SCREEN_DEPTHS
+    outer = (seed.rosseland_optical_depth >= lo) & (seed.rosseland_optical_depth <= hi)
+    return float(np.max(share[outer]))
 
 
 def compute_db(
@@ -836,24 +884,31 @@ def compute_db(
 ) -> ModelResult:
     """Calculate one DB atmosphere and spectrum with Beauchamp25-LD lines."""
 
-    if config.transfer_discretization not in ("column-mass", "optical-depth"):
-        raise ValueError("DB transfer_discretization must be 'column-mass' or 'optical-depth'")
-    column_mass = config.transfer_discretization == "column-mass"
+    if config.transfer_discretization not in ("auto", "column-mass", "optical-depth"):
+        raise ValueError(
+            "DB transfer_discretization must be 'auto', 'column-mass' or 'optical-depth'"
+        )
+    resolution = numerical_resolution(config.quality)
+    helium_minus_share = None
+    if config.transfer_discretization == "auto":
+        helium_minus_share = _db_helium_minus_share(config, resolution.n_depth)
+        column_mass = helium_minus_share > 0.5
+    else:
+        column_mass = config.transfer_discretization == "column-mass"
+    discretization = "column-mass" if column_mass else "optical-depth"
     data = ModelData.default() if data is None else data
     request_fingerprint = model_request_fingerprint("DB", config, data)
     checkpoint_matches_request = atmosphere_matches_model_request(
         initial_atmosphere, request_fingerprint
     )
-    resolution = numerical_resolution(config.quality)
     wave = validate_wavelength(wavelength)
     he_i, he_ii = _helium_tables(data)
     if not relax_atmosphere and initial_atmosphere is None:
         raise ValueError("relax_atmosphere=False requires initial_atmosphere")
     atmosphere = initial_atmosphere
     if relax_atmosphere:
-        atmosphere = solve_with_screened_boundary(radiative_equilibrium_helium_atmosphere,
-            config.effective_temperature,
-            config.logg,
+        solver_arguments = (config.effective_temperature, config.logg)
+        solver_options = dict(
             stark_table=he_i,
             helium_ii_stark_table=he_ii,
             n_depth=resolution.n_depth,
@@ -884,19 +939,59 @@ def compute_db(
             resume_supplied_structure_in_formal_flux_phase=(
                 checkpoint_matches_request
             ),
-            iteration_callback=iteration_callback,
-            **(
-                dict(
-                    transfer_discretization="column-mass",
-                    tau_min=_DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH,
-                    deepen_on_any_screen_failure=True,
-                    restart_after_deepening=True,
-                    deepening_pressure_factor=_DB_DEEPENING_PRESSURE_FACTOR,
-                )
-                if column_mass
-                else {}
-            ),
         )
+        if column_mass:
+            discretization_options = dict(
+                transfer_discretization="column-mass",
+                tau_min=_DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH,
+                deepen_on_any_screen_failure=True,
+                restart_after_deepening=True,
+                deepening_pressure_factor=_DB_DEEPENING_PRESSURE_FACTOR,
+            )
+        else:
+            discretization_options = {}
+        atmosphere = solve_with_screened_boundary(
+            radiative_equilibrium_helium_atmosphere,
+            *solver_arguments,
+            **solver_options,
+            iteration_callback=iteration_callback,
+            **discretization_options,
+        )
+        if (
+            not column_mass
+            and config.transfer_discretization == "auto"
+            and initial_atmosphere is None
+        ):
+            extensions = []
+            top = _DB_OPTICAL_DEPTH_TOP_ROSSELAND_DEPTH
+            for _ in range(_DB_UPPER_BOUNDARY_EXTENSIONS):
+                meta = atmosphere.metadata
+                worst = meta.get("nonlinear_solver_final_worst_residual_depth_index")
+                if (
+                    meta.get("equilibrium_certificate", {}).get("verified")
+                    or worst is None
+                    or worst >= _DB_UPPER_BOUNDARY_LAYERS
+                ):
+                    break
+                extensions.append(dict(
+                    seed_top_rosseland_optical_depth=top,
+                    failures=list(meta["equilibrium_certificate"]["failures"]),
+                    worst_residual_depth_index=int(worst),
+                ))
+                top /= _DB_UPPER_BOUNDARY_FACTOR
+                atmosphere = solve_with_screened_boundary(
+                    radiative_equilibrium_helium_atmosphere,
+                    *solver_arguments,
+                    **solver_options,
+                    iteration_callback=iteration_callback,
+                    tau_min=top,
+                )
+            if extensions:
+                atmosphere = replace(atmosphere, metadata={
+                    **atmosphere.metadata,
+                    "upper_boundary_extensions": extensions,
+                    "seed_top_rosseland_optical_depth": top,
+                })
     assert atmosphere is not None
     if relax_atmosphere:
         atmosphere = atmosphere_with_model_request_fingerprint(
@@ -922,7 +1017,9 @@ def compute_db(
         config,
         {
             "preset": "DB-production-v5" if column_mass else "DB-production-v4",
-            "transfer_discretization": config.transfer_discretization,
+            "transfer_discretization": discretization,
+            "transfer_discretization_request": config.transfer_discretization,
+            "helium_minus_rosseland_share": helium_minus_share,
             "helium_i_profiles": "Beauchamp25-LD semi-analytical",
             "helium_ii_profiles": "Schoning/SYNSPEC table",
             "neutral_broadening": config.neutral_broadening,
