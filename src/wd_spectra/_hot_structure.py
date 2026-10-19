@@ -27,6 +27,11 @@ from ._hot_rates import (PreparedHeliumRates, PreparedLineAverages,
 
 LOGGER = logging.getLogger(__name__)
 
+# Fresh full-NLTE solves allowed from a rejected bracketed thermal-branch
+# switch (see _hot_recovery.RejectedDirectionFallback). Each one is a new
+# initial state sharing the stage's iteration budget.
+_MAXIMUM_THERMAL_BRANCH_RESTARTS = 3
+
 
 def _least_squares(matrix, rhs, *, rcond):
     """Retry a finite system with classical SVD if divide-and-conquer fails.
@@ -380,6 +385,8 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
     equations = HotEquations(seed,model,wave,fixed_temperature=fixed_temperature,nlte_fraction=nlte_fraction)
     x = equations.initial_state(populations)
     proposed_temperature_correction = None
+    iteration_offset = 0
+    segment_iterations = 0
     def qualified(x,e,correction):
         d=e.payload[2]
         populations_ok = (d['nlte_populations_converged'] if nlte_fraction == 1 else
@@ -393,9 +400,11 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
             newton_unrestricted_temperature_correction=(proposed_temperature_correction
                 if it.step_kind == 'newton' and not it.proposal_limited else None),
             nonlinear_step_kind=it.step_kind,nonlinear_trust_radius=it.trust_radius)
-        LOGGER.info('Joint Newton iteration %d: %s',it.iteration,e.payload[2])
+        nonlocal segment_iterations
+        segment_iterations = it.iteration
+        LOGGER.info('Joint Newton iteration %d: %s',iteration_offset+it.iteration,e.payload[2])
         if iteration_callback:
-            iteration_callback(it.iteration,e.payload[0],e.payload[1],e.payload[2])
+            iteration_callback(iteration_offset+it.iteration,e.payload[0],e.payload[1],e.payload[2])
     def direction(x,e,j,radius):
         nonlocal proposed_temperature_correction
         rows=np.maximum(np.max(abs(j),axis=1),np.finfo(float).tiny)
@@ -438,30 +447,55 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
         if jacobian and jacobian_callback is not None:
             jacobian_callback(state,evaluated)
         return evaluated
-    recovery = None
-    recovery_hooks = {}
-    proposal_builder = direction
-    if nlte_fraction in (0., 1.) and not fixed_temperature:
-        from ._hot_recovery import (CoupledBracketedThermalPopulationCorrection,
-                                    PlanckBracketedThermalCorrection)
-        from ._hot_recovery_fresh import FreshTangentFallback
-        # The Planck stage has temperatures only; it gets the thermal root
-        # bracket without population restoration. Intermediate continuation
-        # stages keep the plain Newton driver.
-        proposals = (CoupledBracketedThermalPopulationCorrection if nlte_fraction == 1. else
-                     PlanckBracketedThermalCorrection)(
-            evaluate, direction, temperature_tolerance, equations)
-        recovery = FreshTangentFallback(proposals, equations)
-        proposal_builder = recovery.direction
-        recovery_hooks = dict(iteration_correction=recovery.correction,
-            trial_projector=recovery.project, rejected_step_handoff=recovery.rejected)
-    result = solve_trust_region_newton(x,evaluate,maximum_iterations=maximum_iterations,
-        residual_tolerance=model.population_tolerance,step_tolerance=temperature_tolerance,convergence_test=qualified,
-        allow_initial_convergence=False,callback=callback,finite_difference_fallback_step=None,
-        jacobian_refresh_interval=3,initial_trust_radius=initial_trust_radius,maximum_trust_radius=.12,
-        broyden_updates=False,
-        linear_regularization=0.,step_builder=proposal_builder,merit_function="least-squares",
-        **recovery_hooks)
+    from ._hot_recovery import ThermalBranchRestart
+    recoveries = []
+    branch_restarts = []
+    while True:
+        recovery = None
+        recovery_hooks = {}
+        proposal_builder = direction
+        if nlte_fraction in (0., 1.) and not fixed_temperature:
+            from ._hot_recovery import (CoupledBracketedThermalPopulationCorrection,
+                                        PlanckBracketedThermalCorrection)
+            from ._hot_recovery_fresh import FreshTangentFallback
+            # The Planck stage has temperatures only; it gets the thermal root
+            # bracket without population restoration. Intermediate continuation
+            # stages keep the plain Newton driver.
+            proposals = (CoupledBracketedThermalPopulationCorrection if nlte_fraction == 1. else
+                         PlanckBracketedThermalCorrection)(
+                evaluate, direction, temperature_tolerance, equations)
+            recovery = FreshTangentFallback(proposals, equations, branch_restart=(
+                nlte_fraction == 1. and len(branch_restarts) < _MAXIMUM_THERMAL_BRANCH_RESTARTS
+                and iteration_offset < maximum_iterations - 1))
+            recoveries.append((recovery, proposals))
+            proposal_builder = recovery.direction
+            recovery_hooks = dict(iteration_correction=recovery.correction,
+                trial_projector=recovery.project, rejected_step_handoff=recovery.rejected)
+        segment_iterations = 0
+        try:
+            result = solve_trust_region_newton(x,evaluate,maximum_iterations=maximum_iterations-iteration_offset,
+                residual_tolerance=model.population_tolerance,step_tolerance=temperature_tolerance,convergence_test=qualified,
+                allow_initial_convergence=False,callback=callback,finite_difference_fallback_step=None,
+                jacobian_refresh_interval=3,initial_trust_radius=initial_trust_radius,maximum_trust_radius=.12,
+                broyden_updates=False,
+                linear_regularization=0.,step_builder=proposal_builder,merit_function="least-squares",
+                **recovery_hooks)
+        except ThermalBranchRestart as switch:
+            # A fresh solve from a genuine thermal root of the switched layer:
+            # an initial state, not an accepted step (see RejectedDirectionFallback).
+            # The interrupted iteration counts against the stage budget, which
+            # always leaves at least one iteration for the restarted solve.
+            iteration_offset = min(iteration_offset + segment_iterations + 1, maximum_iterations - 1)
+            branch_restarts.append(dict(depth=int(switch.depth), iteration=int(iteration_offset),
+                temperature_before=float(np.exp(switch.anchor[switch.depth])),
+                temperature_after=float(np.exp(switch.state[switch.depth]))))
+            LOGGER.info('Restarting full NLTE from the depth %d thermal branch: %.2f -> %.2f K',
+                        switch.depth, np.exp(switch.anchor[switch.depth]), np.exp(switch.state[switch.depth]))
+            x = switch.state
+            continue
+        iteration_offset += result.iterations
+        break
+    result = replace(result, iterations=iteration_offset)
     # A continuation stage is an initialization problem, never a certified
     # atmosphere. Its accepted state and driver termination are sufficient
     # to start the next stage; an extra independent full Jacobian here costs
@@ -498,13 +532,14 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
         'coupled_unknown_count':len(x),'structure_wavelength_count':len(equations.wave)}
     metadata['hot_nlte_recovery'] = dict(
         eligible=recovery is not None,
-        activated=recovery.active if recovery is not None else False,
+        activated=any(r.active for r, _ in recoveries),
         activation_rule='two rejected Newton directions at the Planck or full NLTE stage',
-        rejected_directions_observed=recovery.rejected_directions if recovery is not None else 0,
-        extra_jacobian_evaluations=recovery.extra_jacobian_evaluations if recovery is not None else 0,
-        extra_residual_evaluations=proposals.extra_residual_evaluations if recovery is not None else 0,
-        thermal_probes=proposals.thermal_probes if recovery is not None else 0,
-        neighbor_adjustments=proposals.neighbor_adjustments if recovery is not None else 0)
+        rejected_directions_observed=sum(r.rejected_directions for r, _ in recoveries),
+        extra_jacobian_evaluations=sum(r.extra_jacobian_evaluations for r, _ in recoveries),
+        extra_residual_evaluations=sum(p.extra_residual_evaluations for _, p in recoveries),
+        thermal_probes=sum(p.thermal_probes for _, p in recoveries),
+        neighbor_adjustments=sum(p.neighbor_adjustments for _, p in recoveries),
+        thermal_branch_restarts=branch_restarts)
     metadata['equilibrium_certificate']=equilibrium_certificate(metadata,flux_tolerance=flux_tolerance,temperature_tolerance=temperature_tolerance)
     metadata['radiative_equilibrium_converged']=metadata['equilibrium_certificate']['verified']
     return HotAtmosphereResult(replace(a,metadata=metadata),p,result)
