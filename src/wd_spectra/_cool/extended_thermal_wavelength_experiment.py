@@ -194,6 +194,11 @@ def main():
                 preserve_convective_transport=args.thermal_branch_preserve_convection))
         from functools import partial
         from . import check_cool_db_transport_seed as runner
+        # The worker already chose its structure and formal-transfer grid.
+        # Do not run the public gray-seed selector inside the dense EOS scope
+        # when compute_db performs fixed-atmosphere synthesis below.
+        stack.enter_context(patch.object(runner,'DBConfig',partial(runner.DBConfig,
+            transfer_discretization=('column-mass' if args.mass_conservative_transfer else 'optical-depth'))))
         if args.direct_spectrum:
             from .dense_direct_spectrum import direct_result
             original_compute=runner.compute_db

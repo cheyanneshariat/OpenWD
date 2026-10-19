@@ -28,9 +28,10 @@ def test_invalid_extent_rejected():
 
 
 @pytest.mark.parametrize('temperature', [5000., 8000.])
-@pytest.mark.parametrize('mass_conservative', [False, True])
+@pytest.mark.parametrize('mass_conservative,direct_spectrum',
+                         [(False, False), (False, True), (True, True)])
 def test_driver_forwards_transfer_choice_through_helium_solver(
-        monkeypatch, temperature, mass_conservative):
+        monkeypatch, temperature, mass_conservative, direct_spectrum):
     import sys
     from wd_spectra import adaptive_structure as adaptive, gray_helium_atmosphere
     from wd_spectra._cool import (
@@ -38,7 +39,10 @@ def test_driver_forwards_transfer_choice_through_helium_solver(
         dense_helium_molecular_experiment as experiment,
         extended_thermal_wavelength_experiment as driver,
         stable_feautrier_experiment as stable,
+        dense_direct_spectrum as direct,
     )
+    from wd_spectra.models import stellar
+    from wd_spectra._cool.dense_helium_limits import DenseHeliumDomainError
 
     seed = gray_helium_atmosphere(temperature, 8., n_depth=8)
     monkeypatch.setattr(atmosphere, 'helium_continuum_atmosphere',
@@ -50,6 +54,20 @@ def test_driver_forwards_transfer_choice_through_helium_solver(
         return initial
 
     monkeypatch.setattr(adaptive, 'solve_adaptive_lte_structure', solve)
+    original_config = runner.DBConfig
+    spectra = []
+
+    def screen(*args):
+        # The dense worker already chose its grid and has a solved state.
+        # A new gray seed can leave the dense EOS's tabulated domain.
+        raise DenseHeliumDomainError('unexpected gray-seed screen during fixed synthesis')
+
+    monkeypatch.setattr(stellar, '_db_helium_minus_share', screen)
+    monkeypatch.setattr(stellar, '_helium_tables', lambda data: (object(), object()))
+    monkeypatch.setattr(stellar, 'warn_if_atmosphere_not_converged', lambda *a: 'stub')
+    monkeypatch.setattr(stellar, 'synthesize_helium_spectrum',
+                        lambda a, w, **options: spectra.append(options))
+    monkeypatch.setattr(direct, 'direct_result', lambda result, *a, **kw: result)
 
     def run_worker():
         # Exercise the real public helium forwarding and scoped transfer
@@ -60,10 +78,21 @@ def test_driver_forwards_transfer_choice_through_helium_solver(
                 n_continuum_wavelength=80, include_lines=False,
                 include_helium_ii_lines=False, mixing_length_alpha=None)
         assert result is calls[-1][0]
+        config = runner.DBConfig(effective_temperature=temperature, logg=8., quality='production')
+        formal = runner.compute_db(config, np.array([4000., 5000.]),
+                                   initial_atmosphere=result, relax_atmosphere=False)
+        expected = 'column-mass' if mass_conservative else 'optical-depth'
+        assert formal.config.transfer_discretization == expected
+        assert formal.metadata['transfer_discretization'] == expected
+        assert spectra[-1].get('transfer_discretization', 'optical-depth') == expected
+        np.testing.assert_array_equal(formal.atmosphere.temperature, result.temperature)
+        np.testing.assert_array_equal(formal.atmosphere.column_mass, result.column_mass)
 
     monkeypatch.setattr(experiment, 'main', run_worker)
-    arguments = ['extended-thermal', '--direct-spectrum', '--stable-transfer',
+    arguments = ['extended-thermal', '--stable-transfer',
                  '--structure-angles', '8']
+    if direct_spectrum:
+        arguments.append('--direct-spectrum')
     if mass_conservative:
         arguments.append('--mass-conservative-transfer')
     monkeypatch.setattr(sys, 'argv', arguments)
@@ -79,3 +108,4 @@ def test_driver_forwards_transfer_choice_through_helium_solver(
         'column-mass' if mass_conservative else 'optical-depth')
     assert options['metadata'].get('experimental_mass_conservative_transfer', False) == mass_conservative
     assert adaptive.solve_adaptive_lte_structure is solve
+    assert runner.DBConfig is original_config
