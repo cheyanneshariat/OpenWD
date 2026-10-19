@@ -67,15 +67,49 @@ and the dense workflow at 5000 and 8000 K. See [tested points](../tested-tempera
 [cool-model setup](../getting-started.md#cool-helium-and-mixed-atmospheres), and
 [physical limitations](../limitations.md#physical-approximations).
 
-## Column-mass default (DB-production-v5, 2026-10-13)
+## Discretization by He- screen (2026-10-17)
 
-`DBConfig(transfer_discretization="column-mass")` is the default. It uses mass
-control volumes for the structure's transfer, its cell-by-cell energy balance
-and the final spectrum together, starts the cold-start grid at Rosseland
-tau = 1e-12, and whenever the lower-boundary screen fails (also together with
-other failed checks) deepens the mesh by a factor 4 in bottom pressure and
-re-solves it from the first phase. `transfer_discretization="optical-depth"`
-restores DB-production-v4 exactly.
+`DBConfig(transfer_discretization="auto")` is the default. Before solving, it
+measures how much of the cold seed's Rosseland-mean continuum opacity comes
+from He- free-free between Rosseland depths 1e-6 and 1e-2. Where that share
+exceeds one half (7000-11000 K at every gravity, and the cooler high-gravity
+models up to about 14000 K), it uses the column-mass recipe below
+(DB-production-v5). Elsewhere it uses the optical-depth discretization
+(DB-production-v4). `"column-mass"` and `"optical-depth"` force either; the
+latter restores v4 exactly. The chosen discretization and the He- share are
+saved in the metadata.
+
+Column mass alone (the 2026-10-13 default) failed or timed out at about 40
+hot DBs of the October 16 grid, mostly 30000-45000 K below log g 8. Their
+residuals were tiny but the temperature-stationarity check failed: hot DBs
+have a steep upper-atmosphere temperature front (about 3000 K within a layer
+near tau_R ~ 1e-8 to 1e-7) that the mass grid resolved too coarsely. Moving
+its top boundary only shuffled which models passed. v4 converges these, and
+the mechanism column mass was introduced for, He- free-free, is absent there.
+
+On the optical-depth path, "auto" also extends the top boundary like the
+lower one: if a cold solve fails with its worst residual in the top three
+layers, the seed top moves from tau_R 1e-8 tenfold outward and the model is
+re-solved cold, at most twice (`upper_boundary_extensions` in the metadata).
+At 32000 K, log g 6.0 the default top is opaque in He II Lyman alpha and one
+top layer stays hot; the 1e-9 top converges. Models that pass at once never
+extend.
+
+Fresh production cold starts on this default pass all five gates at
+10000/8.0, 12000/6.0 and 13000/8.0 (column mass) and at 16000/9.0, 17000/6.0,
+18000/7.0, 20000/8.0, 22000/8.0, 27500/8.125, 30000/6.25, 32000/6.0 (one top
+extension), 32000/6.25, 34000/6.0, 34000/6.5, 36000/6.5, 36000/7.5, 38000/7.5, 40000/6.0, 40000/7.0,
+40000/7.75, 45000/7.0, 55000/6.5 and 60000/6.25 (optical depth), and
+22000/8.0 at standard resolution, in 3-29 minutes.
+
+### Column-mass recipe (DB-production-v5, 2026-10-13)
+
+`transfer_discretization="column-mass"` uses mass control volumes for the
+structure's transfer, its cell-by-cell energy balance and the final spectrum
+together, starts the cold-start grid at Rosseland tau = 1e-12, and whenever
+the lower-boundary screen fails (also together with other failed checks)
+deepens the mesh by a factor 4 in bottom pressure and re-solves it from the
+first phase.
 
 Why: the optical-depth cell width averages the two adjacent optical-depth
 steps, so a cell's heating weight follows its neighbours' extinction. In cool,
@@ -113,9 +147,8 @@ above sigma Teff^4 by 0.5-1.3% at the coolest low-gravity points (production:
 (refinement 1) conserve it to 0.05%, but their spectral shape changes by about
 1.25% in the optical between 40 and 80 layers.
 Spectra differ from v4 by up to about 0.4% in the optical and infrared at
-production resolution (0.04% integrated in the optical at 22000/8.0). The DB
-cold-start canary references were recaptured with v5 (2026-10-14); the
-fixed-atmosphere spectral controls keep v4's optical-depth synthesis.
+production resolution. The fixed-atmosphere spectral controls keep v4's
+optical-depth synthesis.
 
 ## Flux conservation (2026-10-01)
 

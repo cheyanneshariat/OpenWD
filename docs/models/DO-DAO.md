@@ -174,7 +174,12 @@ if it reduces the full residual merit, rebuilds the Jacobian after a material
 correction, and requires an ordinary Newton attempt between corrections.
 These recovery proposals cannot certify convergence. The final independent
 temperature, population, flux, energy, source and boundary checks are unchanged.
-`hot_nlte_recovery` records activation and the extra work in atmosphere metadata.
+If that full-transfer root is rejected by merit, the stage ends and solves
+again from the switched state, as a new initial state rather than an accepted
+step (at most three restarts, within the stage's iteration budget; see
+[thermal-branch folds](#thermal-branch-folds-2026-10-18)).
+`hot_nlte_recovery` records activation, the extra work and any
+`thermal_branch_restarts` in atmosphere metadata.
 After activation, a changed accepted state gets a fresh tangent before the next
 recovery direction; reusing an earlier state's tangent can point uphill even
 after its populations have been restored. These extra Jacobians are counted
@@ -348,6 +353,57 @@ Fresh standard cold starts on this source pass all five certificate gates:
 The DO and DAO 100,000 K runs never rejected a Newton direction, so the new
 Planck-stage bracket stayed dormant; the DO 60,000 K run took 4.55 h on the
 October 8 source.
+
+### Thermal-branch folds (2026-10-18)
+
+DO 55,000 K, log g = 8 stalled at full NLTE with flux and local-energy
+residuals near 1e-5 and a temperature correction of 0.3-0.7 that never
+decreased (4-10 min per iteration). The outermost layer (`tau_Ross = 1e-8`)
+has two thermal branches: with the radiation field frozen, its net heating
+stays within 1e-3 of its emission from 19 to 26 kK, with a cool root near
+20 kK and a warm hump near 24 kK. At 55,000 K the warm root has merged into
+that hump (a fold). Newton settles on the hump, where the residual is a small
+minimum rather than a root and the Jacobian is nearly singular
+(smallest scaled singular value 1e-5 to 1e-7, concentrated in one or two
+layers). It is not a depth-resolution or top-depth effect: a 48-depth regrid
+and seed tops of 1e-9 and 1e-10 all stalled the same way. DO 50,000 K
+converges on the cool branch and DO 70,000 K on the warm one.
+
+The existing full-NLTE bracket found the cool full-transfer root (20.6 kK)
+but never used it:
+
+- its population restoration stopped after 12 chord iterations at a residual
+  of 3.5e-7, above its 1e-7 acceptance, while still contracting by about 0.44
+  per iteration. The limit is now 50; each loop still stops once settled or
+  when no damping lowers the residual;
+- moving the layer to its root first raises its neighbours' residuals, so the
+  merit test rejected the switch while Newton crept along the fold. A rejected
+  switch now ends the stage, which solves again from the switched state.
+
+From the stalled state, the restarted solve certified in 51 min
+(stationarity 9e-6). From the converged 0.95 stage it certified in 67 min
+after one restart. Relative to the stalled state, the outermost layer moves
+from 23.6 to 19.9 kK and the next from 26.0 to 26.5 kK; every deeper layer
+changes by at most 0.63 kK (1.6%, near `tau_Ross = 1e-5`).
+
+Fresh standard cold starts on this source, four at a time on one machine,
+pass all five certificate gates:
+
+| Preset | Parameters | Stationarity | Branch restarts | Time |
+| --- | --- | ---: | ---: | ---: |
+| DO standard | 50,000 K, log g=8 | 4.1e-06 | 0 | 1.70 h |
+| DO standard | 55,000 K, log g=8 | 8.9e-06 | 1 | 2.14 h |
+| DO standard | 60,000 K, log g=8 | 7.4e-07 | 0 | 1.17 h |
+| DO standard | 70,000 K, log g=8 | 4.9e-07 | 0 | 1.09 h |
+| DO standard | 90,000 K, log g=8 | 6.7e-05 | 0 | 1.14 h |
+| DO standard | 120,000 K, log g=8 | 1.2e-04 | 0 | 1.13 h |
+| DAO standard | 40,000 K, log g=8, log H/He=0 | 1.6e-05 | 0 | 3.40 h |
+| DAO standard | 100,000 K, log g=8, log H/He=2 | 5.7e-05 | 0 | 1.85 h |
+
+DO 50,000 K and DAO 40,000 K also end with their outermost layer on the cool
+branch (18.8 and 20.7 kK), but the common driver accepted those switches
+directly, so neither needed a restart. The DO 50,000 K structure matches the
+previous source's converged model to the printed precision.
 
 For details see the [release evidence](../development/history/do-dao-release-2026-09-20.md)
 and its [machine-readable measurements](../development/history/do-dao-cold-evidence.json).

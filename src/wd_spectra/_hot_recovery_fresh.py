@@ -11,8 +11,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class FreshTangentFallback(RejectedDirectionFallback):
-    def __init__(self, proposals, equations):
-        super().__init__(proposals)
+    def __init__(self, proposals, equations, *, branch_restart=False):
+        super().__init__(proposals, branch_restart=branch_restart)
         self.equations = equations
         self.extra_jacobian_evaluations = 0
 

@@ -36,11 +36,12 @@ def test_reviewed_baselines_and_historical_inputs_are_unchanged(mode, count):
             assert set(certificate.get("required_checks", required)) == required
             assert required <= set(certificate["checks"])
             assert all(certificate["checks"][name]["passed"] for name in required)
-        # Cold DB references were recaptured with the column-mass default
-        # (DB-production-v5, 2026-10-14); fixed DB controls keep v4.
+        # The DB default chooses its discretization with the He- screen: the
+        # 10000 K cold reference is column mass (DB-production-v5, recaptured
+        # 2026-10-14); the 22000 K ones are optical depth (v4) again.
         if record["case"].startswith("da-"):
             expected = "formal-pchip"
-        elif mode == "cold" and record["case"].startswith("db-"):
+        elif mode == "cold" and record["case"] == "db-10000":
             expected = "column-mass"
         else:
             expected = "formal-linear"
