@@ -400,8 +400,6 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
             newton_unrestricted_temperature_correction=(proposed_temperature_correction
                 if it.step_kind == 'newton' and not it.proposal_limited else None),
             nonlinear_step_kind=it.step_kind,nonlinear_trust_radius=it.trust_radius)
-        nonlocal segment_iterations
-        segment_iterations = it.iteration
         LOGGER.info('Joint Newton iteration %d: %s',iteration_offset+it.iteration,e.payload[2])
         if iteration_callback:
             iteration_callback(iteration_offset+it.iteration,e.payload[0],e.payload[1],e.payload[2])
@@ -450,6 +448,16 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
     from ._hot_recovery import ThermalBranchRestart
     recoveries = []
     branch_restarts = []
+    def counted_proposal(*args):
+        nonlocal segment_iterations
+        # The callback records accepted steps only. Count every attempted
+        # Newton direction, including the one interrupted by a branch switch.
+        segment_iterations += 1
+        if recovery is not None and iteration_offset + segment_iterations >= maximum_iterations:
+            # The current attempt consumes the last iteration; a new solve
+            # would exceed the shared budget even if its counter were clamped.
+            recovery.branch_restart_allowed = False
+        return proposal_builder(*args)
     while True:
         recovery = None
         recovery_hooks = {}
@@ -478,14 +486,14 @@ def solve(seed,model,wave,*,maximum_iterations=60,iteration_callback=None,popula
                 allow_initial_convergence=False,callback=callback,finite_difference_fallback_step=None,
                 jacobian_refresh_interval=3,initial_trust_radius=initial_trust_radius,maximum_trust_radius=.12,
                 broyden_updates=False,
-                linear_regularization=0.,step_builder=proposal_builder,merit_function="least-squares",
+                linear_regularization=0.,step_builder=counted_proposal,merit_function="least-squares",
                 **recovery_hooks)
         except ThermalBranchRestart as switch:
             # A fresh solve from a genuine thermal root of the switched layer:
             # an initial state, not an accepted step (see RejectedDirectionFallback).
             # The interrupted iteration counts against the stage budget, which
             # always leaves at least one iteration for the restarted solve.
-            iteration_offset = min(iteration_offset + segment_iterations + 1, maximum_iterations - 1)
+            iteration_offset += segment_iterations
             branch_restarts.append(dict(depth=int(switch.depth), iteration=int(iteration_offset),
                 temperature_before=float(np.exp(switch.anchor[switch.depth])),
                 temperature_after=float(np.exp(switch.state[switch.depth]))))
