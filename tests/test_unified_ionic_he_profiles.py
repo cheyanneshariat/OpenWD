@@ -29,13 +29,13 @@ def _figure_sum(path, value, wavelength):
 
 
 @pytest.mark.parametrize("ion", ["ca", "mg"])
-@pytest.mark.parametrize("temperature, density", [(4000.0, 1e20), (6000.0, 1e21), (8000.0, 1e22)])
+@pytest.mark.parametrize("temperature, density", [(4000.0, 1e20), (6000.0, 1e21), (8000.0, 1e22), (6000.0, 1e23)])
 def test_oscillator_strength_sum_rule(ion, temperature, density):
     table = _tables()[ion]
     w = table.wavelength_angstrom
     sigma = table.cross_section(w, np.array([density]), temperature=np.array([temperature]))[:, 0]
     area = -trapezoid(sigma, LIGHT_SPEED / (w * 1e-8))
-    assert area == pytest.approx(PI_E2_MC * F_SUM[ion], rel=0.03)
+    assert area == pytest.approx(PI_E2_MC * F_SUM[ion], rel=0.01)
 
 
 @pytest.mark.parametrize("ion", ["ca", "mg"])
