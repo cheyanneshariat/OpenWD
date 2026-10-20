@@ -176,6 +176,15 @@ class ModelData:
         )
 
     @property
+    def mg_i_b_he_density_profiles(self) -> Path:
+        """Allard et al. (2016) Mg b--He figure-vector profiles, 6000 K."""
+
+        return (
+            self.cache
+            / "metal-opacity/unified-metal-he/mgi-b-he-6000K-density.dat"
+        )
+
+    @property
     def ca_i_he_temperature_profiles(self) -> Path:
         return (
             self.cache

@@ -850,7 +850,7 @@ class AtomicTransition:
     # Optional unified (non-impact) neutral-He line profile replacing the
     # Lorentzian He broadening of this line in helium atmospheres; see
     # atomic_database_with_si_ii_he_unified_profile.
-    helium_unified_profile: "SiIIHeUnifiedProfile | None" = None
+    helium_unified_profile: "SiIIHeUnifiedProfile | MgIbHeUnifiedProfile | None" = None
     independently_validated_supplement: bool = False
 
 
@@ -4031,6 +4031,150 @@ def atomic_database_with_si_ii_he_unified_profile(
     return AtomicDatabase(
         MappingProxyType(ions),
         source=database.source + f"; {table.source} for {attached} lines",
+    )
+
+
+class MgIbHeUnifiedProfile:
+    """Unified Mg I b (3s3p 3P_J - 3s4s 3S1) + He profile for one J component.
+
+    Allard et al. (2016, A&A 588, A142) absolute cross sections at 6000 K,
+    recovered from their figure vectors (n_He = 1, 1.75, 2, 3, 4e21 cm^-3;
+    ``scripts/extract_allard_mgib_figure_profiles.py``).  Each curve is used
+    as a shape normalized to unit area; the transition's own oscillator
+    strength sets the strength.  The paper shows J1 coinciding with J0 at
+    1e21 cm^-3, so J1 uses the J0 sequence.  Between tabulated densities the
+    normalized profiles are interpolated linearly in log n_He.  Below 1e21
+    the profile is the impact Lorentzian (Allard's Table 2 widths and shifts,
+    plus ``Gamma_other``) plus the part of the 1e21 profile beyond impact
+    theory (signed, zero integral) scaled by n_He/1e21 (binary collisions),
+    as for Ca I 4227, so the profile is continuous at 1e21.  Above
+    4e21 the 4e21 shape is held: the satellite keeps moving blueward at higher
+    density, which this figure-resolution bridge cannot represent.  The paper
+    finds the wings nearly temperature independent at 4000-8000 K; the 6000-K
+    calculation is used at all temperatures.  Detunings outside the plotted
+    range (-100..1000 cm^-1 at 1e21, to ~1900 cm^-1 at 4e21) carry no unified
+    opacity; the ordinary Voigt line supplies the core by the envelope merge.
+    """
+
+    window_angstrom = 600.0
+    # Allard et al. (2016) Table 2, 6000 K: HWHM and shift per perturber (cm^-1 cm^3).
+    impact_hwhm = {0: 5.37e-20, 1: 5.37e-20, 2: 5.57e-20}
+    impact_shift = {0: 2.79e-20, 1: 2.30e-20, 2: 1.89e-20}
+
+    def __init__(self, path, component: int) -> None:
+        data = np.loadtxt(path, comments="#")
+        if data.ndim != 2 or data.shape[1] != 4:
+            raise ValueError("Mg I b--He table must have four columns")
+        sequence = 0 if component == 1 else component
+        rows = data[data[:, 1] == sequence]
+        self.component = int(component)
+        self.densities = np.unique(rows[:, 0])
+        if self.densities.size < 2:
+            raise ValueError("Mg I b--He table needs at least two densities")
+        self.detuning_cm1 = np.arange(-250.0, 2100.0, 0.5)
+        shapes = []
+        for density in self.densities:
+            curve = rows[rows[:, 0] == density]
+            x, y = curve[:, 2], curve[:, 3]
+            if np.any(np.diff(x) <= 0) or np.any(y < 0) or not np.all(np.isfinite(y)):
+                raise ValueError("Mg I b--He curves must be finite and increasing")
+            area = trapezoid(y, x)
+            shapes.append(np.interp(self.detuning_cm1, x, y, left=0.0, right=0.0) / area)
+        self.shapes = np.array(shapes)          # per cm^-1, unit area
+        self._log_densities = np.log(self.densities)
+        self._reference_hwhm = self.impact_hwhm[self.component] * self.densities[0]
+        self._reference_shift = self.impact_shift[self.component] * self.densities[0]
+        # Signed beyond-impact part of the least-dense profile.  Its integral
+        # is zero, so the low-density profile keeps unit area and equals the
+        # tabulated one at the table edge.
+        self.excess_at_minimum = self.shapes[0] - self._reference_lorentz(self.detuning_cm1)
+        self.source = (
+            "Allard et al. (2016) Mg I b-He unified profiles (6000 K, figure vectors)"
+        )
+
+    def _reference_lorentz(self, detuning):
+        h, d = self._reference_hwhm, self._reference_shift
+        return h / PI / ((detuning - d) ** 2 + h ** 2)
+
+    def profile(self, detuning_cm1, temperature, helium_density, gamma_other):
+        """Profile per unit angular frequency [s], shape (n_detuning, n_depth)."""
+
+        density = np.atleast_1d(np.asarray(helium_density, dtype=np.float64))
+        gamma = np.broadcast_to(np.asarray(gamma_other, dtype=np.float64), density.shape)
+        detuning = np.asarray(detuning_cm1, dtype=np.float64)
+        per_cm = np.zeros((detuning.size, density.size))
+        clipped = np.clip(density, self.densities[0], self.densities[-1])
+        log_n = np.log(np.maximum(clipped, 1.0))
+        index = np.clip(np.searchsorted(self._log_densities, log_n) - 1,
+                        0, self.densities.size - 2)
+        weight = (log_n - self._log_densities[index]) / (
+            self._log_densities[index + 1] - self._log_densities[index])
+        tabulated = np.array([np.interp(detuning, self.detuning_cm1, row, left=0.0, right=0.0)
+                              for row in self.shapes])
+        dense = density >= self.densities[0]
+        per_cm[:, dense] = (
+            (1.0 - weight[dense])[np.newaxis, :] * tabulated[index[dense]].T
+            + weight[dense][np.newaxis, :] * tabulated[index[dense] + 1].T
+        )
+        thin = ~dense
+        if np.any(thin):
+            n = density[thin]
+            hwhm = (self.impact_hwhm[self.component] * n
+                    + gamma[thin] / (4.0 * PI * LIGHT_SPEED))
+            shift = self.impact_shift[self.component] * n
+            lorentz = hwhm / PI / ((detuning[:, np.newaxis] - shift) ** 2 + hwhm ** 2)
+            inside = (detuning >= self.detuning_cm1[0]) & (detuning <= self.detuning_cm1[-1])
+            excess = np.where(
+                inside,
+                np.interp(detuning, self.detuning_cm1, self.excess_at_minimum),
+                -self._reference_lorentz(detuning),
+            )
+            per_cm[:, thin] = np.maximum(
+                lorentz + excess[:, np.newaxis] * (n / self.densities[0]), 0.0
+            )
+        return per_cm / (2.0 * PI * LIGHT_SPEED)
+
+
+def atomic_database_with_mg_i_b_he_unified_profile(
+    database: AtomicDatabase, path: str | Path,
+) -> AtomicDatabase:
+    """Attach the Allard et al. (2016) Mg b--He profiles to Mg I 3p 3P - 4s 3S.
+
+    Only the three E1 components 3s3p 3P_J - 3s4s 3S1 (5168.8, 5174.1,
+    5185.0 A vacuum) change: their neutral-He broadening becomes the unified
+    profile in helium atmospheres.  Oscillator strengths, populations and
+    other widths are unchanged; other lines are untouched.
+    """
+
+    ion = database.ions.get(("Mg", 0))
+    if ion is None:
+        return database
+    levels = {level.index: level for level in ion.levels}
+    tables: dict[int, MgIbHeUnifiedProfile] = {}
+    changed, attached = [], 0
+    for transition in ion.transitions:
+        lower = levels.get(transition.lower_index)
+        upper = levels.get(transition.upper_index)
+        if (
+            transition.transition_type == "E1"
+            and lower is not None and upper is not None
+            and _stout_core_orbital_term(lower) == ("3s", "3p", "3Po")
+            and _stout_core_orbital_term(upper) == ("3s", "4s", "3S")
+        ):
+            j = int(round((lower.statistical_weight - 1.0) / 2.0))
+            if j not in tables:
+                tables[j] = MgIbHeUnifiedProfile(path, j)
+            transition = replace(transition, helium_unified_profile=tables[j])
+            attached += 1
+        changed.append(transition)
+    if attached == 0:
+        return database
+    ions = dict(database.ions)
+    ions["Mg", 0] = replace(ion, transitions=tuple(changed))
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=database.source
+        + f"; {next(iter(tables.values())).source} for {attached} lines",
     )
 
 

@@ -285,6 +285,11 @@ class DZConfig:
     # Lorentzian neutral-He broadening.  No stellar fitting.  False restores
     # the previous Unsold neutral-He Lorentzian for these lines.
     si_ii_he_unified_profile: bool = True
+    # Unified Mg I b (5169/5174/5185 A) + He profiles from Allard et al.
+    # (2016) figure vectors (6000 K, n_He = 1e21-4e21; impact + scaled
+    # excess below, 4e21 shape held above).  False keeps the Unsold
+    # Lorentzian; the satellite-dominated blue wing of cool DZs is then absent.
+    mg_i_b_he_unified_profile: bool = False
     # Legacy import switch for bare/custom atoms. Independently corroborated
     # Si II additions are already in the default reader; this switch neither
     # removes them nor appends the former unfiltered supplement to that atom.
@@ -1603,6 +1608,13 @@ def compute_dz(
         atomic = atomic_database_with_kurucz_electron_stark(atomic)
     if config.si_ii_he_unified_profile:
         atomic = atomic_database_with_si_ii_he_unified_profile(atomic)
+    if config.mg_i_b_he_unified_profile and "Mg" in elements:
+        from ..metals import atomic_database_with_mg_i_b_he_unified_profile
+
+        data.require(data.mg_i_b_he_density_profiles)
+        atomic = atomic_database_with_mg_i_b_he_unified_profile(
+            atomic, data.mg_i_b_he_density_profiles
+        )
     photo = read_verner_photoionization_database(
         data.verner_photoionization,
         elements=elements,
@@ -1858,6 +1870,7 @@ def compute_dz(
             "strong_line_atomic_data": config.strong_line_atomic_data,
             "kurucz_electron_stark": config.kurucz_electron_stark,
             "si_ii_he_unified_profile": config.si_ii_he_unified_profile,
+            "mg_i_b_he_unified_profile": config.mg_i_b_he_unified_profile,
             "si_ii_kurucz_transitions": config.si_ii_kurucz_transitions,
             "maximum_metal_charge": config.maximum_metal_charge,
             "photoionization": (
