@@ -2091,6 +2091,7 @@ def radiative_equilibrium_helium_atmosphere(
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     helium_reos3_table: HeliumREOS3Table | None = None,
     helium_minus_correction_table=None,
+    helium_minus_prescription: str = "automatic",
     metal_photoionization_database: VernerPhotoionizationDatabase | None = None,
     metal_topbase_photoionization_database: (
         TOPbasePhotoionizationDatabase | None
@@ -2762,6 +2763,7 @@ def radiative_equilibrium_helium_atmosphere(
             include_helium_three_body_cia=include_helium_three_body_cia,
             include_rydberg_bound_free=include_rydberg_bound_free,
             helium_minus_correction=dense_helium_minus,
+            helium_minus_prescription=helium_minus_prescription,
         )
         if include_lines:
             result += helium_i_line_mass_absorption_coefficient(
@@ -3069,6 +3071,7 @@ def radiative_equilibrium_helium_atmosphere(
                 "John-1994 inside tabulated T/lambda domain; "
                 "Carbon-1969 fit to John-1968 elsewhere"
             ),
+            "helium_minus_free_free_prescription": helium_minus_prescription,
             "dense_helium_minus_free_free": (
                 {
                     "table_sha256": helium_minus_correction_table.sha256,

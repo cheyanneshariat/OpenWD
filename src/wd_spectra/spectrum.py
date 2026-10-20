@@ -1009,6 +1009,7 @@ def synthesize_helium_spectrum(
     transfer_discretization: Literal["formal-linear", "formal-pchip", "optical-depth", "feautrier-optical-depth", "column-mass"] = "formal-linear",
     transfer_depth_refinement: int = 1,
     helium_minus_correction_table=None,
+    helium_minus_prescription: str = "automatic",
 ) -> Spectrum:
     """Synthesize an LTE pure-He spectrum with tabulated He I profiles.
 
@@ -1106,6 +1107,7 @@ def synthesize_helium_spectrum(
         include_helium_three_body_cia=include_helium_three_body_cia,
         include_rydberg_bound_free=include_rydberg_bound_free,
         helium_minus_correction=dense_helium_minus,
+        helium_minus_prescription=helium_minus_prescription,
     )
     if include_lines:
         absorption += helium_i_line_mass_absorption_coefficient(

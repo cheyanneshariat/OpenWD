@@ -256,6 +256,11 @@ class DZConfig:
     # In cool DZ photospheres (rho ~ 0.1-0.6 g/cm^3) it removes 20-70% of the
     # dominant continuum opacity.  "off" keeps the ideal John (1994) value.
     dense_helium_free_free: Literal["off", "rogers-young"] = "off"
+    # He- free-free below John's (1994) 0.5063-micron edge: "automatic" keeps
+    # the Carbon et al. (1969) fit to John (1968), which jumps by 16-24% at
+    # the edge for 3000-5000 K; "partial-wave" uses John's edge value times
+    # a first-principles e-He partial-wave wavelength shape (continuous).
+    helium_minus_free_free: Literal["automatic", "partial-wave"] = "automatic"
     # "nist-asd" replaces exactly matched Stout transitions (UV included)
     # with evaluated NIST values; the default keeps the paper-figure data.
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
@@ -1533,6 +1538,8 @@ def compute_dz(
             fetch_command="python scripts/fetch_metal_data.py",
         )
         helium_reos3 = read_helium_reos3_table(data.helium_reos3)
+    if config.helium_minus_free_free not in ("automatic", "partial-wave"):
+        raise ValueError("helium_minus_free_free must be 'automatic' or 'partial-wave'")
     if config.dense_helium_free_free not in ("off", "rogers-young"):
         raise ValueError("dense_helium_free_free must be 'off' or 'rogers-young'")
     helium_minus_table = None
@@ -1743,6 +1750,7 @@ def compute_dz(
             ca_i_he_profile_table=ca_i_he,
             helium_reos3_table=helium_reos3,
             helium_minus_correction_table=helium_minus_table,
+            helium_minus_prescription=config.helium_minus_free_free,
             minimum_metal_oscillator_strength=(
                 structure_minimum_oscillator_strength
             ),
@@ -1832,6 +1840,7 @@ def compute_dz(
         transfer_discretization=synthesis_transfer,
         transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
         helium_minus_correction_table=helium_minus_table,
+        helium_minus_prescription=config.helium_minus_free_free,
     )
     return ModelResult(
         "DZ",
@@ -1889,6 +1898,7 @@ def compute_dz(
             "synthesis_flux_fraction": _synthesis_flux_fraction(
                 spectrum, config.effective_temperature
             ),
+            "helium_minus_free_free": config.helium_minus_free_free,
             "dense_helium_free_free": (
                 {"mode": config.dense_helium_free_free,
                  "table_sha256": helium_minus_table.sha256}

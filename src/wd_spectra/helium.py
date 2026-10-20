@@ -11,6 +11,7 @@ unified profiles provide a provisional He II bound-bound treatment.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
@@ -532,13 +533,68 @@ def _john_1968_helium_minus_free_free_coefficient(
     return np.maximum(coefficient_cm5, 0.0) / (BOLTZMANN * temperature)
 
 
+_PARTIAL_WAVE_TABLE = (
+    Path(__file__).resolve().parent
+    / "data/runtime/cache/he-minus-ff/he_minus_ff_partial_wave.npz"
+)
+
+
+@lru_cache(maxsize=1)
+def _partial_wave_helium_minus_table():
+    """First-principles He- free-free shape below John's 0.5063-micron edge.
+
+    Built by ``tools/build_he_minus_partial_wave_table.py`` from e-He
+    continuum dipole matrix elements in a pseudopotential fitted to Nesbet
+    (1979) phase shifts.  Returns (theta, log wavelength [micron], log k).
+    """
+
+    with np.load(_PARTIAL_WAVE_TABLE, allow_pickle=False) as data:
+        theta = np.asarray(data["theta"], dtype=np.float64)
+        wave = np.asarray(data["wavelength_micron"], dtype=np.float64)
+        coefficient = np.asarray(data["coefficient_cm4_dyn"], dtype=np.float64)
+    if (
+        theta.ndim != 1 or wave.ndim != 1 or coefficient.shape != (theta.size, wave.size)
+        or np.any(np.diff(theta) <= 0) or np.any(np.diff(wave) <= 0)
+        or np.any(~np.isfinite(coefficient)) or np.any(coefficient <= 0)
+    ):
+        raise ValueError(f"invalid He- partial-wave table {_PARTIAL_WAVE_TABLE}")
+    return theta, np.log(wave), np.log(coefficient)
+
+
+def _partial_wave_log_coefficient(wavelength_micron, theta):
+    """Bilinear interpolation of log k in (theta, log lambda), edges held."""
+
+    table_theta, log_wave, log_k = _partial_wave_helium_minus_table()
+    x = np.clip(np.log(wavelength_micron), log_wave[0], log_wave[-1])
+    t = np.clip(theta, table_theta[0], table_theta[-1])
+    i = np.clip(np.searchsorted(table_theta, t, side="right") - 1, 0, table_theta.size - 2)
+    j = np.clip(np.searchsorted(log_wave, x, side="right") - 1, 0, log_wave.size - 2)
+    ft = (t - table_theta[i]) / (table_theta[i + 1] - table_theta[i])
+    fx = (x - log_wave[j]) / (log_wave[j + 1] - log_wave[j])
+    return (
+        (1 - ft) * (1 - fx) * log_k[i, j] + ft * (1 - fx) * log_k[i + 1, j]
+        + (1 - ft) * fx * log_k[i, j + 1] + ft * fx * log_k[i + 1, j + 1]
+    )
+
+
 def helium_minus_free_free_coefficient(
     wavelength_micron: ArrayLike,
     temperature: ArrayLike,
     *,
-    prescription: Literal["automatic", "john1968", "john1994"] = "automatic",
+    prescription: Literal[
+        "automatic", "john1968", "john1994", "partial-wave"
+    ] = "automatic",
 ) -> FloatArray:
     """Return a He-minus free-free coefficient in cm^4 dyne^-1.
+
+    ``prescription='partial-wave'`` is the automatic choice except below
+    John's 0.5063-micron edge inside his temperature range, where the
+    Carbon et al. fit (16-24% above John at the edge for 3000-5000 K, and up
+    to 2x above an exact calculation at 0.3 micron) is replaced by John's
+    edge value times the wavelength shape of a first-principles partial-wave
+    calculation (e-He pseudopotential fitted to Nesbet 1979 phase shifts;
+    it reproduces John 1994 to 2-3% at 0.5-15 micron).  It is continuous at
+    the edge.
 
     ``prescription='automatic'`` uses the more accurate John (1994) table
     only inside its published wavelength and temperature domain
@@ -562,9 +618,9 @@ def helium_minus_free_free_coefficient(
         raise ValueError("wavelength_micron must contain finite positive values")
     if np.any(~np.isfinite(temperature)) or np.any(temperature <= 0.0):
         raise ValueError("temperature must contain finite positive values")
-    if prescription not in ("automatic", "john1968", "john1994"):
+    if prescription not in ("automatic", "john1968", "john1994", "partial-wave"):
         raise ValueError(
-            "prescription must be 'automatic', 'john1968', or 'john1994'"
+            "prescription must be 'automatic', 'john1968', 'john1994', or 'partial-wave'"
         )
     john_1968 = _john_1968_helium_minus_free_free_coefficient(
         wavelength, temperature
@@ -630,11 +686,23 @@ def helium_minus_free_free_coefficient(
     john_1994 = result * 1.0e-26
     if prescription == "john1994":
         return john_1994
-    john_1994_domain = (
-        (wavelength >= _JOHN_WAVELENGTH_UM[0])
-        & (temperature >= 5040.0 / _JOHN_THETA[-1])
+    john_temperature = (
+        (temperature >= 5040.0 / _JOHN_THETA[-1])
         & (temperature <= 5040.0 / _JOHN_THETA[0])
     )
+    john_1994_domain = (wavelength >= _JOHN_WAVELENGTH_UM[0]) & john_temperature
+    if prescription == "partial-wave":
+        # Below the edge: John's edge value times the partial-wave shape.
+        theta_pw = 5040.0 / temperature
+        shape = np.exp(
+            _partial_wave_log_coefficient(np.minimum(wavelength, _JOHN_WAVELENGTH_UM[0]), theta_pw)
+            - _partial_wave_log_coefficient(np.full_like(wavelength, _JOHN_WAVELENGTH_UM[0]), theta_pw)
+        )
+        partial_wave = edge * 1.0e-26 * shape
+        return np.where(
+            john_1994_domain, john_1994,
+            np.where(john_temperature, partial_wave, john_1968),
+        )
     return np.where(john_1994_domain, john_1994, john_1968)
 
 
@@ -770,6 +838,7 @@ def helium_continuum_mass_absorption_coefficient(
     include_helium_three_body_cia: bool = True,
     include_rydberg_bound_free: bool = True,
     helium_minus_correction: ArrayLike | None = None,
+    helium_minus_prescription: str = "automatic",
 ) -> FloatArray:
     """Return the implemented LTE pure-He continuum in cm^2 g^-1.
 
@@ -826,7 +895,10 @@ def helium_continuum_mass_absorption_coefficient(
 
     electron_pressure = electrons * BOLTZMANN * temperature
     helium_minus = (
-        helium_minus_free_free_coefficient(wavelength[:, np.newaxis] * 1.0e-4, temperature)
+        helium_minus_free_free_coefficient(
+            wavelength[:, np.newaxis] * 1.0e-4, temperature,
+            prescription=helium_minus_prescription,
+        )
         * neutral * electron_pressure
     )
     if helium_minus_correction is not None:
