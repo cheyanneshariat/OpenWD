@@ -1195,25 +1195,36 @@ def synthesize_helium_spectrum(
                 raise ValueError("ca_ii_resonance_redistribution must be 'complete' or 'coherent'")
 
             def ca_ii_line_extinction(grid):
-                return {
-                    (lower_index, upper_index): metal_line_mass_absorption_coefficient(
+                def extinction(keys, profile_table):
+                    return metal_line_mass_absorption_coefficient(
                         ca_ii_crd_atmosphere,
                         grid,
                         metal_database,
                         metal_state,
-                        ca_ii_he_profile_table=ca_ii_he_profile_table,
+                        ca_ii_he_profile_table=profile_table,
                         ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
                         minimum_oscillator_strength=(
                             minimum_metal_oscillator_strength
                         ),
                         maximum_lines=None,
-                        transition_keys=(("Ca", 1, lower_index, upper_index),),
+                        transition_keys=keys,
                         include_classical_electron_stark=(
                             metal_classical_electron_stark
                         ),
                     )
-                    for lower_index, upper_index in ca_ii_probabilities
-                }
+
+                keys = tuple(("Ca", 1, lower, upper) for lower, upper in ca_ii_probabilities)
+                if ca_ii_he_profile_table is None:
+                    return {key[2:]: extinction((key,), None) for key in keys}
+                # The unified table is the summed H+K cross section.  Evaluate
+                # the joint extinction once (as it enters the total opacity)
+                # and share it between the lines in proportion to their
+                # individual ordinary profiles at each wavelength.
+                joint = extinction(keys, ca_ii_he_profile_table)
+                ordinary = {key[2:]: extinction((key,), None) for key in keys}
+                total = sum(ordinary.values())
+                share = np.divide(1.0, total, out=np.zeros_like(total), where=total > 0)
+                return {key: joint * value * share for key, value in ordinary.items()}
 
             if ca_ii_resonance_redistribution == "coherent":
                 # Monochromatic coherent scattering with the same

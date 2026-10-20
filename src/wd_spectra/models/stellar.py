@@ -290,6 +290,17 @@ class DZConfig:
     # excess below, 4e21 shape held above).  False keeps the Unsold
     # Lorentzian; the satellite-dominated blue wing of cool DZs is then absent.
     mg_i_b_he_unified_profile: bool = False
+    # Unified Mg II h/k + He profiles (Allard et al. 2016, 6000 K, n_He
+    # 1e20-1e22; linear in n_He beyond).  Their far red wings dominate the
+    # 3000-4000 A metal opacity of cool, dense DZ photospheres, where the
+    # impact Lorentzian is 5-20x too weak.
+    mg_ii_he_unified_profile: bool = False
+    # Density exponent of the Mg II wing above the top tabulated 1e22 cm^-3.
+    mg_ii_he_density_exponent: float = 1.0
+    # Unified Ca II H&K + He profiles (Allard et al. 2014, n_He 5e21,
+    # 4000-10000 K).  The value is the density exponent above 5e21 cm^-3
+    # (1 = binary far-wing law, 0 = hold); None disables.  DEVELOPMENT option.
+    ca_ii_he_unified_density_exponent: float | None = None
     # Legacy import switch for bare/custom atoms. Independently corroborated
     # Si II additions are already in the default reader; this switch neither
     # removes them nor appends the former unfiltered supplement to that atom.
@@ -1671,6 +1682,23 @@ def compute_dz(
         )
     else:
         mg_he = None
+    ca_ii_he = None
+    if config.ca_ii_he_unified_density_exponent is not None and "Ca" in elements:
+        from ..metals import IonicHeTemperatureProfileGrid
+
+        data.require(data.ca_ii_he_temperature_profiles)
+        ca_ii_he = IonicHeTemperatureProfileGrid(
+            data.ca_ii_he_temperature_profiles,
+            density_exponent=config.ca_ii_he_unified_density_exponent,
+        )
+    mg_ii_he = None
+    if config.mg_ii_he_unified_profile and "Mg" in elements:
+        from ..metals import read_mg_ii_he_density_profile_grid
+
+        data.require(data.mg_ii_he_density_profiles)
+        mg_ii_he = read_mg_ii_he_density_profile_grid(
+            data.mg_ii_he_density_profiles, config.mg_ii_he_density_exponent
+        )
     if config.unified_metal_helium_profiles == "production" and "Ca" in elements:
         data.require(
             data.ca_i_he_density_profiles,
@@ -1759,6 +1787,8 @@ def compute_dz(
             metal_photoionization_database=photo,
             metal_topbase_photoionization_database=topbase_photoionization,
             mg_he_red_wing_table=mg_he,
+            mg_ii_he_profile_table=mg_ii_he,
+            ca_ii_he_profile_table=ca_ii_he,
             ca_i_he_profile_table=ca_i_he,
             helium_reos3_table=helium_reos3,
             helium_minus_correction_table=helium_minus_table,
@@ -1825,6 +1855,8 @@ def compute_dz(
         metal_photoionization_database=photo,
         metal_topbase_photoionization_database=topbase_photoionization,
         mg_he_red_wing_table=mg_he,
+        mg_ii_he_profile_table=mg_ii_he,
+        ca_ii_he_profile_table=ca_ii_he,
         ca_i_he_profile_table=ca_i_he,
         include_dense_helium_metal_ionization=True,
         metal_occupation_probability_partitions=(
@@ -1871,6 +1903,9 @@ def compute_dz(
             "kurucz_electron_stark": config.kurucz_electron_stark,
             "si_ii_he_unified_profile": config.si_ii_he_unified_profile,
             "mg_i_b_he_unified_profile": config.mg_i_b_he_unified_profile,
+            "mg_ii_he_unified_profile": (
+                mg_ii_he.source if mg_ii_he is not None else False
+            ),
             "si_ii_kurucz_transitions": config.si_ii_kurucz_transitions,
             "maximum_metal_charge": config.maximum_metal_charge,
             "photoionization": (

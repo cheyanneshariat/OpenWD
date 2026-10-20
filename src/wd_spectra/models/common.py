@@ -176,6 +176,24 @@ class ModelData:
         )
 
     @property
+    def ca_ii_he_temperature_profiles(self) -> Path:
+        """Allard et al. (2014) Ca II H&K--He figure-vector profiles, 5e21 cm^-3."""
+
+        return (
+            self.cache
+            / "metal-opacity/unified-metal-he/caii-hk-he-5e21-temperature.dat"
+        )
+
+    @property
+    def mg_ii_he_density_profiles(self) -> Path:
+        """Allard et al. (2016) Mg II h/k--He figure-vector profiles, 6000 K."""
+
+        return (
+            self.cache
+            / "metal-opacity/unified-metal-he/mgii-hk-he-6000K-density.dat"
+        )
+
+    @property
     def mg_i_b_he_density_profiles(self) -> Path:
         """Allard et al. (2016) Mg b--He figure-vector profiles, 6000 K."""
 
