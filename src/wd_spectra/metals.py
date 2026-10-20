@@ -1409,7 +1409,10 @@ class MgIIHeProfileTable:
         self,
         wavelength_angstrom: ArrayLike,
         helium_density: ArrayLike,
+        temperature: ArrayLike | None = None,
     ) -> FloatArray:
+        # Single-condition table: the local temperature is not used.
+        del temperature
         wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
         density = np.asarray(helium_density, dtype=np.float64)
         if wavelength.ndim != 1:
@@ -1472,153 +1475,97 @@ class MgIIHeProfileTable:
         return sigma.reshape((-1,) + (1,) * density.ndim) * density_scale
 
 
-class IonicHeDensityProfileGrid:
-    """Summed resonance-doublet + He absolute cross section on a density grid.
+class UnifiedIonicHeProfileGrid:
+    """Resonance-doublet + He unified-profile cross sections on a (T, n_He) grid.
 
-    Built from figure-vector recoveries of unified-theory profiles at one
-    temperature and several helium densities (e.g. Allard et al. 2016 Mg II
-    h/k at 6000 K and n_He = 1e20, 1e21, 1e22 cm^-3).  The components are
-    summed on a common wavelength grid; log sigma is interpolated linearly in
-    log n_He between tabulated densities.  Outside the tabulated densities,
-    and where a lower-density curve ends inside the plot, the cross section
-    is scaled linearly with n_He from the nearest tabulated density.  That is
-    the binary-collision (first order in density) far-wing law; the authors'
-    own sequence grows at least this fast between 1e21 and 1e22, so linear
-    continuation above the table is a lower bound, whereas holding the
-    top-density value fixed (as single-condition bridges do) underestimates
-    the wing in proportion to n_He.  The ordinary impact line still supplies
-    the core through the envelope merge.
+    Tables computed with the OpenWD unified-profile engine (Anderson-Talman
+    autocorrelation with Allard's modulated dipole, independent perturbers,
+    straight paths, Maxwell-averaged) from ab initio ion-He potentials; see
+    the ``source`` string stored with each table.  Each fine-structure line
+    is placed at its own vacuum wavenumber, normalized to its f-value (unit
+    area), and the lines are summed; values are bin averages over the
+    tabulated vacuum wavelength cells.  log sigma is interpolated bilinearly
+    in (log T, log n_He); T is held at the grid edges.  Outside the density
+    grid the cross section scales linearly with n_He from the nearest edge:
+    the binary (first-order) far-wing law.  Its impact core is not meant to
+    replace the ordinary Voigt core: callers merge by envelope.
     """
 
-    def __init__(self, wavelength, densities, cross_sections, *, temperature_kelvin, source,
-                 density_exponent: float = 1.0):
-        self.density_exponent = float(density_exponent)
-        self.wavelength_angstrom = np.asarray(wavelength, dtype=np.float64)
-        self.densities = np.asarray(densities, dtype=np.float64)
-        sigma = np.asarray(cross_sections, dtype=np.float64)
+    def __init__(self, path: str | Path):
+        with np.load(path, allow_pickle=False) as table:
+            self.temperatures = np.asarray(table["temperature_kelvin"], dtype=np.float64)
+            self.densities = np.asarray(table["helium_density_cm3"], dtype=np.float64)
+            self.wavelength_angstrom = np.asarray(
+                table["wavelength_vacuum_angstrom"], dtype=np.float64
+            )
+            sigma = np.asarray(table["cross_section_cm2"], dtype=np.float64)
+            self.source = str(table["source"])
         if (
-            self.wavelength_angstrom.ndim != 1 or np.any(np.diff(self.wavelength_angstrom) <= 0)
-            or self.densities.ndim != 1 or np.any(np.diff(self.densities) <= 0)
-            or sigma.shape != (self.densities.size, self.wavelength_angstrom.size)
+            self.temperatures.ndim != 1 or self.temperatures.size < 2
+            or np.any(np.diff(self.temperatures) <= 0)
+            or self.densities.ndim != 1 or self.densities.size < 2
+            or np.any(np.diff(self.densities) <= 0)
+            or self.wavelength_angstrom.ndim != 1
+            or np.any(np.diff(self.wavelength_angstrom) <= 0)
+            or sigma.shape != (
+                self.temperatures.size, self.densities.size, self.wavelength_angstrom.size
+            )
             or np.any(~np.isfinite(sigma)) or np.any(sigma < 0)
         ):
-            raise ValueError("invalid ionic He density profile grid")
-        # Fill gaps of lower-density curves by linear scaling from above.
-        filled = sigma.copy()
-        for i in range(self.densities.size - 2, -1, -1):
-            gap = filled[i] <= 0.0
-            filled[i, gap] = filled[i + 1, gap] * self.densities[i] / self.densities[i + 1]
-        self.cross_section_by_density = filled
-        self.temperature_kelvin = float(temperature_kelvin)
-        self.helium_density_cm3 = float(self.densities[-1])
-        self.source = source
-
-    def cross_section(self, wavelength_angstrom, helium_density):
-        wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
-        density = np.asarray(helium_density, dtype=np.float64)
-        if wavelength.ndim != 1 or np.any(~np.isfinite(density)) or np.any(density < 0.0):
-            raise ValueError("wavelength and helium density must be physical")
-        rows = np.array([
-            np.interp(wavelength, self.wavelength_angstrom, row, left=0.0, right=0.0)
-            for row in self.cross_section_by_density
-        ])                                                   # (n_density, n_wave)
-        flat = density.ravel()
-        log_n = np.log(np.clip(flat, self.densities[0], self.densities[-1]))
-        log_d = np.log(self.densities)
-        index = np.clip(np.searchsorted(log_d, log_n) - 1, 0, self.densities.size - 2)
-        weight = (log_n - log_d[index]) / (log_d[index + 1] - log_d[index])
-        tiny = np.finfo(np.float64).tiny
-        low, high = rows[index].T, rows[index + 1].T          # (n_wave, n_depth)
-        both = (low > 0) & (high > 0)
-        interpolated = np.where(
-            both,
-            np.exp((1 - weight) * np.log(np.maximum(low, tiny)) + weight * np.log(np.maximum(high, tiny))),
-            (1 - weight) * low + weight * high,
-        )
-        scale = np.where(flat < self.densities[0], flat / self.densities[0],
-                         np.where(flat > self.densities[-1],
-                                  (flat / self.densities[-1]) ** self.density_exponent, 1.0))
-        result = interpolated * scale[np.newaxis, :]
-        return result.reshape((wavelength.size,) + density.shape)
-
-
-class IonicHeTemperatureProfileGrid:
-    """Summed doublet + He cross section on a temperature grid at one density.
-
-    For Allard et al. (2014) Ca II H&K at n_He = 5e21 cm^-3 and 4000, 6000,
-    10000 K (figure vectors).  log sigma is interpolated in log T (held at the
-    grid edges).  Below the tabulated density the cross section scales
-    linearly with n_He (binary collisions).  Above it, ``density_exponent``
-    sets sigma proportional to n_He**exponent: 1 is the binary far-wing law,
-    0 holds the tabulated value.  Blouin et al. (2018) Fig. 1 at 1e22 implies
-    an exponent of ~0.4-0.6 at 3700-4300 A for these near wings.
-    """
-
-    def __init__(self, path, *, density_exponent: float = 1.0):
-        data = np.loadtxt(path, comments="#")
-        self.temperatures = np.unique(data[:, 0])
-        self.wavelength_angstrom = np.unique(np.round(np.concatenate([
-            np.arange(2100.0, 3800.0, 2.0), np.arange(3800.0, 4100.0, 0.25),
-            np.arange(4100.0, 6500.0, 2.0)]), 4))
-        sigma = np.zeros((self.temperatures.size, self.wavelength_angstrom.size))
-        for i, t in enumerate(self.temperatures):
-            for component in np.unique(data[:, 1]):
-                curve = data[(data[:, 0] == t) & (data[:, 1] == component)]
-                order = np.argsort(curve[:, 2])
-                sigma[i] += np.interp(self.wavelength_angstrom, curve[order, 2], curve[order, 3],
-                                      left=0.0, right=0.0)
-        self.cross_section_by_temperature = sigma
-        self.helium_density_cm3 = 5.0e21
-        self.temperature_kelvin = 6000.0
-        self.density_exponent = float(density_exponent)
-        self.source = ("Allard et al. (2014) Ca II H+K-He unified profiles, n_He 5e21, "
-                       f"4000-10000 K (figure vectors); n_He^{self.density_exponent:g} above")
+            raise ValueError(f"invalid unified ionic He profile table: {path}")
+        self.cross_section_by_condition = sigma
 
     def cross_section(self, wavelength_angstrom, helium_density, temperature=None):
         wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
         density = np.asarray(helium_density, dtype=np.float64)
-        t = np.full(density.shape, 6000.0) if temperature is None else np.broadcast_to(
-            np.asarray(temperature, dtype=np.float64), density.shape)
-        rows = np.array([np.interp(wavelength, self.wavelength_angstrom, r, left=0.0, right=0.0)
-                         for r in self.cross_section_by_temperature])
-        log_t = np.log(np.clip(t.ravel(), self.temperatures[0], self.temperatures[-1]))
-        lt = np.log(self.temperatures)
-        index = np.clip(np.searchsorted(lt, log_t) - 1, 0, lt.size - 2)
-        weight = (log_t - lt[index]) / (lt[index + 1] - lt[index])
+        if wavelength.ndim != 1 or np.any(~np.isfinite(density)) or np.any(density < 0.0):
+            raise ValueError("wavelength and helium density must be physical")
+        if temperature is None:
+            raise ValueError("the unified ionic He table needs the local temperature")
+        t = np.broadcast_to(np.asarray(temperature, dtype=np.float64), density.shape).ravel()
+        n = density.ravel()
+        log_t, log_n = np.log(self.temperatures), np.log(self.densities)
+        x = np.log(np.clip(t, self.temperatures[0], self.temperatures[-1]))
+        y = np.log(np.clip(np.maximum(n, self.densities[0]), self.densities[0], self.densities[-1]))
+        it = np.clip(np.searchsorted(log_t, x) - 1, 0, log_t.size - 2)
+        jn = np.clip(np.searchsorted(log_n, y) - 1, 0, log_n.size - 2)
+        wt = (x - log_t[it]) / (log_t[it + 1] - log_t[it])
+        wn = (y - log_n[jn]) / (log_n[jn + 1] - log_n[jn])
+        inside = (wavelength >= self.wavelength_angstrom[0]) & (
+            wavelength <= self.wavelength_angstrom[-1]
+        )
+        result = np.zeros((wavelength.size, n.size))
+        if not np.any(inside):
+            return result.reshape((wavelength.size,) + density.shape)
+        w_in = wavelength[inside]
+        # Interpolate in wavelength only the grid rows that some depth needs.
+        rows = {}
+
+        def row(i, j):
+            if (i, j) not in rows:
+                rows[(i, j)] = np.interp(
+                    w_in, self.wavelength_angstrom, self.cross_section_by_condition[i, j]
+                )
+            return rows[(i, j)]
+
         tiny = np.finfo(np.float64).tiny
-        low, high = rows[index].T, rows[index + 1].T
-        sigma = np.where((low > 0) & (high > 0),
-                         np.exp((1 - weight) * np.log(np.maximum(low, tiny))
-                                + weight * np.log(np.maximum(high, tiny))),
-                         (1 - weight) * low + weight * high)
-        ratio = density.ravel() / self.helium_density_cm3
-        scale = np.where(ratio < 1.0, ratio, ratio ** self.density_exponent)
-        return (sigma * scale[np.newaxis, :]).reshape((wavelength.size,) + density.shape)
-
-
-def read_mg_ii_he_density_profile_grid(
-    path: str | Path, density_exponent: float = 1.0
-) -> IonicHeDensityProfileGrid:
-    """Sum the Allard et al. (2016) 6000-K Mg II h and k density sequence."""
-
-    data = np.loadtxt(path, comments="#")
-    if data.ndim != 2 or data.shape[1] != 4:
-        raise ValueError("Mg II--He density table must have four columns")
-    densities = np.unique(data[:, 0])
-    grid = np.unique(np.round(np.concatenate([
-        np.arange(1900.0, 2700.0, 2.0), np.arange(2700.0, 2900.0, 0.25),
-        np.arange(2900.0, 5200.0, 2.0)]), 4))
-    sigma = np.zeros((densities.size, grid.size))
-    for i, density in enumerate(densities):
-        for component in np.unique(data[:, 1]):
-            curve = data[(data[:, 0] == density) & (data[:, 1] == component)]
-            order = np.argsort(curve[:, 2])
-            sigma[i] += np.interp(grid, curve[order, 2], curve[order, 3], left=0.0, right=0.0)
-    return IonicHeDensityProfileGrid(
-        grid, densities, sigma, temperature_kelvin=6000.0, density_exponent=density_exponent,
-        source="Allard et al. (2016) Mg II h+k-He unified profiles, 6000 K, n_He 1e20-1e22 "
-        f"(figure vectors); n_He^{density_exponent:g} above",
-    )
+        for k in range(n.size):
+            corners = (
+                (row(it[k], jn[k]), (1 - wt[k]) * (1 - wn[k])),
+                (row(it[k] + 1, jn[k]), wt[k] * (1 - wn[k])),
+                (row(it[k], jn[k] + 1), (1 - wt[k]) * wn[k]),
+                (row(it[k] + 1, jn[k] + 1), wt[k] * wn[k]),
+            )
+            positive = np.all([c > 0.0 for c, _ in corners], axis=0)
+            log_mean = sum(w * np.log(np.maximum(c, tiny)) for c, w in corners)
+            linear = sum(w * c for c, w in corners)
+            result[inside, k] = np.where(positive, np.exp(log_mean), linear)
+        scale = np.where(
+            n < self.densities[0], n / self.densities[0],
+            np.where(n > self.densities[-1], n / self.densities[-1], 1.0),
+        )
+        result *= scale[np.newaxis, :]
+        return result.reshape((wavelength.size,) + density.shape)
 
 
 @dataclass(frozen=True)
@@ -10033,7 +9980,7 @@ def metal_line_mass_absorption_coefficient(
                 / partition
             )
             profile_cross_section = mg_ii_he_profile_table.cross_section(
-                wavelength, helium_density
+                wavelength, helium_density, temperature=atmosphere.temperature
             )
             stimulated = -np.expm1(
                 -PLANCK * LIGHT_SPEED
@@ -10051,9 +9998,9 @@ def metal_line_mass_absorption_coefficient(
             # The public bridge is recovered from a plotted curve.  Its
             # strongest core points are clipped by the figure axes, and a
             # single-condition profile scaled to a much lower density can
-            # also fall below the ordinary impact core.  Preserve the larger
-            # opacity everywhere instead of erasing a valid ordinary core
-            # merely because its wavelength lies inside the figure panel.
+            # also fall below the ordinary impact core; a computed table's
+            # bin-averaged core is likewise lower than the Doppler-broadened
+            # Voigt core.  Preserve the larger opacity everywhere.
             combined = np.maximum(
                 unified_opacity, replacement_ordinary["MgII"]
             )
@@ -10155,10 +10102,8 @@ def metal_line_mass_absorption_coefficient(
                 * stimulated
                 / atmosphere.mass_density[np.newaxis, :]
             )
-            # As for Mg II, these vector-recovered data are a clipped figure
-            # bridge rather than a complete numerical profile grid.  An
-            # envelope is the only safe merge at the clipped core and when
-            # scaling away from the published density/temperature.
+            # As for Mg II: the envelope keeps the Doppler/Voigt core where a
+            # tabulated (clipped or bin-averaged) unified core lies below it.
             combined = np.maximum(
                 unified_opacity, replacement_ordinary["CaII"]
             )

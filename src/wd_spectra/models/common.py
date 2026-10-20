@@ -176,21 +176,21 @@ class ModelData:
         )
 
     @property
-    def ca_ii_he_temperature_profiles(self) -> Path:
-        """Allard et al. (2014) Ca II H&K--He figure-vector profiles, 5e21 cm^-3."""
+    def ca_ii_he_unified_profiles(self) -> Path:
+        """Computed Ca II H&K--He unified-profile table (T, n_He grid)."""
 
         return (
             self.cache
-            / "metal-opacity/unified-metal-he/caii-hk-he-5e21-temperature.dat"
+            / "metal-opacity/unified-metal-he/caii-hk-he-unified-profiles.npz"
         )
 
     @property
-    def mg_ii_he_density_profiles(self) -> Path:
-        """Allard et al. (2016) Mg II h/k--He figure-vector profiles, 6000 K."""
+    def mg_ii_he_unified_profiles(self) -> Path:
+        """Computed Mg II h&k--He unified-profile table (T, n_He grid)."""
 
         return (
             self.cache
-            / "metal-opacity/unified-metal-he/mgii-hk-he-6000K-density.dat"
+            / "metal-opacity/unified-metal-he/mgii-hk-he-unified-profiles.npz"
         )
 
     @property
