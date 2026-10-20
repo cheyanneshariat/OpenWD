@@ -13,6 +13,12 @@ substituted. This module does not supply a qualified Blouin fluid model.
 Atomic units are used internally (r/a0, k*a0, energy/Hartree). The public
 integrator accepts vacuum wavelength in Angstrom and temperature in kelvin.
 No atmosphere solver or production dispatcher enables this module by default.
+
+``dielectric`` divides by |epsilon|^2 as written in Blouin Eq. 4. The shipped
+DQ table (tools/build_dq_dense_continuum.py) passes dielectric=1: Iglesias'
+own Fig. 2 (delta_ff -> S(0) as u -> 0) and Eq. 4.6 apply only the 1/n
+propagation factor, which the DQ ray kernel supplies. See
+docs/development/history/dq-dense-he-ff-2026-10-15.md.
 """
 
 from __future__ import annotations
@@ -266,3 +272,24 @@ class DenseHeliumCorrectionTable:
                                        order=3, mode="mirror", prefilter=False))
         result[:, n == 0] = 1.0
         return result
+
+
+def bounded_helium_minus_correction(table, wavelength, temperature,
+                                    neutral_number_density):
+    """Evaluate ``table`` for an atmosphere, holding its T and lambda edges.
+
+    Polluted-He atmospheres sample wavelengths below the table's 1000-A edge
+    (where He-minus free-free is negligible beside He I bound-free) and very
+    cool upper layers below its lowest temperature (where the neutral density
+    is far below the table's dense regime, so the factor is already ~1).
+    The factor is held at the nearest tabulated wavelength and temperature,
+    as the dense-He ionization shift is held at its tested edge.  Density is
+    never extrapolated: a layer denser than the table raises.
+    Returns a (wavelength, depth) array of multiplicative factors.
+    """
+    wave = _positive(wavelength, "wavelength")
+    t = _positive(temperature, "temperature")
+    lo, hi = table.wavelength_bounds
+    t_lo, t_hi = np.exp(table.axes[0][[0, -1]])
+    return table.correction(np.clip(wave, lo, hi), np.clip(t, t_lo, t_hi),
+                            neutral_number_density)
