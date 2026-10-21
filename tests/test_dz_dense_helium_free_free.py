@@ -19,8 +19,10 @@ def table():
 def test_table_is_rogers_young_without_dielectric(table):
     assert table.metadata["schema"] == "dense-He-ff-v1"
     assert table.sha256 == (
-        "d6337a48a729015be117522f63b525ad8d585e95bea3427b5f8f0595b4a0f4e9"
+        "80ec59814c937e5761f34934a9d2446e41f0297c85e7a3aa3149500350507102"
     )
+    # v1 isotherms plus the 2412 and 2649 K extension for cool DZ upper layers
+    assert np.exp(table.axes[0][0]) == pytest.approx(2411.817, rel=1e-6)
 
 
 def test_dilute_limit_and_monotone_density(table):
