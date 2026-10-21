@@ -29,13 +29,27 @@ def _figure_sum(path, value, wavelength):
 
 
 @pytest.mark.parametrize("ion", ["ca", "mg"])
-@pytest.mark.parametrize("temperature, density", [(4000.0, 1e20), (6000.0, 1e21), (8000.0, 1e22), (6000.0, 1e23)])
-def test_oscillator_strength_sum_rule(ion, temperature, density):
+@pytest.mark.parametrize("temperature", [4000.0, 8000.0])
+def test_oscillator_strength_sum_rule_at_low_density(ion, temperature):
     table = _tables()[ion]
     w = table.wavelength_angstrom
-    sigma = table.cross_section(w, np.array([density]), temperature=np.array([temperature]))[:, 0]
+    sigma = table.cross_section(w, np.array([1e20]), temperature=np.array([temperature]))[:, 0]
     area = -trapezoid(sigma, LIGHT_SPEED / (w * 1e-8))
     assert area == pytest.approx(PI_E2_MC * F_SUM[ion], rel=0.01)
+
+
+def test_dense_fluid_band_area():
+    """The R-dependent 4s-4p dipole moves Ca II H&K strength into other bands as He packs
+    around the ion (Mg II: constant dipole, area conserved)."""
+    tables = _tables()
+    areas = {}
+    for ion, table in tables.items():
+        w = table.wavelength_angstrom
+        sigma = table.cross_section(w, np.array([1e21, 1e22, 1e23]), temperature=np.full(3, 6000.0))
+        areas[ion] = -trapezoid(sigma, LIGHT_SPEED / (w * 1e-8), axis=0) / (PI_E2_MC * F_SUM[ion])
+    assert np.all(np.diff(areas["ca"]) < 0) and 0.3 < areas["ca"][-1] < 0.6
+    assert areas["ca"][0] == pytest.approx(0.994, abs=0.01)
+    assert np.allclose(areas["mg"], 1.0, atol=0.06)
 
 
 @pytest.mark.parametrize("ion", ["ca", "mg"])
@@ -56,11 +70,11 @@ def test_grid_nodes_and_density_scaling(ion):
 
 
 def test_far_wings_grow_with_density():
-    # Far wings only: by 1e23 cm^-3 the impact width is hundreds of A, so
-    # the near wings (~300 A out) saturate and then fall as the line spreads.
+    # Below the dense-fluid regime (by 1e23 correlations and the band-area loss
+    # cut the red wing, and the near wings saturate as the line spreads).
     table = _tables()["ca"]
     w = np.array([2800.0, 3000.0, 4800.0, 5200.0])
-    n = np.array([1e21, 1e22, 1e23])
+    n = np.array([1e20, 1e21, 1e22])
     sigma = table.cross_section(w, n, temperature=np.full(3, 6000.0))
     assert np.all(np.diff(sigma, axis=1) > 0)
 

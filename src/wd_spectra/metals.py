@@ -1479,12 +1479,17 @@ class UnifiedIonicHeProfileGrid:
     """Resonance-doublet + He unified-profile cross sections on a (T, n_He) grid.
 
     Tables computed with the OpenWD unified-profile engine (Anderson-Talman
-    autocorrelation with Allard's modulated dipole, independent perturbers,
-    straight paths, Maxwell-averaged) from ab initio ion-He potentials; see
-    the ``source`` string stored with each table.  Each fine-structure line
-    is placed at its own vacuum wavenumber, normalized to its f-value (unit
-    area), and the lines are summed; values are bin averages over the
-    tabulated vacuum wavelength cells.  log sigma is interpolated bilinearly
+    autocorrelation with Allard's modulated dipole, straight paths,
+    Maxwell-averaged) from ab initio ion-He potentials; see the ``source``
+    string stored with each table.  Each fine-structure line is placed at its
+    own vacuum wavenumber with its f-value and the lines are summed; values are
+    bin averages over the tabulated vacuum wavelength cells.  Dense-fluid
+    physics: each profile carries its physical band area (an R-dependent
+    transition dipole moves strength into other bands as He packs around the
+    ion, instead of the unit area of Allard's tables), and the quasi-static
+    part is corrected from independent to correlated perturbers with a
+    classical Monte Carlo of the He fluid (HFD-B He-He; equation of state
+    within 5% of REOS3) using diatomics-in-molecules transition energies.  log sigma is interpolated bilinearly
     in (log T, log n_He); T is held at the grid edges.  Outside the density
     grid the cross section scales linearly with n_He from the nearest edge:
     the binary (first-order) far-wing law.  Its impact core is not meant to
