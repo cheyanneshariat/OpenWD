@@ -194,6 +194,15 @@ class ModelData:
         )
 
     @property
+    def mg_i_b_he_unified_profiles(self) -> Path:
+        """Computed Mg I b--He unified-profile table (T, n_He grid)."""
+
+        return (
+            self.cache
+            / "metal-opacity/unified-metal-he/mgi-b-he-unified-profiles.npz"
+        )
+
+    @property
     def mg_i_b_he_density_profiles(self) -> Path:
         """Allard et al. (2016) Mg b--He figure-vector profiles, 6000 K."""
 

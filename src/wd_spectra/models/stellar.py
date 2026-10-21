@@ -285,10 +285,10 @@ class DZConfig:
     # Lorentzian neutral-He broadening.  No stellar fitting.  False restores
     # the previous Unsold neutral-He Lorentzian for these lines.
     si_ii_he_unified_profile: bool = True
-    # Unified Mg I b (5169/5174/5185 A) + He profiles from Allard et al.
-    # (2016) figure vectors (6000 K, n_He = 1e21-4e21; impact + scaled
-    # excess below, 4e21 shape held above).  False keeps the Unsold
-    # Lorentzian; the satellite-dominated blue wing of cool DZs is then absent.
+    # Unified Mg I b (5169/5174/5185 A) + He profiles computed from the
+    # Allard et al. (2016) potentials (3000-12000 K, n_He 1e19-1e23; the blue
+    # satellites pile up and move blueward with density).  False keeps the
+    # Unsold Lorentzian; the satellite-dominated blue wing of cool DZs is then absent.
     mg_i_b_he_unified_profile: bool = False
     # Unified Mg II h&k and Ca II H&K + He profiles computed with the OpenWD
     # unified-profile engine from ab initio ion-He potentials (Mg+-He: Allard
@@ -1619,9 +1619,9 @@ def compute_dz(
     if config.mg_i_b_he_unified_profile and "Mg" in elements:
         from ..metals import atomic_database_with_mg_i_b_he_unified_profile
 
-        data.require(data.mg_i_b_he_density_profiles)
+        data.require(data.mg_i_b_he_unified_profiles)
         atomic = atomic_database_with_mg_i_b_he_unified_profile(
-            atomic, data.mg_i_b_he_density_profiles
+            atomic, data.mg_i_b_he_unified_profiles
         )
     photo = read_verner_photoionization_database(
         data.verner_photoionization,

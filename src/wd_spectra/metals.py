@@ -850,7 +850,9 @@ class AtomicTransition:
     # Optional unified (non-impact) neutral-He line profile replacing the
     # Lorentzian He broadening of this line in helium atmospheres; see
     # atomic_database_with_si_ii_he_unified_profile.
-    helium_unified_profile: "SiIIHeUnifiedProfile | MgIbHeUnifiedProfile | None" = None
+    helium_unified_profile: (
+        "SiIIHeUnifiedProfile | MgIbHeUnifiedProfile | MgIbHeComputedProfile | None"
+    ) = None
     independently_validated_supplement: bool = False
 
 
@@ -4236,6 +4238,76 @@ class MgIbHeUnifiedProfile:
         return per_cm / (2.0 * PI * LIGHT_SPEED)
 
 
+class MgIbHeComputedProfile:
+    """Unified Mg I b (3s3p 3P_J - 3s4s 3S1) + He profile from a computed (T, n_He) table.
+
+    Computed with the OpenWD unified-profile engine (Anderson-Talman autocorrelation,
+    Allard's modulated dipole, straight paths, Maxwell average) from the Allard et al.
+    (2016) Mg-He potentials and transition dipoles (their Figs. 1-3, no spin-orbit), for
+    3000-12000 K and n_He = 1e19-1e23 cm^-3.  Each lower-state component (3p b Sigma,
+    a Pi) carries its own Boltzmann factor.  The blue satellites at multiples of the
+    difference-potential maximum (395 cm^-1) pile up with density: the absorption
+    maximum moves from the line to ~480 cm^-1 at 3e21 and ~1800 cm^-1 at 1e22, which
+    the 4e21-limited figure bridge cannot represent.  Profiles carry their physical
+    band area (R-dependent dipoles).  The same shape serves all three J components.
+    log profile is interpolated bilinearly in (log T, log n_He); T is held at the grid
+    edges, n_He above 1e23 is held, and below 1e19 the profile scales as n_He (binary
+    wings; the Voigt core supplies the line centre through the envelope merge).
+    """
+
+    window_angstrom = 3000.0
+
+    def __init__(self, path, component: int) -> None:
+        with np.load(path, allow_pickle=False) as table:
+            self.temperatures = np.asarray(table["temperature_kelvin"], dtype=np.float64)
+            self.densities = np.asarray(table["helium_density_cm3"], dtype=np.float64)
+            self.detuning_cm1 = np.asarray(table["detuning_cm1"], dtype=np.float64)
+            self.profiles = np.asarray(table["profile_per_cm1"], dtype=np.float64)
+            self.source = str(table["source"])
+        if self.profiles.shape != (self.temperatures.size, self.densities.size,
+                                   self.detuning_cm1.size):
+            raise ValueError("invalid Mg I b--He profile table")
+        self.component = int(component)
+
+    def profile(self, detuning_cm1, temperature, helium_density, gamma_other):
+        """Profile per unit angular frequency [s], shape (n_detuning, n_depth)."""
+
+        del gamma_other          # the Voigt core carries the other widths (envelope merge)
+        density = np.atleast_1d(np.asarray(helium_density, dtype=np.float64))
+        t = np.broadcast_to(np.asarray(temperature, dtype=np.float64), density.shape)
+        detuning = np.asarray(detuning_cm1, dtype=np.float64)
+        lt, ln = np.log(self.temperatures), np.log(self.densities)
+        x = np.log(np.clip(t, self.temperatures[0], self.temperatures[-1]))
+        y = np.log(np.clip(density, self.densities[0], self.densities[-1]))
+        it = np.clip(np.searchsorted(lt, x) - 1, 0, lt.size - 2)
+        jn = np.clip(np.searchsorted(ln, y) - 1, 0, ln.size - 2)
+        wt = (x - lt[it]) / (lt[it + 1] - lt[it])
+        wn = (y - ln[jn]) / (ln[jn + 1] - ln[jn])
+        tiny = np.finfo(np.float64).tiny
+        rows = {}
+
+        def row(i, j):
+            if (i, j) not in rows:
+                rows[(i, j)] = np.interp(detuning, self.detuning_cm1, self.profiles[i, j],
+                                         left=0.0, right=0.0)
+            return rows[(i, j)]
+
+        per_cm = np.zeros((detuning.size, density.size))
+        for k in range(density.size):
+            corners = ((row(it[k], jn[k]), (1 - wt[k]) * (1 - wn[k])),
+                       (row(it[k] + 1, jn[k]), wt[k] * (1 - wn[k])),
+                       (row(it[k], jn[k] + 1), (1 - wt[k]) * wn[k]),
+                       (row(it[k] + 1, jn[k] + 1), wt[k] * wn[k]))
+            positive = np.all([c > 0.0 for c, _ in corners], axis=0)
+            per_cm[:, k] = np.where(
+                positive,
+                np.exp(sum(w * np.log(np.maximum(c, tiny)) for c, w in corners)),
+                sum(w * c for c, w in corners),
+            )
+        scale = np.where(density < self.densities[0], density / self.densities[0], 1.0)
+        return per_cm * scale[np.newaxis, :] / (2.0 * PI * LIGHT_SPEED)
+
+
 def atomic_database_with_mg_i_b_he_unified_profile(
     database: AtomicDatabase, path: str | Path,
 ) -> AtomicDatabase:
@@ -4251,7 +4323,7 @@ def atomic_database_with_mg_i_b_he_unified_profile(
     if ion is None:
         return database
     levels = {level.index: level for level in ion.levels}
-    tables: dict[int, MgIbHeUnifiedProfile] = {}
+    tables: dict[int, "MgIbHeUnifiedProfile | MgIbHeComputedProfile"] = {}
     changed, attached = [], 0
     for transition in ion.transitions:
         lower = levels.get(transition.lower_index)
@@ -4264,7 +4336,8 @@ def atomic_database_with_mg_i_b_he_unified_profile(
         ):
             j = int(round((lower.statistical_weight - 1.0) / 2.0))
             if j not in tables:
-                tables[j] = MgIbHeUnifiedProfile(path, j)
+                tables[j] = (MgIbHeComputedProfile(path, j) if str(path).endswith(".npz")
+                             else MgIbHeUnifiedProfile(path, j))
             transition = replace(transition, helium_unified_profile=tables[j])
             attached += 1
         changed.append(transition)
