@@ -280,6 +280,7 @@ def synthesize_balmer_spectrum(
     ) = None,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
+    na_i_he_profile_table: "UnifiedIonicHeProfileGrid | None" = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     ca_ii_helium_impact_scale: float = 1.0,
@@ -518,6 +519,7 @@ def synthesize_balmer_spectrum(
             metal_state,
             mg_he_red_wing_table=mg_he_red_wing_table,
             mg_ii_he_profile_table=mg_ii_he_profile_table,
+            na_i_he_profile_table=na_i_he_profile_table,
             ca_i_he_profile_table=ca_i_he_profile_table,
             ca_ii_he_profile_table=ca_ii_he_profile_table,
             ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
@@ -883,6 +885,7 @@ def synthesize_hydrogen_spectrum(
     ) = None,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
+    na_i_he_profile_table: "UnifiedIonicHeProfileGrid | None" = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     ca_ii_helium_impact_scale: float = 1.0,
@@ -937,6 +940,7 @@ def synthesize_hydrogen_spectrum(
         ),
         mg_he_red_wing_table=mg_he_red_wing_table,
         mg_ii_he_profile_table=mg_ii_he_profile_table,
+        na_i_he_profile_table=na_i_he_profile_table,
         ca_i_he_profile_table=ca_i_he_profile_table,
         ca_ii_he_profile_table=ca_ii_he_profile_table,
         ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
@@ -991,6 +995,7 @@ def synthesize_helium_spectrum(
     ) = None,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
+    na_i_he_profile_table: "UnifiedIonicHeProfileGrid | None" = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     ca_ii_helium_impact_scale: float = 1.0,
@@ -1170,6 +1175,7 @@ def synthesize_helium_spectrum(
             metal_state,
             mg_he_red_wing_table=mg_he_red_wing_table,
             mg_ii_he_profile_table=mg_ii_he_profile_table,
+            na_i_he_profile_table=na_i_he_profile_table,
             ca_i_he_profile_table=ca_i_he_profile_table,
             ca_ii_he_profile_table=ca_ii_he_profile_table,
             ca_ii_helium_impact_scale=ca_ii_helium_impact_scale,
@@ -1422,6 +1428,10 @@ def synthesize_helium_spectrum(
             "mg_ii_he_unified_profile": (
                 mg_ii_he_profile_table.source
                 if mg_ii_he_profile_table is not None else "disabled"
+            ),
+            "na_i_he_unified_profile": (
+                na_i_he_profile_table.source
+                if na_i_he_profile_table is not None else "disabled"
             ),
             "mg_i_he_unified_profile": (
                 mg_he_red_wing_table.source

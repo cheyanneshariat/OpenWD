@@ -2087,6 +2087,7 @@ def radiative_equilibrium_helium_atmosphere(
     depth_concentration: float = 0.0,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
+    na_i_he_profile_table: "UnifiedIonicHeProfileGrid | None" = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     helium_reos3_table: HeliumREOS3Table | None = None,
@@ -2655,6 +2656,9 @@ def radiative_equilibrium_helium_atmosphere(
     if mg_ii_he_profile_table is not None:
         step = max(1, mg_ii_he_profile_table.wavelength_angstrom.size // 400)
         unified_profile_grids.append(mg_ii_he_profile_table.wavelength_angstrom[::step])
+    if na_i_he_profile_table is not None:
+        step = max(1, na_i_he_profile_table.wavelength_angstrom.size // 400)
+        unified_profile_grids.append(na_i_he_profile_table.wavelength_angstrom[::step])
     if ca_i_he_profile_table is not None:
         for local_wavelength in ca_i_he_profile_table.wavelength_by_density.values():
             step = max(1, local_wavelength.size // 100)
@@ -2840,6 +2844,7 @@ def radiative_equilibrium_helium_atmosphere(
                     metal_state,
                     mg_he_red_wing_table=mg_he_red_wing_table,
                     mg_ii_he_profile_table=mg_ii_he_profile_table,
+                    na_i_he_profile_table=na_i_he_profile_table,
                     ca_i_he_profile_table=ca_i_he_profile_table,
                     ca_ii_he_profile_table=ca_ii_he_profile_table,
                     minimum_oscillator_strength=minimum_metal_oscillator_strength,

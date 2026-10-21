@@ -298,6 +298,10 @@ class DZConfig:
     # Lorentzian is 3-20x too weak.
     mg_ii_he_unified_profile: bool = False
     ca_ii_he_unified_profile: bool = False
+    # Unified Na I D + He profiles computed from the Dell'Angelo et al. (2012)
+    # potentials (Allard et al. 2023 figures), same grid and dense-fluid
+    # treatment as the Mg II/Ca II tables.  False keeps the impact Lorentzian.
+    na_i_he_unified_profile: bool = False
     # Legacy import switch for bare/custom atoms. Independently corroborated
     # Si II additions are already in the default reader; this switch neither
     # removes them nor appends the former unfiltered supplement to that atom.
@@ -1691,6 +1695,12 @@ def compute_dz(
 
         data.require(data.mg_ii_he_unified_profiles)
         mg_ii_he = UnifiedIonicHeProfileGrid(data.mg_ii_he_unified_profiles)
+    na_i_he = None
+    if config.na_i_he_unified_profile and "Na" in elements:
+        from ..metals import UnifiedIonicHeProfileGrid
+
+        data.require(data.na_i_he_unified_profiles)
+        na_i_he = UnifiedIonicHeProfileGrid(data.na_i_he_unified_profiles)
     if config.unified_metal_helium_profiles == "production" and "Ca" in elements:
         data.require(
             data.ca_i_he_density_profiles,
@@ -1780,6 +1790,7 @@ def compute_dz(
             metal_topbase_photoionization_database=topbase_photoionization,
             mg_he_red_wing_table=mg_he,
             mg_ii_he_profile_table=mg_ii_he,
+            na_i_he_profile_table=na_i_he,
             ca_ii_he_profile_table=ca_ii_he,
             ca_i_he_profile_table=ca_i_he,
             helium_reos3_table=helium_reos3,
@@ -1848,6 +1859,7 @@ def compute_dz(
         metal_topbase_photoionization_database=topbase_photoionization,
         mg_he_red_wing_table=mg_he,
         mg_ii_he_profile_table=mg_ii_he,
+        na_i_he_profile_table=na_i_he,
         ca_ii_he_profile_table=ca_ii_he,
         ca_i_he_profile_table=ca_i_he,
         include_dense_helium_metal_ionization=True,
@@ -1900,6 +1912,9 @@ def compute_dz(
             ),
             "ca_ii_he_unified_profile": (
                 ca_ii_he.source if ca_ii_he is not None else False
+            ),
+            "na_i_he_unified_profile": (
+                na_i_he.source if na_i_he is not None else False
             ),
             "si_ii_kurucz_transitions": config.si_ii_kurucz_transitions,
             "maximum_metal_charge": config.maximum_metal_charge,

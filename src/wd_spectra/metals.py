@@ -1480,6 +1480,10 @@ class MgIIHeProfileTable:
 class UnifiedIonicHeProfileGrid:
     """Resonance-doublet + He unified-profile cross sections on a (T, n_He) grid.
 
+    ``complete_line``: the table resolves the impact core (bin averages), so
+    at n_He >= 1e20 it is the whole line rather than an envelope over the
+    ordinary Voigt profile.
+
     Tables computed with the OpenWD unified-profile engine (Anderson-Talman
     autocorrelation with Allard's modulated dipole, straight paths,
     Maxwell-averaged) from ab initio ion-He potentials; see the ``source``
@@ -1497,6 +1501,8 @@ class UnifiedIonicHeProfileGrid:
     the binary (first-order) far-wing law.  Its impact core is not meant to
     replace the ordinary Voigt core: callers merge by envelope.
     """
+
+    complete_line = True
 
     def __init__(self, path: str | Path):
         with np.load(path, allow_pickle=False) as table:
@@ -4256,6 +4262,7 @@ class MgIbHeComputedProfile:
     """
 
     window_angstrom = 3000.0
+    complete_line = True
 
     def __init__(self, path, component: int) -> None:
         with np.load(path, allow_pickle=False) as table:
@@ -8225,6 +8232,24 @@ def hydrogenic_metal_shell_mean_radius_cm(
     return BOHR_RADIUS_CM * (5.0 * effective_n**2 + 1.0) / (4.0 * core_charge)
 
 
+UNIFIED_COMPLETE_LINE_MINIMUM_HELIUM_DENSITY = 1.0e20
+
+
+def _computed_table_coverage(table, wavelength) -> FloatArray:
+    """Wavelengths a computed unified table describes completely (core included).
+
+    Figure-recovered bridges (clipped cores, limited conditions) are never
+    complete: they stay merged with the ordinary line by the envelope.
+    """
+    if not getattr(table, "complete_line", False):
+        return np.zeros(np.size(wavelength), dtype=bool)
+    grid = table.wavelength_angstrom
+    return (np.asarray(wavelength) >= grid[0]) & (np.asarray(wavelength) <= grid[-1])
+
+# Hydrogenic mean radius a0 (5 n*^2 + 1) / 4 of an n* = 4 neutral level.
+NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM = 20.25 * BOHR_RADIUS_CM
+
+
 def metal_neutral_hard_sphere_occupation_probability(
     level_radius_cm: ArrayLike,
     neutral_perturber_number_density: Mapping[str, ArrayLike],
@@ -8234,6 +8259,14 @@ def metal_neutral_hard_sphere_occupation_probability(
 
     This is ``exp[-4 pi/3 sum_j n_j (r_i+r_j)^3]`` in the low-excitation
     approximation, where neutral perturbers reside in their ground states.
+    It is applied only to Rydberg levels, mean radius at least
+    ``NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM`` (n* = 4 of a neutral).  A
+    neutral atom inside a low-lying orbital does not destroy the level: it
+    forms a quasi-molecule whose shifted, broadened transitions are the
+    collision-broadened line (unified/impact theory conserves the oscillator
+    strength).  Applied to ground and low excited states, the excluded volume
+    of dense He (cool DZ photospheres, n_He ~ 1e22) would leave Ca II with
+    U ~ 0.2 < g0 and remove lines such as Ca I 4227 that cool DZs show.
     """
 
     level_radius = np.asarray(level_radius_cm, dtype=np.float64)
@@ -8261,7 +8294,8 @@ def metal_neutral_hard_sphere_occupation_probability(
         ):
             raise ValueError("neutral perturber densities and radii must be physical")
         exponent += density * (radius + perturber_radius) ** 3
-    return np.exp(-np.minimum((4.0 * PI / 3.0) * exponent, 745.0))
+    rydberg = radius >= NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM
+    return np.where(rydberg, np.exp(-np.minimum((4.0 * PI / 3.0) * exponent, 745.0)), 1.0)
 
 
 def bulk_metal_neutral_perturber_data(
@@ -8883,6 +8917,7 @@ def metal_line_mass_absorption_coefficient(
     *,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
+    na_i_he_profile_table: "UnifiedIonicHeProfileGrid | None" = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     minimum_oscillator_strength: float = 1.0e-4,
@@ -9037,6 +9072,22 @@ def metal_line_mass_absorption_coefficient(
             dissolution_elements is None or ion.element in dissolution_elements
         )
 
+    def table_level_occupation(ion: AtomicIon, level) -> FloatArray:
+        """Occupation probability of a table-path lower level.
+
+        The same factor the line-list path applies to its lower populations,
+        so that n g w exp(-E/kT) / U sums to the ion density with the
+        occupation-weighted partition function U.
+        """
+        if not (metal_state.metal_level_dissolution and dissolves(ion)):
+            return np.ones(atmosphere.n_depth)
+        return metal_rydberg_level_occupation_probability(
+            ion, level, ionic_microfield_charge_sum, atmosphere.temperature,
+            correlated_microfields=rydberg_correlated_microfields,
+            neutral_perturber_number_density=rydberg_neutral_density,
+            neutral_perturber_radius_cm=rydberg_neutral_radius,
+        )
+
     profile_support_elements = (
         None
         if profile_edge_optical_depth_elements is None
@@ -9104,6 +9155,8 @@ def metal_line_mass_absorption_coefficient(
         replacement_ordinary["MgII"] = np.zeros_like(result)
     if ca_ii_he_profile_table is not None:
         replacement_ordinary["CaII"] = np.zeros_like(result)
+    if na_i_he_profile_table is not None:
+        replacement_ordinary["NaI"] = np.zeros_like(result)
     if transition_keys is not None:
         allowed = frozenset(
             (
@@ -9174,6 +9227,12 @@ def metal_line_mass_absorption_coefficient(
         atmosphere.helium_lte_state.neutral_he_density
         if atmosphere.helium_lte_state is not None else np.zeros(atmosphere.n_depth)
     )
+    # Computed unified tables resolve the impact core from n_He = 1e20 up
+    # (0.1-A cells near the lines; the impact HWHM exceeds the Doppler width).
+    # There the unified profile is the complete line: a Voigt core with an
+    # impact He width would restore absorption at line centre that the
+    # quasi-molecular satellites have already moved into the wings.
+    unified_complete_line = helium_density >= UNIFIED_COMPLETE_LINE_MINIMUM_HELIUM_DENSITY
     if metal_state.reference_species == "H":
         hydrogen_density = atmosphere.neutral_h_density
     elif (
@@ -9254,6 +9313,7 @@ def metal_line_mass_absorption_coefficient(
         "CaI": empty_profile_batch(),
         "MgII": empty_profile_batch(),
         "CaII": empty_profile_batch(),
+        "NaI": empty_profile_batch(),
         "CaI_reference": empty_profile_batch(),
         "HeUnified": empty_profile_batch(),
     }
@@ -9534,6 +9594,7 @@ def metal_line_mass_absorption_coefficient(
             "CaI" if is_ca_i_resonance and ca_i_he_profile_table is not None
             else "MgII" if is_mg_ii_resonance and mg_ii_he_profile_table is not None
             else "CaII" if is_ca_ii_resonance and ca_ii_he_profile_table is not None
+            else "NaI" if is_na_i_d_resonance and na_i_he_profile_table is not None
             else "HeUnified"
             if line.helium_unified_profile is not None and helium_present
             else None
@@ -10024,12 +10085,15 @@ def metal_line_mass_absorption_coefficient(
         flush_profile_batch(batch_key)
     if unified_he_lines:
         unified = np.zeros_like(result)
+        complete_wavelengths = np.zeros(wavelength.size, dtype=bool)
         for center, oscillator_strength, population, gamma_other, table in (
             unified_he_lines
         ):
             window = np.abs(wavelength - center) < table.window_angstrom
             if not np.any(window):
                 continue
+            if getattr(table, "complete_line", False):
+                complete_wavelengths |= window
             detuning = 1.0e8 / wavelength[window] - 1.0e8 / center
             profile = table.profile(
                 detuning, atmosphere.temperature, helium_density, gamma_other
@@ -10042,7 +10106,11 @@ def metal_line_mass_absorption_coefficient(
         # As for the Mg II and Ca II tables, merge with the ordinary Voigt
         # opacity by an envelope: the Doppler core comes from the Voigt
         # profile, the collision wings from the unified profile.
-        result += np.maximum(unified, replacement_ordinary["HeUnified"])
+        result += np.where(
+            complete_wavelengths[:, np.newaxis] & unified_complete_line[np.newaxis, :],
+            unified,
+            np.maximum(unified, replacement_ordinary["HeUnified"]),
+        )
     if mg_ii_he_profile_table is not None and "Mg" in line_abundances:
         mg_ii = atomic_database.ions.get(("Mg", 1))
         if mg_ii is not None and metal_state.ion_number_density["Mg"].shape[0] > 1:
@@ -10057,6 +10125,7 @@ def metal_line_mass_absorption_coefficient(
                 )
                 / partition
             )
+            ground_population = ground_population * table_level_occupation(mg_ii, ground)
             profile_cross_section = mg_ii_he_profile_table.cross_section(
                 wavelength, helium_density, temperature=atmosphere.temperature
             )
@@ -10079,8 +10148,14 @@ def metal_line_mass_absorption_coefficient(
             # also fall below the ordinary impact core; a computed table's
             # bin-averaged core is likewise lower than the Doppler-broadened
             # Voigt core.  Preserve the larger opacity everywhere.
-            combined = np.maximum(
-                unified_opacity, replacement_ordinary["MgII"]
+            complete = (
+                unified_complete_line[np.newaxis, :]
+                & _computed_table_coverage(mg_ii_he_profile_table, wavelength)[:, np.newaxis]
+            )
+            combined = np.where(
+                complete,
+                unified_opacity,
+                np.maximum(unified_opacity, replacement_ordinary["MgII"]),
             )
             result += combined
     if ca_i_he_profile_table is not None and "Ca" in line_abundances:
@@ -10097,6 +10172,7 @@ def metal_line_mass_absorption_coefficient(
                 )
                 / partition
             )
+            ground_population = ground_population * table_level_occupation(ca_i, ground)
             profile_cross_section = ca_i_he_profile_table.cross_section(
                 wavelength,
                 helium_density,
@@ -10162,6 +10238,7 @@ def metal_line_mass_absorption_coefficient(
                 )
                 / partition
             )
+            ground_population = ground_population * table_level_occupation(ca_ii, ground)
             profile_cross_section = ca_ii_he_profile_table.cross_section(
                 wavelength,
                 helium_density,
@@ -10182,8 +10259,51 @@ def metal_line_mass_absorption_coefficient(
             )
             # As for Mg II: the envelope keeps the Doppler/Voigt core where a
             # tabulated (clipped or bin-averaged) unified core lies below it.
-            combined = np.maximum(
-                unified_opacity, replacement_ordinary["CaII"]
+            complete = (
+                unified_complete_line[np.newaxis, :]
+                & _computed_table_coverage(ca_ii_he_profile_table, wavelength)[:, np.newaxis]
+            )
+            combined = np.where(
+                complete,
+                unified_opacity,
+                np.maximum(unified_opacity, replacement_ordinary["CaII"]),
             )
             result += combined
+    if na_i_he_profile_table is not None and "Na" in line_abundances:
+        na_i = atomic_database.ions.get(("Na", 0))
+        if na_i is not None:
+            ground = min(na_i.levels, key=lambda level: level.energy_wavenumber)
+            ground_population = (
+                metal_state.ion_number_density["Na"][0]
+                * ground.statistical_weight
+                * np.exp(
+                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
+                    / (BOLTZMANN * atmosphere.temperature)
+                )
+                / metal_state.partition_function[("Na", 0)]
+            ) * table_level_occupation(na_i, ground)
+            stimulated = -np.expm1(
+                -PLANCK * LIGHT_SPEED
+                / (
+                    wavelength[:, np.newaxis] * 1.0e-8
+                    * BOLTZMANN * atmosphere.temperature[np.newaxis, :]
+                )
+            )
+            unified_opacity = (
+                na_i_he_profile_table.cross_section(
+                    wavelength, helium_density, temperature=atmosphere.temperature
+                )
+                * ground_population[np.newaxis, :]
+                * stimulated
+                / atmosphere.mass_density[np.newaxis, :]
+            )
+            complete = (
+                unified_complete_line[np.newaxis, :]
+                & _computed_table_coverage(na_i_he_profile_table, wavelength)[:, np.newaxis]
+            )
+            result += np.where(
+                complete,
+                unified_opacity,
+                np.maximum(unified_opacity, replacement_ordinary["NaI"]),
+            )
     return result

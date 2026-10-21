@@ -185,6 +185,15 @@ class ModelData:
         )
 
     @property
+    def na_i_he_unified_profiles(self) -> Path:
+        """Computed Na I D--He unified-profile table (T, n_He grid)."""
+
+        return (
+            self.cache
+            / "metal-opacity/unified-metal-he/nai-d-he-unified-profiles.npz"
+        )
+
+    @property
     def mg_ii_he_unified_profiles(self) -> Path:
         """Computed Mg II h&k--He unified-profile table (T, n_He grid)."""
 
