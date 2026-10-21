@@ -4256,9 +4256,18 @@ class MgIbHeComputedProfile:
     maximum moves from the line to ~480 cm^-1 at 3e21 and ~1800 cm^-1 at 1e22, which
     the 4e21-limited figure bridge cannot represent.  Profiles carry their physical
     band area (R-dependent dipoles).  The same shape serves all three J components.
+    One upper 4s curve serves both lower components (V_4s = V_Pi + dV_Pi; the Sigma
+    difference potential is rebuilt as V_4s - V_Sigma inside 6.4 a0, where Allard's
+    Fig. 3 Sigma curve leaves its frame).
     log profile is interpolated bilinearly in (log T, log n_He); T is held at the grid
     edges, n_He above 1e23 is held, and below 1e19 the profile scales as n_He (binary
-    wings; the Voigt core supplies the line centre through the envelope merge).
+    wings; the Voigt core supplies the line centre through the envelope merge).  Because
+    the peaks move with density, geometric interpolation loses band area between nodes
+    (~10% median for 0.25-dex nodes); the table therefore uses 0.05-dex density nodes and
+    500-K temperature nodes below 7000 K (median loss 0.3%, worst 3.6%).
+    Above n_He = 1e20 the table replaces the Voigt line entirely (complete_line), so
+    radiative, Stark and neutral-H damping are not added; there the He impact width
+    (>= 5 cm^-1) exceeds them by more than an order of magnitude.
     """
 
     window_angstrom = 3000.0
@@ -4279,7 +4288,7 @@ class MgIbHeComputedProfile:
     def profile(self, detuning_cm1, temperature, helium_density, gamma_other):
         """Profile per unit angular frequency [s], shape (n_detuning, n_depth)."""
 
-        del gamma_other          # the Voigt core carries the other widths (envelope merge)
+        del gamma_other          # below 1e20 the Voigt core carries them; above, He dominates (class doc)
         density = np.atleast_1d(np.asarray(helium_density, dtype=np.float64))
         t = np.broadcast_to(np.asarray(temperature, dtype=np.float64), density.shape)
         detuning = np.asarray(detuning_cm1, dtype=np.float64)
