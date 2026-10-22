@@ -69,6 +69,8 @@ def test_ca_ii_scattering_includes_radiative_branching_and_electron_destruction(
     )
     assert np.all(low_density[(1, 4)].probability == pytest.approx(100.0 / 120.0))
     assert np.all(low_density[(1, 5)].probability == pytest.approx(200.0 / 240.0))
+    assert low_density[(1, 4)].wavelength_vacuum_angstrom == 3969.6
+    assert low_density[(1, 5)].wavelength_vacuum_angstrom == 3934.8
 
     high_density = ca_ii_resonance_scattering_probabilities(
         replace(
@@ -117,10 +119,12 @@ def test_ca_ii_fine_structure_transfer_is_not_counted_as_destruction(tmp_path: P
         )
 
 
-def _isothermal_crd_inputs(probability: float):
+def _isothermal_crd_inputs(
+    probability: float, *, n_depth: int = 40, line_half_width: float = 0.5
+):
     from wd_spectra.cool_metal_nlte import ResonanceScatteringProbability
 
-    atmosphere = gray_helium_atmosphere(8000.0, 8.0, n_depth=40)
+    atmosphere = gray_helium_atmosphere(8000.0, 8.0, n_depth=n_depth)
     atmosphere = replace(atmosphere, temperature=np.full(atmosphere.n_depth, 8000.0))
     wavelength = np.linspace(3800.0, 4100.0, 1501)
     centers = {(1, 4): 3969.6, (1, 5): 3934.8}
@@ -128,7 +132,8 @@ def _isothermal_crd_inputs(probability: float):
 
     def line_extinction(grid):
         return {
-            key: 1.0e3 * 0.5 / np.pi / ((grid[:, None] - center) ** 2 + 0.25)
+            key: 1.0e3 * line_half_width / np.pi
+            / ((grid[:, None] - center) ** 2 + line_half_width**2)
             * np.ones(atmosphere.n_depth)[None, :]
             for key, center in centers.items()
         }
@@ -139,6 +144,7 @@ def _isothermal_crd_inputs(probability: float):
             resonant_einstein_a=1.0,
             total_radiative_rate=1.0,
             source="test",
+            wavelength_vacuum_angstrom=centers[key],
             fine_structure_partner=other,
             fine_structure_transfer=np.zeros(atmosphere.n_depth),
         )
@@ -163,6 +169,29 @@ def test_ca_ii_crd_source_recovers_lte_without_scattering():
     np.testing.assert_allclose(sources[(1, 5)], planck, rtol=1e-12)
 
 
+@pytest.mark.parametrize("wavelength", [
+    np.arange(3800.0, 4100.1, 20.0),
+    np.array([3934.0, 3934.8, 3935.0, 3936.0]),
+])
+def test_ca_ii_thermal_source_uses_atomic_centers_on_coarse_or_single_line_grid(wavelength):
+    from wd_spectra.cool_metal_nlte import (
+        _planck_frequency,
+        ca_ii_crd_resonance_source_functions,
+    )
+
+    atmosphere, _, _, lines, probabilities = _isothermal_crd_inputs(0.0)
+    absorption = np.full((wavelength.size, atmosphere.n_depth), 0.01) + sum(
+        lines(wavelength).values()
+    )
+    sources = ca_ii_crd_resonance_source_functions(
+        atmosphere, wavelength, absorption, np.zeros_like(absorption),
+        lines, probabilities, n_angle=3,
+    )
+    for key, center in (((1, 4), 3969.6), ((1, 5), 3934.8)):
+        expected = _planck_frequency(np.asarray([center]), atmosphere.temperature)[0]
+        np.testing.assert_allclose(sources[key], expected, rtol=1e-12)
+
+
 def test_ca_ii_crd_source_follows_sqrt_epsilon_surface_law():
     from wd_spectra.cool_metal_nlte import (
         _planck_frequency,
@@ -183,3 +212,61 @@ def test_ca_ii_crd_source_follows_sqrt_epsilon_surface_law():
     assert 0.3 * np.sqrt(epsilon) < ratio[0] < 3.0 * np.sqrt(epsilon)
     assert ratio[-1] == pytest.approx(1.0, rel=0.02)
     assert np.all(np.diff(ratio) >= -1e-12)
+
+
+@pytest.mark.parametrize("probability", [0.9, 0.99])
+def test_ca_ii_crd_quadrature_does_not_depend_on_requested_output_samples(probability):
+    from wd_spectra.cool_metal_nlte import ca_ii_crd_resonance_source_functions
+
+    atmosphere, _, _, lines, probabilities = _isothermal_crd_inputs(
+        probability, n_depth=8
+    )
+    grids = (
+        np.arange(3800.0, 4100.1, 20.0),
+        np.linspace(3800.0, 4100.0, 1501),
+        np.array([3934.0, 3934.8, 3935.0, 3936.0]),
+    )
+    results = []
+    for wave in grids:
+        # A constant background removes background-interpolation error.
+        # Only the caller samples and their former quadrature weights vary.
+        absorption = np.full((wave.size, atmosphere.n_depth), 0.01) + sum(
+            lines(wave).values()
+        )
+        results.append(ca_ii_crd_resonance_source_functions(
+            atmosphere, wave, absorption, np.zeros_like(absorption),
+            lines, probabilities, n_angle=3,
+        ))
+    for result in results[1:]:
+        for key in probabilities:
+            np.testing.assert_allclose(
+                result[key], results[0][key], rtol=1e-12, atol=0.0
+            )
+
+
+@pytest.mark.parametrize("line_half_width", [0.02, 0.5, 10.0])
+@pytest.mark.parametrize("probability", [0.9, 0.99])
+def test_ca_ii_crd_quadrature_refinement_reduces_source_error(
+    line_half_width, probability
+):
+    from wd_spectra.cool_metal_nlte import ca_ii_crd_resonance_source_functions
+
+    atmosphere, _, _, lines, probabilities = _isothermal_crd_inputs(
+        probability, n_depth=8, line_half_width=line_half_width
+    )
+    wave = np.arange(3800.0, 4100.1, 20.0)
+    absorption = np.full((wave.size, atmosphere.n_depth), 0.01) + sum(
+        lines(wave).values()
+    )
+    results = [ca_ii_crd_resonance_source_functions(
+        atmosphere, wave, absorption, np.zeros_like(absorption),
+        lines, probabilities, n_angle=3, points_per_side=points,
+    ) for points in (80, 160, 320, 640)]
+    errors = [max(
+        float(np.max(np.abs(result[key] / results[-1][key] - 1.0)))
+        for key in probabilities
+    ) for result in results[:-1]]
+    # This checks convergence at fixed wing extent and atmospheric depths;
+    # it does not establish either extent or depth convergence.
+    assert errors[1] < 0.4 * errors[0]
+    assert errors[2] < 0.4 * errors[1]

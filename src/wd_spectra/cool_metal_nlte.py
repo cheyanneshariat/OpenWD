@@ -34,6 +34,7 @@ class ResonanceScatteringProbability:
     resonant_einstein_a: float
     total_radiative_rate: float
     source: str
+    wavelength_vacuum_angstrom: float
     fine_structure_partner: tuple[int, int] | None = None
     fine_structure_transfer: FloatArray | None = None
 
@@ -146,6 +147,7 @@ def ca_ii_resonance_scattering_probabilities(
                     "CHIANTI Ca II electron collision strengths; radiative "
                     "branching from the supplied atomic database"
                 ),
+                wavelength_vacuum_angstrom=transition.wavelength_vacuum_angstrom,
                 fine_structure_partner=(partner.lower_index, partner.upper_index),
                 fine_structure_transfer=np.clip(
                     electron_density * fine_structure_coefficient / total_rate,
@@ -198,10 +200,14 @@ def ca_ii_crd_resonance_source_functions(
     using the exact linear-formal Lambda operator of every frequency.  The
     frequency integral uses a dedicated grid that resolves each Doppler core
     and extends ``half_width_angstrom`` into the damping wings; the line
-    extinction is evaluated exactly there, while the smooth background is
-    interpolated from the caller's opacity (held at the nearest edge outside
-    its range).  Returned source functions are per unit frequency, one
-    ``(n_depth,)`` array per line key.
+    extinction is evaluated exactly there. Line centers come from the atomic
+    transitions in ``probabilities``, even when the caller does not sample
+    either core. The quadrature depends only on those centers and its stated
+    resolution, not on the requested output samples. The smooth background
+    is interpolated from the caller's opacity (held at the nearest edge
+    outside its range), so background sampling and wing coverage still need
+    separate convergence checks. Returned source functions are per unit
+    frequency, one ``(n_depth,)`` array per line key.
     """
 
     from ._linear_scattering import linear_lambda_operator
@@ -214,18 +220,17 @@ def ca_ii_crd_resonance_source_functions(
     temperature = np.asarray(atmosphere.temperature, dtype=np.float64)
     n_depth = temperature.size
 
-    user_lines = line_extinction(wavelength)
     centers = {
-        key: float(wavelength[int(np.argmax(np.max(user_lines[key], axis=1)))])
-        for key in keys
+        key: float(probabilities[key].wavelength_vacuum_angstrom) for key in keys
     }
-    # Grid: symmetric log-spaced offsets about each centre plus the caller's
-    # own points inside the window.
+    if any(not np.isfinite(center) or center <= 0.0 for center in centers.values()):
+        raise ValueError("Ca II line centers must be finite positive vacuum wavelengths")
+    user_lines = line_extinction(wavelength)
+    # Keep the integration rule independent of the requested output grid.
+    # Adding output samples must not change an otherwise identical source
+    # calculation merely by changing its trapezoid weights.
     offsets = np.geomspace(1.0e-3, half_width_angstrom, points_per_side)
-    nodes = [wavelength[
-        (wavelength > min(centers.values()) - half_width_angstrom)
-        & (wavelength < max(centers.values()) + half_width_angstrom)
-    ]]
+    nodes = []
     for center in centers.values():
         nodes.extend((center - offsets, center + offsets, np.asarray([center])))
     grid = np.unique(np.concatenate(nodes))
