@@ -1,0 +1,85 @@
+# Metal population consistency
+
+This follow-up to the cool-DZ release (PR #38) makes the level populations
+used by opacity consistent with the partition functions that formed each
+ion abundance. It retains the released continuum tables, line profiles,
+ionization shifts and Rydberg-only neutral occupation prescription.
+
+## Ionization in a helium host
+
+Neutral-He excluded volume applies only to levels with mean radius at least
+`NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM`, as in PR #38. Low levels retain
+their neutral reservoir; charged occupation probabilities still apply. The
+Blouin dense-He ionization shift and the Saha partition ratio are unchanged.
+The original PR #37's compensating neutral ground-state ratio was needed by
+its all-level excluded-volume prescription. That prescription was superseded
+by PR #38, so the compensation is omitted here. Applying it to the released
+Rydberg-only partitions would add a spurious ground-state correction.
+
+## Populations used by opacity
+
+The stored partition functions remain absolute sums. A native bound level's
+population uses the same statistical weight, Boltzmann factor and occupation
+factor as its contribution to that partition. Summing the levels included in
+the partition therefore recovers the ion abundance. The native 0.1-eV
+partition cutoff is unchanged. Autoionizing resonances retain their separate
+historical LTE approximation and are not included in this conservation claim.
+
+Ordinary lines, Verner ground terms, special Mg II/Ca I/Ca II/Na I profiles and the
+O I dissolved-series lower populations share this calculation. An optional
+profile-dissolution switch cannot disable the occupation factor needed to
+normalize the lower population. The trace and bulk state builders currently
+use different charged-perturber conventions; each consumer uses the one that
+formed its partition rather than silently substituting another density.
+
+## External photoionization levels
+
+TOPbase source indices are not Stout indices. A uniquely identified native
+fine-structure level or complete LS term uses the corresponding native level
+populations. Each channel keeps its own opening energy; an excited-parent
+channel threshold is not the lower state's binding energy.
+
+Some source entries are aggregate model levels without constituent identities.
+The default `effective-level` policy retains their supplied excitation and
+aggregate statistical weight, with hydrogenic survival calculated from the
+true lower binding energy and the existing shell-mean neutral radius. This
+is an explicit representative-level approximation. It does not recover the
+unknown constituents or guarantee that aggregate populations sum to the
+native partition function. The [TLUSTY guide, section
+8.1](https://tlusty.oca.eu/tlusty/Tlusty2002/pdf/tlguide200.pdf) distinguishes
+such model levels from constituent-resolved populations and describes the
+limited accuracy of hydrogenic occupation for complex ions.
+
+`TOPbasePhotoionizationDatabase.unmapped_population_policy="strict"` rejects
+unresolved nonideal levels for audits. No channel is silently omitted. Model
+and spectrum metadata record the policy, section counts, and its limitation.
+Counts describe photoionization sections, not distinct states: several channels
+can share a lower state. The ideal-state source-model convention is unchanged.
+
+## Repairs already released in PR #38
+
+The RAP absolute excitation/photon-grid repair and fixed Ca II source
+quadrature already ship in PR #38. This follow-up retains them without
+reapplying their numerical changes. In particular, RAP absolute photon
+support is not clipped at a representative binding. Such aggregate tables
+do not define one physical edge, so an explicit dissolved-pseudocontinuum
+request is rejected rather than assigned a guessed limit.
+
+The old PR #37 comparison figures predate the cool-DZ release and do not
+qualify this combined candidate. They are omitted from the updated change.
+Saved-structure comparisons against current main must measure this remaining
+population correction separately from the already released RAP/profile work.
+
+## What the tests establish
+
+Ground-only Saha tests evaluate the reference independently. Separate opacity
+tests hold ion density fixed, preventing cancellation between ionization and
+opacity errors. Further checks cover dilute and disabled-correction limits,
+higher ion stages, charge balance, native included-level sums, ground terms,
+source-local IDs, excited-parent channels and the pseudocontinuum edge.
+
+These are implementation checks, not validation of all cool-DZ atmospheres or
+of inferred abundances. Saved-structure comparisons isolate opacity changes;
+new cold-start equilibrium and resolution checks remain distinct requirements.
+Frozen spectra and their acceptance tolerances must not be changed merely to
+make these source changes pass. Earlier spectra retain their original versions.

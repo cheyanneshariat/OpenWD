@@ -1210,6 +1210,9 @@ class MetalLTEState:
     # opacity applies the same level survival so populations stay normalized.
     neutral_perturber_number_density: Mapping[str, FloatArray] | None = None
     neutral_perturber_radius_cm: Mapping[str, float] | None = None
+    # The population atom, not an opacity-table index namespace. Retain it
+    # for matching external photoionization terms to the partition levels.
+    atomic_database: AtomicDatabase | None = None
 
 
 @dataclass(frozen=True)
@@ -5372,8 +5375,10 @@ def metal_lte_state(
     probabilities for charged Q-MHD microfields and ground-state neutral He
     perturbers.  The partitions depend on the electron density, so they are
     iterated with charge neutrality to self-consistency.  The state is then
-    marked for level dissolution, and line opacity applies the same survival
-    probabilities.
+    marked for level dissolution, and opacity applies the same survival
+    probabilities. Neutral-He excluded volume applies only to Rydberg
+    levels, retaining the released low-level reservoir. No additional
+    ground-state compensation is applied to the Saha partition ratio.
     """
 
     if reference_species == "auto":
@@ -5434,7 +5439,6 @@ def metal_lte_state(
     hydrogen_host_template = (
         host_state if isinstance(host_state, HydrogenLTEState) else None
     )
-
     def populations_at_electron_density(
         electron_density: FloatArray,
     ) -> tuple[
@@ -5831,6 +5835,7 @@ def metal_lte_state(
         log_hydrogen_abundance=log_hydrogen_abundance,
         trace_hydrogen_state=trace_hydrogen_state,
         metal_level_dissolution=bool(occupation_probability_partitions),
+        atomic_database=atomic_database,
         neutral_perturber_number_density=(
             None if neutral_perturbers is None else MappingProxyType(neutral_perturbers)
         ),
@@ -6024,6 +6029,7 @@ def helium_metal_lte_state_from_mass_fractions(
         composition_mode="bulk",
         mass_fraction=MappingProxyType(normalized_mass_fraction),
         total_mass_density=np.asarray(total_mass_density),
+        atomic_database=atomic_database,
     )
 
 
@@ -7931,6 +7937,50 @@ def metal_rydberg_level_occupation_probability(
     return charged_survival * neutral_survival
 
 
+def metal_lte_level_population(
+    ion: AtomicIon,
+    level: AtomicLevel,
+    metal_state: MetalLTEState,
+    temperature_kelvin: ArrayLike,
+) -> FloatArray:
+    """Return a level population with the same occupation convention as Q.
+
+    Trace-metal partitions use electron density; bulk-metal partitions use
+    the ionic microfield moment. Profile-only dissolution switches do not
+    change this normalization. Autoionizing levels retain the existing LTE
+    resonance-population approximation rather than a bound-state survival.
+    Their populations are not part of the bound-level partition sum.
+    """
+
+    temperature = np.asarray(temperature_kelvin, dtype=np.float64)
+    partition = metal_state.partition_function[(ion.element, ion.charge)]
+    weight = (
+        level.statistical_weight
+        * np.exp(-level.energy_wavenumber * WAVENUMBER_TO_ERG
+                 / (BOLTZMANN * temperature))
+    )
+    if metal_state.metal_level_dissolution and (
+        ion.ionization_energy_ev is None
+        or level.energy_wavenumber < ion.ionization_energy_ev * EV_TO_WAVENUMBER
+    ):
+        perturber_density = (
+            metal_ionic_microfield_perturber_density(metal_state)
+            if metal_state.reference_species == "metal"
+            else metal_state.electron_density
+        )
+        weight = weight * metal_rydberg_level_occupation_probability(
+            ion, level, perturber_density, temperature,
+            neutral_perturber_number_density=(
+                metal_state.neutral_perturber_number_density
+            ),
+            neutral_perturber_radius_cm=metal_state.neutral_perturber_radius_cm,
+        )
+    return (
+        metal_state.ion_number_density[ion.element][ion.charge]
+        * (weight / partition)
+    )
+
+
 def metal_rydberg_transition_survival_probability(
     ion: AtomicIon,
     lower_level: AtomicLevel,
@@ -8090,7 +8140,6 @@ def oxygen_i_dissolved_series_mass_absorption_coefficient(
     populations = metal_state.ion_number_density.get("O")
     if populations is None or populations.shape[0] == 0:
         return result
-    partition = metal_state.partition_function[("O", 0)]
     charged_perturber_density = metal_ionic_microfield_perturber_density(
         metal_state
     )
@@ -8115,14 +8164,8 @@ def oxygen_i_dissolved_series_mass_absorption_coefficient(
         ) if centers.size > 1 else centers[-1] + 1.0
         lower_population = lower_population_cache.get(lower.index)
         if lower_population is None:
-            lower_population = (
-                populations[0]
-                * lower.statistical_weight
-                * np.exp(
-                    -lower.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                )
-                / partition
+            lower_population = metal_lte_level_population(
+                ion, lower, metal_state, atmosphere.temperature,
             )
             lower_population_cache[lower.index] = lower_population
         for member_index, (center, line, effective_n) in enumerate(members):
@@ -8860,7 +8903,6 @@ def metal_bound_free_mass_absorption_coefficient(
             fit = photoionization_database.fits.get((element, ion.charge))
             if fit is None or ion.charge >= populations.shape[0]:
                 continue
-            partition = metal_state.partition_function[(element, ion.charge)]
             ion_departure = None
             if ion_departure_coefficient is not None:
                 ion_departure = np.asarray(
@@ -8877,14 +8919,8 @@ def metal_bound_free_mass_absorption_coefficient(
             ground_population = np.zeros(atmosphere.n_depth)
             departure_weighted = np.zeros(atmosphere.n_depth)
             for level in ground_term_levels(ion):
-                level_population = (
-                    populations[ion.charge]
-                    * level.statistical_weight
-                    * np.exp(
-                        -level.energy_wavenumber * WAVENUMBER_TO_ERG
-                        / (BOLTZMANN * atmosphere.temperature)
-                    )
-                    / partition
+                level_population = metal_lte_level_population(
+                    ion, level, metal_state, atmosphere.temperature,
                 )
                 level_key = (element, ion.charge, level.index)
                 if (
@@ -9079,22 +9115,6 @@ def metal_line_mass_absorption_coefficient(
     def dissolves(ion: AtomicIon) -> bool:
         return include_rydberg_dissolution and (
             dissolution_elements is None or ion.element in dissolution_elements
-        )
-
-    def table_level_occupation(ion: AtomicIon, level) -> FloatArray:
-        """Occupation probability of a table-path lower level.
-
-        The same factor the line-list path applies to its lower populations,
-        so that n g w exp(-E/kT) / U sums to the ion density with the
-        occupation-weighted partition function U.
-        """
-        if not (metal_state.metal_level_dissolution and dissolves(ion)):
-            return np.ones(atmosphere.n_depth)
-        return metal_rydberg_level_occupation_probability(
-            ion, level, ionic_microfield_charge_sum, atmosphere.temperature,
-            correlated_microfields=rydberg_correlated_microfields,
-            neutral_perturber_number_density=rydberg_neutral_density,
-            neutral_perturber_radius_cm=rydberg_neutral_radius,
         )
 
     profile_support_elements = (
@@ -9352,41 +9372,9 @@ def metal_line_mass_absorption_coefficient(
         lower_population = lower_population_cache.get(lower_key)
         if lower_population is None:
             lower = levels_by_ion[(ion.element, ion.charge)][line.lower_index]
-            partition = metal_state.partition_function[(ion.element, ion.charge)]
-            ion_population = metal_state.ion_number_density[ion.element][ion.charge]
-            lower_population = (
-                ion_population * lower.statistical_weight
-                * np.exp(
-                    -lower.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                ) / partition
+            lower_population = metal_lte_level_population(
+                ion, lower, metal_state, atmosphere.temperature,
             )
-            if (
-                metal_state.metal_level_dissolution
-                and dissolves(ion)
-                and (
-                    ion.ionization_energy_ev is None
-                    or lower.energy_wavenumber
-                    < ion.ionization_energy_ev * EV_TO_WAVENUMBER
-                )
-            ):
-                # Occupation probabilities describe bound levels.  Keep the
-                # LTE resonance-population approximation for autoionizing
-                # lower states, as in the transition-survival calculation;
-                # their negative binding energy must not erase the line.
-                lower_population = lower_population * (
-                    metal_rydberg_level_occupation_probability(
-                        ion,
-                        lower,
-                        ionic_microfield_charge_sum,
-                        atmosphere.temperature,
-                        correlated_microfields=rydberg_correlated_microfields,
-                        neutral_perturber_number_density=(
-                            rydberg_neutral_density
-                        ),
-                        neutral_perturber_radius_cm=rydberg_neutral_radius,
-                    )
-                )
             if (
                 level_departure_coefficient is not None
                 and lower_key in level_departure_coefficient
@@ -10124,17 +10112,9 @@ def metal_line_mass_absorption_coefficient(
         mg_ii = atomic_database.ions.get(("Mg", 1))
         if mg_ii is not None and metal_state.ion_number_density["Mg"].shape[0] > 1:
             ground = min(mg_ii.levels, key=lambda level: level.energy_wavenumber)
-            partition = metal_state.partition_function[("Mg", 1)]
-            ground_population = (
-                metal_state.ion_number_density["Mg"][1]
-                * ground.statistical_weight
-                * np.exp(
-                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                )
-                / partition
+            ground_population = metal_lte_level_population(
+                mg_ii, ground, metal_state, atmosphere.temperature,
             )
-            ground_population = ground_population * table_level_occupation(mg_ii, ground)
             profile_cross_section = mg_ii_he_profile_table.cross_section(
                 wavelength, helium_density, temperature=atmosphere.temperature
             )
@@ -10171,17 +10151,9 @@ def metal_line_mass_absorption_coefficient(
         ca_i = atomic_database.ions.get(("Ca", 0))
         if ca_i is not None:
             ground = min(ca_i.levels, key=lambda level: level.energy_wavenumber)
-            partition = metal_state.partition_function[("Ca", 0)]
-            ground_population = (
-                metal_state.ion_number_density["Ca"][0]
-                * ground.statistical_weight
-                * np.exp(
-                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                )
-                / partition
+            ground_population = metal_lte_level_population(
+                ca_i, ground, metal_state, atmosphere.temperature,
             )
-            ground_population = ground_population * table_level_occupation(ca_i, ground)
             profile_cross_section = ca_i_he_profile_table.cross_section(
                 wavelength,
                 helium_density,
@@ -10237,17 +10209,9 @@ def metal_line_mass_absorption_coefficient(
         ca_ii = atomic_database.ions.get(("Ca", 1))
         if ca_ii is not None and metal_state.ion_number_density["Ca"].shape[0] > 1:
             ground = min(ca_ii.levels, key=lambda level: level.energy_wavenumber)
-            partition = metal_state.partition_function[("Ca", 1)]
-            ground_population = (
-                metal_state.ion_number_density["Ca"][1]
-                * ground.statistical_weight
-                * np.exp(
-                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                )
-                / partition
+            ground_population = metal_lte_level_population(
+                ca_ii, ground, metal_state, atmosphere.temperature,
             )
-            ground_population = ground_population * table_level_occupation(ca_ii, ground)
             profile_cross_section = ca_ii_he_profile_table.cross_section(
                 wavelength,
                 helium_density,
@@ -10282,15 +10246,9 @@ def metal_line_mass_absorption_coefficient(
         na_i = atomic_database.ions.get(("Na", 0))
         if na_i is not None:
             ground = min(na_i.levels, key=lambda level: level.energy_wavenumber)
-            ground_population = (
-                metal_state.ion_number_density["Na"][0]
-                * ground.statistical_weight
-                * np.exp(
-                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
-                    / (BOLTZMANN * atmosphere.temperature)
-                )
-                / metal_state.partition_function[("Na", 0)]
-            ) * table_level_occupation(na_i, ground)
+            ground_population = metal_lte_level_population(
+                na_i, ground, metal_state, atmosphere.temperature,
+            )
             stimulated = -np.expm1(
                 -PLANCK * LIGHT_SPEED
                 / (

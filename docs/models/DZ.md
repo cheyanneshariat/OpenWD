@@ -41,6 +41,14 @@ limitations. Setting the seven changed options back to their previous values
 is a diagnostic of the default choices; the EOS interpolation, population,
 Ca-source and RAP-reader repairs still apply.
 
+The [population-consistency repair](../validation/metal-population-consistency.md)
+applies matching occupation factors to line and photoionization populations.
+It retains the cool-DZ Rydberg-only occupation prescription and low-level
+reservoir. Identified external levels use the native population atom;
+unresolved grouped photoionization levels retain an explicitly recorded
+effective-level approximation. Dated comparisons below retain their original
+source versions.
+
 The metal physics was revised after a 2026-09-30 audit (physics revision
 `metal-audit-2026-09-30`):
 
@@ -61,8 +69,10 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   so the line opacity applied almost no dissolution and was inconsistent
   with the partition functions. Spectra change by at most 3% (one pixel in
   the J0738 control).
-- The Blouin et al. (2018) dense-He shift enters the Saha equation with the
-  full partition functions, so it vanishes in the dilute limit. Outside the
+- The Blouin et al. (2018) dense-He shift enters the first-ionization Saha
+  equation with the partition ratio corrected for its duplicated neutral-He
+  ground-state contribution. The within-ion partitions remain absolute. The
+  nonideal corrections vanish in the dilute limit. Outside the
   authors' tested 2000--10000 K and 0--1.5 g cm^-3 range the fit is held at
   its edge instead of being switched off.
 - Metal lines use an exact Voigt profile evaluated in frequency (Humlicek

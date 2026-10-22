@@ -1955,6 +1955,10 @@ def compute_dz(
                 if topbase_photoionization is not None
                 else "disabled"
             ),
+            "photoionization_population_model": spectrum.metadata.get(
+                "metal_photoionization_population_model", "disabled"
+            ),
+            "metal_population_revision": "normalized-levels-rydberg-only-2026-10-24",
             "metal_electron_feedback": True,
             "structure_maximum_metal_lines": structure_lines,
             "structure_metal_line_budget_policy": structure_line_policy,
