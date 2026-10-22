@@ -69,6 +69,9 @@ class AtomicDenseEOS:
             self.temperature = table['temperature'].copy()
             self.density = table['density'].copy()
             mu = table['mu'].copy()
+            # Cold isotherms whose fluid solve stops below the top density.
+            self.maximum_valid_density = (table['maximum_valid_density'].copy()
+                                          if 'maximum_valid_density' in table.files else None)
         if (self.temperature.ndim != 1 or self.density.ndim != 1
                 or min(len(self.temperature),len(self.density)) < 4
                 or np.any(~np.isfinite(self.temperature)) or np.any(~np.isfinite(self.density))
@@ -93,6 +96,20 @@ class AtomicDenseEOS:
                 or np.any(rho < self.density[0]) or np.any(rho > self.density[-1])):
             raise DenseHeliumDomainError(f'atomic HNC table domain violation: T={t.min():g}..{t.max():g}, '
                              f'rho={rho.min():g}..{rho.max():g}; no substitution')
+        if self.maximum_valid_density is not None:
+            # Bicubic support spans two isotherms on each side; continued
+            # (unconverged) nodes are kept two density nodes away.
+            limit = self.maximum_valid_density
+            node = np.clip(np.searchsorted(self.temperature, t, side='right')-1, 0, len(limit)-1)
+            low, high = np.maximum(node-1, 0), np.minimum(node+3, len(limit))
+            allowed = np.array([limit[a:b].min() for a, b in zip(np.ravel(low), np.ravel(high))]).reshape(np.shape(node))
+            margin = (self.density[-1]/self.density[-2])**2
+            allowed = np.where(allowed < self.density[-1], allowed/margin, allowed)
+            if np.any(rho > allowed):
+                i = np.unravel_index(np.argmax(rho > allowed), np.shape(rho))
+                raise DenseHeliumDomainError(
+                    f'dense He fluid solve unconverged above {allowed[i]:.4g} g/cm3 at T={t[i]:.6g} K '
+                    f'(requested {rho[i]:.4g}); no substitution')
         terms = [rho*curve.ev(np.log(t), np.log(rho)) for curve in self.curves]
         return terms
 
@@ -181,7 +198,7 @@ def transport_surface_boundary(runner, model, teff, logg, **options):
     approximate INITIAL condition, not a converged atmosphere or EOS fallback.
     """
     from scipy.optimize import brentq
-    tau = 1e-8
+    tau = getattr(model, 'surface_rosseland_depth', 1e-8)
     temperature = teff*(.75*(tau+2/3))**.25
     upper = np.searchsorted(model.bulk.temperature_grid, temperature)
     if upper == 0 or upper == len(model.bulk.temperature_grid):

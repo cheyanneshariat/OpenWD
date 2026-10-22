@@ -251,6 +251,11 @@ class DZConfig:
         "production", "legacy", "off"
     ] = "production"
     dense_helium_eos: Literal["reos3", "ideal"] = "ideal"
+    # Dense-fluid He-minus free-free correction (Iglesias, Rogers & Saumon
+    # 2002 Born ratio with a Rogers-Young neutral-He S(k); no 1/|eps|^2).
+    # In cool DZ photospheres (rho ~ 0.1-0.6 g/cm^3) it removes 20-70% of the
+    # dominant continuum opacity.  "off" keeps the ideal John (1994) value.
+    dense_helium_free_free: Literal["off", "rogers-young"] = "off"
     # "nist-asd" replaces exactly matched Stout transitions (UV included)
     # with evaluated NIST values; the default keeps the paper-figure data.
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
@@ -1528,6 +1533,16 @@ def compute_dz(
             fetch_command="python scripts/fetch_metal_data.py",
         )
         helium_reos3 = read_helium_reos3_table(data.helium_reos3)
+    if config.dense_helium_free_free not in ("off", "rogers-young"):
+        raise ValueError("dense_helium_free_free must be 'off' or 'rogers-young'")
+    helium_minus_table = None
+    if config.dense_helium_free_free == "rogers-young":
+        from ..dense_helium_continuum import DenseHeliumCorrectionTable
+
+        data.require(data.helium_minus_dense_free_free)
+        helium_minus_table = DenseHeliumCorrectionTable(
+            data.helium_minus_dense_free_free
+        )
     if config.maximum_metal_charge < 1:
         raise ValueError("maximum_metal_charge must be positive")
     elements = tuple(config.abundances)
@@ -1727,6 +1742,7 @@ def compute_dz(
             mg_he_red_wing_table=mg_he,
             ca_i_he_profile_table=ca_i_he,
             helium_reos3_table=helium_reos3,
+            helium_minus_correction_table=helium_minus_table,
             minimum_metal_oscillator_strength=(
                 structure_minimum_oscillator_strength
             ),
@@ -1815,6 +1831,7 @@ def compute_dz(
         n_angle=resolution.n_angle,
         transfer_discretization=synthesis_transfer,
         transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
+        helium_minus_correction_table=helium_minus_table,
     )
     return ModelResult(
         "DZ",
@@ -1871,6 +1888,12 @@ def compute_dz(
             ),
             "synthesis_flux_fraction": _synthesis_flux_fraction(
                 spectrum, config.effective_temperature
+            ),
+            "dense_helium_free_free": (
+                {"mode": config.dense_helium_free_free,
+                 "table_sha256": helium_minus_table.sha256}
+                if helium_minus_table is not None
+                else "off"
             ),
             "bulk_helium_eos": (
                 helium_reos3.source

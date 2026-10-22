@@ -1008,6 +1008,7 @@ def synthesize_helium_spectrum(
     backend: Backend = "auto",
     transfer_discretization: Literal["formal-linear", "formal-pchip", "optical-depth", "feautrier-optical-depth", "column-mass"] = "formal-linear",
     transfer_depth_refinement: int = 1,
+    helium_minus_correction_table=None,
 ) -> Spectrum:
     """Synthesize an LTE pure-He spectrum with tabulated He I profiles.
 
@@ -1090,12 +1091,21 @@ def synthesize_helium_spectrum(
             occupation_probability_partitions=metal_occupation_probability_partitions,
         )
         atmosphere = atmosphere_with_metal_electrons(atmosphere, metal_state)
+    dense_helium_minus = None
+    if helium_minus_correction_table is not None:
+        from .dense_helium_continuum import bounded_helium_minus_correction
+
+        dense_helium_minus = bounded_helium_minus_correction(
+            helium_minus_correction_table, wavelength, atmosphere.temperature,
+            atmosphere.helium_lte_state.neutral_he_density,
+        )
     absorption = helium_continuum_mass_absorption_coefficient(
         atmosphere, wavelength, include_electron_scattering=False,
         include_rayleigh_scattering=False,
         include_helium_dimer_ion=include_helium_dimer_ion,
         include_helium_three_body_cia=include_helium_three_body_cia,
         include_rydberg_bound_free=include_rydberg_bound_free,
+        helium_minus_correction=dense_helium_minus,
     )
     if include_lines:
         absorption += helium_i_line_mass_absorption_coefficient(

@@ -9,7 +9,6 @@ thermodynamics comes from REOS; trace reaction energy is neglected only
 within the explicit <=0.1% ionization validity guard.
 """
 import argparse
-from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 import json
 import hashlib
@@ -22,18 +21,22 @@ from wd_spectra import eos, helium_molecular as molecular
 from wd_spectra.constants import BOLTZMANN, HELIUM_MASS, PLANCK, LIGHT_SPEED
 from wd_spectra.dense_eos import read_helium_reos3_table
 from .dense_helium_atomic_experiment import AtomicDenseEOS, atomic_dense_experiment
-from .dense_helium_chemical_equilibrium import ExcessPotentials, solve_chemistry
+from .dense_helium_chemical_equilibrium import ExcessPotentials, solve_solute_chemistry
 from .dense_helium_fluid_experiment import (
-    RadialGrid,solve_hnc,neutral_pair_ev,ion_pair_ev,electron_insertion_ev,KB_EV,
+    RadialGrid,solve_hnc,neutral_pair_ev,ion_pair_ev,electron_insertion_ev,KB_EV,bound_neighbour_count,
 )
 from .chang_helium_potential import molecular_ion_neutral_pair_ev,BOHR_ANGSTROM,HARTREE_EV
 from .helium_dimer_state_sum import calculate_bound_states, DimerBoundStates
 
 PHYSICS=('EXPERIMENTAL REOS3 + HNC He/He+/He2+ + thesis electron insertion; '
-         'Chang bound-state molecular equilibrium; Stancil bf/ff with explicit donors; '
+         'He+ solute holds its bound He2+ pairs (HNC bound-neighbour split, no explicit-dimer double count); '
+         'Stancil bf on bound / ff on free ions, bf below 4200 K with computed He2+ T dependence; '
          'cross sections held below 4200 K; collective He- ff/refraction ABSENT; '
          'not validated dense-He atmosphere physics')
-TABLE_VERSION='molecular-hnc-young1981-bruno2010-chang2002-tail-electron-domain-v4'
+TABLE_VERSION='molecular-hnc-young1981-bruno2010-chang2002-tail-electron-domain-bound-v6'
+COLD_NODES=10
+# Smooth REOS3 support starts below the coldest interaction-table node (~830 K).
+BULK_MINIMUM_TEMPERATURE=800.
 
 
 def run_coordinates(arguments):
@@ -67,53 +70,153 @@ def insertion_tail_corrections(grid,temperature,density):
     return np.stack((neutral,np.zeros_like(neutral),dimer),axis=-1)
 
 
-def molecular_isotherm(temperature,densities,*,grid=None,pair=None):
+def _solve_point(grid,temperature,number,potentials,guesses):
+    """Neutral, He+ and He2+ HNC solves at one state, trying each initial guess in turn.
+
+    Guesses are per-species correlation arrays (or None for a cold start). The
+    Krylov iteration of the deep-well He+ solute can stall or raise for one
+    starting point and converge from another; a guess only seeds the iteration,
+    every accepted state passes solve_hnc's own residual test.
+    """
+    for guess in guesses:
+        try:
+            states,values=[],[]
+            neutral=None
+            for j,potential in enumerate(potentials):
+                state,mu=solve_hnc(grid,temperature,number,potential,solvent=neutral,
+                                   initial=None if guess is None else guess[j])
+                states.append(state); values.append(mu)
+                if j == 0:
+                    neutral=state
+            return states,values
+        except (RuntimeError,ValueError,OverflowError,FloatingPointError):
+            continue
+    return None
+
+
+def molecular_isotherm(temperature,densities,*,grid=None,pair=None,stop_at_failure=False,neighbour=None):
+    """HNC excess potentials, S(0) and bound-neighbour counts along an isotherm.
+
+    Each density is seeded from the previous density, then from ``neighbour``
+    (per-density correlations of an adjacent isotherm, if given), then cold,
+    then by density substeps from the previous node. With ``stop_at_failure``
+    the isotherm stops at the first density none of these converge (cold,
+    compressed He near or beyond melting); remaining entries are NaN and the
+    last converged index and the per-density correlations are also returned.
+    """
     grid=RadialGrid() if grid is None else grid
     pair=molecular_ion_neutral_pair_ev(grid.r) if pair is None else pair
     rho=np.asarray(densities,float)
     if (rho.ndim != 1 or not len(rho) or np.any(~np.isfinite(rho))
             or rho[0] < 0 or np.any(np.diff(rho) <= 0)):
         raise ValueError('densities must be nonnegative, finite and increasing')
-    previous=[None]*3
-    mu=np.empty((len(rho),3)); s0=np.empty(len(rho))
+    mu=np.full((len(rho),3),np.nan); s0=np.full(len(rho),np.nan); bound=np.full(len(rho),np.nan)
+    correlations=[None]*len(rho)
+    last=len(rho)-1
     potentials=[neutral_pair_ev(grid.r),ion_pair_ev(grid.r),pair]
+    previous=None
     for i,rhoi in enumerate(rho):
         number=rhoi/(HELIUM_MASS*1e24)
-        neutral=None
-        errors=[]
-        for j,potential in enumerate(potentials):
-            state,mu[i,j]=solve_hnc(grid,temperature,number,potential,
-                                  solvent=neutral,initial=previous[j])
-            previous[j]=state.gamma
-            errors.append(state.residual)
-            if j == 0:
-                neutral=state
-                s0[i]=1/(1-number*grid.zero(state.direct))
+        guesses=[previous]
+        if neighbour is not None and i < len(neighbour) and neighbour[i] is not None:
+            guesses.append(neighbour[i])
+        guesses.append(None)
+        solved=_solve_point(grid,temperature,number,potentials,guesses)
+        if solved is None and previous is not None:
+            seed,step=previous,None
+            for sub in np.geomspace(rho[i-1],rhoi,5)[1:]:      # last substep is rhoi
+                step=_solve_point(grid,temperature,sub/(HELIUM_MASS*1e24),potentials,[seed])
+                if step is None:
+                    break
+                seed=[state.gamma for state in step[0]]
+            solved=step
+        if solved is None:
+            if not stop_at_failure or i < 3:
+                raise RuntimeError(f'HNC failed along isotherm T={temperature:g} at rho={rhoi:g}')
+            last=i-1
+            break
+        states,values=solved
+        mu[i]=values
+        previous=[state.gamma for state in states]
+        correlations[i]=previous
+        s0[i]=1/(1-number*grid.zero(states[0].direct))
+        bound[i]=bound_neighbour_count(grid,temperature,number,states[1].gamma)
         if i % 40 == 0 or i == len(rho)-1:
             print(f'molecular HNC T={temperature:g} rho={rhoi:.6g} '
-                  f'mu={mu[i]} closure={max(errors):.3g}',flush=True)
-    return mu+insertion_tail_corrections(grid,temperature,rho),s0
+                  f'mu={mu[i]} closure={max(state.residual for state in states):.3g}',flush=True)
+    mu=mu+insertion_tail_corrections(grid,temperature,rho)
+    return (mu,s0,bound,last,correlations) if stop_at_failure else (mu,s0,bound)
 
 
-def build_table(path,workers=2):
+def continue_isotherm(values,density,last):
+    """Quadratic continuation in log density beyond index ``last`` (spline support only)."""
+    v=np.array(values,dtype=float)
+    if last < 2:
+        raise ValueError('an isotherm needs at least three converged densities')
+    for j in range(last+1,len(density)):
+        v[j]=3*v[j-1]-3*v[j-2]+v[j-3]
+    return v
+
+
+def build_table(path):
+    """Build the interaction table one isotherm at a time, single process.
+
+    Each finished isotherm is saved under <path>.parts/ and reused on restart;
+    the table is assembled only when all isotherms exist.
+    """
     path=Path(path)
     if path.exists():
         raise ValueError('refusing to overwrite interaction table')
-    if workers < 1:
-        raise ValueError('workers must be positive')
-    # Use the electron model's documented lower domain, rather than a
-    # guessed lower atmospheric temperature or a fitted Teff switch.
-    temperature=np.geomspace(np.nextafter(.1/KB_EV,np.inf),17000.,81)
+    # 0.1 eV to 17000 K as before, plus COLD_NODES nodes below at the same
+    # log spacing: cool dense-He upper layers reach ~1000 K, where the He-He-He
+    # CIA fit ends. The electron fit holds there (thesis Fig. 32, to 10 K).
+    warm=np.geomspace(np.nextafter(.1/KB_EV,np.inf),17000.,81)
+    temperature=np.r_[warm[0]*(warm[1]/warm[0])**-np.arange(COLD_NODES,0,-1),warm]
+    # v6: four more nodes at the same spacing reach the electron fit's 4 g/cm3
+    # DFT domain; cold isotherms record where their fluid solve stops.
     density=np.geomspace(1e-12,2.,161)
+    density=np.r_[density,2.*(density[-1]/density[-2])**np.arange(1,5)]
     grid=RadialGrid()
     pair=molecular_ion_neutral_pair_ev(grid.r)
-    worker=partial(molecular_isotherm,densities=density,grid=grid,pair=pair)
-    with ProcessPoolExecutor(max_workers=workers) as pool:
-        results=list(pool.map(worker,temperature))
+    parts=path.with_name(path.name+'.parts')
+    parts.mkdir(parents=True,exist_ok=True)
+    results=[None]*len(temperature)
+    # Warm isotherms upward from 0.1 eV, then cold ones downward, each seeded
+    # by the adjacent (already converged) isotherm's correlations.
+    order=list(range(COLD_NODES,len(temperature)))+list(range(COLD_NODES-1,-1,-1))
+    neighbour=None
+    for i in order:
+        t=temperature[i]
+        if i == COLD_NODES-1:
+            neighbour=warm_edge
+        part=parts/f'isotherm-{i:03d}.npz'
+        if part.exists():
+            with np.load(part,allow_pickle=False) as saved:
+                if str(saved['version']) != TABLE_VERSION or float(saved['temperature']) != t:
+                    raise ValueError(f'stale isotherm checkpoint {part}')
+                results[i]=(saved['mu'].copy(),saved['structure_zero'].copy(),
+                            saved['bound_neighbours'].copy(),int(saved['last']))
+            neighbour=None
+        else:
+            mu,s0,bound,last,neighbour=molecular_isotherm(t,density,grid=grid,pair=pair,
+                                                          stop_at_failure=True,neighbour=neighbour)
+            temporary=part.with_name(part.stem+'.writing.npz')
+            np.savez(temporary,temperature=t,mu=mu,structure_zero=s0,bound_neighbours=bound,last=last,
+                     version=TABLE_VERSION)
+            temporary.replace(part)
+            results[i]=(mu,s0,bound,last)
+        if i == COLD_NODES:
+            warm_edge=neighbour
     levels=calculate_bound_states()
     path.parent.mkdir(parents=True,exist_ok=True)
+    # Unconverged cold, dense entries are continued (per unit density, as the
+    # spline is built) only to construct coefficients; the EOS refuses them.
+    mu=np.stack([continue_isotherm(r[0]/density[:,None],density,r[3])*density[:,None] for r in results])
+    s0=np.stack([continue_isotherm(r[1],density,r[3]) for r in results])
+    bound=np.stack([np.maximum(continue_isotherm(r[2]/density,density,r[3])*density,0.) for r in results])
     np.savez_compressed(path,temperature=temperature,density=density,
-        mu=np.stack([r[0] for r in results]),structure_zero=np.stack([r[1] for r in results]),
+        mu=mu,structure_zero=s0,bound_neighbours=bound,
+        maximum_valid_density=np.array([density[r[3]] for r in results]),
         version=TABLE_VERSION,physics=PHYSICS,radial_points=grid.points,radial_extent=grid.extent,
         molecular_pair_ev=pair,bound_energy_ev=levels.energy_ev,
         bound_rotational_quantum_number=levels.rotational_quantum_number,
@@ -127,18 +230,38 @@ class MolecularDenseEOS(AtomicDenseEOS):
     dimer_description='explicit He2+ bound-free and He*He+ free-free; no ideal-equilibrium donor substitution'
     output_stem='molecular-dense'
 
-    def __init__(self,bulk,interaction_path):
+    def __init__(self,bulk,interaction_path,helium_minus_table=None):
         super().__init__(bulk,interaction_path)
         with np.load(self.path,allow_pickle=False) as table:
             self.levels=DimerBoundStates(table['bound_energy_ev'].copy(),
                 table['bound_rotational_quantum_number'].copy(),str(table['bound_state_source']))
+            bound=table['bound_neighbours'].copy()
+        if bound.shape != (len(self.temperature),len(self.density)) or np.any(~np.isfinite(bound)) or np.any(bound < 0):
+            raise ValueError('invalid HNC bound-neighbour table')
+        # N_b/rho has a finite second-virial limit, like mu/rho.
+        from scipy.interpolate import RectBivariateSpline
+        self.bound_curve=RectBivariateSpline(np.log(self.temperature),np.log(self.density),
+                                             bound/self.density[None,:],s=0)
+        # Optional dense-fluid He- free-free factor (Rogers-Young S(k), no
+        # 1/|eps|^2), applied wherever this model supplies opacity. Its SHA is
+        # part of the physics label, so runs and audits must use the same table.
+        self.helium_minus_table=None
+        if helium_minus_table is not None:
+            from wd_spectra.dense_helium_continuum import DenseHeliumCorrectionTable
+            path=Path(helium_minus_table)
+            self.helium_minus_table=DenseHeliumCorrectionTable(path)
+            sha=hashlib.sha256(path.read_bytes()).hexdigest()
+            self.physics=self.physics.replace('collective He- ff/refraction ABSENT',
+                f'dense He- ff Rogers-Young S(k) table {sha[:12]}; refraction ABSENT')
 
     def chemistry(self,temperature,density):
         mu=self.excess_potentials(temperature,density)
         q0=self.level_weights(temperature).sum(axis=-1)
-        return solve_chemistry(temperature,density,
+        t,rho=np.broadcast_arrays(np.asarray(temperature,float),np.asarray(density,float))
+        bound=np.maximum(rho*self.bound_curve.ev(np.log(t),np.log(rho)),0.)
+        return solve_solute_chemistry(temperature,density,
             ExcessPotentials(*mu,electron_insertion_ev(temperature,density),self.physics),
-            equilibrium=self.levels.equilibrium,neutral_partition=q0)
+            bound,neutral_partition=q0)
 
     def level_weights(self,temperature):
         weights=eos.HELIUM_I_LOW_TERM_STATISTICAL_WEIGHT*np.exp(
@@ -168,6 +291,15 @@ class MolecularDenseEOS(AtomicDenseEOS):
     def opacity_factory(self,original):
         def absorption(atmosphere,wavelength,**options):
             include=options.pop('include_helium_dimer_ion',True)
+            if self.helium_minus_table is not None and options.get('helium_minus_correction') is None:
+                from wd_spectra.dense_helium_continuum import bounded_helium_minus_correction
+                try:
+                    options['helium_minus_correction']=bounded_helium_minus_correction(
+                        self.helium_minus_table,wavelength,atmosphere.temperature,
+                        atmosphere.helium_lte_state.neutral_he_density)
+                except ValueError as error:
+                    from .dense_helium_limits import DenseHeliumDomainError
+                    raise DenseHeliumDomainError(f'dense He- free-free table: {error}') from error
             result=original(atmosphere,wavelength,include_helium_dimer_ion=False,**options)
             if include:
                 chemistry=self.chemistry(atmosphere.temperature,atmosphere.mass_density)
@@ -176,17 +308,50 @@ class MolecularDenseEOS(AtomicDenseEOS):
         return absorption
 
 
+_COOL_PHOTODISSOCIATION=Path(__file__).resolve().parents[1]/'data/runtime/cool-models/he2-photodissociation-cool.npz'
+_cool_photodissociation_cache=[]
+
+
+def _cool_bound_free_nodes(temperature):
+    """Stancil bf on its wavelength nodes below 4200 K (wavelength, layer).
+
+    Stancil's 4200 K values times the computed He2+ X->A temperature
+    dependence (tools/build_he2_photodissociation.py), so the opacity stays
+    continuous with the table at 4200 K. Held below the 600 K table edge.
+    """
+    if not _cool_photodissociation_cache:
+        with np.load(_COOL_PHOTODISSOCIATION,allow_pickle=False) as z:
+            if not np.array_equal(z['wavelength_angstrom'],molecular._WAVELENGTH_BOUND_FREE):
+                raise ValueError('He2+ cool photodissociation table uses a different wavelength grid')
+            _cool_photodissociation_cache.append((np.log(z['temperature']),z['log_ratio'].copy()))
+    log_t,log_ratio=_cool_photodissociation_cache[0]
+    x=np.clip(np.log(temperature),log_t[0],log_t[-1])
+    hi=np.clip(np.searchsorted(log_t,x,side='right'),1,len(log_t)-1); lo=hi-1
+    f=(x-log_t[lo])/(log_t[hi]-log_t[lo])
+    ratio=log_ratio[:,lo]*(1-f)+log_ratio[:,hi]*f
+    return molecular._BOUND_FREE[:,:1]*np.exp(ratio)
+
+
 def molecular_absorption(wavelength,temperature,chemistry):
     """cm^-1; cross sections per actual molecular/atomic donor, respectively.
 
-    Retains the existing table's explicit low-T cross-section hold. This is
-    an acknowledged opacity limitation, not an extrapolated equilibrium law.
+    Bound-free below Stancil's 4200 K edge uses the computed He2+ temperature
+    dependence; the He.He+ free-free table is still held at 4200 K (minor: in
+    the cool dense layers almost every ion is bound).
     Chemical potential shifts change populations, NOT photoionization edges.
     """
     wave=np.asarray(wavelength,float)[:,None]
     temp=np.asarray(temperature,float)[None,:]
     tab_t=np.maximum(temp,molecular._TEMPERATURE[0])
     bf=molecular._linear_interpolate_table(wave,tab_t,molecular._WAVELENGTH_BOUND_FREE,molecular._BOUND_FREE)
+    cold=temp[0] < molecular._TEMPERATURE[0]
+    if np.any(cold):
+        nodes=_cool_bound_free_nodes(temp[0,cold])
+        grid=molecular._WAVELENGTH_BOUND_FREE
+        w=np.clip(wave[:,0],grid[0],grid[-1])
+        hi=np.clip(np.searchsorted(grid,w,side='right'),1,len(grid)-1); lo=hi-1
+        f=((w-grid[lo])/(grid[hi]-grid[lo]))[:,None]
+        bf[:,cold]=nodes[lo]*(1-f)+nodes[hi]*f
     ff=molecular._linear_interpolate_table(wave,tab_t,molecular._WAVELENGTH_FREE_FREE,molecular._FREE_FREE)
     bf=np.where((wave >= molecular._WAVELENGTH_BOUND_FREE[0]) & (wave <= molecular._WAVELENGTH_BOUND_FREE[-1]),bf,0.)
     ff=np.where((wave >= molecular._WAVELENGTH_FREE_FREE[0]) & (wave <= molecular._WAVELENGTH_FREE_FREE[-1]),ff,0.)
@@ -198,7 +363,10 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__,allow_abbrev=False)
     parser.add_argument('--interaction-table',type=Path,required=True)
     parser.add_argument('--build-table',action='store_true')
-    parser.add_argument('--workers',type=int,default=2)
+    parser.add_argument('--surface-rosseland-depth',type=float,default=1e-8,
+        help='Rosseland depth of the seed surface (upper boundary); default 1e-8')
+    parser.add_argument('--dense-heminus-ff',type=Path,default=None,
+        help='dense-fluid He- free-free factor table (Rogers-Young S(k)); default none')
     parser.add_argument('--least-squares-merit',action='store_true')
     parser.add_argument('--exact-dense-materials',action='store_true')
     parser.add_argument('--exact-convection-tangent',action='store_true')
@@ -226,7 +394,7 @@ def main():
     if args.build_table:
         if remaining:
             parser.error('table build does not accept atmosphere arguments')
-        return build_table(args.interaction_table,args.workers)
+        return build_table(args.interaction_table)
     forbidden=('--reos3','--helium-dimer','--log-h-he','--reuse-fresh-seed','--resume-atmosphere',
         '--refine-atmosphere','--extend-atmosphere','--stable-helium-thermodynamics','--smooth-h2','--state-sum-h2')
     if any(x.split('=')[0] in forbidden for x in remaining):
@@ -235,8 +403,12 @@ def main():
     from wd_spectra.models import ModelData
     from .smooth_reos3_experiment import SmoothREOS3
     bulk=read_helium_reos3_table(ModelData.default().helium_reos3)
-    model=MolecularDenseEOS(SmoothREOS3(bulk,.1/KB_EV,17000.),args.interaction_table)
+    model=MolecularDenseEOS(SmoothREOS3(bulk,BULK_MINIMUM_TEMPERATURE,17000.),args.interaction_table,
+                            helium_minus_table=args.dense_heminus_ff)
     model.exact_dense_materials=args.exact_dense_materials
+    if not 0 < args.surface_rosseland_depth < 1:
+        parser.error('surface Rosseland depth must lie in (0, 1)')
+    model.surface_rosseland_depth=args.surface_rosseland_depth
     model.positive_radiative_rates=args.positive_radiative_rates
     model.full_coupled_newton=args.full_coupled_newton
     model.experiment_options={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()}
