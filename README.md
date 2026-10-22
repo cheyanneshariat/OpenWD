@@ -34,6 +34,17 @@ list the temperatures and compositions that have been run from a cold start.
 
 ## Get started
 
+### Using OpenWD with an AI assistant
+
+Point your assistant to [AGENTS.md](AGENTS.md) for installation checks, a
+runnable spectrum example, and links to the model guides. For example:
+
+> Read AGENTS.md and help me generate a DA spectrum at 12,000 K and log g = 8.
+> Use the documented workflow, save and plot the spectrum, and report its
+> numerical convergence status and output location.
+
+### Install and run
+
 Clone the repository and install it with Python 3.9 or newer:
 
 ```bash
