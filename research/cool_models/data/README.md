@@ -10,25 +10,38 @@ the neutral-background bulk thermodynamics is separately read from the
 bundled He-REOS.3 table. Source citations and equations are in the respective
 modules. This is not the exact interaction model of Kowalski (2007).
 
-The bundled cache is the one used by the successful 5000/8000 K investigations:
+v6 adds `bound_neighbours`: the mean number of He bound (E < 0, bonding
+channel) to the trace He+ solute, from the same HNC solution. The He+ solute's
+full Mayer function already contains bound He2+ pairs, so the chemistry no
+longer adds an explicit He2+ species (which counted them twice); instead the
+ions are split into free He+ and bound He2+ by 1 - exp(-N_b) for opacity
+(He2+ photodissociation vs He.He+ free-free). N_b -> n/K(He2+) at low density.
+The mu and S(0) columns are unchanged from v4 (to 7e-10 eV). The bundled cache is:
 
 ```
-SHA-256 4bf3134197d7309ccb6ee227bf2a659c30438ec263e322cb020aec8371fc10e7
-version molecular-hnc-young1981-bruno2010-chang2002-tail-electron-domain-v4
+SHA-256 b72c73cec42f5f2661742bb9a4051283abc36185f5059d213d4ab0db2c8607f4
+version molecular-hnc-young1981-bruno2010-chang2002-tail-electron-domain-bound-v6
 ```
 
-It spans 81 temperatures from just above 0.1 eV/kB to 17000 K, and 161
-densities from 1e-12 to 2 g/cm^3. These are **local material bounds**, not a
+It spans 91 temperatures from 830 K to 17000 K (ten nodes below 0.1 eV/kB, built downward
+by temperature continuation), and 165
+densities from 1e-12 to 4.07 g/cm^3 (the electron fit's 0.5-4 g/cm^3 DFT data,
+Kowalski thesis Fig. 31). A few isotherms below ~1050 K stop (above 2.8 g/cm^3) where the fluid solve
+fails (cold compressed He); `maximum_valid_density` records each limit and the
+EOS refuses requests above it. These are **local material bounds**, not a
 validated Teff range. Excited-state and trace-ion checks impose additional
 validity limits. Invalid trials can be shortened, but accepted atmospheres
 cannot silently extrapolate or substitute an ideal EOS.
 
 To recompute into a new file, from the repository root after the normal
-package installation:
+package installation (single process; each finished isotherm is kept in
+`<table>.parts/` and reused if the build is restarted):
 
 ```sh
 python research/cool_models/dense_helium_molecular_experiment.py \
-  --build-table --workers 2 --interaction-table results/new-molecular-hnc.npz
+  --build-table --interaction-table results/new-molecular-hnc.npz
+# He2+ photodissociation T dependence below 4200 K (cool-models/he2-photodissociation-cool.npz):
+python tools/build_he2_photodissociation.py src/wd_spectra/data/runtime/cool-models/he2-photodissociation-cool.npz
 ```
 
 The numerical arrays can be compared, but a regenerated compressed archive

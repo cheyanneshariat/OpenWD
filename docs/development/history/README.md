@@ -31,6 +31,8 @@ Use [getting started](../../getting-started.md) for current commands and
 
 ## Cool helium physics
 
+- [Dense pure-He DB v6: bound-ion He₂⁺ opacity, dense He⁻ ff, cold tables](dense-db-v6-2026-10-22.md)
+- [Dense-He He⁻ free-free correction with a Rogers–Young S(k)](dq-dense-he-ff-2026-10-15.md)
 - [DQ stride-four structure sampling default](dq-stride4-default-2026-09-18.md)
 - [DQ 2024 C–A and completed-Swan default](dq-completed-default-2026-09-17.md)
 - [Refractive DQ release extraction and validation](dq-release-2026-09-17.md)

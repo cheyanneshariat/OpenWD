@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from dense_helium_fluid_experiment import (
-    RadialGrid, neutral_pair_ev, ion_pair_ev, electron_insertion_ev,
+    RadialGrid, neutral_pair_ev, ion_pair_ev, electron_insertion_ev, bound_neighbour_count,
     solve_neutral_py, solve_trace_py, solve_hnc, KB_EV,
 )
 
@@ -91,3 +91,16 @@ def test_hnc_rejects_invalid_state(temperature, density):
     grid = RadialGrid()
     with pytest.raises(ValueError, match='invalid HNC'):
         solve_hnc(grid, temperature, density, neutral_pair_ev(grid.r))
+
+
+def test_bound_neighbours_reduce_to_the_chang_association_constant():
+    from helium_dimer_state_sum import calculate_bound_states
+    from wd_spectra.constants import HELIUM_MASS
+    grid = RadialGrid()
+    levels = calculate_bound_states()
+    for temperature in (5000., 7000., 10000.):
+        n = 1e-5/(HELIUM_MASS*1e24)
+        neutral, _ = solve_hnc(grid, temperature, n, neutral_pair_ev(grid.r))
+        ion, _ = solve_hnc(grid, temperature, n, ion_pair_ev(grid.r), solvent=neutral)
+        expected = n*1e24/levels.equilibrium(np.array([temperature]))[0][0]
+        np.testing.assert_allclose(bound_neighbour_count(grid, temperature, n, ion.gamma), expected, rtol=.06)

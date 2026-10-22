@@ -20,7 +20,7 @@ from scipy.fft import dst
 from scipy.integrate import cumulative_trapezoid
 from scipy.optimize import brentq, root
 from scipy.sparse.linalg import LinearOperator, gmres
-from scipy.special import logsumexp
+from scipy.special import gammainc, logsumexp
 from wd_spectra.constants import BOLTZMANN, HELIUM_MASS
 
 EV = 1.602176634e-12
@@ -61,19 +61,38 @@ curves, not just a converged fluid iteration.
     return np.stack((bonding, antibonding))
 
 
+def bound_neighbour_count(grid, temperature, number_density, gamma):
+    """Mean number of He bound (E < 0) to a trace He+ in its bonding channel.
+
+    The He+ solute is solved with the equal-weight Mayer average of both
+    channels, so bonding-channel pairs carry weight 1/2 and HNC correlation
+    exp(gamma). Of the classical pair states at separation r, the fraction with
+    relative energy below zero is P(3/2, -V/kT) (regularized lower incomplete
+    gamma). At low density this tends to n/K(He2+): the classical bound volume
+    equals the Chang-level association constant to 3-5% above 3000 K.
+    """
+    bonding = ion_pair_ev(grid.r)[0]
+    depth = -bonding/(KB_EV*temperature)
+    bound = .5*np.exp(depth+gamma)*np.where(depth > 0, gammainc(1.5, np.maximum(depth, 0.)), 0.)
+    return number_density*grid.zero(bound)
+
+
 def electron_insertion_ev(temperature, density):
     """The thesis fit as PRINTED, with no silent smoothing or extrapolation.
 
 T in K, rho in g/cm3. The printed join at rho=.05 is continuous but not
 C1; this is deliberately not patched with a guessed coefficient. This
-function alone is NOT a nonideal ionization treatment.
+function alone is NOT a nonideal ionization treatment. The linear branch
+is Kowalski's fit to DFT electron energies at 0.5-4 g/cm3 (thesis Fig. 31),
+so densities up to 4 g/cm3 lie inside the fitted data. Its T dependence is
+weak and the thesis shows it down to 10 K against 10-100 K data (Fig. 32).
 """
     t, rho = np.broadcast_arrays(np.asarray(temperature, float)*KB_EV,
                                 np.asarray(density, float))
     if (np.any(~np.isfinite(t)) or np.any(~np.isfinite(rho))
-            or np.any(t < .1) or np.any(t > 1.5)
-            or np.any(rho < 0) or np.any(rho > 2)):
-        raise ValueError('electron fit outside 0.1--1.5 eV, 0--2 g/cm3 research domain')
+            or np.any(t < 1e-3) or np.any(t > 1.5)
+            or np.any(rho < 0) or np.any(rho > 4)):
+        raise ValueError('electron fit outside 0.001--1.5 eV, 0--4 g/cm3 research domain')
     polynomial = np.polynomial.polynomial.polyval(t,
         [1.0313, 2.99678, 10.3747, 2.99498, -1.27844, -3.10191])
     alpha = 8.60384*np.exp(-4.83886*t+1.97586*t*t)*polynomial

@@ -195,6 +195,12 @@ class ModelData:
         return self.cache / "dense-eos/he-reos3-table3.dat"
 
     @property
+    def helium_minus_dense_free_free(self) -> Path:
+        """Dense-He He-minus free-free factor, Rogers-Young S(k) (no 1/|eps|^2)."""
+
+        return self.cache / "dense-eos/he-minus-ff-rogers-young.npz"
+
+    @property
     def nist_asd_strong(self) -> Path:
         """Checksum-pinned NIST ASD strong-line query directory."""
 

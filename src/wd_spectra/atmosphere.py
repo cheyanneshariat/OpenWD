@@ -2090,6 +2090,7 @@ def radiative_equilibrium_helium_atmosphere(
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     helium_reos3_table: HeliumREOS3Table | None = None,
+    helium_minus_correction_table=None,
     metal_photoionization_database: VernerPhotoionizationDatabase | None = None,
     metal_topbase_photoionization_database: (
         TOPbasePhotoionizationDatabase | None
@@ -2746,12 +2747,21 @@ def radiative_equilibrium_helium_atmosphere(
     structure_absorption_cache: dict[str, object] = {}
 
     def true_absorption(current: Atmosphere) -> FloatArray:
+        dense_helium_minus = None
+        if helium_minus_correction_table is not None:
+            from .dense_helium_continuum import bounded_helium_minus_correction
+
+            dense_helium_minus = bounded_helium_minus_correction(
+                helium_minus_correction_table, wavelength, current.temperature,
+                current.helium_lte_state.neutral_he_density,
+            )
         result = helium_continuum_mass_absorption_coefficient(
             current, wavelength, include_electron_scattering=False,
             include_rayleigh_scattering=False,
             include_helium_dimer_ion=include_helium_dimer_ion,
             include_helium_three_body_cia=include_helium_three_body_cia,
             include_rydberg_bound_free=include_rydberg_bound_free,
+            helium_minus_correction=dense_helium_minus,
         )
         if include_lines:
             result += helium_i_line_mass_absorption_coefficient(
@@ -3058,6 +3068,15 @@ def radiative_equilibrium_helium_atmosphere(
             "helium_minus_free_free": (
                 "John-1994 inside tabulated T/lambda domain; "
                 "Carbon-1969 fit to John-1968 elsewhere"
+            ),
+            "dense_helium_minus_free_free": (
+                {
+                    "table_sha256": helium_minus_correction_table.sha256,
+                    "metadata": helium_minus_correction_table.metadata,
+                    "policy": "hold table T/lambda edges; no density extrapolation",
+                }
+                if helium_minus_correction_table is not None
+                else None
             ),
             "radiative_equilibrium_hydrogen_abundance": (
                 float(log_hydrogen_abundance)
