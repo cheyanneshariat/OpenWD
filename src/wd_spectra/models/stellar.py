@@ -852,6 +852,13 @@ def compute_da(
 
 _DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH = 1.0e-12
 _DB_DEEPENING_PRESSURE_FACTOR = 4.0
+# Cool dense DZ: transparent windows reach far below the Rosseland-scaled seed
+# (LP 658-2 first-phase escape 0.30, WD 2251-070 0.11-0.15).  Deepen as soon as
+# the first phase shows such a leak, on any screening failure, and re-run the
+# full phase sequence on the deeper mesh: resuming the extrapolated cells in the
+# formal-flux phase diverged (residual 6e-5 -> 1.2e4) for LP 658-2 with a CI mix.
+_DZ_DEEPENING_PRESSURE_FACTOR = 4.0
+_DZ_EARLY_DEEPENING_ESCAPE_LIMIT = 0.05
 _DB_HELIUM_MINUS_SCREEN_DEPTHS = (1.0e-6, 1.0e-2)
 # On the optical-depth path, "auto" extends the top boundary like the lower
 # one: when a cold solve fails and its worst residual sits in the top layers,
@@ -1837,6 +1844,10 @@ def compute_dz(
                 checkpoint_matches_request
             ),
             iteration_callback=iteration_callback,
+            deepen_on_any_screen_failure=True,
+            restart_after_deepening=True,
+            deepening_pressure_factor=_DZ_DEEPENING_PRESSURE_FACTOR,
+            early_deepening_escape_limit=_DZ_EARLY_DEEPENING_ESCAPE_LIMIT,
         )
     assert atmosphere is not None
     if relax_atmosphere:
