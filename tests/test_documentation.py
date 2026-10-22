@@ -9,7 +9,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-PAGES = sorted(DOCS.rglob("*.md")) + [ROOT / "README.md", ROOT / "examples/data/README.md"]
+PAGES = sorted(DOCS.rglob("*.md")) + [
+    ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "examples/data/README.md"
+]
 NOTEBOOK = ROOT / "examples/generate_spectrum.ipynb"
 FIT_NOTEBOOK = ROOT / "examples/fit_dz_spectrum.ipynb"
 

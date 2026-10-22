@@ -6,6 +6,9 @@ inspect its convergence status, then change the parameters for your application.
 
 ## Using OpenWD
 
+Using an AI assistant? Start with the [agent quick start](../AGENTS.md) for
+environment checks, a runnable spectrum example, and links for each task.
+
 1. [Get started](getting-started.md): install, run a model, and read the outputs.
 2. [Interactive notebook](../examples/generate_spectrum.ipynb): edit parameters
    and plot the resulting spectrum. A second notebook
