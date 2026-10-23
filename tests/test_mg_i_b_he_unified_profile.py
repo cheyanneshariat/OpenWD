@@ -44,5 +44,5 @@ def test_attaches_only_the_triplet():
     assert sorted(t.helium_unified_profile.component for t in tagged) == [0, 1, 2]
 
 
-def test_default_off():
-    assert DZConfig().mg_i_b_he_unified_profile is False
+def test_default_on():
+    assert DZConfig().mg_i_b_he_unified_profile is True

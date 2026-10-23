@@ -250,17 +250,20 @@ class DZConfig:
     unified_metal_helium_profiles: Literal[
         "production", "legacy", "off"
     ] = "production"
-    dense_helium_eos: Literal["reos3", "ideal"] = "ideal"
+    # The dense-fluid defaults below (REOS3, Rogers-Young He- ff, partial-wave
+    # He- ff, computed unified He tables) are the configuration validated on ten
+    # cool DZ/DZA spectra (4000-8700 K); the alternatives reproduce older releases.
+    dense_helium_eos: Literal["reos3", "ideal"] = "reos3"
     # Dense-fluid He-minus free-free correction (Iglesias, Rogers & Saumon
     # 2002 Born ratio with a Rogers-Young neutral-He S(k); no 1/|eps|^2).
     # In cool DZ photospheres (rho ~ 0.1-0.6 g/cm^3) it removes 20-70% of the
     # dominant continuum opacity.  "off" keeps the ideal John (1994) value.
-    dense_helium_free_free: Literal["off", "rogers-young"] = "off"
+    dense_helium_free_free: Literal["off", "rogers-young"] = "rogers-young"
     # He- free-free below John's (1994) 0.5063-micron edge: "automatic" keeps
     # the Carbon et al. (1969) fit to John (1968), which jumps by 16-24% at
     # the edge for 3000-5000 K; "partial-wave" uses John's edge value times
     # a first-principles e-He partial-wave wavelength shape (continuous).
-    helium_minus_free_free: Literal["automatic", "partial-wave"] = "automatic"
+    helium_minus_free_free: Literal["automatic", "partial-wave"] = "partial-wave"
     # "nist-asd" replaces exactly matched Stout transitions (UV included)
     # with evaluated NIST values; the default keeps the paper-figure data.
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
@@ -289,19 +292,19 @@ class DZConfig:
     # Allard et al. (2016) potentials (3000-12000 K, n_He 1e19-1e23; the blue
     # satellites pile up and move blueward with density).  False keeps the
     # Unsold Lorentzian; the satellite-dominated blue wing of cool DZs is then absent.
-    mg_i_b_he_unified_profile: bool = False
+    mg_i_b_he_unified_profile: bool = True
     # Unified Mg II h&k and Ca II H&K + He profiles computed with the OpenWD
     # unified-profile engine from ab initio ion-He potentials (Mg+-He: Allard
     # et al. 2016 GG; Ca+-He: Alekseev, with R-dependent dipoles), 3000-12000 K
     # and n_He 1e19-1e23 cm^-3.  Their far wings dominate the 3000-4500 A
     # metal opacity of cool, dense DZ photospheres, where the impact
     # Lorentzian is 3-20x too weak.
-    mg_ii_he_unified_profile: bool = False
-    ca_ii_he_unified_profile: bool = False
+    mg_ii_he_unified_profile: bool = True
+    ca_ii_he_unified_profile: bool = True
     # Unified Na I D + He profiles computed from the Dell'Angelo et al. (2012)
     # potentials (Allard et al. 2023 figures), same grid and dense-fluid
     # treatment as the Mg II/Ca II tables.  False keeps the impact Lorentzian.
-    na_i_he_unified_profile: bool = False
+    na_i_he_unified_profile: bool = True
     # Legacy import switch for bare/custom atoms. Independently corroborated
     # Si II additions are already in the default reader; this switch neither
     # removes them nor appends the former unfiltered supplement to that atom.

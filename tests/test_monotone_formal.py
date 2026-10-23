@@ -195,6 +195,7 @@ def test_public_dz_option_only_changes_synthesis(monkeypatch):
     monkeypatch.setattr(stellar, 'warn_if_atmosphere_not_converged', lambda *args: 'unconverged')
     # A DZ model needs at least one metal; the trace Fe abundance is inert here.
     config = DZConfig(abundances={'Fe': -10.0}, dense_helium_eos='ideal',
+                      dense_helium_free_free='off',
                       unified_metal_helium_profiles='off', ca_ii_resonance_source='lte')
     compute_dz(config, [4000., 5000.], synthesis_transfer='formal-linear')
     compute_dz(config, [4000., 5000.], synthesis_transfer='formal-pchip')

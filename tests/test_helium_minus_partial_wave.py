@@ -49,7 +49,7 @@ def test_table_metadata_records_john_agreement():
 
 
 def test_config_default_and_validation():
-    assert DZConfig().helium_minus_free_free == "automatic"
+    assert DZConfig().helium_minus_free_free == "partial-wave"
     from wd_spectra.models.stellar import compute_dz
     with pytest.raises(ValueError, match="helium_minus_free_free"):
         compute_dz(DZConfig(helium_minus_free_free="bogus"), relax_atmosphere=False)
