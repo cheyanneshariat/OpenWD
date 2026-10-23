@@ -36,9 +36,11 @@ Both versions use exactly the same archived cold source, published parameters,
 abundances, 1.5% perturbation, 48 layers and 25,000-line budgets. The old
 reference and its tolerances remain unchanged. The warm test checks `warm_v1`
 with the Fe II supplement disabled in a test-only scope, then checks
-`warm_v2_feii` with current defaults, clearing cached atoms between scopes.
-The optical fixed-atmosphere test still compares current defaults to the
-original `warm_v1` spectrum at its original tolerance.
+`warm_v2_feii` with the defaults at its approval, clearing cached atoms
+between scopes. Both now use their corresponding historical scopes.
+At the time of the v2 approval, the optical fixed-atmosphere spectrum also
+remained within the original `warm_v1` tolerance. Later versions have their
+own reviewed spectra; historical cases retain their original physics scopes.
 
 The v2 manifest records the independently verified legacy recovery and the
 complete-profile differences caused by the new atom. Its source certificate
@@ -83,6 +85,38 @@ PYTHONPATH=src python tools/build_d6_regression.py SOURCE_ATMOSPHERE.npz NEW_DIR
 
 The builder refuses to overwrite an existing directory. Preserve previous
 references and their provenance when accepting a new one.
+
+## Current RAP reference
+
+`warm_v3_independent_kurucz` retains the independently qualified Kurucz atom.
+`warm_v4_rap_absolute` adds the Fe RAP reader repair taken from PR 37:
+the supplied excitation already contains the ground-term centroid, and the
+cross-section grid is an absolute photon grid. Counting that excitation once
+and retaining the sampled support changes the fixed optical spectrum by at
+most 0.0219181%, at 4883.3 Angstrom. Integrated flux over the stored grid
+changes by -0.0052548%.
+
+The v4 approval was explicitly requested for the cool-DZ release on
+2026-10-23. Its seed is copied exactly from the checked v3 capsule.
+Temperature, column mass, optical depth, abundances, 48 layers and both
+25,000-line budgets are retained. The offline builder freshly computes two
+measured warm steps and the fixed spectrum; all original comparison
+tolerances remain unchanged. The old v1, v2 and v3 capsules and manifests
+remain byte-for-byte unchanged. Their tests use their original atomic
+policies and the preceding RAP reader, with caches cleared on both scope
+boundaries. The current v4 tests use the corrected reader.
+
+As for every earlier version, the archived cold certificate qualifies its
+source revision only. Neither the frozen optical spectrum nor two perturbed
+warm steps establish a new cold-start certificate.
+
+Explicit capture from the checked-in source capsule:
+
+```bash
+PYTHONPATH=src python tools/build_d6_regression.py \
+  tests/data/d6_regressions/warm_v3_independent_kurucz NEW_DIRECTORY \
+  --from-frozen-reference --spectrum-first
+```
 
 The Fe II revision can also be captured from the checked-in, checksum-verified
 seed capsule, without transporting the original cold-atmosphere file:

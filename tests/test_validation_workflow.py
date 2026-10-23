@@ -85,6 +85,9 @@ def test_dq_fixed_spectrum_and_true_cold_are_separate_tiers():
     assert spectral[-1].startswith("tests/test_dq_spectral_regression.py::")
     assert cold[-1] == runner.COLD_TESTS["dq-j1235"]
     assert "true_cold" in cold[-1]
+    assert runner.commands("spectra", ["dq-j1311"])["dq-j1311"][-1] == (
+        "tests/test_dq_spectral_regression.py::test_completed_default_retains_j1311_absolute_flux"
+    )
 
 
 def test_every_released_family_has_a_cold_case():

@@ -17,11 +17,18 @@ from wd_spectra import D6Config, DZConfig, PG1159Config, run_model
 @pytest.mark.parametrize("case", ["dz-pg1225", "pg1159-pg1424", "d6-j1637"])
 def test_released_family_cold_start(case, tmp_path):
     if case == "dz-pg1225":
-        # Only stellar parameters are read; atmosphere and flux arrays are
-        # neither loaded nor used as a solver input.
+        # Read stellar parameters and retain production resolution, while
+        # qualifying current public physics defaults. The historical fixed
+        # spectrum explicitly selects the old ideal EOS; it must not pin
+        # this fresh cold-start canary to that preceding physics.
+        # Atmosphere and flux arrays are never supplied to the solver.
         reference = Path(__file__).parent / "data/spectral_regressions/dz-pg1225.npz"
         with np.load(reference, allow_pickle=False) as saved:
-            config = DZConfig(**json.loads(str(saved["config_json"])))
+            parameters = json.loads(str(saved["config_json"]))
+        config = DZConfig(**{key: parameters[key] for key in (
+            "effective_temperature", "logg", "abundances",
+            "log_hydrogen_abundance", "quality",
+        )})
     elif case == "pg1159-pg1424":
         config = PG1159Config(
             mass_fractions={"He": 0.52, "C": 0.45, "O": 0.03},

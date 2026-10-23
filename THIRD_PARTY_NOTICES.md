@@ -233,6 +233,26 @@ include SDSS/BOSS J1007+1237 (plate 5328, MJD 55982, fiber 66). The unscaled
 and smoothly rescaled figure variants are labelled separately in the guide;
 the smooth correction is a model-derived comparison operation.
 
+## Cool-DZ unified metal–helium profiles
+
+The Mg I b, Mg II h/k, Ca II H/K and Na I D NPZ grids under
+`src/wd_spectra/data/runtime/cache/metal-opacity/unified-metal-he/` are
+OpenWD calculations using published potentials and dipoles. They are not the
+original authors' numerical opacity tables. Their embedded source/provenance
+records identify the recovered curves, input hashes, model tails and
+dense-fluid corrections. Scientific uses should credit the sources recorded
+there: Allard et al. (2016, A&A 588, A142) for Mg I b; Allard et al. (2016,
+A&A 593, A13) for Mg II; Allard & Alekseev (2014) and the Hollands et al.
+(2017) figure curves for Ca II; and Dell'Angelo et al. (2012), as presented
+in Allard et al. (2023), for Na I.
+
+The companion `mgi-b-he-6000K-density.dat`,
+`mgii-hk-he-6000K-density.dat` and `caii-hk-he-5e21-temperature.dat` contain
+figure-resolution cross sections recovered from the cited papers, with
+sources recorded in their headers. The Mg extraction scripts are included
+under `scripts/`. Credit the original authors when using these derived
+scientific data.
+
 ## Other scientific tables
 
 The DQ constitutive data in `src/wd_spectra/data/dq` include derived ExoMol

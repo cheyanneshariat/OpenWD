@@ -61,8 +61,8 @@ resolutions, renormalize spectra, or supply a previous atmosphere. See the
 data. Missing data are failures, not successful physical tests. Additional
 affected comparisons in the paper-validation workspace remain necessary.
 
-DQ has fast chemistry/transfer/controller tests and a fixed-state spectral
-case, `python tools/validate.py spectra --case dq-j1235`. Its separate
+DQ has fast chemistry/transfer/controller tests and fixed-state spectral
+cases, `python tools/validate.py spectra --case dq-j1235 --case dq-j1311`. Its separate
 `cold --case dq-j1235` canary constructs an atmosphere from parameters and
 checks the independent 154000-point spectrum; allow hours for it. The saved
 spectral fixture never supplies an atmosphere to the cold test. DQ data are

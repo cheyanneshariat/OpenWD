@@ -41,6 +41,7 @@ SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
     "daz-g149-28",
     "daz-galex1931",
     "dq-j1235",
+    "dq-j1311",
 )
 CANARY = "tests/test_protected_model_canaries.py::"
 COLD_TESTS = {
@@ -110,6 +111,10 @@ def commands(tier, cases=()):
         elif tier == "spectra" and case == "dq-j1235":
             tasks[case] = pytest + [
                 "tests/test_dq_spectral_regression.py::test_refractive_spectrum_retains_j1235_absolute_flux"
+            ]
+        elif tier == "spectra" and case == "dq-j1311":
+            tasks[case] = pytest + [
+                "tests/test_dq_spectral_regression.py::test_completed_default_retains_j1311_absolute_flux"
             ]
         elif tier == "spectra" and case.startswith("daz-"):
             name = "g149_28" if case == "daz-g149-28" else "galex1931"

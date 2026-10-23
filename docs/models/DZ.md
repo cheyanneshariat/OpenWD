@@ -18,6 +18,29 @@ Trace-hydrogen Lyman lines likewise retain the figure's charged-particle
 Stark treatment by default; `lyman_profile_source="allard"` explicitly
 selects the later unified-profile option.
 
+## Cool-DZ defaults
+
+The cool-DZ release selects `dense_helium_eos="reos3"`,
+`dense_helium_free_free="rogers-young"` and
+`helium_minus_free_free="partial-wave"`. Computed Mg I b, Mg II h/k,
+Ca II H/K and Na I D unified He profiles are enabled by default. The profile
+tables cover 3000–12000 K and helium number densities of
+`1e19–1e23 cm^-3`; their consumers retain explicit edge policies outside
+that coverage. The older Mg I 2852 and Ca I 4227 tables have different,
+more restrictive domains.
+
+The shared He-REOS.3 interpolation is continuous with continuous first
+derivatives between temperature isotherms. Neutral-He hard-sphere
+occupation suppresses Rydberg levels while retaining the low-level
+reservoir. These are model prescriptions; numerical convergence alone does
+not establish their accuracy for a particular star.
+
+The [release record](../development/history/cool-dz-release-2026-10-23.md)
+lists the defaults, regression changes, observation comparisons and
+limitations. Setting the seven changed options back to their previous values
+is a diagnostic of the default choices; the EOS interpolation, population,
+Ca-source and RAP-reader repairs still apply.
+
 The metal physics was revised after a 2026-09-30 audit (physics revision
 `metal-audit-2026-09-30`):
 
@@ -108,8 +131,9 @@ The metal physics was revised after a 2026-09-30 audit (physics revision
   Anderson–Talman autocorrelation. The same method reproduces Allard et al.
   (2016) Mg II–He widths to 0.3–2% and Hammond's (1975) laboratory Ca II H&K
   width to 13%. Electron and radiative damping still come from each line's own
-  data, and the Doppler core from its Voigt profile, merged by an envelope as
-  for the Mg II and Ca II He tables. Nothing is fitted to a stellar spectrum.
+  data, and the Doppler core from its Voigt profile, merged by the existing
+  Si II envelope rule. The new dense Mg II and Ca II tables supply the
+  complete profile above n_He = 1e20 cm^-3. Nothing is fitted to a stellar spectrum.
   With the stellar parameters, abundances and structures fixed, the COS
   1258–1269 Å residual falls from 0.221 to 0.153 for GD 40 and from 0.166 to
   0.104 for G241−6, and in three further DBZs computed from cold starts at
@@ -173,9 +197,9 @@ python examples/one_shot_dz.py --teff 15300 --logg 8.0 \
 Abundances are `log10[N(element)/N(He)]`; supplying any `--abundance` entries
 replaces the entire default abundance dictionary. The model does not refit
 `Teff`, `log g`, or composition. Standard line-rich atmospheres can take from
-about 30 minutes to several hours. `dense_helium_eos="reos3"` is available in
-the Python configuration as an explicitly experimental bulk-EOS option; the
-validated production default remains the chemical-picture EOS.
+about 30 minutes to several hours. The default `dense_helium_eos="reos3"`
+selects the dense-helium material model; `dense_helium_eos="ideal"` retains
+the preceding chemical-picture choice for controlled comparisons.
 
 The [DZ fitting notebook](../../examples/fit_dz_spectrum.ipynb) fits Ca, Mg and
 Fe in four public VLT/UVES spectra of PG 1225-079, with Teff, log g and the
@@ -191,6 +215,10 @@ See [tested points](../tested-temperature-ranges.md) and
 for the status of PG 1225 and SDSS J0738+1835.
 
 ## Paper comparison
+
+The paper and HIRES figures below retain their recorded source versions.
+They have not been recomputed for the cool-DZ defaults; the release record
+above describes the separate cool-star comparisons.
 
 The paper compares seven polluted white dwarfs at fixed literature parameters
 and abundances. Five have helium-dominated atmospheres and use DZ/DBZ; the

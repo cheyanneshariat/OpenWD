@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "scope": "bounded warm trajectory and fixed-atmosphere spectrum",
+  "cold_start_qualification": false,
+  "steps": 2,
+  "config": {
+    "effective_temperature": 15680.0,
+    "logg": 6.3,
+    "abundances": {
+      "C": 0.0,
+      "O": 0.27,
+      "Ne": -1.86,
+      "Mg": -2.33,
+      "Al": -4.0,
+      "Si": -1.76,
+      "S": -2.84,
+      "Ca": -2.85,
+      "Fe": -3.0
+    },
+    "reference_element": "C",
+    "quality": "standard",
+    "mixing_length_alpha": 1.25,
+    "structure_maximum_metal_lines": null,
+    "formal_maximum_metal_lines": null,
+    "include_rydberg_dissolution": true,
+    "include_metal_series_pseudocontinuum": true,
+    "metal_series_pseudocontinuum_elements": [
+      "O",
+      "Mg",
+      "C"
+    ],
+    "include_linear_stark_quasistatic": true,
+    "linear_stark_profile": "manifold",
+    "include_oxygen_i_series_stark": true,
+    "microturbulent_velocity_kms": 0.0,
+    "line_profile_edge_optical_depth": 0.001
+  },
+  "source_name": "d6-j1637-openwd-v5-coldstart/atmosphere.npz",
+  "source_sha256": "86e963f5ab7178065264fa18a43d6e2a29a132fd1659e317f7b0d80868ddb932",
+  "source_cold_certificate": {
+    "schema": 1,
+    "scope": "declared equations on the structure grid",
+    "verified": true,
+    "checks": {
+      "all_depth_flux": {
+        "value": 4.423480692850035e-09,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "surface_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "photospheric_flux": {
+        "value": null,
+        "tolerance": 0.003,
+        "passed": false,
+        "measured": false
+      },
+      "local_energy": {
+        "value": 0.00014367091560790876,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      },
+      "temperature_stationarity": {
+        "value": 0.00015934034866658134,
+        "tolerance": 0.0003,
+        "passed": true,
+        "measured": true
+      },
+      "source_closure": {
+        "value": 1.911806824396143e-15,
+        "tolerance": 1e-06,
+        "passed": true,
+        "measured": true
+      },
+      "boundary_screening": {
+        "value": 4.4220126337291185e-16,
+        "tolerance": 0.003,
+        "passed": true,
+        "measured": true
+      }
+    },
+    "required_checks": [
+      "all_depth_flux",
+      "local_energy",
+      "temperature_stationarity",
+      "source_closure",
+      "boundary_screening"
+    ],
+    "failures": [],
+    "independent_grid_validation": false,
+    "full_physics_validation": false
+  },
+  "source_request": {
+    "physics_revision": "openwd-0.1.3-qmhd-undoubled-v4",
+    "code_sha256": "02d4d7a088743db2efd2b317dfa2121b3dae30a33f9238b4554c0d40909042a6",
+    "data_sha256": "026dc590d5d7fa8f035c5fed5f1847010d101e096dbe378af5900bc2a716b985",
+    "config": {
+      "effective_temperature": 15680.0,
+      "logg": 6.3,
+      "abundances": {
+        "C": 0.0,
+        "O": 0.27,
+        "Ne": -1.86,
+        "Mg": -2.33,
+        "Al": -4.0,
+        "Si": -1.76,
+        "S": -2.84,
+        "Ca": -2.85,
+        "Fe": -3.0
+      },
+      "reference_element": "C",
+      "quality": "standard",
+      "mixing_length_alpha": 1.25,
+      "structure_maximum_metal_lines": null,
+      "formal_maximum_metal_lines": null,
+      "include_rydberg_dissolution": true,
+      "include_metal_series_pseudocontinuum": true,
+      "metal_series_pseudocontinuum_elements": [
+        "O",
+        "Mg",
+        "C"
+      ],
+      "include_linear_stark_quasistatic": true,
+      "linear_stark_profile": "manifold",
+      "include_oxygen_i_series_stark": true,
+      "microturbulent_velocity_kms": 0.0,
+      "line_profile_edge_optical_depth": 0.001
+    }
+  },
+  "reference_commit": "10a5e708071336c8588c68d052fdcb7332c6fadc",
+  "physics_revision": "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving:metal-audit-2026-09-30:default-feii-kurucz-uv-2026-10-12:rap-absolute-grid-2026-10-23",
+  "data_sha256": "a8df67ba874e2aa47c70847c1cdfa5bd4fd5e07d1f8c398b3c897024fa91e7c1",
+  "code_sha256": "159b6d40e3f46c8af9daeb9a71c5a191e6cb33eaceb72dd4fc87f5166f562a3f",
+  "python": "3.11.9 | packaged by conda-forge | (main, Apr 19 2024, 18:34:54) [Clang 16.0.6 ]",
+  "numpy": "2.3.5",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "perturbation": "T * exp(0.015 * exp(-((log10(tau) + 2) / 1)**2))",
+  "metrics": [
+    "maximum_all_depth_total_flux_residual",
+    "maximum_relative_cell_energy_balance_residual",
+    "maximum_log_temperature_correction",
+    "scattering_source_maximum_relative_residual"
+  ],
+  "output_sha256": "2d8824478e829d0492ebe7dfd62e07ad66cff9b6421a95d5e0ff17b0f96049c4",
+  "seed_sha256": "70574a3c78a74f55e4c6c75c2b4f2b0d16b7d61a1ef398891de93a1aac8cb338",
+  "timings_seconds": {
+    "trajectory": 2206.195472124964,
+    "fixed_spectrum": 107.87026891601272
+  },
+  "independent_kurucz_manifest_sha256": "f0efa3b6012e25c4888722a154455e519e9a4857575e583e70004739b112226e",
+  "archived_reference": {
+    "name": "warm_v3_independent_kurucz",
+    "manifest_sha256": "5e76b67ede71abb6493ae5d74d79f385ba8c7bd3ab7909686346ff571420056c",
+    "output_sha256": "4a082d47ea1ece82eab887b0c85be42f068f28d2fa7debc850c9061b740005cf",
+    "seed_sha256": "b97a305d5b27b19f5c1974f4a936565b47660521ff1f3249ac551d781eccaac5",
+    "reference_commit": "6e5074ea8ffc3feba9f04bd621796a60b27f4ae6"
+  },
+  "difference_from_previous": {
+    "profiles": {
+      "temperature": {
+        "maximum_absolute": 2.00346668349448,
+        "maximum_relative": 9.048076673967564e-05,
+        "maximum_relative_by_step": [
+          9.048076673967564e-05,
+          8.934500857682437e-05
+        ],
+        "maximum_relative_location": [
+          0,
+          39
+        ]
+      },
+      "gas_pressure": {
+        "maximum_absolute": 0.0,
+        "maximum_relative": 0.0,
+        "maximum_relative_by_step": [
+          0.0,
+          0.0
+        ],
+        "maximum_relative_location": [
+          0,
+          0
+        ]
+      },
+      "mass_density": {
+        "maximum_absolute": 1.7173694255791344e-10,
+        "maximum_relative": 0.00017099317985902474,
+        "maximum_relative_by_step": [
+          0.00017099317985902474,
+          0.00016334006923923727
+        ],
+        "maximum_relative_location": [
+          0,
+          13
+        ]
+      },
+      "electron_density": {
+        "maximum_absolute": 2648087849744.0,
+        "maximum_relative": 7.488222344631534e-05,
+        "maximum_relative_by_step": [
+          7.488222344631534e-05,
+          7.396075575905048e-05
+        ],
+        "maximum_relative_location": [
+          0,
+          38
+        ]
+      }
+    },
+    "metrics": [
+      "maximum_all_depth_total_flux_residual",
+      "maximum_relative_cell_energy_balance_residual",
+      "maximum_log_temperature_correction",
+      "scattering_source_maximum_relative_residual"
+    ],
+    "previous_metrics": [
+      [
+        0.00653202494158478,
+        3.0717518265813224e-05,
+        0.014033549434932624,
+        1.611723216566948e-15
+      ],
+      [
+        2.41851261517656e-05,
+        1.104350881175943e-07,
+        0.0007573268993166238,
+        1.5971100726711988e-15
+      ]
+    ],
+    "current_metrics": [
+      [
+        0.006500833180771437,
+        3.0246566238837965e-05,
+        0.013974520424943293,
+        1.722195056608127e-15
+      ],
+      [
+        2.1527118993169836e-05,
+        1.1300192172516317e-07,
+        0.0007549419187391493,
+        1.6844138216669627e-15
+      ]
+    ]
+  },
+  "spectral_approval": {
+    "date": "2026-10-23",
+    "authorization": "Explicit user request to re-approve the D6 J1637 fixture for the Fe photoionization fix from PR #37, with a maximum fixed-spectrum change of 0.022%.",
+    "maximum_relative_change": 0.00022,
+    "observed_maximum_relative_change": 0.00021918014093524896,
+    "integrated_flux_change": -5.254786501531004e-05,
+    "spectrum_rtol": 2e-06,
+    "tolerances_changed": false,
+    "approved_output_sha256": "2d8824478e829d0492ebe7dfd62e07ad66cff9b6421a95d5e0ff17b0f96049c4",
+    "reason": "Absolute RAP excitations and photon support; count the Fe ground-term centroid once and retain aggregate channel support below the mean binding.",
+    "cold_start_qualification": false
+  }
+}
