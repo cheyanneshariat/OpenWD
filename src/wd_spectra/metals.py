@@ -1273,13 +1273,7 @@ class MgHeRedWingTable:
             raise ValueError("wavelength, temperature, and density must be physical")
 
         grid_temperature = self.temperatures
-        # Below the coolest table (4000 K) the far wing is extrapolated as
-        # ln sigma linear in 1/T through the two coolest tables: the
-        # quasi-static wing at a given detuning is formed at one separation R
-        # and scales as exp(-V_X(R)/kT).  The tables themselves follow that law
-        # (slope 1.5-2e4 K at 3800 A); holding the 4000-K wing instead
-        # overestimates it 5-10x in the 2700-3000 K layers of the coolest DZs.
-        clipped_temperature = np.minimum(temp, grid_temperature[-1])
+        clipped_temperature = np.clip(temp, grid_temperature[0], grid_temperature[-1])
         result = np.zeros((wavelength.size,) + temp.shape, dtype=np.float64)
         tiny = np.finfo(np.float64).tiny
         flattened_temperature = clipped_temperature.ravel()
@@ -1302,16 +1296,10 @@ class MgHeRedWingTable:
                         right=0.0,
                     )
                 )
-            if local_temperature < t_lower:
-                fraction = (
-                    (1.0 / local_temperature - 1.0 / t_lower)
-                    / (1.0 / t_upper - 1.0 / t_lower)
-                )
-            else:
-                fraction = (
-                    (np.log(local_temperature) - np.log(t_lower))
-                    / (np.log(t_upper) - np.log(t_lower))
-                )
+            fraction = (
+                (np.log(local_temperature) - np.log(t_lower))
+                / (np.log(t_upper) - np.log(t_lower))
+            )
             both_positive = (sigma_pair[0] > 0.0) & (sigma_pair[1] > 0.0)
             interpolated = np.where(
                 both_positive,
@@ -1319,8 +1307,7 @@ class MgHeRedWingTable:
                     (1.0 - fraction) * np.log(np.maximum(sigma_pair[0], tiny))
                     + fraction * np.log(np.maximum(sigma_pair[1], tiny))
                 ),
-                (1.0 - fraction) * sigma_pair[0] + fraction * sigma_pair[1]
-                if fraction >= 0.0 else sigma_pair[0],
+                (1.0 - fraction) * sigma_pair[0] + fraction * sigma_pair[1],
             )
             result.reshape(wavelength.size, -1)[:, depth] = interpolated
         density_scale = np.minimum(density / self.helium_density_cm3, 1.0)
@@ -1351,20 +1338,6 @@ class MgHeRedWingTable:
         flattened_density = density.ravel()
         flat_result = result.reshape(wavelength.size, -1)
         flat_reference = reference_sigma.reshape(wavelength.size, -1)
-        # The ratio is defined only where both CDS curves bracketing the local
-        # temperature (and the reference) are tabulated.
-        curve_start = np.asarray([self.wavelength_by_temperature[t][0] for t in grid_temperature])
-        curve_end = np.asarray([self.wavelength_by_temperature[t][-1] for t in grid_temperature])
-        reference_upper = min(max(int(np.searchsorted(
-            grid_temperature, reference_temperature, side="right")), 1), grid_temperature.size - 1)
-        ratio_start = np.empty(flattened_temperature.size)
-        ratio_end = np.empty(flattened_temperature.size)
-        for depth, local_temperature in enumerate(flattened_temperature):
-            upper = min(max(int(np.searchsorted(
-                grid_temperature, local_temperature, side="right")), 1), grid_temperature.size - 1)
-            nodes = [upper - 1, upper, reference_upper - 1, reference_upper]
-            ratio_start[depth] = curve_start[nodes].max()
-            ratio_end[depth] = curve_end[nodes].min()
         for depth, local_density in enumerate(flattened_density):
             binary_density_scale = (
                 local_density / grid_density[0]
@@ -1383,25 +1356,10 @@ class MgHeRedWingTable:
             for table_density in (d_lower, d_upper):
                 table_wavelength = self.wavelength_by_density[table_density]
                 table_sigma = self.cross_section_by_density[table_density]
-                sigma = np.interp(
+                sigma_pair.append(np.interp(
                     wavelength, table_wavelength, table_sigma,
                     left=0.0, right=0.0,
-                )
-                # Each figure curve stops where it leaves the plot (~1e-19 cm^2),
-                # not where the wing ends.  Continue it with its own logarithmic
-                # slope over the last 150 A instead of a hard edge.
-                red = wavelength > table_wavelength[-1]
-                tail = table_wavelength > table_wavelength[-1] - 150.0
-                if np.any(red) and np.count_nonzero(tail) >= 2:
-                    slope = np.polyfit(
-                        table_wavelength[tail],
-                        np.log(np.maximum(table_sigma[tail], tiny)), 1,
-                    )[0]
-                    if slope < 0.0:
-                        sigma[red] = table_sigma[-1] * np.exp(
-                            slope * (wavelength[red] - table_wavelength[-1])
-                        )
-                sigma_pair.append(sigma)
+                ))
             fraction = (
                 (np.log(clipped_density) - np.log(d_lower))
                 / (np.log(d_upper) - np.log(d_lower))
@@ -1417,23 +1375,10 @@ class MgHeRedWingTable:
             )
             reference = flat_reference[:, depth]
             temperature_ratio = np.ones_like(reference)
-            # The CDS curves end at different wavelengths for each temperature.
-            # Interpolate the ratio in log between wavelengths where both are
-            # tabulated and hold it beyond them, as for Ca I, so a figure
-            # boundary does not become an opacity edge (ratio 0 then 1).
-            valid_ratio = (
-                (reference > 0.0) & (flat_result[:, depth] > 0.0)
-                & (wavelength >= ratio_start[depth])
-                & (wavelength <= ratio_end[depth])
+            valid_ratio = reference > 0.0
+            temperature_ratio[valid_ratio] = (
+                flat_result[valid_ratio, depth] / reference[valid_ratio]
             )
-            if np.any(valid_ratio):
-                order = np.argsort(wavelength)
-                valid_order = order[valid_ratio[order]]
-                temperature_ratio[order] = np.exp(np.interp(
-                    wavelength[order],
-                    wavelength[valid_order],
-                    np.log(flat_result[valid_order, depth] / reference[valid_order]),
-                ))
             flat_result[:, depth] = (
                 density_profile * temperature_ratio * binary_density_scale
             )
@@ -10044,35 +9989,12 @@ def metal_line_mass_absorption_coefficient(
         elif is_mg_resonance and mg_he_red_wing_table is not None:
             # The unified red wing must be enveloped depth by depth, so retain
             # this rare special line outside the ordinary compiled batch.
-            # The ordinary Voigt is the impact profile; it supplies the core and
-            # holds only for detunings below the Weisskopf frequency v/rho_W,
-            # beyond which the line is quasi-static and the Allard unified
-            # profile is the wing.  rho_W follows from the He impact width
-            # itself, gamma_He = 2 pi n_He v rho_W^2.  Enveloping out to 100
-            # impact HWHM instead let the Lorentzian far wing (1e3-1e4 A at
-            # n_He ~ 1e23) dominate the 3000-7000 A opacity of cool dense DZs.
-            reduced_mass_g = (
-                HELIUM_MASS / _HELIUM_ATOMIC_MASS_U
-                * ion.atomic_mass_u * _HELIUM_ATOMIC_MASS_U
-                / (ion.atomic_mass_u + _HELIUM_ATOMIC_MASS_U)
-            )
-            mean_speed = np.sqrt(
-                8.0 * BOLTZMANN * atmosphere.temperature / (PI * reduced_mass_g)
-            )
-            weisskopf_radius = np.sqrt(
-                helium_collision_rate
-                / np.maximum(2.0 * PI * helium_density * mean_speed, 1.0e-300)
-            )
-            impact_half_window = (
-                center_cm**2 * mean_speed / np.maximum(weisskopf_radius, 1.0e-300)
-                / (2.0 * PI * LIGHT_SPEED) * 1.0e8
-            )
             for depth in range(atmosphere.n_depth):
                 half_window = max(
                     METAL_LINE_MINIMUM_HALF_WINDOW_ANGSTROM,
                     resonance_half_window,
                     10.0 * gaussian_sigma[depth],
-                    min(100.0 * lorentz_hwhm[depth], impact_half_window[depth]),
+                    100.0 * lorentz_hwhm[depth],
                 )
                 start = int(np.searchsorted(wavelength, center - half_window))
                 stop = int(np.searchsorted(
@@ -10096,18 +10018,26 @@ def metal_line_mass_absorption_coefficient(
                     atmosphere.temperature[depth],
                     helium_density[depth],
                 ).reshape(wavelength.size)
-                # The table clamps temperature at its published edges.  Outside
-                # them that is still the quasi-static wing; falling back to the
-                # impact profile would put a Lorentzian wing back where the
-                # line is quasi-static (cool dense layers below 4000 K).
-                result[:, depth] += allard_cross_section * population_factor[depth]
-                if stop > start:
+                valid_temperature = (
+                    mg_he_red_wing_table.temperatures[0]
+                    <= atmosphere.temperature[depth]
+                    <= mg_he_red_wing_table.temperatures[-1]
+                )
+                if valid_temperature:
+                    result[:, depth] += (
+                        allard_cross_section * population_factor[depth]
+                    )
+                if stop > start and valid_temperature:
                     result[start:stop, depth] += (
                         np.maximum(
                             ordinary_cross_section,
                             allard_cross_section[start:stop],
                         ) - allard_cross_section[start:stop]
                     ) * population_factor[depth]
+                elif stop > start:
+                    result[start:stop, depth] += (
+                        ordinary_cross_section * population_factor[depth]
+                    )
         else:
             batch_key = "result" if replacement_key is None else replacement_key
             batch = ordinary_profile_batches[batch_key]
@@ -10291,11 +10221,18 @@ def metal_line_mass_absorption_coefficient(
                 ),
                 unified_opacity,
             )
-            # The temperature sequence is clamped at its published edges inside
-            # the table.  Replacing the unified line by the impact profile there
-            # instead put a full Lorentzian 4227 A wing into the 2700-3000 K
-            # upper layers of the coolest DZs (n_He ~ 1e22-1e23).
-            result += unified_with_core
+            if ca_i_he_profile_table.temperatures.size:
+                valid_temperature = (
+                    (atmosphere.temperature >= ca_i_he_profile_table.temperatures[0])
+                    & (atmosphere.temperature <= ca_i_he_profile_table.temperatures[-1])
+                )
+                result += np.where(
+                    valid_temperature[np.newaxis, :],
+                    unified_with_core,
+                    ordinary_opacity,
+                )
+            else:
+                result += unified_with_core
     if ca_ii_he_profile_table is not None and "Ca" in line_abundances:
         ca_ii = atomic_database.ions.get(("Ca", 1))
         if ca_ii is not None and metal_state.ion_number_density["Ca"].shape[0] > 1:
