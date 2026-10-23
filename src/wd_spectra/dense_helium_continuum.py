@@ -216,6 +216,11 @@ class DenseHeliumCorrectionTable:
             factor = np.array(source["factor"], dtype=float)
             self.density_scale = float(source["density_scale_g_cm3"])
             self.metadata = json.loads(str(source["metadata_json"].item()))
+            # Cool isotherms whose fluid solve stops converging at high density
+            # carry their last converged log1p density; None = full axis.
+            self.maximum_valid_log1p_density = (
+                np.array(source["maximum_valid_log1p_density"], dtype=float)
+                if "maximum_valid_log1p_density" in source.files else None)
         if not isinstance(self.metadata, dict) or self.metadata.get("schema") != "dense-He-ff-v1":
             raise ValueError("invalid dense-He table schema")
         for axis in self.axes:
@@ -228,6 +233,10 @@ class DenseHeliumCorrectionTable:
                 or np.any(~np.isfinite(factor)) or np.any(factor <= 0)
                 or not np.array_equal(factor[:, 0], np.ones_like(factor[:, 0]))):
             raise ValueError("invalid dense-He factors, shape, or zero-density limit")
+        limit = self.maximum_valid_log1p_density
+        if limit is not None and (limit.shape != self.axes[0].shape or np.any(~np.isfinite(limit))
+                                  or np.any(limit <= self.axes[1][0]) or np.any(limit > self.axes[1][-1])):
+            raise ValueError("invalid dense-He maximum valid density")
         # Quadratic ghost knots avoid imposing a zero physical derivative at
         # a table boundary. They are used only to construct spline coefficients;
         # requests outside the original physical domain still raise below.
@@ -267,6 +276,21 @@ class DenseHeliumCorrectionTable:
                     f"{name} requested [{values.min():.12g}, {values.max():.12g}], "
                     f"allowed [{axis[0]:.12g}, {axis[-1]:.12g}]")
             fractional.append(self._padding+(np.clip(values, axis[0], axis[-1])-axis[0])/(axis[1]-axis[0]))
+        if self.maximum_valid_log1p_density is not None:
+            # Cubic support spans the two nearest isotherms on each side; a partial
+            # isotherm's continued (unconverged) knots are kept 2 knots away.
+            limit = self.maximum_valid_log1p_density
+            step = self.axes[1][1]-self.axes[1][0]
+            node = np.clip(np.floor(fractional[0]-self._padding).astype(int), 0, len(limit)-1)
+            allowed = np.array([min(limit[max(i-1, 0):i+3]) for i in node])
+            allowed = np.where(allowed < self.axes[1][-1], allowed-2*step, allowed)
+            beyond = physical[1] > allowed
+            if np.any(beyond):
+                i = int(np.argmax(beyond))
+                raise ValueError(
+                    "dense-He continuum requested above the converged fluid density of the "
+                    f"cool isotherms: T={t[i]:.6g} K, log1p_neutral_density={physical[1][i]:.6g}, "
+                    f"allowed {allowed[i]:.6g}")
         x, y, z = np.broadcast_arrays(fractional[0][None, :], fractional[1][None, :], fractional[2][:, None])
         result = np.exp(map_coordinates(self._spline, np.array([x, y, z]),
                                        order=3, mode="mirror", prefilter=False))

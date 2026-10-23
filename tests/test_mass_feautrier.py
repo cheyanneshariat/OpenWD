@@ -319,3 +319,20 @@ def test_deep_wien_transfer_preserves_nonnegative_intensity_without_clipping():
         rtol=2e-13,atol=20*np.nextafter(0.,1.))
     np.testing.assert_allclose(physical.interface_flux,normalized.interface_flux*scale,
         rtol=2e-13,atol=20*np.nextafter(0.,1.))
+
+
+def test_transparent_layers_below_tau_resolution_use_direct_mass_increments():
+    from wd_spectra._mass_feautrier import mass_field
+    from wd_spectra.opacity import optical_depth_from_mass_opacity
+    mass = np.geomspace(1e-2, 1e3, 40)
+    extinction = np.vstack([np.full(40, 1.0),                       # well resolved
+                            np.r_[np.full(5, 1e3), np.full(35, 1e-17)]])  # opaque top, transparent below
+    tau = optical_depth_from_mass_opacity(mass, extinction)
+    assert np.any(np.diff(tau[1]) <= 0)                             # increments lost in accumulated tau
+    planck = np.ones_like(extinction)
+    source, field = mass_field(tau, planck, extinction, np.zeros_like(extinction), column_mass=mass, n_angle=4)
+    assert np.all(np.isfinite(field.mean_intensity)) and np.all(np.isfinite(field.interface_flux))
+    # The resolved wavelength is computed exactly as before.
+    reference_source, reference = mass_field(tau[:1], planck[:1], extinction[:1], np.zeros((1, 40)),
+                                             column_mass=mass, n_angle=4)
+    np.testing.assert_array_equal(field.mean_intensity[0], reference.mean_intensity[0])

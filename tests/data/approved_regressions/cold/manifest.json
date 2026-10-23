@@ -1676,7 +1676,7 @@
     "src/wd_spectra/data/runtime/cache/tmad-atoms/O_VII_syn": "818833682725667d091e1af43ae761429b7a0390ef040353549debbfe79fc45b",
     "src/wd_spectra/data/runtime/cache/tmad-atoms/O_VI_syn": "f6b381b0a09ba275e237bbb27b1023f0838a103d16800b464a9688053f397220",
     "src/wd_spectra/data/runtime/cache/tmad-atoms/O_V_syn": "a710984370e0985e82500d26ed01aae0bf8326293f2347dc332fdf1dd430ee84",
-    "src/wd_spectra/data/runtime/cool-models/molecular-hnc-electron-domain-table.npz": "4bf3134197d7309ccb6ee227bf2a659c30438ec263e322cb020aec8371fc10e7",
+    "src/wd_spectra/data/runtime/cool-models/molecular-hnc-electron-domain-table.npz": "b72c73cec42f5f2661742bb9a4051283abc36185f5059d213d4ab0db2c8607f4",
     "src/wd_spectra/data/stark/LICENSE.txt": "38129f95f350841be398684668f7917958bcb167e3ab148e7dad4824d20d66a6",
     "src/wd_spectra/data/stark/README.txt": "0d69097706168e5307378ccb303df709515710d72db705aa8b4b0da917d4fb9d",
     "src/wd_spectra/data/stark/kurucz_mg_ii_electron_widths.csv": "9080abe4eff66f794f6b1de4838a0a7eb8b2563335bbe8fa753420842db26180",

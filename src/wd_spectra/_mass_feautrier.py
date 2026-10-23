@@ -30,6 +30,15 @@ class MassFactors(_DifferenceFactors):
         self.mu,self.weight=angular_quadrature(n_angle)
         nw,nd=tau.shape;nr=len(self.mu)
         self.h=np.diff(tau,axis=1,prepend=0.)
+        # Nearly transparent layers (e.g. cm wavelengths high in a cool He
+        # atmosphere) have kappa*dm below the double-precision resolution of
+        # the accumulated tau. For those wavelengths only, use the trapezoidal
+        # extinction integrals tau was accumulated from, without cancellation.
+        lost=np.any(~(self.h>0),axis=1)
+        if np.any(lost):
+            m=np.asarray(mass,dtype=float);e=np.asarray(extinction,dtype=float)[lost]
+            self.h[lost,0]=tau[lost,0]
+            self.h[lost,1:]=.5*(e[:,1:]+e[:,:-1])*np.diff(m)[None,:]
         if np.any(~np.isfinite(self.h)) or np.any(self.h<=0):
             raise ValueError('optical face resistances must be positive finite')
         volume=extinction[:,:-1]*mass_width(mass)[None,:]

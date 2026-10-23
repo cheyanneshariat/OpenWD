@@ -66,8 +66,10 @@ def solve_rogers_young(grid, temperature, number_density, alpha, initial=None):
     f = -np.expm1(-alpha*grid.r)
 
     def fields(gamma):
-        # exp overflow is clipped only far inside the core, where e == 0.
-        y = 1 + np.expm1(np.minimum(f*gamma, 700.))/f
+        # Clipped only far inside the core (e == 0) and in wild Krylov trial
+        # steps: at 700 the trial residual's squared norm overflowed (below
+        # ~2200 K); converged states have f*gamma << 200 outside the core.
+        y = 1 + np.expm1(np.minimum(f*gamma, 200.))/f
         c = e*y - 1 - gamma
         ck = grid.forward(c)
         s = 1/(1-number_density*ck)

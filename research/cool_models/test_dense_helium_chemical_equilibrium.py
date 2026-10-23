@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
-from dense_helium_chemical_equilibrium import ExcessPotentials, solve_mass_action, solve_chemistry
+from dense_helium_chemical_equilibrium import (ExcessPotentials, solve_mass_action, solve_chemistry,
+                                              solve_solute_chemistry)
 from dense_helium_atomic_experiment import atomic_ion_fraction
 
 
@@ -45,3 +46,19 @@ def test_electron_insertion_suppresses_ionization_not_enhances_it():
     original = solve_chemistry(6000., .1, ExcessPotentials(0., 0., 0., 0., 'unit test'))
     extra_electron_energy = solve_chemistry(6000., .1, ExcessPotentials(0., 0., 0., 1., 'unit test'))
     assert extra_electron_energy.electron < original.electron
+
+
+def test_solute_chemistry_conserves_and_reduces_to_atomic_without_bound_pairs():
+    potentials = ExcessPotentials(.3, -.8, 1.2, .6, 'synthetic algebra test')
+    rho = np.geomspace(1e-6, 1., 7)
+    free = solve_solute_chemistry(6000., rho, potentials, 0.)
+    explicit = solve_chemistry(6000., rho, potentials, equilibrium=lambda t: (np.full_like(t, 1e300),))
+    np.testing.assert_allclose(free.electron, explicit.electron, rtol=1e-12)
+    assert np.all(free.molecular_ion == 0)
+    bound = solve_solute_chemistry(6000., rho, potentials, 3*rho)
+    np.testing.assert_allclose(bound.electron, free.electron, rtol=1e-12)
+    np.testing.assert_allclose(bound.molecular_ion/bound.electron, -np.expm1(-3*rho), rtol=1e-12)
+    from wd_spectra.constants import HELIUM_MASS
+    nuclei = rho/HELIUM_MASS
+    np.testing.assert_allclose(bound.neutral+bound.atomic_ion+2*bound.molecular_ion, nuclei, rtol=1e-14)
+    assert bound.maximum_relative_charge_residual < 1e-14

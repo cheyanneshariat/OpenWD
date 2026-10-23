@@ -55,4 +55,4 @@ def test_external_data_check_fails_closed(monkeypatch, tmp_path):
 
 def test_bundled_hnc_cache_is_the_qualified_generated_table():
     table = Path(__file__).parent / "data/molecular-hnc-electron-domain-table.npz"
-    assert hashlib.sha256(table.read_bytes()).hexdigest() == "4bf3134197d7309ccb6ee227bf2a659c30438ec263e322cb020aec8371fc10e7"
+    assert hashlib.sha256(table.read_bytes()).hexdigest() == "b72c73cec42f5f2661742bb9a4051283abc36185f5059d213d4ab0db2c8607f4"
