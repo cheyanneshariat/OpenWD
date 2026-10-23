@@ -73,6 +73,21 @@ def _previous_rap_reader(reader):
 
 
 @contextmanager
+def previous_rap_photoionization():
+    """Recover the pre-repair RAP convention for immutable D6 controls."""
+    current = d6.read_tlusty_rap_lte_photoionization
+    previous = _previous_rap_reader(current)
+    with ExitStack() as stack:
+        for module in tuple(sys.modules.values()):
+            if module is None or not getattr(module, "__name__", "").startswith("wd_spectra"):
+                continue
+            for name, value in tuple(vars(module).items()):
+                if value is current:
+                    stack.enter_context(patch.object(module, name, previous))
+        yield
+
+
+@contextmanager
 def previous_cool_dz_release_physics():
     """Patch every wd_spectra binding of the three changed functions."""
     swaps = {
