@@ -8,6 +8,7 @@ import json
 import sys
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 import numpy as np
 import pytest
 from wd_spectra._compat import trapezoid
@@ -33,6 +34,30 @@ from cool_dz_release_control_legacy import (
 )
 
 CONTROLS = Path(__file__).parent / "data/spectral_regressions"
+
+
+@pytest.fixture(autouse=True)
+def _restores_every_wd_spectra_binding():
+    """Legacy scopes and patches must leave no wd_spectra function binding replaced.
+
+    Autouse fixtures are set up before ``monkeypatch`` and torn down after it,
+    so this sees the bindings a later test in the same process would see.
+    """
+    def bindings():
+        return {
+            (name, attr): value
+            for name, module in tuple(sys.modules.items())
+            if module is not None and name.startswith("wd_spectra")
+            for attr, value in tuple(vars(module).items())
+            if callable(value)
+        }
+
+    before = bindings()
+    yield
+    after = bindings()
+    changed = sorted(f"{name}.{attr}" for (name, attr), value in before.items()
+                     if (name, attr) in after and after[(name, attr)] is not value)
+    assert not changed, f"wd_spectra bindings left patched: {changed}"
 APPROVED = Path(__file__).parent / "data/approved_regressions/fixed"
 APPROVED_DENSITY_EDGE = (
     Path(__file__).parent
@@ -262,8 +287,12 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
                     kwargs["include_default_supplements"] = False
                     return reader(*args, **kwargs)
 
-                monkeypatch.setattr(stellar, "read_stout_atomic_database", raw_stout)
-                with pytest.warns(AtmosphereConvergenceWarning):
+                # Scope this patch to the call. A test-wide monkeypatch would record
+                # the reader that is current inside the legacy scopes (their
+                # replacement) and restore it at teardown, after those scopes have
+                # exited, leaving every later DZ model with the old supplements.
+                with patch.object(stellar, "read_stout_atomic_database", raw_stout), \
+                        pytest.warns(AtmosphereConvergenceWarning):
                     original = compute_dz(
                         previous_config, wave, initial_atmosphere=atmosphere,
                         relax_atmosphere=False,
