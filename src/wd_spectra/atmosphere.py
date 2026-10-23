@@ -1575,10 +1575,11 @@ def radiative_equilibrium_hydrogen_atmosphere(
     if metal_topbase_photoionization_database is not None:
         topbase_edge_grid = np.asarray([
             PLANCK * LIGHT_SPEED
-            / (section.threshold_energy_ev * 1.602_176_634e-12)
+            / (edge * 1.602_176_634e-12)
             * 1.0e8
             for section in metal_topbase_photoionization_database.sections
             if metal_abundances is not None and section.element in metal_abundances
+            for edge in section.structure_edge_energies_ev
         ])
         if topbase_edge_grid.size:
             wavelength = np.unique(np.concatenate((
@@ -2623,10 +2624,11 @@ def radiative_equilibrium_helium_atmosphere(
     if metal_topbase_photoionization_database is not None:
         topbase_edge_grid = np.asarray([
             PLANCK * LIGHT_SPEED
-            / (section.threshold_energy_ev * 1.602_176_634e-12)
+            / (edge * 1.602_176_634e-12)
             * 1.0e8
             for section in metal_topbase_photoionization_database.sections
             if section.element in metal_abundances
+            for edge in section.structure_edge_energies_ev
         ])
         if topbase_edge_grid.size:
             topbase_edge_samples = (

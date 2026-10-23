@@ -276,10 +276,67 @@ class TOPbaseLevelPhotoionization:
     source_threshold_energy_ev: float
     photon_energy_ev: FloatArray
     cross_section_cm2: FloatArray
+    # RAP superlevels can combine channels with different lower energies.
+    # Their absolute tabulated support is not a unique I-E continuum edge.
+    absolute_photon_grid: bool = False
+
+    @property
+    def sampling_edge_energy_ev(self) -> float:
+        """Energy to bracket in structure quadrature, not a level binding.
+
+        For an absolute aggregate table this is the first covered positive
+        sample, not a constituent-resolved spectroscopic continuum limit.
+        """
+        if self.absolute_photon_grid:
+            positive = np.flatnonzero(self.cross_section_cm2 > 0.0)
+            if positive.size:
+                return float(self.photon_energy_ev[int(positive[0])])
+        return self.threshold_energy_ev
+
+    @property
+    def structure_edge_energies_ev(self) -> tuple[float, ...]:
+        """Bracket both ends of an absolute table's zero-to-positive ramp."""
+        if self.absolute_photon_grid:
+            positive = np.flatnonzero(self.cross_section_cm2 > 0.0)
+            if positive.size:
+                first = int(positive[0])
+                return tuple(float(value) for value in
+                             self.photon_energy_ev[max(0, first - 1):first + 1])
+        return (self.threshold_energy_ev,)
 
     def cross_section(self, photon_energy_ev: ArrayLike) -> FloatArray:
         energy = np.asarray(photon_energy_ev, dtype=np.float64)
         result = np.zeros_like(energy)
+        if self.absolute_photon_grid:
+            # TLUSTY SIGAVE interpolates the absolute RAP table: log-log for
+            # positive pairs, linear frequency/cross-section if either end
+            # is zero. Some superlevels have broad zero-to-positive ramps.
+            # Neither a mean I-E cutoff nor a first-positive step is valid.
+            valid = np.isfinite(energy) & (energy >= self.photon_energy_ev[0])
+            selected = energy[valid]
+            if selected.size == 0:
+                return result
+            left = np.clip(np.searchsorted(self.photon_energy_ev, selected,
+                                            side="right") - 1,
+                           0, self.photon_energy_ev.size - 2)
+            x0, x1 = self.photon_energy_ev[left], self.photon_energy_ev[left + 1]
+            y0, y1 = self.cross_section_cm2[left], self.cross_section_cm2[left + 1]
+            sampled = y0 + (selected - x0) / (x1 - x0) * (y1 - y0)
+            positive = (y0 > 0.0) & (y1 > 0.0)
+            sampled[positive] = np.exp(
+                np.log(y0[positive])
+                + np.log(selected[positive] / x0[positive])
+                / np.log(x1[positive] / x0[positive])
+                * np.log(y1[positive] / y0[positive])
+            )
+            above = selected > self.photon_energy_ev[-1]
+            # Retain the native high-energy continuation; this is not a
+            # claim that the truncated RAP table covers all higher channels.
+            sampled[above] = self.cross_section_cm2[-1] * (
+                selected[above] / self.photon_energy_ev[-1]
+            ) ** -3
+            result[valid] = np.maximum(sampled, 0.0)
+            return result
         valid = energy >= self.threshold_energy_ev
         if not np.any(valid):
             return result
@@ -769,6 +826,18 @@ def read_tlusty_rap_lte_photoionization(
     a compact companion file rather than embedding it in the atom file. Each
     section supplies the lower-level excitation energy, statistical weight,
     frequency samples, and cross sections in units of 1e-18 cm2.
+
+    RAP excitations are absolute wavenumbers above the lowest fine-structure
+    level, including a nonzero ground-term centroid. They are not relative
+    to that centroid. For example, the bundled Fe II ground entry is
+    416.299 cm-1 with weight 30, already the complete a6D term. Unlike the
+    embedded TLUSTY threshold format, no ground-term offset is added here.
+    The supplied absolute photon grid is retained; its older atomic energy
+    scale is not inferred or rebased from the first positive sample.
+    Aggregate channels can have positive support below the mean I-E. As in
+    TLUSTY's SIGAVE reader, that support is not clipped at a mean binding.
+    The threshold fields retain I-E for population bookkeeping only; such
+    sections do not define a unique edge for dissolved-series continuation.
     """
 
     sections: list[TOPbaseLevelPhotoionization] = []
@@ -797,7 +866,6 @@ def read_tlusty_rap_lte_photoionization(
             )
         cursor = 1
         loaded = 0
-        ground_term = stout_ground_term_centroid_ev(ion)
         for _ in range(section_count):
             if cursor >= len(lines):
                 raise ValueError(f"truncated TLUSTY RAP file {source}")
@@ -834,13 +902,11 @@ def read_tlusty_rap_lte_photoionization(
             first_positive = int(positive[0])
             start = max(0, first_positive - 1)
             photon_energy = PLANCK * frequency[start:] / EV_TO_ERG
-            # RAP sections share one absolute frequency grid, so the first
-            # positive sample is not a threshold.  Use the level's physical
-            # edge; energies are LS term averages measured from the ground
-            # term, which lies at the Stout ground-term centroid.
-            excitation = (
-                ground_term + excitation_wavenumber / EV_TO_WAVENUMBER
-            )
+            # The tabulated photon frequencies are absolute and can have
+            # delayed channel openings. Do not infer a level binding from
+            # the first positive sample. The RAP excitation already uses
+            # the lowest-J zero point, including its ground-term centroid.
+            excitation = excitation_wavenumber / EV_TO_WAVENUMBER
             target_edge = float(ion.ionization_energy_ev - excitation)
             if excitation < 0.0 or target_edge <= 0.0:
                 continue
@@ -855,6 +921,7 @@ def read_tlusty_rap_lte_photoionization(
                 source_threshold_energy_ev=source_edge,
                 photon_energy_ev=photon_energy,
                 cross_section_cm2=cross_section[start:],
+                absolute_photon_grid=True,
             ))
             loaded += 1
         if loaded:
