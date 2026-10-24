@@ -113,3 +113,11 @@ The offline capture records hashes, source revision, runtime, full-profile
 differences and the spectral change. Tests only compare frozen artifacts;
 they never rebuild them. The local preparation audit and the eventual PR
 checks record their actual outcomes separately.
+
+The first protected CI run passed all 24 cold-model cases and the normal
+test/spectral jobs. Its three historical J1637 trajectories passed in about
+97, 99 and 88 minutes, leaving insufficient time for the fourth version
+under the shared 330-minute command guard. The warm checks now run as four
+separate CI jobs, each retaining the same two updates, full resolution,
+reference arrays, tolerances and 330-minute command guard. Qualification
+requires all four; no prior-head pass is substituted for a fresh run.

@@ -99,6 +99,14 @@ an interrupted trajectory establishes cold convergence. The original public
 J1637 cold canary remains in `cold` and `full`; use it for release validation
 and cold-start investigations. See the [reference provenance](../../tests/data/d6_regressions/README.md).
 
+Each frozen J1637 version is a separate regression task. The aggregate
+`regression --case d6-j1637` selects all four; `--jobs 1` runs them
+sequentially with separate per-task work guards. To run just the current
+reference, select `--case d6-j1637-warm_v4_rap-current`. PR CI puts the four
+versions on separate workers, and its qualification gate requires the entire
+matrix to pass. Their reference arrays, two measured steps and physical
+tolerances are unchanged.
+
 ## GitHub checks
 
 Fast/component and fixed-spectrum checks run on pull requests and pushes to

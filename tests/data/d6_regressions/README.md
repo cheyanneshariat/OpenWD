@@ -70,6 +70,13 @@ python tools/validate.py regression --case d6-j1637 --jobs 1
 python tools/validate.py spectra --case d6-j1637 --jobs 1
 ```
 
+The aggregate warm selector expands to four independently recorded tasks.
+Use `--case d6-j1637-warm_v4_rap-current` to select only the current version.
+PR CI runs one version per worker, retaining all four references and both
+measured updates in each. All four jobs must pass qualification. Splitting
+the work prevents the historical versions from consuming the current
+version's time budget; no solver or comparison limit is relaxed.
+
 The full public cold-start canary remains available through
 `python tools/validate.py cold --case d6-j1637 --jobs 1`; weekly and manually
 dispatched CI still run it. A successful warm regression does not satisfy
