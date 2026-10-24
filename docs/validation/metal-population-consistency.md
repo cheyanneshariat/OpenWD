@@ -83,3 +83,27 @@ of inferred abundances. Saved-structure comparisons isolate opacity changes;
 new cold-start equilibrium and resolution checks remain distinct requirements.
 Frozen spectra and their acceptance tolerances must not be changed merely to
 make these source changes pass. Earlier spectra retain their original versions.
+
+## Comparison with the released PR #38 code
+
+With the same saved atmospheres, configurations and wavelength samples:
+
+| Star | Maximum relative flux change | Location | Integrated flux change |
+| --- | ---: | ---: | ---: |
+| PG1225 | 0.0049231% | 2659.76 A | +0.0002631% |
+| J0738 | 0.364745% | 1222 A | +0.0168186% |
+
+Component reversions isolate nearly all of each difference to TOPbase lower
+populations. Restoring all previous population expressions recovers every
+stored PR #38 flux sample exactly on the capture runtime. The separately
+versioned [controls](../../tests/data/approved_regressions/metal_populations_2026_10_24/README.md)
+retain all structures and tolerances and include hashes, runtime and component
+attribution. Historical spectra continue to run under their original population
+convention; the previous references remain unchanged.
+
+All four J1637 fixed spectra pass unchanged. Its public default uses ideal
+metal partitions; the new nonideal TOPbase normalization is exercised by the
+nonideal material tests and the DZ comparisons. Both DAZ fixed-spectrum controls
+also pass. These are fixed-state implementation comparisons, without a fresh
+atmosphere or a claim of improved agreement with observations. Full protected
+PR qualification is still required.

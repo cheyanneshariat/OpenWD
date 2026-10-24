@@ -360,3 +360,28 @@ def test_neutral_occupation_retains_low_levels_and_suppresses_rydberg_levels():
     np.testing.assert_array_equal(actual[:2], np.ones(2))
     expected = np.exp(-4. * np.pi / 3. * density["He"][2:] * (radius[2:] + perturber["He"])**3)
     np.testing.assert_allclose(actual[2:], expected, rtol=1e-14)
+
+
+def test_bulk_multicharge_population_uses_the_partition_ionic_moment():
+    temperature = np.full(4, 150000.)
+    electrons = np.array([1e12, 1e14, 1e16, 1e18])
+    levels = (
+        metals.AtomicLevel(1, 0., 1., '2s2.(1S<0>)'),
+        metals.AtomicLevel(2, 79. * metals.EV_TO_WAVENUMBER, 100., '11p.(1Po<1>)'),
+    )
+    ion = metals.AtomicIon('Mg', 2, 24.305, 80., levels, ())
+    population = np.zeros((3, 4))
+    population[2] = .5 * electrons
+    ionic_moment = np.sqrt(2.) * electrons
+    partition = ion.occupation_weighted_partition_function(temperature, ionic_moment)
+    state = metals.MetalLTEState(
+        reference_species='metal', log_number_abundance={'Mg': 0.},
+        element_number_density={'Mg': population[2]}, ion_number_density={'Mg': population},
+        partition_function={('Mg', 2): partition}, electron_density=electrons,
+        metal_electron_density=electrons, metal_level_dissolution=True, composition_mode='bulk')
+    recovered = sum(metals.metal_lte_level_population(ion, level, state, temperature)
+                    for level in levels)
+    np.testing.assert_allclose(recovered, population[2], rtol=2e-13)
+    # The wrong charged density would give a different partition, so this
+    # state actually distinguishes the trace and bulk conventions.
+    assert np.max(np.abs(partition / ion.occupation_weighted_partition_function(temperature, electrons) - 1.)) > 1e-3
