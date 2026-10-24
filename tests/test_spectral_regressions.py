@@ -8,6 +8,7 @@ import json
 import sys
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 import numpy as np
 import pytest
 from wd_spectra._compat import trapezoid
@@ -27,8 +28,36 @@ from wd_spectra.models import (
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
 from uv_atomic_control_legacy import legacy_uv_atomic_controls
 from independent_kurucz_control_legacy import previous_kurucz_defaults
+from cool_dz_release_control_legacy import (
+    previous_cool_dz_release_config,
+    previous_cool_dz_release_physics,
+)
 
 CONTROLS = Path(__file__).parent / "data/spectral_regressions"
+
+
+@pytest.fixture(autouse=True)
+def _restores_every_wd_spectra_binding():
+    """Legacy scopes and patches must leave no wd_spectra function binding replaced.
+
+    Autouse fixtures are set up before ``monkeypatch`` and torn down after it,
+    so this sees the bindings a later test in the same process would see.
+    """
+    def bindings():
+        return {
+            (name, attr): value
+            for name, module in tuple(sys.modules.items())
+            if module is not None and name.startswith("wd_spectra")
+            for attr, value in tuple(vars(module).items())
+            if callable(value)
+        }
+
+    before = bindings()
+    yield
+    after = bindings()
+    changed = sorted(f"{name}.{attr}" for (name, attr), value in before.items()
+                     if (name, attr) in after and after[(name, attr)] is not value)
+    assert not changed, f"wd_spectra bindings left patched: {changed}"
 APPROVED = Path(__file__).parent / "data/approved_regressions/fixed"
 APPROVED_DENSITY_EDGE = (
     Path(__file__).parent
@@ -61,6 +90,10 @@ APPROVED_MICROFIELD_HOSTS = (
 APPROVED_INDEPENDENT_KURUCZ = (
     Path(__file__).parent
     / "data/approved_regressions/independent_kurucz_2026_10_14/fixed"
+)
+APPROVED_COOL_DZ_RELEASE = (
+    Path(__file__).parent
+    / "data/approved_regressions/cool_dz_release_2026_10_23/fixed"
 )
 
 
@@ -106,7 +139,9 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        approved_directory = APPROVED_INDEPENDENT_KURUCZ
+        # Re-approved for the cool-DZ release defaults (dense-He physics, unified
+        # He tables, Rydberg-only neutral hard sphere); see that directory's manifest.
+        approved_directory = APPROVED_COOL_DZ_RELEASE
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -151,112 +186,120 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
-        # Retain the exact predecessor and its tolerances as a separate check.
-        with previous_kurucz_defaults(), pytest.warns(AtmosphereConvergenceWarning):
-            predecessor = compute_dz(config, wave, initial_atmosphere=atmosphere,
-                                     relax_atmosphere=False)
-        with np.load(APPROVED_UV_ATOMIC / (case + ".npz")) as control:
-            previous_default_flux = control["surface_flux"]
-        np.testing.assert_allclose(predecessor.spectrum.surface_flux_lambda,
-            previous_default_flux, rtol=2e-6, atol=1e-12 * np.max(previous_default_flux))
-        with legacy_uv_atomic_controls():
-            # First recover the immediate predecessor without altering the
-            # historical structure, EOS, metal populations or host microfields.
-            with pytest.warns(AtmosphereConvergenceWarning):
-                legacy_atomic = compute_dz(
-                    config, wave, initial_atmosphere=atmosphere,
-                    relax_atmosphere=False,
+        # Every earlier approval predates the cool-DZ release: recover its
+        # defaults and physics first, then keep each predecessor check intact.
+        config = previous_cool_dz_release_config(config)
+        with previous_cool_dz_release_physics():
+            # Retain the exact predecessor and its tolerances as a separate check.
+            with previous_kurucz_defaults(), pytest.warns(AtmosphereConvergenceWarning):
+                predecessor = compute_dz(config, wave, initial_atmosphere=atmosphere,
+                                         relax_atmosphere=False)
+            with np.load(APPROVED_UV_ATOMIC / (case + ".npz")) as control:
+                previous_default_flux = control["surface_flux"]
+            np.testing.assert_allclose(predecessor.spectrum.surface_flux_lambda,
+                previous_default_flux, rtol=2e-6, atol=1e-12 * np.max(previous_default_flux))
+            with legacy_uv_atomic_controls():
+                # First recover the immediate predecessor without altering the
+                # historical structure, EOS, metal populations or host microfields.
+                with pytest.warns(AtmosphereConvergenceWarning):
+                    legacy_atomic = compute_dz(
+                        config, wave, initial_atmosphere=atmosphere,
+                        relax_atmosphere=False,
+                    )
+                with np.load(APPROVED_MICROFIELD_HOSTS / (case + ".npz")) as control:
+                    host_flux = control["surface_flux"]
+                    np.testing.assert_array_equal(wave, control["wavelength"])
+                np.testing.assert_allclose(
+                    legacy_atomic.spectrum.surface_flux_lambda, host_flux,
+                    rtol=2e-6, atol=1e-12 * np.max(host_flux),
                 )
-            with np.load(APPROVED_MICROFIELD_HOSTS / (case + ".npz")) as control:
-                host_flux = control["surface_flux"]
-                np.testing.assert_array_equal(wave, control["wavelength"])
-            np.testing.assert_allclose(
-                legacy_atomic.spectrum.surface_flux_lambda, host_flux,
-                rtol=2e-6, atol=1e-12 * np.max(host_flux),
-            )
-            # Restoring only the previous metal-only microfield moment must recover
-            # the previous (default Kurucz Si II transitions) control; the older
-            # controls below were all captured with that moment.
-            from wd_spectra import metals
+                # Restoring only the previous metal-only microfield moment must recover
+                # the previous (default Kurucz Si II transitions) control; the older
+                # controls below were all captured with that moment.
+                from wd_spectra import metals
 
-            monkeypatch.setattr(
-                metals, "metal_ionic_microfield_perturber_density",
-                _legacy_metal_only_microfield_moment,
-            )
-            with pytest.warns(AtmosphereConvergenceWarning):
-                legacy = compute_dz(
-                    config, wave, initial_atmosphere=atmosphere,
-                    relax_atmosphere=False,
+                monkeypatch.setattr(
+                    metals, "metal_ionic_microfield_perturber_density",
+                    _legacy_metal_only_microfield_moment,
                 )
-            with np.load(APPROVED_SI_KURUCZ / (case + ".npz")) as control:
-                legacy_flux = control["surface_flux"]
-            np.testing.assert_allclose(
-                legacy.spectrum.surface_flux_lambda, legacy_flux,
-                rtol=2e-6, atol=1e-12 * np.max(legacy_flux),
-            )
-            # Disabling only the default Kurucz Si II missing transitions must
-            # recover the previous (default unified Si+-He profile) control.
-            unified_config = replace(config, si_ii_kurucz_transitions=False)
-            with pytest.warns(AtmosphereConvergenceWarning):
-                unified = compute_dz(
-                    unified_config, wave, initial_atmosphere=atmosphere,
-                    relax_atmosphere=False,
+                with pytest.warns(AtmosphereConvergenceWarning):
+                    legacy = compute_dz(
+                        config, wave, initial_atmosphere=atmosphere,
+                        relax_atmosphere=False,
+                    )
+                with np.load(APPROVED_SI_KURUCZ / (case + ".npz")) as control:
+                    legacy_flux = control["surface_flux"]
+                np.testing.assert_allclose(
+                    legacy.spectrum.surface_flux_lambda, legacy_flux,
+                    rtol=2e-6, atol=1e-12 * np.max(legacy_flux),
                 )
-            with np.load(APPROVED_SI_HE_UNIFIED / (case + ".npz")) as control:
-                unified_flux = control["surface_flux"]
-            np.testing.assert_allclose(
-                unified.spectrum.surface_flux_lambda, unified_flux,
-                rtol=2e-6, atol=1e-12 * np.max(unified_flux),
-            )
-            # Disabling the unified Si+-He profile as well must recover the
-            # default Kurucz electron Stark control.
-            stark_config = replace(unified_config, si_ii_he_unified_profile=False)
-            with pytest.warns(AtmosphereConvergenceWarning):
-                stark = compute_dz(
-                    stark_config, wave, initial_atmosphere=atmosphere,
-                    relax_atmosphere=False,
+                # Disabling only the default Kurucz Si II missing transitions must
+                # recover the previous (default unified Si+-He profile) control.
+                unified_config = replace(config, si_ii_kurucz_transitions=False)
+                with pytest.warns(AtmosphereConvergenceWarning):
+                    unified = compute_dz(
+                        unified_config, wave, initial_atmosphere=atmosphere,
+                        relax_atmosphere=False,
+                    )
+                with np.load(APPROVED_SI_HE_UNIFIED / (case + ".npz")) as control:
+                    unified_flux = control["surface_flux"]
+                np.testing.assert_allclose(
+                    unified.spectrum.surface_flux_lambda, unified_flux,
+                    rtol=2e-6, atol=1e-12 * np.max(unified_flux),
                 )
-            with np.load(APPROVED_KURUCZ_STARK / (case + ".npz")) as control:
-                stark_flux = control["surface_flux"]
-            np.testing.assert_allclose(
-                stark.spectrum.surface_flux_lambda, stark_flux,
-                rtol=2e-6, atol=1e-12 * np.max(stark_flux),
-            )
-            # Disabling the Kurucz electron Stark constants as well must recover
-            # the default Cr II control.
-            previous_config = replace(stark_config, kurucz_electron_stark=False)
-            with pytest.warns(AtmosphereConvergenceWarning):
-                previous = compute_dz(
-                    previous_config, wave, initial_atmosphere=atmosphere,
-                    relax_atmosphere=False,
+                # Disabling the unified Si+-He profile as well must recover the
+                # default Kurucz electron Stark control.
+                stark_config = replace(unified_config, si_ii_he_unified_profile=False)
+                with pytest.warns(AtmosphereConvergenceWarning):
+                    stark = compute_dz(
+                        stark_config, wave, initial_atmosphere=atmosphere,
+                        relax_atmosphere=False,
+                    )
+                with np.load(APPROVED_KURUCZ_STARK / (case + ".npz")) as control:
+                    stark_flux = control["surface_flux"]
+                np.testing.assert_allclose(
+                    stark.spectrum.surface_flux_lambda, stark_flux,
+                    rtol=2e-6, atol=1e-12 * np.max(stark_flux),
                 )
-            with np.load(APPROVED_CRII / (case + ".npz")) as control:
-                previous_flux = control["surface_flux"]
-            np.testing.assert_allclose(
-                previous.spectrum.surface_flux_lambda, previous_flux,
-                rtol=2e-6, atol=1e-12 * np.max(previous_flux),
-            )
-            # Keep the historical control as an independent check: disabling the
-            # Cr II supplement as well recovers the pre-Cr II spectrum.
-            from wd_spectra.models import stellar
-            from wd_spectra._kurucz_supplements import SOURCE
+                # Disabling the Kurucz electron Stark constants as well must recover
+                # the default Cr II control.
+                previous_config = replace(stark_config, kurucz_electron_stark=False)
+                with pytest.warns(AtmosphereConvergenceWarning):
+                    previous = compute_dz(
+                        previous_config, wave, initial_atmosphere=atmosphere,
+                        relax_atmosphere=False,
+                    )
+                with np.load(APPROVED_CRII / (case + ".npz")) as control:
+                    previous_flux = control["surface_flux"]
+                np.testing.assert_allclose(
+                    previous.spectrum.surface_flux_lambda, previous_flux,
+                    rtol=2e-6, atol=1e-12 * np.max(previous_flux),
+                )
+                # Keep the historical control as an independent check: disabling the
+                # Cr II supplement as well recovers the pre-Cr II spectrum.
+                from wd_spectra.models import stellar
+                from wd_spectra._kurucz_supplements import SOURCE
 
-            assert SOURCE in result.metadata["atomic_lines"]
-            reader = stellar.read_stout_atomic_database
+                assert SOURCE in result.metadata["atomic_lines"]
+                reader = stellar.read_stout_atomic_database
 
-            def raw_stout(*args, **kwargs):
-                kwargs["include_default_supplements"] = False
-                return reader(*args, **kwargs)
+                def raw_stout(*args, **kwargs):
+                    kwargs["include_default_supplements"] = False
+                    return reader(*args, **kwargs)
 
-            monkeypatch.setattr(stellar, "read_stout_atomic_database", raw_stout)
-            with pytest.warns(AtmosphereConvergenceWarning):
-                original = compute_dz(
-                    previous_config, wave, initial_atmosphere=atmosphere,
-                    relax_atmosphere=False,
+                # Scope this patch to the call. A test-wide monkeypatch would record
+                # the reader that is current inside the legacy scopes (their
+                # replacement) and restore it at teardown, after those scopes have
+                # exited, leaving every later DZ model with the old supplements.
+                with patch.object(stellar, "read_stout_atomic_database", raw_stout), \
+                        pytest.warns(AtmosphereConvergenceWarning):
+                    original = compute_dz(
+                        previous_config, wave, initial_atmosphere=atmosphere,
+                        relax_atmosphere=False,
+                    )
+                with np.load(APPROVED / (case + ".npz")) as historical:
+                    old_flux = historical["surface_flux"]
+                np.testing.assert_allclose(
+                    original.spectrum.surface_flux_lambda, old_flux,
+                    rtol=2e-6, atol=1e-12 * np.max(old_flux),
                 )
-            with np.load(APPROVED / (case + ".npz")) as historical:
-                old_flux = historical["surface_flux"]
-            np.testing.assert_allclose(
-                original.spectrum.surface_flux_lambda, old_flux,
-                rtol=2e-6, atol=1e-12 * np.max(old_flux),
-            )

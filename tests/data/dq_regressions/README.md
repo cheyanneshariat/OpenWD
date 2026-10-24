@@ -40,3 +40,17 @@ change at a time on the J1311 structure:
 - J1235 (9347 K): under 1% at 2000-100000 A, plus 25-30% less flux at 1000-1100 A.
   The far-UV change is consistent with C I Verner photoionization now
   applied to the whole ground term.
+
+## Re-approval 2026-10-23 (cool-DZ release)
+
+Both flux arrays were recomputed on the unchanged stored structures and
+re-approved by the user (capture: `research/capture_cool_dz_release_controls.py`).
+The previous hashes are recorded under `reapprovals` in each manifest. The
+change was bisected to one commit, 41a6cde: He-REOS.3 now interpolates its
+non-ideal part smoothly (C1) between isotherms. The previous linear-in-log T
+interpolation was piecewise constant in its derivatives, with ~30% jumps in
+nabla_ad at the isotherms, and DQ models share that equation of state.
+
+- J1311 (5529 K): band-integrated flux falls by 0.8% at 3500-4000 A, 0.4% at
+  4000-4500 A and 0.2-0.3% redward. The largest single-sample change is 6.4%.
+- J1235 (9347 K): at most 0.015% anywhere.

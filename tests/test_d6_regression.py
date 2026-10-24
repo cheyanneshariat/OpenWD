@@ -18,12 +18,31 @@ from d6_regression_support import (
 DIRECTORY = Path(__file__).parent / "data/d6_regressions/warm_v1"
 SEED = DIRECTORY.with_name(DIRECTORY.name + "-seed.npz")
 FE_II_DIRECTORY = DIRECTORY.with_name("warm_v2_feii")
-CURRENT_DIRECTORY = DIRECTORY.with_name("warm_v3_independent_kurucz")
+INDEPENDENT_DIRECTORY = DIRECTORY.with_name("warm_v3_independent_kurucz")
+CURRENT_DIRECTORY = DIRECTORY.with_name("warm_v4_rap_absolute")
 REFERENCES = (
     pytest.param(DIRECTORY, True, False, id="warm_v1-legacy"),
     pytest.param(FE_II_DIRECTORY, False, True, id="warm_v2_feii-historical"),
-    pytest.param(CURRENT_DIRECTORY, False, False, id="warm_v3_independent-current"),
+    pytest.param(INDEPENDENT_DIRECTORY, False, False, id="warm_v3_independent-historical"),
+    pytest.param(CURRENT_DIRECTORY, False, False, id="warm_v4_rap-current"),
 )
+
+
+def test_rap_spectral_approval_retains_inputs_and_stays_within_reviewed_change():
+    manifest = json.loads((CURRENT_DIRECTORY / "manifest.json").read_text())
+    approval = manifest["spectral_approval"]
+    assert approval["date"] == "2026-10-23"
+    assert approval["maximum_relative_change"] == 2.2e-4
+    assert approval["spectrum_rtol"] == 2e-6
+    assert approval["tolerances_changed"] is False
+    assert approval["approved_output_sha256"] == manifest["output_sha256"]
+    with np.load(INDEPENDENT_DIRECTORY / "j1637.npz", allow_pickle=False) as previous:
+        with np.load(CURRENT_DIRECTORY / "j1637.npz", allow_pickle=False) as current:
+            for key in ("column_mass", "optical_depth", "base_temperature",
+                        "initial_temperature", "wavelength"):
+                np.testing.assert_array_equal(current[key], previous[key])
+            change = np.max(np.abs(current["surface_flux"] / previous["surface_flux"] - 1))
+    assert change <= approval["maximum_relative_change"]
 
 
 @pytest.mark.parametrize("directory,legacy,previous", REFERENCES)
@@ -74,7 +93,7 @@ def test_frozen_j1637_seed_certificate_and_reference_integrity(directory, legacy
                             current_seed[key], previous_seed[key], maxulp=1)
                     else:
                         np.testing.assert_array_equal(current_seed[key], previous_seed[key])
-    elif not legacy:
+    elif directory == INDEPENDENT_DIRECTORY:
         from wd_spectra._kurucz_supplements import MANIFEST_SHA256
 
         previous_manifest = json.loads((FE_II_DIRECTORY / "manifest.json").read_text())
@@ -92,6 +111,26 @@ def test_frozen_j1637_seed_certificate_and_reference_integrity(directory, legacy
         with np.load(seed_path, allow_pickle=False) as current_seed:
             old_seed_path = FE_II_DIRECTORY.with_name(FE_II_DIRECTORY.name + "-seed.npz")
             with np.load(old_seed_path, allow_pickle=False) as previous_seed:
+                for key in previous_seed.files:
+                    np.testing.assert_array_equal(current_seed[key], previous_seed[key])
+    elif directory == CURRENT_DIRECTORY:
+        previous_manifest = json.loads((INDEPENDENT_DIRECTORY / "manifest.json").read_text())
+        for key in ("source_name", "source_sha256", "source_cold_certificate",
+                    "source_request", "config", "perturbation", "steps", "metrics"):
+            assert manifest[key] == previous_manifest[key]
+        archive = manifest["archived_reference"]
+        assert archive["name"] == INDEPENDENT_DIRECTORY.name
+        assert archive["manifest_sha256"] == hashlib.sha256(
+            (INDEPENDENT_DIRECTORY / "manifest.json").read_bytes()).hexdigest()
+        for key in ("output_sha256", "seed_sha256", "reference_commit"):
+            assert archive[key] == previous_manifest[key]
+        assert "rap-absolute-grid-2026-10-23" in manifest["physics_revision"].split(":")
+        assert manifest["code_sha256"] != previous_manifest["code_sha256"]
+        with np.load(seed_path, allow_pickle=False) as current_seed:
+            old_seed_path = INDEPENDENT_DIRECTORY.with_name(
+                INDEPENDENT_DIRECTORY.name + "-seed.npz")
+            with np.load(old_seed_path, allow_pickle=False) as previous_seed:
+                assert set(current_seed.files) == set(previous_seed.files)
                 for key in previous_seed.files:
                     np.testing.assert_array_equal(current_seed[key], previous_seed[key])
     with np.load(path, allow_pickle=False) as saved:
@@ -114,7 +153,8 @@ def test_frozen_j1637_seed_certificate_and_reference_integrity(directory, legacy
 @pytest.mark.parametrize("directory,legacy,previous", REFERENCES)
 def test_j1637_two_step_warm_trajectory(directory, legacy, previous):
     seed_path = directory.with_name(directory.name + "-seed.npz")
-    with atomic_input_scope(legacy=legacy, previous=previous):
+    with atomic_input_scope(legacy=legacy, previous=previous,
+                            legacy_rap=directory != CURRENT_DIRECTORY):
         with np.load(seed_path, allow_pickle=False) as seed:
             records = trajectory(seed["column_mass"], seed["optical_depth"],
                                  seed["initial_temperature"])
@@ -132,7 +172,8 @@ def test_j1637_fixed_atmosphere_spectrum(monkeypatch, directory, legacy, previou
 
     monkeypatch.setattr(public, "radiative_equilibrium_d6_atmosphere", forbidden_solve)
     with np.load(directory / "j1637.npz", allow_pickle=False) as saved:
-        with atomic_input_scope(legacy=legacy, previous=previous), pytest.warns(AtmosphereConvergenceWarning):
+        with atomic_input_scope(legacy=legacy, previous=previous,
+                                legacy_rap=directory != CURRENT_DIRECTORY), pytest.warns(AtmosphereConvergenceWarning):
             spectrum = fixed_spectrum(saved["column_mass"], saved["optical_depth"],
                                       saved["base_temperature"], saved["wavelength"])
         flux = spectrum.surface_flux_lambda

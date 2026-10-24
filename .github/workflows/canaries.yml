@@ -104,14 +104,21 @@ jobs:
           retention-days: 14
 
   d6-regression:
-    name: J1637 warm trajectory regression
+    name: J1637 warm trajectory regression (${{ matrix.reference }})
     needs: preflight
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    # Each atom version uses two full-resolution updates (historically ~77
-    # minutes locally). Verify immutable legacy and current Fe II controls
-    # sequentially; hosted CPU speed varies. Keep a generous work guard.
+    # Four sequential versions exceeded the shared 330-minute command guard.
+    # Give each unchanged two-step reference its own worker and work guard.
     timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        reference:
+          - warm_v1-legacy
+          - warm_v2_feii-historical
+          - warm_v3_independent-historical
+          - warm_v4_rap-current
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -121,12 +128,12 @@ jobs:
       - run: python -m pip install -e '.[test]'
       - name: Require compiled acceleration
         run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'stark_manifold_bins')"
-      - name: Legacy and current atoms, two measured warm steps each
-        run: python tools/validate.py regression --case d6-j1637 --jobs 1 --timeout 19800 --output results/d6-regression
+      - name: One frozen version, two measured warm steps
+        run: python tools/validate.py regression --case 'd6-j1637-${{ matrix.reference }}' --jobs 1 --timeout 19800 --output results/d6-regression
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: d6-warm-regression
+          name: d6-warm-regression-${{ matrix.reference }}
           path: results/d6-regression
           retention-days: 14
 

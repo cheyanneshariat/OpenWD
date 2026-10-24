@@ -250,12 +250,20 @@ class DZConfig:
     unified_metal_helium_profiles: Literal[
         "production", "legacy", "off"
     ] = "production"
-    dense_helium_eos: Literal["reos3", "ideal"] = "ideal"
+    # The dense-fluid defaults below (REOS3, Rogers-Young He- ff, partial-wave
+    # He- ff, computed unified He tables) are the configuration validated on ten
+    # cool DZ/DZA spectra (4000-8700 K); the alternatives reproduce older releases.
+    dense_helium_eos: Literal["reos3", "ideal"] = "reos3"
     # Dense-fluid He-minus free-free correction (Iglesias, Rogers & Saumon
     # 2002 Born ratio with a Rogers-Young neutral-He S(k); no 1/|eps|^2).
     # In cool DZ photospheres (rho ~ 0.1-0.6 g/cm^3) it removes 20-70% of the
     # dominant continuum opacity.  "off" keeps the ideal John (1994) value.
-    dense_helium_free_free: Literal["off", "rogers-young"] = "off"
+    dense_helium_free_free: Literal["off", "rogers-young"] = "rogers-young"
+    # He- free-free below John's (1994) 0.5063-micron edge: "automatic" keeps
+    # the Carbon et al. (1969) fit to John (1968), which jumps by 16-24% at
+    # the edge for 3000-5000 K; "partial-wave" uses John's edge value times
+    # a first-principles e-He partial-wave wavelength shape (continuous).
+    helium_minus_free_free: Literal["automatic", "partial-wave"] = "partial-wave"
     # "nist-asd" replaces exactly matched Stout transitions (UV included)
     # with evaluated NIST values; the default keeps the paper-figure data.
     strong_line_atomic_data: Literal["stout", "nist-asd"] = "stout"
@@ -280,6 +288,23 @@ class DZConfig:
     # Lorentzian neutral-He broadening.  No stellar fitting.  False restores
     # the previous Unsold neutral-He Lorentzian for these lines.
     si_ii_he_unified_profile: bool = True
+    # Unified Mg I b (5169/5174/5185 A) + He profiles computed from the
+    # Allard et al. (2016) potentials (3000-12000 K, n_He 1e19-1e23; the blue
+    # satellites pile up and move blueward with density).  False keeps the
+    # Unsold Lorentzian; the satellite-dominated blue wing of cool DZs is then absent.
+    mg_i_b_he_unified_profile: bool = True
+    # Unified Mg II h&k and Ca II H&K + He profiles computed with the OpenWD
+    # unified-profile engine from ab initio ion-He potentials (Mg+-He: Allard
+    # et al. 2016 GG; Ca+-He: Alekseev, with R-dependent dipoles), 3000-12000 K
+    # and n_He 1e19-1e23 cm^-3.  Their far wings dominate the 3000-4500 A
+    # metal opacity of cool, dense DZ photospheres, where the impact
+    # Lorentzian is 3-20x too weak.
+    mg_ii_he_unified_profile: bool = True
+    ca_ii_he_unified_profile: bool = True
+    # Unified Na I D + He profiles computed from the Dell'Angelo et al. (2012)
+    # potentials (Allard et al. 2023 figures), same grid and dense-fluid
+    # treatment as the Mg II/Ca II tables.  False keeps the impact Lorentzian.
+    na_i_he_unified_profile: bool = True
     # Legacy import switch for bare/custom atoms. Independently corroborated
     # Si II additions are already in the default reader; this switch neither
     # removes them nor appends the former unfiltered supplement to that atom.
@@ -830,6 +855,13 @@ def compute_da(
 
 _DB_COLUMN_MASS_TOP_ROSSELAND_DEPTH = 1.0e-12
 _DB_DEEPENING_PRESSURE_FACTOR = 4.0
+# Cool dense DZ: transparent windows reach far below the Rosseland-scaled seed
+# (LP 658-2 first-phase escape 0.30, WD 2251-070 0.11-0.15).  Deepen as soon as
+# the first phase shows such a leak, on any screening failure, and re-run the
+# full phase sequence on the deeper mesh: resuming the extrapolated cells in the
+# formal-flux phase diverged (residual 6e-5 -> 1.2e4) for LP 658-2 with a CI mix.
+_DZ_DEEPENING_PRESSURE_FACTOR = 4.0
+_DZ_EARLY_DEEPENING_ESCAPE_LIMIT = 0.05
 _DB_HELIUM_MINUS_SCREEN_DEPTHS = (1.0e-6, 1.0e-2)
 # On the optical-depth path, "auto" extends the top boundary like the lower
 # one: when a cold solve fails and its worst residual sits in the top layers,
@@ -1533,6 +1565,8 @@ def compute_dz(
             fetch_command="python scripts/fetch_metal_data.py",
         )
         helium_reos3 = read_helium_reos3_table(data.helium_reos3)
+    if config.helium_minus_free_free not in ("automatic", "partial-wave"):
+        raise ValueError("helium_minus_free_free must be 'automatic' or 'partial-wave'")
     if config.dense_helium_free_free not in ("off", "rogers-young"):
         raise ValueError("dense_helium_free_free must be 'off' or 'rogers-young'")
     helium_minus_table = None
@@ -1596,6 +1630,13 @@ def compute_dz(
         atomic = atomic_database_with_kurucz_electron_stark(atomic)
     if config.si_ii_he_unified_profile:
         atomic = atomic_database_with_si_ii_he_unified_profile(atomic)
+    if config.mg_i_b_he_unified_profile and "Mg" in elements:
+        from ..metals import atomic_database_with_mg_i_b_he_unified_profile
+
+        data.require(data.mg_i_b_he_unified_profiles)
+        atomic = atomic_database_with_mg_i_b_he_unified_profile(
+            atomic, data.mg_i_b_he_unified_profiles
+        )
     photo = read_verner_photoionization_database(
         data.verner_photoionization,
         elements=elements,
@@ -1652,6 +1693,24 @@ def compute_dz(
         )
     else:
         mg_he = None
+    ca_ii_he = None
+    mg_ii_he = None
+    if config.ca_ii_he_unified_profile and "Ca" in elements:
+        from ..metals import UnifiedIonicHeProfileGrid
+
+        data.require(data.ca_ii_he_unified_profiles)
+        ca_ii_he = UnifiedIonicHeProfileGrid(data.ca_ii_he_unified_profiles)
+    if config.mg_ii_he_unified_profile and "Mg" in elements:
+        from ..metals import UnifiedIonicHeProfileGrid
+
+        data.require(data.mg_ii_he_unified_profiles)
+        mg_ii_he = UnifiedIonicHeProfileGrid(data.mg_ii_he_unified_profiles)
+    na_i_he = None
+    if config.na_i_he_unified_profile and "Na" in elements:
+        from ..metals import UnifiedIonicHeProfileGrid
+
+        data.require(data.na_i_he_unified_profiles)
+        na_i_he = UnifiedIonicHeProfileGrid(data.na_i_he_unified_profiles)
     if config.unified_metal_helium_profiles == "production" and "Ca" in elements:
         data.require(
             data.ca_i_he_density_profiles,
@@ -1740,9 +1799,13 @@ def compute_dz(
             metal_photoionization_database=photo,
             metal_topbase_photoionization_database=topbase_photoionization,
             mg_he_red_wing_table=mg_he,
+            mg_ii_he_profile_table=mg_ii_he,
+            na_i_he_profile_table=na_i_he,
+            ca_ii_he_profile_table=ca_ii_he,
             ca_i_he_profile_table=ca_i_he,
             helium_reos3_table=helium_reos3,
             helium_minus_correction_table=helium_minus_table,
+            helium_minus_prescription=config.helium_minus_free_free,
             minimum_metal_oscillator_strength=(
                 structure_minimum_oscillator_strength
             ),
@@ -1784,6 +1847,10 @@ def compute_dz(
                 checkpoint_matches_request
             ),
             iteration_callback=iteration_callback,
+            deepen_on_any_screen_failure=True,
+            restart_after_deepening=True,
+            deepening_pressure_factor=_DZ_DEEPENING_PRESSURE_FACTOR,
+            early_deepening_escape_limit=_DZ_EARLY_DEEPENING_ESCAPE_LIMIT,
         )
     assert atmosphere is not None
     if relax_atmosphere:
@@ -1805,6 +1872,9 @@ def compute_dz(
         metal_photoionization_database=photo,
         metal_topbase_photoionization_database=topbase_photoionization,
         mg_he_red_wing_table=mg_he,
+        mg_ii_he_profile_table=mg_ii_he,
+        na_i_he_profile_table=na_i_he,
+        ca_ii_he_profile_table=ca_ii_he,
         ca_i_he_profile_table=ca_i_he,
         include_dense_helium_metal_ionization=True,
         metal_occupation_probability_partitions=(
@@ -1832,6 +1902,7 @@ def compute_dz(
         transfer_discretization=synthesis_transfer,
         transfer_depth_refinement=config.synthesis_transfer_depth_refinement,
         helium_minus_correction_table=helium_minus_table,
+        helium_minus_prescription=config.helium_minus_free_free,
     )
     return ModelResult(
         "DZ",
@@ -1849,6 +1920,16 @@ def compute_dz(
             "strong_line_atomic_data": config.strong_line_atomic_data,
             "kurucz_electron_stark": config.kurucz_electron_stark,
             "si_ii_he_unified_profile": config.si_ii_he_unified_profile,
+            "mg_i_b_he_unified_profile": config.mg_i_b_he_unified_profile,
+            "mg_ii_he_unified_profile": (
+                mg_ii_he.source if mg_ii_he is not None else False
+            ),
+            "ca_ii_he_unified_profile": (
+                ca_ii_he.source if ca_ii_he is not None else False
+            ),
+            "na_i_he_unified_profile": (
+                na_i_he.source if na_i_he is not None else False
+            ),
             "si_ii_kurucz_transitions": config.si_ii_kurucz_transitions,
             "maximum_metal_charge": config.maximum_metal_charge,
             "photoionization": (
@@ -1889,6 +1970,7 @@ def compute_dz(
             "synthesis_flux_fraction": _synthesis_flux_fraction(
                 spectrum, config.effective_temperature
             ),
+            "helium_minus_free_free": config.helium_minus_free_free,
             "dense_helium_free_free": (
                 {"mode": config.dense_helium_free_free,
                  "table_sha256": helium_minus_table.sha256}

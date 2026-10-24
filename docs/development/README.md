@@ -61,8 +61,8 @@ resolutions, renormalize spectra, or supply a previous atmosphere. See the
 data. Missing data are failures, not successful physical tests. Additional
 affected comparisons in the paper-validation workspace remain necessary.
 
-DQ has fast chemistry/transfer/controller tests and a fixed-state spectral
-case, `python tools/validate.py spectra --case dq-j1235`. Its separate
+DQ has fast chemistry/transfer/controller tests and fixed-state spectral
+cases, `python tools/validate.py spectra --case dq-j1235 --case dq-j1311`. Its separate
 `cold --case dq-j1235` canary constructs an atmosphere from parameters and
 checks the independent 154000-point spectrum; allow hours for it. The saved
 spectral fixture never supplies an atmosphere to the cold test. DQ data are
@@ -98,6 +98,14 @@ profiles and residuals. Its fixed-atmosphere optical spectrum is in the
 an interrupted trajectory establishes cold convergence. The original public
 J1637 cold canary remains in `cold` and `full`; use it for release validation
 and cold-start investigations. See the [reference provenance](../../tests/data/d6_regressions/README.md).
+
+Each frozen J1637 version is a separate regression task. The aggregate
+`regression --case d6-j1637` selects all four; `--jobs 1` runs them
+sequentially with separate per-task work guards. To run just the current
+reference, select `--case d6-j1637-warm_v4_rap-current`. PR CI puts the four
+versions on separate workers, and its qualification gate requires the entire
+matrix to pass. Their reference arrays, two measured steps and physical
+tolerances are unchanged.
 
 ## GitHub checks
 

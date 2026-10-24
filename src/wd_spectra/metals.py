@@ -850,7 +850,9 @@ class AtomicTransition:
     # Optional unified (non-impact) neutral-He line profile replacing the
     # Lorentzian He broadening of this line in helium atmospheres; see
     # atomic_database_with_si_ii_he_unified_profile.
-    helium_unified_profile: "SiIIHeUnifiedProfile | None" = None
+    helium_unified_profile: (
+        "SiIIHeUnifiedProfile | MgIbHeUnifiedProfile | MgIbHeComputedProfile | None"
+    ) = None
     independently_validated_supplement: bool = False
 
 
@@ -1409,7 +1411,10 @@ class MgIIHeProfileTable:
         self,
         wavelength_angstrom: ArrayLike,
         helium_density: ArrayLike,
+        temperature: ArrayLike | None = None,
     ) -> FloatArray:
+        # Single-condition table: the local temperature is not used.
+        del temperature
         wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
         density = np.asarray(helium_density, dtype=np.float64)
         if wavelength.ndim != 1:
@@ -1470,6 +1475,110 @@ class MgIIHeProfileTable:
             1.0,
         )
         return sigma.reshape((-1,) + (1,) * density.ndim) * density_scale
+
+
+class UnifiedIonicHeProfileGrid:
+    """Resonance-doublet + He unified-profile cross sections on a (T, n_He) grid.
+
+    ``complete_line``: the table resolves the impact core (bin averages), so
+    at n_He >= 1e20 it is the whole line rather than an envelope over the
+    ordinary Voigt profile.
+
+    Tables computed with the OpenWD unified-profile engine (Anderson-Talman
+    autocorrelation with Allard's modulated dipole, straight paths,
+    Maxwell-averaged) from ab initio ion-He potentials; see the ``source``
+    string stored with each table.  Each fine-structure line is placed at its
+    own vacuum wavenumber with its f-value and the lines are summed; values are
+    bin averages over the tabulated vacuum wavelength cells.  Dense-fluid
+    physics: each profile carries its physical band area (an R-dependent
+    transition dipole moves strength into other bands as He packs around the
+    ion, instead of the unit area of Allard's tables), and the quasi-static
+    part is corrected from independent to correlated perturbers with a
+    classical Monte Carlo of the He fluid (HFD-B He-He; equation of state
+    within 5% of REOS3) using diatomics-in-molecules transition energies.  log sigma is interpolated bilinearly
+    in (log T, log n_He); T is held at the grid edges.  Outside the density
+    grid the cross section scales linearly with n_He from the nearest edge:
+    the binary (first-order) far-wing law.  Its impact core is not meant to
+    replace the ordinary Voigt core: callers merge by envelope.
+    """
+
+    complete_line = True
+
+    def __init__(self, path: str | Path):
+        with np.load(path, allow_pickle=False) as table:
+            self.temperatures = np.asarray(table["temperature_kelvin"], dtype=np.float64)
+            self.densities = np.asarray(table["helium_density_cm3"], dtype=np.float64)
+            self.wavelength_angstrom = np.asarray(
+                table["wavelength_vacuum_angstrom"], dtype=np.float64
+            )
+            sigma = np.asarray(table["cross_section_cm2"], dtype=np.float64)
+            self.source = str(table["source"])
+        if (
+            self.temperatures.ndim != 1 or self.temperatures.size < 2
+            or np.any(np.diff(self.temperatures) <= 0)
+            or self.densities.ndim != 1 or self.densities.size < 2
+            or np.any(np.diff(self.densities) <= 0)
+            or self.wavelength_angstrom.ndim != 1
+            or np.any(np.diff(self.wavelength_angstrom) <= 0)
+            or sigma.shape != (
+                self.temperatures.size, self.densities.size, self.wavelength_angstrom.size
+            )
+            or np.any(~np.isfinite(sigma)) or np.any(sigma < 0)
+        ):
+            raise ValueError(f"invalid unified ionic He profile table: {path}")
+        self.cross_section_by_condition = sigma
+
+    def cross_section(self, wavelength_angstrom, helium_density, temperature=None):
+        wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
+        density = np.asarray(helium_density, dtype=np.float64)
+        if wavelength.ndim != 1 or np.any(~np.isfinite(density)) or np.any(density < 0.0):
+            raise ValueError("wavelength and helium density must be physical")
+        if temperature is None:
+            raise ValueError("the unified ionic He table needs the local temperature")
+        t = np.broadcast_to(np.asarray(temperature, dtype=np.float64), density.shape).ravel()
+        n = density.ravel()
+        log_t, log_n = np.log(self.temperatures), np.log(self.densities)
+        x = np.log(np.clip(t, self.temperatures[0], self.temperatures[-1]))
+        y = np.log(np.clip(np.maximum(n, self.densities[0]), self.densities[0], self.densities[-1]))
+        it = np.clip(np.searchsorted(log_t, x) - 1, 0, log_t.size - 2)
+        jn = np.clip(np.searchsorted(log_n, y) - 1, 0, log_n.size - 2)
+        wt = (x - log_t[it]) / (log_t[it + 1] - log_t[it])
+        wn = (y - log_n[jn]) / (log_n[jn + 1] - log_n[jn])
+        inside = (wavelength >= self.wavelength_angstrom[0]) & (
+            wavelength <= self.wavelength_angstrom[-1]
+        )
+        result = np.zeros((wavelength.size, n.size))
+        if not np.any(inside):
+            return result.reshape((wavelength.size,) + density.shape)
+        w_in = wavelength[inside]
+        # Interpolate in wavelength only the grid rows that some depth needs.
+        rows = {}
+
+        def row(i, j):
+            if (i, j) not in rows:
+                rows[(i, j)] = np.interp(
+                    w_in, self.wavelength_angstrom, self.cross_section_by_condition[i, j]
+                )
+            return rows[(i, j)]
+
+        tiny = np.finfo(np.float64).tiny
+        for k in range(n.size):
+            corners = (
+                (row(it[k], jn[k]), (1 - wt[k]) * (1 - wn[k])),
+                (row(it[k] + 1, jn[k]), wt[k] * (1 - wn[k])),
+                (row(it[k], jn[k] + 1), (1 - wt[k]) * wn[k]),
+                (row(it[k] + 1, jn[k] + 1), wt[k] * wn[k]),
+            )
+            positive = np.all([c > 0.0 for c, _ in corners], axis=0)
+            log_mean = sum(w * np.log(np.maximum(c, tiny)) for c, w in corners)
+            linear = sum(w * c for c, w in corners)
+            result[inside, k] = np.where(positive, np.exp(log_mean), linear)
+        scale = np.where(
+            n < self.densities[0], n / self.densities[0],
+            np.where(n > self.densities[-1], n / self.densities[-1], 1.0),
+        )
+        result *= scale[np.newaxis, :]
+        return result.reshape((wavelength.size,) + density.shape)
 
 
 @dataclass(frozen=True)
@@ -4031,6 +4140,231 @@ def atomic_database_with_si_ii_he_unified_profile(
     return AtomicDatabase(
         MappingProxyType(ions),
         source=database.source + f"; {table.source} for {attached} lines",
+    )
+
+
+class MgIbHeUnifiedProfile:
+    """Unified Mg I b (3s3p 3P_J - 3s4s 3S1) + He profile for one J component.
+
+    Allard et al. (2016, A&A 588, A142) absolute cross sections at 6000 K,
+    recovered from their figure vectors (n_He = 1, 1.75, 2, 3, 4e21 cm^-3;
+    ``scripts/extract_allard_mgib_figure_profiles.py``).  Each curve is used
+    as a shape normalized to unit area; the transition's own oscillator
+    strength sets the strength.  The paper shows J1 coinciding with J0 at
+    1e21 cm^-3, so J1 uses the J0 sequence.  Between tabulated densities the
+    normalized profiles are interpolated linearly in log n_He.  Below 1e21
+    the profile is the impact Lorentzian (Allard's Table 2 widths and shifts,
+    plus ``Gamma_other``) plus the part of the 1e21 profile beyond impact
+    theory (signed, zero integral) scaled by n_He/1e21 (binary collisions),
+    as for Ca I 4227, so the profile is continuous at 1e21.  Above
+    4e21 the 4e21 shape is held: the satellite keeps moving blueward at higher
+    density, which this figure-resolution bridge cannot represent.  The paper
+    finds the wings nearly temperature independent at 4000-8000 K; the 6000-K
+    calculation is used at all temperatures.  Detunings outside the plotted
+    range (-100..1000 cm^-1 at 1e21, to ~1900 cm^-1 at 4e21) carry no unified
+    opacity; the ordinary Voigt line supplies the core by the envelope merge.
+    """
+
+    window_angstrom = 600.0
+    # Allard et al. (2016) Table 2, 6000 K: HWHM and shift per perturber (cm^-1 cm^3).
+    impact_hwhm = {0: 5.37e-20, 1: 5.37e-20, 2: 5.57e-20}
+    impact_shift = {0: 2.79e-20, 1: 2.30e-20, 2: 1.89e-20}
+
+    def __init__(self, path, component: int) -> None:
+        data = np.loadtxt(path, comments="#")
+        if data.ndim != 2 or data.shape[1] != 4:
+            raise ValueError("Mg I b--He table must have four columns")
+        sequence = 0 if component == 1 else component
+        rows = data[data[:, 1] == sequence]
+        self.component = int(component)
+        self.densities = np.unique(rows[:, 0])
+        if self.densities.size < 2:
+            raise ValueError("Mg I b--He table needs at least two densities")
+        self.detuning_cm1 = np.arange(-250.0, 2100.0, 0.5)
+        shapes = []
+        for density in self.densities:
+            curve = rows[rows[:, 0] == density]
+            x, y = curve[:, 2], curve[:, 3]
+            if np.any(np.diff(x) <= 0) or np.any(y < 0) or not np.all(np.isfinite(y)):
+                raise ValueError("Mg I b--He curves must be finite and increasing")
+            area = trapezoid(y, x)
+            shapes.append(np.interp(self.detuning_cm1, x, y, left=0.0, right=0.0) / area)
+        self.shapes = np.array(shapes)          # per cm^-1, unit area
+        self._log_densities = np.log(self.densities)
+        self._reference_hwhm = self.impact_hwhm[self.component] * self.densities[0]
+        self._reference_shift = self.impact_shift[self.component] * self.densities[0]
+        # Signed beyond-impact part of the least-dense profile.  Its integral
+        # is zero, so the low-density profile keeps unit area and equals the
+        # tabulated one at the table edge.
+        self.excess_at_minimum = self.shapes[0] - self._reference_lorentz(self.detuning_cm1)
+        self.source = (
+            "Allard et al. (2016) Mg I b-He unified profiles (6000 K, figure vectors)"
+        )
+
+    def _reference_lorentz(self, detuning):
+        h, d = self._reference_hwhm, self._reference_shift
+        return h / PI / ((detuning - d) ** 2 + h ** 2)
+
+    def profile(self, detuning_cm1, temperature, helium_density, gamma_other):
+        """Profile per unit angular frequency [s], shape (n_detuning, n_depth)."""
+
+        density = np.atleast_1d(np.asarray(helium_density, dtype=np.float64))
+        gamma = np.broadcast_to(np.asarray(gamma_other, dtype=np.float64), density.shape)
+        detuning = np.asarray(detuning_cm1, dtype=np.float64)
+        per_cm = np.zeros((detuning.size, density.size))
+        clipped = np.clip(density, self.densities[0], self.densities[-1])
+        log_n = np.log(np.maximum(clipped, 1.0))
+        index = np.clip(np.searchsorted(self._log_densities, log_n) - 1,
+                        0, self.densities.size - 2)
+        weight = (log_n - self._log_densities[index]) / (
+            self._log_densities[index + 1] - self._log_densities[index])
+        tabulated = np.array([np.interp(detuning, self.detuning_cm1, row, left=0.0, right=0.0)
+                              for row in self.shapes])
+        dense = density >= self.densities[0]
+        per_cm[:, dense] = (
+            (1.0 - weight[dense])[np.newaxis, :] * tabulated[index[dense]].T
+            + weight[dense][np.newaxis, :] * tabulated[index[dense] + 1].T
+        )
+        thin = ~dense
+        if np.any(thin):
+            n = density[thin]
+            hwhm = (self.impact_hwhm[self.component] * n
+                    + gamma[thin] / (4.0 * PI * LIGHT_SPEED))
+            shift = self.impact_shift[self.component] * n
+            lorentz = hwhm / PI / ((detuning[:, np.newaxis] - shift) ** 2 + hwhm ** 2)
+            inside = (detuning >= self.detuning_cm1[0]) & (detuning <= self.detuning_cm1[-1])
+            excess = np.where(
+                inside,
+                np.interp(detuning, self.detuning_cm1, self.excess_at_minimum),
+                -self._reference_lorentz(detuning),
+            )
+            per_cm[:, thin] = np.maximum(
+                lorentz + excess[:, np.newaxis] * (n / self.densities[0]), 0.0
+            )
+        return per_cm / (2.0 * PI * LIGHT_SPEED)
+
+
+class MgIbHeComputedProfile:
+    """Unified Mg I b (3s3p 3P_J - 3s4s 3S1) + He profile from a computed (T, n_He) table.
+
+    Computed with the OpenWD unified-profile engine (Anderson-Talman autocorrelation,
+    Allard's modulated dipole, straight paths, Maxwell average) from the Allard et al.
+    (2016) Mg-He potentials and transition dipoles (their Figs. 1-3, no spin-orbit), for
+    3000-12000 K and n_He = 1e19-1e23 cm^-3.  Each lower-state component (3p b Sigma,
+    a Pi) carries its own Boltzmann factor.  The blue satellites at multiples of the
+    difference-potential maximum (395 cm^-1) pile up with density: the absorption
+    maximum moves from the line to ~480 cm^-1 at 3e21 and ~1800 cm^-1 at 1e22, which
+    the 4e21-limited figure bridge cannot represent.  Profiles carry their physical
+    band area (R-dependent dipoles).  The same shape serves all three J components.
+    One upper 4s curve serves both lower components (V_4s = V_Pi + dV_Pi; the Sigma
+    difference potential is rebuilt as V_4s - V_Sigma inside 6.4 a0, where Allard's
+    Fig. 3 Sigma curve leaves its frame).
+    log profile is interpolated bilinearly in (log T, log n_He); T is held at the grid
+    edges, n_He above 1e23 is held, and below 1e19 the profile scales as n_He (binary
+    wings; the Voigt core supplies the line centre through the envelope merge).  Because
+    the peaks move with density, geometric interpolation loses band area between nodes
+    (~10% median for 0.25-dex nodes); the table therefore uses 0.05-dex density nodes and
+    500-K temperature nodes below 7000 K (median loss 0.3%, worst 3.6%).
+    Above n_He = 1e20 the table replaces the Voigt line entirely (complete_line), so
+    radiative, Stark and neutral-H damping are not added; there the He impact width
+    (>= 5 cm^-1) exceeds them by more than an order of magnitude.
+    """
+
+    window_angstrom = 3000.0
+    complete_line = True
+
+    def __init__(self, path, component: int) -> None:
+        with np.load(path, allow_pickle=False) as table:
+            self.temperatures = np.asarray(table["temperature_kelvin"], dtype=np.float64)
+            self.densities = np.asarray(table["helium_density_cm3"], dtype=np.float64)
+            self.detuning_cm1 = np.asarray(table["detuning_cm1"], dtype=np.float64)
+            self.profiles = np.asarray(table["profile_per_cm1"], dtype=np.float64)
+            self.source = str(table["source"])
+        if self.profiles.shape != (self.temperatures.size, self.densities.size,
+                                   self.detuning_cm1.size):
+            raise ValueError("invalid Mg I b--He profile table")
+        self.component = int(component)
+
+    def profile(self, detuning_cm1, temperature, helium_density, gamma_other):
+        """Profile per unit angular frequency [s], shape (n_detuning, n_depth)."""
+
+        del gamma_other          # below 1e20 the Voigt core carries them; above, He dominates (class doc)
+        density = np.atleast_1d(np.asarray(helium_density, dtype=np.float64))
+        t = np.broadcast_to(np.asarray(temperature, dtype=np.float64), density.shape)
+        detuning = np.asarray(detuning_cm1, dtype=np.float64)
+        lt, ln = np.log(self.temperatures), np.log(self.densities)
+        x = np.log(np.clip(t, self.temperatures[0], self.temperatures[-1]))
+        y = np.log(np.clip(density, self.densities[0], self.densities[-1]))
+        it = np.clip(np.searchsorted(lt, x) - 1, 0, lt.size - 2)
+        jn = np.clip(np.searchsorted(ln, y) - 1, 0, ln.size - 2)
+        wt = (x - lt[it]) / (lt[it + 1] - lt[it])
+        wn = (y - ln[jn]) / (ln[jn + 1] - ln[jn])
+        tiny = np.finfo(np.float64).tiny
+        rows = {}
+
+        def row(i, j):
+            if (i, j) not in rows:
+                rows[(i, j)] = np.interp(detuning, self.detuning_cm1, self.profiles[i, j],
+                                         left=0.0, right=0.0)
+            return rows[(i, j)]
+
+        per_cm = np.zeros((detuning.size, density.size))
+        for k in range(density.size):
+            corners = ((row(it[k], jn[k]), (1 - wt[k]) * (1 - wn[k])),
+                       (row(it[k] + 1, jn[k]), wt[k] * (1 - wn[k])),
+                       (row(it[k], jn[k] + 1), (1 - wt[k]) * wn[k]),
+                       (row(it[k] + 1, jn[k] + 1), wt[k] * wn[k]))
+            positive = np.all([c > 0.0 for c, _ in corners], axis=0)
+            per_cm[:, k] = np.where(
+                positive,
+                np.exp(sum(w * np.log(np.maximum(c, tiny)) for c, w in corners)),
+                sum(w * c for c, w in corners),
+            )
+        scale = np.where(density < self.densities[0], density / self.densities[0], 1.0)
+        return per_cm * scale[np.newaxis, :] / (2.0 * PI * LIGHT_SPEED)
+
+
+def atomic_database_with_mg_i_b_he_unified_profile(
+    database: AtomicDatabase, path: str | Path,
+) -> AtomicDatabase:
+    """Attach the Allard et al. (2016) Mg b--He profiles to Mg I 3p 3P - 4s 3S.
+
+    Only the three E1 components 3s3p 3P_J - 3s4s 3S1 (5168.8, 5174.1,
+    5185.0 A vacuum) change: their neutral-He broadening becomes the unified
+    profile in helium atmospheres.  Oscillator strengths, populations and
+    other widths are unchanged; other lines are untouched.
+    """
+
+    ion = database.ions.get(("Mg", 0))
+    if ion is None:
+        return database
+    levels = {level.index: level for level in ion.levels}
+    tables: dict[int, "MgIbHeUnifiedProfile | MgIbHeComputedProfile"] = {}
+    changed, attached = [], 0
+    for transition in ion.transitions:
+        lower = levels.get(transition.lower_index)
+        upper = levels.get(transition.upper_index)
+        if (
+            transition.transition_type == "E1"
+            and lower is not None and upper is not None
+            and _stout_core_orbital_term(lower) == ("3s", "3p", "3Po")
+            and _stout_core_orbital_term(upper) == ("3s", "4s", "3S")
+        ):
+            j = int(round((lower.statistical_weight - 1.0) / 2.0))
+            if j not in tables:
+                tables[j] = (MgIbHeComputedProfile(path, j) if str(path).endswith(".npz")
+                             else MgIbHeUnifiedProfile(path, j))
+            transition = replace(transition, helium_unified_profile=tables[j])
+            attached += 1
+        changed.append(transition)
+    if attached == 0:
+        return database
+    ions = dict(database.ions)
+    ions["Mg", 0] = replace(ion, transitions=tuple(changed))
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=database.source
+        + f"; {next(iter(tables.values())).source} for {attached} lines",
     )
 
 
@@ -7907,6 +8241,24 @@ def hydrogenic_metal_shell_mean_radius_cm(
     return BOHR_RADIUS_CM * (5.0 * effective_n**2 + 1.0) / (4.0 * core_charge)
 
 
+UNIFIED_COMPLETE_LINE_MINIMUM_HELIUM_DENSITY = 1.0e20
+
+
+def _computed_table_coverage(table, wavelength) -> FloatArray:
+    """Wavelengths a computed unified table describes completely (core included).
+
+    Figure-recovered bridges (clipped cores, limited conditions) are never
+    complete: they stay merged with the ordinary line by the envelope.
+    """
+    if not getattr(table, "complete_line", False):
+        return np.zeros(np.size(wavelength), dtype=bool)
+    grid = table.wavelength_angstrom
+    return (np.asarray(wavelength) >= grid[0]) & (np.asarray(wavelength) <= grid[-1])
+
+# Hydrogenic mean radius a0 (5 n*^2 + 1) / 4 of an n* = 4 neutral level.
+NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM = 20.25 * BOHR_RADIUS_CM
+
+
 def metal_neutral_hard_sphere_occupation_probability(
     level_radius_cm: ArrayLike,
     neutral_perturber_number_density: Mapping[str, ArrayLike],
@@ -7916,6 +8268,14 @@ def metal_neutral_hard_sphere_occupation_probability(
 
     This is ``exp[-4 pi/3 sum_j n_j (r_i+r_j)^3]`` in the low-excitation
     approximation, where neutral perturbers reside in their ground states.
+    It is applied only to Rydberg levels, mean radius at least
+    ``NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM`` (n* = 4 of a neutral).  A
+    neutral atom inside a low-lying orbital does not destroy the level: it
+    forms a quasi-molecule whose shifted, broadened transitions are the
+    collision-broadened line (unified/impact theory conserves the oscillator
+    strength).  Applied to ground and low excited states, the excluded volume
+    of dense He (cool DZ photospheres, n_He ~ 1e22) would leave Ca II with
+    U ~ 0.2 < g0 and remove lines such as Ca I 4227 that cool DZs show.
     """
 
     level_radius = np.asarray(level_radius_cm, dtype=np.float64)
@@ -7943,7 +8303,8 @@ def metal_neutral_hard_sphere_occupation_probability(
         ):
             raise ValueError("neutral perturber densities and radii must be physical")
         exponent += density * (radius + perturber_radius) ** 3
-    return np.exp(-np.minimum((4.0 * PI / 3.0) * exponent, 745.0))
+    rydberg = radius >= NEUTRAL_HARD_SPHERE_MINIMUM_LEVEL_RADIUS_CM
+    return np.where(rydberg, np.exp(-np.minimum((4.0 * PI / 3.0) * exponent, 745.0)), 1.0)
 
 
 def bulk_metal_neutral_perturber_data(
@@ -8565,6 +8926,7 @@ def metal_line_mass_absorption_coefficient(
     *,
     mg_he_red_wing_table: MgHeRedWingTable | None = None,
     mg_ii_he_profile_table: MgIIHeProfileTable | None = None,
+    na_i_he_profile_table: "UnifiedIonicHeProfileGrid | None" = None,
     ca_i_he_profile_table: CaIHeProfileTable | None = None,
     ca_ii_he_profile_table: CaIIHeProfileTable | None = None,
     minimum_oscillator_strength: float = 1.0e-4,
@@ -8719,6 +9081,22 @@ def metal_line_mass_absorption_coefficient(
             dissolution_elements is None or ion.element in dissolution_elements
         )
 
+    def table_level_occupation(ion: AtomicIon, level) -> FloatArray:
+        """Occupation probability of a table-path lower level.
+
+        The same factor the line-list path applies to its lower populations,
+        so that n g w exp(-E/kT) / U sums to the ion density with the
+        occupation-weighted partition function U.
+        """
+        if not (metal_state.metal_level_dissolution and dissolves(ion)):
+            return np.ones(atmosphere.n_depth)
+        return metal_rydberg_level_occupation_probability(
+            ion, level, ionic_microfield_charge_sum, atmosphere.temperature,
+            correlated_microfields=rydberg_correlated_microfields,
+            neutral_perturber_number_density=rydberg_neutral_density,
+            neutral_perturber_radius_cm=rydberg_neutral_radius,
+        )
+
     profile_support_elements = (
         None
         if profile_edge_optical_depth_elements is None
@@ -8786,6 +9164,8 @@ def metal_line_mass_absorption_coefficient(
         replacement_ordinary["MgII"] = np.zeros_like(result)
     if ca_ii_he_profile_table is not None:
         replacement_ordinary["CaII"] = np.zeros_like(result)
+    if na_i_he_profile_table is not None:
+        replacement_ordinary["NaI"] = np.zeros_like(result)
     if transition_keys is not None:
         allowed = frozenset(
             (
@@ -8856,6 +9236,12 @@ def metal_line_mass_absorption_coefficient(
         atmosphere.helium_lte_state.neutral_he_density
         if atmosphere.helium_lte_state is not None else np.zeros(atmosphere.n_depth)
     )
+    # Computed unified tables resolve the impact core from n_He = 1e20 up
+    # (0.1-A cells near the lines; the impact HWHM exceeds the Doppler width).
+    # There the unified profile is the complete line: a Voigt core with an
+    # impact He width would restore absorption at line centre that the
+    # quasi-molecular satellites have already moved into the wings.
+    unified_complete_line = helium_density >= UNIFIED_COMPLETE_LINE_MINIMUM_HELIUM_DENSITY
     if metal_state.reference_species == "H":
         hydrogen_density = atmosphere.neutral_h_density
     elif (
@@ -8936,6 +9322,7 @@ def metal_line_mass_absorption_coefficient(
         "CaI": empty_profile_batch(),
         "MgII": empty_profile_batch(),
         "CaII": empty_profile_batch(),
+        "NaI": empty_profile_batch(),
         "CaI_reference": empty_profile_batch(),
         "HeUnified": empty_profile_batch(),
     }
@@ -9216,6 +9603,7 @@ def metal_line_mass_absorption_coefficient(
             "CaI" if is_ca_i_resonance and ca_i_he_profile_table is not None
             else "MgII" if is_mg_ii_resonance and mg_ii_he_profile_table is not None
             else "CaII" if is_ca_ii_resonance and ca_ii_he_profile_table is not None
+            else "NaI" if is_na_i_d_resonance and na_i_he_profile_table is not None
             else "HeUnified"
             if line.helium_unified_profile is not None and helium_present
             else None
@@ -9706,12 +10094,15 @@ def metal_line_mass_absorption_coefficient(
         flush_profile_batch(batch_key)
     if unified_he_lines:
         unified = np.zeros_like(result)
+        complete_wavelengths = np.zeros(wavelength.size, dtype=bool)
         for center, oscillator_strength, population, gamma_other, table in (
             unified_he_lines
         ):
             window = np.abs(wavelength - center) < table.window_angstrom
             if not np.any(window):
                 continue
+            if getattr(table, "complete_line", False):
+                complete_wavelengths |= window
             detuning = 1.0e8 / wavelength[window] - 1.0e8 / center
             profile = table.profile(
                 detuning, atmosphere.temperature, helium_density, gamma_other
@@ -9724,7 +10115,11 @@ def metal_line_mass_absorption_coefficient(
         # As for the Mg II and Ca II tables, merge with the ordinary Voigt
         # opacity by an envelope: the Doppler core comes from the Voigt
         # profile, the collision wings from the unified profile.
-        result += np.maximum(unified, replacement_ordinary["HeUnified"])
+        result += np.where(
+            complete_wavelengths[:, np.newaxis] & unified_complete_line[np.newaxis, :],
+            unified,
+            np.maximum(unified, replacement_ordinary["HeUnified"]),
+        )
     if mg_ii_he_profile_table is not None and "Mg" in line_abundances:
         mg_ii = atomic_database.ions.get(("Mg", 1))
         if mg_ii is not None and metal_state.ion_number_density["Mg"].shape[0] > 1:
@@ -9739,8 +10134,9 @@ def metal_line_mass_absorption_coefficient(
                 )
                 / partition
             )
+            ground_population = ground_population * table_level_occupation(mg_ii, ground)
             profile_cross_section = mg_ii_he_profile_table.cross_section(
-                wavelength, helium_density
+                wavelength, helium_density, temperature=atmosphere.temperature
             )
             stimulated = -np.expm1(
                 -PLANCK * LIGHT_SPEED
@@ -9758,11 +10154,17 @@ def metal_line_mass_absorption_coefficient(
             # The public bridge is recovered from a plotted curve.  Its
             # strongest core points are clipped by the figure axes, and a
             # single-condition profile scaled to a much lower density can
-            # also fall below the ordinary impact core.  Preserve the larger
-            # opacity everywhere instead of erasing a valid ordinary core
-            # merely because its wavelength lies inside the figure panel.
-            combined = np.maximum(
-                unified_opacity, replacement_ordinary["MgII"]
+            # also fall below the ordinary impact core; a computed table's
+            # bin-averaged core is likewise lower than the Doppler-broadened
+            # Voigt core.  Preserve the larger opacity everywhere.
+            complete = (
+                unified_complete_line[np.newaxis, :]
+                & _computed_table_coverage(mg_ii_he_profile_table, wavelength)[:, np.newaxis]
+            )
+            combined = np.where(
+                complete,
+                unified_opacity,
+                np.maximum(unified_opacity, replacement_ordinary["MgII"]),
             )
             result += combined
     if ca_i_he_profile_table is not None and "Ca" in line_abundances:
@@ -9779,6 +10181,7 @@ def metal_line_mass_absorption_coefficient(
                 )
                 / partition
             )
+            ground_population = ground_population * table_level_occupation(ca_i, ground)
             profile_cross_section = ca_i_he_profile_table.cross_section(
                 wavelength,
                 helium_density,
@@ -9844,6 +10247,7 @@ def metal_line_mass_absorption_coefficient(
                 )
                 / partition
             )
+            ground_population = ground_population * table_level_occupation(ca_ii, ground)
             profile_cross_section = ca_ii_he_profile_table.cross_section(
                 wavelength,
                 helium_density,
@@ -9862,12 +10266,53 @@ def metal_line_mass_absorption_coefficient(
                 * stimulated
                 / atmosphere.mass_density[np.newaxis, :]
             )
-            # As for Mg II, these vector-recovered data are a clipped figure
-            # bridge rather than a complete numerical profile grid.  An
-            # envelope is the only safe merge at the clipped core and when
-            # scaling away from the published density/temperature.
-            combined = np.maximum(
-                unified_opacity, replacement_ordinary["CaII"]
+            # As for Mg II: the envelope keeps the Doppler/Voigt core where a
+            # tabulated (clipped or bin-averaged) unified core lies below it.
+            complete = (
+                unified_complete_line[np.newaxis, :]
+                & _computed_table_coverage(ca_ii_he_profile_table, wavelength)[:, np.newaxis]
+            )
+            combined = np.where(
+                complete,
+                unified_opacity,
+                np.maximum(unified_opacity, replacement_ordinary["CaII"]),
             )
             result += combined
+    if na_i_he_profile_table is not None and "Na" in line_abundances:
+        na_i = atomic_database.ions.get(("Na", 0))
+        if na_i is not None:
+            ground = min(na_i.levels, key=lambda level: level.energy_wavenumber)
+            ground_population = (
+                metal_state.ion_number_density["Na"][0]
+                * ground.statistical_weight
+                * np.exp(
+                    -ground.energy_wavenumber * WAVENUMBER_TO_ERG
+                    / (BOLTZMANN * atmosphere.temperature)
+                )
+                / metal_state.partition_function[("Na", 0)]
+            ) * table_level_occupation(na_i, ground)
+            stimulated = -np.expm1(
+                -PLANCK * LIGHT_SPEED
+                / (
+                    wavelength[:, np.newaxis] * 1.0e-8
+                    * BOLTZMANN * atmosphere.temperature[np.newaxis, :]
+                )
+            )
+            unified_opacity = (
+                na_i_he_profile_table.cross_section(
+                    wavelength, helium_density, temperature=atmosphere.temperature
+                )
+                * ground_population[np.newaxis, :]
+                * stimulated
+                / atmosphere.mass_density[np.newaxis, :]
+            )
+            complete = (
+                unified_complete_line[np.newaxis, :]
+                & _computed_table_coverage(na_i_he_profile_table, wavelength)[:, np.newaxis]
+            )
+            result += np.where(
+                complete,
+                unified_opacity,
+                np.maximum(unified_opacity, replacement_ordinary["NaI"]),
+            )
     return result

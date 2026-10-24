@@ -65,7 +65,7 @@ def test_edges_are_held_not_extrapolated(table):
 
 
 def test_config_default_and_validation():
-    assert DZConfig().dense_helium_free_free == "off"
+    assert DZConfig().dense_helium_free_free == "rogers-young"
     from wd_spectra.models.stellar import compute_dz
     with pytest.raises(ValueError, match="dense_helium_free_free"):
         compute_dz(DZConfig(dense_helium_free_free="bogus"), relax_atmosphere=False)

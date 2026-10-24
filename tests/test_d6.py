@@ -691,8 +691,11 @@ def test_tlusty_rap_reader_recovers_level_resolved_cross_section(tmp_path):
         1000.0 / 8065.543937
     )
     assert section.statistical_weight == 10.0
-    assert section.cross_section(section.threshold_energy_ev) == pytest.approx(
-        2.0e-18
+    # An absolute RAP sample, not the representative mean I-E, fixes the
+    # cross section. Default pytest absolute tolerances exceed these data.
+    np.testing.assert_allclose(
+        section.cross_section(section.photon_energy_ev[1]), 2.0e-18,
+        rtol=1.0e-12, atol=0.0,
     )
     assert loaded.ion_stages == frozenset({("Fe", 1)})
 

@@ -41,6 +41,7 @@ SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
     "daz-g149-28",
     "daz-galex1931",
     "dq-j1235",
+    "dq-j1311",
 )
 CANARY = "tests/test_protected_model_canaries.py::"
 COLD_TESTS = {
@@ -80,8 +81,15 @@ COLD = tuple(COLD_TESTS) + (
     "daz-g149-28",
     "daz-galex1931",
 )
+D6_REGRESSION_TEST = "tests/test_d6_regression.py::test_j1637_two_step_warm_trajectory"
 REGRESSIONS = {
-    "d6-j1637": "tests/test_d6_regression.py::test_j1637_two_step_warm_trajectory",
+    "d6-j1637-" + reference: D6_REGRESSION_TEST + f"[{reference}]"
+    for reference in (
+        "warm_v1-legacy",
+        "warm_v2_feii-historical",
+        "warm_v3_independent-historical",
+        "warm_v4_rap-current",
+    )
 }
 
 
@@ -92,6 +100,12 @@ def commands(tier, cases=()):
             "components": pytest + ["tests", "-m", "not canary and not spectral"],
             "cool-components": pytest + ["research/cool_models"],
         }
+    if tier == "regression":
+        # Keep the public aggregate selector, but give every frozen version
+        # its own process, log, result and work guard. CI runs them on
+        # separate workers; none can consume another version's time budget.
+        cases = tuple(name for case in cases for name in
+                      (REGRESSIONS if case == "d6-j1637" else (case,)))
     available = SPECTRA if tier == "spectra" else REGRESSIONS if tier == "regression" else COLD
     if set(cases) - set(available):
         raise ValueError(f"unknown {tier} cases: {sorted(set(cases) - set(available))}")
@@ -110,6 +124,10 @@ def commands(tier, cases=()):
         elif tier == "spectra" and case == "dq-j1235":
             tasks[case] = pytest + [
                 "tests/test_dq_spectral_regression.py::test_refractive_spectrum_retains_j1235_absolute_flux"
+            ]
+        elif tier == "spectra" and case == "dq-j1311":
+            tasks[case] = pytest + [
+                "tests/test_dq_spectral_regression.py::test_completed_default_retains_j1311_absolute_flux"
             ]
         elif tier == "spectra" and case.startswith("daz-"):
             name = "g149_28" if case == "daz-g149-28" else "galex1931"
@@ -326,7 +344,7 @@ def main(argv=None):
     if args.jobs < 1 or args.timeout <= 0:
         parser.error("jobs and timeout must be positive")
     if args.case and args.tier in {"fast", "full"}:
-        parser.error("--case is only for spectra/cold; full must include every control")
+        parser.error("--case is only for spectra/regression/cold; full must include every control")
     tiers = ("fast", "spectra", "cold") if args.tier == "full" else (args.tier,)
     try:
         stages = {tier: commands(tier, args.case) for tier in tiers}

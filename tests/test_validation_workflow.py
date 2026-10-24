@@ -4,6 +4,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import threading
@@ -85,6 +86,9 @@ def test_dq_fixed_spectrum_and_true_cold_are_separate_tiers():
     assert spectral[-1].startswith("tests/test_dq_spectral_regression.py::")
     assert cold[-1] == runner.COLD_TESTS["dq-j1235"]
     assert "true_cold" in cold[-1]
+    assert runner.commands("spectra", ["dq-j1311"])["dq-j1311"][-1] == (
+        "tests/test_dq_spectral_regression.py::test_completed_default_retains_j1311_absolute_flux"
+    )
 
 
 def test_every_released_family_has_a_cold_case():
@@ -212,10 +216,12 @@ def test_pr_warm_regression_and_scheduled_cold_convergence_have_distinct_coverag
     assert set(pr_cases) == set(runner.COLD) - {"d6-j1637"}
     for event in ("schedule", "workflow_dispatch"):
         assert policy.selected_cold_cases(event, runner.COLD) == list(runner.COLD)
-    warm = runner.commands("regression", ["d6-j1637"])["d6-j1637"]
+    warm = runner.commands("regression", ["d6-j1637"])
     cold = runner.commands("cold", ["d6-j1637"])["d6-j1637"]
     spectrum = runner.commands("spectra", ["d6-j1637"])["d6-j1637"]
-    assert "two_step_warm_trajectory" in warm[-1]
+    assert warm == runner.commands("regression")
+    assert set(warm) == set(runner.REGRESSIONS)
+    assert all("two_step_warm_trajectory" in command[-1] for command in warm.values())
     assert "cold_start[d6-j1637]" in cold[-1]
     assert "fixed_atmosphere_spectrum" in spectrum[-1]
     with pytest.raises(ValueError):
@@ -243,6 +249,35 @@ def test_workflow_preserves_full_cold_dispatch_and_has_no_duplicate_push_trigger
     assert "if: github.event_name == 'pull_request'" in workflow
 
 
+def test_d6_matrix_runs_every_version_with_separate_artifacts_and_unchanged_guards():
+    workflow = (ROOT / ".github/workflows/canaries.yml").read_text()
+    job = workflow.split("  d6-regression:\n", 1)[1].split("\n  qualification:", 1)[0]
+    references = re.findall(r"^\s+- (warm_\S+)\s*$", job, re.MULTILINE)
+    assert len(references) == len(set(references)) == len(runner.REGRESSIONS)
+    assert {"d6-j1637-" + reference for reference in references} == set(runner.REGRESSIONS)
+    assert "fail-fast: false" in job
+    assert "timeout-minutes: 350" in job and "--timeout 19800" in job
+    assert "--case 'd6-j1637-${{ matrix.reference }}'" in job
+    assert "name: d6-warm-regression-${{ matrix.reference }}" in job
+    for reference in references:
+        case = "d6-j1637-" + reference
+        tasks = runner.commands("regression", [case])
+        assert set(tasks) == {case}
+        assert tasks[case][-1] == runner.D6_REGRESSION_TEST + f"[{reference}]"
+    # Reuse of one shard's evidence must never stand in for another shard.
+    assert len({tuple(command) for command in runner.commands("regression").values()}) == len(references)
+
+
+@pytest.mark.parametrize("case", list(runner.REGRESSIONS))
+def test_single_warm_reference_plan_selects_only_that_version(case, tmp_path, capsys):
+    output = tmp_path / case
+    assert runner.main(["regression", "--case", case, "--plan", "--output", str(output)]) == 0
+    plan = json.loads(capsys.readouterr().out)
+    assert set(plan["regression"]) == {case}
+    assert plan["regression"][case][-1] == runner.REGRESSIONS[case]
+    assert not output.exists()
+
+
 def test_protected_node_ids_still_collect_without_running_atmospheres():
     output = subprocess.check_output(
         [
@@ -254,7 +289,7 @@ def test_protected_node_ids_still_collect_without_running_atmospheres():
             "-o",
             "addopts=",
             *runner.COLD_TESTS.values(),
-            *runner.REGRESSIONS.values(),
+            runner.D6_REGRESSION_TEST,
         ],
         cwd=ROOT,
         text=True,
@@ -262,3 +297,8 @@ def test_protected_node_ids_still_collect_without_running_atmospheres():
     )
     for node in (*runner.COLD_TESTS.values(), *runner.REGRESSIONS.values()):
         assert node in output
+    # Collect the entire parameterized function, so a newly added capsule
+    # cannot silently be absent from the runner and workflow matrix.
+    collected = {line for line in output.splitlines()
+                 if line.startswith(runner.D6_REGRESSION_TEST + "[")}
+    assert collected == set(runner.REGRESSIONS.values())
