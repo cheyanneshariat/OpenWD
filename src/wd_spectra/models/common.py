@@ -747,6 +747,7 @@ def _jsonable(value: object) -> object:
         return {
             item.name: _jsonable(getattr(value, item.name))
             for item in fields(value)
+            if item.metadata.get("serialize", True)
         }
     if isinstance(value, Path):
         return str(value)
@@ -793,13 +794,15 @@ def save_model_result(result: ModelResult, output: str | Path) -> Path:
         ),
     )
     if result.population_state is not None:
-        # Keep nested atom states without pickle; this is diagnostic output,
-        # not an implicit restart input to the public cold-start API.
+        # Keep nested population states without pickle; this is diagnostic
+        # output, not an implicit restart input to the public cold-start API.
+        # Runtime-only fields (such as the population atom and its caches)
+        # opt out through dataclass metadata; physical arrays remain intact.
         arrays = {}
         def collect_population(value, prefix=""):
             if is_dataclass(value):
                 return {item.name: collect_population(getattr(value, item.name), prefix + item.name + ".")
-                        for item in fields(value)}
+                        for item in fields(value) if item.metadata.get("serialize", True)}
             if isinstance(value, Mapping):
                 return {str(key): collect_population(item, prefix + str(key) + ".")
                         for key, item in value.items()}

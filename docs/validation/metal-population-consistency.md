@@ -107,3 +107,28 @@ nonideal material tests and the DZ comparisons. Both DAZ fixed-spectrum controls
 also pass. These are fixed-state implementation comparisons, without a fresh
 atmosphere or a claim of improved agreement with observations. Full protected
 PR qualification is still required.
+
+## Population export
+
+The population state retains its actual `atomic_database` for matching
+external photoionization terms during a calculation. This is a runtime
+reference, not an extra set of population arrays. Common JSON and NPZ exports
+omit fields marked `serialize=False` in dataclass metadata. All physical
+population arrays and the existing code/data provenance remain in the output.
+
+Without this distinction, recursively exporting the population atom also
+expanded its line-selection caches. Each cached transition refers to its
+whole ion, including all that ion's transitions: the resulting output grows
+quadratically with the line list. One standard PG1159 selection has 25,532
+cached candidates and would expand to 79,474,430 transition records per
+exported atom. This occurs after the expensive solve, explaining why the
+failed CI runs reached the same final logged residuals as the successful
+predecessor before their runners were shut down.
+
+The regression tests forbid walking the runtime cache, check that both PG1159
+material states and their physical arrays still export without pickle, and
+verify that output size is independent of cache size. A diagnostic with the
+real PG1159 atom and a four-layer Planck state exported 2,877 arrays to a
+1.08-MB archive in about 0.08 seconds. This checks export behavior, not a new
+atmosphere-convergence certificate. No atmosphere, spectrum, tolerance or
+iteration limit is changed by this export repair.

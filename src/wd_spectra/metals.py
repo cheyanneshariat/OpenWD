@@ -1212,7 +1212,11 @@ class MetalLTEState:
     neutral_perturber_radius_cm: Mapping[str, float] | None = None
     # The population atom, not an opacity-table index namespace. Retain it
     # for matching external photoionization terms to the partition levels.
-    atomic_database: AtomicDatabase | None = None
+    # This is a runtime reference: its line-selection caches repeatedly
+    # reference whole ions and must not be expanded into population exports.
+    atomic_database: AtomicDatabase | None = field(
+        default=None, metadata={"serialize": False},
+    )
 
 
 @dataclass(frozen=True)
