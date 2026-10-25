@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "scope": "Portable metadata and new archive transport checks; no new numerical or physical qualification.",
+  "local_tests": {
+    "command": "python -m pytest tests/test_documentation.py tests/test_sdb_grid_snapshot.py -q",
+    "passed": 27
+  },
+  "coordinates_checked": 1573,
+  "HHe_qualified": 1381,
+  "reference_qualified": 696,
+  "native_members": 5535,
+  "new_archive_member_hashes_match_cached_accepted_products": true,
+  "new_archives_native_array_deserialization_or_scientific_solves": false,
+  "exact_requested_coordinate_cube_and_masks_checked": true,
+  "independent_reference_arithmetic_checked_for_qualified_hosts": 696,
+  "figure_PNGs_visually_inspected_during_PR_preparation": true,
+  "PDFs_reused_unchanged_with_original_independent_render_QA": true,
+  "figure_export_SHA256_checks": 6,
+  "absolute_private_paths_in_public_metadata": false,
+  "source_runtime_physics_caps_or_fitter_changed": false,
+  "public_data_release_published": false,
+  "solver_or_physical_accuracy_claimed": false,
+  "base_commit": "ef04c543aebbb7ea175f8785e4ab24f46aee78b1"
+}

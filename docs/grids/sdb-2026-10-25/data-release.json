@@ -1,0 +1,49 @@
+{
+  "repository": "cheyanneshariat/OpenWD",
+  "release_id": 423576518,
+  "tag": "sdb-grid-2026-10-25",
+  "url": "https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-cb888c3dbd4533d53bc5",
+  "draft": true,
+  "prerelease": true,
+  "public_downloads_available": false,
+  "target_commit": "e75a113c514b7ef0738092353a0ef94fc005f7ca",
+  "archives": [
+    {
+      "name": "sdb-2026-10-25-HHe-01.tar.gz",
+      "bytes": 859069557,
+      "sha256": "92079f63c6ec9a19cb6078266e2bdd7ee1a02f82b5e72b90d35f840a13f2ea87",
+      "members": 2073,
+      "transport_member_hashes_match_saved_accepted_hashes": true,
+      "scientific_arrays_loaded_or_solvers_repeated": false
+    },
+    {
+      "name": "sdb-2026-10-25-HHe-02.tar.gz",
+      "bytes": 857758914,
+      "sha256": "a04cb2bd69a36293de4f87b1b4d294a65be0e8efc9eb249bdca0db8c32728acf",
+      "members": 2070,
+      "transport_member_hashes_match_saved_accepted_hashes": true,
+      "scientific_arrays_loaded_or_solvers_repeated": false
+    },
+    {
+      "name": "sdb-2026-10-25-reference-metals-01.tar.gz",
+      "bytes": 1184043751,
+      "sha256": "bb31ac78844c186bac4d639108e62f380d024210d0b402c7dadd15e7f562df15",
+      "members": 696,
+      "transport_member_hashes_match_saved_accepted_hashes": true,
+      "scientific_arrays_loaded_or_solvers_repeated": false
+    },
+    {
+      "name": "sdb-2026-10-25-reference-metals-02.tar.gz",
+      "bytes": 1183703377,
+      "sha256": "ddcc740c4f57e9010f2ba654fe57ed6cfef8a8c90dbaec08fd0e6426a08be40e",
+      "members": 696,
+      "transport_member_hashes_match_saved_accepted_hashes": true,
+      "scientific_arrays_loaded_or_solvers_repeated": false
+    }
+  ],
+  "native_bytes": 6279137613,
+  "native_files": 5535,
+  "metadata_asset": "sdb-2026-10-25-metadata.tar.gz",
+  "checksums_asset": "SHA256SUMS",
+  "publication_note": "Unpublished draft assets require authorized repository access. Publication remains a separate step."
+}

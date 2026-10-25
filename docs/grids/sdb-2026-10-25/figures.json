@@ -1,0 +1,30 @@
+{
+  "exports": [
+    {
+      "path": "hhe-coverage.png",
+      "sha256": "77929fb313f4800ea892ea8552afa94a058fb4ad548cd0ca9a5626905ff7d15c"
+    },
+    {
+      "path": "hhe-coverage.pdf",
+      "sha256": "d4435bc9b116e194926fb06e323c90f2f7302266c26d0a6248db34702bbed8ca"
+    },
+    {
+      "path": "reference-coverage-by-helium.png",
+      "sha256": "143c1dc42f3a39b4145e4d4ecf58ce0f278a37aa1f552bf2335a0eefe77bf308"
+    },
+    {
+      "path": "reference-coverage-by-helium.pdf",
+      "sha256": "a0c928eb4dee7dbc2d52d358474680448d9ec34a00be080d302340899ca235c2"
+    },
+    {
+      "path": "metal-coverage-convergence.png",
+      "sha256": "24f4ffb4739095d633c0a586f7b35748c1ab7181c5ddeef3fc3f42e51785864f"
+    },
+    {
+      "path": "metal-coverage-convergence.pdf",
+      "sha256": "f3a8fa2bc41e7c76479dd5a1c7158663baba9f32466c3b2b7ba25f2cd598d377"
+    }
+  ],
+  "original_visual_QA": "Actual PNGs and independently rendered PDFs inspected in the completed campaign. Unmodified exports reused by hash.",
+  "new_array_reads_or_scientific_solves": false
+}

@@ -18,6 +18,11 @@ environment checks, a runnable spectrum example, and links for each task.
 4. [Caveats and limitations](limitations.md): convergence, accuracy, and
    [tested temperatures and compositions](tested-temperature-ranges.md).
 
+The [precomputed sdB snapshot](grids/sdb-2026-10-25/README.md) provides 1,381
+qualified H/He spectra, 696 reference-metal spectra, coverage masks and fitting
+guidance. Large data archives are staged in an unpublished draft release;
+the snapshot retains numerical gaps and has no independent abundance axes.
+
 ## Developing OpenWD
 
 - [Development and regression policy](development/README.md): local workflow

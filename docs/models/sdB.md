@@ -13,6 +13,13 @@ log10 N(He)/N(H) = −4 to −1 at 40 depths. The paper also compares an
 intermediate helium-rich sdOB star. These are tested examples, rather than a
 qualification of the whole parameter range.
 
+The separate [precomputed sdB snapshot from October 25, 2026](../grids/sdb-2026-10-25/README.md)
+contains 1,381 numerically qualified H/He spectra and 696 fixed-reference metal
+spectra over a requested 20,000–44,000 K grid. Failed points remain explicit
+gaps. Its source version, numerical criteria, draft data archives and fitting
+limits are documented separately from the paper comparisons below. It has no
+independent metal-abundance axes or validated interpolation across gaps.
+
 ## Paper comparison
 
 [![Observed spectra of HD 4539 and LS IV−14°116 compared with OpenWD hybrid LTE/NLTE models](../assets/sdb-paper.png)](../assets/sdb-paper.pdf)

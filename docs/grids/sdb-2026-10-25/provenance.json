@@ -1,0 +1,35 @@
+{
+  "source_commit": "e75a113c514b7ef0738092353a0ef94fc005f7ca",
+  "source_url": "https://github.com/kareemelbadry/OpenWD/tree/e75a113c514b7ef0738092353a0ef94fc005f7ca",
+  "original_catalog_sha256": "b3544375a7af85a4bc002d75a90091271033e94ab1cf42053c4fef57193b93cb",
+  "original_catalog_verification_sha256": "6325ff6a51d1b44695df7e22f03dfcda5a6337616ca1afe4b92ce2fd38b4f3ed",
+  "original_handoff_index_sha256": "35e8b7ef276fe035c4813f81a4f02ba7bf14c60e35d5e337ad8262cd7621d4d3",
+  "original_membership_sha256": "79775107a50bb8ee61ee1852759b84d1a5cb80486ea21b841865d76e9ed4a27e",
+  "generated_by": "Additive metadata projection and byte-preserving archival of already qualified products.",
+  "source_updated_or_models_recomputed": false,
+  "runtime_note": "Original platform-specific native binary identities differ. Per-reference binary hashes and original terminal/delivery proof hashes remain in qualification.json.",
+  "archived_products": "Qualified spectra, populations, and HHe LTE atmospheres only. Full private execution logs, original proofs, raw failures, sensitivity models, inputs and source snapshots are preserved in the research archive and are not bundled here.",
+  "HHe_qualification": "Passed measured native LTE checks, converged native NLTE, original ordinary-rate independent population defect <= 1e-4, saved-array and execution identity qualification.",
+  "metal_qualification": "Native population defect < 0.001 under the fraction/tau scope, process cap and execution/saved-array qualification; no independent full-metal rate qualification.",
+  "HHe_counts": {
+    "qualified": 1381,
+    "LTE_timeout": 176,
+    "HYBRID_timeout": 6,
+    "ordinary_rate_check_failed": 6,
+    "native_LTE_failed": 2,
+    "native_NLTE_not_converged": 2
+  },
+  "reference_counts": {
+    "qualified": 696,
+    "timeout": 682,
+    "process_cap_excluded": 2,
+    "native_signal_error": 1
+  },
+  "extra_attempts_excluded": {
+    "sensitivity_calculations": 7,
+    "historical_invalid_input": 1
+  },
+  "independent_abundance_axes": false,
+  "physical_accuracy_established": false,
+  "interpolation_validated": false
+}
