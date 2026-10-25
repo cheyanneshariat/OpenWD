@@ -14,10 +14,10 @@ OpenWD provides plane-parallel models for these classes:
 | Class | Atmosphere | Populations | Guide |
 | --- | --- | --- | --- |
 | DA | Hydrogen | LTE | [DA](docs/models/DA.md) |
-| DAZ | Hydrogen with metals | LTE | [DAZ](docs/models/DAZ.md) |
+| DAZ | Hydrogen with metals | LTE | [DZ/DBZ/DAZ](docs/models/DZ.md#hydrogen-hosts-daz) |
 | DB | Helium | LTE | [DB](docs/models/DB.md) |
 | DAB/DBA | Homogeneous hydrogen–helium mixture | LTE | [DAB/DBA](docs/models/DAB.md) |
-| DZ/DBZ | Helium with metals | LTE | [DZ/DBZ](docs/models/DZ.md) |
+| DZ/DBZ | Helium with metals | LTE | [DZ/DBZ/DAZ](docs/models/DZ.md#helium-hosts-dz-dbz) |
 | DQ | Helium with trace carbon and C₂, refractive transfer | LTE | [DQ](docs/models/DQ.md) |
 | DO/DAO | Hot helium or hydrogen–helium | NLTE hydrogen and helium (LTE charge closure) | [DO/DAO](docs/models/DO-DAO.md) |
 | PG 1159 | Hot helium–carbon–oxygen | NLTE He, C and O; trace elements in the line formation | [PG 1159](docs/models/PG1159.md) |
