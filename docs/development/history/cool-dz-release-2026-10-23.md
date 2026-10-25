@@ -1,6 +1,6 @@
 # Cool-DZ release preparation, 2026-10-23
 
-[DZ model guide](../../models/DZ.md) · [Development guide](../README.md)
+[Polluted-atmosphere guide](../../models/DZ.md) · [Development guide](../README.md)
 
 This candidate builds on PRs 35 and 36 and the local cool-DZ physics work.
 Full protected PR qualification is requested with this release; the local
