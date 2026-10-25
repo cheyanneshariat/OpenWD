@@ -16,10 +16,10 @@ remain listed separately under [tested points](../tested-temperature-ranges.md).
 | Configuration | Composition | Populations | Details |
 | --- | --- | --- | --- |
 | `DAConfig` | Pure hydrogen | LTE | [DA physics](DA.md) |
-| `DAZConfig` | Hydrogen with metals; abundances relative to H | LTE | [DAZ physics](DAZ.md) |
+| `DAZConfig` | Hydrogen with metals; abundances relative to H | LTE | [Polluted atmospheres: DAZ](DZ.md#hydrogen-hosts-daz) |
 | `DBConfig` | Pure helium | LTE | [DB physics](DB.md) |
 | `DABConfig` | Homogeneous H/He; `log_hydrogen_to_helium` sets log10 N(H)/N(He) | LTE | [DAB/DBA physics](DAB.md) |
-| `DZConfig` | Helium with metals and optional trace hydrogen | LTE | [DZ/DBZ physics](DZ.md) |
+| `DZConfig` | Helium with metals and optional trace hydrogen | LTE | [Polluted atmospheres: DZ/DBZ](DZ.md#helium-hosts-dz-dbz) |
 | `DQConfig` | Helium with trace carbon and C₂; refractive transfer | LTE | [DQ physics and setup](DQ.md) |
 | `DOConfig` | Pure helium, hot | NLTE He; LTE charge closure | [DO/DAO physics and data](DO-DAO.md) |
 | `DAOConfig` | Homogeneous H/He, hot | NLTE H and He; LTE charge closure | [DO/DAO physics and data](DO-DAO.md) |

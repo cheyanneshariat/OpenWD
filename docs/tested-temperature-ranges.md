@@ -192,7 +192,7 @@ results. The configurations and metal abundances are in
 [`research/validate_daz_cold_start.py`](../research/validate_daz_cold_start.py).
 The separate fixed-atmosphere DAZ paper comparisons also pass; these do not
 imply that a new cold atmosphere is identical to a paper checkpoint or that
-its final-spectrum integral is certified. See the [DAZ guide](models/DAZ.md).
+its final-spectrum integral is certified. See the [DAZ section of the polluted-atmosphere guide](models/DZ.md#hydrogen-hosts-daz).
 
 The 8000 K DAB depth study compared 80, 159 and 317 layers: integrated absolute
 spectral differences decreased from 0.688% to 0.172% of stellar flux, approximately

@@ -1,0 +1,74 @@
+{
+ "description": "Cool DZ/DAZ paper comparison: published parameters and abundances (never fitted) and the public spectra they are compared with. Abundances are log10 N(Z)/N(He) for host He and log10 N(Z)/N(H) for host H; log_h is log10 N(H)/N(He) (null: pure He).",
+ "objects": {
+  "wd2251": {
+   "name": "WD 2251-070",
+   "host": "He",
+   "teff": 4170,
+   "logg": 8.06,
+   "log_h": null,
+   "abundances": {"Ca": -9.8, "Mg": -8.5, "Na": -10.6},
+   "source": "Blouin et al. (2019, ApJ 875, 137) Teff, log g and Ca; Mg and Na from O'Brien et al. (2026, MNRAS 552, stag1669)",
+   "dataset": "xshooter",
+   "eso": ["ADP.2017-05-12T18:16:31.462", "ADP.2017-05-12T18:16:31.470", "ADP.2017-05-12T18:16:31.524"]
+  },
+  "j0916": {
+   "name": "SDSS J0916+2540",
+   "host": "He",
+   "teff": 5378,
+   "logg": 8.0,
+   "log_h": -4.0,
+   "abundances": {"Ca": -7.48, "Mg": -6.83, "Fe": -7.09, "Na": -9.32, "Cr": -8.9, "Ti": -8.75},
+   "source": "Hollands et al. (2017, MNRAS 467, 4970), Table 6",
+   "dataset": "sdss",
+   "sdss": "2087-53415-0166"
+  },
+  "vma2": {
+   "name": "vMa2",
+   "host": "He",
+   "teff": 5830,
+   "logg": 8.09,
+   "log_h": -4.4,
+   "abundances": {"Ca": -10.14, "Mg": -8.6, "Fe": -9.3, "Si": -8.6, "Na": -9.6, "Cr": -10.83, "Ni": -10.97},
+   "source": "O'Brien et al. (2026, MNRAS 552, stag1669), Table 8",
+   "dataset": "xshooter",
+   "eso": ["ADP.2017-05-12T18:13:46.424", "ADP.2017-05-12T18:13:46.450", "ADP.2017-05-12T18:13:46.482"]
+  },
+  "j1227": {
+   "name": "SDSS J1227+6330",
+   "host": "He",
+   "teff": 7418,
+   "logg": 8.07,
+   "log_h": -4.05,
+   "abundances": {"Ca": -8.7, "Mg": -7.3, "Fe": -7.5, "Na": -8.3, "Ti": -9.7, "Ni": -8.9},
+   "source": "Coutu et al. (2019, ApJ 885, 74) Teff and log g (H/He upper limit adopted); Swan et al. (2023, MNRAS 526, 3815) abundances",
+   "dataset": "desi",
+   "desi": [39633427355403754, "main", "bright", 11254]
+  },
+  "j0255": {
+   "name": "WD J0255+0237",
+   "host": "He",
+   "teff": 7940,
+   "logg": 8.03,
+   "log_h": -2.1,
+   "abundances": {"Mg": -7.57, "Ca": -9.35, "Ti": -10.3, "Mn": -10.48, "Fe": -7.72, "Ni": -8.84},
+   "source": "Izquierdo et al. (2026, MNRAS 551, stag1353), Tables 3-4 (X-shooter abundances)",
+   "dataset": "xshooter",
+   "eso": ["ADP.2025-09-22T17:20:21.027", "ADP.2025-09-22T17:20:21.031"]
+  },
+  "j1336": {
+   "name": "WD J1336-0337",
+   "host": "H",
+   "teff": 6262.0,
+   "logg": 7.936,
+   "log_h": null,
+   "abundances": {"Ca": -8.13, "Na": -8.14, "Mg": -6.89, "Al": -7.98, "Si": -6.91, "Ti": -9.51, "Cr": -8.78, "Mn": -8.94, "Fe": -6.97, "Ni": -8.22},
+   "label_calcium_only": true,
+   "source": "Kilic et al. (2026, ApJ 1006, 248), Table 1: photometric Teff and log g and log Ca/H; the other metals at CI-chondritic ratios to Ca, as assumed in that analysis",
+   "dataset": "xshooter",
+   "eso": ["ADP.2025-04-30T10:46:37.977", "ADP.2025-04-30T10:46:37.981"],
+   "continuum_reference": "desi",
+   "desi": [39627697575433449, "main", "dark", 25822]
+  }
+ }
+}
