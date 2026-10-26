@@ -70,10 +70,10 @@ python tools/validate.py regression --case d6-j1637 --jobs 1
 python tools/validate.py spectra --case d6-j1637 --jobs 1
 ```
 
-The aggregate warm selector expands to four independently recorded tasks.
-Use `--case d6-j1637-warm_v4_rap-current` to select only the current version.
-PR CI runs one version per worker, retaining all four references and both
-measured updates in each. All four jobs must pass qualification. Splitting
+The aggregate warm selector expands to five independently recorded tasks.
+Use `--case d6-j1637-warm_v5_excited_parent-current` to select only the current version.
+PR CI runs one version per worker, retaining all five references and both
+measured updates in each. All five jobs must pass qualification. Splitting
 the work prevents the historical versions from consuming the current
 version's time budget; no solver or comparison limit is relaxed.
 
@@ -137,3 +137,15 @@ PYTHONPATH=src python tools/build_d6_regression.py \
 This explicitly verifies the old trajectory at its original tolerances before
 capturing the new default trajectory. It is expensive: four measured updates
 plus a fixed spectrum. Use a hosted runner if local memory is insufficient.
+
+## Current excited-parent reference
+
+`warm_v5_excited_parent_o_i` (2026-10-25) keeps the v4 seed, grid, budgets
+and tolerances. It adds two O I/C II line-physics changes: classical electron
+widths and linear-Stark n-manifolds measure excited-parent series (for example
+O I 2p³(²D°)4d, above the first limit) from their parent limit, and the D6 atom
+gains the OP-normalized O I 2p³(²D°)3p → 4d, 5s ³D° multiplets. The v1–v4
+controls run inside `research/excited_parent_series_legacy.py`, which recovers
+the previous behaviour exactly. A separate certified public cold start with
+this physics (17 iterations, 139 minutes) agrees with the frozen structure to
+0.1 per cent in temperature for tau_R = 1e-4–10; see `docs/models/D6.md`.

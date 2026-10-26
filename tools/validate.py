@@ -88,7 +88,8 @@ REGRESSIONS = {
         "warm_v1-legacy",
         "warm_v2_feii-historical",
         "warm_v3_independent-historical",
-        "warm_v4_rap-current",
+        "warm_v4_rap-historical",
+        "warm_v5_excited_parent-current",
     )
 }
 
