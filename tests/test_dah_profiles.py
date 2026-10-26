@@ -1,5 +1,7 @@
 """Independent physical invariants of the released DAH profile kernels."""
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -117,8 +119,16 @@ def test_public_default_and_legacy_low_level_defaults_are_explicit():
     assert not any((paper.include_magnetic_eos, paper.include_rwa_photoionization,
                     paper.include_centered_motion, paper.include_cyclotron_absorption))
     assert all(getattr(paper, name) == value for name, value in DAH_PAPER_PRESCRIPTION.items())
+    assert paper.polarized_transfer == "scalar-stokes-i"
     with pytest.raises(ValueError, match="fixes"):
         paper_dah_config(include_rwa_photoionization=True)
+    # The transfer mode is not part of the fixed physics: full Stokes keeps
+    # the paper's zero-field EOS and continuum.
+    assert "polarized_transfer" not in DAH_PAPER_PRESCRIPTION
+    full = paper_dah_config(effective_temperature=12_000.0, polarized_transfer="full-stokes-iquv")
+    assert full.polarized_transfer == "full-stokes-iquv"
+    assert all(getattr(full, name) == value for name, value in DAH_PAPER_PRESCRIPTION.items())
+    assert replace(full, polarized_transfer="scalar-stokes-i") == paper
     legacy = MagneticPhysics(None, None)
     assert legacy.balmer_profile == "unified"
     assert not legacy.normalize_balmer_strength

@@ -258,9 +258,11 @@ The unscaled variant is necessary for assessing continuum agreement.
 `paper_dah_config(**parameters)` returns a `DAHConfig` with the prescription
 of the 2026 paper figure (the default until 2026-10-25): the same structure,
 lines and transfer as the default, but the zero-field EOS and H I bound-free
-continuum at all fields. It accepts stellar, geometry and numerical inputs
-and rejects attempts to change the prescription itself;
-`DAH_PAPER_PRESCRIPTION` lists the fixed switches.
+continuum at all fields. It accepts stellar, geometry, transfer and numerical
+inputs and rejects attempts to change the prescription's physics;
+`DAH_PAPER_PRESCRIPTION` lists the fixed switches. Transfer defaults to scalar
+Stokes I, as in the paper figure; `polarized_transfer="full-stokes-iquv"`
+keeps the same physics.
 
 ```python
 from wd_spectra import paper_dah_config

@@ -121,11 +121,11 @@ class DAHConfig:
 
 # The 2026 paper comparison (Section ``sec:dah``): zero-field EOS and bound-free
 # opacity on the nonmagnetic structure, i.e. the public default until 2026-10-25.
+# These physics switches are fixed; the transfer mode is not part of them.
 DAH_PAPER_PRESCRIPTION: Mapping[str, object] = MappingProxyType({
     "atmosphere_structure": "nonmagnetic",
     "balmer_profile": "kurucz-griem",
     "normalize_balmer_strength": True,
-    "polarized_transfer": "scalar-stokes-i",
     "include_rwa_photoionization": False,
     "include_cyclotron_absorption": False,
     "include_magnetic_eos": False,
@@ -136,14 +136,18 @@ DAH_PAPER_PRESCRIPTION: Mapping[str, object] = MappingProxyType({
 def paper_dah_config(**parameters: object) -> DAHConfig:
     """Return a :class:`DAHConfig` with the 2026 paper prescription.
 
-    ``parameters`` set the stellar, geometry and numerical inputs; they may
-    not override the prescription itself.
+    ``parameters`` set the stellar, geometry, transfer and numerical inputs;
+    they may not override the physics in :data:`DAH_PAPER_PRESCRIPTION`.
+    Transfer defaults to scalar Stokes I, as in the paper figure;
+    ``polarized_transfer="full-stokes-iquv"`` keeps the same physics.
     """
 
     fixed = sorted(set(parameters) & set(DAH_PAPER_PRESCRIPTION))
     if fixed:
         raise ValueError(f"paper_dah_config fixes {', '.join(fixed)}; use DAHConfig instead")
-    return DAHConfig(**{**DAH_PAPER_PRESCRIPTION, **parameters})  # type: ignore[arg-type]
+    return DAHConfig(**{  # type: ignore[arg-type]
+        "polarized_transfer": "scalar-stokes-i", **DAH_PAPER_PRESCRIPTION, **parameters,
+    })
 
 
 def dah_surface_cells(
