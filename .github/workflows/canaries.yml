@@ -108,7 +108,7 @@ jobs:
     needs: preflight
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    # Four sequential versions exceeded the shared 330-minute command guard.
+    # Five sequential versions exceed the shared 330-minute command guard.
     # Give each unchanged two-step reference its own worker and work guard.
     timeout-minutes: 350
     strategy:
@@ -118,7 +118,8 @@ jobs:
           - warm_v1-legacy
           - warm_v2_feii-historical
           - warm_v3_independent-historical
-          - warm_v4_rap-current
+          - warm_v4_rap-historical
+          - warm_v5_excited_parent-current
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

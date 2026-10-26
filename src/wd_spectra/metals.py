@@ -531,6 +531,45 @@ _O_I_6258_6271_MULTIPLET = (
 )
 _O_I_6258_6271_RADIATIVE_DAMPING_RATE_S = 43_651_583.22401656
 
+# O I 2p3(2D)3p 3D, 3F -> 2p3(2D)4d 3Do (6094--6262 A) and -> 2p3(2D)5s 3Do
+# (6368--6554 A): (lower, upper energy in cm^-1, absorption f).  NIST lists the
+# upper levels (autoionizing, 4So + ed) but no transition strengths.  With a
+# spectator 2D core, S(SL->SL') = (2S+1)(2L+1)(2L'+1){l L 2; L' l' 1}^2 R and
+# S(J->J') = (2J+1)(2J'+1){L S J; J' 1 L'}^2 S(SL->SL')/(2S+1).  The radial
+# factor R is the mean over the OP (TOPbase, retrieved 2026-10-25) LS multiplets of
+# the same arrays between bound terms: 3p' 3D -> 4d' 3Po, 3Fo for 3p -> 4d
+# (gf 0.124, 0.614; spread +-10%) and 3p' 1P, 1F -> 5s' 1Do for 3p -> 5s
+# (gf 0.0440, 0.118; +-9%).  The same R reproduces the independent Stout
+# 3p' 3D3 -> 4d' 3Fo4 strength to 12% and the NBS 3p' 3F -> 4d' 3Go relative
+# fine structure exactly (absolute scale 25% lower).  Wavelengths follow from
+# the observed NIST level energies; components below f = 1e-4 are omitted.
+_O_I_EXCITED_CORE_3D_TRANSITIONS = (
+    (113294.854, 129703.000, 4.4095e-03),  # 6094.53 3D2-4d 3Do1
+    (113298.320, 129703.000, 2.2043e-02),  # 6095.82 3D1-4d 3Do1
+    (113294.816, 129697.500, 3.2652e-03),  # 6096.56 3D3-4d 3Do2
+    (113294.854, 129697.500, 2.0407e-02),  # 6096.58 3D2-4d 3Do2
+    (113298.320, 129697.500, 7.3451e-03),  # 6097.87 3D1-4d 3Do2
+    (113294.816, 129692.300, 2.6113e-02),  # 6098.50 3D3-4d 3Do3
+    (113294.854, 129692.300, 4.5698e-03),  # 6098.51 3D2-4d 3Do3
+    (113714.444, 129692.300, 2.3368e-03),  # 6258.66 3F4-4d 3Do3
+    (113721.413, 129697.500, 2.0769e-03),  # 6259.35 3F3-4d 3Do2
+    (113727.165, 129703.000, 1.9627e-03),  # 6259.45 3F2-4d 3Do1
+    (113721.413, 129692.300, 2.5953e-04),  # 6261.39 3F3-4d 3Do3
+    (113727.165, 129697.500, 3.6333e-04),  # 6261.61 3F2-4d 3Do2
+    (113294.854, 128998.200, 2.4474e-03),  # 6368.07 3D2-5s 3Do1
+    (113298.320, 128998.200, 1.2234e-02),  # 6369.48 3D1-5s 3Do1
+    (113294.816, 128990.200, 1.8120e-03),  # 6371.30 3D3-5s 3Do2
+    (113294.854, 128990.200, 1.1325e-02),  # 6371.32 3D2-5s 3Do2
+    (113298.320, 128990.200, 4.0760e-03),  # 6372.72 3D1-5s 3Do2
+    (113294.816, 128978.800, 1.4485e-02),  # 6375.93 3D3-5s 3Do3
+    (113294.854, 128978.800, 2.5349e-03),  # 6375.95 3D2-5s 3Do3
+    (113727.165, 128998.200, 1.3328e-02),  # 6548.34 3F2-5s 3Do1
+    (113721.413, 128990.200, 1.4102e-02),  # 6549.31 3F3-5s 3Do2
+    (113714.444, 128978.800, 1.5860e-02),  # 6551.21 3F4-5s 3Do3
+    (113727.165, 128990.200, 2.4669e-03),  # 6551.78 3F2-5s 3Do2
+    (113721.413, 128978.800, 1.7614e-03),  # 6554.20 3F3-5s 3Do3
+)
+
 
 # CI-chondrite number ratios relative to calcium from columns 5--6 of
 # Lodders (2003), ApJ 591, 1220, Table 1.  Blouin, Dufour & Allard (2018)
@@ -3103,6 +3142,86 @@ def augment_oxygen_i_6258_6271_multiplet(
     return AtomicDatabase(
         MappingProxyType(ions),
         source=f"{database.source}; Kurucz GF100 O I 6258--6271-A supplement",
+    )
+
+
+def augment_oxygen_i_excited_core_3d_transitions(
+    database: AtomicDatabase,
+) -> AtomicDatabase:
+    """Add the O I ``2p3(2D)3p 3D, 3F -> 2p3(2D)4d, 5s 3Do`` multiplets.
+
+    Stout and NIST list the observed ``4d'`` and ``5s' 3Do`` levels but no
+    transitions to them.  These upper levels autoionize (``4So + ed``), so
+    the Opacity Project treats them as resonances and tabulates no
+    bound-bound strengths.  The strengths here follow from the spectator-core
+    LS relation for one ``3p -> 4d`` (or ``3p -> 5s``) electron jump, with the
+    radial factor taken from the OP (TOPbase) multiplets between bound
+    members of the same transition arrays (see
+    ``_O_I_EXCITED_CORE_3D_TRANSITIONS``).  Only transitions between observed
+    levels are added; existing records are kept, and the function is
+    idempotent.  Natural widths come from the usual upper-level radiative
+    sums; the OP resonance widths of these levels (<~1e11 s^-1) are below the
+    electron-impact widths in the atmospheres where the lines form.
+    """
+
+    key = ("O", 0)
+    if key not in database.ions:
+        return database
+    ion = database.ions[key]
+
+    def level_at(energy: float) -> AtomicLevel | None:
+        matches = [
+            level for level in ion.levels
+            if abs(level.energy_wavenumber - energy) <= 0.02
+        ]
+        return matches[0] if len(matches) == 1 else None
+
+    existing_pairs = {
+        (transition.lower_index, transition.upper_index)
+        for transition in ion.transitions
+    }
+    added: list[AtomicTransition] = []
+    for lower_energy, upper_energy, oscillator_strength in (
+        _O_I_EXCITED_CORE_3D_TRANSITIONS
+    ):
+        lower, upper = level_at(lower_energy), level_at(upper_energy)
+        if lower is None or upper is None:
+            # A custom or subset atom without these levels is left unchanged.
+            continue
+        pair = (lower.index, upper.index)
+        if pair in existing_pairs:
+            continue
+        wavelength_cm = 1.0 / (upper.energy_wavenumber - lower.energy_wavenumber)
+        einstein_a = (
+            8.0 * PI**2 * ELEMENTARY_CHARGE_ESU**2
+            / (ELECTRON_MASS * LIGHT_SPEED * wavelength_cm**2)
+            * lower.statistical_weight / upper.statistical_weight
+            * oscillator_strength
+        )
+        added.append(
+            AtomicTransition(
+                lower_index=lower.index,
+                upper_index=upper.index,
+                einstein_a=einstein_a,
+                transition_type="E1",
+                wavelength_vacuum_angstrom=wavelength_cm * 1.0e8,
+                absorption_oscillator_strength=oscillator_strength,
+            )
+        )
+        existing_pairs.add(pair)
+    if not added:
+        return database
+
+    label = "OP-normalized LS O I 2p3(2D)3p-4d/5s 3Do supplement"
+    ions = dict(database.ions)
+    ions[key] = replace(
+        ion,
+        transitions=ion.transitions + tuple(added),
+        source=f"{ion.source}; {label}",
+    )
+    return AtomicDatabase(
+        MappingProxyType(ions),
+        source=f"{database.source}; {label}",
     )
 
 
@@ -7055,6 +7174,7 @@ def na_i_d_neon_impact_rate_coefficient(
 def classical_electron_stark_rate_coefficient(
     ion: AtomicIon,
     transition: AtomicTransition,
+    parent_ion: AtomicIon | None = None,
 ) -> float:
     """Return SYNSPEC's classical electron damping rate per electron.
 
@@ -7064,6 +7184,12 @@ def classical_electron_stark_rate_coefficient(
     The coefficient is in cm3 s-1.  It is only a fallback, but omitting it
     altogether makes saturated metal lines much too narrow in hydrogen- and
     helium-free C/O atmospheres.
+
+    An upper level above the first ionization limit (for example O I
+    ``2p3(2D).4d``) belongs to a series converging on an excited parent term.
+    When ``parent_ion`` (the next ionization stage) is supplied, its binding
+    energy is measured from that parent limit, as in the Unsold widths (see
+    :func:`_parent_limit_excitation_ev`); otherwise no width is assigned.
     """
 
     if ion.ionization_energy_ev is None:
@@ -7076,6 +7202,8 @@ def classical_electron_stark_rate_coefficient(
         ion.ionization_energy_ev
         - upper.energy_wavenumber / EV_TO_WAVENUMBER
     )
+    if binding_energy_ev <= 0.0 and parent_ion is not None:
+        binding_energy_ev += _parent_limit_excitation_ev(upper, parent_ion)
     if binding_energy_ev <= 0.0:
         return 0.0
     effective_n_squared = np.clip(
@@ -7105,11 +7233,49 @@ def _rydberg_orbital(label: str) -> tuple[int, int, str] | None:
     )
 
 
-def _level_quantum_defect(ion: AtomicIon, level: AtomicLevel, principal: int) -> float | None:
-    binding = ion.ionization_energy_ev - level.energy_wavenumber / EV_TO_WAVENUMBER
+def _level_quantum_defect(
+    ion: AtomicIon,
+    level: AtomicLevel,
+    principal: int,
+    parent_excitation_ev: float = 0.0,
+) -> float | None:
+    binding = (
+        ion.ionization_energy_ev + parent_excitation_ev
+        - level.energy_wavenumber / EV_TO_WAVENUMBER
+    )
     if binding <= 0.0:
         return None
     return principal - (ion.charge + 1.0) * float(np.sqrt(_RYDBERG_ENERGY_EV / binding))
+
+
+def _series_parent_excitation_ev(
+    atomic_database: AtomicDatabase,
+    ion: AtomicIon,
+    level: AtomicLevel,
+) -> float | None:
+    """Return the excitation of the parent term a level's series converges on.
+
+    Zero is returned for a level built on the ground term of the next ion (or
+    without a named parent term), so ground-parent series keep the first
+    ionization limit.  A level built on an excited parent term, such as O I
+    ``2p3(2Do).4d``, is a Rydberg level of the series converging on that term;
+    its binding energy is ``I + E(parent) - E(level)``
+    (see :func:`_parent_limit_excitation_ev`).  ``None`` marks an excited
+    parent that cannot be identified in the next ion.
+    """
+
+    parsed = _rydberg_orbital(level.label)
+    core = parsed[2] if parsed is not None else level.label
+    parents = _PARENT_TERM_PATTERN.findall(core)
+    next_ion = atomic_database.ions.get((ion.element, ion.charge + 1))
+    if not parents or next_ion is None or not next_ion.levels:
+        return 0.0
+    ground = min(next_ion.levels, key=lambda item: item.energy_wavenumber)
+    ground_terms = _PARENT_TERM_PATTERN.findall(ground.label)
+    if ground_terms and ground_terms[-1] == parents[-1]:
+        return 0.0
+    excitation = _parent_limit_excitation_ev(level, next_ion)
+    return excitation if excitation > 0.0 else None
 
 
 _LINEAR_STARK_LEVEL_CACHE: dict[tuple[int, int, int], object] = {}
@@ -7139,11 +7305,12 @@ def _linear_stark_rydberg_level(
 
     Linear (hydrogenic) Stark behaviour requires a nearly degenerate
     ``n``-manifold: the outer electron must be in an ``l >= 2`` orbital
-    converging on the ground term of the next ion, with a small positive
-    quantum defect.  The returned defect gap is the smallest defect difference
-    to an ``l +/- 1`` neighbour of the same ``n``.  Core-excited levels and
-    series converging on excited parent terms are excluded; their binding energy relative to the ground
-    ionization limit does not measure their Rydberg character.
+    with a small positive quantum defect.  The returned defect gap is the
+    smallest defect difference to an ``l +/- 1`` neighbour of the same ``n``
+    and parent core.  A series converging on an excited parent term (for
+    example O I ``2p3(2Do).nd``) is measured from that parent limit, where it
+    is as hydrogenic as the ground-parent series; levels whose excited parent
+    cannot be identified are excluded.
     """
 
     if ion.ionization_energy_ev is None:
@@ -7154,14 +7321,13 @@ def _linear_stark_rydberg_level(
     principal, angular, core = parsed
     if angular < 2:
         return None
-    parents = _PARENT_TERM_PATTERN.findall(core)
-    next_ion = atomic_database.ions.get((ion.element, ion.charge + 1))
-    if parents and next_ion is not None and next_ion.levels:
-        ground = min(next_ion.levels, key=lambda item: item.energy_wavenumber)
-        ground_terms = _PARENT_TERM_PATTERN.findall(ground.label)
-        if not ground_terms or ground_terms[-1] != parents[-1]:
-            return None
-    binding = ion.ionization_energy_ev - level.energy_wavenumber / EV_TO_WAVENUMBER
+    parent_excitation = _series_parent_excitation_ev(atomic_database, ion, level)
+    if parent_excitation is None:
+        return None
+    binding = (
+        ion.ionization_energy_ev + parent_excitation
+        - level.energy_wavenumber / EV_TO_WAVENUMBER
+    )
     if binding <= 0.0:
         return None
     core_charge = ion.charge + 1.0
@@ -7182,7 +7348,9 @@ def _linear_stark_rydberg_level(
         and parsed_other[0] == principal
         and parsed_other[2] == core
         and abs(parsed_other[1] - angular) == 1
-        and (value := _level_quantum_defect(ion, other, principal)) is not None
+        and (value := _level_quantum_defect(
+            ion, other, principal, parent_excitation
+        )) is not None
     ]
     has_upper = any(
         (parsed_other := _rydberg_orbital(other.label)) is not None
@@ -7322,8 +7490,13 @@ def _rydberg_stark_manifold(
     if angular not in energy_sum:
         return None
     core_charge = ion.charge + 1.0
+    # Untabulated high-l members lie at the hydrogenic energy below the
+    # series limit of their own parent term.
+    series_limit_ev = ion.ionization_energy_ev + _series_parent_excitation_ev(
+        atomic_database, ion, level
+    )
     hydrogenic = (
-        ion.ionization_energy_ev * EV_TO_WAVENUMBER
+        series_limit_ev * EV_TO_WAVENUMBER
         - _RYDBERG_FREQUENCY_HZ / LIGHT_SPEED * core_charge**2 / principal**2
     )
     energies = {l_value: energy_sum[l_value] / weight_sum[l_value] for l_value in energy_sum}
@@ -9450,7 +9623,9 @@ def metal_line_mass_absorption_coefficient(
         )
         classical_stark_rate = (
             local_classical_stark_scale
-            * classical_electron_stark_rate_coefficient(ion, line)
+            * classical_electron_stark_rate_coefficient(
+                ion, line, atomic_database.ions.get((ion.element, ion.charge + 1))
+            )
             if include_classical_electron_stark else 0.0
         )
         oxygen_series_stark_rate = (
@@ -9856,16 +10031,32 @@ def metal_line_mass_absorption_coefficient(
             )
             if include_oxygen_i_quasistatic_microfields else None
         )
-        if quasistatic_series_rate is not None or stark_mixing is not None:
-            core_charge = ion.charge + 1.0
+        if stark_mixing is not None:
+            # Both levels of an excited-parent series are measured from
+            # that parent limit, consistently with the upper Rydberg level.
+            lower_parent_ev = _series_parent_excitation_ev(
+                atomic_database, ion, lower_level
+            )
+            upper_parent_ev = _series_parent_excitation_ev(
+                atomic_database, ion, upper_level
+            )
+        else:
+            lower_parent_ev = upper_parent_ev = 0.0
+        lower_binding_ev = upper_binding_ev = 0.0
+        if lower_parent_ev is not None and upper_parent_ev is not None:
             lower_binding_ev = (
-                ion.ionization_energy_ev
+                ion.ionization_energy_ev + lower_parent_ev
                 - lower_level.energy_wavenumber / EV_TO_WAVENUMBER
             )
             upper_binding_ev = (
-                ion.ionization_energy_ev
+                ion.ionization_energy_ev + upper_parent_ev
                 - upper_level.energy_wavenumber / EV_TO_WAVENUMBER
             )
+        if (
+            (quasistatic_series_rate is not None or stark_mixing is not None)
+            and lower_binding_ev > 0.0 and upper_binding_ev > 0.0
+        ):
+            core_charge = ion.charge + 1.0
             lower_effective_n = core_charge * np.sqrt(
                 _RYDBERG_ENERGY_EV / lower_binding_ev
             )
