@@ -352,6 +352,8 @@ def solve_hot_trace_metals(
     accelerated_lambda: bool = False,
     mali_overlap_velocity: float | None = None,
     mali_overlap_mode: str = "exclude",
+    acceleration_scope: str = "tested",
+    acceleration_step_limit: str = "scale",
     convergence_criterion: str = "population",
     profile_block_tolerance: float = 1e-4,
     opacity_check_gate: float | None = 3.0,
@@ -409,6 +411,18 @@ def solve_hot_trace_metals(
     strips strongly thick lines next to a weak foreign line (N III 685.8 next
     to a silicon line at log N/N(H) = -6), leaving them on the slow ordinary
     iteration.
+    ``acceleration_scope`` selects the levels whose extrapolated step can
+    veto an Anderson update. "tested" (default) counts only what the population
+    convergence test counts (``POPULATION_DEFECT_FLOOR``,
+    ``POPULATION_DEFECT_MINIMUM_TAU``) and bounds the other levels' steps
+    individually; "all" counts every level above 1e-12 of its element at
+    every depth (the previous behaviour). On 80-depth sdB hosts many sparse outer-layer levels
+    rejected most updates, and the damped fallback then needed tens of extra
+    iterations. ``metadata["acceleration_outcomes"]`` counts accepted and
+    rejected updates by reason. Only the iteration path changes.
+    ``acceleration_step_limit="scale"`` (default) shortens an update whose
+    counted levels move by more than a factor e to that length instead of
+    rejecting it (outcome "scaled"); "reject" restores the damped fallback.
     ``convergence_criterion="opacity"`` tests the undamped fixed-point
     residual in the quantities that enter the transfer: the change in metal
     absorption/emissivity produced by the proposed populations, relative to the
@@ -450,6 +464,8 @@ def solve_hot_trace_metals(
             or isinstance(acceleration_depth, bool) or not isinstance(acceleration_depth, int)
             or acceleration_depth < 0
             or mali_overlap_mode not in ("exclude", "subordinate")
+            or acceleration_scope not in ("all", "tested")
+            or acceleration_step_limit not in ("reject", "scale")
             or (mali_overlap_velocity is not None and not (np.isfinite(mali_overlap_velocity)
                                                          and mali_overlap_velocity > 0))
             or isinstance(n_angle, bool) or not isinstance(n_angle, int) or n_angle < 1):
@@ -562,6 +578,7 @@ def solve_hot_trace_metals(
     element_history = []
     acceleration_history = []
     accelerated_updates = 0
+    acceleration_outcomes = {}
     stopped_by_callback = False
     metadata['accelerated_lambda'] = bool(accelerated_lambda)
     if convergence_criterion not in ("population", "opacity", "flux"):
@@ -764,15 +781,23 @@ def solve_hot_trace_metals(
             old = np.concatenate([states[e].population_density if e in states else p.lte_population_density
                                   for e, p in proposals.items()])
             target = np.concatenate([p.population_density for p in proposals.values()])
-            floors = np.concatenate([np.broadcast_to(1e-12 * reference.element_number_density[e],
+            floor_fraction = POPULATION_DEFECT_FLOOR if acceleration_scope == "tested" else 1e-12
+            floors = np.concatenate([np.broadcast_to(floor_fraction * reference.element_number_density[e],
                                                       p.population_density.shape)
                                      for e, p in proposals.items()])
+            weights = np.minimum(1., np.maximum(old, target)/floors)
+            if acceleration_scope == "tested":
+                # Levels the convergence test ignores (below its floor, or in
+                # layers above its optical-depth limit) are bounded one by one
+                # instead of vetoing the whole extrapolated step.
+                weights = np.where(tested_layers[np.newaxis, :], weights, np.minimum(weights, 0.5))
             if len(history) > 1 and history[-1] > 2 * history[-2]:
                 acceleration_history.clear()
-            accelerated = None if not states else population_update(
+            accelerated, outcome = (None, "cold start") if not states else population_update(
                 np.log(np.maximum(old, 1e-300)), np.log(np.maximum(target, 1e-300)),
                 acceleration_history, depth=acceleration_depth, mixing=damping, maximum_step=1.,
-                residual_weights=np.minimum(1., np.maximum(old, target)/floors))[0]
+                residual_weights=weights, oversized_step=acceleration_step_limit)
+            acceleration_outcomes[outcome] = acceleration_outcomes.get(outcome, 0) + 1
             if not states:
                 # Cold start: the LTE starting point carries no information
                 # worth averaging with, so take the first statistical-
@@ -801,6 +826,8 @@ def solve_hot_trace_metals(
                     element_population_defect_history=element_history,
                     stopped_by_callback=stopped_by_callback,
                     accelerated_updates=accelerated_updates, acceleration_depth=acceleration_depth,
+                    acceleration_scope=acceleration_scope, acceleration_step_limit=acceleration_step_limit,
+                    acceleration_outcomes=acceleration_outcomes,
                     population_wavelength_points=len(pop_wave), convergence_scope="fixed-host metal populations")
     metadata["represented_lte_fraction_minimum"] = {
         e: float(np.min(s.lte_population_density.sum(axis=0) / reference.element_number_density[e]))
