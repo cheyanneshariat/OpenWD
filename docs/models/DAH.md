@@ -189,10 +189,11 @@ line-core discrepancies.
 
 ## Results at published parameters
 
-The paper comparison below used the [paper prescription](#the-paper-prescription),
-not the current default. It uses these fixed values, ordered by dipole polar field.
+The comparison below uses the current default (RWA photoionization and the
+magnetic EOS above 1 MG) at these fixed values, ordered by dipole polar field.
 The first four have continuous visible maxima below 100 MG; the remaining
-objects test the prescription at higher fields.
+objects test the prescription at higher fields, and J1351 and J2247 exceed the
+RWA's tested range of about 200 MG.
 
 | Object | Teff (K) | log g | Bp (MG) | i (deg) | (ax, ay, az) |
 | --- | ---: | ---: | ---: | ---: | --- |
@@ -212,18 +213,23 @@ or the [paper's smoothly rescaled comparison (PDF)](../assets/dah-paper-rescaled
 
 The figure above uses one flux scale per object. The
 [smoothly rescaled version](../assets/dah-paper-rescaled.png) used in the
-paper additionally applies the disclosed continuum correction; neither
-version changes the stellar parameters. Observations are SDSS/BOSS spectra
+paper additionally applies the disclosed continuum correction (factors 0.78–1.16);
+neither version changes the stellar parameters. Both are synthesized on the
+same certified nonmagnetic structures as the 2026-09-29 paper-prescription
+figure; only the magnetic continuum and EOS differ. Relative to that
+prescription the default mainly brightens the blue end of J1018, reshapes
+J1351 redward of 6000 Å, and over-absorbs J2247 at 4100–4450 Å. Observations are SDSS/BOSS spectra
 and the Hardy et al. comparison data. J1007 uses SDSS plate 5328, MJD 55982,
 fiber 66; its spectrum is not velocity shifted or dereddened. J1034 uses
 the previously photometrically recalibrated observation.
 
-The archived spectra underlying the figure are immutable controls in
-[tests/data/dah_paper](../../tests/data/dah_paper/README.md), with original
-source and spectrum hashes. Fixed-state tests exercise the public defaults
-with atmosphere iteration forbidden. Separate cold-start canaries for
-J1007 and J1254 create new structures and require all five equilibrium
-gates as well as absolute-flux agreement with the paper controls.
+The model spectra in the figure are the approved default controls in
+[tests/data/approved_regressions/dah_rwa_default_2026_10_25](../../tests/data/approved_regressions/dah_rwa_default_2026_10_25/README.md);
+the earlier paper-prescription spectra remain immutable controls in
+[tests/data/dah_paper](../../tests/data/dah_paper/README.md). Fixed-state tests
+exercise both with atmosphere iteration forbidden. Separate cold-start canaries
+for J1007 and J1254 create new structures and require all five equilibrium
+gates as well as absolute-flux agreement with the approved default spectra.
 
 ```sh
 python tools/validate.py spectra --case dah-j1007+1237

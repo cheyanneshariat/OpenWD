@@ -72,3 +72,12 @@ paper spectra to ≤1.1e-13. Changes from the paper spectra: up to 5.8–12.3% n
 3800 Å below 80 MG of visible field, 27–45% for J1254, J1018 and J1351, and
 integrated flux from −5.1% (J2247) to +6.3% (J1351). The J1007 and J1254 cold
 canaries now compare against the approved default spectra.
+
+## Guide and paper figure
+
+The DAH guide's eight-object figure (`docs/assets/dah-paper-*.{pdf,png}`) was
+regenerated from the approved default spectra on the paper's certified
+structures, using the archived 2026-09-29 comparison procedure and velocities
+(replayed exactly from the old spectra before substitution). The model line now
+uses the shared paper style (`#d95f02`, 0.6 pt; observations gray 0.30, 0.5 pt).
+The smooth-rescaling factors span 0.78–1.16 (previously 0.81–1.19).
