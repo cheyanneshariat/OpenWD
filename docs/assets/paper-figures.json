@@ -149,12 +149,18 @@
         "D6.md"
       ],
       "paper_source": "paper/figures/d6_j1637_gtc_openwd.pdf",
-      "pdf_sha256": "5661aa3f618852ad6276e35a033391e04d000550865996b8ccb6fead78704d3f",
-      "preview_sha256": "473b3b8e8f40384d658b953970e87fe2979975dfe702b401f53db168cc4be8c0",
+      "pdf_sha256": "856c073703b0a17b939486ab40c327846fd5336c114922f2a3e394cd5aebacfb",
+      "preview_sha256": "eb4b20112e991a8f44aeb17e460f6f13b92bb895471cbcd3538dcf5b79370fc9",
       "plotter_in_paper_workspace": {
         "path": "scripts/make_j1637_gtc_paper_figure.py",
         "sha256_at_import": "25b9824e77def664b38a0eff155374a77c54730fb36caf0f5b380f59e58456f7",
         "scope": "Current plotting source at import; not proof that the archived PDF was generated from this exact script revision."
+      },
+      "regenerated": {
+        "date": "2026-10-26",
+        "model": "Certified public compute_d6(D6Config()) cold start with the excited-parent O I physics (17 iterations, 139 min; PR #43), spectrum.txt sha256 7db7436769cc7f1fcad440f0788c4158c095ad4de14296674c7a5cc4db8efa29",
+        "plotter_sha256": "25b9824e77def664b38a0eff155374a77c54730fb36caf0f5b380f59e58456f7",
+        "previous_pdf_sha256": "5661aa3f618852ad6276e35a033391e04d000550865996b8ccb6fead78704d3f"
       }
     },
     {
