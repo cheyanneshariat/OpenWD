@@ -15,7 +15,9 @@ Survey spectra of the Hardy targets are de-reddened with the per-object MWDD
 E(B-V) (Fitzpatrick 1999, R_V=3.1) as in Hardy et al.; the two
 Vera-Rueda & Rohrmann (2024) targets are used as observed.  Each output file
 holds the rest-frame-independent observation (``wavelength_angstrom``,
-``flux_nu``, ``sigma_log_wavelength``) and, where available, the Hardy curve.
+``flux_nu``, ``sigma_log_wavelength``), the 1-sigma ``flux_nu_sigma`` from the
+survey inverse variance (absent for the GH Leo MWDD spectrum, which has none)
+and, where available, the Hardy curve.
 Requires ``astropy`` and ``extinction`` (build time only).
 """
 
@@ -40,7 +42,7 @@ from wd_spectra.validation.magnetic_da import (
 )
 
 
-def _observation(root: Path, target) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _observation(root: Path, target) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:
     path = root / target.source_file
     if target.source_format == "mwdd-fnu-csv":
         table = np.genfromtxt(path, delimiter=",", skip_header=2)
@@ -48,6 +50,7 @@ def _observation(root: Path, target) -> tuple[np.ndarray, np.ndarray, np.ndarray
         wave = np.asarray(table[valid, 0], dtype=np.float64)
         flux_nu = np.asarray(table[valid, 1], dtype=np.float64)
         sigma_log = np.full_like(wave, target.resolution_fwhm_angstrom / 2.354820045 / wave)
+        flux_sigma = None
     else:
         observed = read_sdss_spectrum(path)
         valid = (
@@ -60,11 +63,17 @@ def _observation(root: Path, target) -> tuple[np.ndarray, np.ndarray, np.ndarray
             observed.flux_lambda[valid] * 1.0e-17 * wave**2 * 1.0e-8 / LIGHT_SPEED
         )
         sigma_log = np.asarray(observed.resolution_sigma_log_wavelength[valid])
+        flux_sigma = (
+            1.0e-17 / np.sqrt(observed.inverse_variance[valid]) * wave**2 * 1.0e-8 / LIGHT_SPEED
+        )
     keep = (wave >= 3_500.0) & (wave <= 7_500.0)
     wave, flux_nu, sigma_log = wave[keep], flux_nu[keep], sigma_log[keep]
+    flux_sigma = None if flux_sigma is None else flux_sigma[keep]
     if target.ebv > 0.0:
-        flux_nu = flux_nu * 10.0 ** (0.4 * fitzpatrick99(wave, 3.1 * target.ebv, 3.1))
-    return wave, flux_nu, sigma_log
+        dereddening = 10.0 ** (0.4 * fitzpatrick99(wave, 3.1 * target.ebv, 3.1))
+        flux_nu = flux_nu * dereddening
+        flux_sigma = None if flux_sigma is None else flux_sigma * dereddening
+    return wave, flux_nu, sigma_log, flux_sigma
 
 
 _WEAK_CACHE = ".cache/magnetic-validation"
@@ -73,12 +82,14 @@ _WEAK_CACHE = ".cache/magnetic-validation"
 def build(root: Path, output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     for target in DAH_VALIDATION_TARGETS:
-        wave, flux_nu, sigma_log = _observation(root, target)
+        wave, flux_nu, sigma_log, flux_sigma = _observation(root, target)
         arrays = dict(
             wavelength_angstrom=wave,
             flux_nu=flux_nu,
             sigma_log_wavelength=sigma_log,
         )
+        if flux_sigma is not None:
+            arrays["flux_nu_sigma"] = flux_sigma
         if target.hardy_curve_file is not None:
             with np.load(root / target.hardy_curve_file) as saved:
                 arrays["hardy_wavelength_angstrom"] = physical_air_to_vacuum(
