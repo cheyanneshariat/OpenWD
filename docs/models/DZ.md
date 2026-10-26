@@ -83,6 +83,13 @@ the [atomic-data notes](../../src/wd_spectra/data/atomic/README.md). The metal
 physics was revised after a 2026-09-30 audit (physics revision
 `metal-audit-2026-09-30`); the revisions apply to both hosts.
 
+The [population-consistency repair](../validation/metal-population-consistency.md)
+uses matching occupation factors in native line and photoionization
+populations. It retains the cool-DZ Rydberg-only neutral prescription and
+low-level reservoir. Identified external levels use the native population
+atom; unresolved grouped levels retain an explicitly recorded effective-level
+approximation. Dated comparisons below retain their original source versions.
+
 - Bound-free opacity is level-resolved Opacity-Project photoionization from
   every level of the bundled TLUSTY/SIROCCO model atoms (C I--II, O I--II,
   Mg I--II, Al II, Si I--II, S II, Fe II), including excited-level continua

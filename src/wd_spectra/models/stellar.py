@@ -1060,7 +1060,11 @@ def compute_db(
             "helium_i_profiles": "Beauchamp25-LD semi-analytical",
             "helium_ii_profiles": "Schoning/SYNSPEC table",
             "neutral_broadening": config.neutral_broadening,
-            "convection": f"ML2/alpha={config.mixing_length_alpha:g}",
+            "convection": (
+                f"ML2/alpha={config.mixing_length_alpha:g}"
+                if config.mixing_length_alpha is not None
+                else "suppressed; radiative equilibrium"
+            ),
             "atmosphere_solver": config.atmosphere_solver,
             "atmosphere_mode": (
                 "relaxed" if relax_atmosphere else "checkpoint formal synthesis"
@@ -1073,8 +1077,12 @@ def compute_db(
 
 
 def _mixed_molecular_data(h2_he_path: str, h2_h2_path: str):
+    from .._provenance import content_identity
+
     paths=tuple(Path(p).expanduser().resolve() for p in (h2_he_path,h2_h2_path))
-    identity=tuple((p.stat().st_mtime_ns,p.stat().st_size) for p in paths)
+    # Data replacements can preserve size and modification time. The cache
+    # must follow the bytes used by the request's physical-data fingerprint.
+    identity=content_identity(paths)
     return _cached_mixed_molecular_data(*map(str,paths),identity)
 
 
@@ -1385,7 +1393,11 @@ def compute_dab(
             "balmer_self_broadening_truncation_closure": (
                 config.balmer_self_broadening_truncation_closure
             ),
-            "convection": f"ML2/alpha={config.mixing_length_alpha:g}",
+            "convection": (
+                f"ML2/alpha={config.mixing_length_alpha:g}"
+                if config.mixing_length_alpha is not None
+                else "suppressed; radiative equilibrium"
+            ),
             "neutral_broadening": config.neutral_broadening,
             "atmosphere_solver": config.atmosphere_solver,
             "atmosphere_mode": (
@@ -1943,6 +1955,10 @@ def compute_dz(
                 if topbase_photoionization is not None
                 else "disabled"
             ),
+            "photoionization_population_model": spectrum.metadata.get(
+                "metal_photoionization_population_model", "disabled"
+            ),
+            "metal_population_revision": "normalized-levels-rydberg-only-2026-10-24",
             "metal_electron_feedback": True,
             "structure_maximum_metal_lines": structure_lines,
             "structure_metal_line_budget_policy": structure_line_policy,
