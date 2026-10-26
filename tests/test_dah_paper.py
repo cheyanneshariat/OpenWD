@@ -83,3 +83,27 @@ def test_dah_public_default_cold_start(key):
     # Independent cold structures can stop at different certified Newton
     # iterates. Require their absolute spectra to agree to 0.2 percent.
     np.testing.assert_allclose(result.spectrum.surface_flux_lambda, expected, rtol=2e-3, atol=0.)
+
+
+@pytest.mark.canary
+def test_mean_field_j1018_structure_converges_from_cold():
+    """The coolest strong-field mean-field structure must certify at standard quality.
+
+    Its 40-layer attempt stalls at a ~9% flux error; the refinement ladder must
+    re-solve the same physics on a finer mesh and earn a fresh certificate.
+    """
+    from wd_spectra.validation.magnetic_da import DAH_VALIDATION_BY_KEY
+
+    target = DAH_VALIDATION_BY_KEY["j1018+0111"]
+    config = DAHConfig(
+        **target.config_kwargs(), quality="standard",
+        atmosphere_structure="mean-field", balmer_profile="unified",
+        normalize_balmer_strength=False, include_magnetic_eos=True,
+        include_rwa_photoionization=True, include_centered_motion=True,
+    )
+    result = compute_dah(config, np.array([4000.0, 5000.0]))
+    metadata = result.atmosphere.metadata
+    assert metadata["equilibrium_certificate"]["verified"], metadata["equilibrium_certificate"]
+    assert result.metadata["atmosphere_convergence_status"] == "converged"
+    assert result.metadata["structure_field_megagauss"] > 1.0
+    assert result.atmosphere.effective_temperature == target.effective_temperature

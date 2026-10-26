@@ -34,6 +34,7 @@ from ..magnetic_atomic import (
 )
 from .common import (
     ModelData,
+    atmosphere_convergence_status,
     ModelResult,
     Quality,
     atmosphere_with_model_request_fingerprint,
@@ -44,6 +45,7 @@ from .common import (
 )
 from .stellar import (
     DAConfig,
+    _radiative_refinement_depth,
     _allard_lyman_profiles_for_effective_temperature,
     _da_self_broadening_prescription,
     compute_da,
@@ -54,6 +56,8 @@ from .stellar import (
 # convection; Gentile Fusillo et al. (2018) need a radiative atmosphere for a
 # ~43 kG DAH.
 CONVECTION_SUPPRESSION_FIELD_MEGAGAUSS = 0.05
+# A failed mean-field structure is re-solved on finer meshes up to this depth.
+MEAN_FIELD_REFINEMENT_MAXIMUM_DEPTH = 200
 
 
 @dataclass(frozen=True)
@@ -197,7 +201,7 @@ def _drift_resolved_dipole_cells(
 
 
 # Above this, adjacent equal-weight bins can place H2db components tens of
-# Angstroms apart (docs/development/history/dah-high-field-2026-10-08.md).
+# Angstroms apart (docs/development/history/dah-disk-quadrature-2026-10-08.md).
 EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS = 100.0
 
 
@@ -289,7 +293,11 @@ def compute_dah(
 
     _validate(config)
     data = ModelData.default() if data is None else data
-    request_fingerprint = model_request_fingerprint("DAH", config, data)
+    # The structure (nonmagnetic or angle-averaged mean field) never depends on
+    # the transfer mode, so IQUV and scalar syntheses share one structure claim.
+    request_fingerprint = model_request_fingerprint(
+        "DAH", replace(config, polarized_transfer="scalar-stokes-i"), data
+    )
     resolution = numerical_resolution(config.quality)
     wave = (
         default_magnetic_da_wavelength_grid()
@@ -459,39 +467,74 @@ def compute_dah(
                 "initial_temperature": initial_atmosphere.temperature,
                 "initial_column_mass": initial_atmosphere.column_mass,
             }
-        atmosphere = radiative_equilibrium_hydrogen_atmosphere(
-            config.effective_temperature,
-            config.logg,
-            n_depth=structure_depth,
-            n_continuum_wavelength=resolution.n_continuum,
-            max_iterations=resolution.maximum_iterations,
-            n_angle=min(resolution.n_angle, 3),
-            # With the RWA the dissolved-level pseudo-continuum follows the
-            # shifted edges inside the continuum hook instead.
-            include_series_pseudocontinuum=not structure_uses_rwa_dissolution(
-                structure_field, physics
-            ),
-            correlated_microfields=True,
-            include_molecules=False,
-            include_negative_hydrogen=False,
-            unified_allard_table=_allard_lyman_profiles_for_effective_temperature(
-                config.effective_temperature, data
-            ),
-            mixing_length_alpha=mixing_length_alpha,
-            balmer_self_broadening_prescription=self_broadening,
-            balmer_self_broadening_truncation_closure="stark-core",
-            resolve_balmer_line_cores=False,
-            **restart,
-            hydrogen_eos_function=magnetic_eos
-            if config.include_magnetic_eos
-            else None,
-            balmer_opacity_function=balmer_opacity,
-            continuum_opacity_function=continuum_opacity,
-            scattering_opacity_function=scattering_opacity,
-            additional_structure_wavelength_angstrom=extra,
-            structure_solver="adaptive-newton",
-            iteration_callback=iteration_callback,
-        )
+        def solve(n_depth: int, seed: dict[str, object]) -> Atmosphere:
+            return radiative_equilibrium_hydrogen_atmosphere(
+                config.effective_temperature,
+                config.logg,
+                n_depth=n_depth,
+                n_continuum_wavelength=resolution.n_continuum,
+                max_iterations=resolution.maximum_iterations,
+                n_angle=min(resolution.n_angle, 3),
+                # With the RWA the dissolved-level pseudo-continuum follows the
+                # shifted edges inside the continuum hook instead.
+                include_series_pseudocontinuum=not structure_uses_rwa_dissolution(
+                    structure_field, physics
+                ),
+                correlated_microfields=True,
+                include_molecules=False,
+                include_negative_hydrogen=False,
+                unified_allard_table=_allard_lyman_profiles_for_effective_temperature(
+                    config.effective_temperature, data
+                ),
+                mixing_length_alpha=mixing_length_alpha,
+                balmer_self_broadening_prescription=self_broadening,
+                balmer_self_broadening_truncation_closure="stark-core",
+                resolve_balmer_line_cores=False,
+                **seed,
+                hydrogen_eos_function=magnetic_eos
+                if config.include_magnetic_eos
+                else None,
+                balmer_opacity_function=balmer_opacity,
+                continuum_opacity_function=continuum_opacity,
+                scattering_opacity_function=scattering_opacity,
+                additional_structure_wavelength_angstrom=extra,
+                structure_solver="adaptive-newton",
+                iteration_callback=iteration_callback,
+            )
+        atmosphere = solve(structure_depth, restart)
+        refinements = 0
+        depth = structure_depth
+        while (
+            config.quality != "quick"
+            and _radiative_refinement_depth(depth) <= MEAN_FIELD_REFINEMENT_MAXIMUM_DEPTH
+            and atmosphere_convergence_status(atmosphere) != "converged"
+        ):
+            # As for the radiative DA: a steep ionization transition can stall
+            # the initial mesh. Re-solve the same equations on a finer mesh
+            # (40 -> 100 -> 200), seeded by the unfinished state, which must
+            # not certify itself.
+            coarse = atmosphere
+            refinements += 1
+            depth = _radiative_refinement_depth(depth)
+            atmosphere = solve(depth, {
+                "initial_temperature": coarse.temperature,
+                "initial_column_mass": coarse.column_mass,
+            })
+            atmosphere = replace(atmosphere, metadata={
+                **atmosphere.metadata,
+                "radiative_depth_refinement": {
+                    "initial_depth_points": structure_depth,
+                    "final_depth_points": atmosphere.n_depth,
+                    "refinements": refinements,
+                    "previous_certificate_failures": coarse.metadata.get(
+                        "equilibrium_certificate", {}
+                    ).get("failures"),
+                    "previous_maximum_flux_residual": coarse.metadata.get(
+                        "maximum_all_depth_total_flux_residual"
+                    ),
+                    "stellar_parameters_changed": False,
+                },
+            })
         atmosphere = atmosphere_with_model_request_fingerprint(
             atmosphere, request_fingerprint
         )

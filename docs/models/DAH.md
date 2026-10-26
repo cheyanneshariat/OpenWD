@@ -160,11 +160,14 @@ scope of this numerical estimate and the unchanged physics approximations.
 The normal convection policy uses ML2/α=0.7 below 0.05 MG and no convection
 above it. An explicit positive `mixing_length_alpha` overrides this policy.
 For a strictly radiative DA control at any field, use
-`DAConfig(mixing_length_alpha=None)`. Cool radiative production atmospheres
-can refine a failed 100-layer attempt to 200 layers with unchanged physics
-and fresh convergence checks; see the [DA guide](DA.md#radiative-atmospheres-with-convection-disabled).
-G 76−48 (6680 K, log g=7.96) motivated this repair. It does not establish
-an entire cool radiative grid or remove its observed line-core discrepancies.
+`DAConfig(mixing_length_alpha=None)`. A radiative structure that fails its
+certificate is re-solved on doubled layers with unchanged physics and fresh
+convergence checks: 100 → 200 at `production`, 40 → 100 → 200 at `standard`;
+see the [DA guide](DA.md#radiative-atmospheres-with-convection-disabled).
+The mean-field magnetic structure uses the same ladder. G 76−48 (6680 K,
+log g=7.96) and the mean-field J1018+0111 (10500 K) motivated these repairs.
+They do not establish an entire cool radiative grid or remove the observed
+line-core discrepancies.
 
 ## Results at published parameters
 
@@ -211,7 +214,14 @@ python tools/validate.py cold --case da-radiative-g76-48
 
 Bundled observational controls are available through
 `wd_spectra.validation.magnetic_da`; `research/validate_dah_observed.py`
-runs their public models and saves comparisons. Its fitted velocity and
+runs their public models and saves comparisons. `chi2_scale` and
+`chi2_cubic` are noise-weighted χ² per pixel (3820–6950 Å) after one flux
+scale, and after a cubic multiplicative continuum that isolates the magnetic
+features from flux calibration. They use the survey inverse variances bundled
+with the spectra; GH Leo has none, so its noise is estimated from the
+high-pass scatter. Compare χ² between models of one object. The older
+`feature_rms` is dominated by photon noise for most of these spectra and is
+kept only for continuity. Its fitted velocity and
 single 5200–6100 Å scale belong to the comparison, never the atmosphere or
 spectrum calculation. Smooth rescaling used in one paper-figure variant is
 also a plotting operation: a positive quadratic correction in log flux.
@@ -237,7 +247,9 @@ coupled = replace(
 
 Above 1 MG this solves one structure at the projected-area mean field with
 angle-averaged H2db Balmer opacity, the selected continuum and optional
-magnetic Saha/HM chemistry. Below 1 MG it retains the DA-structure
+magnetic Saha/HM chemistry. The structure uses the same `balmer_profile` and
+`normalize_balmer_strength` as the synthesis (before 2026-10-25 it always used
+unified, unnormalized profiles). Below 1 MG it retains the DA-structure
 approximation. `balmer_profile="unified"` selects the ordinary zero-field
 Stark and neutral-broadening templates; `normalize_balmer_strength=False`
 retains the field-dependent H2db total oscillator strength.
@@ -289,6 +301,8 @@ Scientific use should cite the relevant ingredients and observational sources:
 - [Vera-Rueda & Rohrmann (2024)](https://doi.org/10.1051/0004-6361/202449627): field geometry and the J1018/J2247 comparisons.
 
 [Release notes and regression controls](../development/history/dah-release-2026-09-29.md)
-describe the integration and radiative convergence repair.
+describe the integration and radiative convergence repair; the
+[2026-10-25 clean-up](../development/history/dah-cleanup-2026-10-25.md)
+records the standard-quality convergence ladder and the χ² validation scores.
 Data attribution and redistribution details are in
 [third-party notices](../../THIRD_PARTY_NOTICES.md).

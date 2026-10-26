@@ -99,6 +99,21 @@ def profile_area(temperature, electron_density, upper_level, rest_frequency):
     return area
 
 
+def _distinct_frequency_nodes(wavelength):
+    """Drop increasing-wavelength nodes within 64 ulp in frequency of their neighbor.
+
+    The per-depth meshes of nearly equal electron densities can coincide to
+    rounding. The approximation is discontinuous at beta=20, so coincident
+    nodes straddling another depth's jump would carry different values at one
+    frequency, which a piecewise-linear profile (and its Hilbert partner)
+    cannot represent. Distinct nodes keep the jump as a steep segment.
+    """
+    frequency = LIGHT_SPEED / (wavelength * 1e-8)
+    keep = np.ones(wavelength.size, dtype=bool)
+    keep[1:] = -np.diff(frequency) > 64 * np.finfo(np.float64).eps * frequency[:-1]
+    return wavelength[keep]
+
+
 def kurucz_griem_templates(atmosphere, *, broadening=None, maximum_upper_level=12,
                      include_dispersion=False):
     """Frequency-area-normalized kernels with the same LTE line populations."""
@@ -118,12 +133,12 @@ def kurucz_griem_templates(atmosphere, *, broadening=None, maximum_upper_level=1
         delta = np.unique((scale[:, None] * np.geomspace(.01, 100., 120)).ravel())
         frequency = np.concatenate((nu0 - delta, [nu0], nu0 + delta))
         frequency = frequency[(frequency >= LIGHT_SPEED / .00025) & (frequency <= LIGHT_SPEED / 9e-6)]
-        mesh = np.unique(np.concatenate((
+        mesh = _distinct_frequency_nodes(np.unique(np.concatenate((
             LIGHT_SPEED / frequency / 1e-8,
             center + np.arange(-20., 20.0001, .02),
             center - np.geomspace(20., center - 900., 300),
             center + np.geomspace(20., 25000. - center, 400),
-        )))
+        ))))
         area = profile_area(atmosphere.temperature, atmosphere.electron_density, line.upper_level, nu0)
         shape = raw_profile(LIGHT_SPEED / (mesh[:, None]*1e-8) - nu0,
                             atmosphere.temperature, atmosphere.electron_density, line.upper_level, nu0)

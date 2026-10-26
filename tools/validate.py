@@ -45,7 +45,9 @@ SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
 )
 CANARY = "tests/test_protected_model_canaries.py::"
 COLD_TESTS = {
-    "da-radiative-g76-48": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start",
+    "da-radiative-g76-48": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start[production]",
+    "da-radiative-g76-48-standard": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start[standard]",
+    "dah-mean-field-j1018": "tests/test_dah_paper.py::test_mean_field_j1018_structure_converges_from_cold",
     **{f"dah-{key}": f"tests/test_dah_paper.py::test_dah_public_default_cold_start[{key}]"
        for key in ("j1007+1237", "j1254+5612")},
     "do-50000": "tests/test_hot_cold_canary.py::test_hot_public_model_converges_from_cold[do-50000-standard]",

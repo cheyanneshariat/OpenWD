@@ -112,3 +112,24 @@ def test_public_default_and_legacy_low_level_defaults_are_explicit():
     legacy = MagneticPhysics(None, None)
     assert legacy.balmer_profile == "unified"
     assert not legacy.normalize_balmer_strength
+
+
+def test_kurucz_mesh_keeps_no_coincident_frequency_nodes():
+    # Per-depth meshes of nearly equal electron density coincide to rounding;
+    # straddling the beta=20 jump they would carry two values at one frequency,
+    # which the Kramers-Kronig transform rightly rejects.
+    from wd_spectra.kurucz_griem import _distinct_frequency_nodes
+    from wd_spectra.magnetic import frequency_hilbert_dispersion
+
+    base = np.linspace(4800.0, 4900.0, 101)
+    wave = np.sort(np.concatenate((base, base[40:60] * (1.0 + 4.0e-15))))
+    kept = _distinct_frequency_nodes(wave)
+    frequency = LIGHT_SPEED / (kept * 1e-8)
+    assert kept.size == base.size
+    assert np.all(-np.diff(frequency) > 64 * np.finfo(float).eps * frequency[:-1])
+    # A jump between near-coincident nodes fails before and succeeds after.
+    profile = np.where(wave < 4850.0 * (1.0 + 2.0e-15), 1.0, 2.0)[:, None]
+    with pytest.raises(ValueError, match="discontinuous"):
+        frequency_hilbert_dispersion(wave, profile)
+    kept_profile = np.where(kept < 4850.0 * (1.0 + 2.0e-15), 1.0, 2.0)[:, None]
+    assert np.all(np.isfinite(frequency_hilbert_dispersion(kept, kept_profile)))

@@ -12,6 +12,7 @@ Use [getting started](../../getting-started.md) for current commands and
 
 - [DAH paper prescription and release integration](dah-release-2026-09-29.md)
 - [DAH drift-resolved disk quadrature](dah-disk-quadrature-2026-10-08.md)
+- [DAH clean-up and convergence repair](dah-cleanup-2026-10-25.md)
 
 ## Hot H/He models
 
