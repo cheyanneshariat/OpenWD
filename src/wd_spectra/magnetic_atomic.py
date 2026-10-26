@@ -252,33 +252,6 @@ class H2dbEnergyDatabase:
             )
         return output
 
-    def photoionization_threshold_rydberg(
-        self,
-        principal_quantum_number: int,
-        orbital_quantum_number: int,
-        magnetic_quantum_number: int,
-        field_strength_megagauss: float,
-        polarization: int,
-    ) -> float:
-        """Return the RWA continuum threshold from Rohrmann (2026), Eq. 23."""
-
-        if polarization not in {-1, 0, 1}:
-            raise ValueError("polarization must be -1, 0, or +1")
-        magnetic = int(magnetic_quantum_number)
-        base = self.spin_down_energy_rydberg(
-            principal_quantum_number,
-            orbital_quantum_number,
-            -abs(magnetic),
-            field_strength_megagauss,
-        )
-        beta = float(field_strength_megagauss) / H2DB_REFERENCE_FIELD_MEGAGAUSS
-        threshold = -base
-        if polarization == 1 and magnetic >= 0:
-            threshold += 4.0 * beta
-        elif polarization == -1 and magnetic >= 1:
-            threshold -= 4.0 * beta
-        return max(0.0, threshold)
-
     def energy_rydberg_with_analytic_fallback(
         self,
         principal_quantum_number: int,
@@ -842,8 +815,6 @@ class H2dbTransitionDatabase:
 
     root: Path
     transitions_by_upper_level: dict[int, tuple[H2dbTransition, ...]]
-    ground_state_beta: FloatArray
-    ground_state_energy_rydberg: FloatArray
 
     def balmer_components(
         self,
@@ -1093,10 +1064,6 @@ def _read_h2db_cached(path_string: str) -> H2dbTransitionDatabase:
         initial = np.asarray(
             values["transition_initial_energy_rydberg"], dtype=np.float64
         )
-        energy_labels = np.asarray(values["energy_labels"])
-        energy_offsets = np.asarray(values["energy_offsets"])
-        energy_beta = np.asarray(values["energy_beta"], dtype=np.float64)
-        energy_values = np.asarray(values["energy_rydberg"], dtype=np.float64)
     transitions: dict[int, list[H2dbTransition]] = {}
     for index, label in enumerate(labels):
         rows = slice(int(offsets[index]), int(offsets[index + 1]))
@@ -1140,19 +1107,9 @@ def _read_h2db_cached(path_string: str) -> H2dbTransitionDatabase:
             )
     if not all(level in transitions for level in range(3, 7)):
         raise ValueError("H2db subset is missing one or more of Halpha through Hdelta")
-    ground = [
-        index
-        for index, label in enumerate(energy_labels)
-        if tuple(int(value) for value in label) == (0, 1, 1)
-    ]
-    if len(ground) != 1:
-        raise ValueError("H2db subset contains no unique ground-state track")
-    rows = slice(int(energy_offsets[ground[0]]), int(energy_offsets[ground[0] + 1]))
     return H2dbTransitionDatabase(
         path,
         {level: tuple(items) for level, items in sorted(transitions.items())},
-        np.ascontiguousarray(energy_beta[rows]),
-        np.ascontiguousarray(energy_values[rows]),
     )
 
 

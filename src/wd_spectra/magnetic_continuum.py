@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 from typing import Literal
 
 import numpy as np
@@ -30,7 +29,11 @@ from .constants import (
     PI,
     PLANCK,
 )
-from .magnetic_atomic import H2dbEnergyDatabase, read_h2db_energy_database
+from .magnetic_atomic import (
+    H2DB_REFERENCE_FIELD_MEGAGAUSS,
+    H2dbEnergyDatabase,
+    read_h2db_energy_database,
+)
 
 
 FloatArray = NDArray[np.float64]
@@ -38,7 +41,7 @@ Polarization = Literal[-1, 0, 1]
 
 ROHRMANN_2026_DOI = "10.1051/0004-6361/202658917"
 ROHRMANN_2026_ZENODO_DOI = "10.5281/zenodo.19005375"
-MAGNETIC_ATOMIC_FIELD_MEGAGAUSS = 4701.03
+MAGNETIC_ATOMIC_FIELD_MEGAGAUSS = H2DB_REFERENCE_FIELD_MEGAGAUSS
 # The zero-field pseudo-continuum dissolves the Lyman--Brackett edges.
 DISSOLVED_LEVEL_MAXIMUM_LOWER_LEVEL = 4
 _ROZSNYAI_N8_GAUNT_COEFFICIENTS = np.asarray(
@@ -142,10 +145,8 @@ def _rwa_branching_fractions(
     for ``n=6,7`` matter because dissolved high levels dominate much of the
     optical bound-free opacity in warm hydrogen atmospheres.  For ``n>=8``
     the leading high-n closure of their Eq. 18 is used: the ``l+1`` branch
-    dominates.  The Rozsnyai--Jacobs sublevel Gaunt factors are explicit for
-    the important ``n=8`` shell; a unity sublevel-to-shell ratio above it
-    preserves the exact shell sum pending transcription of the remaining
-    rows of their table.
+    dominates, with the Rozsnyai--Jacobs sublevel Gaunt factors. The explicit
+    RWA stops at ``n=8``, the highest shell the ordinary continuum carries.
     """
 
     n = int(principal_quantum_number)
@@ -436,14 +437,8 @@ def _rwa_branching_fractions(
         denominator = np.ones_like(x)
         plus = _rozsnyai_n8_sublevel_gaunt_ratio(l, x)
         minus = np.zeros_like(x)
-    elif n > 8:
-        if not 0 <= l < n:
-            raise ValueError("invalid orbital quantum number")
-        denominator = np.ones_like(x)
-        plus = np.ones_like(x)
-        minus = np.zeros_like(x)
     else:
-        raise ValueError("principal quantum number must be positive")
+        raise ValueError("RWA branching fractions are implemented for n=1..8")
     return plus / denominator, minus / denominator
 
 
@@ -666,8 +661,7 @@ def _explicit_rwa_atomic_kernels(
     limit at that threshold.
     """
 
-    from .gaunt import hydrogen_bound_free_gaunt_factor
-    from .opacity import hydrogen_ground_state_photoionization_cross_section
+    from .opacity import hydrogen_shell_photoionization_cross_section
     from .magnetic_eos import centered_transverse_mass_ratio
 
     database = read_h2db_energy_database(energy_root)
@@ -718,17 +712,9 @@ def _explicit_rwa_atomic_kernels(
                 orbital, magnetic, polarization  # type: ignore[arg-type]
             )
             frequency = np.maximum(shifted_energy, zero_threshold) * rydberg_frequency
-            if principal == 1:
-                shell_cross_section = hydrogen_ground_state_photoionization_cross_section(
-                    frequency
-                )
-            else:
-                shell_cross_section = (
-                    2.815e29
-                    * frequency**-3
-                    / principal**5
-                    * hydrogen_bound_free_gaunt_factor(principal, frequency)
-                )
+            shell_cross_section = hydrogen_shell_photoionization_cross_section(
+                principal, frequency
+            )
             kernel[state_index] = np.where(
                 valid,
                 photon_energy
@@ -742,18 +728,9 @@ def _explicit_rwa_atomic_kernels(
             edge_plus, edge_minus = _rwa_branching_fractions(
                 principal, orbital, np.asarray([1.0e14])
             )
-            edge_frequency = np.asarray([zero_threshold * rydberg_frequency])
-            if principal == 1:
-                edge_cross_section = hydrogen_ground_state_photoionization_cross_section(
-                    edge_frequency
-                )
-            else:
-                edge_cross_section = (
-                    2.815e29
-                    * edge_frequency**-3
-                    / principal**5
-                    * hydrogen_bound_free_gaunt_factor(principal, edge_frequency)
-                )
+            edge_cross_section = hydrogen_shell_photoionization_cross_section(
+                principal, np.asarray([zero_threshold * rydberg_frequency])
+            )
             state_threshold[state_index] = threshold
             threshold_kernel[state_index] = float(
                 (threshold / zero_threshold)
@@ -770,54 +747,6 @@ def _explicit_rwa_atomic_kernels(
             (state_energy, mass_ratio, kernel, state_threshold, threshold_kernel)
         )
     return tuple(output)
-
-
-def explicit_rwa_photoionization_structure_continuum(
-    atmosphere: Atmosphere,
-    wavelength_angstrom: ArrayLike,
-    field_strength_megagauss: float,
-    energy_database: H2dbEnergyDatabase,
-    *,
-    maximum_level: int = 8,
-    include_centered_motion: bool = True,
-) -> FloatArray:
-    """Return a polarization-averaged explicit RWA continuum at one field.
-
-    Bound-free opacity is replaced through ``maximum_level`` (at most eight,
-    the shells carried explicitly by the ordinary continuum).
-    Ordinary higher-level bound-free, free-free, H-minus, and molecular terms
-    are retained. Equal q weights are appropriate for the isotropic radiation
-    field used in the 1D structural iteration.
-    """
-
-    from .opacity import (
-        hydrogen_bound_free_mass_absorption_coefficient,
-        hydrogen_continuum_mass_absorption_coefficient,
-    )
-
-    wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
-    continuum = hydrogen_continuum_mass_absorption_coefficient(
-        atmosphere,
-        wavelength,
-        include_electron_scattering=False,
-        include_rayleigh_scattering=False,
-    )
-    ordinary_replaced = hydrogen_bound_free_mass_absorption_coefficient(
-        atmosphere, wavelength, maximum_level=maximum_level
-    )
-    magnetic_replaced = sum(
-        explicit_rwa_hydrogen_bound_free_mass_absorption_coefficient(
-            atmosphere,
-            wavelength,
-            field_strength_megagauss,
-            polarization,
-            energy_database,
-            maximum_level=maximum_level,
-            include_centered_motion=include_centered_motion,
-        )
-        for polarization in (-1, 0, 1)
-    ) / 3.0
-    return np.maximum(0.0, continuum - ordinary_replaced) + magnetic_replaced
 
 
 @dataclass(frozen=True)
@@ -839,22 +768,10 @@ def hydrogen_free_free_mass_absorption_coefficient(
 ) -> FloatArray:
     """Zero-field e--p bremsstrahlung exactly as in the ordinary continuum."""
 
-    from .opacity import hydrogen_free_free_gaunt_factor
+    from .opacity import hydrogen_free_free_extinction_per_cm
 
     wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
-    wavelength_cm = wavelength[:, np.newaxis] * 1.0e-8
-    frequency = LIGHT_SPEED / wavelength_cm
-    temperature = atmosphere.temperature[np.newaxis, :]
-    stimulated = -np.expm1(-PLANCK * frequency / (BOLTZMANN * temperature))
-    per_cm = (
-        3.692e8
-        * temperature**-0.5
-        * atmosphere.electron_density[np.newaxis, :]
-        * atmosphere.proton_density[np.newaxis, :]
-        * frequency**-3
-        * stimulated
-        * hydrogen_free_free_gaunt_factor(wavelength_cm * 1.0e8, temperature)
-    )
+    per_cm = hydrogen_free_free_extinction_per_cm(atmosphere, wavelength)
     return per_cm / atmosphere.mass_density[np.newaxis, :]
 
 
@@ -963,102 +880,18 @@ def isotropic_free_electron_opacity(
 def _humlicek_complex_probability(argument: ArrayLike) -> NDArray[np.complex128]:
     """Evaluate ``w(z)=exp(-z^2) erfc(-iz)`` without a SciPy dependency.
 
-    This is Humlicek's four-region rational approximation.  Its accuracy is
-    ample for the much larger uncertainties in the collision width, while it
-    supplies the causal imaginary profile that a pseudo-Voigt approximation
-    alone cannot provide.
+    Humlicek's four-region rational approximation (shared with the metal
+    line profiles). Its accuracy is ample for the much larger uncertainties
+    in the collision width, while it supplies the causal imaginary profile
+    that a pseudo-Voigt approximation alone cannot provide.
     """
+
+    from ._faddeeva import humlicek_w4
 
     z = np.asarray(argument, dtype=np.complex128)
     if np.any(~np.isfinite(z)) or np.any(np.imag(z) < 0.0):
         raise ValueError("complex probability arguments require Im(z)>=0")
-    x = np.real(z)
-    y = np.imag(z)
-    t = y - 1j * x
-    s = np.abs(x) + y
-    result = np.empty(z.shape, dtype=np.complex128)
-
-    region_1 = s >= 15.0
-    current = t[region_1]
-    result[region_1] = current * 0.5641896 / (0.5 + current * current)
-
-    region_2 = (~region_1) & (s >= 5.5)
-    current = t[region_2]
-    result[region_2] = (
-        current * (1.410474 + 0.5641896 * current * current)
-        / (0.75 + current * current * (3.0 + current * current))
-    )
-
-    region_3 = (~region_1) & (~region_2) & (
-        y >= 0.195 * np.abs(x) - 0.176
-    )
-    current = t[region_3]
-    result[region_3] = (
-        16.4955
-        + current
-        * (
-            20.20933
-            + current
-            * (11.96482 + current * (3.778987 + current * 0.5642236))
-        )
-    ) / (
-        16.4955
-        + current
-        * (
-            38.82363
-            + current
-            * (
-                39.27121
-                + current
-                * (21.69274 + current * (6.699398 + current))
-            )
-        )
-    )
-
-    region_4 = ~(region_1 | region_2 | region_3)
-    current = t[region_4]
-    squared = current * current
-    result[region_4] = np.exp(squared) - current * (
-        36183.31
-        - squared
-        * (
-            3321.9905
-            - squared
-            * (
-                1540.787
-                - squared
-                * (
-                    219.0313
-                    - squared
-                    * (
-                        35.7668
-                        - squared * (1.320522 - squared * 0.56419)
-                    )
-                )
-            )
-        )
-    ) / (
-        32066.6
-        - squared
-        * (
-            24322.8
-            - squared
-            * (
-                9022.23
-                - squared
-                * (
-                    2186.18
-                    - squared
-                    * (
-                        364.219
-                        - squared
-                        * (61.5704 - squared * (1.84144 - squared))
-                    )
-                )
-            )
-        )
-    )
-    return result
+    return humlicek_w4(np.real(z), np.imag(z))
 
 
 def _complex_voigt_profile_per_angular_frequency(
@@ -1121,5 +954,4 @@ __all__ = [
     "ROHRMANN_2026_DOI",
     "ROHRMANN_2026_ZENODO_DOI",
     "explicit_rwa_hydrogen_bound_free_mass_absorption_coefficient",
-    "explicit_rwa_photoionization_structure_continuum",
 ]
