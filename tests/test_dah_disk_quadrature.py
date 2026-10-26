@@ -102,11 +102,21 @@ def test_domain_notes_flag_documented_high_field_approximations():
                 dipole_inclination_deg=34.0, dipole_offset_radius=(0.0, 0.0, 0.07))
     default = DAHConfig(**high)
     notes = _domain_notes(default, dah_surface_cells(default), True)
-    assert any("pseudo-continuum" in note for note in notes)
+    assert any("RWA bound-free opacity beyond its tested range" in note for note in notes)
     assert any("equal-weight field bins" in note for note in notes)
-    rwa = DAHConfig(**high, include_rwa_photoionization=True, disk_component_drift_angstrom=16.0)
-    notes = _domain_notes(rwa, dah_surface_cells(DAHConfig(**high)), True)
-    assert len(notes) == 1 and "not a flux-error bound" in notes[0]
+    assert not any("pseudo-continuum" in note for note in notes)
+    from wd_spectra import paper_dah_config
+
+    paper = paper_dah_config(**high)
+    notes = _domain_notes(paper, dah_surface_cells(paper), True)
+    assert any("pseudo-continuum" in note for note in notes)
+    assert not any("RWA" in note for note in notes)
+    drift = DAHConfig(**high, disk_component_drift_angstrom=16.0)
+    notes = _domain_notes(drift, dah_surface_cells(DAHConfig(**high)), True)
+    assert len(notes) == 2 and any("not a flux-error bound" in note for note in notes)
+    within = DAHConfig(magnetic_field_megagauss=45.09, field_geometry="dipole",
+                       dipole_inclination_deg=66.0, dipole_offset_radius=(0.0, 0.0, 0.17))
+    assert _domain_notes(within, dah_surface_cells(within), True) == []
     low = DAHConfig(magnetic_field_megagauss=0.5, field_geometry="dipole")
     assert _domain_notes(low, dah_surface_cells(low), False) == []
 
