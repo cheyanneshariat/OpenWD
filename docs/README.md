@@ -26,6 +26,8 @@ the snapshot retains numerical gaps and has no independent abundance axes.
 The [completed sdB snapshot](grids/sdb-2026-10-26/README.md) contains 1,542 H/He
 and 1,523 metal spectra, with exact fitting masks and a separate draft data release.
 See the [coverage figure caption](grids/sdb-2026-10-26/figures/CAPTION.md).
+A [simpler temperature–gravity plot](grids/sdb-2026-10-26/figures/coverage-summary.md)
+shows the total coverage of both grids.
 
 ## Developing OpenWD
 
