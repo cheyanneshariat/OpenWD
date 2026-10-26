@@ -107,8 +107,18 @@ def test_public_default_and_legacy_low_level_defaults_are_explicit():
     assert config.balmer_profile == "kurucz-griem"
     assert config.normalize_balmer_strength
     assert config.polarized_transfer == "scalar-stokes-i"
-    assert not any((config.include_magnetic_eos, config.include_rwa_photoionization,
-                    config.include_centered_motion, config.include_cyclotron_absorption))
+    # Since 2026-10-25: RWA bound-free with magnetic EOS populations, no cyclotron.
+    assert config.include_magnetic_eos and config.include_rwa_photoionization
+    assert config.include_centered_motion and not config.include_cyclotron_absorption
+    from wd_spectra import DAH_PAPER_PRESCRIPTION, paper_dah_config
+
+    paper = paper_dah_config(effective_temperature=12_000.0)
+    assert paper.effective_temperature == 12_000.0
+    assert not any((paper.include_magnetic_eos, paper.include_rwa_photoionization,
+                    paper.include_centered_motion, paper.include_cyclotron_absorption))
+    assert all(getattr(paper, name) == value for name, value in DAH_PAPER_PRESCRIPTION.items())
+    with pytest.raises(ValueError, match="fixes"):
+        paper_dah_config(include_rwa_photoionization=True)
     legacy = MagneticPhysics(None, None)
     assert legacy.balmer_profile == "unified"
     assert not legacy.normalize_balmer_strength

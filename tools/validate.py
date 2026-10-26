@@ -123,7 +123,10 @@ def commands(tier, cases=()):
                 "tests/test_dah_disk_quadrature.py::test_near_zero_spectrum_matches_independent_limb_integral"
             ]
         elif tier == "spectra" and case.startswith("dah-"):
-            tasks[case] = pytest + [f"tests/test_dah_paper.py::test_public_default_reproduces_frozen_paper_spectrum[{case[4:]}]"]
+            tasks[case] = pytest + [
+                f"tests/test_dah_paper.py::test_paper_prescription_reproduces_frozen_paper_spectrum[{case[4:]}]",
+                f"tests/test_dah_paper.py::test_public_default_reproduces_approved_rwa_spectrum[{case[4:]}]",
+            ]
         elif tier == "spectra" and case == "dq-j1235":
             tasks[case] = pytest + [
                 "tests/test_dq_spectral_regression.py::test_refractive_spectrum_retains_j1235_absolute_flux"
