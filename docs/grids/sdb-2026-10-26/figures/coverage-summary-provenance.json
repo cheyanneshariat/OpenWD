@@ -352,10 +352,6 @@
   ],
   "exports": [
     {
-      "file": "coverage-temperature-gravity.png",
-      "sha256": "3edd1ef3fb40aa42a4387fb4f2add79905eba7b914b93d1db16e5d161af80e1e"
-    },
-    {
       "file": "coverage-temperature-gravity.pdf",
       "sha256": "7ebd0b98e34364bc2ab80f5dd685e62bca6002b7c69e6e629f511281207919fd"
     }
@@ -366,5 +362,14 @@
   "scientific_selection_unchanged": true,
   "model_arrays_loaded": 0,
   "no_interpolation": true,
-  "earlier_four_panel_plot_preserved": true
+  "earlier_four_panel_plot_preserved": true,
+  "user_supplied_PNG": true,
+  "PNG_bytes": 112195,
+  "PNG_dimensions": [
+    2205,
+    825
+  ],
+  "new_caption": "Filled circles: all 11 helium abundances available. Open circles: at least one missing.",
+  "earlier_heatmap_PDF_preserved_separately": true,
+  "current_PNG": "coverage-temperature-gravity.png"
 }
