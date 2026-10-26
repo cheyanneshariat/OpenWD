@@ -170,5 +170,5 @@ __all__ += ['ChiantiScaledCollisionComponent', 'ChiantiTermCollisionStrength', '
 from .pg1159_presets import (PG1424_BEST_LINE_ATOM_COUNTS, PG1424_COMPOSITION_LADDER_ATOM_COUNTS, PG1424_ION_STAGE_NLTE_TRACE_ELEMENTS, PG1424_PUBLISHED_MASS_FRACTIONS, PG1424_RELAXED_STRUCTURE_ATOM_COUNTS, WERNER2015_LINE_ATOM_COUNTS, mutable_atom_counts)
 __all__ += ['PG1424_BEST_LINE_ATOM_COUNTS', 'PG1424_COMPOSITION_LADDER_ATOM_COUNTS', 'PG1424_ION_STAGE_NLTE_TRACE_ELEMENTS', 'PG1424_PUBLISHED_MASS_FRACTIONS', 'PG1424_RELAXED_STRUCTURE_ATOM_COUNTS', 'WERNER2015_LINE_ATOM_COUNTS', 'mutable_atom_counts']
 
-from .models.dah import DAHConfig, compute_dah
-__all__ += ["DAHConfig", "compute_dah"]
+from .models.dah import DAH_PAPER_PRESCRIPTION, DAHConfig, compute_dah, paper_dah_config
+__all__ += ["DAH_PAPER_PRESCRIPTION", "DAHConfig", "compute_dah", "paper_dah_config"]
