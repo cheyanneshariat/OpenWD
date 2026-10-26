@@ -20,6 +20,10 @@ gaps. Its source version, numerical criteria, draft data archives and fitting
 limits are documented separately from the paper comparisons below. It has no
 independent metal-abundance axes or validated interpolation across gaps.
 
+The [completed October 26 snapshot](../grids/sdb-2026-10-26/README.md) includes
+the longer runs: 1,542 H/He and 1,523 metal spectra. Failed points remain masked;
+the fixed metal mixture does not provide independent abundance axes.
+
 ## Paper comparison
 
 [![Observed spectra of HD 4539 and LS IV−14°116 compared with OpenWD hybrid LTE/NLTE models](../assets/sdb-paper.png)](../assets/sdb-paper.pdf)

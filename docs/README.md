@@ -23,6 +23,10 @@ qualified H/He spectra, 696 reference-metal spectra, coverage masks and fitting
 guidance. Large data archives are staged in an unpublished draft release;
 the snapshot retains numerical gaps and has no independent abundance axes.
 
+The [completed sdB snapshot](grids/sdb-2026-10-26/README.md) contains 1,542 H/He
+and 1,523 metal spectra, with exact fitting masks and a separate draft data release.
+See the [coverage figure caption](grids/sdb-2026-10-26/figures/CAPTION.md).
+
 ## Developing OpenWD
 
 - [Development and regression policy](development/README.md): local workflow

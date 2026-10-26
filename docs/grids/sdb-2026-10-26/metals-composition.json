@@ -1,0 +1,512 @@
+{
+  "log_number_fraction_relative_to_all_particles": {
+    "C": -4.84,
+    "N": -4.44,
+    "O": -4.34,
+    "Si": -5.54,
+    "S": -5.54,
+    "Ca": -5.7
+  },
+  "original_listed_metals_number_fraction_sum": 0.00017682026456456874,
+  "original_all_listed_metals": [
+    {
+      "atomic_number": 3,
+      "species": "LI",
+      "log_number_fraction": -10.99
+    },
+    {
+      "atomic_number": 4,
+      "species": "BE",
+      "log_number_fraction": -10.66
+    },
+    {
+      "atomic_number": 5,
+      "species": "B",
+      "log_number_fraction": -9.34
+    },
+    {
+      "atomic_number": 6,
+      "species": "C",
+      "log_number_fraction": -4.84
+    },
+    {
+      "atomic_number": 7,
+      "species": "N",
+      "log_number_fraction": -4.44
+    },
+    {
+      "atomic_number": 8,
+      "species": "O",
+      "log_number_fraction": -4.34
+    },
+    {
+      "atomic_number": 9,
+      "species": "F",
+      "log_number_fraction": -7.62
+    },
+    {
+      "atomic_number": 10,
+      "species": "NE",
+      "log_number_fraction": -5.04
+    },
+    {
+      "atomic_number": 11,
+      "species": "NA",
+      "log_number_fraction": -5.8
+    },
+    {
+      "atomic_number": 12,
+      "species": "MG",
+      "log_number_fraction": -5.24
+    },
+    {
+      "atomic_number": 13,
+      "species": "AL",
+      "log_number_fraction": -6.34
+    },
+    {
+      "atomic_number": 14,
+      "species": "SI",
+      "log_number_fraction": -5.54
+    },
+    {
+      "atomic_number": 15,
+      "species": "P",
+      "log_number_fraction": -6.63
+    },
+    {
+      "atomic_number": 16,
+      "species": "S",
+      "log_number_fraction": -5.54
+    },
+    {
+      "atomic_number": 17,
+      "species": "CL",
+      "log_number_fraction": -6.81
+    },
+    {
+      "atomic_number": 18,
+      "species": "AR",
+      "log_number_fraction": -5.64
+    },
+    {
+      "atomic_number": 19,
+      "species": "K",
+      "log_number_fraction": -7.01
+    },
+    {
+      "atomic_number": 20,
+      "species": "CA",
+      "log_number_fraction": -5.7
+    },
+    {
+      "atomic_number": 21,
+      "species": "SC",
+      "log_number_fraction": -7.89
+    },
+    {
+      "atomic_number": 22,
+      "species": "TI",
+      "log_number_fraction": -6.09
+    },
+    {
+      "atomic_number": 23,
+      "species": "V",
+      "log_number_fraction": -7.11
+    },
+    {
+      "atomic_number": 24,
+      "species": "CR",
+      "log_number_fraction": -5.4
+    },
+    {
+      "atomic_number": 25,
+      "species": "MN",
+      "log_number_fraction": -5.61
+    },
+    {
+      "atomic_number": 26,
+      "species": "FE",
+      "log_number_fraction": -4.54
+    },
+    {
+      "atomic_number": 27,
+      "species": "CO",
+      "log_number_fraction": -6.05
+    },
+    {
+      "atomic_number": 28,
+      "species": "NI",
+      "log_number_fraction": -4.82
+    },
+    {
+      "atomic_number": 29,
+      "species": "CU",
+      "log_number_fraction": -6.85
+    },
+    {
+      "atomic_number": 30,
+      "species": "ZN",
+      "log_number_fraction": -6.48
+    },
+    {
+      "atomic_number": 31,
+      "species": "GA",
+      "log_number_fraction": -8.0
+    },
+    {
+      "atomic_number": 32,
+      "species": "GE",
+      "log_number_fraction": -7.39
+    },
+    {
+      "atomic_number": 33,
+      "species": "AS",
+      "log_number_fraction": -9.74
+    },
+    {
+      "atomic_number": 34,
+      "species": "SE",
+      "log_number_fraction": -8.7
+    },
+    {
+      "atomic_number": 35,
+      "species": "BR",
+      "log_number_fraction": -9.5
+    },
+    {
+      "atomic_number": 36,
+      "species": "KR",
+      "log_number_fraction": -8.79
+    },
+    {
+      "atomic_number": 37,
+      "species": "RB",
+      "log_number_fraction": -9.52
+    },
+    {
+      "atomic_number": 38,
+      "species": "SR",
+      "log_number_fraction": -7.17
+    },
+    {
+      "atomic_number": 39,
+      "species": "Y",
+      "log_number_fraction": -7.83
+    },
+    {
+      "atomic_number": 40,
+      "species": "ZR",
+      "log_number_fraction": -7.46
+    },
+    {
+      "atomic_number": 41,
+      "species": "NB",
+      "log_number_fraction": -10.63
+    },
+    {
+      "atomic_number": 42,
+      "species": "MO",
+      "log_number_fraction": -10.1
+    },
+    {
+      "atomic_number": 43,
+      "species": "TC",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 44,
+      "species": "RU",
+      "log_number_fraction": -10.28
+    },
+    {
+      "atomic_number": 45,
+      "species": "RH",
+      "log_number_fraction": -10.98
+    },
+    {
+      "atomic_number": 46,
+      "species": "PD",
+      "log_number_fraction": -10.39
+    },
+    {
+      "atomic_number": 47,
+      "species": "AG",
+      "log_number_fraction": -10.84
+    },
+    {
+      "atomic_number": 48,
+      "species": "CD",
+      "log_number_fraction": -10.33
+    },
+    {
+      "atomic_number": 49,
+      "species": "IN",
+      "log_number_fraction": -11.28
+    },
+    {
+      "atomic_number": 50,
+      "species": "SN",
+      "log_number_fraction": -8.0
+    },
+    {
+      "atomic_number": 51,
+      "species": "SB",
+      "log_number_fraction": -11.03
+    },
+    {
+      "atomic_number": 52,
+      "species": "TE",
+      "log_number_fraction": -9.86
+    },
+    {
+      "atomic_number": 53,
+      "species": "I",
+      "log_number_fraction": -10.49
+    },
+    {
+      "atomic_number": 54,
+      "species": "XE",
+      "log_number_fraction": -9.8
+    },
+    {
+      "atomic_number": 55,
+      "species": "CS",
+      "log_number_fraction": -10.96
+    },
+    {
+      "atomic_number": 56,
+      "species": "BA",
+      "log_number_fraction": -9.86
+    },
+    {
+      "atomic_number": 57,
+      "species": "LA",
+      "log_number_fraction": -10.94
+    },
+    {
+      "atomic_number": 58,
+      "species": "CE",
+      "log_number_fraction": -10.46
+    },
+    {
+      "atomic_number": 59,
+      "species": "PR",
+      "log_number_fraction": -11.28
+    },
+    {
+      "atomic_number": 60,
+      "species": "ND",
+      "log_number_fraction": -10.62
+    },
+    {
+      "atomic_number": 61,
+      "species": "PM",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 62,
+      "species": "SM",
+      "log_number_fraction": -11.08
+    },
+    {
+      "atomic_number": 63,
+      "species": "EU",
+      "log_number_fraction": -11.52
+    },
+    {
+      "atomic_number": 64,
+      "species": "GD",
+      "log_number_fraction": -10.99
+    },
+    {
+      "atomic_number": 65,
+      "species": "TB",
+      "log_number_fraction": -11.72
+    },
+    {
+      "atomic_number": 66,
+      "species": "DY",
+      "log_number_fraction": -10.91
+    },
+    {
+      "atomic_number": 67,
+      "species": "HO",
+      "log_number_fraction": -11.57
+    },
+    {
+      "atomic_number": 68,
+      "species": "ER",
+      "log_number_fraction": -11.12
+    },
+    {
+      "atomic_number": 69,
+      "species": "TM",
+      "log_number_fraction": -11.92
+    },
+    {
+      "atomic_number": 70,
+      "species": "YB",
+      "log_number_fraction": -11.12
+    },
+    {
+      "atomic_number": 71,
+      "species": "LU",
+      "log_number_fraction": -11.95
+    },
+    {
+      "atomic_number": 72,
+      "species": "HF",
+      "log_number_fraction": -11.33
+    },
+    {
+      "atomic_number": 73,
+      "species": "TA",
+      "log_number_fraction": -12.16
+    },
+    {
+      "atomic_number": 74,
+      "species": "W",
+      "log_number_fraction": -11.19
+    },
+    {
+      "atomic_number": 75,
+      "species": "RE",
+      "log_number_fraction": -11.78
+    },
+    {
+      "atomic_number": 76,
+      "species": "OS",
+      "log_number_fraction": -10.64
+    },
+    {
+      "atomic_number": 77,
+      "species": "IR",
+      "log_number_fraction": -10.72
+    },
+    {
+      "atomic_number": 78,
+      "species": "PT",
+      "log_number_fraction": -10.42
+    },
+    {
+      "atomic_number": 79,
+      "species": "AU",
+      "log_number_fraction": -11.24
+    },
+    {
+      "atomic_number": 80,
+      "species": "HG",
+      "log_number_fraction": -10.87
+    },
+    {
+      "atomic_number": 81,
+      "species": "TL",
+      "log_number_fraction": -11.27
+    },
+    {
+      "atomic_number": 82,
+      "species": "PB",
+      "log_number_fraction": -8.29
+    },
+    {
+      "atomic_number": 83,
+      "species": "BI",
+      "log_number_fraction": -11.39
+    },
+    {
+      "atomic_number": 84,
+      "species": "PO",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 85,
+      "species": "AT",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 86,
+      "species": "RN",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 87,
+      "species": "FR",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 88,
+      "species": "RA",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 89,
+      "species": "AC",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 90,
+      "species": "TH",
+      "log_number_fraction": -11.95
+    },
+    {
+      "atomic_number": 91,
+      "species": "PA",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 92,
+      "species": "U",
+      "log_number_fraction": -12.02
+    },
+    {
+      "atomic_number": 93,
+      "species": "NP",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 94,
+      "species": "PU",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 95,
+      "species": "AM",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 96,
+      "species": "CM",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 97,
+      "species": "BK",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 98,
+      "species": "CF",
+      "log_number_fraction": -20.3
+    },
+    {
+      "atomic_number": 99,
+      "species": "ES",
+      "log_number_fraction": -20.3
+    }
+  ],
+  "nH_formula": "(1 - original_listed_metals_number_fraction_sum) / (1 + 10**log10_nHe_nH)",
+  "logX_over_H_formula": "log_number_fraction_relative_to_all_particles[X] - log10(nH)",
+  "NLTE": [
+    "C",
+    "N",
+    "O",
+    "Si",
+    "S"
+  ],
+  "LTE": [
+    "Ca"
+  ],
+  "omitted_backgrounds": "All other listed elements are absent from these fixed-host metal calculations. The retained original full-list sum defines the prescribed X/H conversion; it is not a self-consistent atmosphere composition.",
+  "exact_composition_by_host": "qualification.json"
+}

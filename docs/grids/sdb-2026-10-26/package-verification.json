@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "scope": "New distribution archive byte checks; no repeated numerical qualification",
+  "native_files": 7672,
+  "native_bytes": 10652991393,
+  "native_archives": [
+    {
+      "name": "sdb-2026-10-26-HHe-01.tar.gz",
+      "bytes": 893129540,
+      "sha256": "83d698a61613a6aab5ee325c7d0b63c21cbbaf3228eddb384d17245816ed61d5",
+      "members": 2154,
+      "native_bytes": 1498331224
+    },
+    {
+      "name": "sdb-2026-10-26-HHe-02.tar.gz",
+      "bytes": 892903198,
+      "sha256": "ae724c0061d59c04373ab59120330edd1903aa5db33037118b3923b559d43328",
+      "members": 2154,
+      "native_bytes": 1498326734
+    },
+    {
+      "name": "sdb-2026-10-26-HHe-03.tar.gz",
+      "bytes": 131855150,
+      "sha256": "41683349a2baef59f0b0d914c7feb7acdaaf8590ea65d44652f840915d34eea2",
+      "members": 318,
+      "native_bytes": 221205111
+    },
+    {
+      "name": "sdb-2026-10-26-Metals-01.tar.gz",
+      "bytes": 1042734788,
+      "sha256": "aa8008cbf5eef890380002377bda39a936a3d77f3bf29e1ac7d23856b7ba4254",
+      "members": 614,
+      "native_bytes": 1498750020
+    },
+    {
+      "name": "sdb-2026-10-26-Metals-02.tar.gz",
+      "bytes": 1042626893,
+      "sha256": "85de2801a811abc32d19d1b1b37a4c0878e4f9305d676c1652b7a70e6a92f2f3",
+      "members": 614,
+      "native_bytes": 1498612356
+    },
+    {
+      "name": "sdb-2026-10-26-Metals-03.tar.gz",
+      "bytes": 1042770042,
+      "sha256": "5ddd6e5d36e49b1d23d46dd13b65fe5c719e4ca84bec7c9ce9a0681acf14097c",
+      "members": 614,
+      "native_bytes": 1498750020
+    },
+    {
+      "name": "sdb-2026-10-26-Metals-04.tar.gz",
+      "bytes": 1042980791,
+      "sha256": "086eb89116358708d2c510a4b9249b954f8752ea0320372cc347802d289b6163",
+      "members": 614,
+      "native_bytes": 1498887684
+    },
+    {
+      "name": "sdb-2026-10-26-Metals-05.tar.gz",
+      "bytes": 1001804221,
+      "sha256": "947ceae1f621499f6d31ddc0915ef87cc52a8198ed6cb3b87044725ccdf3ce93",
+      "members": 590,
+      "native_bytes": 1440128244
+    }
+  ],
+  "all_member_bytes_match_saved_accepted_hashes": true,
+  "regular_safe_members_only": true,
+  "scientific_model_arrays_deserialized": 0,
+  "scientific_solvers_or_source_or_start_checks_repeated": 0,
+  "all_earlier_products_and_archives_preserved": true,
+  "public_release_performed": false
+}

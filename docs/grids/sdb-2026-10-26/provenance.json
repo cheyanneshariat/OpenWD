@@ -1,0 +1,51 @@
+{
+  "snapshot": "sdb-2026-10-26",
+  "source_commit": "e75a113c514b7ef0738092353a0ef94fc005f7ca",
+  "source_rebuilt_for_snapshot": false,
+  "new_Resnick_native_extension_sha256": "69fe8dfc8d502893630e82ed9eda3eb6707264d434db7993ad7aa81f98e3c07a",
+  "local_final_catalog_sha256": "3a8e4e11e0beb17d0f69db502de38c06f4a7d62b4e30716b8a71389cd8deee8f",
+  "original_snapshot_manifest_sha256": "95be71421d9b2dd91af31dc1f02283cd20041b4ff128f41107a0768e065bdbee",
+  "original_snapshot_qualification_sha256": "15bb73135997d6adc80637fb02cadc928f54022de866275a0d97ffda4a53609e",
+  "all_native_files_retained_without_modification": true,
+  "scientific_model_arrays_deserialized_for_packaging": 0,
+  "scientific_solves_repeated_for_packaging": 0,
+  "HHe_status_counts": {
+    "Verified": 1542,
+    "Timed out": 5,
+    "Independent check failed": 6,
+    "Native NLTE not converged": 17,
+    "Native LTE check failed": 3
+  },
+  "Metals_status_counts": {
+    "QUALIFIED_METALS": 1523,
+    "INELIGIBLE_HHe_FAILED": 31,
+    "METALS_NATIVE_SIGNAL_ERROR": 2,
+    "METALS_PROCESS_CAP_EXCLUDED": 2,
+    "METALS_NATIVE_NOT_CONVERGED": 1,
+    "METALS_TIMEOUT": 14
+  },
+  "HHe_numerical_check": "Measured native LTE/NLTE and original ordinary-rate defect <=1e-4",
+  "Metals_numerical_check": "Native undamped defect<.001; own fixed accepted HHe host; correct composition; supervised cap and saved-array/execution checks",
+  "original_process_caps_seconds": {
+    "LTE": 3600,
+    "HYBRID": 9000,
+    "Metals": 2700
+  },
+  "longer_attempt_process_caps_seconds": {
+    "LTE": 7200,
+    "HYBRID": 18000,
+    "Metals": 5400
+  },
+  "helium_axis": "log10(nHe/nH)",
+  "native_wavelength_convention": "vacuum Angstrom",
+  "surface_flux_units": "erg s^-1 cm^-2 Angstrom^-1",
+  "independent_abundance_axes": false,
+  "physical_accuracy_established": false,
+  "interpolation_validated": false,
+  "observational_fits_performed": false,
+  "historical_invalid_input_attempts_excluded": 1,
+  "sensitivity_models_excluded": 7,
+  "originals_raw_failures_and_all_earlier_snapshots_preserved": true,
+  "distribution_state": "unpublished draft",
+  "release_url": "https://github.com/cheyanneshariat/OpenWD/releases/tag/untagged-939a39e8c7ad36e6de41"
+}

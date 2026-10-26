@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "checked_utc": "2026-10-26T10:31:55.167485+00:00",
+  "actual_PNG_inspected": true,
+  "independently_rendered_PDF_inspected": true,
+  "counts": {
+    "HHe": 1542,
+    "metals": 1523,
+    "new_HHe": 161,
+    "new_metals": 827
+  },
+  "per_cell_gravity_count_denominator": 11,
+  "temperature_units": "kK",
+  "helium_convention": "log10(nHe/nH)",
+  "zero_means_no_qualified_spectrum": true,
+  "no_interpolated_spectra": true,
+  "no_clipping_or_label_collisions": true,
+  "exports": [
+    {
+      "file": "grid-coverage.png",
+      "bytes": 264499,
+      "sha256": "d22e0929b342a53b61d1f52402596d3ade8b845274d1190eafcc03adfd973962"
+    },
+    {
+      "file": "grid-coverage.pdf",
+      "bytes": 40526,
+      "sha256": "501306cf5028b2715ee9b7f2b7a022893a32d1596948688f48c8554c03217986"
+    },
+    {
+      "file": "grid-coverage-pdf-render.png",
+      "bytes": 150552,
+      "sha256": "d0b59a0e3487fc74078b7120b848f97a7226122e5fad14a2be2e4a7ddaf9cd0e"
+    }
+  ],
+  "provenance_sha256": "3e62ee52fa524679800c7b9a3d1c4f7abf01762604a4975e49fba2ec902a572c",
+  "original_local_figure_verification_sha256": "345f4e825abed7dc2e282fc391c8d75fc4fd6ff3601c8edb12f7a1f4c51862e3"
+}
