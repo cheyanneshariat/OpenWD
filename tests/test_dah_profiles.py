@@ -1,5 +1,7 @@
 """Independent physical invariants of the released DAH profile kernels."""
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -107,8 +109,47 @@ def test_public_default_and_legacy_low_level_defaults_are_explicit():
     assert config.balmer_profile == "kurucz-griem"
     assert config.normalize_balmer_strength
     assert config.polarized_transfer == "scalar-stokes-i"
-    assert not any((config.include_magnetic_eos, config.include_rwa_photoionization,
-                    config.include_centered_motion, config.include_cyclotron_absorption))
+    # Since 2026-10-25: RWA bound-free with magnetic EOS populations, no cyclotron.
+    assert config.include_magnetic_eos and config.include_rwa_photoionization
+    assert config.include_centered_motion and not config.include_cyclotron_absorption
+    from wd_spectra import DAH_PAPER_PRESCRIPTION, paper_dah_config
+
+    paper = paper_dah_config(effective_temperature=12_000.0)
+    assert paper.effective_temperature == 12_000.0
+    assert not any((paper.include_magnetic_eos, paper.include_rwa_photoionization,
+                    paper.include_centered_motion, paper.include_cyclotron_absorption))
+    assert all(getattr(paper, name) == value for name, value in DAH_PAPER_PRESCRIPTION.items())
+    assert paper.polarized_transfer == "scalar-stokes-i"
+    with pytest.raises(ValueError, match="fixes"):
+        paper_dah_config(include_rwa_photoionization=True)
+    # The transfer mode is not part of the fixed physics: full Stokes keeps
+    # the paper's zero-field EOS and continuum.
+    assert "polarized_transfer" not in DAH_PAPER_PRESCRIPTION
+    full = paper_dah_config(effective_temperature=12_000.0, polarized_transfer="full-stokes-iquv")
+    assert full.polarized_transfer == "full-stokes-iquv"
+    assert all(getattr(full, name) == value for name, value in DAH_PAPER_PRESCRIPTION.items())
+    assert replace(full, polarized_transfer="scalar-stokes-i") == paper
     legacy = MagneticPhysics(None, None)
     assert legacy.balmer_profile == "unified"
     assert not legacy.normalize_balmer_strength
+
+
+def test_kurucz_mesh_keeps_no_coincident_frequency_nodes():
+    # Per-depth meshes of nearly equal electron density coincide to rounding;
+    # straddling the beta=20 jump they would carry two values at one frequency,
+    # which the Kramers-Kronig transform rightly rejects.
+    from wd_spectra.kurucz_griem import _distinct_frequency_nodes
+    from wd_spectra.magnetic import frequency_hilbert_dispersion
+
+    base = np.linspace(4800.0, 4900.0, 101)
+    wave = np.sort(np.concatenate((base, base[40:60] * (1.0 + 4.0e-15))))
+    kept = _distinct_frequency_nodes(wave)
+    frequency = LIGHT_SPEED / (kept * 1e-8)
+    assert kept.size == base.size
+    assert np.all(-np.diff(frequency) > 64 * np.finfo(float).eps * frequency[:-1])
+    # A jump between near-coincident nodes fails before and succeeds after.
+    profile = np.where(wave < 4850.0 * (1.0 + 2.0e-15), 1.0, 2.0)[:, None]
+    with pytest.raises(ValueError, match="discontinuous"):
+        frequency_hilbert_dispersion(wave, profile)
+    kept_profile = np.where(kept < 4850.0 * (1.0 + 2.0e-15), 1.0, 2.0)[:, None]
+    assert np.all(np.isfinite(frequency_hilbert_dispersion(kept, kept_profile)))

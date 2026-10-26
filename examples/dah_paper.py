@@ -2,6 +2,7 @@
 """Cold-start predictions at the eight fixed parameter sets used in the paper.
 
 Example: python examples/dah_paper.py j1007+1237 results/j1007
+The paper prescription is used unless --prescription default is given.
 The physical surface flux is saved without velocity or calibration corrections.
 """
 
@@ -10,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
-from wd_spectra import DAHConfig, run_model
+from wd_spectra import DAHConfig, paper_dah_config, run_model
 
 
 # Teff [K], log g [cgs], undisplaced dipole polar field [MG], inclination
@@ -31,12 +32,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("target", choices=TARGETS)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--prescription", choices=("paper", "default"), default="paper")
     args = parser.parse_args()
     teff, logg, polar, inclination, offset = TARGETS[args.target]
-    config = DAHConfig(effective_temperature=teff, logg=logg,
-                       magnetic_field_megagauss=polar, field_geometry="dipole",
-                       dipole_inclination_deg=inclination, dipole_offset_radius=offset,
-                       quality="production")
+    make = paper_dah_config if args.prescription == "paper" else DAHConfig
+    config = make(effective_temperature=teff, logg=logg,
+                  magnetic_field_megagauss=polar, field_geometry="dipole",
+                  dipole_inclination_deg=inclination, dipole_offset_radius=offset,
+                  quality="production")
     run = run_model(config, args.output, wavelength=np.arange(3600., 7000.01, 1.),
                     require_convergence=True)
     print(f"Saved {args.target} to {run.output_directory}")

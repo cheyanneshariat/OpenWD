@@ -43,7 +43,7 @@ _MODEL_FAMILY_PHYSICS_REVISIONS = {
     "DAB": "hydrogen-stark-density-floor-2026-10-05:default-feii-kurucz-uv-2026-10-12:neutral-trace-h-metal-widths-2026-10-12:helium-reos3-c1-2026-10-23:normalized-metal-levels-2026-10-24",
     "DQ": "helium-reos3-c1-2026-10-23",
     "DAO": "hydrogen-stark-density-floor-2026-10-05",
-    "DAH": "dah-kurucz-griem-v4:hydrogen-stark-density-floor-2026-10-05",
+    "DAH": "dah-rwa-magnetic-eos-v5:hydrogen-stark-density-floor-2026-10-05",
     # Shared metal physics revised by the 2026-09-30 DZ audit: ground-term
     # bound-free populations, 1/Z^2 Unsold radii, frequency Voigt profiles,
     # structure line identity and continuous dense-He ionization.

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from types import MappingProxyType
 from typing import Callable, Literal, Mapping
 
 import numpy as np
@@ -34,6 +35,7 @@ from ..magnetic_atomic import (
 )
 from .common import (
     ModelData,
+    atmosphere_convergence_status,
     ModelResult,
     Quality,
     atmosphere_with_model_request_fingerprint,
@@ -44,6 +46,7 @@ from .common import (
 )
 from .stellar import (
     DAConfig,
+    _radiative_refinement_depth,
     _allard_lyman_profiles_for_effective_temperature,
     _da_self_broadening_prescription,
     compute_da,
@@ -54,6 +57,8 @@ from .stellar import (
 # convection; Gentile Fusillo et al. (2018) need a radiative atmosphere for a
 # ~43 kG DAH.
 CONVECTION_SUPPRESSION_FIELD_MEGAGAUSS = 0.05
+# A failed mean-field structure is re-solved on finer meshes up to this depth.
+MEAN_FIELD_REFINEMENT_MAXIMUM_DEPTH = 200
 
 
 @dataclass(frozen=True)
@@ -69,8 +74,12 @@ class DAHConfig:
     the polar field of the undisplaced dipole (``dipole-polar``, as tabulated
     by Hardy et al. 2023) or the visible projected-area mean modulus.
 
-    Defaults reproduce the paper prescription: a nonmagnetic DA structure,
-    normalized Kurucz/Griem Balmer profiles and scalar magnetic transfer.
+    Defaults: a nonmagnetic DA structure, normalized Kurucz/Griem Balmer
+    profiles, scalar magnetic transfer and, above 1 MG, stationary-state RWA
+    photoionization (Rohrmann 2026) with the magnetic Saha/HM EOS and
+    centered-motion populations evaluated on that structure in each surface
+    cell. :func:`paper_dah_config` returns the 2026 paper prescription, which
+    keeps the zero-field EOS and bound-free opacity.
     ``atmosphere_structure="mean-field"`` opts into the earlier coupled
     magnetic structure experiment above 1 MG; see the DAH guide for its
     other physics switches. The equilibrium certificate always applies to
@@ -96,18 +105,49 @@ class DAHConfig:
     polarized_transfer: Literal["full-stokes-iquv", "scalar-stokes-i"] = (
         "scalar-stokes-i"
     )
-    include_rwa_photoionization: bool = False
+    include_rwa_photoionization: bool = True
     # Off by default: the standard magneto-ionic treatment predicts a broad
     # cyclotron depression at 200-600 MG that J2247+1456 does not show (see
     # the DAH guide); it stays an explicit, validated-against-data option.
     include_cyclotron_absorption: bool = False
-    include_magnetic_eos: bool = False
-    include_centered_motion: bool = False
+    include_magnetic_eos: bool = True
+    include_centered_motion: bool = True
     mixing_length_alpha: float | None = None
     balmer_self_broadening_prescription: str | None = None
     # Append new fields to preserve the existing positional constructor.
     # Opt-in; takes precedence over disk_field_bins.
     disk_component_drift_angstrom: float | None = None
+
+
+# The 2026 paper comparison (Section ``sec:dah``): zero-field EOS and bound-free
+# opacity on the nonmagnetic structure, i.e. the public default until 2026-10-25.
+# These physics switches are fixed; the transfer mode is not part of them.
+DAH_PAPER_PRESCRIPTION: Mapping[str, object] = MappingProxyType({
+    "atmosphere_structure": "nonmagnetic",
+    "balmer_profile": "kurucz-griem",
+    "normalize_balmer_strength": True,
+    "include_rwa_photoionization": False,
+    "include_cyclotron_absorption": False,
+    "include_magnetic_eos": False,
+    "include_centered_motion": False,
+})
+
+
+def paper_dah_config(**parameters: object) -> DAHConfig:
+    """Return a :class:`DAHConfig` with the 2026 paper prescription.
+
+    ``parameters`` set the stellar, geometry, transfer and numerical inputs;
+    they may not override the physics in :data:`DAH_PAPER_PRESCRIPTION`.
+    Transfer defaults to scalar Stokes I, as in the paper figure;
+    ``polarized_transfer="full-stokes-iquv"`` keeps the same physics.
+    """
+
+    fixed = sorted(set(parameters) & set(DAH_PAPER_PRESCRIPTION))
+    if fixed:
+        raise ValueError(f"paper_dah_config fixes {', '.join(fixed)}; use DAHConfig instead")
+    return DAHConfig(**{  # type: ignore[arg-type]
+        "polarized_transfer": "scalar-stokes-i", **DAH_PAPER_PRESCRIPTION, **parameters,
+    })
 
 
 def dah_surface_cells(
@@ -196,8 +236,14 @@ def _drift_resolved_dipole_cells(
     return field_binned_surface_cells(raw, edges, n_limb_bins=DRIFT_RESOLVED_LIMB_BINS)
 
 
+# Zhao & Stancil (2007) quantum cross sections agree with the RWA to <~0.3 dex
+# through 211 MG and differ by up to 1-2 dex per transition at 235 MG
+# (docs/development/history/dah-rwa-default-2026-10-25.md).
+RWA_VALIDATED_FIELD_MEGAGAUSS = 200.0
+
+
 # Above this, adjacent equal-weight bins can place H2db components tens of
-# Angstroms apart (docs/development/history/dah-high-field-2026-10-08.md).
+# Angstroms apart (docs/development/history/dah-disk-quadrature-2026-10-08.md).
 EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS = 100.0
 
 
@@ -206,6 +252,12 @@ def _domain_notes(config: DAHConfig, cells: SurfaceCells, strong: bool) -> list[
 
     maximum = cells.maximum_field_megagauss
     notes = []
+    if strong and config.include_rwa_photoionization and maximum > RWA_VALIDATED_FIELD_MEGAGAUSS:
+        notes.append(
+            "RWA bound-free opacity beyond its tested range: per-transition cross "
+            "sections differ from quantum calculations by up to 1-2 dex at 235 MG "
+            f"(validated to ~0.3 dex below {RWA_VALIDATED_FIELD_MEGAGAUSS:g} MG)"
+        )
     if strong and not config.include_rwa_photoionization:
         notes.append(
             "zero-field H I bound-free and dissolved-level Balmer pseudo-continuum "
@@ -289,7 +341,11 @@ def compute_dah(
 
     _validate(config)
     data = ModelData.default() if data is None else data
-    request_fingerprint = model_request_fingerprint("DAH", config, data)
+    # The structure (nonmagnetic or angle-averaged mean field) never depends on
+    # the transfer mode, so IQUV and scalar syntheses share one structure claim.
+    request_fingerprint = model_request_fingerprint(
+        "DAH", replace(config, polarized_transfer="scalar-stokes-i"), data
+    )
     resolution = numerical_resolution(config.quality)
     wave = (
         default_magnetic_da_wavelength_grid()
@@ -459,39 +515,74 @@ def compute_dah(
                 "initial_temperature": initial_atmosphere.temperature,
                 "initial_column_mass": initial_atmosphere.column_mass,
             }
-        atmosphere = radiative_equilibrium_hydrogen_atmosphere(
-            config.effective_temperature,
-            config.logg,
-            n_depth=structure_depth,
-            n_continuum_wavelength=resolution.n_continuum,
-            max_iterations=resolution.maximum_iterations,
-            n_angle=min(resolution.n_angle, 3),
-            # With the RWA the dissolved-level pseudo-continuum follows the
-            # shifted edges inside the continuum hook instead.
-            include_series_pseudocontinuum=not structure_uses_rwa_dissolution(
-                structure_field, physics
-            ),
-            correlated_microfields=True,
-            include_molecules=False,
-            include_negative_hydrogen=False,
-            unified_allard_table=_allard_lyman_profiles_for_effective_temperature(
-                config.effective_temperature, data
-            ),
-            mixing_length_alpha=mixing_length_alpha,
-            balmer_self_broadening_prescription=self_broadening,
-            balmer_self_broadening_truncation_closure="stark-core",
-            resolve_balmer_line_cores=False,
-            **restart,
-            hydrogen_eos_function=magnetic_eos
-            if config.include_magnetic_eos
-            else None,
-            balmer_opacity_function=balmer_opacity,
-            continuum_opacity_function=continuum_opacity,
-            scattering_opacity_function=scattering_opacity,
-            additional_structure_wavelength_angstrom=extra,
-            structure_solver="adaptive-newton",
-            iteration_callback=iteration_callback,
-        )
+        def solve(n_depth: int, seed: dict[str, object]) -> Atmosphere:
+            return radiative_equilibrium_hydrogen_atmosphere(
+                config.effective_temperature,
+                config.logg,
+                n_depth=n_depth,
+                n_continuum_wavelength=resolution.n_continuum,
+                max_iterations=resolution.maximum_iterations,
+                n_angle=min(resolution.n_angle, 3),
+                # With the RWA the dissolved-level pseudo-continuum follows the
+                # shifted edges inside the continuum hook instead.
+                include_series_pseudocontinuum=not structure_uses_rwa_dissolution(
+                    structure_field, physics
+                ),
+                correlated_microfields=True,
+                include_molecules=False,
+                include_negative_hydrogen=False,
+                unified_allard_table=_allard_lyman_profiles_for_effective_temperature(
+                    config.effective_temperature, data
+                ),
+                mixing_length_alpha=mixing_length_alpha,
+                balmer_self_broadening_prescription=self_broadening,
+                balmer_self_broadening_truncation_closure="stark-core",
+                resolve_balmer_line_cores=False,
+                **seed,
+                hydrogen_eos_function=magnetic_eos
+                if config.include_magnetic_eos
+                else None,
+                balmer_opacity_function=balmer_opacity,
+                continuum_opacity_function=continuum_opacity,
+                scattering_opacity_function=scattering_opacity,
+                additional_structure_wavelength_angstrom=extra,
+                structure_solver="adaptive-newton",
+                iteration_callback=iteration_callback,
+            )
+        atmosphere = solve(structure_depth, restart)
+        refinements = 0
+        depth = structure_depth
+        while (
+            config.quality != "quick"
+            and _radiative_refinement_depth(depth) <= MEAN_FIELD_REFINEMENT_MAXIMUM_DEPTH
+            and atmosphere_convergence_status(atmosphere) != "converged"
+        ):
+            # As for the radiative DA: a steep ionization transition can stall
+            # the initial mesh. Re-solve the same equations on a finer mesh
+            # (40 -> 100 -> 200), seeded by the unfinished state, which must
+            # not certify itself.
+            coarse = atmosphere
+            refinements += 1
+            depth = _radiative_refinement_depth(depth)
+            atmosphere = solve(depth, {
+                "initial_temperature": coarse.temperature,
+                "initial_column_mass": coarse.column_mass,
+            })
+            atmosphere = replace(atmosphere, metadata={
+                **atmosphere.metadata,
+                "radiative_depth_refinement": {
+                    "initial_depth_points": structure_depth,
+                    "final_depth_points": atmosphere.n_depth,
+                    "refinements": refinements,
+                    "previous_certificate_failures": coarse.metadata.get(
+                        "equilibrium_certificate", {}
+                    ).get("failures"),
+                    "previous_maximum_flux_residual": coarse.metadata.get(
+                        "maximum_all_depth_total_flux_residual"
+                    ),
+                    "stellar_parameters_changed": False,
+                },
+            })
         atmosphere = atmosphere_with_model_request_fingerprint(
             atmosphere, request_fingerprint
         )
@@ -586,8 +677,11 @@ def compute_dah(
 
 __all__ = [
     "CONVECTION_SUPPRESSION_FIELD_MEGAGAUSS",
+    "DAH_PAPER_PRESCRIPTION",
     "DAHConfig",
+    "RWA_VALIDATED_FIELD_MEGAGAUSS",
     "compute_dah",
     "dah_surface_cells",
+    "paper_dah_config",
     "structure_field_megagauss",
 ]

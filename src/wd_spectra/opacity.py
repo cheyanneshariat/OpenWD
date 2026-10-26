@@ -1244,6 +1244,53 @@ def hydrogen_ground_state_photoionization_cross_section(
     return cross_section
 
 
+def hydrogen_shell_photoionization_cross_section(
+    level: int, frequency_hz: ArrayLike
+) -> FloatArray:
+    """Return the H I shell photoionization cross section in cm^2.
+
+    ``level=1`` is the exact Stobbe ground-state result; excited shells use
+    the Kramers normalization with the shell-averaged Mihalas/Karzas--Latter
+    Gaunt factor. Threshold masking is left to the caller.
+    """
+
+    frequency = np.asarray(frequency_hz, dtype=np.float64)
+    if level == 1:
+        return hydrogen_ground_state_photoionization_cross_section(frequency)
+    return (
+        2.815e29
+        * frequency**-3
+        / level**5
+        * hydrogen_bound_free_gaunt_factor(level, frequency)
+    )
+
+
+def hydrogen_free_free_extinction_per_cm(
+    atmosphere: Atmosphere, wavelength_angstrom: ArrayLike
+) -> FloatArray:
+    """Return thermal electron--proton free--free extinction in cm^-1.
+
+    The non-relativistic, thermally averaged Gaunt factor is interpolated
+    from van Hoof et al. (2014) rather than fixed to unity. Stimulated
+    emission is included.
+    """
+
+    wavelength = np.asarray(wavelength_angstrom, dtype=np.float64)
+    wavelength_cm = wavelength[:, np.newaxis] * 1.0e-8
+    frequency = LIGHT_SPEED / wavelength_cm
+    temperature = atmosphere.temperature[np.newaxis, :]
+    stimulated_emission = -np.expm1(-PLANCK * frequency / (BOLTZMANN * temperature))
+    return (
+        3.692e8
+        * temperature**-0.5
+        * atmosphere.electron_density[np.newaxis, :]
+        * atmosphere.proton_density[np.newaxis, :]
+        * frequency**-3
+        * stimulated_emission
+        * hydrogen_free_free_gaunt_factor(wavelength_cm * 1.0e8, temperature)
+    )
+
+
 def hydrogen_continuum_mass_absorption_coefficient(
     atmosphere: Atmosphere,
     wavelength_angstrom: ArrayLike,
@@ -1273,30 +1320,13 @@ def hydrogen_continuum_mass_absorption_coefficient(
     if maximum_level < 1:
         raise ValueError("maximum_level must be positive")
 
-    wavelength_cm = wavelength[:, np.newaxis] * 1.0e-8
     wavelength_um = wavelength[:, np.newaxis] * 1.0e-4
-    frequency = LIGHT_SPEED / wavelength_cm
     temperature = atmosphere.temperature[np.newaxis, :]
     density = atmosphere.mass_density[np.newaxis, :]
     neutral_h = atmosphere.neutral_h_density[np.newaxis, :]
     electrons = atmosphere.electron_density[np.newaxis, :]
-    protons = atmosphere.proton_density[np.newaxis, :]
-    stimulated_emission = -np.expm1(
-        -PLANCK * frequency / (BOLTZMANN * temperature)
-    )
 
-    # Thermal electron-proton bremsstrahlung.  The non-relativistic,
-    # thermally averaged Gaunt factor is interpolated from van Hoof et al.
-    # (2014) rather than fixed to unity.
-    free_free_per_cm = (
-        3.692e8
-        * temperature**-0.5
-        * electrons
-        * protons
-        * frequency**-3
-        * stimulated_emission
-        * hydrogen_free_free_gaunt_factor(wavelength_cm * 1.0e8, temperature)
-    )
+    free_free_per_cm = hydrogen_free_free_extinction_per_cm(atmosphere, wavelength)
 
     bound_free = hydrogen_bound_free_mass_absorption_coefficient(
         atmosphere,
@@ -1374,17 +1404,7 @@ def hydrogen_bound_free_mass_absorption_coefficient(
     )
     for level in range(1, maximum_level + 1):
         threshold_frequency = lyman_frequency / level**2
-        if level == 1:
-            cross_section = hydrogen_ground_state_photoionization_cross_section(
-                frequency
-            )
-        else:
-            cross_section = (
-                2.815e29
-                * frequency**-3
-                / level**5
-                * hydrogen_bound_free_gaunt_factor(level, frequency)
-            )
+        cross_section = hydrogen_shell_photoionization_cross_section(level, frequency)
         population = level_distribution.population_density[..., level - 1]
         bound_free_per_cm += np.where(
             frequency >= threshold_frequency,

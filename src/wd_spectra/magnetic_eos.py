@@ -17,6 +17,7 @@ improvement.
 
 from __future__ import annotations
 
+from functools import lru_cache
 import math
 
 import numpy as np
@@ -49,6 +50,7 @@ from .magnetic_atomic import (
     H2DB_REFERENCE_FIELD_MEGAGAUSS,
     H2dbEnergyDatabase,
     _longitudinal_quantum_number,
+    read_h2db_energy_database,
 )
 
 
@@ -265,9 +267,40 @@ def centered_pseudomomentum_shell_boltzmann_weight(
     if field == 0.0:
         return stationary
     output = np.array(stationary, copy=True)
-    ground = database.energy_rydberg(1, 0, 0, -0.5, field)
-    for principal in range(1, min(maximum_level, maximum_centered_level) + 1):
+    terms = _centered_shell_terms(
+        str(database.root.resolve()),
+        field,
+        min(maximum_level, maximum_centered_level),
+    )
+    for principal, (excitation, mass_ratios) in enumerate(terms, start=1):
         shell = np.zeros_like(temperature)
+        for energy, mass_ratio in zip(excitation, mass_ratios):
+            shell += mass_ratio * np.exp(
+                -energy
+                * _RYDBERG_ENERGY_ERG
+                / (BOLTZMANN * temperature)
+            )
+        output[..., principal - 1] = shell
+    return output
+
+
+@lru_cache(maxsize=64)
+def _centered_shell_terms(
+    energy_root: str, field_strength_megagauss: float, maximum_level: int
+) -> tuple[tuple[tuple[float, ...], tuple[float, ...]], ...]:
+    """Per shell: substate excitation (Ry above the ground state) and ``M_perp/M``.
+
+    Both depend only on the field, so they are computed once per field instead
+    of on every pass of the EOS iteration.
+    """
+
+    database = read_h2db_energy_database(energy_root)
+    field = float(field_strength_megagauss)
+    ground = database.energy_rydberg(1, 0, 0, -0.5, field)
+    shells = []
+    for principal in range(1, maximum_level + 1):
+        excitation: list[float] = []
+        mass_ratios: list[float] = []
         for orbital in range(principal):
             for magnetic in range(-orbital, orbital + 1):
                 energy = database.energy_rydberg_with_analytic_fallback(
@@ -282,13 +315,10 @@ def centered_pseudomomentum_shell_boltzmann_weight(
                     # adjacent state needed by the perturbative mass formula
                     # is unavailable or the expansion becomes singular.
                     mass_ratio = 1.0
-                shell += mass_ratio * np.exp(
-                    -(energy - ground)
-                    * _RYDBERG_ENERGY_ERG
-                    / (BOLTZMANN * temperature)
-                )
-        output[..., principal - 1] = shell
-    return output
+                excitation.append(energy - ground)
+                mass_ratios.append(mass_ratio)
+        shells.append((tuple(excitation), tuple(mass_ratios)))
+    return tuple(shells)
 
 
 def magnetic_hydrogen_level_distribution(

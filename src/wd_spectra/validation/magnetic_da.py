@@ -14,8 +14,17 @@ velocity and one flux scale (5200--6100 A) are nuisance parameters.
   development-tree validation suite, so values are directly comparable);
 * ``blue_ratio``: median smoothed model/observation over 3820--4400 A;
 * ``feature_rms``: RMS difference of the locally normalized spectra
-  (each divided by its own 150-pixel running mean), which isolates the
-  magnetic line components from the continuum slope.
+  (each divided by its own 150-pixel running mean). It is dominated by
+  photon noise for most survey spectra and barely distinguishes models;
+  it is kept for continuity, not as a decision metric;
+* ``chi2_scale``: noise-weighted chi^2 per pixel over 3820--6950 A after one
+  least-squares flux scale (tests continuum and lines together);
+* ``chi2_cubic``: the same after a cubic multiplicative continuum in
+  log wavelength, which absorbs flux-calibration error and isolates the
+  magnetic features. Both use the survey inverse variance; the GH Leo
+  spectrum has none, and its noise is estimated from the high-pass
+  scatter (``noise_source``). The chi^2 values are comparable between models
+  of one object, not between objects.
 
 The same scores of the digitized Hardy model are reported as a reference.
 """
@@ -138,6 +147,7 @@ class DAHObservation:
     sigma_log_wavelength: np.ndarray
     hardy_wavelength_angstrom: np.ndarray | None
     hardy_flux: np.ndarray | None
+    flux_nu_sigma: np.ndarray | None = None
 
 
 def load_dah_observation(key: str, root: str | Path | None = None) -> DAHObservation:
@@ -157,6 +167,7 @@ def load_dah_observation(key: str, root: str | Path | None = None) -> DAHObserva
             np.asarray(saved["sigma_log_wavelength"]),
             np.asarray(saved["hardy_wavelength_angstrom"]) if "hardy_flux" in saved else None,
             np.asarray(saved["hardy_flux"]) if "hardy_flux" in saved else None,
+            np.asarray(saved["flux_nu_sigma"]) if "flux_nu_sigma" in saved else None,
         )
 
 
@@ -206,6 +217,42 @@ def _scores(rest_wave: np.ndarray, observed: np.ndarray, model: np.ndarray) -> d
     }
 
 
+CHI2_WINDOW_ANGSTROM = (3_820.0, 6_950.0)
+
+
+def _estimated_noise(flux: np.ndarray) -> np.ndarray:
+    """Per-pixel noise from the robust scatter about a 3-pixel smooth."""
+
+    residual = flux - gaussian_smooth(flux, 3.0)
+    deviation = 1.4826 * np.median(np.abs(residual - np.median(residual)))
+    # The residual about a 3-pixel Gaussian retains ~0.8 of white noise.
+    return np.full_like(flux, 1.25 * deviation)
+
+
+def _chi2_scores(
+    rest_wave: np.ndarray, observed: np.ndarray, sigma: np.ndarray, model: np.ndarray
+) -> dict[str, float]:
+    """chi^2/N after one scale and after a cubic multiplicative continuum."""
+
+    selected = (
+        (rest_wave >= CHI2_WINDOW_ANGSTROM[0])
+        & (rest_wave <= CHI2_WINDOW_ANGSTROM[1])
+        & np.isfinite(sigma)
+        & (sigma > 0.0)
+    )
+    x = np.interp(np.log(rest_wave[selected]), np.log(CHI2_WINDOW_ANGSTROM), [-1.0, 1.0])
+    weight = 1.0 / sigma[selected]
+    scores = {}
+    for name, degree in (("chi2_scale", 0), ("chi2_cubic", 3)):
+        basis = np.polynomial.legendre.legvander(x, degree) * model[selected, np.newaxis]
+        coefficients = np.linalg.lstsq(
+            basis * weight[:, np.newaxis], observed[selected] * weight, rcond=None
+        )[0]
+        residual = (observed[selected] - basis @ coefficients) * weight
+        scores[name] = float(np.mean(residual**2))
+    return scores
+
+
 def score_dah_spectrum(
     key: str,
     model_wavelength_angstrom: ArrayLike,
@@ -227,6 +274,12 @@ def score_dah_spectrum(
     wave = observation.wavelength_angstrom[inside]
     flux = observation.flux_nu[inside]
     sigma = observation.sigma_log_wavelength[inside]
+    if observation.flux_nu_sigma is not None:
+        noise = observation.flux_nu_sigma[inside]
+        noise_source = "survey inverse variance"
+    else:
+        noise = _estimated_noise(flux)
+        noise_source = "estimated from high-pass scatter"
     reference_wave, reference_flux = (
         (observation.hardy_wavelength_angstrom, observation.hardy_flux)
         if observation.hardy_flux is not None
@@ -241,10 +294,12 @@ def score_dah_spectrum(
         "velocity_correlation": correlation,
         "velocity_reference": "Hardy curve" if observation.hardy_flux is not None else "model",
         **_scores(rest, flux, sampled),
+        **_chi2_scores(rest, flux, noise, sampled),
+        "noise_source": noise_source,
     }
     if observation.hardy_flux is not None:
         hardy = np.interp(rest, observation.hardy_wavelength_angstrom, observation.hardy_flux)
-        result["hardy"] = _scores(rest, flux, hardy)
+        result["hardy"] = {**_scores(rest, flux, hardy), **_chi2_scores(rest, flux, noise, hardy)}
     return result
 
 

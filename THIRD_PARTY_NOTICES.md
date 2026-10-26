@@ -235,7 +235,8 @@ the SDSS data policy), the Gianninas GH Leo spectrum from the Montreal White
 Dwarf Database, and model curves of Hardy, Dufour & Jordan (2023, MNRAS 520,
 6111) digitized from their CDS figures (regression targets derived from the
 published figures, not the authors' numerical models). Survey spectra of the
-Hardy targets are de-reddened with MWDD E(B-V). Cite the original surveys and
+Hardy targets are de-reddened with MWDD E(B-V); their survey inverse variances
+are carried as 1σ flux errors. Cite the original surveys and
 papers when using them. The weak-field GD 9 and G 76−48 controls come from
 public ESO SPY/UVES spectra. The documentation's eight-panel figures also
 include SDSS/BOSS J1007+1237 (plate 5328, MJD 55982, fiber 66). The unscaled

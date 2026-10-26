@@ -91,10 +91,11 @@ def test_radiative_refined_restart_is_not_compressed(monkeypatch):
 
 
 @pytest.mark.canary
-def test_g76_48_radiative_da_cold_start():
+@pytest.mark.parametrize("quality", ["production", "standard"])
+def test_g76_48_radiative_da_cold_start(quality):
     """The fixed G 76-48 parameters must work before any magnetic synthesis."""
     output = os.environ.get("OPENWD_TEST_ARTIFACTS")
-    directory = Path(output) / "g76-48" if output else None
+    directory = Path(output) / f"g76-48-{quality}" if output else None
     started = time.monotonic()
     records = []
 
@@ -113,7 +114,7 @@ def test_g76_48_radiative_da_cold_start():
         warnings.simplefilter("always", AtmosphereConvergenceWarning)
         result = compute_da(
             DAConfig(effective_temperature=6680.0, logg=7.96,
-                     quality="production", mixing_length_alpha=None,
+                     quality=quality, mixing_length_alpha=None,
                      include_molecules=True),
             np.array([4000.0, 5000.0]),
             iteration_callback=progress,
@@ -124,13 +125,16 @@ def test_g76_48_radiative_da_cold_start():
     # The photosphere-concentrated 100-layer mesh (2026-10-01) resolves the
     # steep radiative ionization transition directly; the 200-layer re-solve
     # remains the fallback whenever 100 layers cannot be certified.
-    assert result.atmosphere.n_depth in (100, 200)
+    # Standard starts on 40 layers and refines through the production meshes.
+    assert result.atmosphere.n_depth in ((100, 200) if quality == "production" else (40, 100, 200))
     assert result.atmosphere.effective_temperature == 6680.0
     assert result.atmosphere.logg == 7.96
     assert m["maximum_convective_flux_fraction"] == 0.0
     assert m["convective_preconditioner_iterations"] == 0
-    if result.atmosphere.n_depth == 200:
-        assert m["radiative_depth_refinement"]["initial_depth_points"] == 100
+    if result.atmosphere.n_depth > (100 if quality == "production" else 40):
+        assert m["radiative_depth_refinement"]["initial_depth_points"] == (
+            100 if quality == "production" else 40
+        )
         assert m["radiative_depth_refinement"]["stellar_parameters_changed"] is False
     assert m["equilibrium_certificate"]["verified"], m["equilibrium_certificate"]
     assert m["maximum_all_depth_total_flux_residual"] < 2e-3
