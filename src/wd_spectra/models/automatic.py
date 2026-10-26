@@ -56,19 +56,31 @@ class ModelRun:
 
     @property
     def spectrum(self):
+        from ..spectrum import StokesSpectrum
+
         values = np.loadtxt(self.spectrum_path)
-        return Spectrum(
-            values[:, 0],
-            values[:, 1],
-            dict(
-                flux_convention="surface F_lambda",
-                wavelength_medium="vacuum",
-                flux_unit="erg s^-1 cm^-2 Angstrom^-1",
-                source_path=str(self.spectrum_path),
-                convergence_verified=self.convergence_verified,
-                selected_physics=self.selection.workflow,
-            ),
+        metadata = dict(
+            flux_convention="surface F_lambda",
+            wavelength_medium="vacuum",
+            flux_unit="erg s^-1 cm^-2 Angstrom^-1",
+            source_path=str(self.spectrum_path),
+            convergence_verified=self.convergence_verified,
+            selected_physics=self.selection.workflow,
         )
+        saved_metadata = self.output_directory / "metadata.json"
+        if self.selection.workflow == "dah" and saved_metadata.is_file():
+            record = json.loads(saved_metadata.read_text())
+            if record["config"].get("return_stokes", False):
+                path = self.output_directory / "stokes.txt"
+                stokes = np.loadtxt(path)
+                if (stokes.shape != (values.shape[0], 5) or not np.all(np.isfinite(stokes))
+                        or not np.array_equal(stokes[:, :2], values)):
+                    raise ValueError("stokes.txt must match the saved intensity grid and flux")
+                metadata.update(record["spectrum_metadata"])
+                metadata["stokes_source_path"] = str(path)
+                return StokesSpectrum(values[:, 0], values[:, 1], metadata,
+                                      stokes[:, 2], stokes[:, 3], stokes[:, 4])
+        return Spectrum(values[:, 0], values[:, 1], metadata)
 
 
 def _cool_commands(config, selection, directory):

@@ -27,7 +27,7 @@ from ..eos import (
     hummer_mihalas_hydrogen_helium_lte,
     hummer_mihalas_hydrogen_lte,
 )
-from ..spectrum import Spectrum
+from ..spectrum import Spectrum, StokesSpectrum
 FloatArray = NDArray[np.float64]
 Quality = Literal["quick", "standard", "production"]
 AtmosphereComposition = Literal["hydrogen", "helium", "mixed"]
@@ -330,6 +330,8 @@ def model_request_fingerprint(
     }
     if physical_data_identity is not None:
         request["physical_data_identity"] = _jsonable(physical_data_identity)
+    if str(spectral_type) == "DAH" and getattr(config, "return_stokes", False):
+        request["physics_revision"] += ":signed-sky-stokes-optical-v1"
     serialized = json.dumps(
         request,
         sort_keys=True,
@@ -773,6 +775,16 @@ def save_model_result(result: ModelResult, output: str | Path) -> Path:
         np.column_stack((spectrum.wavelength_angstrom, spectrum.surface_flux_lambda)),
         header="vacuum_wavelength_angstrom surface_flux_erg_s-1_cm-2_A-1",
     )
+    if isinstance(spectrum, StokesSpectrum):
+        np.savetxt(
+            directory / "stokes.txt",
+            np.column_stack((spectrum.wavelength_angstrom, spectrum.surface_flux_lambda,
+                             spectrum.surface_flux_q_lambda, spectrum.surface_flux_u_lambda,
+                             spectrum.surface_flux_v_lambda)),
+            header=("vacuum_wavelength_angstrom I Q U V\n"
+                    "surface_flux_erg_s-1_cm-2_A-1; "
+                    + str(spectrum.metadata["stokes_convention"])),
+        )
     np.savez_compressed(
         directory / "atmosphere.npz",
         effective_temperature=atmosphere.effective_temperature,

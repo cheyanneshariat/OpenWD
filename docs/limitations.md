@@ -152,8 +152,10 @@ those examples nor the input bounds establish a validated parameter grid.
 The historical Stark approximation has no separate Doppler convolution or
 neutral self broadening, and translating a zero-field profile is not a
 simultaneous Stark–Zeeman calculation. Magnetic Lyman/Paschen/Brackett data,
-decentered atoms, strong-field molecular chemistry and disk-integrated Q/U/V
-are absent. The earlier mean-field magnetic structure, magnetic EOS, RWA
+decentered atoms and strong-field molecular chemistry are absent. Opt-in
+disk-integrated Q/U/V use signed, uncompressed cells and a declared observer
+basis, but have not been validated against polarimetry. The earlier
+mean-field magnetic structure, magnetic EOS, RWA
 continuum, full IQUV transfer and cyclotron opacity remain explicit options.
 The default 21 field bins can under-resolve rapidly moving magnetic line
 components. The opt-in drift-resolved disk reduces this numerical error in
