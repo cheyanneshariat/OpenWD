@@ -19,7 +19,8 @@ class ElementPopulationAcceleration:
         self.reasons={element:{} for element in rows}
         self.last_reasons={}
 
-    def __call__(self,old,target,history,*,depth,mixing,maximum_step,residual_weights=None):
+    def __call__(self,old,target,history,*,depth,mixing,maximum_step,residual_weights=None,
+                 oversized_step='reject'):
         if old.shape!=target.shape or old.shape[0]!=sum(self.rows.values()):
             raise ValueError('acceleration element rows do not match the population arrays')
         if not history:
@@ -36,7 +37,8 @@ class ElementPopulationAcceleration:
                 self.histories[element].clear()
             self.previous_norm[element]=norm
             result,reason=population_update(old[sl],target[sl],self.histories[element],
-                depth=depth,mixing=mixing,maximum_step=maximum_step,residual_weights=weights)
+                depth=depth,mixing=mixing,maximum_step=maximum_step,residual_weights=weights,
+                oversized_step=oversized_step)
             self.reasons[element][reason]=self.reasons[element].get(reason,0)+1
             self.last_reasons[element]=reason
             if result is None:

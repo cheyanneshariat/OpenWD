@@ -38,6 +38,40 @@ def test_population_svd_retains_step_safeguard():
     assert proposed is None and reason == "step"
 
 
+def test_scaled_oversized_step_keeps_direction_and_reaches_slow_fixed_point():
+    # A slowly contracting mode (rate 0.98) far from its fixed point: every
+    # correct extrapolation exceeds the bound, so "reject" falls back to the
+    # damped map while "scale" walks along the extrapolated direction.
+    target = np.array([3.0, -2.0])
+    iterations = {}
+    for mode in ("reject", "scale"):
+        x, history = np.zeros(2), []
+        for iteration in range(1, 200):
+            g = target + 0.98 * (x - target)
+            if np.max(abs(g - x)) < 1e-6:
+                break
+            proposed, reason = population_update(
+                x, g, history, depth=4, mixing=0.5, maximum_step=1.0,
+                oversized_step=mode)
+            if proposed is None:
+                x = 0.5 * x + 0.5 * g
+            else:
+                assert np.max(abs(proposed - x)) <= 1.0 + 1e-12
+                if reason == "scaled":
+                    direction = (proposed - x) / np.linalg.norm(proposed - x)
+                    assert direction @ (target - x) > 0
+                x = proposed
+        iterations[mode] = iteration
+        np.testing.assert_allclose(x, target, atol=1e-4)
+    assert iterations["scale"] < iterations["reject"] / 3
+
+
+def test_oversized_step_mode_is_validated():
+    with pytest.raises(ValueError):
+        population_update(np.zeros(2), np.ones(2), [], depth=3, mixing=0.5,
+                          maximum_step=1.0, oversized_step="clip")
+
+
 @pytest.mark.parametrize(
     "weight", [np.ones(3), np.array([1.0, np.nan]), np.array([1.0, -1.0])]
 )
