@@ -1560,6 +1560,7 @@ def synthesize_magnetic_hydrogen_spectrum(
         return spectrum
     metadata = dict(spectrum.metadata)
     metadata.update({
+        "stokes_output_revision": "signed-sky-stokes-optical-v1",
         "stokes_convention": "Landi Degl'Innocenti, Bagnulo & Fossati (2007), optical; V positive clockwise facing source",
         "stokes_reference_axis": "observer sky x; azimuth counterclockwise facing source; z toward observer",
         "stokes_native_conversion": "(I,Q,U,V)_local = (I,Q,-U,-V)_native, then rotate local Q/U to sky",

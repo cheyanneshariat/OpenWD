@@ -367,9 +367,11 @@ def compute_dah(
     _validate(config)
     data = ModelData.default() if data is None else data
     # The structure (nonmagnetic or angle-averaged mean field) never depends on
-    # the transfer mode, so IQUV and scalar syntheses share one structure claim.
+    # the transfer mode, returned Stokes columns or observer sky axis. Retain
+    # the actual opacity/EOS choices while sharing one structure claim.
     request_fingerprint = model_request_fingerprint(
-        "DAH", replace(config, polarized_transfer="scalar-stokes-i"), data
+        "DAH", replace(config, polarized_transfer="scalar-stokes-i",
+                       return_stokes=False, sky_position_angle_deg=0.0), data
     )
     resolution = numerical_resolution(config.quality)
     wave = (

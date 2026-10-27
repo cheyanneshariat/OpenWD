@@ -331,6 +331,16 @@ Set `return_stokes=True` together with full transfer. A dipole also requires
 The existing intensity calculation and two-column `spectrum.txt` remain the
 default when the option is off.
 
+Polarized output inherits the selected physics. `DAHConfig` uses RWA
+photoionization, the magnetic EOS and centered-motion populations above 1 MG;
+`paper_dah_config(..., return_stokes=True, polarized_transfer="full-stokes-iquv")`
+keeps the historical paper prescription. Selecting the returned Stokes columns
+or rotating the sky reference axis does not change the underlying atmosphere's
+request identity. Changing the opacity or EOS settings still invalidates a
+previous structure claim. The saved spectrum records its output convention as
+`stokes_output_revision="signed-sky-stokes-optical-v1"` separately from the
+atmosphere's physics revision.
+
 ```python
 from wd_spectra import DAHConfig, run_model
 
@@ -400,7 +410,8 @@ At a longitudinal field the projected axis is degenerate; any assigned
 azimuth gives the same result because local Q/U vanish.
 
 Analytic transfer, signed cancellation, basis rotation, zero-field and
-save/reload tests check this interface. They do not establish accuracy of
+save/reload tests check this interface with both the current defaults and the
+paper prescription. They do not establish accuracy of
 high-field polarized line profiles. Check depth, wavelength and surface
 resolution for a target; the raw default grid has no universal polarimetric
 error bound. The shared atmosphere and line-profile approximations below

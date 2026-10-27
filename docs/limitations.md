@@ -144,6 +144,8 @@ installed with OpenWD.
 
 [DAH models](models/DAH.md) default to normalized Kurucz/Griem Balmer
 profiles and scalar magnetic transfer on a nonmagnetic DA structure.
+Above 1 MG the default synthesis uses stationary-state RWA photoionization,
+the magnetic Saha/HM EOS and centered-motion populations on that structure.
 The equilibrium certificate applies to that underlying structure; magnetic
 opacities do not feed back on its temperature profile. The eight fixed-parameter
 paper comparisons span dipole polar fields from 6.13 to 437.1 MG, but neither
@@ -154,16 +156,18 @@ neutral self broadening, and translating a zero-field profile is not a
 simultaneous Stark–Zeeman calculation. Magnetic Lyman/Paschen/Brackett data,
 decentered atoms and strong-field molecular chemistry are absent. Opt-in
 disk-integrated Q/U/V use signed, uncompressed cells and a declared observer
-basis, but have not been validated against polarimetry. The earlier
-mean-field magnetic structure, magnetic EOS, RWA
-continuum, full IQUV transfer and cyclotron opacity remain explicit options.
+basis, but have not been validated against polarimetry. The coupled
+mean-field magnetic structure, full IQUV transfer and cyclotron opacity
+remain explicit options. `paper_dah_config` retains the previous zero-field
+EOS and bound-free continuum prescription.
 The default 21 field bins can under-resolve rapidly moving magnetic line
 components. The opt-in drift-resolved disk reduces this numerical error in
 two fixed-atmosphere examples; it does not repair continuum, line-width or
 atmospheric-structure approximations. See the
 [disk-quadrature benchmark](development/history/dah-disk-quadrature-2026-10-08.md).
-The [DAH guide](models/DAH.md) separates these options from the paper default
-and explains why smooth continuum corrections belong to observational
+The [DAH guide](models/DAH.md) distinguishes the current defaults, paper preset
+and optional transfer/structure treatments and explains why smooth continuum
+corrections belong to observational
 comparisons rather than the physical prediction.
 
 ## PG 1159

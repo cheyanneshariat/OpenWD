@@ -8,7 +8,9 @@ import numpy as np
 import pytest
 from scipy.linalg import expm
 
-from wd_spectra import DAHConfig, Spectrum, StokesSpectrum, compute_dah, select_physics
+from wd_spectra import (
+    DAHConfig, Spectrum, StokesSpectrum, compute_dah, paper_dah_config, select_physics,
+)
 from wd_spectra.atmosphere import gray_hydrogen_atmosphere
 from wd_spectra.magnetic import (
     BalmerBroadening, MagneticPhysics, PolarizedOpacity, SurfaceCells,
@@ -34,23 +36,25 @@ def atmosphere():
     return gray_hydrogen_atmosphere(15000., 8., n_depth=16, correlated_microfields=True)
 
 
-def physics(field):
+def physics(field, prescription="default"):
     data = ModelData.default()
+    config = {"default": DAHConfig, "paper": paper_dah_config}[prescription]()
     return MagneticPhysics(
         read_h2db_transition_database(data.h2db_balmer_subset) if field > 1 else None,
         read_h2db_energy_database(data.h2db_balmer_subset) if field > 1 else None,
         broadening=BalmerBroadening(include_self_broadening=False),
         balmer_profile="kurucz-griem", normalize_balmer_strength=True,
-        include_rwa_photoionization=False, include_magnetic_eos=False,
-        include_centered_motion=False,
+        include_rwa_photoionization=config.include_rwa_photoionization,
+        include_magnetic_eos=config.include_magnetic_eos,
+        include_centered_motion=config.include_centered_motion,
         line_regime="h2db" if field > 1 else "linear-zeeman",
     )
 
 
-def synth(atmosphere, geometry, *, output=True, wavelength=None):
+def synth(atmosphere, geometry, *, output=True, wavelength=None, prescription="default"):
     wave = np.arange(4800., 4931., 2.) if wavelength is None else wavelength
     return synthesize_magnetic_hydrogen_spectrum(
-        atmosphere, wave, geometry, physics(geometry.maximum_field_megagauss),
+        atmosphere, wave, geometry, physics(geometry.maximum_field_megagauss, prescription),
         return_stokes=output, polarized_transfer="full-stokes-iquv",
     )
 
@@ -149,15 +153,18 @@ def test_optical_output_matches_independent_standard_matrix_including_U():
     assert abs(expected[2]) > .001  # this test detects flipping V alone
 
 
-@pytest.mark.parametrize("field,wave", [(.5,np.arange(4800.,4931.,2.)), (300.,np.arange(4000.,4201.,4.))])
-def test_real_transfer_signed_cancellation_and_legacy_I(atmosphere,field,wave):
+@pytest.mark.parametrize("prescription", ["default", "paper"])
+@pytest.mark.parametrize("field,wave", [(.5,np.arange(4800.,4931.,2.)),
+    (30.,np.arange(4800.,4931.,4.)), (300.,np.arange(4000.,4201.,4.))])
+def test_real_transfer_signed_cancellation_and_legacy_I(atmosphere,field,wave,prescription):
     geometry = cells(field=field)
-    polarized = synth(atmosphere,geometry,wavelength=wave)
-    legacy = synth(atmosphere,geometry,output=False,wavelength=wave)
+    polarized = synth(atmosphere,geometry,wavelength=wave,prescription=prescription)
+    legacy = synth(atmosphere,geometry,output=False,wavelength=wave,prescription=prescription)
     assert isinstance(polarized,StokesSpectrum) and type(legacy) is Spectrum
     np.testing.assert_array_equal(polarized.surface_flux_lambda,legacy.surface_flux_lambda)
     np.testing.assert_allclose(polarized.surface_flux_v_lambda,0.,atol=1e-12*max(polarized.surface_flux_lambda))
-    folded = synth(atmosphere,replace(geometry,field_ray_cosine=abs(geometry.field_ray_cosine)),wavelength=wave)
+    folded = synth(atmosphere,replace(geometry,field_ray_cosine=abs(geometry.field_ray_cosine)),
+                   wavelength=wave,prescription=prescription)
     assert np.max(abs(folded.surface_flux_v_lambda/polarized.surface_flux_lambda)) > 1e-8
     p = np.stack([polarized.surface_flux_q_lambda,polarized.surface_flux_u_lambda,polarized.surface_flux_v_lambda])
     assert np.all(np.linalg.norm(p,axis=0) <= polarized.surface_flux_lambda)
@@ -170,10 +177,11 @@ def test_isotropic_directions_cancel_all_polarization(atmosphere):
         assert max(abs(f/polarized.surface_flux_lambda)) < 1e-12
 
 
-def test_integrates_fluxes_after_rotating_each_cell(atmosphere):
+@pytest.mark.parametrize("field", [.5, 30.])
+def test_integrates_fluxes_after_rotating_each_cell(atmosphere, field):
     # Unequal weights, angles and limb cosines prohibit averaging fractions
     # or rotating only once after summing native Q/U.
-    geometry = replace(cells((.4,-.8),(0.,np.pi/4)),ray_mu=np.array([.3,.9]),projected_weight=np.array([.2,.8]))
+    geometry = replace(cells((.4,-.8),(0.,np.pi/4),field=field),ray_mu=np.array([.3,.9]),projected_weight=np.array([.2,.8]))
     wave=np.arange(4800.,4931.,5.)
     total = synth(atmosphere,geometry,wavelength=wave)
     fields=("surface_flux_lambda","surface_flux_q_lambda","surface_flux_u_lambda","surface_flux_v_lambda")
@@ -201,9 +209,10 @@ def test_pole_on_axial_dipole_has_zero_disk_linear_polarization(atmosphere):
     assert max(abs(spec.surface_flux_u_lambda/spec.surface_flux_lambda)) < 1e-12
 
 
-@pytest.mark.parametrize("field", [0., .5])
-def test_public_dispatch_and_saved_output(atmosphere,tmp_path,field):
-    config=DAHConfig(effective_temperature=15000.,logg=8.,magnetic_field_megagauss=field,field_angle_deg=50.,
+@pytest.mark.parametrize("config_factory", [DAHConfig, paper_dah_config], ids=["default", "paper"])
+@pytest.mark.parametrize("field", [0., .5, 30.])
+def test_public_dispatch_and_saved_output(atmosphere,tmp_path,field,config_factory):
+    config=config_factory(effective_temperature=15000.,logg=8.,magnetic_field_megagauss=field,field_angle_deg=50.,
         polarized_transfer="full-stokes-iquv",return_stokes=True,sky_position_angle_deg=37.)
     with pytest.warns(AtmosphereConvergenceWarning):
         result=compute_dah(config,np.arange(4800.,4931.,5.),initial_atmosphere=atmosphere,relax_atmosphere=False)
@@ -219,7 +228,8 @@ def test_public_dispatch_and_saved_output(atmosphere,tmp_path,field):
     np.testing.assert_array_equal(disk[:,1],result.spectrum.surface_flux_lambda)
     np.testing.assert_array_equal(np.loadtxt(tmp_path/"spectrum.txt")[:,1],disk[:,1])
     assert "clockwise" in json.loads((tmp_path/"metadata.json").read_text())["spectrum_metadata"]["stokes_convention"]
-    assert "signed-sky-stokes-optical-v1" in result.metadata["model_request_fingerprint"]["physics_revision"]
+    assert result.spectrum.metadata["stokes_output_revision"] == "signed-sky-stokes-optical-v1"
+    assert "dah-rwa-magnetic-eos-v5" in result.metadata["model_request_fingerprint"]["physics_revision"]
     from wd_spectra.models.automatic import ModelRun
     run = ModelRun(tmp_path, select_physics(config), tmp_path/"spectrum.txt", False)
     loaded = run.spectrum
@@ -228,6 +238,7 @@ def test_public_dispatch_and_saved_output(atmosphere,tmp_path,field):
         attr="surface_flux_"+name+"_lambda"
         np.testing.assert_array_equal(getattr(loaded,attr),getattr(result.spectrum,attr))
     assert loaded.metadata["polarimetry_validated"] is False
+    assert loaded.metadata["stokes_output_revision"] == result.spectrum.metadata["stokes_output_revision"]
     disk[0,0] += 1.
     np.savetxt(tmp_path/"stokes.txt",disk)
     with pytest.raises(ValueError,match="match"):

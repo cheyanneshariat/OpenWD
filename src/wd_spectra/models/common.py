@@ -330,8 +330,6 @@ def model_request_fingerprint(
     }
     if physical_data_identity is not None:
         request["physical_data_identity"] = _jsonable(physical_data_identity)
-    if str(spectral_type) == "DAH" and getattr(config, "return_stokes", False):
-        request["physics_revision"] += ":signed-sky-stokes-optical-v1"
     serialized = json.dumps(
         request,
         sort_keys=True,
