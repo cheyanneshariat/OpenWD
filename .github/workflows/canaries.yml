@@ -37,12 +37,17 @@ jobs:
         run: python tools/validation_policy.py
 
   preflight:
+    name: preflight (${{ matrix.tier }})
     needs: plan
     if: needs.plan.outputs.requested == 'true'
     runs-on: ubuntu-latest
-    # Sequential fast (~26 min) and fixed-spectrum (~34 min) suites plus setup
-    # exceed one hour on hosted runners. Leave room for runner-speed variation.
+    # Fast (~49 min) plus spectra (>41 min) exhausted one shared 90-minute
+    # budget on a hosted runner. Each complete tier gets its own worker.
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        tier: [fast, spectra]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -52,13 +57,12 @@ jobs:
       - run: python -m pip install -e '.[test]'
       - name: Require compiled acceleration
         run: python -c "from wd_spectra import _rt; assert hasattr(_rt, 'hydrogen_stark_lorentz_convolution')"
-      - run: python tools/validate.py fast --output results/preflight-fast
-      - run: python tools/validate.py spectra --output results/preflight-spectra
+      - run: python tools/validate.py '${{ matrix.tier }}' --output 'results/preflight-${{ matrix.tier }}'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: qualification-preflight
-          path: results/preflight-*
+          name: qualification-preflight-${{ matrix.tier }}
+          path: results/preflight-${{ matrix.tier }}
 
   cold-model:
     needs: [plan, preflight]
