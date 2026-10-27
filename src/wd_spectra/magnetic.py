@@ -1165,34 +1165,55 @@ def _line_manifolds(
     key = (regime, dispersion, physics.balmer_profile)
     templates = cache.get(key)
     if templates is None:
-        if physics.balmer_profile == "kurucz-griem":
-            from .kurucz_griem import kurucz_griem_templates
-
-            template_factory = kurucz_griem_templates
-        elif physics.balmer_profile == "unified":
-            template_factory = balmer_line_templates
-        else:
-            raise ValueError("balmer_profile must be 'unified' or 'kurucz-griem'")
-        templates = template_factory(
-            atmosphere,
-            broadening=physics.broadening,
-            maximum_upper_level=22 if regime == "linear-zeeman" else MAXIMUM_H2DB_BALMER_UPPER_LEVEL,
-            include_dispersion=dispersion,
-        )
+        templates = _balmer_templates(atmosphere, physics, regime, dispersion)
         cache[key] = templates
-    if regime == "linear-zeeman":
-        result = weak_field_balmer_manifolds(
-            atmosphere, wavelength, field, templates=templates, dispersion=dispersion  # type: ignore[arg-type]
-        )
-    else:
-        if physics.transitions is None:
-            raise ValueError("fields above 1 MG require the H2db transition database")
-        result = h2db_balmer_manifolds(
-            atmosphere, wavelength, field, physics.transitions,
-            normalize_line_strength=physics.normalize_balmer_strength,
-            templates=templates, dispersion=dispersion,  # type: ignore[arg-type]
-        )
+    result = _balmer_manifolds(atmosphere, wavelength, field, physics, regime, templates, dispersion)
     return result if dispersion else (result, None)  # type: ignore[return-value]
+
+
+def _balmer_templates(
+    atmosphere: Atmosphere, physics: MagneticPhysics, regime: str, dispersion: bool
+) -> dict[int, BalmerLineTemplate]:
+    """Zero-field single-line templates of the configured Balmer profile."""
+
+    if physics.balmer_profile == "kurucz-griem":
+        from .kurucz_griem import kurucz_griem_templates
+
+        template_factory = kurucz_griem_templates
+    elif physics.balmer_profile == "unified":
+        template_factory = balmer_line_templates
+    else:
+        raise ValueError("balmer_profile must be 'unified' or 'kurucz-griem'")
+    return template_factory(
+        atmosphere,
+        broadening=physics.broadening,
+        maximum_upper_level=22 if regime == "linear-zeeman" else MAXIMUM_H2DB_BALMER_UPPER_LEVEL,
+        include_dispersion=dispersion,
+    )
+
+
+def _balmer_manifolds(
+    atmosphere: Atmosphere,
+    wavelength: FloatArray,
+    field: float,
+    physics: MagneticPhysics,
+    regime: str,
+    templates: dict[int, BalmerLineTemplate],
+    dispersion: bool,
+) -> PolarizedOpacity | tuple[PolarizedOpacity, PolarizedOpacity]:
+    """Balmer manifolds of one field from templates; shared by structure and synthesis."""
+
+    if regime == "linear-zeeman":
+        return weak_field_balmer_manifolds(
+            atmosphere, wavelength, field, templates=templates, dispersion=dispersion
+        )
+    if physics.transitions is None:
+        raise ValueError("fields above 1 MG require the H2db transition database")
+    return h2db_balmer_manifolds(
+        atmosphere, wavelength, field, physics.transitions,
+        normalize_line_strength=physics.normalize_balmer_strength,
+        templates=templates, dispersion=dispersion,
+    )
 
 
 def _local_atmosphere(
@@ -1566,7 +1587,8 @@ def magnetic_structure_opacity(
     Thomson scattering relative to the solver's zero-field value.
 
     Both are angle averages for the isotropic radiation field of a plane-
-    parallel structure solve and use the same manifolds as the synthesis.
+    parallel structure solve and use the same manifolds as the synthesis,
+    including its ``balmer_profile`` and strength normalization.
     With the RWA the dissolved-level pseudo-continuum is attached to the RWA
     edges here, and the solver's zero-field pseudo-continuum must be off
     (see :func:`structure_uses_rwa_dissolution`); otherwise the solver's own
@@ -1578,17 +1600,11 @@ def magnetic_structure_opacity(
     rwa_active = structure_uses_rwa_dissolution(field, physics)
 
     def balmer(current: Atmosphere, wavelength: FloatArray) -> FloatArray:
+        # The same profile and strength convention as the synthesis.
         grid = np.ascontiguousarray(wavelength, dtype=np.float64)
-        if regime == "linear-zeeman":
-            return weak_field_balmer_manifolds(
-                current, grid, field, broadening=physics.broadening
-            ).isotropic()
-        return h2db_balmer_manifolds(
-            current,
-            grid,
-            field,
-            physics.transitions,  # type: ignore[arg-type]
-            broadening=physics.broadening,
+        templates = _balmer_templates(current, physics, regime, False)
+        return _balmer_manifolds(  # type: ignore[union-attr]
+            current, grid, field, physics, regime, templates, False
         ).isotropic()
 
     def continuum(current: Atmosphere, wavelength: FloatArray) -> FloatArray:

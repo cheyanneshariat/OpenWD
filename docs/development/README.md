@@ -100,9 +100,9 @@ J1637 cold canary remains in `cold` and `full`; use it for release validation
 and cold-start investigations. See the [reference provenance](../../tests/data/d6_regressions/README.md).
 
 Each frozen J1637 version is a separate regression task. The aggregate
-`regression --case d6-j1637` selects all four; `--jobs 1` runs them
+`regression --case d6-j1637` selects all five; `--jobs 1` runs them
 sequentially with separate per-task work guards. To run just the current
-reference, select `--case d6-j1637-warm_v4_rap-current`. PR CI puts the four
+reference, select `--case d6-j1637-warm_v5_excited_parent-current`. PR CI puts the five
 versions on separate workers, and its qualification gate requires the entire
 matrix to pass. Their reference arrays, two measured steps and physical
 tolerances are unchanged.

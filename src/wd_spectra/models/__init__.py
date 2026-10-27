@@ -66,5 +66,5 @@ __all__ += ["PG1159Config", "compute_pg1159"]
 from .d6 import D6Config, compute_d6
 __all__ += ["D6Config", "compute_d6"]
 
-from .dah import DAHConfig, compute_dah
-__all__ += ["DAHConfig", "compute_dah"]
+from .dah import DAH_PAPER_PRESCRIPTION, DAHConfig, compute_dah, paper_dah_config
+__all__ += ["DAH_PAPER_PRESCRIPTION", "DAHConfig", "compute_dah", "paper_dah_config"]

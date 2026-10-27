@@ -28,6 +28,7 @@ from ..d6 import (
 from ..metals import (
     _canonical_element,
     augment_oxygen_i_6258_6271_multiplet,
+    augment_oxygen_i_excited_core_3d_transitions,
     read_stout_atomic_database,
     read_verner_photoionization_database,
 )
@@ -157,6 +158,7 @@ def _atomic_inputs(data: ModelData, elements: tuple[str, ...]):
     database = retain_d6_structure_line_stages(database)
     if "O" in elements:
         database = augment_oxygen_i_6258_6271_multiplet(database)
+        database = augment_oxygen_i_excited_core_3d_transitions(database)
     # Verner fits supply the ground-state continuum of every loaded stage
     # that has no level-resolved atom (replacement is stage-specific).
     photoionization = read_verner_photoionization_database(

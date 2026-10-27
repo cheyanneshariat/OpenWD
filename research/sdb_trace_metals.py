@@ -101,6 +101,8 @@ def main():
     parser.add_argument('--data-root', type=Path)
     parser.add_argument('--maximum-iterations', type=int, default=120,
                         help='verification grid: up to 73 iterations with the overlap exclusion')
+    parser.add_argument('--tolerance', type=float,
+                        help='undamped population-defect tolerance (solver default 1e-3)')
     parser.add_argument('--step', type=float, default=0.02,
                         help='uniform synthesis step (A) over 3700-7000 A; lines must not fall between samples')
     parser.add_argument('--lte-abundance', action='append', default=[],
@@ -110,6 +112,11 @@ def main():
                         help='ELEMENT=log10 N/N(H) for Z > 30 (sdb_heavy_lines.py: LTE, Kurucz/literature lines)')
     parser.add_argument('--damping', type=float, default=0.5, help='solver mixing (solve_hot_trace_metals default 0.5)')
     parser.add_argument('--acceleration-depth', type=int, default=6, help='Anderson history (0: none)')
+    parser.add_argument('--acceleration-scope', choices=['all', 'tested'], default='tested',
+                        help="levels that can veto an Anderson step: only those the convergence test counts "
+                             "('tested', solver default) or every level ('all', previous behaviour)")
+    parser.add_argument('--acceleration-step-limit', choices=['reject', 'scale'], default='scale',
+                        help='Anderson updates longer than a factor e: shorten along the same direction (default) or discard')
     parser.add_argument('--mali-overlap-mode', choices=['subordinate', 'exclude'], default='subordinate',
                         help='overlapping lines: no MALI for the subordinate line of each pair (default) or for both')
     parser.add_argument('--profile-block-tolerance', type=float, default=1e-4,
@@ -217,7 +224,9 @@ def main():
         collision_data=collisions, accelerated_lambda=not args.no_accelerated_lambda,
         damping=args.damping, acceleration_depth=args.acceleration_depth,
         mali_overlap_velocity=args.mali_overlap_velocity or None, profile_block_tolerance=args.profile_block_tolerance,
-        mali_overlap_mode=args.mali_overlap_mode, maximum_iterations=args.maximum_iterations,
+        mali_overlap_mode=args.mali_overlap_mode, acceleration_scope=args.acceleration_scope,
+        acceleration_step_limit=args.acceleration_step_limit, maximum_iterations=args.maximum_iterations,
+        tolerance=args.tolerance,
         n_angle=model.n_angle, require_convergence=False, iteration_callback=progress,
         # Solar-like sdB carbon is ~0.14% by mass: it changes the host's mean
         # molecular weight and electron density by <0.2%, negligible for the
@@ -236,7 +245,9 @@ def main():
         chianti_collision_pairs={k: v['selected_pairs'] for k, v in audit.items()}, history=history,
         element_population_defect_history=result.metadata.get('element_population_defect_history'),
         worst_population_defect=result.metadata.get('worst_population_defect'),
-        accelerated_updates=result.metadata.get('accelerated_updates')),
+        accelerated_updates=result.metadata.get('accelerated_updates'),
+        acceleration_outcomes=result.metadata.get('acceleration_outcomes'),
+        acceleration_scope=args.acceleration_scope, acceleration_step_limit=args.acceleration_step_limit),
         indent=2, default=str) + '\n')
     print(f'converged={result.converged} iterations={result.iterations} defect={result.population_defect:.3g} '
           f'({time.monotonic() - start:.0f} s)', flush=True)

@@ -108,7 +108,8 @@ def test_nonideal_populations_retain_oxygen_autoionizing_multiplet(j1637_inputs)
     atmosphere = atmosphere_with_bulk_metal_state(atmosphere, state)
     lines = [line for line in database.ions[("O", 0)].transitions
              if 6258.0 < line.wavelength_vacuum_angstrom < 6271.0]
-    assert len(lines) == 7
+    # Seven 3p' 3F -> 4d' 3Go/3Fo components plus five 3F -> 4d' 3Do ones.
+    assert len(lines) == 12
     wavelength = np.arange(6255.0, 6275.0, 0.025)
     options = dict(
         transition_keys=tuple(("O", 0, line.lower_index, line.upper_index) for line in lines),

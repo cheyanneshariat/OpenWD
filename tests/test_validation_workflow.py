@@ -302,3 +302,16 @@ def test_protected_node_ids_still_collect_without_running_atmospheres():
     collected = {line for line in output.splitlines()
                  if line.startswith(runner.D6_REGRESSION_TEST + "[")}
     assert collected == set(runner.REGRESSIONS.values())
+
+
+@pytest.mark.parametrize('name', [
+    'metal_population_control_legacy.py', 'cool_dz_release_control_legacy.py',
+    'independent_kurucz_control_legacy.py', 'uv_atomic_control_legacy.py',
+])
+def test_spectral_history_helpers_invalidate_validation_reuse(tmp_path, name):
+    helper = tmp_path / 'research' / name
+    helper.parent.mkdir()
+    helper.write_text('previous = 1\n')
+    before = runner.numerical_identity(tmp_path)['sha256']
+    helper.write_text('previous = 2\n')
+    assert runner.numerical_identity(tmp_path)['sha256'] != before

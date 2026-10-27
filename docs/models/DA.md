@@ -76,12 +76,15 @@ equation weights on every step.
 
 For `quality="production"`, the initial 100-layer grid gets up to 40 Newton
 iterations. If it fails equilibrium, the code interpolates that numerical
-seed onto 200 layers and solves the same equations again. This resolves steep
-hydrogen-ionization transitions that can stall the coarser grid. A supplied
+seed onto 200 layers and solves the same equations again. This resolves
+steep hydrogen-ionization transitions that can stall the coarser grid. At
+`quality="standard"` a failed 40-layer solve is re-solved on 100 and then
+200 layers in the same way; converged solves are never refined. Doubling
+from 40 does not work for G 76−48: neither 80 nor 160 layers recover. A supplied
 finer radiative restart retains its depth resolution. Temperature, gravity,
 chemistry, opacity prescriptions, convection and convergence tolerances are
 unchanged. The finer atmosphere must pass its own complete equilibrium
-certificate; exhausting both attempts still returns an unconverged warning.
+certificate; exhausting the attempts still returns an unconverged warning.
 The refinement and initial failure diagnostics are recorded in atmosphere
 metadata under `radiative_depth_refinement`.
 

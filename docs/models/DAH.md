@@ -3,10 +3,14 @@
 [Model guide](README.md) · [Getting started](../getting-started.md)
 
 `DAHConfig` predicts disk-integrated optical spectra of magnetic,
-pure-hydrogen white dwarfs. The default is the **normalized Kurucz/Griem
-prescription used in the paper**: a nonmagnetic DA atmosphere, scalar
-Stokes-I magnetic transfer, and the ordinary hydrogen EOS and continuum.
-Convection is suppressed above a projected-area mean field of 0.05 MG.
+pure-hydrogen white dwarfs. The default uses a nonmagnetic DA atmosphere,
+normalized Kurucz/Griem Balmer components and scalar Stokes-I magnetic
+transfer. Above 1 MG it adds **stationary-state RWA photoionization and the
+magnetic Saha/HM EOS** (Rohrmann 2026) in each surface cell. Convection is
+suppressed above a projected-area mean field of 0.05 MG. The 2026 paper
+comparison used the zero-field EOS and continuum instead; that prescription
+remains available as `paper_dah_config(...)` (see
+[the paper prescription](#the-paper-prescription)).
 The output covers vacuum wavelengths from 3400 to 8000 Å and is surface
 `F_lambda` in erg s⁻¹ cm⁻² Å⁻¹.
 
@@ -50,10 +54,11 @@ python examples/one_shot_dah.py --teff 18687 --logg 8.04 \
 ```
 
 `examples/dah_paper.py` accepts any of the eight paper object keys and holds
-its temperature, gravity and geometry fixed. `quality="production"` is the
-paper resolution (initially 100 depth points and four synthesis angles).
-`standard` uses the ordinary smaller structure grid; `quick` is only a smoke
-test and is not a convergence guarantee.
+its temperature, gravity and geometry fixed. It uses the paper prescription by
+default; `--prescription default` selects the current public default.
+`quality="production"` is the paper resolution (initially 100 depth points
+and four synthesis angles). `standard` uses the ordinary smaller structure
+grid; `quick` is only a smoke test and is not a convergence guarantee.
 
 ## Field geometry
 
@@ -150,27 +155,45 @@ scope of this numerical estimate and the unchanged physics approximations.
    source is solved for each cell's angle-averaged opacity. Dipole quadrature
    starts at 8 limb × 16 azimuth nodes and refines to resolve displaced polar
    caps. Field-bin compression splits bins crossing 1 MG.
-6. **Continuum and chemistry.** The defaults keep the nonmagnetic EOS,
-   bound-free/free-free absorption and scattering. Molecular chemistry,
-   H⁻ and H₃⁺ are included for weak-field models at or below 12000 K;
-   the strong-field comparison prescription omits molecular chemistry.
-   Magnetic EOS, RWA photoionization, centered-motion corrections and
-   cyclotron absorption are disabled by default.
+6. **Continuum and chemistry.** Above 1 MG each surface cell re-evaluates
+   the magnetic Saha/HM equilibrium (Landau-quantized free charges, H2db
+   substate energies, centered-motion transverse masses) on the fixed
+   temperature–pressure structure, and replaces the zero-field H I
+   bound-free opacity of n=1–8 with stationary-state RWA cross sections for
+   each polarization, continued below each shifted edge by the dissolved-level
+   closure. Free–free absorption and scattering keep their zero-field form;
+   cyclotron absorption is off. At or below 1 MG the zero-field EOS and
+   continuum are used. Molecular chemistry, H⁻ and H₃⁺ are included for
+   weak-field models at or below 12000 K and omitted at strong fields.
+
+   The RWA reproduces Rohrmann's published opacities to 0.02 dex up to
+   47 MG and agrees with the Zhao & Stancil (2007) quantum cross sections
+   to within about 0.3 dex up to 211 MG. At 235 MG individual transitions
+   differ by 1–2 dex, so above 200 MG of visible field the continuum is
+   uncertain; such requests record a `domain_notes` entry. On ten SDSS
+   objects at fixed published parameters it improved the line-level fit for
+   eight and worsened J2247+1456 (437 MG); see the
+   [2026-10-25 change note](../development/history/dah-rwa-default-2026-10-25.md).
 
 The normal convection policy uses ML2/α=0.7 below 0.05 MG and no convection
 above it. An explicit positive `mixing_length_alpha` overrides this policy.
 For a strictly radiative DA control at any field, use
-`DAConfig(mixing_length_alpha=None)`. Cool radiative production atmospheres
-can refine a failed 100-layer attempt to 200 layers with unchanged physics
-and fresh convergence checks; see the [DA guide](DA.md#radiative-atmospheres-with-convection-disabled).
-G 76−48 (6680 K, log g=7.96) motivated this repair. It does not establish
-an entire cool radiative grid or remove its observed line-core discrepancies.
+`DAConfig(mixing_length_alpha=None)`. A radiative structure that fails its
+certificate is re-solved on doubled layers with unchanged physics and fresh
+convergence checks: 100 → 200 at `production`, 40 → 100 → 200 at `standard`;
+see the [DA guide](DA.md#radiative-atmospheres-with-convection-disabled).
+The mean-field magnetic structure uses the same ladder. G 76−48 (6680 K,
+log g=7.96) and the mean-field J1018+0111 (10500 K) motivated these repairs.
+They do not establish an entire cool radiative grid or remove the observed
+line-core discrepancies.
 
 ## Results at published parameters
 
-The paper comparison uses these fixed values, ordered by dipole polar field.
+The comparison below uses the current default (RWA photoionization and the
+magnetic EOS above 1 MG) at these fixed values, ordered by dipole polar field.
 The first four have continuous visible maxima below 100 MG; the remaining
-objects test the prescription at higher fields.
+objects test the prescription at higher fields, and J1351 and J2247 exceed the
+RWA's tested range of about 200 MG.
 
 | Object | Teff (K) | log g | Bp (MG) | i (deg) | (ax, ay, az) |
 | --- | ---: | ---: | ---: | ---: | --- |
@@ -190,18 +213,23 @@ or the [paper's smoothly rescaled comparison (PDF)](../assets/dah-paper-rescaled
 
 The figure above uses one flux scale per object. The
 [smoothly rescaled version](../assets/dah-paper-rescaled.png) used in the
-paper additionally applies the disclosed continuum correction; neither
-version changes the stellar parameters. Observations are SDSS/BOSS spectra
+paper additionally applies the disclosed continuum correction (factors 0.78–1.16);
+neither version changes the stellar parameters. Both are synthesized on the
+same certified nonmagnetic structures as the 2026-09-29 paper-prescription
+figure; only the magnetic continuum and EOS differ. Relative to that
+prescription the default mainly brightens the blue end of J1018, reshapes
+J1351 redward of 6000 Å, and over-absorbs J2247 at 4100–4450 Å. Observations are SDSS/BOSS spectra
 and the Hardy et al. comparison data. J1007 uses SDSS plate 5328, MJD 55982,
 fiber 66; its spectrum is not velocity shifted or dereddened. J1034 uses
 the previously photometrically recalibrated observation.
 
-The archived spectra underlying the figure are immutable controls in
-[tests/data/dah_paper](../../tests/data/dah_paper/README.md), with original
-source and spectrum hashes. Fixed-state tests exercise the public defaults
-with atmosphere iteration forbidden. Separate cold-start canaries for
-J1007 and J1254 create new structures and require all five equilibrium
-gates as well as absolute-flux agreement with the paper controls.
+The model spectra in the figure are the approved default controls in
+[tests/data/approved_regressions/dah_rwa_default_2026_10_25](../../tests/data/approved_regressions/dah_rwa_default_2026_10_25/README.md);
+the earlier paper-prescription spectra remain immutable controls in
+[tests/data/dah_paper](../../tests/data/dah_paper/README.md). Fixed-state tests
+exercise both with atmosphere iteration forbidden. Separate cold-start canaries
+for J1007 and J1254 create new structures and require all five equilibrium
+gates as well as absolute-flux agreement with the approved default spectra.
 
 ```sh
 python tools/validate.py spectra --case dah-j1007+1237
@@ -211,12 +239,44 @@ python tools/validate.py cold --case da-radiative-g76-48
 
 Bundled observational controls are available through
 `wd_spectra.validation.magnetic_da`; `research/validate_dah_observed.py`
-runs their public models and saves comparisons. Its fitted velocity and
+runs their public models and saves comparisons. `chi2_scale` and
+`chi2_cubic` are noise-weighted χ² per pixel (3820–6950 Å) after one flux
+scale, and after a cubic multiplicative continuum that isolates the magnetic
+features from flux calibration. They use the survey inverse variances bundled
+with the spectra; GH Leo has none, so its noise is estimated from the
+high-pass scatter. Compare χ² between models of one object. The older
+`feature_rms` is dominated by photon noise for most of these spectra and is
+kept only for continuity. Its fitted velocity and
 single 5200–6100 Å scale belong to the comparison, never the atmosphere or
 spectrum calculation. Smooth rescaling used in one paper-figure variant is
 also a plotting operation: a positive quadratic correction in log flux.
 It can absorb flux-calibration error **or** a physical continuum error.
 The unscaled variant is necessary for assessing continuum agreement.
+
+## The paper prescription
+
+`paper_dah_config(**parameters)` returns a `DAHConfig` with the prescription
+of the 2026 paper figure (the default until 2026-10-25): the same structure,
+lines and transfer as the default, but the zero-field EOS and H I bound-free
+continuum at all fields. It accepts stellar, geometry, transfer and numerical
+inputs and rejects attempts to change the prescription's physics;
+`DAH_PAPER_PRESCRIPTION` lists the fixed switches. Transfer defaults to scalar
+Stokes I, as in the paper figure; `polarized_transfer="full-stokes-iquv"`
+keeps the same physics.
+
+```python
+from wd_spectra import paper_dah_config
+
+paper = paper_dah_config(
+    effective_temperature=18_687, logg=8.04, magnetic_field_megagauss=6.13,
+    field_geometry="dipole", dipole_inclination_deg=71,
+    dipole_offset_radius=(0.0, 0.0, 0.30), quality="production",
+)
+```
+
+The frozen paper spectra in `tests/data/dah_paper` test this preset; the
+approved default spectra on the same atmospheres are in
+`tests/data/approved_regressions/dah_rwa_default_2026_10_25`.
 
 ## Other physics options
 
@@ -237,17 +297,20 @@ coupled = replace(
 
 Above 1 MG this solves one structure at the projected-area mean field with
 angle-averaged H2db Balmer opacity, the selected continuum and optional
-magnetic Saha/HM chemistry. Below 1 MG it retains the DA-structure
+magnetic Saha/HM chemistry. The structure uses the same `balmer_profile` and
+`normalize_balmer_strength` as the synthesis (before 2026-10-25 it always used
+unified, unnormalized profiles). Below 1 MG it retains the DA-structure
 approximation. `balmer_profile="unified"` selects the ordinary zero-field
 Stark and neutral-broadening templates; `normalize_balmer_strength=False`
 retains the field-dependent H2db total oscillator strength.
 
-`include_rwa_photoionization=True` selects stationary-state rigid-wavefunction
-H I photoionization through n=8 with shifted dissolved-level edges.
-`include_magnetic_eos=True` selects Landau-quantized charged particles and
-H2db stationary energies in the Saha/HM closure. `include_centered_motion`
-controls the transverse-mass weighting in both the EOS and RWA populations.
-These are separate diagnostic options, not ingredients of the paper default.
+`include_rwa_photoionization` (default `True`) selects stationary-state
+rigid-wavefunction H I photoionization through n=8 with shifted
+dissolved-level edges. `include_magnetic_eos` (default `True`) selects
+Landau-quantized charged particles and H2db stationary energies in the
+Saha/HM closure. `include_centered_motion` (default `True`) controls the
+transverse-mass weighting in both the EOS and RWA populations. Each can be
+switched off individually; the paper preset switches off all three.
 
 Full IQUV transfer includes dichroism and magneto-optical dispersion at each
 cell. By default only disk-integrated Stokes I is returned. Full IQUV transfer works with both
@@ -356,6 +419,9 @@ thermally decentered atoms are absent. Polarimetric output remains unvalidated
 against observations. Strong-field
 molecular chemistry is absent, which limits cool-star applications.
 Agreement with eight objects does not guarantee an unbiased parameter fit.
+The RWA bound-free opacity is an approximation (rigid wavefunctions); it is
+tested against quantum cross sections only up to ~200 MG and fails at the
+1–2 dex level per transition by 235 MG.
 At zero field the default still uses Kurucz/Griem profiles; select unified
 profiles to recover the ordinary DA line-profile limit.
 
@@ -373,6 +439,8 @@ Scientific use should cite the relevant ingredients and observational sources:
 - [Vera-Rueda & Rohrmann (2024)](https://doi.org/10.1051/0004-6361/202449627): field geometry and the J1018/J2247 comparisons.
 
 [Release notes and regression controls](../development/history/dah-release-2026-09-29.md)
-describe the integration and radiative convergence repair.
+describe the integration and radiative convergence repair; the
+[2026-10-25 clean-up](../development/history/dah-cleanup-2026-10-25.md)
+records the standard-quality convergence ladder and the χ² validation scores.
 Data attribution and redistribution details are in
 [third-party notices](../../THIRD_PARTY_NOTICES.md).

@@ -45,7 +45,9 @@ SPECTRA = tuple("dah-" + key for key in DAH_PAPER) + (
 )
 CANARY = "tests/test_protected_model_canaries.py::"
 COLD_TESTS = {
-    "da-radiative-g76-48": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start",
+    "da-radiative-g76-48": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start[production]",
+    "da-radiative-g76-48-standard": "tests/test_radiative_da_convergence.py::test_g76_48_radiative_da_cold_start[standard]",
+    "dah-mean-field-j1018": "tests/test_dah_paper.py::test_mean_field_j1018_structure_converges_from_cold",
     **{f"dah-{key}": f"tests/test_dah_paper.py::test_dah_public_default_cold_start[{key}]"
        for key in ("j1007+1237", "j1254+5612")},
     "do-50000": "tests/test_hot_cold_canary.py::test_hot_public_model_converges_from_cold[do-50000-standard]",
@@ -88,7 +90,8 @@ REGRESSIONS = {
         "warm_v1-legacy",
         "warm_v2_feii-historical",
         "warm_v3_independent-historical",
-        "warm_v4_rap-current",
+        "warm_v4_rap-historical",
+        "warm_v5_excited_parent-current",
     )
 }
 
@@ -120,7 +123,10 @@ def commands(tier, cases=()):
                 "tests/test_dah_disk_quadrature.py::test_near_zero_spectrum_matches_independent_limb_integral"
             ]
         elif tier == "spectra" and case.startswith("dah-"):
-            tasks[case] = pytest + [f"tests/test_dah_paper.py::test_public_default_reproduces_frozen_paper_spectrum[{case[4:]}]"]
+            tasks[case] = pytest + [
+                f"tests/test_dah_paper.py::test_paper_prescription_reproduces_frozen_paper_spectrum[{case[4:]}]",
+                f"tests/test_dah_paper.py::test_public_default_reproduces_approved_rwa_spectrum[{case[4:]}]",
+            ]
         elif tier == "spectra" and case == "dq-j1235":
             tasks[case] = pytest + [
                 "tests/test_dq_spectral_regression.py::test_refractive_spectrum_retains_j1235_absolute_flux"
@@ -197,6 +203,10 @@ def numerical_identity(root=ROOT):
         "research/validate_public_cold_start.py",
         "research/validate_daz_cold_start.py",
         "research/check_saved_bolometric_spectrum.py",
+        "research/metal_population_control_legacy.py",
+        "research/cool_dz_release_control_legacy.py",
+        "research/independent_kurucz_control_legacy.py",
+        "research/uv_atomic_control_legacy.py",
         "tests/test_protected_model_canaries.py",
         "tests/test_spectral_regressions.py",
         "tests/test_daz_regressions.py",

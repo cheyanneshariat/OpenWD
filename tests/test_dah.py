@@ -1,5 +1,7 @@
 """Fast checks of the magnetic hydrogen (DAH) physics and public surface."""
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 from types import SimpleNamespace
@@ -239,6 +241,14 @@ def test_bundled_validation_targets_load_and_score_a_flat_model():
     wavelength = np.arange(3600.0, 7000.0, 1.0)
     score = score_dah_spectrum("j2149-0728", wavelength, wavelength**-2.0)
     assert np.isfinite(score["broad_rms"]) and "hardy" in score
+    assert score["noise_source"] == "survey inverse variance"
+    # A featureless model cannot fit the magnetic components; the published
+    # model does, so its noise-weighted score is much closer to unity.
+    assert score["chi2_cubic"] <= score["chi2_scale"]
+    assert 1.0 < score["hardy"]["chi2_cubic"] < 3.0 < score["chi2_cubic"]
+    assert load_dah_observation("j1033+2309").flux_nu_sigma is None
+    estimated = score_dah_spectrum("j1033+2309", wavelength, wavelength**-2.0)
+    assert estimated["noise_source"].startswith("estimated")
 
 
 @pytest.mark.parametrize("component_wave", [4142.1894, 7838.4694])
@@ -370,6 +380,42 @@ def test_crossing_dipole_uses_same_structure_and_synthesis_regime(monkeypatch, a
     assert result.metadata["line_physics"] == "h2db"
 
 
+@pytest.mark.parametrize("profile, normalize", [("kurucz-griem", True), ("unified", True), ("kurucz-griem", False)])
+def test_mean_field_structure_uses_the_synthesis_balmer_physics(monkeypatch, atmosphere, transitions, profile, normalize):
+    import wd_spectra.models.dah as dah
+    from wd_spectra.kurucz_griem import kurucz_griem_templates
+    from wd_spectra.magnetic import balmer_line_templates
+    from wd_spectra.spectrum import Spectrum
+
+    config = DAHConfig(
+        magnetic_field_megagauss=30.0, atmosphere_structure="mean-field",
+        balmer_profile=profile, normalize_balmer_strength=normalize,
+    )
+    wave = np.linspace(3900., 7000., 20)
+    captured = {}
+
+    def structure(*args, **kwargs):
+        captured.update(kwargs)
+        return atmosphere
+
+    def synthesis(atm, wavelength, cells, physics, **kwargs):
+        factory = kurucz_griem_templates if profile == "kurucz-griem" else balmer_line_templates
+        templates = factory(atm, broadening=physics.broadening, maximum_upper_level=12)
+        expected = h2db_balmer_manifolds(
+            atm, wavelength, 30.0, transitions, templates=templates,
+            normalize_line_strength=normalize,
+        ).isotropic()
+        np.testing.assert_allclose(captured["balmer_opacity_function"](atm, wavelength), expected)
+        return Spectrum(wavelength, np.ones_like(wavelength), {
+            "magnetic_line_regime": "h2db", "polarized_transfer": "test",
+        })
+
+    monkeypatch.setattr(dah, "radiative_equilibrium_hydrogen_atmosphere", structure)
+    monkeypatch.setattr(dah, "synthesize_magnetic_hydrogen_spectrum", synthesis)
+    monkeypatch.setattr(dah, "warn_if_atmosphere_not_converged", lambda *args: "unknown")
+    compute_dah(config, wave)
+
+
 @pytest.mark.parametrize("polar,offset", [(0.02, 0.79), (0.05, 0.70)])
 def test_polar_caps_keep_physical_field_bounds_and_strong_area(polar, offset):
     options = dict(inclination_deg=0., offset_vector_radius=(0., 0., offset))
@@ -476,6 +522,36 @@ def test_dah_physics_revision_invalidates_old_fixed_structure_claim(monkeypatch,
     fixed = common.fixed_synthesis_atmosphere(checkpoint, current)
     assert old["sha256"] != current["sha256"]
     assert not fixed.metadata["fixed_synthesis_request_verified"]
+
+
+def test_scalar_synthesis_shares_the_structure_claim_of_iquv(monkeypatch, atmosphere):
+    import warnings
+    import wd_spectra.models.dah as dah
+
+    captured = {}
+
+    def da(*args, **kwargs):
+        captured["atmosphere"] = dah.atmosphere_with_model_request_fingerprint(atmosphere, {})
+        return SimpleNamespace(atmosphere=captured["atmosphere"], metadata={"convection": "test"})
+
+    monkeypatch.setattr(dah, "compute_da", da)
+    monkeypatch.setattr(dah, "warn_if_atmosphere_not_converged", lambda *args: "converged")
+    wave = np.linspace(6500.0, 6600.0, 5)
+    config = DAHConfig(
+        effective_temperature=atmosphere.effective_temperature, logg=atmosphere.logg,
+        polarized_transfer="full-stokes-iquv",
+    )
+    first = compute_dah(config, wave)
+    second = compute_dah(
+        replace(config, polarized_transfer="scalar-stokes-i"), wave,
+        initial_atmosphere=first.atmosphere, relax_atmosphere=False,
+    )
+    assert second.atmosphere.metadata["fixed_synthesis_request_verified"]
+    other = compute_dah(
+        replace(config, logg=config.logg + 0.1), wave,
+        initial_atmosphere=first.atmosphere, relax_atmosphere=False,
+    )
+    assert not other.atmosphere.metadata["fixed_synthesis_request_verified"]
 
 
 @pytest.mark.parametrize("centered_motion", [False, True])

@@ -185,6 +185,15 @@ and are not covered by OpenWD's BSD source-code license:
 Credit the Opacity Project (Cunto et al. 1993) and the TLUSTY and SIROCCO
 distributions.
 
+## O I excited-core multiplet strengths (D6)
+
+`_O_I_EXCITED_CORE_3D_TRANSITIONS` in `src/wd_spectra/metals.py` contains
+oscillator strengths derived (spectator-core LS algebra) from four Opacity
+Project LS multiplet gf-values retrieved from TOPbase at CDS on 2026-10-25,
+with NIST ASD O I level energies. No TOPbase or NIST file is redistributed;
+`research/o_i_excited_core_ls_strengths.py` lists the inputs. Credit the
+Opacity Project (Cunto et al. 1993) and the NIST Atomic Spectra Database.
+
 ## Hollands et al. (2025) J1637 digitization
 
 `src/wd_spectra/data/validation/hollands2025_j1637_figure1.npz` records the
@@ -226,7 +235,8 @@ the SDSS data policy), the Gianninas GH Leo spectrum from the Montreal White
 Dwarf Database, and model curves of Hardy, Dufour & Jordan (2023, MNRAS 520,
 6111) digitized from their CDS figures (regression targets derived from the
 published figures, not the authors' numerical models). Survey spectra of the
-Hardy targets are de-reddened with MWDD E(B-V). Cite the original surveys and
+Hardy targets are de-reddened with MWDD E(B-V); their survey inverse variances
+are carried as 1σ flux errors. Cite the original surveys and
 papers when using them. The weak-field GD 9 and G 76−48 controls come from
 public ESO SPY/UVES spectra. The documentation's eight-panel figures also
 include SDSS/BOSS J1007+1237 (plate 5328, MJD 55982, fiber 66). The unscaled

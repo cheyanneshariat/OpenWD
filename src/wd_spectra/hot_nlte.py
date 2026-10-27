@@ -251,8 +251,16 @@ class HotNLTEModel:
                 break
             log_old = np.log(old/reference)
             log_new = np.log(new/reference)
+            # Fit the MALI residual with the same population significance as
+            # the convergence check. Nearly empty levels can have large log
+            # changes without a significant population defect. The weights
+            # change only the acceleration fit, not the rates or acceptance.
+            fit_weights = (None if accelerator is None else np.minimum(
+                1.0, np.maximum(old, new)
+                / (1e-12 * reference.sum(axis=1)[:, None])))
             proposal, _ = h._anderson_log_population_update(
-                log_old, log_new, history, depth=4, mixing=.65, maximum_step=.75)
+                log_old, log_new, history, depth=4, mixing=.65, maximum_step=.75,
+                residual_weights=fit_weights)
             if proposal is None:
                 proposal = log_old + .4*(log_new-log_old)
             current = with_departures(candidate, np.exp(proposal))

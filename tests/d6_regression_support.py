@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
 from uv_atomic_control_legacy import legacy_uv_atomic_controls
 from independent_kurucz_control_legacy import previous_kurucz_defaults
 from cool_dz_release_control_legacy import previous_rap_photoionization
+from excited_parent_series_legacy import previous_excited_parent_series
 
 STEPS = 2
 ARRAYS = ("temperature", "gas_pressure", "mass_density", "electron_density")
@@ -39,7 +40,8 @@ def atomic_inputs():
 
 
 @contextmanager
-def atomic_input_scope(*, legacy=False, previous=False, legacy_rap=False):
+def atomic_input_scope(*, legacy=False, previous=False, legacy_rap=False,
+                       legacy_excited_parent=False):
     """Keep cached atoms local to a current or historical regression scope.
 
     The immutable pre-Fe controls need their original Fe II atom. A cache
@@ -54,7 +56,12 @@ def atomic_input_scope(*, legacy=False, previous=False, legacy_rap=False):
                    previous_kurucz_defaults() if previous else nullcontext())
         rap_context = (previous_rap_photoionization()
                        if legacy or previous or legacy_rap else nullcontext())
-        with context, rap_context:
+        # Every control approved before 2026-10-25 predates the excited-parent
+        # series widths and the O I 3Do supplement.
+        series_context = (previous_excited_parent_series()
+                          if legacy or previous or legacy_rap or legacy_excited_parent
+                          else nullcontext())
+        with context, rap_context, series_context:
             yield
     finally:
         atomic_inputs.cache_clear()

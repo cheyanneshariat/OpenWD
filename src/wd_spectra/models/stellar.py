@@ -319,6 +319,17 @@ _ALLARD_TEMPERATURE_DEPENDENT_CUTOFF_K = 13_000.0
 _DA_SEED_ROSSELAND_DEPTH_MINIMUM = 1.0e-10
 _DA_SEED_ROSSELAND_DEPTH_MAXIMUM = 1.0e2
 _DA_DEEPENING_FACTOR = 4.0
+# Failed radiative solves are re-solved on finer meshes up to this depth.
+# 200 layers resolve the steep cool-DA ionization transition (G 76-48); a
+# 100-layer attempt is the seed production uses for it.
+_DA_RADIATIVE_REFINEMENT_MAXIMUM_DEPTH = 200
+_DA_RADIATIVE_REFINEMENT_SEED_DEPTH = 100
+
+
+def _radiative_refinement_depth(n_depth: int) -> int:
+    """Next mesh for a failed radiative solve (40 -> 100 -> 200; 100 -> 200)."""
+
+    return _DA_RADIATIVE_REFINEMENT_SEED_DEPTH if n_depth < _DA_RADIATIVE_REFINEMENT_SEED_DEPTH else 2 * n_depth
 
 
 def _metal_structure_line_budget(
@@ -557,7 +568,7 @@ def compute_da(
             else (1.0 if full_depth >= 100 else 3.0)
         )
         refine_radiative_grid = (
-            config.quality == "production"
+            config.quality in ("standard", "production")
             and config.mixing_length_alpha is None
             and config.atmosphere_solver == "adaptive-newton"
         )
@@ -697,22 +708,29 @@ def compute_da(
                     domain_iterations
                 ),
             })
-        if (
+        while (
             refine_radiative_grid
-            and full_depth == 100
+            and _radiative_refinement_depth(atmosphere.n_depth)
+            <= _DA_RADIATIVE_REFINEMENT_MAXIMUM_DEPTH
             and atmosphere_convergence_status(atmosphere) != "converged"
         ):
             # A radiative hydrogen ionization transition can be too steep for
-            # the initial mass mesh. Re-solve the SAME equations on 200 layers;
-            # the unfinished 100-layer state is only an interpolated seed.
-            # The fine solve must earn its own complete equilibrium certificate.
+            # the initial mass mesh. Re-solve the SAME equations on a finer
+            # mesh (production 100 -> 200; standard 40 -> 100 -> 200); the
+            # unfinished state is only an interpolated seed. Doubling from 40
+            # never yields a usable seed for G 76-48. Each fine solve must
+            # earn its own complete equilibrium certificate.
             coarse = atmosphere
-            iteration_offset = domain_iterations
-            depth_refinements = 1
+            iteration_offset = (
+                domain_iterations
+                if depth_refinements == 0
+                else iteration_offset + coarse.metadata["radiative_equilibrium_iterations"]
+            )
+            depth_refinements += 1
             atmosphere = radiative_equilibrium_hydrogen_atmosphere(
                 config.effective_temperature,
                 config.logg,
-                n_depth=2 * coarse.n_depth,
+                n_depth=_radiative_refinement_depth(coarse.n_depth),
                 tau_max=tau_max,
                 n_continuum_wavelength=resolution.n_continuum,
                 max_iterations=resolution.maximum_iterations,
@@ -722,14 +740,25 @@ def compute_da(
                 iteration_callback=full_callback,
                 **relaxation_kwargs,
             )
+            first = coarse.metadata.get("radiative_depth_refinement", {})
             atmosphere = replace(atmosphere, metadata={
                 **atmosphere.metadata,
                 "radiative_depth_refinement": {
-                    "initial_depth_points": coarse.n_depth,
+                    "initial_depth_points": first.get("initial_depth_points", coarse.n_depth),
                     "final_depth_points": atmosphere.n_depth,
-                    "initial_certificate_failures": coarse.metadata["equilibrium_certificate"]["failures"],
-                    "initial_maximum_flux_residual": coarse.metadata["maximum_all_depth_total_flux_residual"],
-                    "initial_maximum_local_energy_residual": coarse.metadata["maximum_relative_cell_energy_balance_residual"],
+                    "refinements": depth_refinements,
+                    "initial_certificate_failures": first.get(
+                        "initial_certificate_failures",
+                        coarse.metadata["equilibrium_certificate"]["failures"],
+                    ),
+                    "initial_maximum_flux_residual": first.get(
+                        "initial_maximum_flux_residual",
+                        coarse.metadata["maximum_all_depth_total_flux_residual"],
+                    ),
+                    "initial_maximum_local_energy_residual": first.get(
+                        "initial_maximum_local_energy_residual",
+                        coarse.metadata["maximum_relative_cell_energy_balance_residual"],
+                    ),
                     "initial_iterations": iteration_offset,
                     "stellar_parameters_changed": False,
                 },
@@ -1060,7 +1089,11 @@ def compute_db(
             "helium_i_profiles": "Beauchamp25-LD semi-analytical",
             "helium_ii_profiles": "Schoning/SYNSPEC table",
             "neutral_broadening": config.neutral_broadening,
-            "convection": f"ML2/alpha={config.mixing_length_alpha:g}",
+            "convection": (
+                f"ML2/alpha={config.mixing_length_alpha:g}"
+                if config.mixing_length_alpha is not None
+                else "suppressed; radiative equilibrium"
+            ),
             "atmosphere_solver": config.atmosphere_solver,
             "atmosphere_mode": (
                 "relaxed" if relax_atmosphere else "checkpoint formal synthesis"
@@ -1073,8 +1106,12 @@ def compute_db(
 
 
 def _mixed_molecular_data(h2_he_path: str, h2_h2_path: str):
+    from .._provenance import content_identity
+
     paths=tuple(Path(p).expanduser().resolve() for p in (h2_he_path,h2_h2_path))
-    identity=tuple((p.stat().st_mtime_ns,p.stat().st_size) for p in paths)
+    # Data replacements can preserve size and modification time. The cache
+    # must follow the bytes used by the request's physical-data fingerprint.
+    identity=content_identity(paths)
     return _cached_mixed_molecular_data(*map(str,paths),identity)
 
 
@@ -1385,7 +1422,11 @@ def compute_dab(
             "balmer_self_broadening_truncation_closure": (
                 config.balmer_self_broadening_truncation_closure
             ),
-            "convection": f"ML2/alpha={config.mixing_length_alpha:g}",
+            "convection": (
+                f"ML2/alpha={config.mixing_length_alpha:g}"
+                if config.mixing_length_alpha is not None
+                else "suppressed; radiative equilibrium"
+            ),
             "neutral_broadening": config.neutral_broadening,
             "atmosphere_solver": config.atmosphere_solver,
             "atmosphere_mode": (
@@ -1943,6 +1984,10 @@ def compute_dz(
                 if topbase_photoionization is not None
                 else "disabled"
             ),
+            "photoionization_population_model": spectrum.metadata.get(
+                "metal_photoionization_population_model", "disabled"
+            ),
+            "metal_population_revision": "normalized-levels-rydberg-only-2026-10-24",
             "metal_electron_feedback": True,
             "structure_maximum_metal_lines": structure_lines,
             "structure_metal_line_budget_policy": structure_line_policy,

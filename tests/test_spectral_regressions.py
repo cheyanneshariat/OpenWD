@@ -33,6 +33,8 @@ from cool_dz_release_control_legacy import (
     previous_cool_dz_release_physics,
 )
 
+from metal_population_control_legacy import previous_metal_opacity_populations
+
 CONTROLS = Path(__file__).parent / "data/spectral_regressions"
 
 
@@ -96,6 +98,11 @@ APPROVED_COOL_DZ_RELEASE = (
     / "data/approved_regressions/cool_dz_release_2026_10_23/fixed"
 )
 
+APPROVED_METAL_POPULATIONS = (
+    Path(__file__).parent
+    / "data/approved_regressions/metal_populations_2026_10_24/fixed"
+)
+
 
 def _legacy_metal_only_microfield_moment(metal_state):
     """The pre-2026-10-12 moment, which omitted the host ions."""
@@ -139,9 +146,9 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
     # Historical structures, earlier approved spectra and tolerances stay intact.
     approved_directory = APPROVED_DENSITY_EDGE if case in DENSITY_EDGE_CASES else APPROVED
     if case in CRII_CASES:
-        # Re-approved for the cool-DZ release defaults (dense-He physics, unified
-        # He tables, Rydberg-only neutral hard sphere); see that directory's manifest.
-        approved_directory = APPROVED_COOL_DZ_RELEASE
+        # Versioned correction to opacity populations after the cool-DZ release;
+        # all prior controls and tolerances remain independently checked below.
+        approved_directory = APPROVED_METAL_POPULATIONS
     with np.load(approved_directory / (case + ".npz")) as approved:
         np.testing.assert_array_equal(wave, approved["wavelength"])
         expected = approved["surface_flux"]
@@ -186,10 +193,17 @@ def test_checked_scattering_preserves_broad_spectral_controls(case, monkeypatch)
         assert abs(change) < 1e-5
 
     if case in CRII_CASES:
+        with previous_metal_opacity_populations(), pytest.warns(AtmosphereConvergenceWarning):
+            release = compute_dz(config, wave, initial_atmosphere=atmosphere,
+                                 relax_atmosphere=False)
+        with np.load(APPROVED_COOL_DZ_RELEASE / (case + ".npz")) as control:
+            release_flux = control["surface_flux"]
+        np.testing.assert_allclose(release.spectrum.surface_flux_lambda, release_flux,
+            rtol=2e-6, atol=1e-12 * np.max(release_flux))
         # Every earlier approval predates the cool-DZ release: recover its
         # defaults and physics first, then keep each predecessor check intact.
         config = previous_cool_dz_release_config(config)
-        with previous_cool_dz_release_physics():
+        with previous_metal_opacity_populations(), previous_cool_dz_release_physics():
             # Retain the exact predecessor and its tolerances as a separate check.
             with previous_kurucz_defaults(), pytest.warns(AtmosphereConvergenceWarning):
                 predecessor = compute_dz(config, wave, initial_atmosphere=atmosphere,

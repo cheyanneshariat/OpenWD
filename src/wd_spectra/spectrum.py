@@ -495,6 +495,7 @@ def synthesize_balmer_spectrum(
     absorption = line_opacity + continuum_absorption
     metal_line_scattering = np.zeros_like(absorption)
     ca_ii_probabilities = None
+    topbase_population_record = "disabled"
     excluded_metal_line_elements = tuple(excluded_metal_line_elements)
     calcium_lines_enabled = not any(
         str(element).strip().casefold() == "ca" for element in excluded_metal_line_elements
@@ -519,7 +520,17 @@ def synthesize_balmer_spectrum(
                 ),
             )
         if metal_topbase_photoionization_database is not None:
-            from .d6 import topbase_bound_free_mass_absorption_coefficient
+            from .d6 import (
+                topbase_bound_free_mass_absorption_coefficient,
+                topbase_population_provenance,
+            )
+
+            topbase_population_record = {
+                **topbase_population_provenance(
+                    metal_topbase_photoionization_database, metal_database,
+                ),
+                "occupation_weighted_populations": metal_state.metal_level_dissolution,
+            }
 
             absorption += topbase_bound_free_mass_absorption_coefficient(
                 atmosphere,
@@ -861,6 +872,7 @@ def synthesize_balmer_spectrum(
                 if metal_topbase_photoionization_database is not None
                 else "disabled"
             ),
+            "metal_photoionization_population_model": topbase_population_record,
             "ca_ii_resonance_scattering_fraction": (
                 ca_ii_resonance_scattering_fraction
             ),
@@ -1151,6 +1163,7 @@ def synthesize_helium_spectrum(
             )
     metal_line_scattering = np.zeros_like(absorption)
     ca_ii_probabilities = None
+    topbase_population_record = "disabled"
     excluded_metal_line_elements = tuple(excluded_metal_line_elements)
     calcium_lines_enabled = not any(
         str(element).strip().casefold() == "ca" for element in excluded_metal_line_elements
@@ -1175,7 +1188,17 @@ def synthesize_helium_spectrum(
                 ),
             )
         if metal_topbase_photoionization_database is not None:
-            from .d6 import topbase_bound_free_mass_absorption_coefficient
+            from .d6 import (
+                topbase_bound_free_mass_absorption_coefficient,
+                topbase_population_provenance,
+            )
+
+            topbase_population_record = {
+                **topbase_population_provenance(
+                    metal_topbase_photoionization_database, metal_database,
+                ),
+                "occupation_weighted_populations": metal_state.metal_level_dissolution,
+            }
 
             absorption += topbase_bound_free_mass_absorption_coefficient(
                 atmosphere,
@@ -1441,6 +1464,7 @@ def synthesize_helium_spectrum(
                 if metal_topbase_photoionization_database is not None
                 else "disabled"
             ),
+            "metal_photoionization_population_model": topbase_population_record,
             "mg_ii_he_unified_profile": (
                 mg_ii_he_profile_table.source
                 if mg_ii_he_profile_table is not None else "disabled"

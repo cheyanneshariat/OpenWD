@@ -31,7 +31,8 @@ def population_update(
     depth,
     mixing,
     maximum_step,
-    residual_weights=None
+    residual_weights=None,
+    oversized_step="reject"
 ):
     """Type-II Anderson update using rank-revealing weighted least squares.
 
@@ -40,7 +41,15 @@ def population_update(
     be resolved accurately when populations are eliminated from the thermal
     equations. This PG-specific fit preserves the map, positivity decoding,
     convergence floors, and maximum extrapolation step.
+
+    ``oversized_step="scale"`` shortens a step whose resolved entries exceed
+    ``maximum_step`` to that length along the same direction instead of
+    discarding it.  Near a slowly contracting fixed point the converged state
+    lies residual/(1 - rate) away, so a correct extrapolation can exceed the
+    bound for many iterations while plain damping crawls towards it.
     """
+    if oversized_step not in ("reject", "scale"):
+        raise ValueError("oversized_step must be 'reject' or 'scale'")
     residual = np.asarray(log_fixed_point - log_population)
     if depth < 2:
         return None, "history"
@@ -81,10 +90,16 @@ def population_update(
     # unconstrained history cannot veto the resolved atom's bounded update.
     step = np.where(weights < 1e-8, mixing * f, step)
     important_step = step[weights >= 1.0]
-    if np.any(~np.isfinite(step)) or (
-        important_step.size and np.max(abs(important_step)) > maximum_step
-    ):
+    largest = np.max(abs(important_step)) if important_step.size else 0.0
+    if np.any(~np.isfinite(step)):
         return None, "step"
+    outcome = "accepted"
+    if largest > maximum_step:
+        if oversized_step == "reject":
+            return None, "step"
+        resolved = weights >= 1e-8
+        step[resolved] *= maximum_step / largest
+        outcome = "scaled"
     # Below the convergence floor, an ill-determined log increment must not
     # reject the well-resolved atom. Bound those increments individually;
     # wholly unresolved rows retain the ordinary physical-map update above.
@@ -92,5 +107,5 @@ def population_update(
     step[tails] = np.clip(step[tails], -maximum_step, maximum_step)
     return (
         np.ascontiguousarray(log_population + step.reshape(log_population.shape)),
-        "accepted",
+        outcome,
     )

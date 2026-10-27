@@ -19,13 +19,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from dataclasses import replace
+from functools import lru_cache
 import hashlib
 import json
 import lzma
 from pathlib import Path
 import re
 from types import MappingProxyType
-from typing import Callable, Iterable, Mapping
+from typing import Callable, Iterable, Literal, Mapping
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -54,6 +55,7 @@ from .metals import (
     ATOMIC_NUMBER,
     AtomicDatabase,
     AtomicIon,
+    AtomicLevel,
     AtomicTransition,
     EV_TO_WAVENUMBER,
     METAL_LINE_MINIMUM_HALF_WINDOW_ANGSTROM,
@@ -61,10 +63,14 @@ from .metals import (
     VernerPhotoionizationDatabase,
     _canonical_element,
     _ion_fractions,
+    _level_term_label,
     cool_metal_negative_ion_mass_absorption_coefficient,
+    hydrogenic_metal_shell_mean_radius_cm,
     metal_ionic_microfield_perturber_density,
     metal_bound_free_mass_absorption_coefficient,
     metal_line_mass_absorption_coefficient,
+    metal_lte_level_population,
+    metal_neutral_hard_sphere_occupation_probability,
     oxygen_i_dissolved_series_mass_absorption_coefficient,
     selected_metal_lines,
     WAVENUMBER_TO_ERG,
@@ -399,6 +405,14 @@ class TOPbasePhotoionizationDatabase:
 
     sections: tuple[TOPbaseLevelPhotoionization, ...]
     source: str
+    # Model atoms contain aggregate superlevels without native constituent
+    # identities. Retain their source E/g as an explicitly approximate state.
+    # Strict audits can reject these instead of inferring any membership.
+    unmapped_population_policy: Literal["effective-level", "strict"] = "effective-level"
+
+    def __post_init__(self) -> None:
+        if self.unmapped_population_policy not in ("effective-level", "strict"):
+            raise ValueError("TOPbase population policy must be 'effective-level' or 'strict'")
 
     @property
     def elements(self) -> frozenset[str]:
@@ -492,6 +506,7 @@ def resonance_average_topbase_photoionization(
         tuple(averaged),
         database.source
         + f"; Gaussian resonance average sigma(E)/E={fractional_width:.3f}",
+        unmapped_population_policy=database.unmapped_population_policy,
     )
 
 
@@ -1514,6 +1529,9 @@ def merge_topbase_photoionization_databases(
 
     if not databases:
         raise ValueError("at least one photoionization database is required")
+    policies = {database.unmapped_population_policy for database in databases}
+    if len(policies) != 1:
+        raise ValueError("cannot merge TOPbase databases with different population policies")
     sections: list[TOPbaseLevelPhotoionization] = []
     occupied: set[tuple[str, int]] = set()
     for database in databases:
@@ -1526,7 +1544,200 @@ def merge_topbase_photoionization_databases(
     return TOPbasePhotoionizationDatabase(
         tuple(sections),
         " + ".join(database.source for database in databases),
+        unmapped_population_policy=databases[0].unmapped_population_policy,
     )
+
+
+@lru_cache(maxsize=128)
+def _topbase_native_population_candidates(
+    levels: tuple[AtomicLevel, ...],
+) -> tuple[tuple[float, float, tuple[AtomicLevel, ...]], ...]:
+    """Retain individual levels and complete, explicitly labelled LS terms."""
+
+    candidates = [
+        (level.energy_wavenumber / EV_TO_WAVENUMBER,
+         level.statistical_weight, (level,))
+        for level in levels
+    ]
+    groups: dict[str, list[AtomicLevel]] = {}
+    for level in levels:
+        term = _level_term_label(level.label)
+        if term != level.label:
+            groups.setdefault(term, []).append(level)
+    for members in groups.values():
+        if len(members) < 2:
+            continue
+        weight = sum(level.statistical_weight for level in members)
+        energy = sum(level.statistical_weight * level.energy_wavenumber
+                     for level in members) / weight / EV_TO_WAVENUMBER
+        candidates.append((energy, weight, tuple(members)))
+    return tuple(candidates)
+
+
+def _topbase_native_population_levels(
+    section: TOPbaseLevelPhotoionization, ion: AtomicIon,
+) -> tuple[AtomicLevel, ...]:
+    """Identify a physical level/term; a source-local index is not a Stout ID."""
+
+    return _topbase_native_population_match(
+        ion.levels, float(section.excitation_energy_ev),
+        float(section.statistical_weight),
+    )
+
+
+@lru_cache(maxsize=8192)
+def _topbase_native_population_match(
+    levels: tuple[AtomicLevel, ...], excitation_energy_ev: float,
+    statistical_weight: float,
+) -> tuple[AtomicLevel, ...]:
+    """Cache immutable level identity, never depth-dependent populations."""
+
+    matches = [
+        members for energy, weight, members in
+        _topbase_native_population_candidates(levels)
+        if abs(energy - excitation_energy_ev) <= 1.0e-6
+        and abs(weight - statistical_weight) <= 1.0e-8
+    ]
+    # Equal E/g does not establish identity when more than one physical
+    # term matches. Such sections use the declared unresolved-level policy.
+    return matches[0] if len(matches) == 1 else ()
+
+
+def topbase_population_provenance(
+    database: TOPbasePhotoionizationDatabase,
+    atomic_database: AtomicDatabase | None,
+) -> dict[str, object]:
+    """Describe the nonideal population policy and section identity coverage.
+
+    Counts refer to cross-section sections, not necessarily unique lower
+    states: one lower state can have several parent-continuum channels.
+    This record is suitable for model and spectrum metadata.
+    """
+
+    fine = term = unresolved = 0
+    for section in database.sections:
+        ion = (None if atomic_database is None else
+               atomic_database.ions.get((section.element, section.charge)))
+        levels = () if ion is None else _topbase_native_population_levels(section, ion)
+        if len(levels) == 1:
+            fine += 1
+        elif levels:
+            term += 1
+        else:
+            unresolved += 1
+    return {
+        "nonideal_unmapped_population_policy": database.unmapped_population_policy,
+        "section_count": len(database.sections),
+        "native_level_sections": fine,
+        "native_LS_term_sections": term,
+        "unresolved_model_level_sections": unresolved,
+        "absolute_photon_grid_sections": sum(
+            section.absolute_photon_grid for section in database.sections
+        ),
+        "absolute_photon_grid_policy": (
+            "tabulated sampled support, no mean-binding clipping or photon shift; "
+            "no unique edge for dissolved-series continuation"
+        ),
+        "resolved_population": "sum of native occupation-weighted level populations",
+        "unresolved_population": (
+            "source excitation and aggregate statistical weight; hydrogenic survival "
+            "from true ionization binding and shell-mean neutral radius; effective "
+            "model-level approximation, not exact native-partition or constituent "
+            "superlevel normalization"
+            if database.unmapped_population_policy == "effective-level"
+            else "rejected in nonideal states until native level identity is supplied"
+        ),
+        "ideal_population": "unchanged source-model Boltzmann factor divided by native partition",
+    }
+
+
+def _topbase_population_ion(
+    section: TOPbaseLevelPhotoionization, metal_state: MetalLTEState,
+) -> AtomicIon:
+    database = metal_state.atomic_database
+    ion = None if database is None else database.ions.get(
+        (section.element, section.charge)
+    )
+    if ion is None or ion.ionization_energy_ev is None:
+        raise ValueError(
+            "nonideal TOPbase populations require the atomic_database used "
+            "to build metal_state; reconstruct it with metal_lte_state or "
+            "bulk_metal_lte_state instead of guessing the lower binding from "
+            "a photoionization channel threshold"
+        )
+    return ion
+
+
+def topbase_lte_level_population(
+    section: TOPbaseLevelPhotoionization,
+    metal_state: MetalLTEState,
+    temperature_kelvin: ArrayLike,
+    *,
+    unmapped_population_policy: Literal["effective-level", "strict"] = "effective-level",
+) -> FloatArray:
+    """Populate a photoionization level with the partition's occupation rule.
+
+    Ideal states retain the source-model energy and statistical weight.
+    Nonideal levels that identify a unique native level or complete LS term
+    use the corresponding native normalized populations. Source model level
+    indices are unrelated to Stout indices. Unmatched model terms retain
+    their source energy and aggregate weight, with hydrogenic survival from
+    the true lower binding ``I_ion - E_level`` and the native shell-mean
+    neutral radius. This effective-state approximation does not recover an
+    unknown superlevel constituent list or ensure exact native-Q population
+    normalization for aggregates. ``strict`` rejects unresolved identities.
+    A channel opening to an excited parent is not the lower binding energy.
+    """
+
+    if unmapped_population_policy not in ("effective-level", "strict"):
+        raise ValueError("TOPbase population policy must be 'effective-level' or 'strict'")
+    temperature = np.asarray(temperature_kelvin, dtype=np.float64)
+    weight = (
+        section.statistical_weight
+        * np.exp(-section.excitation_energy_ev * EV_TO_ERG
+                 / (BOLTZMANN * temperature))
+    )
+    ion_population = metal_state.ion_number_density[section.element][section.charge]
+    partition = metal_state.partition_function[(section.element, section.charge)]
+    if not metal_state.metal_level_dissolution:
+        return ion_population * (weight / partition)
+    ion = _topbase_population_ion(section, metal_state)
+    levels = _topbase_native_population_levels(section, ion)
+    if levels:
+        return sum(
+            metal_lte_level_population(ion, level, metal_state, temperature)
+            for level in levels
+        )
+    if unmapped_population_policy == "strict":
+        raise ValueError(
+            f"TOPbase {section.element} {section.charge:+d} model level "
+            f"{section.level_index} has no unique native level/LS-term "
+            "identity under the strict population policy; supply a physical "
+            "mapping or explicitly select the effective-level approximation"
+        )
+    binding = float(ion.ionization_energy_ev - section.excitation_energy_ev)
+    if not np.isfinite(binding) or binding <= 0.0:
+        raise ValueError("TOPbase lower level must have positive true binding energy")
+    core_charge = float(section.charge + 1)
+    effective_n = float(np.sqrt(RYDBERG_ENERGY_EV * core_charge**2 / binding))
+    perturber_density = (
+        metal_ionic_microfield_perturber_density(metal_state)
+        if metal_state.reference_species == "metal"
+        else metal_state.electron_density
+    )
+    survival = charged_particle_hydrogen_occupation_probability(
+        perturber_density, max(1.0, effective_n), temperature,
+        ionic_charge=core_charge,
+    )
+    if metal_state.neutral_perturber_number_density is not None:
+        if metal_state.neutral_perturber_radius_cm is None:
+            raise ValueError("neutral perturber radii are required with their densities")
+        survival = survival * metal_neutral_hard_sphere_occupation_probability(
+            hydrogenic_metal_shell_mean_radius_cm(effective_n, core_charge),
+            metal_state.neutral_perturber_number_density,
+            metal_state.neutral_perturber_radius_cm,
+        )
+    return ion_population * ((weight * survival) / partition)
 
 
 def topbase_bound_free_mass_absorption_coefficient(
@@ -1551,15 +1762,9 @@ def topbase_bound_free_mass_absorption_coefficient(
         populations = metal_state.ion_number_density[section.element]
         if section.charge >= populations.shape[0]:
             continue
-        partition = metal_state.partition_function[(section.element, section.charge)]
-        lower_population = (
-            populations[section.charge]
-            * section.statistical_weight
-            * np.exp(
-                -section.excitation_energy_ev * EV_TO_ERG
-                / (BOLTZMANN * atmosphere.temperature)
-            )
-            / partition
+        lower_population = topbase_lte_level_population(
+            section, metal_state, atmosphere.temperature,
+            unmapped_population_policy=database.unmapped_population_policy,
         )
         result += (
             section.cross_section(photon_energy)[:, np.newaxis]
@@ -1633,12 +1838,24 @@ def topbase_dissolved_level_pseudocontinuum_mass_absorption_coefficient(
         populations = metal_state.ion_number_density.get(section.element)
         if populations is None or section.charge >= populations.shape[0]:
             continue
+        if section.absolute_photon_grid:
+            raise ValueError(
+                "absolute RAP tables do not define a unique continuum edge "
+                "for dissolved-level pseudocontinuum"
+            )
         threshold = float(section.threshold_energy_ev)
         core_charge = float(section.charge + 1)
+        lower_binding = (
+            _topbase_population_ion(section, metal_state).ionization_energy_ev
+            - section.excitation_energy_ev
+            if metal_state.metal_level_dissolution else threshold
+        )
+        if not np.isfinite(lower_binding) or lower_binding <= 0.0:
+            raise ValueError("TOPbase lower level must have positive true binding energy")
         lower_effective_n = max(
             1.0,
             float(np.sqrt(
-                RYDBERG_ENERGY_EV * core_charge**2 / threshold
+                RYDBERG_ENERGY_EV * core_charge**2 / lower_binding
             )),
         )
         minimum_upper_n = lower_effective_n + upper_level_offset
@@ -1708,17 +1925,9 @@ def topbase_dissolved_level_pseudocontinuum_mass_absorption_coefficient(
         extrapolated_cross_section = (
             threshold_cross_section * (selected_wavelength / series_limit) ** 3
         )
-        partition = metal_state.partition_function[
-            (section.element, section.charge)
-        ]
-        lower_population = (
-            populations[section.charge]
-            * section.statistical_weight
-            * np.exp(
-                -section.excitation_energy_ev * EV_TO_ERG
-                / (BOLTZMANN * atmosphere.temperature)
-            )
-            / partition
+        lower_population = topbase_lte_level_population(
+            section, metal_state, atmosphere.temperature,
+            unmapped_population_policy=database.unmapped_population_policy,
         )
         stimulated = -np.expm1(
             -selected_photon_energy[:, np.newaxis]
@@ -1920,6 +2129,7 @@ def bulk_metal_lte_state(
         composition_mode="bulk",
         mass_fraction=MappingProxyType(mass_fraction),
         total_mass_density=np.asarray(mass_density),
+        atomic_database=atomic_database,
     )
 
 
@@ -2849,6 +3059,12 @@ def radiative_equilibrium_d6_atmosphere(
                 if topbase_photoionization_database is not None
                 else "disabled"
             ),
+            "metal_topbase_population_policy": (
+                topbase_population_provenance(
+                    topbase_photoionization_database, atomic_database
+                )
+                if topbase_photoionization_database is not None else None
+            ),
         },
     )
 
@@ -2980,6 +3196,12 @@ def synthesize_d6_spectrum(
                 if topbase_photoionization_database is None
                 else topbase_photoionization_database.source
                 + "; Verner ground-state fallback for remaining ion stages"
+            ),
+            "metal_topbase_population_policy": (
+                topbase_population_provenance(
+                    topbase_photoionization_database, atomic_database
+                )
+                if topbase_photoionization_database is not None else None
             ),
             "metal_free_free": "charge-weighted ionic bremsstrahlung",
             "metal_electron_feedback": "fixed-pressure particle and charge closure",

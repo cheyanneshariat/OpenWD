@@ -3,7 +3,8 @@
 
 By default each target uses its published Teff, log g and field geometry;
 ``--set`` explicitly overrides those values. One radial velocity and one flux scale are nuisance
-operations (see ``wd_spectra.validation.magnetic_da``).  Targets run one at a
+operations (see ``wd_spectra.validation.magnetic_da``); ``chi2_cubic`` additionally
+allows a cubic multiplicative continuum. Compare chi^2 between models of one target.  Targets run one at a
 time in this process.  Each writes ``OUTPUT/KEY/`` (model, scores.json,
 comparison.png); ``OUTPUT/summary.json`` collects the scores.
 
@@ -59,9 +60,11 @@ def plot(key: str, spectrum, score: dict, path: Path) -> None:
     axis.plot(arrays["wavelength_angstrom"], arrays["observed"], color="0.15", lw=0.7, label="observed")
     if "hardy" in arrays:
         axis.plot(arrays["wavelength_angstrom"], arrays["hardy"], color="#1b9e77", lw=0.8,
-                  label=f"Hardy et al. (broad {score['hardy']['broad_rms']:.3f})")
+                  label=f"Hardy et al. (chi2 {score['hardy']['chi2_scale']:.2f}/"
+                        f"{score['hardy']['chi2_cubic']:.2f}, broad {score['hardy']['broad_rms']:.3f})")
     axis.plot(arrays["wavelength_angstrom"], arrays["model"], color="#d95f02", lw=0.9,
-              label=f"OpenWD DAH (broad {score['broad_rms']:.3f}, feature {score['feature_rms']:.3f})")
+              label=f"OpenWD DAH (chi2 {score['chi2_scale']:.2f}/{score['chi2_cubic']:.2f}, "
+                    f"broad {score['broad_rms']:.3f})")
     axis.set_xlim(3_800.0, 7_000.0)
     axis.set_xlabel("rest vacuum wavelength (A)")
     axis.set_ylabel("F_nu / median(5200-6100 A)")
@@ -192,9 +195,12 @@ def main() -> None:
             for path in sorted(args.output.glob("*/scores.json"))
         }
         summary_path.write_text(json.dumps(summary, indent=1, default=float))
+        hardy = score.get("hardy")
         print(
-            f"{key}: broad {score['broad_rms']:.4f} feature {score['feature_rms']:.4f} "
-            f"blue {score['blue_ratio']:.3f} ({score['convergence']}, {score['seconds']:.0f}s)",
+            f"{key}: chi2 scale/cubic {score['chi2_scale']:.2f}/{score['chi2_cubic']:.2f}"
+            + (f" (Hardy {hardy['chi2_scale']:.2f}/{hardy['chi2_cubic']:.2f})" if hardy else "")
+            + f" broad {score['broad_rms']:.4f} blue {score['blue_ratio']:.3f}"
+            f" ({score['convergence']}, {score['seconds']:.0f}s)",
             flush=True,
         )
 
