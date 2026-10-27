@@ -8,11 +8,13 @@ import pytest
 
 from wd_spectra import DAHConfig, Spectrum, StokesSpectrum, compute_dah, paper_dah_config
 from wd_spectra.atmosphere import gray_hydrogen_atmosphere
+from wd_spectra.eos import hummer_mihalas_hydrogen_lte
 from wd_spectra import magnetic
 from wd_spectra.magnetic import (
     BalmerBroadening, MagneticPhysics, SurfaceCells, synthesize_magnetic_hydrogen_spectrum,
 )
 from wd_spectra.models import dah
+from wd_spectra.magnetic_eos import atmosphere_with_magnetic_hydrogen_eos
 from wd_spectra.models.common import (
     AtmosphereConvergenceWarning, ModelData, numerical_resolution, save_model_result,
 )
@@ -229,3 +231,53 @@ def test_custom_null_point_in_h2db_map_takes_zero_field_lines(atmosphere):
     weak, _ = magnetic._line_manifolds(atmosphere, wave, .2, physics, "h2db", cache, False)
     # Same uniform grid: the summed profiles compare the integrated line opacity.
     np.testing.assert_allclose(weak.isotropic().sum(axis=0), null.isotropic().sum(axis=0), rtol=2e-3)
+
+
+@pytest.mark.parametrize("centered_motion", [False, True])
+def test_null_cell_resets_mean_field_eos_without_changing_structure(atmosphere, centered_motion):
+    data = ModelData.default()
+    energies = dah.read_h2db_energy_database(data.h2db_balmer_subset)
+    physics = MagneticPhysics(dah.read_h2db_transition_database(data.h2db_balmer_subset), energies,
+                              include_centered_motion=centered_motion, line_regime="h2db")
+    shared = atmosphere_with_magnetic_hydrogen_eos(
+        atmosphere, 138.75, energies, include_centered_motion=centered_motion)
+    local = magnetic._local_atmosphere(shared, 0., physics, "h2db")
+    expected = hummer_mihalas_hydrogen_lte(
+        shared.temperature, shared.gas_pressure, correlated_microfields=True,
+        include_molecules=False)
+    for name in ("mass_density", "neutral_h_density", "proton_density", "electron_density"):
+        np.testing.assert_array_equal(getattr(local, name), getattr(expected, name))
+    np.testing.assert_array_equal(local.hydrogen_lte_state.level_population_density,
+                                  expected.level_population_density)
+    for name in ("temperature", "gas_pressure", "column_mass"):
+        np.testing.assert_array_equal(getattr(local, name), getattr(shared, name))
+    assert local.metadata["magnetic_eos_field_megagauss"] == 0.
+    assert shared.metadata["magnetic_eos_field_megagauss"] == 138.75
+
+
+def test_public_mean_field_null_cell_uses_zero_field_continuum_state(atmosphere, monkeypatch):
+    # Observe the actual EOS passed to continuum synthesis, while retaining
+    # the real opacity/transfer calculation on this diagnostic fixed state.
+    continuum = magnetic.magnetic_continuum
+    seen = []
+    def check_continuum(local, wave, field, *args, **kwargs):
+        if field == 0.:
+            expected = hummer_mihalas_hydrogen_lte(
+                local.temperature, local.gas_pressure, correlated_microfields=True,
+                include_molecules=False)
+            np.testing.assert_array_equal(local.electron_density, expected.electron_density)
+            np.testing.assert_array_equal(local.hydrogen_lte_state.level_population_density,
+                                          expected.level_population_density)
+            seen.append(field)
+        return continuum(local, wave, field, *args, **kwargs)
+    monkeypatch.setattr(magnetic, "magnetic_continuum", check_continuum)
+    geometry = replace(cells(), field_strength_megagauss=np.array([0., 185.]))
+    config = DAHConfig(effective_temperature=15000., logg=8., atmosphere_structure="mean-field",
+                       polarized_transfer="full-stokes-iquv", return_stokes=True)
+    with pytest.warns(AtmosphereConvergenceWarning):
+        result = compute_dah(config, np.linspace(4800., 4930., 11), surface_cells=geometry,
+                             initial_atmosphere=atmosphere, relax_atmosphere=False)
+    assert seen == [0.]
+    assert result.atmosphere.metadata["magnetic_eos_field_megagauss"] == 138.75
+    for name in ("surface_flux_lambda", "surface_flux_q_lambda", "surface_flux_u_lambda", "surface_flux_v_lambda"):
+        assert np.all(np.isfinite(getattr(result.spectrum, name)))
