@@ -222,7 +222,8 @@ def test_custom_null_point_in_h2db_map_takes_zero_field_lines(atmosphere):
                               dah.read_h2db_energy_database(data.h2db_balmer_subset),
                               broadening=BalmerBroadening(include_self_broadening=False),
                               line_regime="h2db")
-    wave, cache = np.linspace(6200., 6950., 751), {}
+    # 0.25 A resolves the narrow line cores of the top layers.
+    wave, cache = np.linspace(6200., 6950., 3001), {}
     null, _ = magnetic._line_manifolds(atmosphere, wave, 0., physics, "h2db", cache, False)
     np.testing.assert_array_equal(null.minus, null.plus)
     weak, _ = magnetic._line_manifolds(atmosphere, wave, .2, physics, "h2db", cache, False)
