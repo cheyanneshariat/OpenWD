@@ -57,6 +57,10 @@ class AtmosphereConvergenceWarning(RuntimeWarning):
     """A spectrum is being returned from an unverified atmosphere."""
 
 
+class DenseHeliumPhotosphereError(ValueError):
+    """The dilute-helium `compute_db` physics was requested for a dense neutral photosphere."""
+
+
 @dataclass(frozen=True)
 class NumericalResolution:
     """Numerical work budget associated with a public quality level."""

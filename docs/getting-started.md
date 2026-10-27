@@ -171,10 +171,14 @@ See [DQ physics and limitations](models/DQ.md) and the
 ### Cool helium and mixed atmospheres
 
 The automatic interface screens local material conditions before solving. For
-pure-He DB it selects the dense-helium workflow when indicated; that workflow
+pure-He DB it selects the dense-helium workflow when indicated (below about
+8500 K at log g = 8); that workflow
 requires `quality="production"` and integer-K temperatures, and preserves the
 requested gravity through the initializer, atmosphere calculation and
-independent spectrum audit.
+independent spectrum audit. Always run cool DBs through `run_model`: the
+lower-level `compute_db` keeps the dilute-helium physics and raises
+`DenseHeliumPhotosphereError` for a dense photosphere. See the
+[DB guide](models/DB.md#cool-helium).
 
 Every metal-free DAB/DBA request runs the in-process molecular H/He closure
 (H2, H2+, H-, H3+, HeH+, H2-He/H2-H2 CIA) at any temperature and gravity, so

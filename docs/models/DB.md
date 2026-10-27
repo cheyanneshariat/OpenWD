@@ -15,6 +15,15 @@ python examples/one_shot_db.py --teff 20000 --logg 8.0 \
 Typical standard calculations take roughly 3--10 minutes on a current laptop;
 cool neutral-line models can be slower. No previous atmosphere is needed.
 
+> **Cool DBs: use `run_model`.** `compute_db` is the dilute-helium preset. Below
+> roughly 8500 K at log g = 8 (and at higher temperatures for higher gravity),
+> the neutral photosphere is dense enough that its EOS and opacities no longer
+> apply. `run_model(DBConfig(...), output_directory)` screens the photosphere and
+> selects the [dense-helium workflow](#cool-helium) there. Asking `compute_db` to
+> relax such a star raises `DenseHeliumPhotosphereError` (the same screen as
+> `run_model`); pass `allow_dense_photosphere=True` only to study the dilute
+> physics deliberately. The one-shot command line goes through `run_model`.
+
 ## Paper comparisons
 
 The paper compares pure-He models with the one-dimensional ML2/alpha=1.25
@@ -49,21 +58,91 @@ below, and normalized line agreement does not establish an absolute flux scale.
 
 ## Cool helium
 
-Use `run_model(DBConfig(...), output_directory)` to select the experimental
-dense-neutral helium treatment when indicated by the local material screen.
-It combines the tabulated bulk EOS with approximate chemical potentials and
-trace-ion chemistry, without inserting that closure into warm ionized helium.
-The command-line example uses the same automatic selection as `run_model`.
-The lower-level `compute_db` preset remains an explicit atomic-physics interface.
-The dense driver propagates the requested `logg` through hydrostatic column mass,
-ML2 initialization, the structure solver and the independent spectrum audit.
-Saved structures record their gravity, and the audit rejects a mismatch with
-the request. The production recipe and its numerical tolerances are unchanged.
-The material-domain checks still apply at every depth; accepting a parameter is
-not a claim that its atmosphere or spectrum has been qualified.
+### When the dense workflow is used
 
-Protected cold starts cover the established prescription at 10000 and 22000 K
-and the dense workflow at 5000 and 8000 K. See [tested points](../tested-temperature-ranges.md),
+`run_model` evaluates a gray hydrostatic helium photosphere at Rosseland
+optical depth 2/3 before solving. If that photosphere is neutral (electron
+fraction below 1e-3) and the He-REOS.3 density differs from the dilute
+Hummer--Mihalas density by at least 5%, it selects the dense-helium workflow
+(`dense-db`); otherwise it runs `compute_db`. At log g = 8 the switch lies near
+8500 K; at log g = 9.5 it is above 10000 K. The selection and its diagnostics are
+recorded in `model-run.json`. `compute_db` applies the same screen and refuses
+relaxing a dense photosphere (see above).
+
+```python
+from wd_spectra import DBConfig, run_model
+
+run = run_model(
+    DBConfig(effective_temperature=5000, logg=8.0, quality="production"),
+    "results/db-5000",
+    require_convergence=True,
+)
+print(run.selection.workflow)      # "dense-db"
+spectrum = run.spectrum            # surface F_lambda, vacuum Angstrom
+```
+
+The dense workflow requires `quality="production"` and integer-K temperatures,
+and runs in an isolated, single-threaded worker process. Cold starts at
+4500--8000 K and log g = 8 take about 10--14 minutes each.
+
+### Physics
+
+The dense workflow is experimental. Its main ingredients are:
+
+- **EOS:** bulk density and internal energy from the ab initio He-REOS.3 table
+  (Becker et al. 2014), with the dilute EOS kept for warm ionized helium.
+- **Trace ionization:** He+ and free electrons with non-ideal chemical
+  potentials from integral-equation (HNC) fluid calculations and a DFT-based
+  electron-insertion fit. Ions are split between bound He2+ and free He+ by the
+  bound-neighbour count of the same HNC solution, so the bound pairs are not
+  counted twice.
+- **Continuum:** dense-fluid (Rogers--Young) correction to He- free--free
+  absorption; He2+ bound--free and He--He+ free--free absorption (Stancil
+  1994), with a computed temperature dependence below 4200 K; He--He--He
+  collision-induced absorption (Kowalski 2014); Rayleigh scattering with the
+  fluid structure factor. Refraction is not included.
+
+Details and the evidence for each choice are in the
+[dense-db v6 history note](../development/history/dense-db-v6-2026-10-22.md).
+
+### Comparison with other models
+
+[![Cool DB models compared with Cukanovaite et al. (2021) and Blouin et al. (2018)](../assets/db-cool-paper.png)](../assets/db-cool-paper.pdf)
+
+[Download the comparison (PDF)](../assets/db-cool-paper.pdf). The top panel
+compares OpenWD with the 1D grid of
+[Cukanovaite et al. (2021)](https://doi.org/10.1093/mnras/staa3684), which uses
+ideal-gas ionization and no dense-fluid corrections. The bottom panel shows
+band-averaged fluxes relative to the Montreal synthetic photometry, which uses
+the dense-fluid models of
+[Blouin et al. (2018)](https://doi.org/10.3847/1538-4357/aad4a9) below 8000 K.
+
+- Down to about 6500 K, OpenWD agrees with Cukanovaite et al. to a few per cent
+  between 3000 Å and 1.2 µm.
+- At cooler temperatures, OpenWD agrees with Blouin et al. in the ultraviolet
+  and blue optical (within 0.15 mag in GALEX NUV at 5000 K), where the
+  Cukanovaite grid is much fainter.
+- In the near-infrared, OpenWD is fainter than both (0.4 and 0.7 mag in H and Ks
+  at 5000 K relative to Blouin). Nearly all of this comes from the strength of
+  pressure ionization: with the Kowalski et al. (2007) ionization used by Blouin,
+  OpenWD reproduces their photometry to 0.1 mag. Observations of the IR-faint
+  white dwarf LHS 1126 favour weaker ionization, closer to OpenWD's
+  ([Blouin et al. 2024](https://doi.org/10.3847/1538-4357/ad863b);
+  [Farihi et al. 2026](https://doi.org/10.1093/mnras/stag1393)), but that rests
+  on very few stars, so which treatment is more reliable remains open.
+
+### Tested points
+
+Fresh cold starts at log g = 8 converge and pass the independent audit at
+4500, 5000, 5500, 6000, 6500, 7000 and 8000 K. Protected cold-start canaries
+cover the established prescription at 10000 and 22000 K and the dense workflow
+at 5000 and 8000 K. The dense driver propagates the
+requested `logg` through hydrostatic column mass, ML2 initialization, the
+structure solver and the independent spectrum audit; saved structures record
+their gravity, and the audit rejects a mismatch with the request. The
+material-domain checks still apply at every depth: accepting a parameter is not
+a claim that its atmosphere or spectrum has been qualified. See
+[tested points](../tested-temperature-ranges.md),
 [cool-model setup](../getting-started.md#cool-helium-and-mixed-atmospheres), and
 [physical limitations](../limitations.md#physical-approximations).
 
