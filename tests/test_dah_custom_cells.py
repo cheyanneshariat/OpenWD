@@ -8,6 +8,7 @@ import pytest
 
 from wd_spectra import DAHConfig, Spectrum, StokesSpectrum, compute_dah, paper_dah_config
 from wd_spectra.atmosphere import gray_hydrogen_atmosphere
+from wd_spectra import magnetic
 from wd_spectra.magnetic import (
     BalmerBroadening, MagneticPhysics, SurfaceCells, synthesize_magnetic_hydrogen_spectrum,
 )
@@ -201,3 +202,29 @@ def test_custom_cells_reject_wrong_type_and_compression_before_atmosphere(monkey
     config = DAHConfig(field_geometry="dipole", disk_component_drift_angstrom=10.)
     with pytest.raises(ValueError, match="compression"):
         compute_dah(config, surface_cells=cells())
+
+
+def test_custom_null_point_in_h2db_map_takes_zero_field_lines(atmosphere):
+    # Multipole and rotation-phase maps can contain B = 0 cells next to
+    # strong-field cells; H2db has no B = 0 entry, so such a cell takes the
+    # unsplit zero-field lines, the B -> 0 limit of the H2db manifolds.
+    config = DAHConfig(effective_temperature=15000., logg=8.,
+                       polarized_transfer="full-stokes-iquv", return_stokes=True)
+    geometry = replace(cells(30.), field_strength_megagauss=np.array([0., 30.]))
+    with pytest.warns(AtmosphereConvergenceWarning):
+        result = compute_dah(config, np.linspace(4800., 4930., 11), surface_cells=geometry,
+                             initial_atmosphere=atmosphere, relax_atmosphere=False)
+    assert result.spectrum.metadata["magnetic_line_regime"] == "h2db"
+    for name in ("surface_flux_lambda", "surface_flux_v_lambda"):
+        assert np.all(np.isfinite(getattr(result.spectrum, name)))
+    data = ModelData.default()
+    physics = MagneticPhysics(dah.read_h2db_transition_database(data.h2db_balmer_subset),
+                              dah.read_h2db_energy_database(data.h2db_balmer_subset),
+                              broadening=BalmerBroadening(include_self_broadening=False),
+                              line_regime="h2db")
+    wave, cache = np.linspace(6200., 6950., 751), {}
+    null, _ = magnetic._line_manifolds(atmosphere, wave, 0., physics, "h2db", cache, False)
+    np.testing.assert_array_equal(null.minus, null.plus)
+    weak, _ = magnetic._line_manifolds(atmosphere, wave, .2, physics, "h2db", cache, False)
+    # Same uniform grid: the summed profiles compare the integrated line opacity.
+    np.testing.assert_allclose(weak.isotropic().sum(axis=0), null.isotropic().sum(axis=0), rtol=2e-3)

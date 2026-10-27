@@ -1203,7 +1203,10 @@ def _balmer_manifolds(
 ) -> PolarizedOpacity | tuple[PolarizedOpacity, PolarizedOpacity]:
     """Balmer manifolds of one field from templates; shared by structure and synthesis."""
 
-    if regime == "linear-zeeman":
+    # A B = 0 cell (a null point of a caller's map in the H2db regime) takes
+    # the unsplit zero-field lines of the same templates: the B -> 0 limit of
+    # the H2db manifolds, which H2db itself does not tabulate.
+    if regime == "linear-zeeman" or field == 0.0:
         return weak_field_balmer_manifolds(
             atmosphere, wavelength, field, templates=templates, dispersion=dispersion
         )

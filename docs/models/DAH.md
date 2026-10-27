@@ -455,6 +455,8 @@ The supplied map replaces the configuration's built-in uniform/dipole
 geometry controls, including `magnetic_field_megagauss` and `disk_field_bins`.
 Its maximum field selects the atomic regime, and its projected-area mean
 modulus controls convection and the optional mean-field magnetic structure.
+A cell with zero field (a null point of a multipole map) takes the unsplit
+zero-field lines and continuum, also when the map's maximum selects H2db.
 Temperature, gravity, quality and the opacity/EOS choices still come from
 `DAHConfig`. `sky_position_angle_deg` additionally rotates the supplied
 azimuths; `disk_component_drift_angstrom` is rejected for custom maps.
