@@ -273,6 +273,9 @@ def run_model(
                 )
                 if not isinstance(config, PG1159Config):
                     options["initial_atmosphere"] = None
+                if isinstance(config, DBConfig):
+                    # select_physics already ran the same dense-helium screen.
+                    options["allow_dense_photosphere"] = True
                 if wave is not None:
                     options["wavelength"] = wave
                 result = compute(

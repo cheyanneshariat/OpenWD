@@ -2,6 +2,7 @@
 
 from .models import (
     AtmosphereConvergenceWarning,
+    DenseHeliumPhotosphereError,
     DAConfig,
     DAZConfig,
     DQConfig,
@@ -102,6 +103,7 @@ __all__ = [
     "DOConfig", "DAOConfig", "compute_do", "compute_dao",
     "Atmosphere",
     "AtmosphereConvergenceWarning",
+    "DenseHeliumPhotosphereError",
     "BarklemSelfBroadeningTable",
     "DAConfig",
     "DAZConfig",

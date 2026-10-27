@@ -82,6 +82,33 @@ def _helium_probe(config, data):
     )
 
 
+def dense_helium_indicated(d, policy=PhysicsSelectionPolicy()):
+    """Whether a `_helium_probe` result calls for the dense-neutral helium workflow.
+
+    Shared by `select_physics` and the `compute_db` guard so the two never disagree.
+    """
+    if not np.isfinite(d["electron_fraction"]) or d["electron_fraction"] < 0:
+        raise ValueError(
+            "Invalid ionization diagnostic; no physics choice can be certified by this screen"
+        )
+    if not d["reos_in_domain"] and d["electron_fraction"] < 1e-3:
+        raise ValueError(
+            "Neutral-helium screen is outside the REOS table; cannot assess dense physics, and no ideal-EOS substitute is selected"
+        )
+    if d["reos_in_domain"] and (
+        not np.isfinite(d["density_fractional_change"])
+        or d["density_fractional_change"] < 0
+    ):
+        raise ValueError(
+            "Invalid dense-EOS diagnostic; no alternate physics is selected"
+        )
+    return bool(
+        d["reos_in_domain"]
+        and d["electron_fraction"] < 1e-3
+        and d["density_fractional_change"] >= policy.dense_density_fraction
+    )
+
+
 def _molecular_probe(config):
     from ..atmosphere import hydrogen_helium_continuum_atmosphere
     from .._mixed_molecules import molecular_hydrogen_helium_lte
@@ -208,26 +235,7 @@ def select_physics(config, *, data=None, policy=PhysicsSelectionPolicy()):
         )
     if isinstance(config, DBConfig):
         d = _helium_probe(config, data)
-        if not np.isfinite(d["electron_fraction"]) or d["electron_fraction"] < 0:
-            raise ValueError(
-                "Invalid ionization diagnostic; no physics choice can be certified by this screen"
-            )
-        if not d["reos_in_domain"] and d["electron_fraction"] < 1e-3:
-            raise ValueError(
-                "Neutral-helium screen is outside the REOS table; cannot assess dense physics, and no ideal-EOS substitute is selected"
-            )
-        if d["reos_in_domain"] and (
-            not np.isfinite(d["density_fractional_change"])
-            or d["density_fractional_change"] < 0
-        ):
-            raise ValueError(
-                "Invalid dense-EOS diagnostic; no alternate physics is selected"
-            )
-        dense = (
-            d["reos_in_domain"]
-            and d["electron_fraction"] < 1e-3
-            and d["density_fractional_change"] >= policy.dense_density_fraction
-        )
+        dense = dense_helium_indicated(d, policy)
         d["selection_policy"] = asdict(policy)
         return PhysicsSelection(
             "dense-db" if dense else "db",
