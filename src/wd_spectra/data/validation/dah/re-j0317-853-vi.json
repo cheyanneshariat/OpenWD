@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "target": "RE J0317-853",
+  "copyright": "ESO",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_policy": "https://archive.eso.org/cms/eso-data-access-policy.html",
+  "sha256": "5bd6adce66db68225ddfcfe69145738f6aee4f57f793417ae2fc0c1d6b657376",
+  "instrument": "ESO VLT FORS2, GRIS_300V, circular spectropolarimetry (PMOS)",
+  "programme": "114.27BU.001",
+  "observing_nights": [
+    "2024-10-30",
+    "2024-10-31"
+  ],
+  "reduction": "ESO FORS pipeline 5.8.8 (fors_pmos_science); V/I by the difference method.",
+  "rotation_phase": "bin 1 of 8, phase [0.125, 0.250) for P = 725.7 s and an arbitrary T0 = BJD_TDB 2460614.0 (no reliable absolute ephemeris); the bin of the cyclotron maximum.",
+  "resolution_fwhm_angstrom": "about 23-26 (2.01 arcsec slit filled by ~3 arcsec seeing)",
+  "wavelength_frame": "vacuum (from air with physical_air_to_vacuum), not barycentric-corrected",
+  "wavelength_unit": "Angstrom",
+  "v_over_i_convention": "optical (Landi Degl'Innocenti, Bagnulo & Fossati 2007), as exported by OpenWD and the ESO pipeline; IAU V/I = -v_over_i. Pass observed_convention='optical'.",
+  "v_over_i_level": "v_over_i and sigma_v_over_i are divided by k = 1.654, which brings this reduction to the published 1990s V/I level of this star at the same phase; multiply both by 1.654 to recover the reduced level. About 8 % of the factor comes from the pipeline's local sky fit, which does not mask the star; the rest is unexplained. score_dah_circular_polarization reports such level differences as v_scale.",
+  "sigma": "empirical 1-sigma of V/I",
+  "n_pixels": 877,
+  "grid_step_angstrom": 3.3,
+  "processing": "Pixels with sigma >= 1 (masked by the reduction) dropped; no resampling.",
+  "acknowledgement": "Based on observations collected at the European Organisation for Astronomical Research in the Southern Hemisphere under ESO programme 114.27BU.001."
+}

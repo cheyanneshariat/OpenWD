@@ -40,6 +40,7 @@ from numpy.typing import ArrayLike
 
 from .._compat import trapezoid
 from ..constants import LIGHT_SPEED
+from ..spectrum import StokesSpectrum
 from .observed import convolve_variable_log_gaussian, gaussian_smooth
 
 
@@ -303,6 +304,75 @@ def score_dah_spectrum(
     return result
 
 
+def score_dah_circular_polarization(
+    wavelength_angstrom: ArrayLike,
+    v_over_i: ArrayLike,
+    sigma_v_over_i: ArrayLike,
+    model: StokesSpectrum,
+    *,
+    observed_convention: str,
+    resolution_fwhm_angstrom: float | None = None,
+    window_angstrom: tuple[float, float] = CHI2_WINDOW_ANGSTROM,
+) -> dict[str, float]:
+    """Score an observed V/I spectrum against a rest-frame ``StokesSpectrum``.
+
+    The observation is on vacuum wavelengths, as for ``score_dah_spectrum``.
+    ``observed_convention`` declares its V sign: ``"optical"`` is the exported
+    convention (Landi Degl'Innocenti, Bagnulo & Fossati 2007) and ``"iau"`` has
+    V_iau = -V_optical. Model I and V are convolved separately to the Gaussian
+    FWHM (interpolated when None) and then divided.
+
+    ``chi2_v`` is the mean squared normalized residual of the unscaled model;
+    ``v_scale`` the least-squares factor on the model V/I (negative for a sign
+    error, away from one for a level error); ``shift_angstrom`` the lag of
+    maximum cross-correlation, positive when the observed features lie redward
+    of the model's (meaningful for a positive ``v_scale``).
+    """
+
+    if observed_convention not in ("iau", "optical"):
+        raise ValueError("observed_convention must be 'iau' or 'optical'")
+    wave = np.asarray(wavelength_angstrom, dtype=np.float64)
+    data = np.asarray(v_over_i, dtype=np.float64) * (-1.0 if observed_convention == "iau" else 1.0)
+    sigma = np.asarray(sigma_v_over_i, dtype=np.float64)
+    model_wave = model.wavelength_angstrom
+    inside = (wave >= model_wave[0] + 10.0) & (wave <= model_wave[-1] - 10.0)
+    wave, data, sigma = wave[inside], data[inside], sigma[inside]
+    if resolution_fwhm_angstrom is None:
+        stokes_i, stokes_v = (
+            np.interp(wave, model_wave, flux)
+            for flux in (model.surface_flux_lambda, model.surface_flux_v_lambda)
+        )
+    else:
+        sigma_log = resolution_fwhm_angstrom / (2.0 * np.sqrt(2.0 * np.log(2.0))) / wave
+        stokes_i, stokes_v = (
+            convolve_variable_log_gaussian(model_wave, flux, wave, sigma_log)
+            for flux in (model.surface_flux_lambda, model.surface_flux_v_lambda)
+        )
+    prediction = stokes_v / stokes_i
+    valid = (
+        (wave >= window_angstrom[0])
+        & (wave <= window_angstrom[1])
+        & np.isfinite(data)
+        & np.isfinite(sigma)
+        & (sigma > 0.0)
+    )
+    d, m, s = data[valid], prediction[valid], sigma[valid]
+    # Cross-correlate on the observed grid; excluded pixels contribute zero.
+    x = np.where(valid, data - d.mean(), 0.0)
+    y = np.where(valid, prediction - m.mean(), 0.0)
+    correlation = np.correlate(x, y, mode="full")
+    peak = int(np.argmax(correlation))
+    lag = float(peak - (y.size - 1))
+    if 0 < peak < correlation.size - 1:
+        left, centre, right = correlation[peak - 1 : peak + 2]
+        lag += 0.5 * (left - right) / (left - 2.0 * centre + right)
+    return {
+        "chi2_v": float(np.mean(((d - m) / s) ** 2)),
+        "v_scale": float(np.sum(d * m / s**2) / np.sum(m**2 / s**2)),
+        "shift_angstrom": lag * float(np.median(np.diff(wave))),
+    }
+
+
 def comparison_arrays(
     key: str,
     model_wavelength_angstrom: ArrayLike,
@@ -552,5 +622,6 @@ __all__ = [
     "DAH_VALIDATION_TARGETS",
     "comparison_arrays",
     "load_dah_observation",
+    "score_dah_circular_polarization",
     "score_dah_spectrum",
 ]
