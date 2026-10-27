@@ -87,6 +87,8 @@ class DAHConfig:
 
     ``mixing_length_alpha=None`` selects the automatic policy: ML2/alpha=0.7
     below 0.05 MG and a radiative atmosphere at stronger fields.
+    ``return_stokes=True`` requires full transfer and uncompressed dipoles;
+    it returns optical-convention IQUV in a common observer sky basis.
     """
 
     effective_temperature: float = 16_700.0
@@ -117,6 +119,23 @@ class DAHConfig:
     # Append new fields to preserve the existing positional constructor.
     # Opt-in; takes precedence over disk_field_bins.
     disk_component_drift_angstrom: float | None = None
+    # Polarimetric output uses signed, uncompressed surface geometry.
+    return_stokes: bool = False
+    sky_position_angle_deg: float = 0.0
+
+
+def _validate_stokes_config(config: DAHConfig) -> None:
+    if not np.isfinite(config.sky_position_angle_deg):
+        raise ValueError("sky_position_angle_deg must be finite")
+    if config.sky_position_angle_deg != 0.0 and not config.return_stokes:
+        raise ValueError("sky_position_angle_deg requires return_stokes=True")
+    if config.return_stokes:
+        if config.polarized_transfer != "full-stokes-iquv":
+            raise ValueError("return_stokes requires polarized_transfer='full-stokes-iquv'")
+        if config.disk_component_drift_angstrom is not None:
+            raise ValueError("return_stokes does not support disk_component_drift_angstrom compression")
+        if config.field_geometry == "dipole" and config.disk_field_bins is not None:
+            raise ValueError("return_stokes requires disk_field_bins=None for a dipole")
 
 
 # The 2026 paper comparison (Section ``sec:dah``): zero-field EOS and bound-free
@@ -166,6 +185,7 @@ def dah_surface_cells(
     estimate is used, matching the selected synthesis data.
     """
 
+    _validate_stokes_config(config)
     drift = config.disk_component_drift_angstrom
     if drift is not None and (not np.isfinite(drift) or drift <= 0.0):
         raise ValueError("disk_component_drift_angstrom must be finite and positive")
@@ -175,7 +195,9 @@ def dah_surface_cells(
         if config.disk_component_drift_angstrom is not None:
             raise ValueError("disk_component_drift_angstrom applies to field_geometry='dipole'")
         return uniform_field_surface_cells(
-            config.magnetic_field_megagauss, field_angle_deg=config.field_angle_deg
+            config.magnetic_field_megagauss, field_angle_deg=config.field_angle_deg,
+            signed_geometry=config.return_stokes,
+            sky_position_angle_deg=config.sky_position_angle_deg,
         )
     if config.field_geometry == "dipole":
         if config.field_angle_deg is not None:
@@ -188,6 +210,8 @@ def dah_surface_cells(
             inclination_deg=config.dipole_inclination_deg,
             offset_vector_radius=tuple(config.dipole_offset_radius),  # type: ignore[arg-type]
             n_field_bins=config.disk_field_bins,
+            signed_geometry=config.return_stokes,
+            sky_position_angle_deg=config.sky_position_angle_deg,
         )
     raise ValueError("field_geometry must be 'uniform' or 'dipole'")
 
@@ -291,6 +315,7 @@ def structure_field_megagauss(cells: SurfaceCells) -> float:
 def _validate(config: DAHConfig) -> None:
     if not isinstance(config, DAHConfig):
         raise TypeError("compute_dah requires a DAHConfig")
+    _validate_stokes_config(config)
     if not np.isfinite(config.effective_temperature) or not (
         5_000.0 <= config.effective_temperature <= 40_000.0
     ):
@@ -342,9 +367,11 @@ def compute_dah(
     _validate(config)
     data = ModelData.default() if data is None else data
     # The structure (nonmagnetic or angle-averaged mean field) never depends on
-    # the transfer mode, so IQUV and scalar syntheses share one structure claim.
+    # the transfer mode, returned Stokes columns or observer sky axis. Retain
+    # the actual opacity/EOS choices while sharing one structure claim.
     request_fingerprint = model_request_fingerprint(
-        "DAH", replace(config, polarized_transfer="scalar-stokes-i"), data
+        "DAH", replace(config, polarized_transfer="scalar-stokes-i",
+                       return_stokes=False, sky_position_angle_deg=0.0), data
     )
     resolution = numerical_resolution(config.quality)
     wave = (
@@ -607,6 +634,7 @@ def compute_dah(
         polarized_transfer=config.polarized_transfer,
         n_angle=resolution.n_angle,
         progress=progress,
+        return_stokes=config.return_stokes,
     )
     return ModelResult(
         "DAH",
@@ -614,7 +642,7 @@ def compute_dah(
         spectrum,
         config,
         {
-            "preset": "DAH-optical-v4",
+            "preset": "DAH-optical-stokes-v1" if config.return_stokes else "DAH-optical-v4",
             "atmosphere_structure": structure_description,
             "structure_field_megagauss": (
                 structure_field if config.atmosphere_structure == "mean-field" and strong else 0.0

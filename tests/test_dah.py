@@ -524,7 +524,8 @@ def test_dah_physics_revision_invalidates_old_fixed_structure_claim(monkeypatch,
     assert not fixed.metadata["fixed_synthesis_request_verified"]
 
 
-def test_scalar_synthesis_shares_the_structure_claim_of_iquv(monkeypatch, atmosphere):
+@pytest.mark.parametrize("return_stokes", [False, True])
+def test_scalar_synthesis_shares_the_structure_claim_of_iquv(monkeypatch, atmosphere, return_stokes):
     import warnings
     import wd_spectra.models.dah as dah
 
@@ -540,13 +541,27 @@ def test_scalar_synthesis_shares_the_structure_claim_of_iquv(monkeypatch, atmosp
     config = DAHConfig(
         effective_temperature=atmosphere.effective_temperature, logg=atmosphere.logg,
         polarized_transfer="full-stokes-iquv",
+        return_stokes=return_stokes, sky_position_angle_deg=37. if return_stokes else 0.,
     )
     first = compute_dah(config, wave)
     second = compute_dah(
-        replace(config, polarized_transfer="scalar-stokes-i"), wave,
+        replace(config, polarized_transfer="scalar-stokes-i", return_stokes=False,
+                sky_position_angle_deg=0.), wave,
         initial_atmosphere=first.atmosphere, relax_atmosphere=False,
     )
     assert second.atmosphere.metadata["fixed_synthesis_request_verified"]
+    if return_stokes:
+        rotated = compute_dah(
+            replace(config, sky_position_angle_deg=83.), wave,
+            initial_atmosphere=first.atmosphere, relax_atmosphere=False,
+        )
+        assert rotated.atmosphere.metadata["fixed_synthesis_request_verified"]
+        assert rotated.metadata["model_request_fingerprint"] == first.metadata["model_request_fingerprint"]
+    changed_physics = compute_dah(
+        replace(config, include_rwa_photoionization=not config.include_rwa_photoionization), wave,
+        initial_atmosphere=first.atmosphere, relax_atmosphere=False,
+    )
+    assert not changed_physics.atmosphere.metadata["fixed_synthesis_request_verified"]
     other = compute_dah(
         replace(config, logg=config.logg + 0.1), wave,
         initial_atmosphere=first.atmosphere, relax_atmosphere=False,

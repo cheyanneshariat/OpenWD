@@ -56,6 +56,22 @@ class Spectrum:
         return (self.bolometric_flux / STEFAN_BOLTZMANN) ** 0.25
 
 
+@dataclass(frozen=True)
+class StokesSpectrum(Spectrum):
+    """Surface IQUV fluxes in one observer basis, in the same units as I.
+
+    Q is parallel minus perpendicular to the declared sky reference axis;
+    positive U is at 45 degrees counterclockwise when looking at the source.
+    Positive V is clockwise electric-vector rotation as seen facing the source
+    (Landi Degl'Innocenti, Bagnulo & Fossati 2007). These are fluxes, not Q/I,
+    U/I or V/I. The inherited ``surface_flux_lambda`` is Stokes I.
+    """
+
+    surface_flux_q_lambda: FloatArray
+    surface_flux_u_lambda: FloatArray
+    surface_flux_v_lambda: FloatArray
+
+
 def planck_lambda_angstrom(wavelength_angstrom: ArrayLike, temperature: ArrayLike) -> FloatArray:
     r"""Planck intensity ``B_lambda`` per Angstrom in cgs units.
 
