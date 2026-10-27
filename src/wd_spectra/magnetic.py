@@ -1245,23 +1245,33 @@ def _population_scale(reference: Atmosphere, local: Atmosphere) -> FloatArray:
     return (local_n2 / local.mass_density) / (reference_n2 / reference.mass_density)
 
 
-def _validate_stokes_cells(cells: SurfaceCells) -> None:
-    """Reject ambiguous or unphysical geometry before polarized synthesis."""
+def _validate_surface_cells(cells: SurfaceCells, *, require_azimuth: bool = False) -> None:
+    """Validate a user-supplied quadrature before any atmosphere or transfer work."""
 
-    if cells.field_azimuth_rad is None:
+    if not isinstance(cells, SurfaceCells):
+        raise TypeError("surface_cells must be a SurfaceCells instance")
+    if require_azimuth and cells.field_azimuth_rad is None:
         raise ValueError("return_stokes requires signed cells with field_azimuth_rad")
-    arrays = [np.asarray(x) for x in (
+    values = [
         cells.field_strength_megagauss, cells.field_ray_cosine, cells.ray_mu,
-        cells.projected_weight, cells.field_azimuth_rad,
-    )]
+        cells.projected_weight,
+    ]
+    if cells.field_azimuth_rad is not None:
+        values.append(cells.field_azimuth_rad)
+    if any(np.iscomplexobj(x) for x in values):
+        raise ValueError("surface cell arrays must be real")
+    try:
+        arrays = [np.asarray(x, dtype=np.float64) for x in values]
+    except (TypeError, ValueError) as error:
+        raise ValueError("surface cell arrays must be real numeric arrays") from error
     if (any(x.ndim != 1 or x.size == 0 or not np.all(np.isfinite(x)) for x in arrays)
             or any(x.shape != arrays[0].shape for x in arrays)):
-        raise ValueError("polarized cell arrays must be finite, nonempty, matching 1D arrays")
-    field, cosine, mu, weight, _ = arrays
+        raise ValueError("surface cell arrays must be finite, nonempty, matching 1D arrays")
+    field, cosine, mu, weight = arrays[:4]
     if (np.any(field < 0.0) or np.any(np.abs(cosine) > 1.0)
             or np.any(mu <= 0.0) or np.any(mu > 1.0) or np.any(weight < 0.0)
             or not np.isclose(np.sum(weight), 1.0, rtol=0.0, atol=1e-12)):
-        raise ValueError("polarized cells require B>=0, |cos|<=1, 0<mu<=1 and normalized nonnegative weights")
+        raise ValueError("surface cells require B>=0, |cos|<=1, 0<mu<=1 and normalized nonnegative weights")
     if cells.field_bounds_megagauss is not None:
         bounds = np.asarray(cells.field_bounds_megagauss)
         if (bounds.shape != (2,) or not np.all(np.isfinite(bounds))
@@ -1269,6 +1279,12 @@ def _validate_stokes_cells(cells: SurfaceCells) -> None:
                 or np.min(field) < bounds[0] * (1 - 1e-12)
                 or np.max(field) > bounds[1] * (1 + 1e-12)):
             raise ValueError("field bounds must contain all polarized cell fields")
+
+
+def _validate_stokes_cells(cells: SurfaceCells) -> None:
+    """Reject ambiguous or unphysical geometry before polarized synthesis."""
+
+    _validate_surface_cells(cells, require_azimuth=True)
 
 
 def _observer_polarization(q, u, v, azimuth):

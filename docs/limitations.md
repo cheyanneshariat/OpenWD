@@ -156,8 +156,10 @@ neutral self broadening, and translating a zero-field profile is not a
 simultaneous Stark–Zeeman calculation. Magnetic Lyman/Paschen/Brackett data,
 decentered atoms and strong-field molecular chemistry are absent. Opt-in
 disk-integrated Q/U/V use signed, uncompressed cells and a declared observer
-basis, but have not been validated against polarimetry. The coupled
-mean-field magnetic structure, full IQUV transfer and cyclotron opacity
+basis, but have not been validated against polarimetry. The public
+`compute_dah(..., surface_cells=...)` interface accepts custom maps;
+the caller supplies their phase dependence and checks surface resolution.
+The coupled mean-field magnetic structure, full IQUV transfer and cyclotron opacity
 remain explicit options. `paper_dah_config` retains the previous zero-field
 EOS and bound-free continuum prescription.
 The default 21 field bins can under-resolve rapidly moving magnetic line
