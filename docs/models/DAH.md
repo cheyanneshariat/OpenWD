@@ -326,7 +326,7 @@ supported by all comparison objects and remains off by default.
 
 ## Opt-in polarized output
 
-Set `return_stokes=True` together with full transfer. A dipole also requires
+Set `return_stokes=True` together with full transfer. A built-in dipole also requires
 `disk_field_bins=None`; drift-based compression is unsupported for polarization.
 The existing intensity calculation and two-column `spectrum.txt` remain the
 default when the option is off.
@@ -388,6 +388,23 @@ Converting V alone would leave the magneto-optical U sign inconsistent.
 This declared convention must still be matched to the convention of each
 observational reduction.
 
+In the IAU/IEEE convention, positive V is counterclockwise when facing the
+source; see [van Straten et al. (2010), section 2.1](https://arxiv.org/abs/0912.1662).
+With the **same sky axes**, convert the exported optical spectrum using
+`v_iau = -spectrum.surface_flux_v_lambda`; I, Q and U are unchanged.
+This differs from the native-local conversion above, which also changes U
+before rotating its local reference axis. Labels such as “right circular”
+are insufficient without specifying the viewing direction and convention.
+
+A controlled regression fixes the physical polarity using an isolated
+Gaussian Hβ normal triplet at 0.5 MG and a Milne–Eddington source increasing
+inward. A longitudinal field toward the observer gives positive optical V
+at the blue σ component and negative V at the red component; reversing the
+field reverses V while retaining I. The check compares the coupled transfer
+with an independent analytic circular-mode solution. Real Stark profiles
+can have additional reversals within a wing, so this benchmark is not a rule
+for the sign of every blue or red sample in a stellar spectrum.
+
 Signed dipole cells retain both polarities and their projected-field azimuths.
 Local Q/U are rotated into the common sky basis before the projected-area
 sum. Uniform models with `field_angle_deg=None` include balanced polarities
@@ -396,18 +413,71 @@ For a specified uniform direction, angles above 90° point away from the
 observer. Uncompressed dipoles need more transfer rays than the legacy
 21-bin calculation, so start with a short wavelength interval.
 
-For custom field/phase geometry, use `SurfaceCells` and
-`synthesize_magnetic_hydrogen_spectrum(..., return_stokes=True)` from
-`wd_spectra.magnetic`. Supply matching one-dimensional arrays for nonnegative
+### Custom surface maps
+
+Pass `surface_cells=` to `compute_dah` to supply a multipole or a map at a
+chosen rotation phase while retaining the public atmosphere and physics
+configuration:
+
+```python
+import numpy as np
+from wd_spectra import DAHConfig, compute_dah
+from wd_spectra.magnetic import SurfaceCells
+
+# Two cells illustrate the interface; qualify a stellar map's resolution.
+cells = SurfaceCells(
+    field_strength_megagauss=np.array([0.5, 0.5]),
+    field_ray_cosine=np.array([0.6, -0.6]),
+    ray_mu=np.array([0.4, 0.8]),
+    projected_weight=np.array([0.25, 0.75]),
+    field_azimuth_rad=np.array([0.1, 1.2]),
+)
+result = compute_dah(
+    DAHConfig(effective_temperature=15_000, logg=8.0,
+              polarized_transfer="full-stokes-iquv", return_stokes=True),
+    np.linspace(4800.0, 4930.0, 261),
+    surface_cells=cells,
+)
+```
+
+Supply matching one-dimensional arrays for nonnegative
 `field_strength_megagauss`, signed `field_ray_cosine` in [−1,1], `ray_mu` in
 (0,1], nonnegative `projected_weight` summing to one, and `field_azimuth_rad`
 measured counterclockwise from sky x facing the source. The weights already
 include projection; synthesis multiplies their sum by π, with no extra limb
-factor. `dipole_surface_cells(..., signed_geometry=True, n_field_bins=None)`
+factor. Azimuths may be omitted for intensity-only output. All arrays are
+validated and copied before atmosphere computation. Optional
+`field_bounds_megagauss=(minimum, maximum)` must enclose the supplied moduli;
+provide conservative bounds if the sampled cells omit a continuous extremum,
+and set `field_bounds_exact=False` for an inexact bound.
+
+The supplied map replaces the configuration's built-in uniform/dipole
+geometry controls, including `magnetic_field_megagauss` and `disk_field_bins`.
+Its maximum field selects the atomic regime, and its projected-area mean
+modulus controls convection and the optional mean-field magnetic structure.
+Temperature, gravity, quality and the opacity/EOS choices still come from
+`DAHConfig`. `sky_position_angle_deg` additionally rotates the supplied
+azimuths; `disk_component_drift_angstrom` is rejected for custom maps.
+The caller computes the phase-dependent map; rotation and Doppler shifts
+are not implemented by this argument.
+
+The actual field distribution, projected weights and bounds enter the
+atmosphere request identity. Changing only viewing angles or sky orientation
+allows reuse of a matching shared structure; changing its magnetic inputs
+invalidates that claim. Spectrum metadata saves the complete effective map
+and its `surface_geometry_sha256`, separately from
+`structure_geometry_sha256`, so the saved configuration's geometry defaults
+cannot be mistaken for the supplied cells. Use `save_model_result` to retain
+this metadata with an in-memory result.
+
+`dipole_surface_cells(..., signed_geometry=True, n_field_bins=None)`
 and `uniform_field_surface_cells(..., signed_geometry=True)` construct such
 cells. The former exposes `n_mu`/`n_azimuth` for surface-resolution checks.
 At a longitudinal field the projected axis is degenerate; any assigned
 azimuth gives the same result because local Q/U vanish.
+For diagnostic transfer on an atmosphere already in hand, the low-level
+`synthesize_magnetic_hydrogen_spectrum(..., return_stokes=True)` remains
+available from `wd_spectra.magnetic`.
 
 Analytic transfer, signed cancellation, basis rotation, zero-field and
 save/reload tests check this interface with both the current defaults and the
