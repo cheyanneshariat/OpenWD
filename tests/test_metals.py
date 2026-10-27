@@ -1499,6 +1499,30 @@ def test_metal_line_opacity_is_positive_and_peaks_at_resonance(atomic_root: Path
     assert np.all(absent == 0.0)
 
 
+def test_line_opacity_accepts_ions_without_a_tabulated_ionization_energy(atomic_root: Path):
+    # The ionization-energy table stops below the highest included stage for
+    # several elements (e.g. Sc IV, V IV); their lines must still be usable.
+    from dataclasses import replace
+
+    database = read_stout_atomic_database(
+        atomic_root, elements=("Mg",), maximum_charge=2
+    )
+    atmosphere = gray_helium_atmosphere(8000.0, 8.0, n_depth=8)
+    state = metal_lte_state(atmosphere, database, {"Mg": -7.0})
+    ion = replace(database.ions[("Mg", 0)], ionization_energy_ev=None)
+    center = ion.transitions[0].wavelength_vacuum_angstrom
+    wavelength = np.asarray([center - 10.0, center, center + 10.0])
+    opacity = metal_line_mass_absorption_coefficient(
+        atmosphere,
+        wavelength,
+        AtomicDatabase(MappingProxyType({("Mg", 0): ion})),
+        state,
+        maximum_lines=None,
+    )
+    assert np.all(np.isfinite(opacity))
+    assert np.all(opacity[1] > opacity[0])
+
+
 def test_explicit_transition_declaration_is_not_filtered_by_query_endpoints(
     monkeypatch, atomic_root: Path
 ):

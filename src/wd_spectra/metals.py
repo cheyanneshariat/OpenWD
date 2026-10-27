@@ -10004,7 +10004,12 @@ def metal_line_mass_absorption_coefficient(
         else:
             lower_parent_ev = upper_parent_ev = 0.0
         lower_binding_ev = upper_binding_ev = 0.0
-        if lower_parent_ev is not None and upper_parent_ev is not None:
+        # Binding energies are needed only by the quasi-static/Stark-mixing
+        # branch below; ions without a tabulated ionization energy never reach it.
+        if (
+            (quasistatic_series_rate is not None or stark_mixing is not None)
+            and lower_parent_ev is not None and upper_parent_ev is not None
+        ):
             lower_binding_ev = (
                 ion.ionization_energy_ev + lower_parent_ev
                 - lower_level.energy_wavenumber / EV_TO_WAVENUMBER
