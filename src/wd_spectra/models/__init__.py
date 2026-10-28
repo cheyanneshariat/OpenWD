@@ -2,6 +2,7 @@
 
 from .common import (
     AtmosphereConvergenceWarning,
+    DenseHeliumPhotosphereError,
     ModelData,
     ModelResult,
     NumericalResolution,
@@ -32,6 +33,7 @@ from .hot import DOConfig, DAOConfig, compute_do, compute_dao
 __all__ = [
     "DOConfig", "DAOConfig", "compute_do", "compute_dao",
     "AtmosphereConvergenceWarning",
+    "DenseHeliumPhotosphereError",
     "DAConfig",
     "DAZConfig",
     "DQConfig",

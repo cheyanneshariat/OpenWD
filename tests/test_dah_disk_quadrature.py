@@ -125,7 +125,8 @@ def test_new_option_preserves_positional_config_arguments():
     from dataclasses import fields
 
     assert fields(DAHConfig)[10].name == "atmosphere_structure"
-    assert fields(DAHConfig)[-1].name == "disk_component_drift_angstrom"
+    # Later opt-in fields may be appended; the original position stays fixed.
+    assert fields(DAHConfig)[20].name == "disk_component_drift_angstrom"
 
 
 def test_zero_field_drift_quadrature_is_finite():

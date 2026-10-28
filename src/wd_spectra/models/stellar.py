@@ -7,6 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from types import MappingProxyType
 from typing import Callable, Literal, Mapping
+import warnings
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -54,6 +55,7 @@ from ..spectrum import (
     synthesize_hydrogen_spectrum,
 )
 from .common import (
+    DenseHeliumPhotosphereError,
     ModelData,
     ModelResult,
     Quality,
@@ -988,6 +990,51 @@ def _db_helium_minus_share(config: DBConfig, n_depth: int) -> float:
     return float(np.max(share[outer]))
 
 
+def _refuse_dense_helium_photosphere(config: DBConfig, data: ModelData) -> None:
+    """Raise when `select_physics` would route this DB to the dense-helium workflow.
+
+    `compute_db` keeps the dilute Hummer--Mihalas helium EOS and atomic opacities.
+    Below roughly 8500 K at log g = 8 (higher at higher gravity) the neutral
+    photosphere is dense enough that this physics no longer applies; there the
+    same material screen used by `run_model` selects the dense-helium workflow.
+    """
+    from .selection import _helium_probe, dense_helium_indicated
+
+    try:
+        probe = _helium_probe(config, data)
+    except FileNotFoundError as error:
+        warnings.warn(
+            f"compute_db could not run the dense-helium photosphere screen ({error}); "
+            "continuing with the dilute helium physics",
+            RuntimeWarning,
+            stacklevel=3,
+        )
+        return
+    advice = (
+        "Use run_model(DBConfig(...), output_directory), which selects the "
+        "dense-helium workflow, or pass allow_dense_photosphere=True to "
+        "compute_db to force the dilute physics."
+    )
+    try:
+        dense = dense_helium_indicated(probe)
+    except ValueError as error:
+        if probe["reos_in_domain"]:
+            raise
+        raise DenseHeliumPhotosphereError(
+            f"compute_db: the neutral photosphere at Teff={config.effective_temperature:g} K, "
+            f"log g={config.logg:g} lies outside the He-REOS.3 table, so the dilute helium "
+            f"EOS cannot be checked there ({error}). {advice}"
+        ) from error
+    if dense:
+        raise DenseHeliumPhotosphereError(
+            f"compute_db uses the dilute (Hummer--Mihalas) helium EOS, but at "
+            f"Teff={config.effective_temperature:g} K, log g={config.logg:g} the gray-atmosphere "
+            f"photosphere (T={probe['temperature']:.0f} K, P={probe['gas_pressure']:.3g} dyn/cm^2) "
+            f"is neutral (electron fraction {probe['electron_fraction']:.1e}) and He-REOS.3 "
+            f"changes its density by {100*probe['density_fractional_change']:.0f}%. {advice}"
+        )
+
+
 def compute_db(
     config: DBConfig = DBConfig(),
     wavelength: ArrayLike | None = None,
@@ -999,8 +1046,16 @@ def compute_db(
         [int, Atmosphere, Mapping[str, object]], None
     ]
     | None = None,
+    allow_dense_photosphere: bool = False,
 ) -> ModelResult:
-    """Calculate one DB atmosphere and spectrum with Beauchamp25-LD lines."""
+    """Calculate one DB atmosphere and spectrum with Beauchamp25-LD lines.
+
+    This is the dilute-helium preset. Cool DBs whose neutral photosphere is
+    dense need the dense-helium workflow selected by `run_model`; relaxing such
+    a star here raises `DenseHeliumPhotosphereError` unless
+    `allow_dense_photosphere=True`. Fixed-structure synthesis
+    (`relax_atmosphere=False`) is not screened.
+    """
 
     if config.transfer_discretization not in ("auto", "column-mass", "optical-depth"):
         raise ValueError(
@@ -1015,6 +1070,8 @@ def compute_db(
         column_mass = config.transfer_discretization == "column-mass"
     discretization = "column-mass" if column_mass else "optical-depth"
     data = ModelData.default() if data is None else data
+    if relax_atmosphere and not allow_dense_photosphere:
+        _refuse_dense_helium_photosphere(config, data)
     request_fingerprint = model_request_fingerprint("DB", config, data)
     checkpoint_matches_request = atmosphere_matches_model_request(
         initial_atmosphere, request_fingerprint

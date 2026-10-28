@@ -68,6 +68,43 @@ one-dimensional LTE and local-convection approximations still matter.
 These are the archived paper curves; current synthesis defaults and their
 separate regression checks are described below.
 
+### Cool DAs
+
+Below about 6000 K the continuum is shaped mainly by the collision-broadened
+red wing of Ly-alpha in the ultraviolet and blue optical, and by H2--H2
+collision-induced absorption in the infrared. OpenWD builds the Ly-alpha wing
+below 9000 K from the quasi-static H--H and H--H2 profiles of
+[Rohrmann et al. (2011)](https://doi.org/10.1111/j.1365-2966.2010.17716.x), with
+the temperature dependence of the molecular wing from
+[Sahu et al. (2025)](https://arxiv.org/abs/2511.00151). Hydrogen photospheres
+stay far less dense than helium ones: at 3000 K and log g = 8 the density at
+Rosseland depth 2/3 is about 0.03 g cm^-3 (0.004 g cm^-3 at 4000 K), compared
+with about 1 g cm^-3 for pure helium. The DA EOS therefore has no dense-fluid
+corrections.
+
+[![Cool DA models compared with Tremblay et al. (2011) and the Montreal photometry](../assets/da-cool-comparison.png)](../assets/da-cool-comparison.pdf)
+
+[Download the cool-DA comparison (PDF)](../assets/da-cool-comparison.pdf).
+OpenWD models are fresh `run_model` production cold starts at 3000--6000 K and
+log g = 8. The top panel compares them with the 1D grid of
+[Tremblay et al. (2011)](https://doi.org/10.1088/0004-637X/730/2/128), and the
+bottom panel shows band-averaged fluxes relative to the Montreal synthetic
+photometry, which uses the models of
+[Blouin et al. (2018)](https://doi.org/10.3847/1538-4357/aad4a9) below 5000 K
+and of Tremblay et al. above. Bands more than 1000 times fainter than the peak
+of the spectral energy distribution are omitted.
+
+- At 5000 and 6000 K, OpenWD agrees with Tremblay et al. to within about 3% from
+  SDSS u to 2MASS Ks; GALEX bands differ by up to 10%.
+- At 4000 and 3000 K, OpenWD is fainter in GALEX NUV (by 25% and a factor of
+  about 2) and brighter in SDSS g (by 10% and 20%). Both reference grids use the
+  Ly-alpha wing of
+  [Kowalski & Saumon (2006)](https://doi.org/10.1086/509723), so this most
+  likely reflects the different wing; it is the main uncertainty of cool DA
+  models below about 4500 K.
+- In the near-infrared at 3000--4000 K, OpenWD lies between the two reference
+  grids and closer to Blouin et al.
+
 ## Radiative atmospheres with convection disabled
 
 Set `DAConfig(mixing_length_alpha=None)` to solve a radiative atmosphere.

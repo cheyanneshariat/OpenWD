@@ -57,7 +57,7 @@ from .magnetic_continuum import (
 )
 from .molecules import H2H2CollisionInducedAbsorptionTable
 from .opacity import BALMER_LINES, balmer_mass_absorption_coefficient
-from .spectrum import Spectrum
+from .spectrum import Spectrum, StokesSpectrum
 
 
 FloatArray = NDArray[np.float64]
@@ -662,6 +662,8 @@ class SurfaceCells:
 
     ``projected_weight`` sums to one; the surface flux is
     ``pi * sum(projected_weight * I(ray))``.
+    Polarimetric cells require signed ``field_ray_cosine`` and
+    ``field_azimuth_rad`` in one observer basis (z toward the observer).
     """
 
     field_strength_megagauss: FloatArray
@@ -672,6 +674,9 @@ class SurfaceCells:
     # For a caller-supplied set of rays only their sampled range is known.
     field_bounds_megagauss: tuple[float, float] | None = None
     field_bounds_exact: bool = False
+    # Present only for signed polarimetric geometry. Counterclockwise from
+    # the observer's positive-Q axis, looking at the source; z is toward us.
+    field_azimuth_rad: FloatArray | None = None
 
     @property
     def maximum_field_megagauss(self) -> float:
@@ -723,6 +728,8 @@ def uniform_field_surface_cells(
     field_angle_deg: float | None = None,
     n_mu: int = 4,
     n_direction: int = 3,
+    signed_geometry: bool = False,
+    sky_position_angle_deg: float = 0.0,
 ) -> SurfaceCells:
     """Constant field modulus over the disk.
 
@@ -730,9 +737,12 @@ def uniform_field_surface_cells(
     isotropic relative to each ray; Stokes I depends only on ``|cos psi|``,
     which is then uniform on [0, 1] and integrated with Gauss--Legendre
     nodes.  A specified angle applies to every ray.
+    ``signed_geometry=True`` retains polarity and the sky-plane azimuth;
+    unknown directions then average both polarities and orthogonal axes.
     """
 
     field = _validate_field(field_strength_megagauss)
+    sky_angle = _sky_position_angle(sky_position_angle_deg, signed_geometry)
     nodes, weights = np.polynomial.legendre.leggauss(int(n_mu))
     mu = 0.5 * (nodes + 1.0)
     mu_weight = 0.5 * weights * mu
@@ -745,8 +755,19 @@ def uniform_field_surface_cells(
         angle = float(field_angle_deg)
         if not np.isfinite(angle) or not 0.0 <= angle <= 180.0:
             raise ValueError("field_angle_deg must lie between 0 and 180 degrees")
-        cosine = np.asarray([abs(np.cos(np.deg2rad(angle)))])
+        value = np.cos(np.deg2rad(angle))
+        cosine = np.asarray([value if signed_geometry else abs(value)])
         direction_weight = np.asarray([1.0])
+    azimuth = None
+    if signed_geometry:
+        if field_angle_deg is None:
+            # Mirror the established |cos| quadrature and average two
+            # orthogonal transverse axes. This cancels isotropic Q/U/V.
+            cosine = np.tile(np.concatenate((cosine, -cosine)), 2)
+            direction_weight = np.tile(direction_weight, 4) / 4.0
+            azimuth = sky_angle + np.repeat([0.0, PI / 2.0], cosine.size // 2)
+        else:
+            azimuth = np.full(cosine.size, sky_angle)
     mu_grid, cosine_grid = np.meshgrid(mu, cosine, indexing="ij")
     weight = mu_weight[:, np.newaxis] * direction_weight[np.newaxis, :]
     return SurfaceCells(
@@ -755,7 +776,17 @@ def uniform_field_surface_cells(
         mu_grid.ravel(),
         weight.ravel() / np.sum(weight),
         (field, field), True,
+        None if azimuth is None else np.broadcast_to(azimuth, mu_grid.shape).ravel().copy(),
     )
+
+
+def _sky_position_angle(angle_deg: float, signed_geometry: bool) -> float:
+    angle = float(angle_deg)
+    if not np.isfinite(angle):
+        raise ValueError("sky_position_angle_deg must be finite")
+    if angle != 0.0 and not signed_geometry:
+        raise ValueError("sky_position_angle_deg requires signed_geometry=True")
+    return float(np.deg2rad(angle % 360.0))
 
 
 def dipole_surface_cells(
@@ -767,6 +798,8 @@ def dipole_surface_cells(
     n_mu: int | None = None,
     n_azimuth: int | None = None,
     n_field_bins: int | None = 21,
+    signed_geometry: bool = False,
+    sky_position_angle_deg: float = 0.0,
 ) -> SurfaceCells:
     """Discretize an offset dipole over the visible disk.
 
@@ -787,9 +820,15 @@ def dipole_surface_cells(
     cell. Compression never merges cells across the 1-MG atomic boundary.
     Continuous field bounds are retained independently: exact for axial
     offsets, conservative for transverse offsets.
+    ``signed_geometry=True`` requires ``n_field_bins=None`` and retains
+    field polarity and azimuth. ``sky_position_angle_deg`` rotates this
+    complete field map counterclockwise facing the source.
     """
 
     field = _validate_field(field_strength_megagauss)
+    sky_angle = _sky_position_angle(sky_position_angle_deg, signed_geometry)
+    if signed_geometry and n_field_bins is not None:
+        raise ValueError("signed_geometry requires n_field_bins=None; polarized compression is unsupported")
     inclination = float(inclination_deg)
     if not np.isfinite(inclination) or not 0.0 <= inclination <= 180.0:
         raise ValueError("inclination_deg must lie between 0 and 180 degrees")
@@ -840,11 +879,15 @@ def dipole_surface_cells(
     bounds = (bounds[0] * scale, bounds[1] * scale)
 
     flat_field = modulus.ravel()
-    flat_cosine = np.abs(cosine.ravel())
+    flat_cosine = cosine.ravel() if signed_geometry else np.abs(cosine.ravel())
     flat_mu = mu_grid.ravel()
     flat_weight = weight.ravel()
     if n_field_bins is None:
-        return SurfaceCells(flat_field, flat_cosine, flat_mu, flat_weight, bounds, bounds_exact)
+        return SurfaceCells(
+            flat_field, flat_cosine, flat_mu, flat_weight, bounds, bounds_exact,
+            (np.arctan2(vector[..., 1], vector[..., 0]).ravel() + sky_angle)
+            if signed_geometry else None,
+        )
     order = np.argsort(flat_field, kind="stable")
     cumulative = np.cumsum(flat_weight[order])
     bins = np.minimum((cumulative * n_field_bins).astype(int), n_field_bins - 1)
@@ -1033,6 +1076,8 @@ def field_binned_surface_cells(
     local opacity and source calculation in the spectrum synthesizer.
     """
 
+    if cells.field_azimuth_rad is not None:
+        raise ValueError("polarized surface cells cannot use intensity-only field compression")
     edges = np.asarray(edges_megagauss, dtype=np.float64)
     if (edges.ndim != 1 or edges.size < 2 or np.any(~np.isfinite(edges))
             or np.any(np.diff(edges) <= 0.0)):
@@ -1200,6 +1245,63 @@ def _population_scale(reference: Atmosphere, local: Atmosphere) -> FloatArray:
     return (local_n2 / local.mass_density) / (reference_n2 / reference.mass_density)
 
 
+def _validate_surface_cells(cells: SurfaceCells, *, require_azimuth: bool = False) -> None:
+    """Validate a user-supplied quadrature before any atmosphere or transfer work."""
+
+    if not isinstance(cells, SurfaceCells):
+        raise TypeError("surface_cells must be a SurfaceCells instance")
+    if require_azimuth and cells.field_azimuth_rad is None:
+        raise ValueError("return_stokes requires signed cells with field_azimuth_rad")
+    values = [
+        cells.field_strength_megagauss, cells.field_ray_cosine, cells.ray_mu,
+        cells.projected_weight,
+    ]
+    if cells.field_azimuth_rad is not None:
+        values.append(cells.field_azimuth_rad)
+    if any(np.iscomplexobj(x) for x in values):
+        raise ValueError("surface cell arrays must be real")
+    try:
+        arrays = [np.asarray(x, dtype=np.float64) for x in values]
+    except (TypeError, ValueError) as error:
+        raise ValueError("surface cell arrays must be real numeric arrays") from error
+    if (any(x.ndim != 1 or x.size == 0 or not np.all(np.isfinite(x)) for x in arrays)
+            or any(x.shape != arrays[0].shape for x in arrays)):
+        raise ValueError("surface cell arrays must be finite, nonempty, matching 1D arrays")
+    field, cosine, mu, weight = arrays[:4]
+    if (np.any(field < 0.0) or np.any(np.abs(cosine) > 1.0)
+            or np.any(mu <= 0.0) or np.any(mu > 1.0) or np.any(weight < 0.0)
+            or not np.isclose(np.sum(weight), 1.0, rtol=0.0, atol=1e-12)):
+        raise ValueError("surface cells require B>=0, |cos|<=1, 0<mu<=1 and normalized nonnegative weights")
+    if cells.field_bounds_megagauss is not None:
+        bounds = np.asarray(cells.field_bounds_megagauss)
+        if (bounds.shape != (2,) or not np.all(np.isfinite(bounds))
+                or bounds[0] < 0.0 or bounds[1] < bounds[0]
+                or np.min(field) < bounds[0] * (1 - 1e-12)
+                or np.max(field) > bounds[1] * (1 + 1e-12)):
+            raise ValueError("field bounds must contain all polarized cell fields")
+
+
+def _validate_stokes_cells(cells: SurfaceCells) -> None:
+    """Reject ambiguous or unphysical geometry before polarized synthesis."""
+
+    _validate_surface_cells(cells, require_azimuth=True)
+
+
+def _observer_polarization(q, u, v, azimuth):
+    """Convert native ray-plane QUV to the declared optical observer basis.
+
+    At chi=0 the standard red-minus-blue eta_V and rho_V are opposite to
+    OpenWD's native coefficients. T=diag(1,1,-1,-1) maps the entire native
+    transfer equation, including emission, to that convention; flipping V
+    alone would miss the magneto-optical U sign. Then rotate the local axis
+    at chi into the sky basis (inverse of an axes rotation by chi).
+    See Piskunov & Kochukhov 2002, Eqs. 6-7, and Landi et al. 2007, Eq. 9.
+    """
+
+    c, s = np.cos(2.0 * azimuth), np.sin(2.0 * azimuth)
+    return c * q + s * u, s * q - c * u, -v
+
+
 def synthesize_magnetic_hydrogen_spectrum(
     atmosphere: Atmosphere,
     wavelength_angstrom: ArrayLike,
@@ -1209,6 +1311,7 @@ def synthesize_magnetic_hydrogen_spectrum(
     polarized_transfer: PolarizedTransfer = "full-stokes-iquv",
     n_angle: int = 4,
     progress: object | None = None,
+    return_stokes: bool = False,
 ) -> Spectrum:
     """Return the disk-integrated Stokes-I surface flux of a DAH.
 
@@ -1220,6 +1323,9 @@ def synthesize_magnetic_hydrogen_spectrum(
     shared structure and rescaled by the local n=2 population per gram.
     Their widths retain the reference charged-particle density; local
     density differences can reach several percent for cool magnetic stars.
+    With ``return_stokes=True`` signed cells with azimuths are required;
+    return a ``StokesSpectrum`` in the optical observer convention. The
+    formal solver's native local U/V signs are converted before sky rotation.
     """
 
     from ._spectrum_source import solve_spectrum_source
@@ -1241,6 +1347,11 @@ def synthesize_magnetic_hydrogen_spectrum(
     if polarized_transfer not in ("full-stokes-iquv", "scalar-stokes-i"):
         raise ValueError("polarized_transfer must be 'full-stokes-iquv' or 'scalar-stokes-i'")
     polarized = polarized_transfer == "full-stokes-iquv"
+    if return_stokes:
+        if not polarized:
+            raise ValueError("return_stokes requires polarized_transfer='full-stokes-iquv'")
+        _validate_stokes_cells(cells)
+    polarization_flux = np.zeros((3, wavelength.size)) if return_stokes else None
     regime = physics.regime(cells.maximum_field_megagauss)
     cache: dict[str, object] = {}
     flux = np.zeros(wavelength.size)
@@ -1386,7 +1497,7 @@ def synthesize_magnetic_hydrogen_spectrum(
             emission[..., 0] = emission_i
             emission[..., 1] = thermal_q * planck + scattered_q * mean_intensity
             emission[..., 3] = thermal_v * planck + scattered_v * mean_intensity
-            intensity = emergent_stokes_specific_intensity(
+            stokes = emergent_stokes_specific_intensity(
                 local.column_mass,
                 extinction,
                 eta_q,
@@ -1397,7 +1508,8 @@ def synthesize_magnetic_hydrogen_spectrum(
                 mu,
                 emission_stokes=emission,
                 formal_solver="delo-linear",
-            ).i
+            )
+            intensity = stokes.i
         else:
             intensity = emergent_specific_intensity(
                 optical_depth_from_mass_opacity(local.column_mass, extinction),
@@ -1405,9 +1517,14 @@ def synthesize_magnetic_hydrogen_spectrum(
                 mu,
             )
         flux += cells.projected_weight[cell] * PI * intensity
+        if return_stokes:
+            q, u, v = _observer_polarization(
+                stokes.q, stokes.u, stokes.v, float(cells.field_azimuth_rad[cell])
+            )
+            polarization_flux += cells.projected_weight[cell] * PI * np.asarray((q, u, v))
         if callable(progress):
             progress(cell + 1, cells.projected_weight.size)
-    return Spectrum(
+    spectrum = Spectrum(
         wavelength,
         flux,
         {
@@ -1455,6 +1572,20 @@ def synthesize_magnetic_hydrogen_spectrum(
             "normalize_balmer_strength": physics.normalize_balmer_strength,
         },
     )
+    if not return_stokes:
+        return spectrum
+    metadata = dict(spectrum.metadata)
+    metadata.update({
+        "stokes_output_revision": "signed-sky-stokes-optical-v1",
+        "stokes_convention": "Landi Degl'Innocenti, Bagnulo & Fossati (2007), optical; V positive clockwise facing source",
+        "stokes_reference_axis": "observer sky x; azimuth counterclockwise facing source; z toward observer",
+        "stokes_native_conversion": "(I,Q,U,V)_local = (I,Q,-U,-V)_native, then rotate local Q/U to sky",
+        "surface_field_ray_cosine": cells.field_ray_cosine.tolist(),
+        "surface_ray_mu": cells.ray_mu.tolist(),
+        "surface_field_azimuth_rad": cells.field_azimuth_rad.tolist(),
+        "polarimetry_validated": False,
+    })
+    return StokesSpectrum(wavelength, flux, metadata, *polarization_flux)
 
 
 # ---------------------------------------------------------------------------

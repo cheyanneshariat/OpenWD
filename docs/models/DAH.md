@@ -313,15 +313,179 @@ transverse-mass weighting in both the EOS and RWA populations. Each can be
 switched off individually; the paper preset switches off all three.
 
 Full IQUV transfer includes dichroism and magneto-optical dispersion at each
-cell, but only disk-integrated Stokes I is returned. Full IQUV transfer works with both
+cell. By default only disk-integrated Stokes I is returned. Full IQUV transfer works with both
 line prescriptions: each magneto-optical profile is the Kramers–Kronig partner of
 its absorption profile, and template nodes that round to the same frequency
-are merged before the transform. The compressed geometry
-does not retain the azimuths needed for Q/U, and V has not been validated
-against polarimetry. `include_cyclotron_absorption=True` additionally uses
+are merged before the transform. Polarized output uses the separate signed
+geometry described below; the legacy compressed geometry is intensity-only.
+The predicted Q/U/V have not been validated against polarimetry.
+`include_cyclotron_absorption=True` additionally uses
 magneto-ionic free-free and Thomson coefficients with a Doppler-broadened
 cyclotron resonance. Its broad optical absorption at hundreds of MG is not
 supported by all comparison objects and remains off by default.
+
+## Opt-in polarized output
+
+Set `return_stokes=True` together with full transfer. A built-in dipole also requires
+`disk_field_bins=None`; drift-based compression is unsupported for polarization.
+The existing intensity calculation and two-column `spectrum.txt` remain the
+default when the option is off.
+
+Polarized output inherits the selected physics. `DAHConfig` uses RWA
+photoionization, the magnetic EOS and centered-motion populations above 1 MG;
+`paper_dah_config(..., return_stokes=True, polarized_transfer="full-stokes-iquv")`
+keeps the historical paper prescription. Selecting the returned Stokes columns
+or rotating the sky reference axis does not change the underlying atmosphere's
+request identity. Changing the opacity or EOS settings still invalidates a
+previous structure claim. The saved spectrum records its output convention as
+`stokes_output_revision="signed-sky-stokes-optical-v1"` separately from the
+atmosphere's physics revision.
+
+```python
+from wd_spectra import DAHConfig, run_model
+
+config = DAHConfig(
+    effective_temperature=15_000, logg=8.0,
+    magnetic_field_megagauss=0.5,
+    field_geometry="dipole", dipole_inclination_deg=60,
+    disk_field_bins=None,
+    polarized_transfer="full-stokes-iquv", return_stokes=True,
+    sky_position_angle_deg=30,
+)
+run = run_model(config, "results/dah-stokes", require_convergence=True)
+spectrum = run.spectrum  # StokesSpectrum, also a Spectrum
+i = spectrum.surface_flux_lambda
+q = spectrum.surface_flux_q_lambda
+u = spectrum.surface_flux_u_lambda
+v = spectrum.surface_flux_v_lambda
+```
+
+`compute_dah` returns the same `StokesSpectrum` inside its `ModelResult`.
+All four arrays are disk-integrated surface fluxes in
+erg s⁻¹ cm⁻² Å⁻¹. `run_model` saves `stokes.txt` with vacuum wavelength,
+I, Q, U, V, and reloads it through `run.spectrum`. Form Q/I, U/I and V/I
+from these summed arrays. An average of individual cell fractions generally
+differs from the disk fraction.
+
+The output adopts the optical convention of
+[Landi Degl'Innocenti, Bagnulo & Fossati (2007)](https://arxiv.org/abs/astro-ph/0610262):
+z points toward the observer, Q is parallel minus perpendicular to the chosen
+sky x-axis, positive U is at 45° counterclockwise from that axis when facing
+the source, and positive V is clockwise electric-vector rotation seen facing
+the source. The sky x-axis may be chosen as celestial north.
+`sky_position_angle_deg` rotates the field map counterclockwise from sky x;
+for the dipole it orients the projected dipole axis, and for a fixed uniform
+direction it gives the projected field azimuth. This is an instantaneous
+viewing geometry. A rotation phase model and Doppler velocities are not
+included.
+
+The formal solver's native local signs remain unchanged. In the normal-triplet
+limit its circular coefficients use blue minus red. The new output converts
+local `(I,Q,U,V)` to `(I,Q,-U,-V)` before the sky rotation. This maps the
+whole propagation/emission system to the red-minus-blue coefficients of
+[Piskunov & Kochukhov (2002), Eqs. 6–7](https://doi.org/10.1051/0004-6361:20011517).
+Converting V alone would leave the magneto-optical U sign inconsistent.
+This declared convention must still be matched to the convention of each
+observational reduction.
+
+In the IAU/IEEE convention, positive V is counterclockwise when facing the
+source; see [van Straten et al. (2010), section 2.1](https://arxiv.org/abs/0912.1662).
+With the **same sky axes**, convert the exported optical spectrum using
+`v_iau = -spectrum.surface_flux_v_lambda`; I, Q and U are unchanged.
+This differs from the native-local conversion above, which also changes U
+before rotating its local reference axis. Labels such as “right circular”
+are insufficient without specifying the viewing direction and convention.
+
+A controlled regression fixes the physical polarity using an isolated
+Gaussian Hβ normal triplet at 0.5 MG and a Milne–Eddington source increasing
+inward. A longitudinal field toward the observer gives positive optical V
+at the blue σ component and negative V at the red component; reversing the
+field reverses V while retaining I. The check compares the coupled transfer
+with an independent analytic circular-mode solution. Real Stark profiles
+can have additional reversals within a wing, so this benchmark is not a rule
+for the sign of every blue or red sample in a stellar spectrum.
+
+Signed dipole cells retain both polarities and their projected-field azimuths.
+Local Q/U are rotated into the common sky basis before the projected-area
+sum. Uniform models with `field_angle_deg=None` include balanced polarities
+and orthogonal projected axes; their isotropic average gives zero Q/U/V.
+For a specified uniform direction, angles above 90° point away from the
+observer. Uncompressed dipoles need more transfer rays than the legacy
+21-bin calculation, so start with a short wavelength interval.
+
+### Custom surface maps
+
+Pass `surface_cells=` to `compute_dah` to supply a multipole or a map at a
+chosen rotation phase while retaining the public atmosphere and physics
+configuration:
+
+```python
+import numpy as np
+from wd_spectra import DAHConfig, compute_dah
+from wd_spectra.magnetic import SurfaceCells
+
+# Two cells illustrate the interface; qualify a stellar map's resolution.
+cells = SurfaceCells(
+    field_strength_megagauss=np.array([0.5, 0.5]),
+    field_ray_cosine=np.array([0.6, -0.6]),
+    ray_mu=np.array([0.4, 0.8]),
+    projected_weight=np.array([0.25, 0.75]),
+    field_azimuth_rad=np.array([0.1, 1.2]),
+)
+result = compute_dah(
+    DAHConfig(effective_temperature=15_000, logg=8.0,
+              polarized_transfer="full-stokes-iquv", return_stokes=True),
+    np.linspace(4800.0, 4930.0, 261),
+    surface_cells=cells,
+)
+```
+
+Supply matching one-dimensional arrays for nonnegative
+`field_strength_megagauss`, signed `field_ray_cosine` in [−1,1], `ray_mu` in
+(0,1], nonnegative `projected_weight` summing to one, and `field_azimuth_rad`
+measured counterclockwise from sky x facing the source. The weights already
+include projection; synthesis multiplies their sum by π, with no extra limb
+factor. Azimuths may be omitted for intensity-only output. All arrays are
+validated and copied before atmosphere computation. Optional
+`field_bounds_megagauss=(minimum, maximum)` must enclose the supplied moduli;
+provide conservative bounds if the sampled cells omit a continuous extremum,
+and set `field_bounds_exact=False` for an inexact bound.
+
+The supplied map replaces the configuration's built-in uniform/dipole
+geometry controls, including `magnetic_field_megagauss` and `disk_field_bins`.
+Its maximum field selects the atomic regime, and its projected-area mean
+modulus controls convection and the optional mean-field magnetic structure.
+Temperature, gravity, quality and the opacity/EOS choices still come from
+`DAHConfig`. `sky_position_angle_deg` additionally rotates the supplied
+azimuths; `disk_component_drift_angstrom` is rejected for custom maps.
+The caller computes the phase-dependent map; rotation and Doppler shifts
+are not implemented by this argument.
+
+The actual field distribution, projected weights and bounds enter the
+atmosphere request identity. Changing only viewing angles or sky orientation
+allows reuse of a matching shared structure; changing its magnetic inputs
+invalidates that claim. Spectrum metadata saves the complete effective map
+and its `surface_geometry_sha256`, separately from
+`structure_geometry_sha256`, so the saved configuration's geometry defaults
+cannot be mistaken for the supplied cells. Use `save_model_result` to retain
+this metadata with an in-memory result.
+
+`dipole_surface_cells(..., signed_geometry=True, n_field_bins=None)`
+and `uniform_field_surface_cells(..., signed_geometry=True)` construct such
+cells. The former exposes `n_mu`/`n_azimuth` for surface-resolution checks.
+At a longitudinal field the projected axis is degenerate; any assigned
+azimuth gives the same result because local Q/U vanish.
+For diagnostic transfer on an atmosphere already in hand, the low-level
+`synthesize_magnetic_hydrogen_spectrum(..., return_stokes=True)` remains
+available from `wd_spectra.magnetic`.
+
+Analytic transfer, signed cancellation, basis rotation, zero-field and
+save/reload tests check this interface with both the current defaults and the
+paper prescription. They do not establish accuracy of
+high-field polarized line profiles. Check depth, wavelength and surface
+resolution for a target; the raw default grid has no universal polarimetric
+error bound. The shared atmosphere and line-profile approximations below
+still apply. Output metadata explicitly records `polarimetry_validated=False`.
 
 ## Limitations and references
 
@@ -332,7 +496,8 @@ H2db substitutes for their component data. The accepted input range
 than the tested sample; table coverage does not establish physical accuracy.
 At high fields, stationary components can have widths quite unlike a
 translated zero-field profile. Magnetic Lyman/Paschen/Brackett data,
-thermally decentered atoms and polarimetric output are absent. Strong-field
+thermally decentered atoms are absent. Polarimetric output remains unvalidated
+against observations. Strong-field
 molecular chemistry is absent, which limits cool-star applications.
 Agreement with eight objects does not guarantee an unbiased parameter fit.
 The RWA bound-free opacity is an approximation (rigid wavefunctions); it is

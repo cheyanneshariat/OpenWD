@@ -249,6 +249,29 @@ def test_workflow_preserves_full_cold_dispatch_and_has_no_duplicate_push_trigger
     assert "if: github.event_name == 'pull_request'" in workflow
 
 
+def test_preflight_tiers_are_independent_and_both_gate_atmosphere_jobs():
+    workflow = (ROOT / ".github/workflows/canaries.yml").read_text()
+    preflight = workflow.split("  preflight:\n", 1)[1].split("\n  cold-model:", 1)[0]
+    tiers = re.search(r"tier:\s*\[([^\]]+)\]", preflight)
+    assert tiers, "complete fast and spectral tiers need independent preflight workers"
+    assert [tier.strip() for tier in tiers[1].split(",")] == ["fast", "spectra"]
+    assert "fail-fast: false" in preflight
+    assert "needs: plan" in preflight
+    assert "if: needs.plan.outputs.requested == 'true'" in preflight
+    commands = re.findall(r"^\s+- run: (python tools/validate.py .+)$", preflight, re.MULTILINE)
+    assert len(commands) == 1 and "'${{ matrix.tier }}'" in commands[0]
+    assert "--case" not in commands[0]  # Neither full tier may be filtered.
+    assert "--output 'results/preflight-${{ matrix.tier }}'" in commands[0]
+    assert "if: always()" in preflight  # Keep failed or interrupted diagnostics.
+    assert "name: qualification-preflight-${{ matrix.tier }}" in preflight
+    assert "path: results/preflight-${{ matrix.tier }}" in preflight
+    cold = workflow.split("  cold-model:\n", 1)[1].split("\n  d6-regression:", 1)[0]
+    warm = workflow.split("  d6-regression:\n", 1)[1].split("\n  qualification:", 1)[0]
+    assert "needs: [plan, preflight]" in cold
+    assert "needs: preflight" in warm
+    assert 'test "$PREFLIGHT_RESULT" = success' in workflow
+
+
 def test_d6_matrix_runs_every_version_with_separate_artifacts_and_unchanged_guards():
     workflow = (ROOT / ".github/workflows/canaries.yml").read_text()
     job = workflow.split("  d6-regression:\n", 1)[1].split("\n  qualification:", 1)[0]

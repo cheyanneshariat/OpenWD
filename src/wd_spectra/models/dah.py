@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+import hashlib
+import json
 from types import MappingProxyType
 from typing import Callable, Literal, Mapping
 
@@ -19,6 +21,7 @@ from ..magnetic import (
     field_binned_surface_cells,
     MagneticPhysics,
     SurfaceCells,
+    _validate_surface_cells,
     default_magnetic_da_wavelength_grid,
     dipole_surface_cells,
     h2db_component_wavelengths,
@@ -87,6 +90,8 @@ class DAHConfig:
 
     ``mixing_length_alpha=None`` selects the automatic policy: ML2/alpha=0.7
     below 0.05 MG and a radiative atmosphere at stronger fields.
+    ``return_stokes=True`` requires full transfer and uncompressed dipoles;
+    it returns optical-convention IQUV in a common observer sky basis.
     """
 
     effective_temperature: float = 16_700.0
@@ -117,6 +122,24 @@ class DAHConfig:
     # Append new fields to preserve the existing positional constructor.
     # Opt-in; takes precedence over disk_field_bins.
     disk_component_drift_angstrom: float | None = None
+    # Polarimetric output uses signed, uncompressed surface geometry.
+    return_stokes: bool = False
+    sky_position_angle_deg: float = 0.0
+
+
+def _validate_stokes_config(config: DAHConfig, *, custom_surface_cells: bool = False) -> None:
+    if not np.isfinite(config.sky_position_angle_deg):
+        raise ValueError("sky_position_angle_deg must be finite")
+    if config.sky_position_angle_deg != 0.0 and not config.return_stokes:
+        raise ValueError("sky_position_angle_deg requires return_stokes=True")
+    if config.return_stokes:
+        if config.polarized_transfer != "full-stokes-iquv":
+            raise ValueError("return_stokes requires polarized_transfer='full-stokes-iquv'")
+        if config.disk_component_drift_angstrom is not None and not custom_surface_cells:
+            raise ValueError("return_stokes does not support disk_component_drift_angstrom compression")
+        if (not custom_surface_cells and config.field_geometry == "dipole"
+                and config.disk_field_bins is not None):
+            raise ValueError("return_stokes requires disk_field_bins=None for a dipole")
 
 
 # The 2026 paper comparison (Section ``sec:dah``): zero-field EOS and bound-free
@@ -166,6 +189,7 @@ def dah_surface_cells(
     estimate is used, matching the selected synthesis data.
     """
 
+    _validate_stokes_config(config)
     drift = config.disk_component_drift_angstrom
     if drift is not None and (not np.isfinite(drift) or drift <= 0.0):
         raise ValueError("disk_component_drift_angstrom must be finite and positive")
@@ -175,7 +199,9 @@ def dah_surface_cells(
         if config.disk_component_drift_angstrom is not None:
             raise ValueError("disk_component_drift_angstrom applies to field_geometry='dipole'")
         return uniform_field_surface_cells(
-            config.magnetic_field_megagauss, field_angle_deg=config.field_angle_deg
+            config.magnetic_field_megagauss, field_angle_deg=config.field_angle_deg,
+            signed_geometry=config.return_stokes,
+            sky_position_angle_deg=config.sky_position_angle_deg,
         )
     if config.field_geometry == "dipole":
         if config.field_angle_deg is not None:
@@ -188,6 +214,8 @@ def dah_surface_cells(
             inclination_deg=config.dipole_inclination_deg,
             offset_vector_radius=tuple(config.dipole_offset_radius),  # type: ignore[arg-type]
             n_field_bins=config.disk_field_bins,
+            signed_geometry=config.return_stokes,
+            sky_position_angle_deg=config.sky_position_angle_deg,
         )
     raise ValueError("field_geometry must be 'uniform' or 'dipole'")
 
@@ -247,7 +275,8 @@ RWA_VALIDATED_FIELD_MEGAGAUSS = 200.0
 EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS = 100.0
 
 
-def _domain_notes(config: DAHConfig, cells: SurfaceCells, strong: bool) -> list[str]:
+def _domain_notes(config: DAHConfig, cells: SurfaceCells, strong: bool,
+                  *, custom_surface_cells: bool = False) -> list[str]:
     """Documented approximations that apply to this particular request."""
 
     maximum = cells.maximum_field_megagauss
@@ -269,7 +298,8 @@ def _domain_notes(config: DAHConfig, cells: SurfaceCells, strong: bool) -> list[
             "flux-error bound or validation of magnetic continuum/structure physics"
         )
     if (
-        config.field_geometry == "dipole"
+        not custom_surface_cells
+        and config.field_geometry == "dipole"
         and config.disk_component_drift_angstrom is None
         and config.disk_field_bins is not None
         and maximum > EQUAL_WEIGHT_BIN_COMB_FIELD_MEGAGAUSS
@@ -288,9 +318,10 @@ def structure_field_megagauss(cells: SurfaceCells) -> float:
     return float(np.sum(cells.projected_weight * cells.field_strength_megagauss))
 
 
-def _validate(config: DAHConfig) -> None:
+def _validate(config: DAHConfig, *, custom_surface_cells: bool = False) -> None:
     if not isinstance(config, DAHConfig):
         raise TypeError("compute_dah requires a DAHConfig")
+    _validate_stokes_config(config, custom_surface_cells=custom_surface_cells)
     if not np.isfinite(config.effective_temperature) or not (
         5_000.0 <= config.effective_temperature <= 40_000.0
     ):
@@ -309,10 +340,81 @@ def _validate(config: DAHConfig) -> None:
     if config.polarized_transfer not in ("full-stokes-iquv", "scalar-stokes-i"):
         raise ValueError("polarized_transfer must be 'full-stokes-iquv' or 'scalar-stokes-i'")
     drift = config.disk_component_drift_angstrom
+    if custom_surface_cells and drift is not None:
+        raise ValueError("custom surface_cells do not support disk_component_drift_angstrom compression")
     if drift is not None and (not np.isfinite(drift) or drift <= 0.0):
         raise ValueError("disk_component_drift_angstrom must be finite and positive")
     if drift is not None and config.field_geometry != "dipole":
         raise ValueError("disk_component_drift_angstrom applies to field_geometry='dipole'")
+
+
+def _snapshot_surface_cells(cells: SurfaceCells, config: DAHConfig) -> SurfaceCells:
+    """Own immutable numeric inputs so callbacks cannot change a recorded map."""
+
+    if not isinstance(cells, SurfaceCells):
+        raise TypeError("surface_cells must be a SurfaceCells instance")
+    arrays = {}
+    for name in ("field_strength_megagauss", "field_ray_cosine", "ray_mu",
+                 "projected_weight", "field_azimuth_rad"):
+        value = getattr(cells, name)
+        if name == "field_azimuth_rad" and value is None:
+            arrays[name] = None
+            continue
+        if np.iscomplexobj(value):
+            raise ValueError("surface cell arrays must be real")
+        try:
+            array = np.array(value, dtype=np.float64, copy=True)
+        except (TypeError, ValueError) as error:
+            raise ValueError("surface cell arrays must be real numeric arrays") from error
+        if name == "field_azimuth_rad":
+            array += np.deg2rad(config.sky_position_angle_deg % 360.)
+        array.setflags(write=False)
+        arrays[name] = array
+    bounds = cells.field_bounds_megagauss
+    if bounds is not None:
+        if np.iscomplexobj(bounds):
+            raise ValueError("field bounds must be real")
+        try:
+            array = np.asarray(bounds, dtype=np.float64)
+        except (TypeError, ValueError) as error:
+            raise ValueError("field bounds must be two real numbers") from error
+        if array.shape != (2,):
+            raise ValueError("field bounds must be two real numbers")
+        bounds = tuple(float(x) for x in array)
+    snapshot = replace(cells, **arrays, field_bounds_megagauss=bounds,
+                       field_bounds_exact=bool(cells.field_bounds_exact))
+    _validate_surface_cells(snapshot, require_azimuth=config.return_stokes)
+    return snapshot
+
+
+def _surface_cells_sha256(cells: SurfaceCells, *, structure_only: bool = False) -> str:
+    """Separate the shared structure inputs from the complete transfer map."""
+
+    descriptor = dict(schema="dah-custom-structure-v1" if structure_only else "dah-custom-map-v1",
+        cells=int(cells.projected_weight.size), bounds=cells.field_bounds_megagauss,
+        bounds_exact=cells.field_bounds_exact)
+    digest = hashlib.sha256(json.dumps(descriptor, sort_keys=True, allow_nan=False).encode())
+    names = ["field_strength_megagauss", "projected_weight"]
+    if not structure_only:
+        names += ["field_ray_cosine", "ray_mu", "field_azimuth_rad"]
+    for name in names:
+        digest.update(name.encode("ascii") + b"\0")
+        value = getattr(cells, name)
+        digest.update(b"none" if value is None else np.asarray(value, dtype="<f8").tobytes(order="C"))
+    return digest.hexdigest()
+
+
+def _structure_request_config(config: DAHConfig, *, custom_surface_cells: bool) -> DAHConfig:
+    options = dict(polarized_transfer="scalar-stokes-i", return_stokes=False, sky_position_angle_deg=0.)
+    if custom_surface_cells:
+        # A supplied map replaces the built-in geometry controls. The actual
+        # field distribution/weights/bounds are identified separately below.
+        defaults = DAHConfig()
+        for name in ("magnetic_field_megagauss", "field_geometry", "field_angle_deg",
+                     "field_strength_definition", "dipole_inclination_deg", "dipole_offset_radius",
+                     "disk_field_bins", "disk_component_drift_angstrom"):
+            options[name] = getattr(defaults, name)
+    return replace(config, **options)
 
 
 def compute_dah(
@@ -325,6 +427,7 @@ def compute_dah(
     iteration_callback: Callable[[int, Atmosphere, Mapping[str, object]], None]
     | None = None,
     progress: Callable[[int, int], None] | None = None,
+    surface_cells: SurfaceCells | None = None,
 ) -> ModelResult:
     """Compute a DA structure and its disk-integrated magnetic optical spectrum.
 
@@ -337,15 +440,29 @@ def compute_dah(
     ``atmosphere_structure="mean-field"`` instead relaxes the strong-field
     structure using the configured magnetic opacities at the projected-area
     mean field. Both modes use the shared adaptive Newton solver.
+
+    ``surface_cells`` supplies a custom visible-disk quadrature in place of
+    the built-in geometry controls. Its actual fields, projected weights and
+    bounds determine the shared structure; its ray directions and azimuths
+    determine the spectrum. ``sky_position_angle_deg`` additionally rotates
+    its supplied sky azimuths. Polarized output requires those azimuths.
+    Drift compression is unsupported for custom maps.
     """
 
-    _validate(config)
+    custom_geometry = surface_cells is not None
+    _validate(config, custom_surface_cells=custom_geometry)
+    custom_cells = _snapshot_surface_cells(surface_cells, config) if surface_cells is not None else None
     data = ModelData.default() if data is None else data
     # The structure (nonmagnetic or angle-averaged mean field) never depends on
-    # the transfer mode, so IQUV and scalar syntheses share one structure claim.
-    request_fingerprint = model_request_fingerprint(
-        "DAH", replace(config, polarized_transfer="scalar-stokes-i"), data
-    )
+    # the transfer mode, returned Stokes columns or observer sky axis. Retain
+    # the actual opacity/EOS choices while sharing one structure claim.
+    identity_options = {} if custom_cells is None else {
+        "physical_data_identity": {
+            "dah_custom_structure_sha256": _surface_cells_sha256(custom_cells, structure_only=True)
+        }
+    }
+    request_fingerprint = model_request_fingerprint("DAH",
+        _structure_request_config(config, custom_surface_cells=custom_geometry), data, **identity_options)
     resolution = numerical_resolution(config.quality)
     wave = (
         default_magnetic_da_wavelength_grid()
@@ -367,7 +484,8 @@ def compute_dah(
         )
     # The continuous field bounds (and so the atomic regime) do not depend on
     # the compression; a drift-resolved disk is built once the data are read.
-    cells = dah_surface_cells(replace(config, disk_component_drift_angstrom=None))
+    cells = (custom_cells if custom_cells is not None
+             else dah_surface_cells(replace(config, disk_component_drift_angstrom=None)))
     maximum_field = cells.maximum_field_megagauss
     strong = maximum_field > WEAK_FIELD_MAXIMUM_MEGAGAUSS
     structure_field = structure_field_megagauss(cells)
@@ -388,7 +506,8 @@ def compute_dah(
         data.require(data.h2db_balmer_subset)
         transitions = read_h2db_transition_database(data.h2db_balmer_subset)
         energies = read_h2db_energy_database(data.h2db_balmer_subset)
-    if config.disk_component_drift_angstrom is not None and config.field_geometry == "dipole":
+    if (not custom_geometry and config.disk_component_drift_angstrom is not None
+            and config.field_geometry == "dipole"):
         # Components just outside the output window still contribute wings.
         cells = dah_surface_cells(
             config,
@@ -607,14 +726,43 @@ def compute_dah(
         polarized_transfer=config.polarized_transfer,
         n_angle=resolution.n_angle,
         progress=progress,
+        return_stokes=config.return_stokes,
     )
+    geometry_metadata = {}
+    if custom_cells is not None:
+        geometry_metadata = {
+            "surface_geometry_source": "surface_cells",
+            "surface_geometry_sha256": _surface_cells_sha256(cells),
+            "structure_geometry_sha256": _surface_cells_sha256(cells, structure_only=True),
+        }
+        spectrum = replace(spectrum, metadata={**spectrum.metadata, **geometry_metadata,
+            "surface_field_ray_cosine": cells.field_ray_cosine.tolist(),
+            "surface_ray_mu": cells.ray_mu.tolist(),
+            "surface_field_azimuth_rad": (None if cells.field_azimuth_rad is None
+                                          else cells.field_azimuth_rad.tolist()),
+            "surface_field_bounds_megagauss": cells.field_bounds_megagauss,
+            "surface_field_bounds_exact": cells.field_bounds_exact,
+        })
+    if custom_geometry:
+        disk_quadrature = f"{cells.projected_weight.size} caller-supplied surface cells"
+    elif config.disk_component_drift_angstrom is not None:
+        disk_quadrature = (
+            f"{np.unique(cells.field_strength_megagauss).size} field bins with Balmer-component drift "
+            f"target {config.disk_component_drift_angstrom:g} A (estimated); "
+            f"{cells.projected_weight.size} limb rays"
+        )
+    elif config.field_geometry == "dipole" and config.disk_field_bins is not None:
+        disk_quadrature = f"{cells.projected_weight.size} equal-weight field bins"
+    else:
+        disk_quadrature = f"{cells.projected_weight.size} cells"
     return ModelResult(
         "DAH",
         atmosphere,
         spectrum,
         config,
         {
-            "preset": "DAH-optical-v4",
+            **geometry_metadata,
+            "preset": "DAH-optical-stokes-v1" if config.return_stokes else "DAH-optical-v4",
             "atmosphere_structure": structure_description,
             "structure_field_megagauss": (
                 structure_field if config.atmosphere_structure == "mean-field" and strong else 0.0
@@ -635,17 +783,7 @@ def compute_dah(
             "disk_limb_bins_per_field": (
                 DRIFT_RESOLVED_LIMB_BINS if config.disk_component_drift_angstrom is not None else None
             ),
-            "disk_quadrature": (
-                f"{np.unique(cells.field_strength_megagauss).size} field bins with Balmer-component drift "
-                f"target {config.disk_component_drift_angstrom:g} A (estimated); "
-                f"{cells.projected_weight.size} limb rays"
-                if config.disk_component_drift_angstrom is not None
-                else (
-                    f"{cells.projected_weight.size} equal-weight field bins"
-                    if config.field_geometry == "dipole" and config.disk_field_bins is not None
-                    else f"{cells.projected_weight.size} cells"
-                )
-            ),
+            "disk_quadrature": disk_quadrature,
             "convection": (
                 "suppressed; radiative equilibrium"
                 if mixing_length_alpha is None
@@ -662,7 +800,7 @@ def compute_dah(
             ),
             "line_physics": spectrum.metadata["magnetic_line_regime"],
             "transfer": spectrum.metadata["polarized_transfer"],
-            "domain_notes": _domain_notes(config, cells, strong),
+            "domain_notes": _domain_notes(config, cells, strong, custom_surface_cells=custom_geometry),
             "atmosphere_convergence_status": convergence_status,
             "model_request_fingerprint": request_fingerprint,
             "limitations": (

@@ -133,6 +133,10 @@ def one_shot_main(spectral_type: str) -> None:
                             help="dipole offset in stellar radii, magnetic-axis frame")
         parser.add_argument("--transfer", choices=("full-stokes-iquv", "scalar-stokes-i"),
                             default=DAHConfig().polarized_transfer)
+        parser.add_argument("--return-stokes", action="store_true",
+                            help="save signed disk IQUV in stokes.txt; requires --transfer full-stokes-iquv")
+        parser.add_argument("--sky-position-angle", type=float, default=0.0,
+                            help="field map position angle (deg), counterclockwise facing source")
         parser.add_argument("--compare", default=None,
                             help="score against a bundled validation target, e.g. j2149-0728")
     if kind == "PG1159":
@@ -205,6 +209,9 @@ def one_shot_main(spectral_type: str) -> None:
             dipole_inclination_deg=args.inclination,
             dipole_offset_radius=tuple(args.offset),
             polarized_transfer=args.transfer,
+            return_stokes=args.return_stokes,
+            sky_position_angle_deg=args.sky_position_angle,
+            disk_field_bins=None if args.return_stokes else defaults.disk_field_bins,
             quality=args.quality,
         )
 

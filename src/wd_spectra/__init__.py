@@ -2,6 +2,7 @@
 
 from .models import (
     AtmosphereConvergenceWarning,
+    DenseHeliumPhotosphereError,
     DAConfig,
     DAZConfig,
     DQConfig,
@@ -82,6 +83,7 @@ from .opacity import hydrogen_dissolved_level_pseudocontinuum_mass_absorption_co
 from .radiative_transfer import compiled_backend_available, emergent_flux
 from .spectrum import (
     Spectrum,
+    StokesSpectrum,
     planck_lambda_angstrom,
     synthesize_balmer_spectrum,
     synthesize_gray_spectrum,
@@ -104,6 +106,7 @@ __all__ = [
     "DOConfig", "DAOConfig", "compute_do", "compute_dao",
     "Atmosphere",
     "AtmosphereConvergenceWarning",
+    "DenseHeliumPhotosphereError",
     "BarklemSelfBroadeningTable",
     "DAConfig",
     "DAZConfig",
@@ -121,6 +124,7 @@ __all__ = [
     "select_physics",
     "run_model",
     "Spectrum",
+    "StokesSpectrum",
     "atmosphere_with_tremblay_2013_mean_3d_temperature_difference",
     "atmosphere_convergence_status",
     "compiled_backend_available",
