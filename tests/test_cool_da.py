@@ -88,8 +88,9 @@ def test_tremblay_2013_table_covers_the_full_fig7_sequence():
         9_520.0,
         10.0**TREMBLAY_2013_LOG_ROSSELAND_DEPTH,
     )
-    np.testing.assert_array_equal(
-        difference, TREMBLAY_2013_MEAN_3D_MINUS_1D_TEMPERATURE_K[4]
+    # 10**log tau round-trips through log10 only to rounding.
+    np.testing.assert_allclose(
+        difference, TREMBLAY_2013_MEAN_3D_MINUS_1D_TEMPERATURE_K[4], rtol=0.0, atol=1e-9
     )
     # Overshoot cooling of the upper layers and the warmer layers near
     # log tau_R = -1 that Tremblay et al. (2013) describe.
