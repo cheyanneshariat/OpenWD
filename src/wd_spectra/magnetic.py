@@ -1203,7 +1203,10 @@ def _balmer_manifolds(
 ) -> PolarizedOpacity | tuple[PolarizedOpacity, PolarizedOpacity]:
     """Balmer manifolds of one field from templates; shared by structure and synthesis."""
 
-    if regime == "linear-zeeman":
+    # A B = 0 cell (a null point of a caller's map in the H2db regime) takes
+    # the unsplit zero-field lines of the same templates: the B -> 0 limit of
+    # the H2db manifolds, which H2db itself does not tabulate.
+    if regime == "linear-zeeman" or field == 0.0:
         return weak_field_balmer_manifolds(
             atmosphere, wavelength, field, templates=templates, dispersion=dispersion
         )
@@ -1219,12 +1222,14 @@ def _balmer_manifolds(
 def _local_atmosphere(
     atmosphere: Atmosphere, field: float, physics: MagneticPhysics, regime: str
 ) -> Atmosphere:
-    if not physics.include_magnetic_eos or regime != "h2db" or field == 0.0:
+    if not physics.include_magnetic_eos or regime != "h2db":
         return atmosphere
     from .magnetic_eos import atmosphere_with_magnetic_hydrogen_eos
 
     if physics.energies is None:
         raise ValueError("the magnetic EOS requires the H2db energy database")
+    # A shared mean-field atmosphere may already carry a magnetic EOS. A
+    # null cell must be remapped too; this routine uses the ordinary EOS at B=0.
     return atmosphere_with_magnetic_hydrogen_eos(
         atmosphere,
         field,
