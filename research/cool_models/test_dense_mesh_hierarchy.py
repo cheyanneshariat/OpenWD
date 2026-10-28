@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from dataclasses import dataclass
 import numpy as np
 import pytest
-from dense_mesh_hierarchy import nested_indices, hierarchy_solve
+from wd_spectra._cool.dense_mesh_hierarchy import nested_indices, hierarchy_solve
 
 
 @dataclass

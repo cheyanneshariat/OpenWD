@@ -1,8 +1,43 @@
 # Hot DA trace-metal development
 
-This branch adds **experimental fixed-atmosphere C/Si NLTE line formation**.
-It does not yet establish a reliable abundance fit at 50,000 K. The ordinary
-DAZ and DO/DAO presets retain their existing physics and interfaces.
+This research workflow calculates NLTE line formation for C, N, O, Al, Si,
+P, S, Fe and Ni on a fixed H/He atmosphere. It is separate from the ordinary
+[DAZ](../models/DZ.md#hydrogen-hosts-daz) and
+[DO/DAO](../models/DO-DAO.md) presets. The G191-B2B comparisons below test
+individual configurations; they do not establish reliable abundance fits
+across hot DA stars.
+
+## Where to start (October 27, 2026)
+
+- For the observed benchmark, published parameters and abundance conventions,
+  start with [G191-B2B](#first-observational-benchmark-g191-b2b).
+- For the current nine-element experiment, read the
+  [iron-group treatment](#iron-group-nlte-convergence-and-speed-2026-10-0304)
+  and its [reproduction command](#reproduction). The command uses retained
+  host/atom inputs and external Kurucz and CHIANTI data; its `results/` paths
+  describe the recorded experiment, not files supplied by an installation.
+- For resources and numerical evidence, see the
+  [80-depth calculation](#production-resolution-cold-start-2026-10-0405).
+  Those October 4–5 measurements distinguish construction of the H/He host
+  from solving the metal populations on that host.
+- Choose and record the metal convergence criterion. The solver still defaults
+  to `convergence_criterion="population"`; selecting `"flux"` instead uses
+  a default relative flux tolerance of `3e-3`. The
+  [criterion comparison](#cold-start-and-the-convergence-criterion) and
+  [population limits](#population-criterion-limits-and-the-ztf-j1539-grid-2026-10-05)
+  explain what each tests.
+
+Metals affect the final spectrum in this fixed-host calculation. Feedback on
+the temperature structure remains an
+[exploratory calculation](#metals-in-the-temperature-structure-exploratory).
+The dated record below preserves the earlier C/Si tests, failed attempts,
+comparisons and source references. Its later results extend the initial
+implementation; the early examples are not the complete nine-element setup.
+
+## Initial C/Si scope
+
+The first implementation added experimental fixed-atmosphere C/Si NLTE line
+formation. It did not establish a reliable abundance fit at 50,000 K.
 
 ## First observational benchmark: G191-B2B
 

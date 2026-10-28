@@ -202,7 +202,7 @@ depth grids; neither comparison establishes universal depth independence.
 
 ## Limits and preservation of established results
 
-- No DA below 3000 K or pure-He DB below 5000 K is qualified here.
+- No DA below 3000 K or pure-He DB below 4500 K is qualified here.
 - Molecular DAB 7250 K remained unqualified with the former worker and has not
   been retried in-process; 5000 K experiments remain far from equilibrium.
   There is no claim of a reliable 5000–10000 K DAB grid.
@@ -211,8 +211,9 @@ depth grids; neither comparison establishes universal depth independence.
   mean the homogeneous 1% hydrogen-by-number mixture above.
 - Dense pure-He thermodynamics combine REOS with approximate HNC chemical
   potentials and trace-ion chemistry. Local table and trace-ion limits are
-  enforced. Refraction and collective He-minus corrections remain absent in
-  this pure-He DB workflow; the separate DQ adapter includes both.
+  enforced. The pure-He DB workflow includes the Rogers–Young dense-fluid
+  correction to He-minus free–free absorption, but omits refraction;
+  the separate DQ adapter includes both.
   The dense-neutral closure is not inserted into warm ionized helium or
   hydrogen/helium mixtures.
 - Molecular mixtures include H2, H2+, H-, H3+, H/He ionization, H2-He/H2-H2 CIA

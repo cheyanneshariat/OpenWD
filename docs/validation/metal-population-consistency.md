@@ -1,5 +1,13 @@
 # Metal population consistency
 
+This record describes the October 24–26, 2026 population repair in
+[PR #37](https://github.com/kareemelbadry/OpenWD/pull/37), merged after the
+cool-DZ release in PR #38. The final PR head was
+`1297b7242d56ff748512e2b8d13819342d3167d7`; it merged on October 26, 2026
+(UTC) as `d5dd1bf33686868d6efd5cbcc54425d6b3c27ba8`.
+See [current development policy](../development/README.md#github-checks)
+for checks required of new changes.
+
 This follow-up to the cool-DZ release (PR #38) makes the level populations
 used by opacity consistent with the partition functions that formed each
 ion abundance. It retains the released continuum tables, line profiles,
@@ -65,10 +73,10 @@ support is not clipped at a representative binding. Such aggregate tables
 do not define one physical edge, so an explicit dissolved-pseudocontinuum
 request is rejected rather than assigned a guessed limit.
 
-The old PR #37 comparison figures predate the cool-DZ release and do not
-qualify this combined candidate. They are omitted from the updated change.
-Saved-structure comparisons against current main must measure this remaining
-population correction separately from the already released RAP/profile work.
+The early PR #37 comparison figures predate the cool-DZ release and do not
+test the final population repair. The comparisons below instead use the
+released PR #38 code (`6e6645911dc85fb023d7a0fbcd51a52458196c02`) as their
+baseline, separating the population correction from the RAP/profile work.
 
 ## What the tests establish
 
@@ -86,6 +94,11 @@ make these source changes pass. Earlier spectra retain their original versions.
 
 ## Comparison with the released PR #38 code
 
+These results were captured on October 24, 2026. The
+[capture manifest](../../tests/data/approved_regressions/metal_populations_2026_10_24/manifest.json)
+records reference commit `9d3d302f67b91aa621184dd0c28837525f154129` and
+per-file source hashes for the capture, as well as the input and output hashes.
+
 With the same saved atmospheres, configurations and wavelength samples:
 
 | Star | Maximum relative flux change | Location | Integrated flux change |
@@ -101,12 +114,20 @@ retain all structures and tolerances and include hashes, runtime and component
 attribution. Historical spectra continue to run under their original population
 convention; the previous references remain unchanged.
 
-All four J1637 fixed spectra pass unchanged. Its public default uses ideal
-metal partitions; the new nonideal TOPbase normalization is exercised by the
-nonideal material tests and the DZ comparisons. Both DAZ fixed-spectrum controls
+All four J1637 fixed spectra available at that revision passed unchanged.
+Its public default uses ideal metal partitions; the new nonideal TOPbase
+normalization is exercised by the nonideal material tests and the DZ
+comparisons. Both DAZ fixed-spectrum controls
 also pass. These are fixed-state implementation comparisons, without a fresh
-atmosphere or a claim of improved agreement with observations. Full protected
-PR qualification is still required.
+atmosphere or a claim of improved agreement with observations.
+
+The final PR subsequently passed all 36 reported GitHub checks. The
+[protected-model run](https://github.com/kareemelbadry/OpenWD/actions/runs/40201010842)
+completed on October 25, 2026 (UTC), with 24 cold-model jobs, four J1637
+warm-trajectory jobs and the qualification gate passing. This was the PR
+qualification required at that revision; it did not run J1637 from a cold
+start. The current policy includes five J1637 reference versions, but the
+historical four-spectrum and four-trajectory results above remain unchanged.
 
 ## Population export
 

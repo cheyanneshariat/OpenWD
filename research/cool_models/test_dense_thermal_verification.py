@@ -1,5 +1,5 @@
 import numpy as np
-from dense_thermal_verification import thermal_diagnostics
+from wd_spectra._cool.dense_thermal_verification import thermal_diagnostics
 from wd_spectra.spectrum import planck_lambda_angstrom
 from wd_spectra._compat import trapezoid
 from wd_spectra.opacity import optical_depth_from_mass_opacity

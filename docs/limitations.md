@@ -8,7 +8,7 @@ approximations are separate questions.
 
 ## Tested temperatures and compositions
 
-Tested cold-start points reach **3000 K for DA, 5000 K for pure-He DB, and
+Tested cold-start points reach **3000 K for DA, 4500 K for pure-He DB, and
 7500 K for a DAB mixture with N(H)/N(He) = 0.01**, at log g = 8. These are
 individual tested points, not validity ranges. The cool DB/DAB workflows are
 experimental and require the setup described in the [user guide](getting-started.md#cool-helium-and-mixed-atmospheres).
@@ -83,8 +83,11 @@ at 12000 and 20000 K; the historical spectral controls remain unchanged.
 See the [DA guide](models/DA.md#spectrum-synthesis).
 
 Regression controls protect previously calculated spectra; they are not
-independent observational validation. Published-grid and observational spectra
-are not distributed in this repository. The fresh production SDSS J0738+1835
+independent observational validation. The repository includes the observed
+[PG 1225-079 UVES coadd](../examples/data/README.md) used by the fitting
+example, with source records and a checksum. Other comparison observations
+and published model grids are not bundled as a complete validation dataset.
+The fresh production SDSS J0738+1835
 atmosphere passes static checks but does not pass the paper-spectrum comparison.
 PG 1225's production cold-start check is also distinct from exact reproduction
 of the lower-resolution paper model. These distinctions are recorded in the
@@ -106,7 +109,8 @@ DQ use LTE populations; DO/DAO and PG 1159 use NLTE (see below). DAB/DBA
 assumes a homogeneous mixture, not a stratified hydrogen layer; DAZ assumes a
 hydrogen-dominated host, and DZ/DBZ a helium-dominated host, with fixed input
 abundances. DQ assumes hydrogen-free, nonmagnetic helium with trace carbon and
-C₂. Magnetic and D6 models are not part of the public modules.
+C₂. The public [DAH](#dah) and [D6](#d6) models have the separate
+assumptions and limits described below.
 
 Convection uses 1D mixing-length theory. For cool DAs (6000--13,000 K, log g
 near 8) the optional [3D line-profile mode](models/DA.md#3d-line-profile-mode-opt-in)
@@ -116,9 +120,10 @@ spectral-energy distributions and photometry. The switch from full to
 photospheric-only correction at 9000 K is empirical.
 
 The dense pure-He DB treatment combines tabulated bulk thermodynamics with
-approximate chemical potentials and trace-ion chemistry. Refraction and
-collective He-minus corrections remain absent from that DB workflow, not
-from DQ. DQ includes refraction and dense-helium continuum corrections, but
+approximate chemical potentials and trace-ion chemistry. It includes a
+Rogers–Young dense-fluid correction to He-minus free–free absorption, but
+does not include refraction; see the [DB guide](models/DB.md).
+DQ includes refraction and dense-helium continuum corrections, but
 its dense-mixture EOS, molecular collision profiles and grey refractive ML2
 bridge remain approximations. It is not an exact reproduction of Blouin's
 implementation or qualified for precision abundance fitting; hot carbon-rich,
@@ -187,8 +192,8 @@ stars: PG 1707+427 (85000 K), PG 1424+535 (110000 K) and PG 1159-035
 refinement. They are individual points, not a grid. Only He, C and O define
 the atmospheric structure; the trace elements (N, Ne, F, Si, P, S, Ar, Fe) are
 NLTE passengers in the final line formation and do not feed back on it.
-Radiative acceleration and the upper-atmosphere refinement are options, off
-by default. Convection, winds and diffusion are omitted.
+Radiative acceleration is off by default; upper-atmosphere refinement is
+on by default. Convection, winds and diffusion are omitted.
 
 Known differences from the observed spectra, at the published stellar
 parameters, are:
