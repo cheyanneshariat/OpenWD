@@ -204,6 +204,7 @@ def numerical_identity(root=ROOT):
         "research/validate_daz_cold_start.py",
         "research/check_saved_bolometric_spectrum.py",
         "research/metal_population_control_legacy.py",
+        "research/montreal_h_radius_control_legacy.py",
         "research/cool_dz_release_control_legacy.py",
         "research/independent_kurucz_control_legacy.py",
         "research/uv_atomic_control_legacy.py",

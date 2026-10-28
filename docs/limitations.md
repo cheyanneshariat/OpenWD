@@ -108,6 +108,13 @@ hydrogen-dominated host, and DZ/DBZ a helium-dominated host, with fixed input
 abundances. DQ assumes hydrogen-free, nonmagnetic helium with trace carbon and
 C₂. Magnetic and D6 models are not part of the public modules.
 
+Convection uses 1D mixing-length theory. For cool DAs (6000--13,000 K, log g
+near 8) the optional [3D line-profile mode](models/DA.md#3d-line-profile-mode-opt-in)
+applies a published mean-3D temperature correction for Balmer line-profile
+analysis. Its spectra are not flux-conserving; use the default 1D spectra for
+spectral-energy distributions and photometry. The switch from full to
+photospheric-only correction at 9000 K is empirical.
+
 The dense pure-He DB treatment combines tabulated bulk thermodynamics with
 approximate chemical potentials and trace-ion chemistry. Refraction and
 collective He-minus corrections remain absent from that DB workflow, not

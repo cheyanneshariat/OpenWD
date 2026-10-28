@@ -357,9 +357,20 @@ def test_crossing_dipole_uses_same_structure_and_synthesis_regime(monkeypatch, a
     def synthesis(atm, wavelength, cells, physics, **kwargs):
         assert physics.regime(field) == physics.regime(cells.field_strength_megagauss.max()) == "h2db"
         assert not captured["include_series_pseudocontinuum"]
+        # The unified profile uses the public hydrogen self-broadening policy.
+        from wd_spectra.magnetic import BalmerBroadening
+        from wd_spectra.models.stellar import _da_self_broadening_prescription
+
+        broadening = BalmerBroadening(
+            self_broadening_prescription=_da_self_broadening_prescription(
+                config.effective_temperature, None
+            )
+        )
         np.testing.assert_allclose(
             captured["balmer_opacity_function"](atm, wavelength),
-            h2db_balmer_manifolds(atm, wavelength, field, transitions).isotropic(),
+            h2db_balmer_manifolds(
+                atm, wavelength, field, transitions, broadening=broadening
+            ).isotropic(),
         )
         unpolarized, rwa = magnetic_continuum(
             atm, wavelength, field, physics.energies,

@@ -30,6 +30,9 @@ from wd_spectra.models.common import _jsonable
 
 pytestmark = pytest.mark.canary
 
+MONTREAL_H_RADIUS_COLD = (
+    Path(__file__).parent / "data/approved_regressions/montreal_h_radius_2026_10_27/cold"
+)
 _FORMAL_WAVELENGTH = np.unique(
     np.r_[np.geomspace(900.0, 300000.0, 1100), np.arange(3700.0, 7000.0, 2.0)]
 )
@@ -46,9 +49,11 @@ def _assert_solver_control(result, case, step_tolerance, caught):
         for entry in segment["iteration_history"]
     ]
     assert history and history[-1]["maximum_step"] < step_tolerance
-    with np.load(
-        Path(__file__).parent / "data/approved_regressions/cold" / (case + ".npz")
-    ) as old:
+    reference = Path(__file__).parent / "data/approved_regressions/cold" / (case + ".npz")
+    # Reviewed 2026-10-27 hydrogen neutral defaults: fresh certified cold starts
+    # replace only the references they moved; see that directory's manifest.
+    reviewed = MONTREAL_H_RADIUS_COLD / (case + ".npz")
+    with np.load(reviewed if reviewed.exists() else reference) as old:
         for name in ("gas_pressure", "column_mass"):
             np.testing.assert_allclose(
                 getattr(result.atmosphere, name)[: len(old[name])],

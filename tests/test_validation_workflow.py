@@ -305,6 +305,7 @@ def test_protected_node_ids_still_collect_without_running_atmospheres():
 
 
 @pytest.mark.parametrize('name', [
+    'montreal_h_radius_control_legacy.py',
     'metal_population_control_legacy.py', 'cool_dz_release_control_legacy.py',
     'independent_kurucz_control_legacy.py', 'uv_atomic_control_legacy.py',
 ])
