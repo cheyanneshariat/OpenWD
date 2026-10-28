@@ -10,7 +10,9 @@ convection.
 
 Hydrogen bound-bound opacity spans Lyman through Brackett. Charged-particle
 profiles use the Tremblay--Bergeron tables. Neutral-H Balmer broadening uses
-Ali--Griem below 10,000 K and Barklem at higher temperatures. The validated
+Ali--Griem resonance widths at every temperature, and the Hummer--Mihalas
+neutral hard-sphere radius is 0.5 n^2 a_0 (the Montreal convention, also used
+for helium), as in Tremblay et al. (2010). The validated
 Lyman policy uses the fixed TLUSTY/Allard Ly-alpha table at 9000--13,000 K,
 temperature-dependent supplied Allard profiles at higher temperature, and the
 independent cool neutral-H/H2 wing below 9000 K.
@@ -162,6 +164,52 @@ corrections in the EOS. Both methods are independently source-checked.
 Low-level synthesis routines retain their explicit legacy defaults, including
 the directional-intensity interface. Other public models' synthesis defaults
 are unchanged.
+
+## 3D line-profile mode (opt-in)
+
+One-dimensional mixing-length models do not reproduce the narrow, deep
+H-alpha and H-beta cores or the inner wings of cool DAs observed at high
+resolution. Set `DAConfig(mean_3d_line_profiles=True)` to synthesize the
+spectrum from a structure corrected for 3D convection:
+
+```python
+result = compute_da(
+    DAConfig(effective_temperature=8000, logg=8.0, quality="production",
+             mean_3d_line_profiles=True),
+    wavelength,
+)
+```
+
+The atmosphere is first converged in 1D as usual. Before the final spectrum
+is computed, the published mean-3D minus 1D temperature difference of
+Tremblay et al. (2013, A&A 552, A13, Fig. 7; log g = 8 CO5BOLD sequence,
+5997--12999 K) is added on the Rosseland optical-depth scale and the gas
+pressure is re-integrated in hydrostatic equilibrium. The cooler upper layers
+have less H- opacity, so each Rosseland depth lies under more mass and the
+neutral-H density rises, as in the 3D structures. Below 9000 K all layers are
+corrected; from 9000 K upward the upper layers (tau_R < 0.01) keep their 1D
+temperatures, because the 3D overshoot cooling there over-deepens the observed
+H-alpha and H-beta cores of warmer DAs (as noted by Tremblay et al. 2013c).
+The returned `result.atmosphere` is the converged 1D structure; only the
+spectrum sees the correction. Outside the published temperature range, or
+more than 0.75 dex from log g = 8, the 1D spectrum is returned and
+`result.metadata["mean_3d_line_profiles"]` says why.
+
+Use this mode for normalized Balmer line profiles, not for spectral-energy
+distributions or photometry. The corrected structure is not in radiative
+equilibrium: its emergent flux is 1.5--2.5% below sigma Teff^4 between 6000
+and 10,000 K, and at 6000--8000 K the far-UV is suppressed by up to an order
+of magnitude through the Ly-alpha red wing. The public mean-3D spectra of
+Tremblay et al. show the same behavior relative to their 1D grid. This
+follows the established practice of using 1D models for photometry. Metadata
+records `flux_conserving_spectrum = False` whenever the correction is applied.
+
+Against SPY/UVES spectra of 13 DAs from 6450 to 11,500 K at fixed published
+parameters, this mode reproduces the line cores and inner wings of the
+public mean-3D grid and improves the fit over the 1D default and the Koester
+grid. The largest gains are in the H-alpha and H-beta cores below 9000 K. The
+change of treatment at 9000 K is an empirical choice, constrained by the SPY
+sample to lie between 8615 and 9256 K.
 
 ## Flux conservation (2026-10-01)
 

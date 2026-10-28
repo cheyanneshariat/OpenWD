@@ -54,3 +54,16 @@ is a fresh public cold start with a verified certificate (see the
 manifests). The DA and DB canary work guards were raised from 45 to 70 and
 from 60 to 90 iterations. These are work limits, not tolerances. The
 spectral and structure tolerances are unchanged.
+
+## Update 2026-10-27: hydrogen neutral defaults
+
+User-approved change of the hydrogen neutral defaults in every
+hydrogen-bearing family: the Montreal Hummer--Mihalas radius scale 0.5 and
+Ali--Griem self-broadening at every temperature (previously scale 1 and
+Barklem at and above 10,000 K). The 26 changed fixed-atmosphere controls,
+including the DAH paper prescription, are versioned in
+[montreal_h_radius_2026_10_27](montreal_h_radius_2026_10_27/README.md); every
+earlier control is still checked exactly under
+`research/montreal_h_radius_control_legacy.py`. Tolerances are unchanged.
+The same change adds the opt-in DA `mean_3d_line_profiles` mode, which does
+not alter any default output.

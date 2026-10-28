@@ -38,17 +38,17 @@ ConvergenceStatus = Literal[
 _MODEL_REQUEST_FINGERPRINT_SCHEMA = 2
 _MODEL_PHYSICS_REVISION = "openwd-0.1.3-qmhd-undoubled-v5-flux-conserving"
 _MODEL_FAMILY_PHYSICS_REVISIONS = {
-    "DA": "hydrogen-stark-density-floor-2026-10-05",
+    "DA": "hydrogen-stark-density-floor-2026-10-05:montreal-h-radius-ali-griem-2026-10-27",
     "DB": "helium-reos3-c1-2026-10-23",
-    "DAB": "hydrogen-stark-density-floor-2026-10-05:default-feii-kurucz-uv-2026-10-12:neutral-trace-h-metal-widths-2026-10-12:helium-reos3-c1-2026-10-23:normalized-metal-levels-2026-10-24",
+    "DAB": "hydrogen-stark-density-floor-2026-10-05:default-feii-kurucz-uv-2026-10-12:neutral-trace-h-metal-widths-2026-10-12:helium-reos3-c1-2026-10-23:normalized-metal-levels-2026-10-24:montreal-h-radius-ali-griem-2026-10-27",
     "DQ": "helium-reos3-c1-2026-10-23",
-    "DAO": "hydrogen-stark-density-floor-2026-10-05",
-    "DAH": "dah-rwa-magnetic-eos-v5:hydrogen-stark-density-floor-2026-10-05",
+    "DAO": "hydrogen-stark-density-floor-2026-10-05:montreal-h-radius-ali-griem-2026-10-27",
+    "DAH": "dah-rwa-magnetic-eos-v5:hydrogen-stark-density-floor-2026-10-05:montreal-h-radius-ali-griem-2026-10-27",
     # Shared metal physics revised by the 2026-09-30 DZ audit: ground-term
     # bound-free populations, 1/Z^2 Unsold radii, frequency Voigt profiles,
     # structure line identity and continuous dense-He ionization.
-    "DZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05:default-crii-kurucz-2026-10-08:kurucz-electron-stark-2026-10-11:si-ii-he-unified-2026-10-11:si-ii-kurucz-transitions-2026-10-12:metal-microfield-hosts-2026-10-12:default-feii-kurucz-uv-2026-10-12:neutral-trace-h-metal-widths-2026-10-12:cool-dz-release-2026-10-23:rap-absolute-grid-2026-10-23:normalized-metal-levels-2026-10-24",
-    "DAZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05:default-crii-kurucz-2026-10-08:kurucz-electron-stark-2026-10-11:barklem-neutral-h-2026-10-12:si-ii-kurucz-transitions-2026-10-12:default-feii-kurucz-uv-2026-10-12:normalized-metal-levels-2026-10-24",
+    "DZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05:default-crii-kurucz-2026-10-08:kurucz-electron-stark-2026-10-11:si-ii-he-unified-2026-10-11:si-ii-kurucz-transitions-2026-10-12:metal-microfield-hosts-2026-10-12:default-feii-kurucz-uv-2026-10-12:neutral-trace-h-metal-widths-2026-10-12:cool-dz-release-2026-10-23:rap-absolute-grid-2026-10-23:normalized-metal-levels-2026-10-24:montreal-h-radius-ali-griem-2026-10-27",
+    "DAZ": "metal-audit-2026-09-30:hydrogen-stark-density-floor-2026-10-05:default-crii-kurucz-2026-10-08:kurucz-electron-stark-2026-10-11:barklem-neutral-h-2026-10-12:si-ii-kurucz-transitions-2026-10-12:default-feii-kurucz-uv-2026-10-12:normalized-metal-levels-2026-10-24:montreal-h-radius-ali-griem-2026-10-27",
     "D6": "metal-audit-2026-09-30:default-feii-kurucz-uv-2026-10-12:rap-absolute-grid-2026-10-23:normalized-metal-levels-2026-10-24:excited-parent-series-o-i-2026-10-25",
 }
 

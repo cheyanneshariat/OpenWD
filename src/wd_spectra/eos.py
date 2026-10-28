@@ -46,12 +46,13 @@ from .molecules import (
 
 FloatArray = NDArray[np.float64]
 HM_MAX_BOUND_LEVEL = 40
-# Effective radii are a model closure in the HM hard-sphere term.  Keep the
-# direct hydrogenic choice r_n = n^2 a_0 as the grid-wide default.  The common
-# Montreal/ATMO r_B=0.5 calibration was screened against the Koester grid: it
-# helps selected 6000 K lines, but degrades Hgamma at 8000 K once the structure
-# is relaxed.  It is therefore not hidden in the default EOS.
-HM_NEUTRAL_HYDROGEN_RADIUS_SCALE = 1.0
+# Effective radii are a model closure in the HM hard-sphere term,
+# r_n = scale * n^2 a_0.  Hydrogen uses the Montreal convention scale=0.5
+# (Bergeron 1991; Tremblay et al. 2010), the same value already used for
+# helium and for hydrogen in mixed H/He atmospheres.  Against SPY/UVES
+# profiles it strengthens the cool-DA (6.4-8.6 kK) Hgamma/Hdelta cores toward
+# the data; above about 9 kK the change is small (2026-10-27 audit).
+HM_NEUTRAL_HYDROGEN_RADIUS_SCALE = 0.5
 HM_HELIUM_NEUTRAL_RADIUS_SCALE = 0.5
 
 

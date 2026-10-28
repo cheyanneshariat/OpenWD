@@ -20,7 +20,8 @@ from ..atmosphere import (
     radiative_equilibrium_hydrogen_helium_atmosphere,
 )
 from ..cool_da import (
-    atmosphere_with_tremblay_2013_mean_3d_temperature_difference,
+    TREMBLAY_2013_EFFECTIVE_TEMPERATURE_K,
+    hydrostatic_atmosphere_with_tremblay_2013_mean_3d_temperature_difference,
 )
 from ..dense_eos import read_helium_reos3_table
 from ..helium_ii_stark import read_helium_ii_stark_table
@@ -87,7 +88,17 @@ class DAConfig:
         "neale-tennyson-1995", "none"
     ] = "neale-tennyson-1995"
     mixing_length_alpha: float | None = 0.7
+    # Retired: True raises; kept so stored configurations still load.
     use_cool_mean_3d_temperature_differential: bool = False
+    # Line-profile mode.  The Tremblay et al. (2013) <3D>-1D temperature
+    # difference (log g=8 CO5BOLD sequence, 5997-12999 K) is added to the
+    # converged 1D structure with hydrostatic re-integration on the Rosseland
+    # scale before synthesis: all layers below 9000 K, tau_R >= 1e-2 above.
+    # The spectrum is not flux-conserving (-1.5 to -2.5% bolometric, UV
+    # suppressed at 6-8 kK); use it for Balmer line profiles and the default
+    # 1D spectrum for SEDs and photometry.  Outside the table range the 1D
+    # spectrum is returned and the metadata says why.
+    mean_3d_line_profiles: bool = False
     balmer_self_broadening_prescription: str | None = None
     balmer_self_broadening_truncation_closure: str = "stark-core"
     atmosphere_solver: Literal["adaptive-newton"] = (
@@ -313,7 +324,13 @@ class DZConfig:
     si_ii_kurucz_transitions: bool = True
 
 
-_DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K = 10_000.0
+# mean_3d_line_profiles: the Tremblay et al. (2013) differential exists only
+# at log g=8 (SPY validation spans log g=7.60-8.74) and for 5997-12999 K.  Its
+# upper-layer (tau_R<1e-2) overshoot cooling matches observed Balmer cores
+# below about 9 kK but over-deepens them above (SPY 8615 vs 9256 K), so only
+# the photospheric part is applied from this temperature upward.
+_MEAN_3D_MAXIMUM_LOGG_OFFSET = 0.75
+_MEAN_3D_UPPER_LAYER_MAXIMUM_TEFF_K = 9_000.0
 _ALLARD_MINIMUM_EFFECTIVE_TEMPERATURE_K = 9_000.0
 _ALLARD_TEMPERATURE_DEPENDENT_CUTOFF_K = 13_000.0
 # DA cold-start seed span (the hydrogen solver's defaults) and the bottom
@@ -375,21 +392,18 @@ def _metal_structure_line_budget(
 def _da_self_broadening_prescription(
     effective_temperature: float, requested: str | None
 ) -> str:
-    """Resolve the public DA neutral-broadening policy.
+    """Resolve the public hydrogen neutral-broadening policy.
 
-    Observed cool-DA profiles favor Ali--Griem below 10,000 K.  The Balmer
-    lines become weak at the very cool end, while the neutral-H contribution
-    becomes negligible toward the warm regime.  Keep Barklem at and above the
-    boundary, and retain an explicit caller override for controlled tests.
+    Ali--Griem resonance broadening at every temperature, as in the Montreal
+    DA models (Tremblay et al. 2010).  Against SPY/UVES profiles it matches
+    or beats Barklem from 6.4 to 11.5 kK, and the two agree to <2e-6 in
+    normalized flux at 20--33 kK.  ``effective_temperature`` is retained so
+    the pre-2026-10-27 temperature-dependent policy can be restored for its
+    historical controls.  An explicit caller override is retained for
+    controlled tests.
     """
 
-    if requested is not None:
-        return requested
-    return (
-        "ali-griem"
-        if effective_temperature < _DA_ALI_GRIEM_TEMPERATURE_CUTOFF_K
-        else "barklem"
-    )
+    return "ali-griem" if requested is None else requested
 
 
 def _allard_lyman_profiles_for_effective_temperature(
@@ -521,6 +535,11 @@ def compute_da(
         or config.lower_boundary_extensions < 0
     ):
         raise ValueError("lower_boundary_extensions must be a nonnegative integer")
+    if config.use_cool_mean_3d_temperature_differential:
+        raise ValueError(
+            "use_cool_mean_3d_temperature_differential is retired; use "
+            "mean_3d_line_profiles=True"
+        )
     self_broadening_prescription = _da_self_broadening_prescription(
         config.effective_temperature, config.balmer_self_broadening_prescription
     )
@@ -769,13 +788,6 @@ def compute_da(
                 ),
             })
     assert atmosphere is not None
-    if config.use_cool_mean_3d_temperature_differential:
-        atmosphere = (
-            atmosphere_with_tremblay_2013_mean_3d_temperature_difference(
-                atmosphere,
-                neutral_radius_scale=0.5,
-            )
-        )
     if relax_atmosphere:
         atmosphere = atmosphere_with_model_request_fingerprint(
             atmosphere, request_fingerprint
@@ -783,8 +795,21 @@ def compute_da(
     else:
         atmosphere = fixed_synthesis_atmosphere(atmosphere, request_fingerprint)
     convergence_status = warn_if_atmosphere_not_converged(atmosphere, "DA")
+    # The returned atmosphere stays the 1D equilibrium structure, so it remains
+    # a valid checkpoint; only the synthesis sees the <3D> differential.
+    mean_3d_layers, mean_3d_note = _mean_3d_line_profile_layers(config)
+    synthesis_atmosphere = (
+        hydrostatic_atmosphere_with_tremblay_2013_mean_3d_temperature_difference(
+            atmosphere,
+            h2_h2_cia_table=cia,
+            maximum_logg_offset=_MEAN_3D_MAXIMUM_LOGG_OFFSET,
+            layers=mean_3d_layers,
+        )
+        if mean_3d_layers is not None
+        else atmosphere
+    )
     spectrum = synthesize_hydrogen_spectrum(
-        atmosphere,
+        synthesis_atmosphere,
         wave,
         h2_line_data=(
             read_h2_lyman_werner_data() if config.h2_lyman_werner_lines else None
@@ -821,7 +846,7 @@ def compute_da(
                 self_broadening_prescription
             ),
             "balmer_self_broadening_policy": (
-                "automatic: Ali-Griem below 10000 K; Barklem otherwise"
+                "automatic: Ali-Griem at every temperature"
                 if config.balmer_self_broadening_prescription is None
                 else "explicit override"
             ),
@@ -874,13 +899,40 @@ def compute_da(
             "atmosphere_initialization": atmosphere_initialization,
             "atmosphere_convergence_status": convergence_status,
             "model_request_fingerprint": request_fingerprint,
-            "cool_mean_3d_temperature_differential": (
-                "Tremblay et al. 2013 Fig. 7 at fixed gas pressure; "
-                "Montreal HM neutral radius rB=0.5"
-                if config.use_cool_mean_3d_temperature_differential
-                else None
-            ),
+            "mean_3d_line_profiles": mean_3d_note,
+            "flux_conserving_spectrum": mean_3d_layers is None,
         },
+    )
+
+
+def _mean_3d_line_profile_layers(config: DAConfig) -> tuple[str | None, str | None]:
+    """Return the <3D> layers applied in line-profile mode and a provenance note."""
+
+    if not config.mean_3d_line_profiles:
+        return None, None
+    teff = config.effective_temperature
+    low, high = (
+        float(TREMBLAY_2013_EFFECTIVE_TEMPERATURE_K[0]),
+        float(TREMBLAY_2013_EFFECTIVE_TEMPERATURE_K[-1]),
+    )
+    if not low <= teff <= high:
+        return None, (
+            f"requested; not applied: Teff outside the {low:.0f}-{high:.0f} K "
+            "Tremblay et al. (2013) sequence; 1D spectrum"
+        )
+    if abs(config.logg - 8.0) > _MEAN_3D_MAXIMUM_LOGG_OFFSET:
+        return None, (
+            "requested; not applied: log g more than "
+            f"{_MEAN_3D_MAXIMUM_LOGG_OFFSET:g} dex from the log g=8 sequence; "
+            "1D spectrum"
+        )
+    layers = (
+        "all" if teff < _MEAN_3D_UPPER_LAYER_MAXIMUM_TEFF_K else "photospheric"
+    )
+    return layers, (
+        "Tremblay et al. 2013 Fig. 7 <3D>-1D temperature difference, "
+        f"layers={layers}, hydrostatic re-integration, synthesis only; "
+        "for line profiles, not flux-conserving"
     )
 
 
@@ -1357,8 +1409,7 @@ def compute_dab(
     else:
         raise ValueError("lyman_profile_source must be 'allard' or 'stark'")
     self_broadening_prescription = _da_self_broadening_prescription(
-        config.effective_temperature,
-        config.balmer_self_broadening_prescription,
+        config.effective_temperature, config.balmer_self_broadening_prescription
     )
     if not relax_atmosphere and initial_atmosphere is None:
         raise ValueError("relax_atmosphere=False requires initial_atmosphere")
@@ -1472,7 +1523,7 @@ def compute_dab(
             ),
             "balmer_self_broadening": self_broadening_prescription,
             "balmer_self_broadening_policy": (
-                "automatic: Ali-Griem below 10000 K; Barklem otherwise"
+                "automatic: Ali-Griem at every temperature"
                 if config.balmer_self_broadening_prescription is None
                 else "explicit override"
             ),
@@ -1871,8 +1922,7 @@ def compute_dz(
     else:
         raise ValueError("lyman_profile_source must be 'allard' or 'stark'")
     self_broadening_prescription = _da_self_broadening_prescription(
-        config.effective_temperature,
-        config.balmer_self_broadening_prescription,
+        config.effective_temperature, config.balmer_self_broadening_prescription
     )
     if not relax_atmosphere and initial_atmosphere is None:
         raise ValueError("relax_atmosphere=False requires initial_atmosphere")
@@ -2103,7 +2153,7 @@ def compute_dz(
             ),
             "balmer_self_broadening": self_broadening_prescription,
             "balmer_self_broadening_policy": (
-                "automatic: Ali-Griem below 10000 K; Barklem otherwise"
+                "automatic: Ali-Griem at every temperature"
                 if config.balmer_self_broadening_prescription is None
                 else "explicit override"
             ),

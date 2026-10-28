@@ -10,6 +10,7 @@ cold-start equilibrium certificates; separate tests cover those questions.
 
 import json
 from pathlib import Path
+import sys
 import warnings
 
 import numpy as np
@@ -19,8 +20,16 @@ from wd_spectra._compat import trapezoid
 from wd_spectra.constants import STEFAN_BOLTZMANN
 from wd_spectra.models import load_atmosphere_checkpoint, AtmosphereConvergenceWarning
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "research"))
+from montreal_h_radius_control_legacy import previous_hydrogen_neutral_defaults
+
 CONTROLS = Path(__file__).parent / "data/spectral_regressions"
 DEFAULT_CONTROLS = Path(__file__).parent / "data/da_cubic_regressions"
+# Reviewed 2026-10-27 hydrogen neutral defaults (radius x0.5, Ali--Griem at
+# every temperature); the original cubic controls are recovered under the
+# previous defaults with the same tolerances.
+MONTREAL = Path(__file__).parent / "data/approved_regressions/montreal_h_radius_2026_10_27/da_cubic"
+MONTREAL_CASES = frozenset({"da-12000-public"})
 SPECTRUM_RTOL = 1e-3  # 0.1% in significant flux, one common numerical budget.
 LINE_ATOL = 1e-3  # 0.1 percentage point of local continuum, including dark cores.
 WINDOWS = ((6250, 6900), (4700, 5025), (4250, 4450), (4020, 4180))
@@ -68,9 +77,14 @@ def test_public_da_spectrum_has_not_changed(case, monkeypatch):
     with np.load(path) as saved:
         cfg = DAConfig(**json.loads(str(saved["config_json"])))
         wave, expected = saved["wavelength"], saved["original_surface_flux"]
+    original = expected
+    if case in MONTREAL_CASES:
+        with np.load(MONTREAL / (case + ".npz")) as approved:
+            np.testing.assert_array_equal(wave, approved["wavelength"])
+            expected = approved["surface_flux"]
     molecular = cfg.effective_temperature <= 12000
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", AtmosphereConvergenceWarning)
+
+    def synthesize():
         state = load_atmosphere_checkpoint(
             path,
             cfg.effective_temperature,
@@ -82,7 +96,15 @@ def test_public_da_spectrum_has_not_changed(case, monkeypatch):
         )
         # Deliberately omit synthesis_transfer. Do not bypass a
         # failing default by opting into the reference's operator here.
-        result = compute_da(cfg, wave, initial_atmosphere=state, relax_atmosphere=False)
+        return compute_da(cfg, wave, initial_atmosphere=state, relax_atmosphere=False)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", AtmosphereConvergenceWarning)
+        result = synthesize()
+        if case in MONTREAL_CASES:
+            with previous_hydrogen_neutral_defaults():
+                previous = synthesize()
+            assert_spectrum_preserved(wave, previous.spectrum.surface_flux_lambda, original)
     assert result.spectrum.metadata['transfer_discretization'] == 'formal-pchip'
     assert_spectrum_preserved(wave, result.spectrum.surface_flux_lambda, expected)
     # Independent stellar-flux guard for these two broad, warm-DA controls.

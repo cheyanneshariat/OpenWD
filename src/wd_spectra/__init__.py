@@ -39,8 +39,10 @@ from .atmosphere import (
     radiative_equilibrium_hydrogen_helium_atmosphere,
 )
 from .cool_da import (
+    TREMBLAY_2013_EFFECTIVE_TEMPERATURE_K,
     TREMBLAY_2013_LOG_ROSSELAND_DEPTH,
     TREMBLAY_2013_MEAN_3D_MINUS_1D_TEMPERATURE_K,
+    TREMBLAY_2013_UPPER_LAYER_ROSSELAND_DEPTH,
     atmosphere_with_tremblay_2013_mean_3d_temperature_difference,
     hydrostatic_atmosphere_with_tremblay_2013_mean_3d_temperature_difference,
     tremblay_2013_mean_3d_temperature_difference,
