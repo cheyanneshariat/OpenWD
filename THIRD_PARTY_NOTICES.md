@@ -243,6 +243,15 @@ include SDSS/BOSS J1007+1237 (plate 5328, MJD 55982, fiber 66). The unscaled
 and smoothly rescaled figure variants are labelled separately in the guide;
 the smooth correction is a model-derived comparison operation.
 
+`re-j0317-853-vi.npz` in the same directory is a V/I spectrum of RE J0317-853
+derived from public ESO VLT FORS2 data of programme 114.27BU.001. The data
+remain copyright ESO under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); see the
+[ESO data policy](https://archive.eso.org/cms/eso-data-access-policy.html).
+`re-j0317-853-vi.json` records its source, processing and sign convention.
+Based on observations collected at the European Organisation for Astronomical
+Research in the Southern Hemisphere under ESO programme 114.27BU.001.
+
 ## Cool-DZ unified metal–helium profiles
 
 The Mg I b, Mg II h/k, Ca II H/K and Na I D NPZ grids under

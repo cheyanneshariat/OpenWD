@@ -396,6 +396,31 @@ This differs from the native-local conversion above, which also changes U
 before rotating its local reference axis. Labels such as “right circular”
 are insufficient without specifying the viewing direction and convention.
 
+`wd_spectra.validation.magnetic_da.score_dah_circular_polarization` compares
+an observed V/I with a returned `StokesSpectrum`; `observed_convention`
+(`"optical"` or `"iau"`) is required. It returns `chi2_v` (unscaled model),
+`v_scale` (a negative value can indicate a sign error, a value away from one a
+level error) and `shift_angstrom` (misplaced features). The first two use the
+unshifted model. Alignment uses the actual vacuum wavelengths and inverse
+variance weights, fitting a scale and constant offset only to locate the
+features. Its default search is ±100 Å; set `max_shift_angstrom` to change
+that range. The observed pixels used for alignment must have model and
+instrumental-profile coverage at every trial shift. Flat profiles, ambiguous
+fits, insufficient overlap and optima at the search boundary give `NaN` for
+the shift; zero model V also gives `NaN` for `v_scale`. Widen the search when
+appropriate rather than interpreting a boundary optimum as a measured shift.
+No pass/fail threshold is imposed.
+
+The bundled
+`src/wd_spectra/data/validation/dah/re-j0317-853-vi.npz` is one ESO FORS2
+rotation phase of RE J0317-853 at the cyclotron maximum, stored in the optical
+convention (negative near 5700 Å); its JSON records the source, resolution and
+a level factor of 1.654 relative to the reduction. Both V/I and its reported
+sigma were divided by this factor to match older observations; part of the
+level discrepancy remains unexplained. This is a diagnostic comparison data
+set, and cannot independently validate the model's absolute V/I amplitude.
+These scores do not change the `polarimetry_validated=False` qualification.
+
 A controlled regression fixes the physical polarity using an isolated
 Gaussian Hβ normal triplet at 0.5 MG and a Milne–Eddington source increasing
 inward. A longitudinal field toward the observer gives positive optical V
